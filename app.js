@@ -1,10 +1,7 @@
 const DATA_URL = "./data/dashboard.json";
 const emptyTemplate = document.querySelector("#empty-template");
 const refreshButton = document.querySelector("#refresh-button");
-const tokenTab = document.querySelector("#token-tab");
-const tokenDrawer = document.querySelector("#token-drawer");
-const drawerBackdrop = document.querySelector("#drawer-backdrop");
-const drawerClose = document.querySelector("#drawer-close");
+const viewTitle = document.querySelector("#view-title");
 
 const fallbackData = {
   brief: "OpenClaw 还没有写入今天的摘要。",
@@ -34,6 +31,13 @@ function formatNumber(value) {
   return new Intl.NumberFormat("zh-CN").format(Math.round(Number(value) || 0));
 }
 
+function compactNumber(value) {
+  const number = Number(value) || 0;
+  if (number >= 1_000_000) return `${(number / 1_000_000).toFixed(1)}M`;
+  if (number >= 10_000) return `${Math.round(number / 1000)}K`;
+  return formatNumber(number);
+}
+
 function formatCost(value) {
   const number = Number(value) || 0;
   if (!number) return "--";
@@ -54,6 +58,18 @@ function createElement(tag, className, text) {
   if (className) node.className = className;
   if (text) node.textContent = text;
   return node;
+}
+
+function setView(view) {
+  const nextView = view === "tokens" ? "tokens" : "home";
+  document.querySelectorAll("[data-view-panel]").forEach((panel) => {
+    panel.classList.toggle("is-active", panel.dataset.viewPanel === nextView);
+  });
+  document.querySelectorAll("[data-view]").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.view === nextView);
+  });
+  if (viewTitle) viewTitle.textContent = nextView === "tokens" ? "Token 用量" : "今天";
+  window.location.hash = nextView === "tokens" ? "tokens" : "home";
 }
 
 function renderTasks(tasks) {
@@ -217,12 +233,23 @@ function renderTokenBars(days) {
   });
 }
 
+function getTokenRange(usage, key) {
+  return (usage.ranges || []).find((range) => range.key === key);
+}
+
 function renderTokenUsage(usage) {
   const ranges = usage.ranges || [];
-  const active = ranges.find((range) => range.key === activeTokenRange) || ranges[0] || {};
-  const sevenDay = ranges.find((range) => range.key === "7d") || active;
+  const active = getTokenRange(usage, activeTokenRange) || ranges[0] || {};
+  const hour = getTokenRange(usage, "1h") || {};
+  const day = getTokenRange(usage, "24h") || {};
+  const week = getTokenRange(usage, "7d") || active;
+  const month = getTokenRange(usage, "30d") || {};
 
-  setText("#token-tab-total", sevenDay.total ? `${formatNumber(sevenDay.total)}` : "--");
+  setText("#sidebar-token-total", week.total ? compactNumber(week.total) : "--");
+  setText("#metric-token-total", week.total ? compactNumber(week.total) : "--");
+  setText("#metric-token-note", day.total ? `24小时 ${compactNumber(day.total)}` : "等待同步");
+  setText("#mini-token-24h", day.total ? compactNumber(day.total) : "--");
+  setText("#mini-token-30d", month.total ? compactNumber(month.total) : "--");
   setText("#token-updated", usage.updatedAt ? `更新于 ${usage.updatedAt}` : "等待同步");
   setText("#token-total", active.total ? formatNumber(active.total) : "--");
   setText("#token-input", active.input ? formatNumber(active.input) : "--");
@@ -326,26 +353,12 @@ function updateClock() {
   );
 }
 
-function openTokenDrawer() {
-  tokenDrawer?.setAttribute("aria-hidden", "false");
-  tokenTab?.setAttribute("aria-expanded", "true");
-  if (drawerBackdrop) drawerBackdrop.hidden = false;
-}
-
-function closeTokenDrawer() {
-  tokenDrawer?.setAttribute("aria-hidden", "true");
-  tokenTab?.setAttribute("aria-expanded", "false");
-  if (drawerBackdrop) drawerBackdrop.hidden = true;
-}
-
-refreshButton?.addEventListener("click", () => loadDashboard({ showState: true }));
-tokenTab?.addEventListener("click", openTokenDrawer);
-drawerClose?.addEventListener("click", closeTokenDrawer);
-drawerBackdrop?.addEventListener("click", closeTokenDrawer);
-window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closeTokenDrawer();
+document.querySelectorAll("[data-view]").forEach((button) => {
+  button.addEventListener("click", () => setView(button.dataset.view));
 });
+refreshButton?.addEventListener("click", () => loadDashboard({ showState: true }));
 
 updateClock();
 loadDashboard();
+setView(window.location.hash === "#tokens" ? "tokens" : "home");
 window.setInterval(updateClock, 30_000);

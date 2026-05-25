@@ -11,61 +11,11 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=3" />
+    <link rel="stylesheet" href="./styles.css?v=4" />
   </head>
   <body>
-    <button class="token-tab" id="token-tab" type="button" aria-controls="token-drawer" aria-expanded="false">
-      <span>Tokens</span>
-      <strong id="token-tab-total">--</strong>
-    </button>
-
-    <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
-    <aside class="token-drawer" id="token-drawer" aria-label="Token 使用详情" aria-hidden="true">
-      <header class="drawer-head">
-        <div>
-          <p class="eyebrow">Token Usage</p>
-          <h2>近期用量</h2>
-          <p id="token-updated">等待同步</p>
-        </div>
-        <button class="icon-button" id="drawer-close" type="button" aria-label="关闭 Token 面板">×</button>
-      </header>
-
-      <div class="range-tabs" id="token-ranges" role="tablist" aria-label="Token 时间范围"></div>
-
-      <section class="token-summary" aria-label="当前范围 Token 汇总">
-        <article>
-          <span>总量</span>
-          <strong id="token-total">--</strong>
-        </article>
-        <article>
-          <span>输入</span>
-          <strong id="token-input">--</strong>
-        </article>
-        <article>
-          <span>输出</span>
-          <strong id="token-output">--</strong>
-        </article>
-        <article>
-          <span>费用</span>
-          <strong id="token-cost">--</strong>
-        </article>
-      </section>
-
-      <p class="token-note" id="token-note">暂无说明。</p>
-
-      <section class="drawer-section">
-        <h3>模型占比</h3>
-        <div class="model-list" id="token-models"></div>
-      </section>
-
-      <section class="drawer-section">
-        <h3>最近 7 天</h3>
-        <div class="token-bars" id="token-bars"></div>
-      </section>
-    </aside>
-
     <div class="app-shell">
-      <header class="topbar" aria-label="站点状态">
+      <aside class="sidebar" aria-label="主导航">
         <div class="brand" aria-label="MaxNow">
           <span class="brand-mark">M</span>
           <span>
@@ -74,105 +24,148 @@
           </span>
         </div>
 
-        <div class="topbar-actions">
-          <span class="status-pill" id="operator-status">等待同步</span>
-          <button
-            class="icon-button"
-            id="refresh-button"
-            type="button"
-            data-action="refresh"
-            aria-label="重新读取数据"
-            title="重新读取数据"
-          >
-            ↻
+        <nav class="side-nav" aria-label="页面">
+          <button class="side-nav-item is-active" type="button" data-view="home">
+            <span>首页</span>
+            <small>今日概览</small>
           </button>
-        </div>
-      </header>
+          <button class="side-nav-item" type="button" data-view="tokens">
+            <span>Token</span>
+            <small id="sidebar-token-total">--</small>
+          </button>
+        </nav>
+      </aside>
 
-      <main class="dashboard">
-        <header class="summary-bar" id="overview">
-          <div class="summary-copy">
+      <main class="workspace">
+        <header class="topbar" aria-label="站点状态">
+          <div>
             <p class="eyebrow">dash.maxnow.cn</p>
-            <h1>今天</h1>
-            <p id="daily-brief">等待 OpenClaw 写入今天的摘要。</p>
+            <strong id="view-title">今天</strong>
           </div>
-          <div class="summary-clock" aria-label="当前时间">
-            <span id="today-label">--</span>
-            <strong id="clock-label">--:--</strong>
+
+          <div class="topbar-actions">
+            <span class="status-pill" id="operator-status">等待同步</span>
+            <button
+              class="icon-button"
+              id="refresh-button"
+              type="button"
+              data-action="refresh"
+              aria-label="重新读取数据"
+              title="重新读取数据"
+            >
+              ↻
+            </button>
           </div>
         </header>
 
-        <section class="metric-grid" aria-label="关键指标">
-          <article class="metric-card">
-            <span>待处理</span>
-            <strong id="metric-tasks">0</strong>
-            <small id="metric-tasks-note">暂无数据</small>
-          </article>
-          <article class="metric-card">
-            <span>信息</span>
-            <strong id="metric-feeds">0</strong>
-            <small id="metric-feeds-note">暂无数据</small>
-          </article>
-          <article class="metric-card">
-            <span>服务器</span>
-            <strong id="metric-server">--</strong>
-            <small id="metric-server-note">等待检测</small>
-          </article>
-          <article class="metric-card">
-            <span>数据</span>
-            <strong id="metric-automation">--</strong>
-            <small id="metric-automation-note">等待同步</small>
-          </article>
-        </section>
+        <section class="view is-active" id="home-view" data-view-panel="home">
+          <header class="summary-bar" id="overview">
+            <div class="summary-copy">
+              <p class="eyebrow">Today</p>
+              <h1>今天</h1>
+              <p id="daily-brief">等待 OpenClaw 写入今天的摘要。</p>
+            </div>
+            <div class="summary-clock" aria-label="当前时间">
+              <span id="today-label">--</span>
+              <strong id="clock-label">--:--</strong>
+            </div>
+          </header>
 
-        <section class="primary-grid">
-          <article class="panel focus-panel" id="focus">
-            <header class="panel-head">
-              <div>
-                <p class="eyebrow">Today</p>
-                <h2>要做的事</h2>
-              </div>
-              <span class="status-pill" id="automation-summary">等待数据同步</span>
-            </header>
-            <div class="task-list" id="task-list"></div>
-          </article>
+          <section class="metric-grid" aria-label="关键指标">
+            <article class="metric-card">
+              <span>待处理</span>
+              <strong id="metric-tasks">0</strong>
+              <small id="metric-tasks-note">暂无数据</small>
+            </article>
+            <article class="metric-card">
+              <span>信息</span>
+              <strong id="metric-feeds">0</strong>
+              <small id="metric-feeds-note">暂无数据</small>
+            </article>
+            <article class="metric-card">
+              <span>服务器</span>
+              <strong id="metric-server">--</strong>
+              <small id="metric-server-note">等待检测</small>
+            </article>
+            <article class="metric-card">
+              <span>Token 7天</span>
+              <strong id="metric-token-total">--</strong>
+              <small id="metric-token-note">等待同步</small>
+            </article>
+            <article class="metric-card">
+              <span>数据</span>
+              <strong id="metric-automation">--</strong>
+              <small id="metric-automation-note">等待同步</small>
+            </article>
+          </section>
 
-          <div class="primary-side">
-            <article class="panel rhythm-panel">
+          <section class="primary-grid">
+            <article class="panel focus-panel" id="focus">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Schedule</p>
-                  <h2>时间点</h2>
+                  <p class="eyebrow">Today</p>
+                  <h2>要做的事</h2>
                 </div>
+                <span class="status-pill" id="automation-summary">等待数据同步</span>
               </header>
-              <ol class="timeline" id="timeline"></ol>
+              <div class="task-list" id="task-list"></div>
             </article>
 
-            <article class="panel" id="system">
+            <div class="primary-side">
+              <article class="panel rhythm-panel">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Schedule</p>
+                    <h2>时间点</h2>
+                  </div>
+                </header>
+                <ol class="timeline" id="timeline"></ol>
+              </article>
+
+              <article class="panel token-mini-panel">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Tokens</p>
+                    <h2>近期用量</h2>
+                  </div>
+                  <button class="text-button" type="button" data-view="tokens">查看</button>
+                </header>
+                <div class="mini-token-grid">
+                  <div>
+                    <span>24小时</span>
+                    <strong id="mini-token-24h">--</strong>
+                  </div>
+                  <div>
+                    <span>30天</span>
+                    <strong id="mini-token-30d">--</strong>
+                  </div>
+                </div>
+              </article>
+
+              <article class="panel" id="system">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Server</p>
+                    <h2>运行状态</h2>
+                  </div>
+                </header>
+                <div class="system-list" id="system-list"></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="section-stack">
+            <article class="panel" id="feeds">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Server</p>
-                  <h2>运行状态</h2>
+                  <p class="eyebrow">Notes</p>
+                  <h2>最近看到</h2>
                 </div>
+                <span class="status-pill" id="feed-source">OpenClaw</span>
               </header>
-              <div class="system-list" id="system-list"></div>
+              <div class="feed-list" id="feed-list"></div>
             </article>
-          </div>
-        </section>
 
-        <section class="section-stack">
-          <article class="panel" id="feeds">
-            <header class="panel-head">
-              <div>
-                <p class="eyebrow">Notes</p>
-                <h2>最近看到</h2>
-              </div>
-              <span class="status-pill" id="feed-source">OpenClaw</span>
-            </header>
-            <div class="feed-list" id="feed-list"></div>
-          </article>
-
-          <div class="secondary-grid">
             <article class="panel" id="projects">
               <header class="panel-head">
                 <div>
@@ -182,7 +175,61 @@
               </header>
               <div class="project-list" id="project-list"></div>
             </article>
-          </div>
+          </section>
+        </section>
+
+        <section class="view" id="tokens-view" data-view-panel="tokens">
+          <header class="token-page-head">
+            <div>
+              <p class="eyebrow">Token Usage</p>
+              <h1>Token 用量</h1>
+              <p id="token-updated">等待同步</p>
+            </div>
+            <div class="range-tabs" id="token-ranges" role="tablist" aria-label="Token 时间范围"></div>
+          </header>
+
+          <section class="token-summary" aria-label="当前范围 Token 汇总">
+            <article>
+              <span>总量</span>
+              <strong id="token-total">--</strong>
+            </article>
+            <article>
+              <span>输入</span>
+              <strong id="token-input">--</strong>
+            </article>
+            <article>
+              <span>输出</span>
+              <strong id="token-output">--</strong>
+            </article>
+            <article>
+              <span>费用</span>
+              <strong id="token-cost">--</strong>
+            </article>
+          </section>
+
+          <p class="token-note panel" id="token-note">暂无说明。</p>
+
+          <section class="token-detail-grid">
+            <article class="panel">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Models</p>
+                  <h2>模型占比</h2>
+                </div>
+              </header>
+              <div class="model-list" id="token-models"></div>
+            </article>
+
+            <article class="panel">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Daily</p>
+                  <h2>最近 7 天</h2>
+                </div>
+              </header>
+              <div class="token-bars" id="token-bars"></div>
+            </article>
+          </section>
         </section>
       </main>
     </div>
@@ -191,6 +238,6 @@
       <p class="empty-state">这部分还没有数据。</p>
     </template>
 
-    <script src="./app.js?v=3"></script>
+    <script src="./app.js?v=4"></script>
   </body>
 </html>
