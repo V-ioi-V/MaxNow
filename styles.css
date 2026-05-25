@@ -211,7 +211,12 @@ a {
 }
 
 .secondary-grid {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
+}
+
+.primary-side {
+  display: grid;
+  gap: 16px;
 }
 
 .section-stack {
