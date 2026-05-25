@@ -1,11 +1,13 @@
 const DATA_URL = "./data/dashboard.json";
 const emptyTemplate = document.querySelector("#empty-template");
+const refreshButton = document.querySelector("#refresh-button");
 
 const fallbackData = {
-  brief: "OpenClaw 暂时还没有生成今日摘要。页面已使用本地默认数据保持可用。",
+  brief: "OpenClaw 还没有写入今天的摘要。",
+  feedSource: "OpenClaw",
   automation: {
     status: "待同步",
-    summary: "把 OpenClaw 的输出写入 data/dashboard.json 后，这里会自动更新。",
+    summary: "等待数据同步",
     lastRun: "--",
   },
   tasks: [],
@@ -45,7 +47,7 @@ function renderTasks(tasks) {
     body.append(createElement("h3", "item-title", task.title));
     body.append(createElement("p", "item-copy", task.note));
     item.append(body);
-    item.append(createElement("span", "item-tag", task.label || "Focus"));
+    item.append(createElement("span", "item-tag", task.label || "事项"));
     container.append(item);
   });
 }
@@ -127,13 +129,16 @@ function renderSystem(metrics) {
 }
 
 function updateMetrics(data) {
-  const pendingTasks = data.tasks.filter((task) => task.status !== "done").length;
-  const serverMetric = data.system.find((item) => item.key === "server") || data.system[0];
+  const tasks = data.tasks || [];
+  const feeds = data.feeds || [];
+  const system = data.system || [];
+  const serverMetric = system.find((item) => item.key === "server") || system[0];
+  const pendingTasks = tasks.filter((task) => task.status !== "done").length;
 
   setText("#metric-tasks", pendingTasks);
-  setText("#metric-tasks-note", `${data.tasks.length} 条事项已加载`);
-  setText("#metric-feeds", data.feeds.length);
-  setText("#metric-feeds-note", "来自 OpenClaw 汇总");
+  setText("#metric-tasks-note", `${tasks.length} 条事项`);
+  setText("#metric-feeds", feeds.length);
+  setText("#metric-feeds-note", data.feedSource || "OpenClaw");
   setText("#metric-server", serverMetric?.value || "--");
   setText("#metric-server-note", serverMetric?.note || "等待检测");
   setText("#metric-automation", data.automation.status);
@@ -153,14 +158,36 @@ function renderDashboard(data) {
   renderSystem(data.system || []);
 }
 
-async function loadDashboard() {
+function setRefreshState(state) {
+  if (!refreshButton) return;
+  refreshButton.dataset.state = state;
+  refreshButton.disabled = state === "loading";
+
+  if (state === "loading") refreshButton.textContent = "…";
+  if (state === "success") refreshButton.textContent = "✓";
+  if (state === "error") refreshButton.textContent = "!";
+
+  if (state !== "idle") {
+    window.setTimeout(() => {
+      refreshButton.dataset.state = "idle";
+      refreshButton.disabled = false;
+      refreshButton.textContent = "↻";
+    }, 900);
+  }
+}
+
+async function loadDashboard({ showState = false } = {}) {
+  if (showState) setRefreshState("loading");
+
   try {
     const response = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     renderDashboard({ ...fallbackData, ...data });
+    if (showState) setRefreshState("success");
   } catch (error) {
     renderDashboard(fallbackData);
+    if (showState) setRefreshState("error");
     console.warn("Failed to load dashboard data:", error);
   }
 }
@@ -185,7 +212,7 @@ function updateClock() {
   );
 }
 
-document.querySelector('[data-action="refresh"]')?.addEventListener("click", loadDashboard);
+refreshButton?.addEventListener("click", () => loadDashboard({ showState: true }));
 
 updateClock();
 loadDashboard();

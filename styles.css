@@ -4,7 +4,7 @@
   --surface: #171a20;
   --surface-soft: #20242c;
   --surface-raised: #272c35;
-  --line: rgba(220, 226, 235, 0.12);
+  --line: rgba(220, 226, 235, 0.1);
   --text: #f3f5f7;
   --muted: #9ca7b4;
   --soft: #c8d0da;
@@ -13,7 +13,7 @@
   --danger: #d98175;
   --ok: #98c79e;
   --radius: 8px;
-  --shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  --shadow: 0 18px 54px rgba(0, 0, 0, 0.22);
 }
 
 * {
@@ -70,6 +70,8 @@ a {
   align-items: center;
   gap: 12px;
   text-decoration: none;
+  cursor: default;
+  user-select: none;
 }
 
 .brand-mark {
@@ -117,6 +119,7 @@ a {
     linear-gradient(120deg, rgba(202, 168, 106, 0.13), transparent 38%),
     linear-gradient(100deg, rgba(120, 183, 166, 0.08), transparent 68%),
     var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .eyebrow {
@@ -178,7 +181,7 @@ a {
 .panel {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(26, 27, 24, 0.9);
+  background: rgba(23, 26, 32, 0.92);
 }
 
 .metric-card {
@@ -243,6 +246,30 @@ a {
   background: var(--surface-soft);
   color: var(--text);
   font-size: 18px;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.icon-button:hover {
+  border-color: rgba(202, 168, 106, 0.42);
+  color: #ffe1a3;
+}
+
+.icon-button:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+.icon-button[data-state="success"] {
+  border-color: rgba(120, 183, 166, 0.52);
+  color: #c9e6d4;
+}
+
+.icon-button[data-state="error"] {
+  border-color: rgba(217, 129, 117, 0.62);
+  color: #f0a49b;
 }
 
 .status-pill {
@@ -270,7 +297,7 @@ a {
 .feed-item,
 .project-item,
 .system-item {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(220, 226, 235, 0.08);
   border-radius: var(--radius);
   padding: 14px;
   background: var(--surface-soft);

@@ -3,33 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MaxNow Dashboard</title>
-    <meta
-      name="description"
-      content="MaxNow 的个人自动化看板，由 OpenClaw 维护数据。"
-    />
+    <title>MaxNow</title>
+    <meta name="description" content="MaxNow 的个人看板，由 OpenClaw 维护数据。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=1" />
+    <link rel="stylesheet" href="./styles.css?v=2" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar" aria-label="站点状态">
-        <a class="brand" href="./index.html" aria-label="MaxNow Dashboard">
+        <div class="brand" aria-label="MaxNow">
           <span class="brand-mark">M</span>
           <span>
             <strong>MaxNow</strong>
-            <small>Personal OS</small>
+            <small>私人看板</small>
           </span>
-        </a>
+        </div>
 
         <div class="topbar-actions">
-          <span class="status-pill" id="operator-status">OpenClaw 自动维护中</span>
-          <button class="icon-button" type="button" data-action="refresh" title="重新读取数据">
+          <span class="status-pill" id="operator-status">等待同步</span>
+          <button
+            class="icon-button"
+            id="refresh-button"
+            type="button"
+            data-action="refresh"
+            aria-label="重新读取数据"
+            title="重新读取数据"
+          >
             ↻
           </button>
         </div>
@@ -39,10 +43,8 @@
         <header class="summary-bar" id="overview">
           <div class="summary-copy">
             <p class="eyebrow">dash.maxnow.cn</p>
-            <h1>今天的 MaxNow</h1>
-            <p id="daily-brief">
-              这里会显示 OpenClaw 生成的当天摘要、待办和系统状态。
-            </p>
+            <h1>今天</h1>
+            <p id="daily-brief">等待 OpenClaw 写入今天的摘要。</p>
           </div>
           <div class="summary-clock" aria-label="当前时间">
             <span id="today-label">--</span>
@@ -52,12 +54,12 @@
 
         <section class="metric-grid" aria-label="关键指标">
           <article class="metric-card">
-            <span>今日事项</span>
+            <span>待处理</span>
             <strong id="metric-tasks">0</strong>
             <small id="metric-tasks-note">暂无数据</small>
           </article>
           <article class="metric-card">
-            <span>信息更新</span>
+            <span>信息</span>
             <strong id="metric-feeds">0</strong>
             <small id="metric-feeds-note">暂无数据</small>
           </article>
@@ -67,7 +69,7 @@
             <small id="metric-server-note">等待检测</small>
           </article>
           <article class="metric-card">
-            <span>自动化</span>
+            <span>数据</span>
             <strong id="metric-automation">--</strong>
             <small id="metric-automation-note">等待同步</small>
           </article>
@@ -77,10 +79,10 @@
           <article class="panel focus-panel" id="focus">
             <header class="panel-head">
               <div>
-                <p class="eyebrow">Focus</p>
-                <h2>今日焦点</h2>
+                <p class="eyebrow">Today</p>
+                <h2>要做的事</h2>
               </div>
-              <span class="status-pill" id="automation-summary">等待数据同步。</span>
+              <span class="status-pill" id="automation-summary">等待数据同步</span>
             </header>
             <div class="task-list" id="task-list"></div>
           </article>
@@ -88,8 +90,8 @@
           <article class="panel rhythm-panel">
             <header class="panel-head">
               <div>
-                <p class="eyebrow">Rhythm</p>
-                <h2>日程节奏</h2>
+                <p class="eyebrow">Schedule</p>
+                <h2>时间点</h2>
               </div>
             </header>
             <ol class="timeline" id="timeline"></ol>
@@ -100,8 +102,8 @@
           <article class="panel" id="feeds">
             <header class="panel-head">
               <div>
-                <p class="eyebrow">Feeds</p>
-                <h2>信息流</h2>
+                <p class="eyebrow">Notes</p>
+                <h2>最近看到</h2>
               </div>
               <span class="status-pill" id="feed-source">OpenClaw</span>
             </header>
@@ -112,8 +114,8 @@
             <article class="panel" id="system">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">System</p>
-                  <h2>服务状态</h2>
+                  <p class="eyebrow">Server</p>
+                  <h2>运行状态</h2>
                 </div>
               </header>
               <div class="system-list" id="system-list"></div>
@@ -123,7 +125,7 @@
               <header class="panel-head">
                 <div>
                   <p class="eyebrow">Projects</p>
-                  <h2>项目推进</h2>
+                  <h2>项目</h2>
                 </div>
               </header>
               <div class="project-list" id="project-list"></div>
@@ -134,9 +136,9 @@
     </div>
 
     <template id="empty-template">
-      <p class="empty-state">OpenClaw 还没有写入这部分数据。</p>
+      <p class="empty-state">这部分还没有数据。</p>
     </template>
 
-    <script src="./app.js?v=1"></script>
+    <script src="./app.js?v=2"></script>
   </body>
 </html>

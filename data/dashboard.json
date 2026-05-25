@@ -1,80 +1,80 @@
 {
-  "brief": "今天优先保持看板稳定上线：确认子域名、部署静态站点、让 OpenClaw 接管 data/dashboard.json。",
-  "feedSource": "OpenClaw Daily",
+  "brief": "今天先把个人看板跑通：代码已经进仓库，接下来把服务器部署和数据自动更新接起来。",
+  "feedSource": "今日整理",
   "automation": {
     "status": "正常",
-    "summary": "OpenClaw 负责汇总任务、信息流和服务器状态，并写入静态 JSON。",
-    "lastRun": "2026-05-25 18:30"
+    "summary": "今日数据已同步",
+    "lastRun": "2026-05-25 19:10"
   },
   "tasks": [
     {
-      "title": "确定看板子域名",
-      "note": "建议使用 dash.maxnow.cn 或 now.maxnow.cn，主域名保留给公开主页。",
-      "label": "DNS",
+      "title": "把看板部署到服务器",
+      "note": "优先用 dash.maxnow.cn，主域名先留给公开主页。",
+      "label": "部署",
       "status": "active"
     },
     {
-      "title": "配置 HTTPS 反向代理",
-      "note": "用 Caddy 或 Nginx 托管当前静态目录，先不引入后端服务。",
-      "label": "Deploy",
+      "title": "确认 OpenClaw 写入路径",
+      "note": "日常只覆盖 data/dashboard.json，不碰页面代码。",
+      "label": "自动化",
+      "status": "active"
+    },
+    {
+      "title": "整理第一批真实数据源",
+      "note": "先接任务、项目和服务器状态，信息流后面再慢慢加。",
+      "label": "数据",
       "status": "waiting"
-    },
-    {
-      "title": "接入 OpenClaw 数据写入",
-      "note": "让自动化任务定时覆盖 data/dashboard.json。",
-      "label": "Automation",
-      "status": "active"
     }
   ],
   "timeline": [
     {
       "time": "09:30",
-      "title": "整理今日事项",
-      "note": "由 OpenClaw 汇总输入源，生成焦点列表。"
+      "title": "看一眼今日事项",
+      "note": "确认今天真正要推进的 2-3 件事。"
     },
     {
-      "time": "14:00",
-      "title": "刷新信息流",
-      "note": "抓取 RSS、项目动态和个人关注项。"
+      "time": "15:00",
+      "title": "检查部署进度",
+      "note": "域名、HTTPS、静态目录是否都已经通。"
     },
     {
       "time": "22:30",
-      "title": "生成晚间摘要",
-      "note": "沉淀完成事项和明日建议。"
+      "title": "让 OpenClaw 收尾",
+      "note": "更新完成项和明天的第一个动作。"
     }
   ],
   "feeds": [
     {
-      "source": "Server",
-      "title": "轻量服务器适合静态优先方案",
-      "summary": "2 核 2G 环境中，静态看板加 JSON 数据源的资源占用最低。",
-      "url": ""
+      "source": "MaxNow",
+      "title": "仓库已经建立",
+      "summary": "本地代码已经推到 GitHub，后续可以从服务器直接拉取。",
+      "url": "https://github.com/V-ioi-V/MaxNow"
     },
     {
       "source": "OpenClaw",
-      "title": "自动维护边界",
-      "summary": "推荐只授予 OpenClaw 数据目录写权限，页面代码走手动或 Git 流程。",
+      "title": "维护边界已写清楚",
+      "summary": "日常维护只改 JSON，避免自动化误改页面结构。",
       "url": ""
     },
     {
-      "source": "Domain",
-      "title": "主域名保留，子域名承载工作台",
-      "summary": "dash.maxnow.cn 用作私有看板，maxnow.cn 以后可做公开入口。",
+      "source": "Server",
+      "title": "适合先做静态站",
+      "summary": "2 核 2G 的机器更适合静态页面加轻量数据文件。",
       "url": ""
     }
   ],
   "projects": [
     {
-      "name": "MaxNow Dashboard",
-      "note": "第一版静态看板，可直接部署到子域名。",
-      "progress": 68,
-      "status": "MVP"
+      "name": "MaxNow 看板",
+      "note": "第一版页面和仓库已经完成，下一步部署到子域名。",
+      "progress": 70,
+      "status": "进行中"
     },
     {
-      "name": "OpenClaw Maintainer",
-      "note": "准备定时写入 dashboard.json 的自动化流程。",
-      "progress": 35,
-      "status": "Design"
+      "name": "OpenClaw 数据维护",
+      "note": "Skill 已写好，等服务器路径确定后接入定时任务。",
+      "progress": 40,
+      "status": "准备中"
     }
   ],
   "system": [
@@ -86,7 +86,7 @@
     },
     {
       "key": "storage",
-      "name": "数据目录",
+      "name": "数据文件",
       "value": "JSON",
       "note": "静态文件驱动"
     },
@@ -94,7 +94,7 @@
       "key": "tls",
       "name": "HTTPS",
       "value": "Pending",
-      "note": "部署后由 Caddy 或 Nginx 配置"
+      "note": "部署后配置"
     }
   ]
 }
