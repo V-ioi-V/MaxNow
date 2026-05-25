@@ -265,7 +265,7 @@ a {
 
 .primary-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(360px, 0.55fr);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.68fr);
   gap: 16px;
   align-items: start;
 }
@@ -383,6 +383,23 @@ a {
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 12px;
   align-items: start;
+}
+
+.focus-panel {
+  padding-bottom: 16px;
+}
+
+.focus-panel .panel-head {
+  margin-bottom: 12px;
+}
+
+.focus-panel .task-list {
+  gap: 8px;
+}
+
+.focus-panel .task-item {
+  min-height: 0;
+  padding: 12px;
 }
 
 .task-dot {
@@ -613,7 +630,7 @@ a {
   font-size: 14px;
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1320px) {
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -624,7 +641,21 @@ a {
   }
 }
 
-@media (max-width: 760px) {
+@media (min-width: 1500px) {
+  .primary-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 0.62fr);
+  }
+
+  .primary-side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rhythm-panel {
+    grid-row: span 2;
+  }
+}
+
+@media (max-width: 860px) {
   .app-shell {
     grid-template-columns: 1fr;
   }
