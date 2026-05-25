@@ -13,6 +13,14 @@ The dashboard is a static website. Do not edit `index.html`, `styles.css`, or `a
 data/dashboard.json
 ```
 
+Also update the browser-compatible data wrapper:
+
+```text
+data/dashboard.js
+```
+
+`dashboard.js` must assign the same object to `window.MAXNOW_DASHBOARD_DATA`.
+
 ## Goal
 
 Create a concise daily operating snapshot for MaxNow:
@@ -164,8 +172,9 @@ Token counts must be integers. `cost` should be a number in USD when known, or `
 2. Gather available daily inputs: tasks, notes, RSS, GitHub activity, server state, and OpenClaw run result.
 3. Summarize aggressively. Prefer fewer, clearer items.
 4. Rewrite the full JSON object.
-5. Validate the file.
-6. Leave page code untouched.
+5. Validate the JSON file.
+6. Regenerate `data/dashboard.js` from the same object.
+7. Leave page code untouched.
 
 ## Validation
 
@@ -176,6 +185,12 @@ python -m json.tool data/dashboard.json >/dev/null
 ```
 
 If validation fails, restore the previous valid JSON and report the error.
+
+Generate `dashboard.js` after validation:
+
+```bash
+python -c "import json; from pathlib import Path; d=json.loads(Path('data/dashboard.json').read_text(encoding='utf-8')); Path('data/dashboard.js').write_text('window.MAXNOW_DASHBOARD_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
+```
 
 ## Deployment Model
 
