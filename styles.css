@@ -263,7 +263,7 @@ a {
   line-height: 1;
 }
 
-.home-masonry,
+.home-grid,
 .project-list,
 .system-list,
 .task-list,
@@ -274,24 +274,21 @@ a {
   gap: 10px;
 }
 
-.home-masonry {
-  display: block;
-  column-count: 3;
-  column-gap: 16px;
+.home-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 16px;
+  align-items: start;
 }
 
 .panel {
   min-height: 0;
   padding: 20px;
-  break-inside: avoid;
-  margin-bottom: 16px;
 }
 
 .focus-panel,
 #feeds,
 #projects {
-  column-span: all;
+  grid-column: 1 / -1;
 }
 
 .panel-head {
@@ -633,8 +630,8 @@ a {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .home-masonry {
-    column-count: 2;
+  .home-grid {
+    grid-template-columns: 1fr;
   }
 
   .token-detail-grid {
@@ -643,8 +640,8 @@ a {
 }
 
 @media (min-width: 1500px) {
-  .home-masonry {
-    column-count: 3;
+  .home-grid {
+    grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(300px, 0.65fr));
   }
 }
 
@@ -692,10 +689,6 @@ a {
   .token-summary,
   .range-tabs {
     grid-template-columns: 1fr;
-  }
-
-  .home-masonry {
-    column-count: 1;
   }
 
   .task-item {
