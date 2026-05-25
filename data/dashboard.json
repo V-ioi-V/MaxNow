@@ -1,0 +1,100 @@
+{
+  "brief": "今天优先保持看板稳定上线：确认子域名、部署静态站点、让 OpenClaw 接管 data/dashboard.json。",
+  "feedSource": "OpenClaw Daily",
+  "automation": {
+    "status": "正常",
+    "summary": "OpenClaw 负责汇总任务、信息流和服务器状态，并写入静态 JSON。",
+    "lastRun": "2026-05-25 18:30"
+  },
+  "tasks": [
+    {
+      "title": "确定看板子域名",
+      "note": "建议使用 dash.maxnow.cn 或 now.maxnow.cn，主域名保留给公开主页。",
+      "label": "DNS",
+      "status": "active"
+    },
+    {
+      "title": "配置 HTTPS 反向代理",
+      "note": "用 Caddy 或 Nginx 托管当前静态目录，先不引入后端服务。",
+      "label": "Deploy",
+      "status": "waiting"
+    },
+    {
+      "title": "接入 OpenClaw 数据写入",
+      "note": "让自动化任务定时覆盖 data/dashboard.json。",
+      "label": "Automation",
+      "status": "active"
+    }
+  ],
+  "timeline": [
+    {
+      "time": "09:30",
+      "title": "整理今日事项",
+      "note": "由 OpenClaw 汇总输入源，生成焦点列表。"
+    },
+    {
+      "time": "14:00",
+      "title": "刷新信息流",
+      "note": "抓取 RSS、项目动态和个人关注项。"
+    },
+    {
+      "time": "22:30",
+      "title": "生成晚间摘要",
+      "note": "沉淀完成事项和明日建议。"
+    }
+  ],
+  "feeds": [
+    {
+      "source": "Server",
+      "title": "轻量服务器适合静态优先方案",
+      "summary": "2 核 2G 环境中，静态看板加 JSON 数据源的资源占用最低。",
+      "url": ""
+    },
+    {
+      "source": "OpenClaw",
+      "title": "自动维护边界",
+      "summary": "推荐只授予 OpenClaw 数据目录写权限，页面代码走手动或 Git 流程。",
+      "url": ""
+    },
+    {
+      "source": "Domain",
+      "title": "主域名保留，子域名承载工作台",
+      "summary": "dash.maxnow.cn 用作私有看板，maxnow.cn 以后可做公开入口。",
+      "url": ""
+    }
+  ],
+  "projects": [
+    {
+      "name": "MaxNow Dashboard",
+      "note": "第一版静态看板，可直接部署到子域名。",
+      "progress": 68,
+      "status": "MVP"
+    },
+    {
+      "name": "OpenClaw Maintainer",
+      "note": "准备定时写入 dashboard.json 的自动化流程。",
+      "progress": 35,
+      "status": "Design"
+    }
+  ],
+  "system": [
+    {
+      "key": "server",
+      "name": "轻量服务器",
+      "value": "Online",
+      "note": "2C / 2G / 40G"
+    },
+    {
+      "key": "storage",
+      "name": "数据目录",
+      "value": "JSON",
+      "note": "静态文件驱动"
+    },
+    {
+      "key": "tls",
+      "name": "HTTPS",
+      "value": "Pending",
+      "note": "部署后由 Caddy 或 Nginx 配置"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+*.log
+
+# Local editor state
+.vscode/
+.idea/
+
+# Temporary local preview files
+.cache/
+dist/
