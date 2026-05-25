@@ -23,6 +23,7 @@ Create a concise daily operating snapshot for MaxNow:
 - useful feed summaries
 - active projects
 - server and automation status
+- token usage ranges and trends
 
 The website reads `data/dashboard.json` in the browser. A valid JSON update is enough for the page to refresh on next load.
 
@@ -87,7 +88,35 @@ Write this complete structure:
       "value": "Online",
       "note": "2C / 2G / 40G"
     }
-  ]
+  ],
+  "tokenUsage": {
+    "updatedAt": "YYYY-MM-DD HH:mm",
+    "ranges": [
+      {
+        "key": "7d",
+        "label": "7天",
+        "input": 512000,
+        "output": 188000,
+        "total": 700000,
+        "cost": 3.26,
+        "note": "一句说明。"
+      }
+    ],
+    "models": [
+      {
+        "name": "GPT-5 Codex",
+        "total": 515000,
+        "share": 74
+      }
+    ],
+    "daily": [
+      {
+        "date": "2026-05-25",
+        "label": "今天",
+        "total": 201000
+      }
+    ]
+  }
 }
 ```
 
@@ -119,6 +148,15 @@ Write this complete structure:
 - `storage`
 - `tls`
 - `openclaw` when available
+
+`tokenUsage`: include usage data when available. Keep these ranges when possible:
+
+- `1h`: recent spike check
+- `24h`: today's usage
+- `7d`: weekly view, used by the left tab badge
+- `30d`: monthly view
+
+Token counts must be integers. `cost` should be a number in USD when known, or `0` when unknown. `models.share` should add up close to 100.
 
 ## Daily Workflow
 

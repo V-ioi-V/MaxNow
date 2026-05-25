@@ -1,6 +1,10 @@
 const DATA_URL = "./data/dashboard.json";
 const emptyTemplate = document.querySelector("#empty-template");
 const refreshButton = document.querySelector("#refresh-button");
+const tokenTab = document.querySelector("#token-tab");
+const tokenDrawer = document.querySelector("#token-drawer");
+const drawerBackdrop = document.querySelector("#drawer-backdrop");
+const drawerClose = document.querySelector("#drawer-close");
 
 const fallbackData = {
   brief: "OpenClaw 还没有写入今天的摘要。",
@@ -15,7 +19,26 @@ const fallbackData = {
   feeds: [],
   projects: [],
   system: [],
+  tokenUsage: {
+    updatedAt: "--",
+    ranges: [],
+    models: [],
+    daily: [],
+  },
 };
+
+let dashboardData = fallbackData;
+let activeTokenRange = "7d";
+
+function formatNumber(value) {
+  return new Intl.NumberFormat("zh-CN").format(Math.round(Number(value) || 0));
+}
+
+function formatCost(value) {
+  const number = Number(value) || 0;
+  if (!number) return "--";
+  return `$${number.toFixed(2)}`;
+}
 
 function setText(selector, value) {
   const node = document.querySelector(selector);
@@ -128,6 +151,90 @@ function renderSystem(metrics) {
   });
 }
 
+function renderTokenRanges(usage) {
+  const container = document.querySelector("#token-ranges");
+  container.replaceChildren();
+
+  const ranges = usage.ranges || [];
+  if (!ranges.some((range) => range.key === activeTokenRange)) {
+    activeTokenRange = ranges[0]?.key || "7d";
+  }
+
+  ranges.forEach((range) => {
+    const button = createElement("button", "range-tab", range.label);
+    button.type = "button";
+    button.dataset.range = range.key;
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-selected", String(range.key === activeTokenRange));
+    button.classList.toggle("is-active", range.key === activeTokenRange);
+    button.addEventListener("click", () => {
+      activeTokenRange = range.key;
+      renderTokenUsage(dashboardData.tokenUsage || fallbackData.tokenUsage);
+    });
+    container.append(button);
+  });
+}
+
+function renderTokenModels(models) {
+  const container = document.querySelector("#token-models");
+  container.replaceChildren();
+  if (!models.length) return renderEmpty(container);
+
+  models.forEach((model) => {
+    const item = createElement("article", "model-item");
+    const top = createElement("div", "model-row");
+    top.append(createElement("strong", "", model.name));
+    top.append(createElement("span", "", `${model.share || 0}%`));
+    item.append(top);
+
+    const meter = createElement("div", "model-meter");
+    const fill = createElement("span");
+    fill.style.width = `${Math.max(0, Math.min(100, model.share || 0))}%`;
+    meter.append(fill);
+    item.append(meter);
+    item.append(createElement("p", "item-meta", `${formatNumber(model.total)} tokens`));
+    container.append(item);
+  });
+}
+
+function renderTokenBars(days) {
+  const container = document.querySelector("#token-bars");
+  container.replaceChildren();
+  if (!days.length) return renderEmpty(container);
+
+  const max = Math.max(...days.map((day) => Number(day.total) || 0), 1);
+  days.forEach((day) => {
+    const item = createElement("article", "token-bar");
+    item.append(createElement("span", "", day.label || day.date));
+
+    const track = createElement("div", "bar-track");
+    const fill = createElement("span");
+    fill.style.width = `${Math.max(4, ((Number(day.total) || 0) / max) * 100)}%`;
+    track.append(fill);
+    item.append(track);
+    item.append(createElement("strong", "", formatNumber(day.total)));
+    container.append(item);
+  });
+}
+
+function renderTokenUsage(usage) {
+  const ranges = usage.ranges || [];
+  const active = ranges.find((range) => range.key === activeTokenRange) || ranges[0] || {};
+  const sevenDay = ranges.find((range) => range.key === "7d") || active;
+
+  setText("#token-tab-total", sevenDay.total ? `${formatNumber(sevenDay.total)}` : "--");
+  setText("#token-updated", usage.updatedAt ? `更新于 ${usage.updatedAt}` : "等待同步");
+  setText("#token-total", active.total ? formatNumber(active.total) : "--");
+  setText("#token-input", active.input ? formatNumber(active.input) : "--");
+  setText("#token-output", active.output ? formatNumber(active.output) : "--");
+  setText("#token-cost", formatCost(active.cost));
+  setText("#token-note", active.note || "暂无说明。");
+
+  renderTokenRanges(usage);
+  renderTokenModels(usage.models || []);
+  renderTokenBars(usage.daily || []);
+}
+
 function updateMetrics(data) {
   const tasks = data.tasks || [];
   const feeds = data.feeds || [];
@@ -150,12 +257,14 @@ function updateMetrics(data) {
 }
 
 function renderDashboard(data) {
+  dashboardData = data;
   updateMetrics(data);
   renderTasks(data.tasks || []);
   renderTimeline(data.timeline || []);
   renderFeeds(data.feeds || []);
   renderProjects(data.projects || []);
   renderSystem(data.system || []);
+  renderTokenUsage(data.tokenUsage || fallbackData.tokenUsage);
 }
 
 function setRefreshState(state) {
@@ -163,7 +272,7 @@ function setRefreshState(state) {
   refreshButton.dataset.state = state;
   refreshButton.disabled = state === "loading";
 
-  if (state === "loading") refreshButton.textContent = "…";
+  if (state === "loading") refreshButton.textContent = "...";
   if (state === "success") refreshButton.textContent = "✓";
   if (state === "error") refreshButton.textContent = "!";
 
@@ -183,7 +292,12 @@ async function loadDashboard({ showState = false } = {}) {
     const response = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    renderDashboard({ ...fallbackData, ...data });
+    renderDashboard({
+      ...fallbackData,
+      ...data,
+      automation: { ...fallbackData.automation, ...data.automation },
+      tokenUsage: { ...fallbackData.tokenUsage, ...data.tokenUsage },
+    });
     if (showState) setRefreshState("success");
   } catch (error) {
     renderDashboard(fallbackData);
@@ -212,7 +326,25 @@ function updateClock() {
   );
 }
 
+function openTokenDrawer() {
+  tokenDrawer?.setAttribute("aria-hidden", "false");
+  tokenTab?.setAttribute("aria-expanded", "true");
+  if (drawerBackdrop) drawerBackdrop.hidden = false;
+}
+
+function closeTokenDrawer() {
+  tokenDrawer?.setAttribute("aria-hidden", "true");
+  tokenTab?.setAttribute("aria-expanded", "false");
+  if (drawerBackdrop) drawerBackdrop.hidden = true;
+}
+
 refreshButton?.addEventListener("click", () => loadDashboard({ showState: true }));
+tokenTab?.addEventListener("click", openTokenDrawer);
+drawerClose?.addEventListener("click", closeTokenDrawer);
+drawerBackdrop?.addEventListener("click", closeTokenDrawer);
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeTokenDrawer();
+});
 
 updateClock();
 loadDashboard();

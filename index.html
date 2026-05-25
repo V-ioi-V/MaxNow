@@ -11,9 +11,59 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=2" />
+    <link rel="stylesheet" href="./styles.css?v=3" />
   </head>
   <body>
+    <button class="token-tab" id="token-tab" type="button" aria-controls="token-drawer" aria-expanded="false">
+      <span>Tokens</span>
+      <strong id="token-tab-total">--</strong>
+    </button>
+
+    <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+    <aside class="token-drawer" id="token-drawer" aria-label="Token 使用详情" aria-hidden="true">
+      <header class="drawer-head">
+        <div>
+          <p class="eyebrow">Token Usage</p>
+          <h2>近期用量</h2>
+          <p id="token-updated">等待同步</p>
+        </div>
+        <button class="icon-button" id="drawer-close" type="button" aria-label="关闭 Token 面板">×</button>
+      </header>
+
+      <div class="range-tabs" id="token-ranges" role="tablist" aria-label="Token 时间范围"></div>
+
+      <section class="token-summary" aria-label="当前范围 Token 汇总">
+        <article>
+          <span>总量</span>
+          <strong id="token-total">--</strong>
+        </article>
+        <article>
+          <span>输入</span>
+          <strong id="token-input">--</strong>
+        </article>
+        <article>
+          <span>输出</span>
+          <strong id="token-output">--</strong>
+        </article>
+        <article>
+          <span>费用</span>
+          <strong id="token-cost">--</strong>
+        </article>
+      </section>
+
+      <p class="token-note" id="token-note">暂无说明。</p>
+
+      <section class="drawer-section">
+        <h3>模型占比</h3>
+        <div class="model-list" id="token-models"></div>
+      </section>
+
+      <section class="drawer-section">
+        <h3>最近 7 天</h3>
+        <div class="token-bars" id="token-bars"></div>
+      </section>
+    </aside>
+
     <div class="app-shell">
       <header class="topbar" aria-label="站点状态">
         <div class="brand" aria-label="MaxNow">
@@ -141,6 +191,6 @@
       <p class="empty-state">这部分还没有数据。</p>
     </template>
 
-    <script src="./app.js?v=2"></script>
+    <script src="./app.js?v=3"></script>
   </body>
 </html>

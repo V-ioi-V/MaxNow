@@ -96,5 +96,100 @@
       "value": "Pending",
       "note": "部署后配置"
     }
-  ]
+  ],
+  "tokenUsage": {
+    "updatedAt": "2026-05-25 19:20",
+    "ranges": [
+      {
+        "key": "1h",
+        "label": "近1小时",
+        "input": 18200,
+        "output": 7400,
+        "total": 25600,
+        "cost": 0.12,
+        "note": "主要消耗在页面调试和部署说明。"
+      },
+      {
+        "key": "24h",
+        "label": "24小时",
+        "input": 148000,
+        "output": 53000,
+        "total": 201000,
+        "cost": 0.94,
+        "note": "今天集中在看板设计、GitHub 推送和 OpenClaw 规约。"
+      },
+      {
+        "key": "7d",
+        "label": "7天",
+        "input": 512000,
+        "output": 188000,
+        "total": 700000,
+        "cost": 3.26,
+        "note": "最近一周以 MaxNow 看板和服务器部署准备为主。"
+      },
+      {
+        "key": "30d",
+        "label": "30天",
+        "input": 1680000,
+        "output": 620000,
+        "total": 2300000,
+        "cost": 10.85,
+        "note": "月度趋势后续由 OpenClaw 按真实账单刷新。"
+      }
+    ],
+    "models": [
+      {
+        "name": "GPT-5 Codex",
+        "total": 515000,
+        "share": 74
+      },
+      {
+        "name": "GPT-5",
+        "total": 128000,
+        "share": 18
+      },
+      {
+        "name": "Other",
+        "total": 57000,
+        "share": 8
+      }
+    ],
+    "daily": [
+      {
+        "date": "2026-05-19",
+        "label": "5/19",
+        "total": 62000
+      },
+      {
+        "date": "2026-05-20",
+        "label": "5/20",
+        "total": 74000
+      },
+      {
+        "date": "2026-05-21",
+        "label": "5/21",
+        "total": 81000
+      },
+      {
+        "date": "2026-05-22",
+        "label": "5/22",
+        "total": 69000
+      },
+      {
+        "date": "2026-05-23",
+        "label": "5/23",
+        "total": 98000
+      },
+      {
+        "date": "2026-05-24",
+        "label": "5/24",
+        "total": 115000
+      },
+      {
+        "date": "2026-05-25",
+        "label": "今天",
+        "total": 201000
+      }
+    ]
+  }
 }
