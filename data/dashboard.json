@@ -1,80 +1,115 @@
 {
-  "brief": "今天先把个人看板跑通：代码已经进仓库，接下来把服务器部署和数据自动更新接起来。",
+  "brief": "今天主要把 MaxNow 从信息展示页收敛成个人状态工作站，并把 OpenClaw 的数据边界写清楚。",
   "feedSource": "今日整理",
+  "journalSource": "状态快照",
+  "today": {
+    "mode": "define",
+    "modeLabel": "整理模式",
+    "energy": "中",
+    "focus": "MaxNow / OpenClaw 边界",
+    "summary": "今天最重要的是明确 MaxNow 记录个人状态，OpenClaw 只负责更新数据。",
+    "updatedAt": "2026-05-26 00:40"
+  },
   "automation": {
     "status": "正常",
-    "summary": "今日数据已同步",
-    "lastRun": "2026-05-25 19:10"
+    "summary": "OpenClaw 日常只更新 data/ 下的数据文件",
+    "lastRun": "2026-05-26 00:40"
   },
-  "tasks": [
+  "mainlines": [
     {
-      "title": "把看板部署到服务器",
-      "note": "优先用 dash.maxnow.cn，主域名先留给公开主页。",
-      "label": "部署",
+      "title": "MaxNow 个人状态工作站",
+      "note": "核心从新闻/信息流转为今日状态、当前主线、今日推进和记录沉淀。",
+      "label": "产品定位",
       "status": "active"
     },
     {
-      "title": "确认 OpenClaw 写入路径",
-      "note": "日常只覆盖 data/dashboard.json，不碰页面代码。",
+      "title": "OpenClaw 数据维护",
+      "note": "用 skill 固定写入路径、权限边界和校验方式，避免自动化误改页面代码。",
       "label": "自动化",
       "status": "active"
     },
     {
-      "title": "整理第一批真实数据源",
-      "note": "先接任务、项目和服务器状态，信息流后面再慢慢加。",
-      "label": "数据",
+      "title": "服务器部署闭环",
+      "note": "页面代码由 GitHub 管理，服务器跑静态站，OpenClaw 定时刷新数据。",
+      "label": "部署",
       "status": "waiting"
+    }
+  ],
+  "actions": [
+    {
+      "title": "恢复并更新 SPEC.md",
+      "note": "把 MaxNow 定义成个人状态工作站，并写清楚首页、Token、数据和 OpenClaw 边界。",
+      "label": "Spec",
+      "status": "active"
+    },
+    {
+      "title": "更新 OpenClaw skill",
+      "note": "让 OpenClaw 知道 MaxNow 是什么、数据放哪里、哪些文件不能碰、如何校验。",
+      "label": "Skill",
+      "status": "active"
+    },
+    {
+      "title": "收敛首页数据结构",
+      "note": "dashboard 管个人状态、主线、推进、记录、系统和 Token；ai-news 只管外部 AI 输入。",
+      "label": "Data",
+      "status": "active"
+    }
+  ],
+  "journal": [
+    {
+      "source": "Owner",
+      "title": "MaxNow 的主角是个人状态",
+      "summary": "AI 每日精选只是附加项，首页不能变成新闻聚合。",
+      "url": ""
+    },
+    {
+      "source": "Design",
+      "title": "自动记录事实，你只补判断",
+      "summary": "Token、GitHub、服务器和 OpenClaw 状态自动更新；今日一句话和优先级由 owner 确认。",
+      "url": ""
+    },
+    {
+      "source": "Boundary",
+      "title": "OpenClaw 只碰数据",
+      "summary": "日常维护只允许写 data/dashboard.* 和 data/ai-news.*，页面结构由 Codex 或人工维护。",
+      "url": ""
     }
   ],
   "timeline": [
     {
-      "time": "09:30",
-      "title": "看一眼今日事项",
-      "note": "确认今天真正要推进的 2-3 件事。"
+      "time": "00:10",
+      "title": "AI 外部输入更新",
+      "note": "OpenClaw 更新 data/ai-news.*，X 不可用时用官方、HN、GitHub、Reddit 补足。"
     },
     {
-      "time": "15:00",
-      "title": "检查部署进度",
-      "note": "域名、HTTPS、静态目录是否都已经通。"
+      "time": "09:30",
+      "title": "看一眼今日状态",
+      "note": "确认今日模式、主线和真正要推进的 1-3 件事。"
     },
     {
       "time": "22:30",
-      "title": "让 OpenClaw 收尾",
-      "note": "更新完成项和明天的第一个动作。"
+      "title": "生成今日记录草稿",
+      "note": "OpenClaw 根据可用事实写短记录，不覆盖 owner 确认过的判断。"
     }
   ],
   "feeds": [
     {
-      "source": "MaxNow",
-      "title": "仓库已经建立",
-      "summary": "本地代码已经推到 GitHub，后续可以从服务器直接拉取。",
+      "source": "GitHub",
+      "title": "V-ioi-V/MaxNow",
+      "summary": "页面代码和 spec 由 Git 管理，服务器后续从仓库拉取部署。",
       "url": "https://github.com/V-ioi-V/MaxNow"
     },
     {
-      "source": "OpenClaw",
-      "title": "维护边界已写清楚",
-      "summary": "日常维护只改 JSON，避免自动化误改页面结构。",
-      "url": ""
-    },
-    {
       "source": "Server",
-      "title": "适合先做静态站",
-      "summary": "2 核 2G 的机器更适合静态页面加轻量数据文件。",
+      "title": "dash.maxnow.cn",
+      "summary": "适合先做静态站，OpenClaw 在服务器侧定时刷新数据文件。",
       "url": ""
-    }
-  ],
-  "projects": [
-    {
-      "name": "MaxNow 看板",
-      "note": "第一版页面和仓库已经完成，下一步部署到子域名。",
-      "progress": 70,
-      "status": "进行中"
     },
     {
-      "name": "OpenClaw 数据维护",
-      "note": "Skill 已写好，等服务器路径确定后接入定时任务。",
-      "progress": 40,
-      "status": "准备中"
+      "source": "OpenClaw",
+      "title": "数据接口已明确",
+      "summary": "dashboard 负责个人状态和 Token，ai-news 只负责外部 AI 输入。",
+      "url": ""
     }
   ],
   "system": [
@@ -82,23 +117,29 @@
       "key": "server",
       "name": "轻量服务器",
       "value": "Online",
-      "note": "2C / 2G / 40G"
+      "note": "2C / 2G / 40G，适合静态站和轻量定时任务"
     },
     {
       "key": "storage",
       "name": "数据文件",
       "value": "JSON",
-      "note": "静态文件驱动"
+      "note": "页面读取 data/*.json，JS wrapper 作为静态兜底"
+    },
+    {
+      "key": "openclaw",
+      "name": "OpenClaw",
+      "value": "Bounded",
+      "note": "只允许更新 data/dashboard.* 和 data/ai-news.*"
     },
     {
       "key": "tls",
       "name": "HTTPS",
       "value": "Pending",
-      "note": "部署后配置"
+      "note": "部署到 dash.maxnow.cn 后配置"
     }
   ],
   "tokenUsage": {
-    "updatedAt": "2026-05-25 19:20",
+    "updatedAt": "2026-05-26 00:40",
     "ranges": [
       {
         "key": "1h",
@@ -107,7 +148,7 @@
         "output": 7400,
         "total": 25600,
         "cost": 0.12,
-        "note": "主要消耗在页面调试和部署说明。"
+        "note": "主要消耗在 MaxNow spec 和首页方向收敛。"
       },
       {
         "key": "24h",
@@ -116,7 +157,7 @@
         "output": 53000,
         "total": 201000,
         "cost": 0.94,
-        "note": "今天集中在看板设计、GitHub 推送和 OpenClaw 规约。"
+        "note": "今天集中在个人看板定位、OpenClaw 边界和数据契约。"
       },
       {
         "key": "7d",
@@ -156,11 +197,6 @@
     ],
     "daily": [
       {
-        "date": "2026-05-19",
-        "label": "5/19",
-        "total": 62000
-      },
-      {
         "date": "2026-05-20",
         "label": "5/20",
         "total": 74000
@@ -187,8 +223,13 @@
       },
       {
         "date": "2026-05-25",
-        "label": "今天",
+        "label": "5/25",
         "total": 201000
+      },
+      {
+        "date": "2026-05-26",
+        "label": "今天",
+        "total": 25600
       }
     ]
   }

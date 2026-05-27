@@ -4,56 +4,66 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MaxNow</title>
-    <meta name="description" content="MaxNow 的个人看板，由 OpenClaw 维护数据。" />
+    <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=8" />
+    <link rel="stylesheet" href="./styles.css?v=14" />
   </head>
   <body>
     <div class="app-shell">
-      <aside class="sidebar" aria-label="主导航">
+      <aside class="sidebar" aria-label="Main navigation">
         <div class="brand" aria-label="MaxNow">
           <span class="brand-mark">M</span>
           <span>
             <strong>MaxNow</strong>
-            <small>私人看板</small>
+            <small>&#31169;&#20154;&#30475;&#26495;</small>
           </span>
         </div>
 
-        <nav class="side-nav" aria-label="页面">
-          <button class="side-nav-item is-active" type="button" data-view="home">
-            <span>首页</span>
-            <small>今日概览</small>
+        <nav class="side-nav" aria-label="Pages">
+          <button class="side-nav-item nav-home is-active" type="button" data-view="home">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg>
+            </span>
+            <span class="nav-copy">
+              <strong>&#39318;&#39029;</strong>
+              <small>&#20170;&#26085;&#27010;&#35272;</small>
+            </span>
           </button>
-          <button class="side-nav-item" type="button" data-view="tokens">
-            <span>Token</span>
-            <small id="sidebar-token-total">--</small>
+          <button class="side-nav-item nav-token" type="button" data-view="tokens">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7zm0 2.2L17.6 8 12 10.8 6.4 8zm-6 4.6 5 2.5v5.9l-5-2.5zm7 8.4v-5.9l5-2.5v5.9z"/></svg>
+            </span>
+            <span class="nav-copy">
+              <strong>Token</strong>
+              <small id="sidebar-token-total">--</small>
+            </span>
           </button>
         </nav>
       </aside>
 
       <main class="workspace">
-        <header class="topbar" aria-label="站点状态">
+        <header class="topbar" aria-label="Site status">
           <div>
             <p class="eyebrow">dash.maxnow.cn</p>
-            <strong id="view-title">今天</strong>
+            <strong id="view-title">&#20170;&#22825;</strong>
           </div>
 
           <div class="topbar-actions">
-            <span class="status-pill" id="operator-status">等待同步</span>
+            <span class="status-pill" id="operator-status">&#31561;&#24453;&#21516;&#27493;</span>
             <button
               class="icon-button"
               id="refresh-button"
               type="button"
               data-action="refresh"
-              aria-label="重新读取数据"
-              title="重新读取数据"
+              aria-label="Refresh data"
+              title="Refresh data"
             >
-              ↻
+              &#8635;
             </button>
           </div>
         </header>
@@ -61,36 +71,41 @@
         <section class="view is-active" id="home-view" data-view-panel="home">
           <header class="summary-bar" id="overview">
             <div class="summary-copy">
-              <p class="eyebrow">Today</p>
-              <h1>今天</h1>
-              <p id="daily-brief">等待 OpenClaw 写入今天的摘要。</p>
+              <p class="eyebrow">Today Status</p>
+              <h1 id="today-mode">&#20170;&#26085;&#29366;&#24577;</h1>
+              <p id="daily-brief">&#31561;&#24453; OpenClaw &#20889;&#20837;&#20170;&#22825;&#30340;&#25688;&#35201;&#12290;</p>
+              <div class="summary-meta" aria-label="Today personal state">
+                <span id="today-energy">&#33021;&#37327; --</span>
+                <span id="today-focus">&#20027;&#32447; --</span>
+                <span id="today-updated">&#24453;&#30830;&#35748;</span>
+              </div>
             </div>
-            <div class="summary-clock" aria-label="当前时间">
+            <div class="summary-clock" aria-label="Current time">
               <span id="today-label">--</span>
               <strong id="clock-label">--:--</strong>
             </div>
           </header>
 
-          <section class="status-strip" aria-label="今日状态">
-            <article>
-              <span>待处理</span>
-              <strong id="metric-tasks">0</strong>
-              <small id="metric-tasks-note">暂无数据</small>
+          <section class="status-strip" aria-label="Today status">
+            <article class="metric-mainline">
+              <span>&#24403;&#21069;&#20027;&#32447;</span>
+              <strong id="metric-mainlines">0</strong>
+              <small id="metric-mainlines-note">&#26242;&#26080;&#25968;&#25454;</small>
             </article>
-            <article>
-              <span>服务器</span>
-              <strong id="metric-server">--</strong>
-              <small id="metric-server-note">等待检测</small>
+            <article class="metric-action">
+              <span>&#20170;&#26085;&#25512;&#36827;</span>
+              <strong id="metric-actions">0</strong>
+              <small id="metric-actions-note">&#26242;&#26080;&#25968;&#25454;</small>
             </article>
-            <article>
-              <span>Token 7天</span>
+            <article class="metric-token">
+              <span>Token 7&#22825;</span>
               <strong id="metric-token-total">--</strong>
-              <small id="metric-token-note">等待同步</small>
+              <small id="metric-token-note">&#31561;&#24453;&#21516;&#27493;</small>
             </article>
-            <article>
-              <span>数据</span>
+            <article class="metric-data">
+              <span>&#25968;&#25454;</span>
               <strong id="metric-automation">--</strong>
-              <small id="metric-automation-note">等待同步</small>
+              <small id="metric-automation-note">&#31561;&#24453;&#21516;&#27493;</small>
             </article>
           </section>
 
@@ -99,19 +114,51 @@
               <article class="panel focus-panel" id="focus">
                 <header class="panel-head">
                   <div>
-                    <p class="eyebrow">Today</p>
-                    <h2>要做的事</h2>
+                    <p class="eyebrow">Mainlines</p>
+                    <h2>&#24403;&#21069;&#20027;&#32447;</h2>
                   </div>
-                  <span class="status-pill" id="automation-summary">等待数据同步</span>
+                  <span class="status-pill" id="automation-summary">&#31561;&#24453;&#25968;&#25454;&#21516;&#27493;</span>
                 </header>
-                <div class="task-list" id="task-list"></div>
+                <div class="task-list" id="mainline-list"></div>
+              </article>
+
+              <article class="panel actions-panel" id="actions">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Actions</p>
+                    <h2>&#20170;&#26085;&#25512;&#36827;</h2>
+                  </div>
+                </header>
+                <div class="task-list" id="action-list"></div>
+              </article>
+
+              <article class="panel" id="journal">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Daily Log</p>
+                    <h2>&#20170;&#26085;&#35760;&#24405;</h2>
+                  </div>
+                  <span class="status-pill" id="journal-source">&#29366;&#24577;&#24555;&#29031;</span>
+                </header>
+                <div class="feed-list journal-list" id="journal-list"></div>
+              </article>
+
+              <article class="panel ai-news-panel" id="ai-news">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">External Input</p>
+                    <h2>AI &#22806;&#37096;&#36755;&#20837;</h2>
+                  </div>
+                  <span class="status-pill" id="ai-news-source">OpenClaw</span>
+                </header>
+                <div class="ai-news-list" id="ai-news-list"></div>
               </article>
 
               <article class="panel" id="feeds">
                 <header class="panel-head">
                   <div>
-                    <p class="eyebrow">Notes</p>
-                    <h2>最近看到</h2>
+                    <p class="eyebrow">Links</p>
+                    <h2>&#31245;&#21518;&#30041;&#24847;</h2>
                   </div>
                   <span class="status-pill" id="feed-source">OpenClaw</span>
                 </header>
@@ -119,12 +166,12 @@
               </article>
             </div>
 
-            <aside class="home-aside" aria-label="辅助信息">
+            <aside class="home-aside" aria-label="Secondary information">
               <article class="panel rhythm-panel">
                 <header class="panel-head">
                   <div>
                     <p class="eyebrow">Schedule</p>
-                    <h2>时间点</h2>
+                    <h2>&#26102;&#38388;&#28857;</h2>
                   </div>
                 </header>
                 <ol class="timeline" id="timeline"></ol>
@@ -134,20 +181,30 @@
                 <header class="panel-head">
                   <div>
                     <p class="eyebrow">Tokens</p>
-                    <h2>近期用量</h2>
+                    <h2>&#36817;&#26399;&#29992;&#37327;</h2>
                   </div>
-                  <button class="text-button" type="button" data-view="tokens">查看</button>
+                  <button class="text-button" type="button" data-view="tokens">&#26597;&#30475;</button>
                 </header>
                 <div class="mini-token-grid">
                   <div>
-                    <span>24小时</span>
+                    <span>24&#23567;&#26102;</span>
                     <strong id="mini-token-24h">--</strong>
                   </div>
                   <div>
-                    <span>30天</span>
+                    <span>30&#22825;</span>
                     <strong id="mini-token-30d">--</strong>
                   </div>
                 </div>
+              </article>
+
+              <article class="panel system-panel">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">System</p>
+                    <h2>&#31995;&#32479;&#29366;&#24577;</h2>
+                  </div>
+                </header>
+                <div class="system-list" id="system-list"></div>
               </article>
             </aside>
           </section>
@@ -157,39 +214,39 @@
           <header class="token-page-head">
             <div>
               <p class="eyebrow">Token Usage</p>
-              <h1>Token 用量</h1>
-              <p id="token-updated">等待同步</p>
+              <h1>Token &#29992;&#37327;</h1>
+              <p id="token-updated">&#31561;&#24453;&#21516;&#27493;</p>
             </div>
-            <div class="range-tabs" id="token-ranges" role="tablist" aria-label="Token 时间范围"></div>
+            <div class="range-tabs" id="token-ranges" role="tablist" aria-label="Token ranges"></div>
           </header>
 
-          <section class="token-summary" aria-label="当前范围 Token 汇总">
+          <section class="token-summary" aria-label="Current token summary">
             <article>
-              <span>总量</span>
+              <span>&#24635;&#37327;</span>
               <strong id="token-total">--</strong>
             </article>
             <article>
-              <span>输入</span>
+              <span>&#36755;&#20837;</span>
               <strong id="token-input">--</strong>
             </article>
             <article>
-              <span>输出</span>
+              <span>&#36755;&#20986;</span>
               <strong id="token-output">--</strong>
             </article>
             <article>
-              <span>费用</span>
+              <span>&#36153;&#29992;</span>
               <strong id="token-cost">--</strong>
             </article>
           </section>
 
-          <p class="token-note panel" id="token-note">暂无说明。</p>
+          <p class="token-note panel" id="token-note">&#26242;&#26080;&#35828;&#26126;&#12290;</p>
 
           <section class="token-detail-grid">
             <article class="panel">
               <header class="panel-head">
                 <div>
                   <p class="eyebrow">Models</p>
-                  <h2>模型占比</h2>
+                  <h2>&#27169;&#22411;&#21344;&#27604;</h2>
                 </div>
               </header>
               <div class="model-list" id="token-models"></div>
@@ -199,7 +256,7 @@
               <header class="panel-head">
                 <div>
                   <p class="eyebrow">Daily</p>
-                  <h2>最近 7 天</h2>
+                  <h2>&#26368;&#36817; 7 &#22825;</h2>
                 </div>
               </header>
               <div class="token-bars" id="token-bars"></div>
@@ -210,10 +267,11 @@
     </div>
 
     <template id="empty-template">
-      <p class="empty-state">这部分还没有数据。</p>
+      <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./data/dashboard.js?v=4"></script>
-    <script src="./app.js?v=11"></script>
+    <script src="./data/dashboard.js?v=5"></script>
+    <script src="./data/ai-news.js?v=1"></script>
+    <script src="./app.js?v=13"></script>
   </body>
 </html>

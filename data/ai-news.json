@@ -1,0 +1,30 @@
+{
+  "updatedAt": "2026-05-26 00:10",
+  "sourceSummary": "OpenClaw AI external inputs",
+  "items": [
+    {
+      "source": "OpenAI",
+      "title": "官方产品/API 更新观察位",
+      "summary": "只保留可能影响工具选择、自动摘要能力或 Token 成本的官方信号。",
+      "url": "https://openai.com/news/",
+      "publishedAt": "2026-05-26",
+      "signal": "official"
+    },
+    {
+      "source": "Anthropic",
+      "title": "Claude 模型和工具更新观察位",
+      "summary": "跟踪模型、工具和安全研究更新，只有与当前工作流有关时才进入首页。",
+      "url": "https://www.anthropic.com/news",
+      "publishedAt": "2026-05-26",
+      "signal": "official"
+    },
+    {
+      "source": "Hacker News",
+      "title": "AI 开发者工具讨论观察位",
+      "summary": "用于捕捉开发者社区里的早期信号；X 不可用时作为社区补充来源。",
+      "url": "https://news.ycombinator.com/",
+      "publishedAt": "2026-05-26",
+      "signal": "community"
+    }
+  ]
+}

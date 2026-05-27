@@ -1,7 +1,11 @@
 const DATA_URL = "./data/dashboard.json";
+const AI_NEWS_URL = "./data/ai-news.json";
+
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
+const fallbackAiNews = window.MAXNOW_AI_NEWS_DATA || { items: [] };
 
 let dashboardData = fallbackData;
+let aiNewsData = fallbackAiNews;
 let activeTokenRange = "7d";
 
 const qs = (selector) => document.querySelector(selector);
@@ -10,6 +14,30 @@ const qsa = (selector) => [...document.querySelectorAll(selector)];
 const emptyTemplate = qs("#empty-template");
 const refreshButton = qs("#refresh-button");
 const viewTitle = qs("#view-title");
+
+const copy = {
+  unnamedTask: "\u672a\u547d\u540d\u4e8b\u9879",
+  unnamedInfo: "\u672a\u547d\u540d\u4fe1\u606f",
+  unnamedTime: "\u672a\u547d\u540d\u65f6\u95f4\u70b9",
+  item: "\u4e8b\u9879",
+  open: "\u6253\u5f00",
+  waitBrief: "\u7b49\u5f85 OpenClaw \u5199\u5165\u4eca\u5929\u7684\u6458\u8981\u3002",
+  waiting: "\u7b49\u5f85",
+  syncWaiting: "\u7b49\u5f85\u6570\u636e\u540c\u6b65",
+  noData: "\u6682\u65e0\u6570\u636e",
+  taskCount: "\u6761\u4e8b\u9879",
+  checkWaiting: "\u7b49\u5f85\u68c0\u6d4b",
+  sync: "\u7b49\u5f85\u540c\u6b65",
+  hour24: "24\u5c0f\u65f6",
+  updatedAt: "\u66f4\u65b0\u4e8e",
+  noNote: "\u6682\u65e0\u8bf4\u660e\u3002",
+  tokenTitle: "Token \u7528\u91cf",
+  today: "\u4eca\u5929",
+  energy: "\u80fd\u91cf",
+  focus: "\u4e3b\u7ebf",
+  updatedAtShort: "\u66f4\u65b0",
+  statusSnapshot: "\u72b6\u6001\u5feb\u7167",
+};
 
 function formatToken(value) {
   if (!Number.isFinite(value)) return "--";
@@ -39,6 +67,7 @@ function createTask(task) {
   const article = document.createElement("article");
   article.className = "task-item";
   article.dataset.status = task.status || "active";
+  article.dataset.tone = getTone(task.label || task.status || task.title);
   article.innerHTML = `
     <span class="task-dot" aria-hidden="true"></span>
     <div>
@@ -47,34 +76,56 @@ function createTask(task) {
     </div>
     <span class="item-tag"></span>
   `;
-  article.querySelector(".item-title").textContent = task.title || "未命名事项";
+  article.querySelector(".item-title").textContent = task.title || copy.unnamedTask;
   article.querySelector(".item-copy").textContent = task.note || "";
-  article.querySelector(".item-tag").textContent = task.label || "事项";
+  article.querySelector(".item-tag").textContent = task.label || copy.item;
   return article;
 }
 
 function createFeed(feed) {
   const article = document.createElement("article");
   article.className = "feed-item";
+  article.dataset.tone = getTone(feed.source || feed.title);
   article.innerHTML = `
     <span class="item-tag"></span>
     <p class="item-title"></p>
     <p class="item-copy"></p>
   `;
   article.querySelector(".item-tag").textContent = feed.source || "Note";
-  article.querySelector(".item-title").textContent = feed.title || "未命名信息";
+  article.querySelector(".item-title").textContent = feed.title || copy.unnamedInfo;
   article.querySelector(".item-copy").textContent = feed.summary || "";
-
-  if (feed.url) {
-    const link = document.createElement("a");
-    link.href = feed.url;
-    link.target = "_blank";
-    link.rel = "noreferrer";
-    link.textContent = "打开";
-    article.appendChild(link);
-  }
-
+  appendLink(article, feed.url);
   return article;
+}
+
+function createAiNewsItem(item) {
+  const article = document.createElement("article");
+  article.className = "ai-news-item";
+  article.dataset.tone = getTone(item.signal || item.source);
+  article.innerHTML = `
+    <div class="ai-news-meta">
+      <span class="item-tag"></span>
+      <time></time>
+    </div>
+    <p class="item-title"></p>
+    <p class="item-copy"></p>
+  `;
+  article.querySelector(".item-tag").textContent = item.source || "AI";
+  article.querySelector("time").textContent = item.publishedAt || "";
+  article.querySelector(".item-title").textContent = item.title || copy.unnamedInfo;
+  article.querySelector(".item-copy").textContent = item.summary || "";
+  appendLink(article, item.url);
+  return article;
+}
+
+function appendLink(container, url) {
+  if (!url) return;
+  const link = document.createElement("a");
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  link.textContent = copy.open;
+  container.appendChild(link);
 }
 
 function createTimelineItem(item) {
@@ -87,9 +138,37 @@ function createTimelineItem(item) {
     </div>
   `;
   li.querySelector("time").textContent = item.time || "--:--";
-  li.querySelector(".item-title").textContent = item.title || "未命名时间点";
+  li.querySelector(".item-title").textContent = item.title || copy.unnamedTime;
   li.querySelector(".item-copy").textContent = item.note || "";
   return li;
+}
+
+function createSystemItem(item) {
+  const article = document.createElement("article");
+  article.className = "system-item";
+  article.dataset.tone = getTone(item.key || item.value || item.name);
+  article.innerHTML = `
+    <div>
+      <p class="item-title"></p>
+      <p class="item-copy"></p>
+    </div>
+    <span class="system-value"></span>
+  `;
+  article.querySelector(".item-title").textContent = item.name || item.key || "System";
+  article.querySelector(".item-copy").textContent = item.note || "";
+  article.querySelector(".system-value").textContent = item.value || "--";
+  return article;
+}
+
+function getTone(value = "") {
+  const text = String(value).toLowerCase();
+  if (text.includes("token") || text.includes("data") || text.includes("github")) return "blue";
+  if (text.includes("auto") || text.includes("openclaw") || text.includes("skill")) return "cyan";
+  if (text.includes("server") || text.includes("deploy") || text.includes("\u90e8\u7f72")) return "orange";
+  if (text.includes("ai") || text.includes("official") || text.includes("openai")) return "purple";
+  if (text.includes("wait") || text.includes("pending") || text.includes("\u7b49")) return "gray";
+  if (text.includes("done") || text.includes("online") || text.includes("\u6b63\u5e38")) return "green";
+  return "blue";
 }
 
 function getSystemItem(key) {
@@ -102,33 +181,46 @@ function getTokenRange(key = activeTokenRange) {
 }
 
 function renderHome() {
-  const tasks = dashboardData.tasks || [];
+  const mainlines = dashboardData.mainlines || dashboardData.projects || dashboardData.tasks || [];
+  const actions = dashboardData.actions || dashboardData.tasks || [];
+  const journal = dashboardData.journal || [];
   const feeds = dashboardData.feeds || [];
-  const server = getSystemItem("server");
+  const aiItems = (aiNewsData.items || []).slice(0, 3);
   const token7d = getTokenRange("7d");
   const token24h = getTokenRange("24h");
   const token30d = getTokenRange("30d");
+  const today = dashboardData.today || {};
 
-  setText("#daily-brief", dashboardData.brief || "等待 OpenClaw 写入今天的摘要。");
-  setText("#operator-status", `OpenClaw ${dashboardData.automation?.status || "等待"}`);
-  setText("#automation-summary", dashboardData.automation?.summary || "等待数据同步");
+  setText("#today-mode", today.modeLabel || "\u4eca\u65e5\u72b6\u6001");
+  setText("#daily-brief", today.summary || dashboardData.brief || copy.waitBrief);
+  setText("#today-energy", `${copy.energy} ${today.energy || "--"}`);
+  setText("#today-focus", `${copy.focus} ${today.focus || "--"}`);
+  setText("#today-updated", today.updatedAt ? `${copy.updatedAtShort} ${today.updatedAt}` : "\u5f85\u786e\u8ba4");
+  setText("#operator-status", `OpenClaw ${dashboardData.automation?.status || copy.waiting}`);
+  setText("#automation-summary", dashboardData.automation?.summary || copy.syncWaiting);
   setText("#feed-source", dashboardData.feedSource || "OpenClaw");
+  setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
+  setText("#ai-news-source", aiNewsData.sourceSummary || "OpenClaw AI Daily");
 
-  setText("#metric-tasks", String(tasks.length));
-  setText("#metric-tasks-note", `${tasks.length} 条事项`);
-  setText("#metric-server", server.value || "--");
-  setText("#metric-server-note", server.note || "等待检测");
+  setText("#metric-mainlines", String(mainlines.length));
+  setText("#metric-mainlines-note", `${mainlines.length} ${copy.taskCount}`);
+  setText("#metric-actions", String(actions.length));
+  setText("#metric-actions-note", `${actions.length} ${copy.taskCount}`);
   setText("#metric-token-total", formatToken(token7d.total));
-  setText("#metric-token-note", `24小时 ${formatToken(token24h.total)}`);
+  setText("#metric-token-note", `${copy.hour24} ${formatToken(token24h.total)}`);
   setText("#metric-automation", dashboardData.automation?.status || "--");
-  setText("#metric-automation-note", dashboardData.automation?.lastRun || "等待同步");
+  setText("#metric-automation-note", dashboardData.automation?.lastRun || copy.sync);
   setText("#mini-token-24h", formatToken(token24h.total));
   setText("#mini-token-30d", formatToken(token30d.total));
   setText("#sidebar-token-total", formatToken(token7d.total));
 
-  clearAndFill(qs("#task-list"), createTask, tasks);
+  clearAndFill(qs("#mainline-list"), createTask, mainlines);
+  clearAndFill(qs("#action-list"), createTask, actions);
+  clearAndFill(qs("#journal-list"), createFeed, journal);
+  clearAndFill(qs("#ai-news-list"), createAiNewsItem, aiItems);
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
+  clearAndFill(qs("#system-list"), createSystemItem, dashboardData.system || []);
 }
 
 function createRangeButton(range) {
@@ -158,12 +250,12 @@ function renderTokens() {
     button.classList.toggle("is-active", button.dataset.range === range.key);
   });
 
-  setText("#token-updated", usage.updatedAt ? `更新于 ${usage.updatedAt}` : "等待同步");
+  setText("#token-updated", usage.updatedAt ? `${copy.updatedAt} ${usage.updatedAt}` : copy.sync);
   setText("#token-total", formatToken(range.total));
   setText("#token-input", formatToken(range.input));
   setText("#token-output", formatToken(range.output));
   setText("#token-cost", Number.isFinite(range.cost) ? `$${range.cost.toFixed(2)}` : "--");
-  setText("#token-note", range.note || "暂无说明。");
+  setText("#token-note", range.note || copy.noNote);
 
   clearAndFill(qs("#token-models"), createModelItem, usage.models || []);
   clearAndFill(qs("#token-bars"), createDailyBar, usage.daily || []);
@@ -205,15 +297,24 @@ function renderAll() {
   renderTokens();
 }
 
-async function loadData() {
+async function readJson(url, fallback) {
   try {
-    const response = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: "no-store" });
+    const response = await fetch(`${url}?t=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    dashboardData = await response.json();
+    return await response.json();
   } catch (error) {
-    dashboardData = window.MAXNOW_DASHBOARD_DATA || fallbackData;
+    return fallback;
   }
+}
 
+async function loadData() {
+  const [dashboard, aiNews] = await Promise.all([
+    readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
+    readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
+  ]);
+
+  dashboardData = dashboard;
+  aiNewsData = aiNews;
   renderAll();
 }
 
@@ -225,7 +326,7 @@ function setView(view) {
   qsa("[data-view]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.view === nextView);
   });
-  if (viewTitle) viewTitle.textContent = nextView === "tokens" ? "Token 用量" : "今天";
+  if (viewTitle) viewTitle.textContent = nextView === "tokens" ? copy.tokenTitle : copy.today;
   if (location.hash !== `#${nextView}`) location.hash = nextView;
 }
 

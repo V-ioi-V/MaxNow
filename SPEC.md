@@ -1,112 +1,153 @@
 # MaxNow Spec
 
-MaxNow 是私人操作台，不是展示型官网。它的核心目标是让你打开页面后，在几秒内知道今天该做什么、自动化是否正常、最近有什么输入、Token 用量有没有异常。
+MaxNow is a private status workstation deployed at `dash.maxnow.cn`. It is not a public home page, a news site, or a generic dashboard. Its job is to show the owner what state they are in, what they are moving forward, what the automation system is doing, and whether AI/tool usage looks normal.
 
 ## Product Positioning
 
-- 面向对象：站点所有者本人。
-- 使用场景：每天多次快速扫一眼，不需要解释型引导。
-- 核心感受：克制、清楚、工具感、可长期维护。
-- 信息密度：中等偏紧凑，宁可少放，也不为了填满空间加模块。
+- Audience: the site owner only.
+- Primary use: open several times a day and understand the current personal/system state in a few seconds.
+- Core value: persistent personal context, not one-off notifications.
+- Tone: calm, compact, operational, and maintainable.
+- First screen priority: personal state, current mainlines, today's actions, time points, system state, and a small amount of external input.
+
+## System Roles
+
+MaxNow has three parts:
+
+1. Page code
+   - `index.html`
+   - `styles.css`
+   - `app.js`
+   - Maintained by Codex or the owner.
+   - Responsible for structure, styling, rendering, and interaction.
+
+2. Data files
+   - `data/dashboard.json`
+   - `data/dashboard.js`
+   - `data/ai-news.json`
+   - `data/ai-news.js`
+   - They are the contract between the page and automation.
+
+3. OpenClaw skill
+   - `openclaw/maxnow-dashboard/SKILL.md`
+   - Tells OpenClaw what MaxNow is, which data files to update, which files are forbidden, and how to validate output.
 
 ## Navigation
 
-左侧只保留一级页面入口。
+Keep only two top-level entries:
 
-1. 首页
-   - 今日概览。
-   - 默认打开。
+1. Home
+   - Personal status workstation.
+   - Default page.
 2. Token
-   - Token 用量详情。
-   - 作为独立页面，不在首页塞完整图表。
+   - Token usage detail page.
 
-新增页面必须满足两个条件：
-- 有独立的问题要回答。
-- 首页放不下，且放进去会干扰今日判断。
+Do not add a new page unless it answers a separate question that cannot fit on Home without hurting the daily scan.
 
-## Home Page Structure
+## Home Page
 
-首页只回答四个问题：
+Home answers these questions, in this order:
 
-1. 今天最重要的状态是什么？
-2. 今天要推进什么？
-3. 今天有什么时间点？
-4. 最近有哪些值得留意的输入？
+1. What state am I in today?
+2. What are my current mainlines?
+3. What should move forward today?
+4. What time points matter today?
+5. Are OpenClaw, the server, data sync, and Token usage normal?
+6. What external inputs are worth noticing later?
 
-页面结构固定为：
+Required modules:
 
-1. Topbar
-   - 当前页面标题。
-   - OpenClaw 状态。
-   - 手动刷新按钮。
-2. Summary
-   - 今日标题。
-   - 一句话摘要。
-   - 当前日期和时间。
-3. Status Strip
-   - 待处理事项数。
-   - 服务器状态。
-   - Token 7 天总量。
-   - 数据同步状态。
-4. Main Work Area
-   - 左侧主列：今日事项、最近看到。
-   - 右侧辅助列：时间点、Token 简要用量。
+- Today Status: mode, energy, focus, one-sentence summary, updated time.
+- Current Mainlines: 1-3 important threads with status, next step, and blocker when useful.
+- Today's Actions: 1-3 actions that should move today. This is not a full todo app.
+- Daily Log: short notes that preserve personal context and decisions.
+- Time Points: schedule items, deadlines, and automation run times.
+- System Status: OpenClaw last run, server state, data sync state, GitHub/deployment state when available.
+- External Inputs: links, signals, and AI daily picks that may matter later.
 
-首页不展示完整项目列表、不展示完整系统列表、不展示完整 Token 趋势。
+## AI Daily Picks
 
-## Token Page Structure
+AI daily picks are a small part of External Inputs, not a news product.
 
-Token 页面只回答 Token 相关问题：
+- Default update time: 00:10 local server time.
+- Show at most 3 items on Home.
+- Prefer official sources and high-signal developer/community sources.
+- X/Twitter is useful for early signals, but is not a hard dependency.
+- If X/Twitter is unavailable, use official blogs/RSS, Hacker News, GitHub, Reddit, project releases, and research labs.
+- Secondary news sites are only for supplemental verification.
 
-1. 近 1 小时、24 小时、7 天、30 天分别用了多少。
-2. 当前范围的输入、输出、总量、费用。
-3. 哪些模型或服务占比最高。
-4. 最近 7 天是否有明显尖峰。
+Each item should explain why it is relevant to the owner, current projects, tools, model choices, or costs.
 
-Token 页面可以有图表，但图表必须直接服务于以上问题。
+## Token Page
 
-## Module Rules
+Token page answers only Token-related questions:
 
-- 同一类信息只能出现一次。首页顶部状态条已经出现的系统状态，不再用大卡片重复展示。
-- 卡片必须有明确答案，不放“看起来像仪表盘”的装饰性模块。
-- 每个模块最多承担一个主要问题。
-- 标题要短，说明文字要像备忘录，不写产品介绍。
-- OpenClaw 生成的内容要少而准，优先 2-3 条。
+- last 1 hour usage
+- last 24 hours usage
+- last 7 days usage
+- last 30 days usage
+- input/output/total/cost
+- model share
+- recent 7-day trend
+- unusual spikes when available
 
-## Visual Rules
-
-- 深色背景，低对比边框，少量暖色作为强调。
-- 卡片半径不超过 8px。
-- 不使用大面积渐变、装饰光斑、营销页式 hero。
-- 页面需要留白，但不能出现因为网格错位造成的大块空洞。
-- 首页首屏优先显示摘要、状态条和今日事项。
+Do not duplicate the full Token page on Home. Home may show only a compact usage status.
 
 ## Data Contract
 
-OpenClaw 日常只能改这些文件：
+OpenClaw may update these files during routine maintenance:
 
 ```text
 data/dashboard.json
 data/dashboard.js
+data/ai-news.json
+data/ai-news.js
 ```
 
-页面结构文件由人工维护：
+OpenClaw must not update these files during routine maintenance:
 
 ```text
 index.html
 styles.css
 app.js
+SPEC.md
+README.md
+DEPLOY.md
 ```
 
-`data/dashboard.json` 是主数据源。`data/dashboard.js` 是兼容兜底，必须由同一份 JSON 生成。
+`data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, and Token usage.
 
-## Current Pages
+`data/ai-news.json` owns external AI inputs only.
 
-当前版本只保留两个页面：
+Each `.js` wrapper must be generated from the matching JSON file and expose the same object to the browser:
 
 ```text
-首页
-Token
+window.MAXNOW_DASHBOARD_DATA
+window.MAXNOW_AI_NEWS_DATA
 ```
 
-任何新增页面先写进本文件，再实现页面。
+## Data Source Policy
+
+The dashboard should not depend on daily manual data entry. The intended split is:
+
+- Automatic: Token usage, GitHub activity, server state, OpenClaw run state, AI external inputs, timestamps.
+- Semi-automatic: current mainlines, daily log draft, project progress summary.
+- Manual: today's one-sentence judgment, energy/state, true priority, and important decisions.
+
+OpenClaw records facts and drafts summaries. The owner keeps final judgment.
+
+## Visual Rules
+
+- Dark, compact, operational interface.
+- No marketing hero, no decorative dashboard filler.
+- Cards exist only for real information modules.
+- Border radius stays at or below 8px.
+- External inputs must remain visually secondary to personal status.
+- The first screen should prioritize state, mainlines, and today's actions.
+
+## Implementation Guardrails
+
+- Keep Home and Token as the only pages for v1.
+- Keep the site static: no database, login, or backend API in v1.
+- Any new daily-maintained data field must be documented here and in the OpenClaw skill.
+- Page code changes require Codex or owner intent; OpenClaw never changes page structure.

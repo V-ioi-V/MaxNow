@@ -1,92 +1,117 @@
 ---
 name: maxnow-dashboard-maintainer
-description: Maintain the MaxNow personal dashboard data. Use when OpenClaw needs to summarize daily tasks, feeds, projects, and server state for the static MaxNow dashboard by updating data/dashboard.json without changing page code.
+description: Maintain MaxNow personal status workstation data. Use when OpenClaw updates daily personal state, current mainlines, actions, logs, automation status, token usage, and AI external inputs for the static dashboard without changing page code.
 ---
 
 # MaxNow Dashboard Maintainer
 
-Maintain the personal dashboard deployed at `dash.maxnow.cn`.
+Maintain the data files for the private MaxNow workstation deployed at `dash.maxnow.cn`.
 
-The dashboard is a static website. Do not edit `index.html`, `styles.css`, or `app.js` during routine daily maintenance. Update only the data file:
+MaxNow is not a news site and not an OpenClaw report page. It is the owner's personal status workstation: today's state, current mainlines, today's actions, daily log, time points, system health, Token usage, and a small external-input area.
+
+## Hard Boundary
+
+Routine OpenClaw runs may update only:
 
 ```text
 data/dashboard.json
+data/dashboard.js
+data/ai-news.json
+data/ai-news.js
 ```
 
-Also update the browser-compatible data wrapper:
+Routine OpenClaw runs must not edit:
 
 ```text
-data/dashboard.js
+index.html
+styles.css
+app.js
+SPEC.md
+README.md
+DEPLOY.md
 ```
 
-`dashboard.js` must assign the same object to `window.MAXNOW_DASHBOARD_DATA`.
+If a page structure or style change is needed, stop and report it. Do not modify page code.
 
 ## Goal
 
-Create a concise daily operating snapshot for MaxNow:
+Create a concise daily personal status snapshot:
 
-- today's brief
-- priority tasks
-- schedule rhythm
-- useful feed summaries
-- active projects
-- server and automation status
-- token usage ranges and trends
+- today's mode, energy, focus, and one-sentence judgment
+- current mainlines and next steps
+- 1-3 actions that should move today
+- short daily log notes and decisions
+- time points and automation rhythm
+- OpenClaw/server/data/GitHub state
+- Token usage ranges and trends
+- AI external inputs when useful
 
-The website reads `data/dashboard.json` in the browser. A valid JSON update is enough for the page to refresh on next load.
+OpenClaw records facts and drafts summaries. The owner keeps final judgment. Do not overwrite owner-confirmed notes unless explicitly asked.
 
-## Hard Rules
+## Data Files
 
-1. Only write `data/dashboard.json` for routine updates.
-2. Keep valid UTF-8 JSON. Do not add comments or trailing commas.
-3. Do not include secrets, tokens, private keys, passwords, cookies, or internal IPs.
-4. Keep text short. The dashboard is for scanning, not reading long reports.
-5. Preserve all top-level fields even when some sections have no new data.
-6. If a data source fails, keep the last known safe value or write a short fallback note.
-7. Validate JSON before finishing.
+`data/dashboard.json` is the main data source for Home and Token. `data/dashboard.js` must contain the same object assigned to `window.MAXNOW_DASHBOARD_DATA`.
 
-## Data Shape
+`data/ai-news.json` is only for AI external inputs. `data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
 
-Write this complete structure:
+## Dashboard Data Shape
+
+Preserve this shape when possible:
 
 ```json
 {
-  "brief": "一句今日摘要。",
-  "feedSource": "OpenClaw Daily",
+  "brief": "今天最重要的一句话判断。",
+  "feedSource": "今日整理",
+  "today": {
+    "mode": "clarify",
+    "modeLabel": "整理模式",
+    "energy": "中",
+    "focus": "MaxNow",
+    "summary": "今天主要确认个人看板的定位。",
+    "updatedAt": "YYYY-MM-DD HH:mm"
+  },
   "automation": {
     "status": "正常",
-    "summary": "OpenClaw 本次做了什么。",
+    "summary": "OpenClaw 已更新今日状态快照。",
     "lastRun": "YYYY-MM-DD HH:mm"
   },
-  "tasks": [
+  "mainlines": [
     {
-      "title": "任务标题",
-      "note": "一句说明。",
-      "label": "Focus",
+      "title": "MaxNow",
+      "note": "当前状态、下一步、卡点。",
+      "label": "主线",
       "status": "active"
+    }
+  ],
+  "actions": [
+    {
+      "title": "今天要推进的动作",
+      "note": "一句话说明。",
+      "label": "推进",
+      "status": "active"
+    }
+  ],
+  "journal": [
+    {
+      "source": "Owner / OpenClaw / GitHub",
+      "title": "记录标题",
+      "summary": "一句话记录事实或判断。",
+      "url": ""
     }
   ],
   "timeline": [
     {
-      "time": "09:30",
-      "title": "事项标题",
-      "note": "一句说明。"
+      "time": "00:10",
+      "title": "AI 外部输入更新",
+      "note": "OpenClaw 更新 data/ai-news.*。"
     }
   ],
   "feeds": [
     {
-      "source": "RSS / GitHub / Server / OpenClaw",
-      "title": "信息标题",
-      "summary": "一句摘要。",
+      "source": "GitHub / RSS / HN / Server",
+      "title": "外部输入标题",
+      "summary": "为什么值得稍后看。",
       "url": ""
-    }
-  ],
-  "projects": [
-    {
-      "name": "项目名",
-      "note": "当前推进状态。",
-      "progress": 50,
-      "status": "MVP"
     }
   ],
   "system": [
@@ -94,122 +119,105 @@ Write this complete structure:
       "key": "server",
       "name": "轻量服务器",
       "value": "Online",
-      "note": "2C / 2G / 40G"
+      "note": "一句话状态。"
     }
   ],
   "tokenUsage": {
     "updatedAt": "YYYY-MM-DD HH:mm",
-    "ranges": [
-      {
-        "key": "7d",
-        "label": "7天",
-        "input": 512000,
-        "output": 188000,
-        "total": 700000,
-        "cost": 3.26,
-        "note": "一句说明。"
-      }
-    ],
-    "models": [
-      {
-        "name": "GPT-5 Codex",
-        "total": 515000,
-        "share": 74
-      }
-    ],
-    "daily": [
-      {
-        "date": "2026-05-25",
-        "label": "今天",
-        "total": 201000
-      }
-    ]
+    "ranges": [],
+    "models": [],
+    "daily": []
   }
 }
 ```
 
-## Field Guidance
+Status values for `mainlines` and `actions`:
 
-`brief`: one sentence, usually 25-60 Chinese characters.
-
-`automation.status`: use `正常`, `部分失败`, or `需要关注`.
-
-`automation.summary`: describe the maintenance result, not implementation details.
-
-`automation.lastRun`: use local server time in `YYYY-MM-DD HH:mm`.
-
-`tasks`: keep 3-6 items. Use status values:
-
-- `active`: should be handled soon
+- `active`: should move soon
 - `waiting`: blocked or waiting
 - `done`: completed
 
-`timeline`: keep 3-5 time blocks. Use 24-hour `HH:mm`.
+Keep arrays short:
 
-`feeds`: keep 3-6 high-signal items. Include a URL only when it is safe and useful.
+- `mainlines`: 1-3
+- `actions`: 1-3
+- `journal`: 2-5
+- `timeline`: 3-5
+- `feeds`: 0-3
 
-`projects`: keep 1-5 active projects. `progress` must be an integer from 0 to 100.
+## AI External Input Shape
 
-`system`: include at least:
+`data/ai-news.json` should contain:
 
-- `server`
-- `storage`
-- `tls`
-- `openclaw` when available
+```json
+{
+  "updatedAt": "YYYY-MM-DD HH:mm",
+  "sourceSummary": "OpenClaw AI external inputs",
+  "items": [
+    {
+      "source": "OpenAI / Anthropic / HN / GitHub / Reddit / X",
+      "title": "短标题",
+      "summary": "说明它和 owner、项目、工具、模型或成本有什么关系。",
+      "url": "https://example.com",
+      "publishedAt": "YYYY-MM-DD",
+      "signal": "official"
+    }
+  ]
+}
+```
 
-`tokenUsage`: include usage data when available. Keep these ranges when possible:
+Show at most 3 items on the page. X/Twitter is useful for early signals but is not required. If X is unavailable, use official blogs/RSS, Hacker News, GitHub, Reddit, releases, and research labs.
 
-- `1h`: recent spike check
-- `24h`: today's usage
-- `7d`: weekly view, used by the left tab badge
-- `30d`: monthly view
+## Source Policy
 
-Token counts must be integers. `cost` should be a number in USD when known, or `0` when unknown. `models.share` should add up close to 100.
+Automatic sources:
 
-## Daily Workflow
+- Token usage
+- GitHub activity
+- server and deployment status
+- OpenClaw run result
+- AI external inputs
+- timestamps
 
-1. Read the existing `data/dashboard.json`.
-2. Gather available daily inputs: tasks, notes, RSS, GitHub activity, server state, and OpenClaw run result.
-3. Summarize aggressively. Prefer fewer, clearer items.
-4. Rewrite the full JSON object.
-5. Validate the JSON file.
-6. Regenerate `data/dashboard.js` from the same object.
-7. Leave page code untouched.
+Semi-automatic sources:
+
+- current mainlines
+- daily log draft
+- project progress summary
+
+Manual or owner-confirmed fields:
+
+- today's one-sentence judgment
+- energy/state
+- true priority
+- important decisions
+
+Do not invent personal feelings. If unsure, keep a neutral status such as `待确认`.
 
 ## Validation
 
-Before finishing, parse the JSON. Example:
+Before finishing every routine update:
 
 ```bash
 python -m json.tool data/dashboard.json >/dev/null
+python -m json.tool data/ai-news.json >/dev/null
 ```
 
-If validation fails, restore the previous valid JSON and report the error.
-
-Generate `dashboard.js` after validation:
+Regenerate wrappers from the JSON files:
 
 ```bash
 python -c "import json; from pathlib import Path; d=json.loads(Path('data/dashboard.json').read_text(encoding='utf-8')); Path('data/dashboard.js').write_text('window.MAXNOW_DASHBOARD_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
+python -c "import json; from pathlib import Path; d=json.loads(Path('data/ai-news.json').read_text(encoding='utf-8')); Path('data/ai-news.js').write_text('window.MAXNOW_AI_NEWS_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
 ```
 
-## Deployment Model
-
-The expected production path is similar to:
-
-```text
-/var/www/maxnow-dashboard/data/dashboard.json
-```
-
-The page code is deployed from GitHub. Daily data is maintained on the server by OpenClaw.
-
-Do not run `git pull`, `git push`, or edit repository code unless the user explicitly asks for a site code change.
+If a source fails, keep the last safe value or write a short fallback note. Do not clear the dashboard.
 
 ## Good Output Style
 
-Use calm operational language:
+Use short operational Chinese. Prefer:
 
-- "今天优先处理部署闭环和数据自动化。"
-- "OpenClaw 已刷新任务、信息流和服务状态。"
-- "TLS 配置待确认。"
+- `今天主要确认 MaxNow 的定位和 OpenClaw 数据边界。`
+- `下一步是把服务器部署和数据定时更新接起来。`
+- `AI 外部输入只保留与工具、模型或成本有关的信号。`
 
-Avoid hype, long explanations, markdown, and multi-paragraph text inside JSON fields.
+Avoid hype, long reports, marketing language, and markdown inside JSON string fields.
