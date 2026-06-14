@@ -5,6 +5,9 @@ Read this file before making code changes in this repository.
 ## First Checks
 
 - Run `git status --short` before editing.
+- Do not make code or document changes directly on `main`.
+- Before editing, create or switch to a short-lived branch from the latest `main`, using the `codex/` prefix unless the owner asks for another branch name.
+- After the work is checked, merge the branch back into `main` or ask the owner before merging if the change is risky.
 - If there are unrelated user changes, preserve them and work around them.
 - Read `SPEC.md` before changing product behavior.
 - Read `CONTEXT.md` when the task depends on project direction, context strategy, automation scope, or next-step planning.
