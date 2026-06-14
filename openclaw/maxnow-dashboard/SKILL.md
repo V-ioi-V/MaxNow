@@ -1,9 +1,9 @@
 ---
-name: maxnow-dashboard-maintainer
+name: maxnow-data
 description: Maintain MaxNow personal status workstation data. Use when OpenClaw updates daily personal state, current mainlines, actions, logs, automation status, token usage, and AI external inputs for the static dashboard without changing page code.
 ---
 
-# MaxNow Dashboard Maintainer
+# MaxNow Data
 
 Maintain the data files for the private MaxNow workstation deployed at `dash.maxnow.cn`.
 
@@ -29,6 +29,9 @@ app.js
 SPEC.md
 README.md
 DEPLOY.md
+CONTEXT.md
+IDEAS.md
+UPDATE_LOG.md
 ```
 
 If a page structure or style change is needed, stop and report it. Do not modify page code.

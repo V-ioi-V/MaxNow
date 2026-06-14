@@ -1,0 +1,104 @@
+{
+  "updatedAt": "2026-06-14 00:00",
+  "sourceSummary": "Last-30 rolling context draft",
+  "today": {
+    "date": "2026-06-14",
+    "title": "今日大事",
+    "summary": "今天主要补齐 MaxNow 的项目上下文结构，并启动 Last-30 滚动记忆建设。",
+    "items": [
+      {
+        "date": "2026-06-14",
+        "title": "补齐项目上下文地图",
+        "summary": "新增 CONTEXT.md，明确长期上下文、代理执行上下文、每日状态上下文和滚动记忆上下文的分层。",
+        "source": "Codex / repo docs",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": ""
+      },
+      {
+        "date": "2026-06-14",
+        "title": "启动 Last-30 滚动记忆",
+        "summary": "确定要用最近 30 天滚动摘要记录今日、本周、近 30 天主线、决定和等待项。",
+        "source": "Owner idea",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": ""
+      }
+    ]
+  },
+  "week": {
+    "range": "2026-06-08/2026-06-14",
+    "title": "本周大事",
+    "summary": "本周重点从单页看板推进到可接力的上下文系统，并开始拆分自动化维护边界。",
+    "items": [
+      {
+        "date": "2026-06-13",
+        "title": "确定文档语言分工",
+        "summary": "Owner 阅读的产品文档使用中文，代理执行规则可以使用英文。",
+        "source": "Owner constraint",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": ""
+      },
+      {
+        "date": "2026-06-14",
+        "title": "明确 CONTEXT.md 主要给代理接力",
+        "summary": "CONTEXT.md 用于 Codex 快速恢复项目上下文，不作为 Owner-facing 汇报文档。",
+        "source": "Owner constraint",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": ""
+      }
+    ]
+  },
+  "last30": {
+    "range": "2026-05-16/2026-06-14",
+    "title": "近 30 天主线",
+    "summary": "MaxNow 从早期个人站/灵感宇宙方向收敛为私人状态工作站，并逐步建立数据、自动化、上下文和未来桌面入口。",
+    "mainlines": [
+      {
+        "title": "私人状态工作站",
+        "summary": "核心定位从公开展示或新闻聚合，收敛为 Owner 每天查看个人状态、主线、推进和系统状态的工作站。",
+        "status": "active",
+        "source": "SPEC.md",
+        "confidence": "high",
+        "needsOwnerConfirm": false
+      },
+      {
+        "title": "OpenClaw 数据自动化边界",
+        "summary": "OpenClaw 日常只更新数据文件，页面代码、产品文档和上下文文档由 Codex 或 Owner 维护。",
+        "status": "active",
+        "source": "AGENTS.md / OpenClaw skill",
+        "confidence": "high",
+        "needsOwnerConfirm": false
+      },
+      {
+        "title": "桌面伴随入口",
+        "summary": "未来可能增加 macOS 状态栏面板和 Windows 桌面壁纸式看板，让 MaxNow 不只存在于浏览器。",
+        "status": "research",
+        "source": "IDEAS.md",
+        "confidence": "medium",
+        "needsOwnerConfirm": false
+      }
+    ],
+    "decisions": [
+      {
+        "date": "2026-06-13",
+        "title": "用户可见文档中文优先",
+        "summary": "给 Owner 看的产品文档用中文，给代理执行的规则可以用英文。",
+        "source": "Owner constraint",
+        "confidence": "high",
+        "needsOwnerConfirm": false
+      }
+    ],
+    "waiting": [
+      {
+        "title": "自动更新执行器",
+        "summary": "还需要决定服务器上由 OpenClaw cron、普通脚本 cron，还是其他执行器负责每天更新 Last-30。",
+        "source": "CONTEXT.md",
+        "confidence": "medium",
+        "needsOwnerConfirm": true
+      }
+    ]
+  }
+}

@@ -7,6 +7,7 @@ Read this file before making code changes in this repository.
 - Run `git status --short` before editing.
 - If there are unrelated user changes, preserve them and work around them.
 - Read `SPEC.md` before changing product behavior.
+- Read `CONTEXT.md` when the task depends on project direction, context strategy, automation scope, or next-step planning.
 - For OpenClaw behavior, read `openclaw/maxnow-dashboard/SKILL.md`.
 
 ## Project Shape
@@ -28,6 +29,9 @@ app.js
 SPEC.md
 README.md
 DEPLOY.md
+CONTEXT.md
+IDEAS.md
+UPDATE_LOG.md
 openclaw/maxnow-dashboard/SKILL.md
 ```
 
@@ -55,3 +59,13 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Token is an independent usage page.
 - AI daily picks are secondary external inputs, capped at 3 visible items.
 - Keep the interface calm, compact, and operational.
+- Record new product ideas in `IDEAS.md`.
+- Record intentional project updates in `UPDATE_LOG.md`.
+- Keep the context map in `CONTEXT.md` current when the project structure or context strategy changes.
+- Treat `CONTEXT.md` primarily as agent handoff context, not as an owner-facing report.
+
+## Language Rules
+
+- Owner-facing product documents should be written in Chinese.
+- Agent-facing operational instructions may remain in English.
+- When a document is meant for both the owner and agents, prefer Chinese for product meaning and concise English for execution rules only when useful.
