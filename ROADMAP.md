@@ -1,0 +1,96 @@
+# MaxNow 路线图
+
+这个文件记录 MaxNow 接下来真正要推进的事情。
+
+它不是灵感池，也不是更新历史：
+
+- 新想法先放进 `IDEAS.md`。
+- 已确定的产品规则放进 `SPEC.md`。
+- 代理接力上下文放进 `CONTEXT.md`。
+- 已发生的重要变更放进 `UPDATE_LOG.md`。
+- 当前要做、下一步要做、暂时卡住的事放在这里。
+
+## 更新规则
+
+- 每次开始一组新工作前，先看这里。
+- 做完一项后，把它从 `Now` 或 `Next` 移到 `Done`，并在 `UPDATE_LOG.md` 记录重要变更。
+- 如果一项需要 Owner 权限、服务器权限或外部信息，放进 `Blocked`。
+- 不要把聊天里的临时判断长期留在这里；只记录可执行任务和阶段路线。
+
+## Now
+
+### 刷新当前真实数据
+
+- 建议分支：`feature/refresh-current-data`
+- 更新 `data/dashboard.json` 和 `data/dashboard.js`，把旧状态快照换成当前真实状态。
+- 更新 `data/last-30.json` 和 `data/last-30.js`，让今日、本周、近 30 天内容和当前项目进展一致。
+- 视情况更新 `data/ai-news.json` 和 `data/ai-news.js`，只保留和 Owner 当前项目、工具、模型或成本相关的高信号输入。
+- 跑 `python scripts/check.py`，确认 JSON 和 wrapper 一致。
+
+### 接服务器自动更新链路
+
+- 建议分支：`feature/server-auto-update`
+- 决定日常更新由 OpenClaw cron、普通脚本 cron，还是其他执行器触发。
+- 明确服务器路径、运行用户、日志路径、失败提醒方式和部署命令。
+- 将实际命令补进 `DEPLOY.md`。
+- 保持 OpenClaw 日常任务只改允许的数据文件。
+
+## Next
+
+### 视觉确认 Last-30 首页模块
+
+- 在浏览器里检查 Last-30 模块的位置、密度和移动端表现。
+- 如果 Owner 觉得信息太重，调整显示数量或层级。
+- 目标是让它辅助 Home，而不是压过今日状态和当前主线。
+
+### 补充访问控制和隐私策略
+
+- 选择 v1 的保护方式：Basic Auth、VPN、IP 限制、反代鉴权或其他方式。
+- 明确 HTTPS / 域名 / 反代配置。
+- 更新 `DEPLOY.md`。
+
+### 补充自动化运行日志
+
+- 定义 OpenClaw 或自动更新脚本的运行日志格式。
+- 至少记录：运行时间、更新文件、是否成功、错误摘要。
+- 让 Home 的系统状态能反映最近一次自动更新。
+
+## Later
+
+### 桌面伴随入口
+
+- macOS：顶部状态栏 app，点击后出现下拉个人面板。
+- Windows：桌面壁纸式个人看板，作为平静常驻的状态层。
+- 两个平台尽量复用 `data/*.json` 的同一套数据契约。
+
+### 公开 MaxNow 主页或灵感宇宙
+
+- 仅在私人工作站稳定后再考虑。
+- 不要让公开表达影响 `dash.maxnow.cn` 的私人状态工作站定位。
+
+## Blocked
+
+### 服务器定时任务
+
+- 阻塞原因：需要 Owner 提供服务器访问方式、目标路径和运行环境。
+- 可先在本地准备脚本和部署文档，真正落地时再连接服务器。
+
+### Token 使用自动化
+
+- 阻塞原因：需要明确 Token 数据来源、读取方式和权限边界。
+- 当前先用静态数据占位，不把 Token 页面做成不可靠的实时系统。
+
+## Done
+
+### 已完成的基础能力
+
+- 建立 `AGENTS.md`，固定分支、语言、文件边界和 OpenClaw 边界。
+- 建立 `CONTEXT.md`，保存代理接力用的项目上下文地图。
+- 建立 `IDEAS.md`，记录未来想法和桌面伴随入口。
+- 建立 `UPDATE_LOG.md`，记录重要项目更新。
+- 建立 `openclaw/maxnow-dashboard/SKILL.md`，约束 dashboard / ai-news 数据维护。
+- 建立 `openclaw/last-30/SKILL.md`，约束 Last-30 滚动记忆维护。
+- 建立 `data/last-30.*`，承载今日、本周、近 30 天上下文。
+- 在 Home 页面接入 Last-30 模块。
+- 中文化 `README.md` 和 `DEPLOY.md`。
+- 新增 `scripts/check.py`，用于本地一致性校验。

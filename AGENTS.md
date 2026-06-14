@@ -12,6 +12,7 @@ Read this file before making code changes in this repository.
 - If there are unrelated user changes, preserve them and work around them.
 - Read `SPEC.md` before changing product behavior.
 - Read `CONTEXT.md` when the task depends on project direction, context strategy, automation scope, or next-step planning.
+- Read `ROADMAP.md` when the task asks what remains, what to do next, or how to sequence work.
 - For OpenClaw behavior, read `openclaw/maxnow-dashboard/SKILL.md`.
 
 ## Project Shape
@@ -35,6 +36,7 @@ README.md
 DEPLOY.md
 scripts/check.py
 CONTEXT.md
+ROADMAP.md
 IDEAS.md
 UPDATE_LOG.md
 openclaw/maxnow-dashboard/SKILL.md
@@ -70,6 +72,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - AI daily picks are secondary external inputs, capped at 3 visible items.
 - Keep the interface calm, compact, and operational.
 - Record new product ideas in `IDEAS.md`.
+- Record executable next steps and phase planning in `ROADMAP.md`.
 - Record intentional project updates in `UPDATE_LOG.md`.
 - Keep the context map in `CONTEXT.md` current when the project structure or context strategy changes.
 - Treat `CONTEXT.md` primarily as agent handoff context, not as an owner-facing report.

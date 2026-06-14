@@ -42,10 +42,11 @@ MaxNow 由四类文件组成：
 
 5. 产品记忆文档
    - `CONTEXT.md`
+   - `ROADMAP.md`
    - `IDEAS.md`
    - `UPDATE_LOG.md`
    - 由 Codex 或 Owner 维护。
-   - 用来跨会话保存上下文地图、未来想法和项目更新记录。
+   - 用来跨会话保存上下文地图、路线图、未来想法和项目更新记录。
 
 ## 导航
 
@@ -132,6 +133,7 @@ README.md
 DEPLOY.md
 scripts/check.py
 CONTEXT.md
+ROADMAP.md
 IDEAS.md
 UPDATE_LOG.md
 ```
@@ -163,6 +165,8 @@ OpenClaw 记录事实并起草摘要。最终判断由 Owner 保留。
 ## 产品记忆
 
 `CONTEXT.md` 用来说明项目上下文如何分层、哪些文件保存什么、谁负责更新、下一步缺口是什么。
+
+`ROADMAP.md` 用来记录当前待做、下一步、长期方向、阻塞项和已完成的阶段成果。
 
 `IDEAS.md` 用来记录不能丢的产品想法，包括未来入口、暂时搁置的概念、Owner 原始想法和待研究问题。
 

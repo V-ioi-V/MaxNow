@@ -11,6 +11,16 @@
 
 ## 2026-06-14
 
+### 新增路线图文档
+
+- 新增 `ROADMAP.md`，用 Now / Next / Later / Blocked / Done 维护当前可执行路线。
+- 将 `ROADMAP.md` 纳入 `AGENTS.md`、`CONTEXT.md`、`SPEC.md` 和 `README.md` 的文档边界。
+- 明确 `CONTEXT.md` 负责代理接力上下文，`ROADMAP.md` 负责待做事项和阶段路线。
+
+原因：
+
+- Owner 询问当前 md 是否都有用，需要把“待做事项”从聊天里固定成可持续维护的文档。
+
 ### 整理说明文档和本地校验
 
 - 中文化并重写 `README.md`。
