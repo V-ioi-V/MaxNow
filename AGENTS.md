@@ -6,7 +6,8 @@ Read this file before making code changes in this repository.
 
 - Run `git status --short` before editing.
 - Do not make code or document changes directly on `main`.
-- Before editing, create or switch to a short-lived branch from the latest `main`, using the `codex/` prefix unless the owner asks for another branch name.
+- Before editing, create or switch to a short-lived branch from the latest `main`.
+- Use `feature/<short-demand-name>` for new features and `bugfix/<short-bug-name>` for fixes, unless the owner asks for another branch name.
 - After the work is checked, merge the branch back into `main` or ask the owner before merging if the change is risky.
 - If there are unrelated user changes, preserve them and work around them.
 - Read `SPEC.md` before changing product behavior.
@@ -36,15 +37,18 @@ CONTEXT.md
 IDEAS.md
 UPDATE_LOG.md
 openclaw/maxnow-dashboard/SKILL.md
+openclaw/last-30/SKILL.md
 ```
 
-OpenClaw routine jobs may edit only:
+OpenClaw routine jobs may edit only data files allowed by the active skill:
 
 ```text
 data/dashboard.json
 data/dashboard.js
 data/ai-news.json
 data/ai-news.js
+data/last-30.json
+data/last-30.js
 ```
 
 OpenClaw routine jobs must not edit page code or documentation.
@@ -53,6 +57,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 
 - `data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, and Token usage.
 - `data/ai-news.json` owns AI external inputs only.
+- `data/last-30.json` owns rolling daily, weekly, and 30-day context.
 - Regenerate each `.js` wrapper from its matching JSON file.
 - Validate JSON before finishing data changes.
 

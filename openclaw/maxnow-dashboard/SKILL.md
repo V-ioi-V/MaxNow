@@ -32,6 +32,8 @@ DEPLOY.md
 CONTEXT.md
 IDEAS.md
 UPDATE_LOG.md
+data/last-30.json
+data/last-30.js
 ```
 
 If a page structure or style change is needed, stop and report it. Do not modify page code.

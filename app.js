@@ -1,11 +1,14 @@
 const DATA_URL = "./data/dashboard.json";
 const AI_NEWS_URL = "./data/ai-news.json";
+const LAST30_URL = "./data/last-30.json";
 
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
 const fallbackAiNews = window.MAXNOW_AI_NEWS_DATA || { items: [] };
+const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
 
 let dashboardData = fallbackData;
 let aiNewsData = fallbackAiNews;
+let last30Data = fallbackLast30;
 let activeTokenRange = "7d";
 
 const qs = (selector) => document.querySelector(selector);
@@ -37,6 +40,9 @@ const copy = {
   focus: "\u4e3b\u7ebf",
   updatedAtShort: "\u66f4\u65b0",
   statusSnapshot: "\u72b6\u6001\u5feb\u7167",
+  todayEvents: "\u4eca\u65e5\u5927\u4e8b",
+  weekEvents: "\u672c\u5468\u5927\u4e8b",
+  last30Mainlines: "\u8fd1 30 \u5929\u4e3b\u7ebf",
 };
 
 function formatToken(value) {
@@ -118,6 +124,26 @@ function createAiNewsItem(item) {
   return article;
 }
 
+function createLast30Item(item) {
+  const article = document.createElement("article");
+  article.className = "last30-item";
+  article.dataset.tone = getTone(item.status || item.confidence || item.source || item.title);
+  article.innerHTML = `
+    <div class="last30-item-head">
+      <p class="item-title"></p>
+      <span class="item-tag"></span>
+    </div>
+    <p class="item-copy"></p>
+  `;
+  article.querySelector(".item-title").textContent = item.title || copy.unnamedInfo;
+  article.querySelector(".item-copy").textContent = item.summary || item.note || "";
+  article.querySelector(".item-tag").textContent = item.needsOwnerConfirm
+    ? "\u5f85\u786e\u8ba4"
+    : item.date || item.status || item.source || copy.item;
+  appendLink(article, item.url);
+  return article;
+}
+
 function appendLink(container, url) {
   if (!url) return;
   const link = document.createElement("a");
@@ -180,6 +206,24 @@ function getTokenRange(key = activeTokenRange) {
   return ranges.find((range) => range.key === key) || ranges[0] || {};
 }
 
+function getLast30Group(key) {
+  if (key === "mainlines") return last30Data.last30 || {};
+  return last30Data[key] || {};
+}
+
+function getLast30Items(key) {
+  const group = getLast30Group(key);
+  if (key === "mainlines") return group.mainlines || group.items || [];
+  return group.items || [];
+}
+
+function renderLast30Column(key, titleSelector, summarySelector, listSelector, fallbackTitle) {
+  const group = getLast30Group(key);
+  setText(titleSelector, group.title || fallbackTitle);
+  setText(summarySelector, group.summary || "");
+  clearAndFill(qs(listSelector), createLast30Item, getLast30Items(key).slice(0, 3));
+}
+
 function renderHome() {
   const mainlines = dashboardData.mainlines || dashboardData.projects || dashboardData.tasks || [];
   const actions = dashboardData.actions || dashboardData.tasks || [];
@@ -201,6 +245,7 @@ function renderHome() {
   setText("#feed-source", dashboardData.feedSource || "OpenClaw");
   setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
   setText("#ai-news-source", aiNewsData.sourceSummary || "OpenClaw AI Daily");
+  setText("#last30-source", last30Data.sourceSummary || last30Data.updatedAt || copy.syncWaiting);
 
   setText("#metric-mainlines", String(mainlines.length));
   setText("#metric-mainlines-note", `${mainlines.length} ${copy.taskCount}`);
@@ -221,6 +266,15 @@ function renderHome() {
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   clearAndFill(qs("#system-list"), createSystemItem, dashboardData.system || []);
+  renderLast30Column("today", "#last30-today-title", "#last30-today-summary", "#last30-today-list", copy.todayEvents);
+  renderLast30Column("week", "#last30-week-title", "#last30-week-summary", "#last30-week-list", copy.weekEvents);
+  renderLast30Column(
+    "mainlines",
+    "#last30-mainline-title",
+    "#last30-mainline-summary",
+    "#last30-mainline-list",
+    copy.last30Mainlines,
+  );
 }
 
 function createRangeButton(range) {
@@ -308,13 +362,15 @@ async function readJson(url, fallback) {
 }
 
 async function loadData() {
-  const [dashboard, aiNews] = await Promise.all([
+  const [dashboard, aiNews, last30] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
+    readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
   ]);
 
   dashboardData = dashboard;
   aiNewsData = aiNews;
+  last30Data = last30;
   renderAll();
 }
 

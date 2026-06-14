@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=14" />
+    <link rel="stylesheet" href="./styles.css?v=15" />
   </head>
   <body>
     <div class="app-shell">
@@ -130,6 +130,42 @@
                   </div>
                 </header>
                 <div class="task-list" id="action-list"></div>
+              </article>
+
+              <article class="panel last30-panel" id="last-30" aria-label="近期大事">
+                <header class="panel-head last30-head">
+                  <div>
+                    <p class="eyebrow">Last-30</p>
+                    <h2>近期大事</h2>
+                  </div>
+                  <span class="status-pill" id="last30-source">等待同步</span>
+                </header>
+                <div class="last30-grid">
+                  <section class="last30-column" aria-label="今日大事">
+                    <div class="last30-column-head">
+                      <span>Today</span>
+                      <strong id="last30-today-title">今日大事</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-today-summary"></p>
+                    <div class="last30-list" id="last30-today-list"></div>
+                  </section>
+                  <section class="last30-column" aria-label="本周大事">
+                    <div class="last30-column-head">
+                      <span>Week</span>
+                      <strong id="last30-week-title">本周大事</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-week-summary"></p>
+                    <div class="last30-list" id="last30-week-list"></div>
+                  </section>
+                  <section class="last30-column" aria-label="近 30 天主线">
+                    <div class="last30-column-head">
+                      <span>30 Days</span>
+                      <strong id="last30-mainline-title">近 30 天主线</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-mainline-summary"></p>
+                    <div class="last30-list" id="last30-mainline-list"></div>
+                  </section>
+                </div>
               </article>
 
               <article class="panel" id="journal">
@@ -272,6 +308,7 @@
 
     <script src="./data/dashboard.js?v=5"></script>
     <script src="./data/ai-news.js?v=1"></script>
-    <script src="./app.js?v=13"></script>
+    <script src="./data/last-30.js?v=1"></script>
+    <script src="./app.js?v=14"></script>
   </body>
 </html>

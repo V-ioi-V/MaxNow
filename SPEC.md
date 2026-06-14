@@ -26,10 +26,13 @@ MaxNow 由四类文件组成：
    - `data/dashboard.js`
    - `data/ai-news.json`
    - `data/ai-news.js`
+   - `data/last-30.json`
+   - `data/last-30.js`
    - 这是页面和自动化之间的数据契约。
 
 3. OpenClaw skill
    - `openclaw/maxnow-dashboard/SKILL.md`
+   - `openclaw/last-30/SKILL.md`
    - 告诉 OpenClaw：MaxNow 是什么、可以更新哪些数据文件、哪些文件不能碰、如何校验输出。
 
 4. 产品记忆文档
@@ -109,6 +112,8 @@ data/dashboard.json
 data/dashboard.js
 data/ai-news.json
 data/ai-news.js
+data/last-30.json
+data/last-30.js
 ```
 
 OpenClaw 日常维护不能更新这些文件：
@@ -129,11 +134,14 @@ UPDATE_LOG.md
 
 `data/ai-news.json` 只负责外部 AI 输入。
 
+`data/last-30.json` 负责今日大事、本周大事、近 30 天主线、重要决定和等待项。
+
 每个 `.js` wrapper 必须从对应 JSON 文件生成，并把同一个对象暴露给浏览器：
 
 ```text
 window.MAXNOW_DASHBOARD_DATA
 window.MAXNOW_AI_NEWS_DATA
+window.MAXNOW_LAST30_DATA
 ```
 
 ## 数据来源策略
@@ -160,7 +168,7 @@ OpenClaw 记录事实并起草摘要。最终判断由 Owner 保留。
 
 MaxNow 需要一层滚动记忆，用来保存今天、本周和最近 30 天的关键上下文。
 
-建议后续新增：
+已新增：
 
 ```text
 data/last-30.json

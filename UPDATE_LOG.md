@@ -14,12 +14,23 @@
 ### 固定分支工作流
 
 - 新增规则：不要直接在 `main` 上修改代码或文档。
-- 每次改动前先从最新 `main` 拉一个短期工作分支，默认使用 `codex/` 前缀。
+- 每次改动前先从最新 `main` 拉一个短期工作分支。
+- 新功能分支使用 `feature/<short-demand-name>`，修复分支使用 `bugfix/<short-bug-name>`，除非 Owner 指定别的名字。
 - 改完检查后再合回 `main`；如果改动有风险，先询问 Owner。
 
 原因：
 
 - Owner 明确要求先从主分支拉分支修改，避免直接改坏主分支。
+
+### 启动 Last-30 首页展示分支
+
+- 创建 `feature/last-30-home-context` 分支，继续推进 Last-30 首页展示。
+- 将 `data/last-30.*` 和 `openclaw/last-30/SKILL.md` 纳入项目文件边界和数据契约。
+- 更新 `CONTEXT.md`，标记 Last-30 数据文件和 skill 已建立，下一步重点转为首页展示和服务器自动更新。
+
+原因：
+
+- Owner 要求直接开始做，并要求后续分支名按需求语义命名。
 
 ### 补充项目上下文地图
 
