@@ -1,0 +1,85 @@
+import json
+import re
+import sys
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+DATASETS = [
+    ("dashboard", "data/dashboard.json", "data/dashboard.js", "MAXNOW_DASHBOARD_DATA"),
+    ("ai-news", "data/ai-news.json", "data/ai-news.js", "MAXNOW_AI_NEWS_DATA"),
+    ("last-30", "data/last-30.json", "data/last-30.js", "MAXNOW_LAST30_DATA"),
+]
+
+
+def load_json(path):
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def load_wrapper(path, global_name):
+    text = path.read_text(encoding="utf-8")
+    pattern = r"window\." + re.escape(global_name) + r"\s*=\s*(\{.*\})\s*;\s*$"
+    match = re.match(pattern, text, re.S)
+    if not match:
+        raise ValueError(f"{path} does not assign window.{global_name}")
+    return json.loads(match.group(1))
+
+
+def check_dataset(name, json_rel, js_rel, global_name):
+    json_path = ROOT / json_rel
+    js_path = ROOT / js_rel
+    source = load_json(json_path)
+    wrapper = load_wrapper(js_path, global_name)
+    if source != wrapper:
+        raise ValueError(f"{name}: {json_rel} and {js_rel} differ")
+    return f"{name}: json and wrapper match"
+
+
+def check_required_files():
+    required = [
+        "index.html",
+        "styles.css",
+        "app.js",
+        "AGENTS.md",
+        "CONTEXT.md",
+        "SPEC.md",
+        "IDEAS.md",
+        "UPDATE_LOG.md",
+        "openclaw/maxnow-dashboard/SKILL.md",
+        "openclaw/last-30/SKILL.md",
+    ]
+    missing = [item for item in required if not (ROOT / item).exists()]
+    if missing:
+        raise FileNotFoundError("missing required files: " + ", ".join(missing))
+    return "required files exist"
+
+
+def check_local_server(url):
+    try:
+        with urllib.request.urlopen(url, timeout=2) as response:
+            if response.status != 200:
+                raise RuntimeError(f"{url} returned HTTP {response.status}")
+        return f"local server ok: {url}"
+    except urllib.error.URLError as error:
+        return f"local server skipped: {url} is not reachable ({error.reason})"
+
+
+def main():
+    checks = [check_required_files()]
+    checks.extend(check_dataset(*dataset) for dataset in DATASETS)
+    checks.append(check_local_server("http://127.0.0.1:4173/"))
+
+    for line in checks:
+        print("[ok]", line)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as error:
+        print("[fail]", error, file=sys.stderr)
+        sys.exit(1)

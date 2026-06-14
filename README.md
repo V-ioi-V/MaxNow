@@ -1,60 +1,113 @@
-# MaxNow Dashboard
+# MaxNow
 
-一个部署在子域名上的个人看板。页面本身是纯静态文件，日常变化的数据由 OpenClaw 写入 `data/dashboard.json`。
+MaxNow 是部署在 `dash.maxnow.cn` 的私人状态工作站。它不是公开主页、新闻站，也不是通用仪表盘；它负责把 Owner 的今日状态、当前主线、今日推进、近期大事、系统状态和 Token 使用情况放在一个安静、紧凑的页面里。
+
+## 当前结构
+
+```text
+index.html
+styles.css
+app.js
+data/
+  dashboard.json
+  dashboard.js
+  ai-news.json
+  ai-news.js
+  last-30.json
+  last-30.js
+openclaw/
+  maxnow-dashboard/SKILL.md
+  last-30/SKILL.md
+scripts/
+  check.py
+```
 
 ## 本地预览
+
+在仓库根目录运行：
 
 ```powershell
 python -m http.server 4173
 ```
 
-打开：
+然后打开：
 
 ```text
-http://127.0.0.1:4173
+http://127.0.0.1:4173/
 ```
 
-## 自动化思路
+Home 页面读取：
 
-代码和数据分开维护：
+- `data/dashboard.json`
+- `data/ai-news.json`
+- `data/last-30.json`
 
-```text
-GitHub 仓库
-  index.html
-  styles.css
-  app.js
-  DEPLOY.md
-  data/dashboard.json
+对应的 `.js` wrapper 是静态兜底，必须和 JSON 保持一致。
 
-服务器
-  /var/www/maxnow-dashboard
-    页面文件
-    data/dashboard.json
+## 本地校验
+
+运行：
+
+```powershell
+python scripts/check.py
 ```
 
-推荐流程：
+校验内容：
 
-1. 你在本地修改页面代码。
-2. 用 Git 推到 GitHub。
-3. 服务器从 GitHub 拉取最新代码。
-4. OpenClaw 每天整理任务、信息流、项目和系统状态。
-5. OpenClaw 覆盖服务器上的 `data/dashboard.json`。
-6. 访问 `dash.maxnow.cn` 时，页面自动读取最新 JSON。
+- 必要文件是否存在。
+- `dashboard` / `ai-news` / `last-30` 的 JSON 是否能解析。
+- 每个 `.js` wrapper 是否和对应 JSON 内容一致。
+- 如果本地服务正在运行，检查 `http://127.0.0.1:4173/` 是否可访问。
 
-## OpenClaw 数据入口
+## 数据分工
 
-OpenClaw 只需要更新这个文件：
+`data/dashboard.json`：
 
-```text
-data/dashboard.json
-```
+- 今日状态
+- 当前主线
+- 今日推进
+- 日常记录
+- 时间点
+- 系统状态
+- Token 使用
 
-建议在服务器上限制 OpenClaw 的写权限，只允许它写入 `data/` 目录，而不是整个站点目录。
+`data/ai-news.json`：
 
-## 推荐子域名
+- 外部 AI / 工具输入
+- 最多在首页展示 3 条
+- 只保留和 Owner、项目、工具、模型或成本有关的信号
 
-```text
-dash.maxnow.cn
-```
+`data/last-30.json`：
 
-主域名 `maxnow.cn` 可以先保留给未来公开主页。
+- 今日大事
+- 本周大事
+- 近 30 天主线
+- 重要决定
+- 等待项 / 待 Owner 确认判断
+
+## OpenClaw 分工
+
+OpenClaw 日常任务只维护数据文件，不维护页面代码和文档。
+
+- `openclaw/maxnow-dashboard/SKILL.md`：维护 `dashboard.*` 和 `ai-news.*`。
+- `openclaw/last-30/SKILL.md`：维护 `last-30.*`。
+
+如果页面结构、产品方向或上下文规则需要变化，由 Codex 或 Owner 在功能分支里修改。
+
+## 分支规则
+
+不要直接在 `main` 上开发。
+
+- 新功能：`feature/<short-demand-name>`
+- 修复：`bugfix/<short-bug-name>`
+
+改完检查后再合回 `main`。有风险的改动先让 Owner 确认。
+
+## 相关文档
+
+- `AGENTS.md`：代理执行规则。
+- `CONTEXT.md`：给 Codex / 代理接力用的项目上下文。
+- `SPEC.md`：已确定的产品规格。
+- `IDEAS.md`：尚未确定的想法。
+- `UPDATE_LOG.md`：重要更新记录。
+- `DEPLOY.md`：部署说明。

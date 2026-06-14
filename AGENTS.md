@@ -33,6 +33,7 @@ app.js
 SPEC.md
 README.md
 DEPLOY.md
+scripts/check.py
 CONTEXT.md
 IDEAS.md
 UPDATE_LOG.md
@@ -60,6 +61,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - `data/last-30.json` owns rolling daily, weekly, and 30-day context.
 - Regenerate each `.js` wrapper from its matching JSON file.
 - Validate JSON before finishing data changes.
+- Use `python scripts/check.py` for local consistency checks when data wrappers or docs change.
 
 ## Product Direction
 

@@ -35,7 +35,12 @@ MaxNow 由四类文件组成：
    - `openclaw/last-30/SKILL.md`
    - 告诉 OpenClaw：MaxNow 是什么、可以更新哪些数据文件、哪些文件不能碰、如何校验输出。
 
-4. 产品记忆文档
+4. 校验脚本
+   - `scripts/check.py`
+   - 由 Codex 或 Owner 维护。
+   - 用来检查必要文件、JSON 合法性、wrapper 一致性和本地预览可访问性。
+
+5. 产品记忆文档
    - `CONTEXT.md`
    - `IDEAS.md`
    - `UPDATE_LOG.md`
@@ -125,6 +130,7 @@ app.js
 SPEC.md
 README.md
 DEPLOY.md
+scripts/check.py
 CONTEXT.md
 IDEAS.md
 UPDATE_LOG.md
