@@ -13,6 +13,7 @@ Read this file before making code changes in this repository.
 - Read `SPEC.md` before changing product behavior.
 - Read `CONTEXT.md` when the task depends on project direction, context strategy, automation scope, or next-step planning.
 - Read `ROADMAP.md` when the task asks what remains, what to do next, or how to sequence work.
+- Read `SERVER_RUNBOOK.md` before operating the MaxNow server over SSH or changing nginx/server deployment state.
 - For OpenClaw behavior, read `openclaw/maxnow-dashboard/SKILL.md`.
 
 ## Project Shape
@@ -34,6 +35,7 @@ app.js
 SPEC.md
 README.md
 DEPLOY.md
+SERVER_RUNBOOK.md
 scripts/check.py
 CONTEXT.md
 ROADMAP.md

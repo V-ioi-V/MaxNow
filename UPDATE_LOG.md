@@ -9,6 +9,19 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-06-16
+
+### 部署前端静态站到服务器
+
+- 在服务器安装 nginx，并将 `main` 分支部署到 `/var/www/maxnow-dashboard`。
+- 配置 `dash.maxnow.cn` 的 nginx HTTP 静态站点，当前访问 `http://dash.maxnow.cn` 返回 MaxNow 页面。
+- 新增 `SERVER_RUNBOOK.md`，记录 SSH 连接方式、部署命令、更新命令和常见排障。
+- 更新 `AGENTS.md`、`CONTEXT.md` 和 `DEPLOY.md`，把 `SERVER_RUNBOOK.md` 纳入服务器操作上下文。
+
+原因：
+
+- Owner 要求先部署前端页面，并记录 Codex 是如何在服务器上执行部署的。
+
 ## 2026-06-15
 
 ### 约束 MaxNow 功能待办的维护位置

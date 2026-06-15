@@ -36,6 +36,12 @@ MaxNow v1 是纯静态站点：
     last-30.js
 ```
 
+当前服务器操作细节、SSH 命令、nginx 配置和排障步骤见：
+
+```text
+SERVER_RUNBOOK.md
+```
+
 ## 更新流程
 
 推荐流程：
