@@ -9,6 +9,18 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-06-15
+
+### 约束 MaxNow 功能待办的维护位置
+
+- 更新 `AGENTS.md`，明确当 Owner 询问 MaxNow 项目待办、功能规划或下一步实现内容时，不要修改 `data/*.json` 或 `data/*.js`。
+- 更新 `ROADMAP.md`，将当前 MaxNow 功能待办整理为：服务器自动更新链路、数据更新工具、Home 真实项目状态、Token 真数据、访问控制、运行日志和 Last-30 视觉确认。
+- 更新 `CONTEXT.md`，强调 MaxNow 功能待办以 `ROADMAP.md` 为准，运行数据仍归 `data/*.json`。
+
+原因：
+
+- Owner 明确指出“MaxNow 待办”指的是要给 MaxNow 实现哪些功能，不是要改首页写死展示数据。
+
 ## 2026-06-14
 
 ### 新增路线图文档

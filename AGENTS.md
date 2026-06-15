@@ -61,6 +61,8 @@ OpenClaw routine jobs must not edit page code or documentation.
 - `data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, and Token usage.
 - `data/ai-news.json` owns AI external inputs only.
 - `data/last-30.json` owns rolling daily, weekly, and 30-day context.
+- Do not update `data/*.json` or `data/*.js` when the owner asks for MaxNow project todos, feature planning, roadmap updates, or "what should MaxNow build next"; update `ROADMAP.md`, `IDEAS.md`, `CONTEXT.md`, or `UPDATE_LOG.md` instead.
+- Only change data files when the owner explicitly asks to update the displayed dashboard/status data, or when running an approved data maintenance task.
 - Regenerate each `.js` wrapper from its matching JSON file.
 - Validate JSON before finishing data changes.
 - Use `python scripts/check.py` for local consistency checks when data wrappers or docs change.
