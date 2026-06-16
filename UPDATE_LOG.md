@@ -120,3 +120,16 @@
 原因：
 
 - Owner 不希望新的 MaxNow 想法或项目更新在不同会话之间丢失。
+
+## 2026-06-16
+
+### 启用 HTTPS 访问
+
+- 使用 Let's Encrypt certbot 为 `dash.maxnow.cn` 签发 SSL 证书。
+- 更新 nginx 配置，启用 HTTPS 访问。
+- 设置 HTTP 到 HTTPS 的 301 跳转。
+- certbot 已自动配置证书自动续期。
+
+原因：
+
+- `dash.maxnow.cn` 需要通过 HTTPS 提供访问，并保留 HTTP 请求的稳定跳转路径。
