@@ -11,6 +11,18 @@
 
 ## 2026-06-16
 
+### 合并 personal-wiki 中的 MaxNow 待办
+
+- 更新 `ROADMAP.md`，把 personal-wiki 中 7 个开放待办合并进 MaxNow 仓库路线图。
+- 将 personal-wiki 近期代办入口、资源监控、OpenClaw / personal-wiki 同步链路列为 MaxNow 侧可执行待办。
+- 将 API key 额度、豆奶流量到期、Token 使用量合并为资源监控模块的子项，避免重复拆任务。
+- 将个人博客模块拆分为：内容筛选和隐私判断留在 personal-wiki，模块开发和状态入口归 MaxNow。
+- 把入口位置、待办数据格式、编辑权限、OpenClaw 写入方式、博客公开范围和旧文筛选策略放入待确认。
+
+原因：
+
+- Owner 希望把偏产品开发的 MaxNow 待办迁到本仓库，personal-wiki 只保留内容筛选、长期方向、数据归属和待确认策略。
+
 ### 部署前端静态站到服务器
 
 - 在服务器安装 nginx，并将 `main` 分支部署到 `/var/www/maxnow-dashboard`。

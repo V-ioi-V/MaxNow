@@ -19,6 +19,14 @@
 
 ## Now
 
+### 增加 personal-wiki 近期代办入口
+
+- 来源 ID：`maxnow-todo-entry`
+- 建议分支：`feature/wiki-todo-entry`
+- 在 Home 中增加一个紧凑入口，用于查看 personal-wiki 里的近期代办事件。
+- 保持 MaxNow 的核心仍是私人状态工作站；入口只提供项目待办的可见性，不把 Home 变成完整 todo app。
+- 先做只读展示和跳转入口，编辑 / 标记完成能力等待数据格式和权限边界确认。
+
 ### 接服务器自动更新链路
 
 - 建议分支：`feature/server-auto-update`
@@ -26,6 +34,17 @@
 - 明确服务器路径、运行用户、日志路径、失败提醒方式和部署命令。
 - 将实际命令补进 `DEPLOY.md`。
 - 保持 OpenClaw 日常任务只改允许的数据文件。
+
+### 增加资源监控能力
+
+- 来源 ID：`maxnow-resource-monitoring`
+- 建议分支：`feature/resource-monitoring`
+- 统一设计资源监控模块，先明确哪些指标进入 Home 摘要，哪些进入详情视图或 Token 页面。
+- 合并子项：
+  - `maxnow-api-key-quota`：补充 API key 剩余额度查询。
+  - `maxnow-dounai-traffic-expiry`：补充豆奶剩余流量与到期时间查询。
+  - `maxnow-token-usage`：补充已使用 token 数量查询，并与现有 Token 真实数据任务合并。
+- 先定义数据来源、权限边界、刷新频率和失败展示方式，再接入页面。
 
 ### 做本地/服务器数据更新工具
 
@@ -44,9 +63,19 @@
 
 ### 补充 Token 使用页真实数据
 
+- 来源 ID：`maxnow-token-usage`
 - 明确 Token 数据来源、读取方式、权限边界和刷新频率。
 - 将当前占位数据替换成可追溯的真实数据或明确标记为手动快照。
 - 保留 1h / 24h / 7d / 30d、模型占比、趋势和异常峰值展示。
+- 这项是资源监控的一部分；实现时避免和资源监控模块重复建两套数据链路。
+
+### 设计手机端 OpenClaw 更新 personal-wiki 链路
+
+- 来源 ID：`maxnow-openclaw-sync`
+- 建议分支：`feature/wiki-openclaw-sync`
+- 方案文档和数据归属策略留在 personal-wiki；MaxNow 仓库负责实现与展示相关的接口、入口和服务器侧操作说明。
+- 明确手机端如何触发 OpenClaw 记录 / 更新待办，以及 OpenClaw 如何受控操作同服务器上的 MaxNow。
+- 先形成最小闭环：记录待办、同步到 personal-wiki、MaxNow 读取或跳转查看。
 
 ### 补充访问控制和隐私策略
 
@@ -70,8 +99,10 @@
 
 ### 个人博客联动
 
+- 来源 ID：`maxnow-blog-module`
 - 个人博客属于未来公开表达方向，不并入 MaxNow v1 的私人状态工作站范围。
-- 后续可以考虑只在 MaxNow 中显示博客相关的个人进度或发布状态，而不是把博客做进 MaxNow。
+- 拆分归属：旧博客 211 篇文章的内容筛选、清理和隐私判断留在 personal-wiki；博客模块开发、发布状态入口和必要的页面能力放在 MaxNow。
+- 后续可以考虑只在 MaxNow 中显示博客迁移 / 发布进度，而不是把完整博客阅读体验塞进私人 Home。
 
 ### 桌面伴随入口
 
@@ -85,6 +116,25 @@
 - 不要让公开表达影响 `dash.maxnow.cn` 的私人状态工作站定位。
 
 ## Blocked
+
+### personal-wiki 待办接入待确认
+
+- 入口在 MaxNow 页面中的具体位置。
+- MaxNow 读取 personal-wiki 待办的数据格式。
+- 是否只读展示，还是允许从 MaxNow 进入后编辑 / 标记完成。
+- MaxNow 仓库内开发待办采用 issue、Markdown、JSON 还是其他机器可读格式，并如何与 personal-wiki 待办在界面上区分。
+
+### personal-wiki / OpenClaw 同步策略待确认
+
+- OpenClaw 更新 personal-wiki 时采用直接 commit、PR，还是其他受控写入方式。
+- 手机端触发更新时的权限、回滚和失败提醒方式。
+- 同服务器上的 MaxNow 被 OpenClaw 操作时，哪些动作允许自动执行，哪些必须 Owner 确认。
+
+### 个人博客模块待确认
+
+- 个人博客面向自己、公开访客，还是两者兼有。
+- 博客读取 personal-wiki 的哪些知识页面，以及是否需要发布 / 隐私筛选机制。
+- 旧博客 211 篇文章中，哪些适合公开发布、哪些只保留归档、哪些需要拆成长期 wiki 知识页。
 
 ### 服务器定时任务
 
