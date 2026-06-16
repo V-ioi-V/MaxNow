@@ -11,6 +11,15 @@
 
 ## 2026-06-16
 
+### 明确“合进去吧”的 Git 语义
+
+- 更新 `AGENTS.md`，记录 Owner 说“没问题了，合进去吧”或类似表达时的固定流程。
+- 该表达表示：把已完成工作合入远端 `origin/main`，然后切回本地 `main` 并执行 `git pull`，让本地 `main` 与远端保持一致。
+
+原因：
+
+- 避免代理误解为只在当前分支、本地 `main` 或其他集成分支上直接操作。
+
 ### 合并 personal-wiki 中的 MaxNow 待办
 
 - 更新 `ROADMAP.md`，把 personal-wiki 中 7 个开放待办合并进 MaxNow 仓库路线图。
