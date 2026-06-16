@@ -12,6 +12,7 @@ DATASETS = [
     ("dashboard", "data/dashboard.json", "data/dashboard.js", "MAXNOW_DASHBOARD_DATA"),
     ("ai-news", "data/ai-news.json", "data/ai-news.js", "MAXNOW_AI_NEWS_DATA"),
     ("last-30", "data/last-30.json", "data/last-30.js", "MAXNOW_LAST30_DATA"),
+    ("wiki-todos", "data/wiki-todos.json", "data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
 ]
 
 
@@ -49,6 +50,7 @@ def check_required_files():
         "SPEC.md",
         "IDEAS.md",
         "UPDATE_LOG.md",
+        "scripts/sync_wiki_todos.py",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
     ]

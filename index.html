@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=15" />
+    <link rel="stylesheet" href="./styles.css?v=16" />
   </head>
   <body>
     <div class="app-shell">
@@ -120,6 +120,27 @@
                   <span class="status-pill" id="automation-summary">&#31561;&#24453;&#25968;&#25454;&#21516;&#27493;</span>
                 </header>
                 <div class="task-list" id="mainline-list"></div>
+              </article>
+
+              <article class="panel wiki-todo-panel" id="wiki-todos">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Personal Wiki</p>
+                    <h2>近期待办</h2>
+                  </div>
+                  <a
+                    class="text-button"
+                    id="wiki-todo-source"
+                    href="https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json"
+                    target="_blank"
+                    rel="noreferrer"
+                  >查看</a>
+                </header>
+                <div class="wiki-todo-summary">
+                  <span class="status-pill" id="wiki-todo-status">等待读取</span>
+                  <small id="wiki-todo-updated">todo.json</small>
+                </div>
+                <div class="wiki-todo-list" id="wiki-todo-list"></div>
               </article>
 
               <article class="panel actions-panel" id="actions">
@@ -309,6 +330,7 @@
     <script src="./data/dashboard.js?v=5"></script>
     <script src="./data/ai-news.js?v=1"></script>
     <script src="./data/last-30.js?v=1"></script>
-    <script src="./app.js?v=14"></script>
+    <script src="./data/wiki-todos.js?v=1"></script>
+    <script src="./app.js?v=16"></script>
   </body>
 </html>
