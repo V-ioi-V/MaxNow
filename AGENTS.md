@@ -9,7 +9,7 @@ Read this file before making code changes in this repository.
 - Before editing, create or switch to a short-lived branch from the latest `main`.
 - Use `feature/<short-demand-name>` for new features and `bugfix/<short-bug-name>` for fixes, unless the owner asks for another branch name.
 - After the work is checked, merge the branch back into `main` or ask the owner before merging if the change is risky.
-- When the owner says "没问题了，合进去吧" or similar, interpret it as: merge the completed work into remote `origin/main`, then switch the local checkout to `main` and run `git pull` so local `main` matches the remote.
+- 当 Owner 表达“没问题了，合进去吧”“合码”“合入主分支”等意图时，固定理解为：把已完成工作合入远端 `origin/main`，然后切回本地 `main` 并执行 `git pull`，让本地 `main` 与远端保持一致。
 - If there are unrelated user changes, preserve them and work around them.
 - Read `SPEC.md` before changing product behavior.
 - Read `CONTEXT.md` when the task depends on project direction, context strategy, automation scope, or next-step planning.
