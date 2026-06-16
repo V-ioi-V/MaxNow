@@ -19,19 +19,12 @@
 
 ## Now
 
-### 增加 personal-wiki 近期代办入口
-
-- 来源 ID：`maxnow-todo-entry`
-- 建议分支：`feature/wiki-todo-entry`
-- 在 Home 中增加一个紧凑入口，用于查看 personal-wiki 里的近期代办事件。
-- 保持 MaxNow 的核心仍是私人状态工作站；入口只提供项目待办的可见性，不把 Home 变成完整 todo app。
-- 先做只读展示和跳转入口，编辑 / 标记完成能力等待数据格式和权限边界确认。
-
 ### 接服务器自动更新链路
 
 - 建议分支：`feature/server-auto-update`
 - 决定日常更新由 OpenClaw cron、普通脚本 cron，还是其他执行器触发。
 - 明确服务器路径、运行用户、日志路径、失败提醒方式和部署命令。
+- 在服务器安装并配置 GitHub CLI，让服务器能用受控登录态读取 Owner 的 private personal-wiki 仓库内容。
 - 将实际命令补进 `DEPLOY.md`。
 - 保持 OpenClaw 日常任务只改允许的数据文件。
 
@@ -119,8 +112,6 @@
 
 ### personal-wiki 待办接入待确认
 
-- 入口在 MaxNow 页面中的具体位置。
-- MaxNow 读取 personal-wiki 待办的数据格式。
 - 是否只读展示，还是允许从 MaxNow 进入后编辑 / 标记完成。
 - MaxNow 仓库内开发待办采用 issue、Markdown、JSON 还是其他机器可读格式，并如何与 personal-wiki 待办在界面上区分。
 
@@ -138,7 +129,7 @@
 
 ### 服务器定时任务
 
-- 阻塞原因：需要 Owner 提供服务器访问方式、目标路径和运行环境。
+- 阻塞原因：需要 Owner 提供服务器访问方式、目标路径、运行环境，以及可读取 private personal-wiki 的 GitHub CLI 授权方式。
 - 可先在本地准备脚本和部署文档，真正落地时再连接服务器。
 
 ### Token 使用自动化
@@ -150,6 +141,8 @@
 
 ### 已完成的基础能力
 
+- 在 Home 主内容区增加 personal-wiki 近期待办入口，位于“当前主线”和“今日推进”之间，当前为只读展示 / 跳转，不支持编辑或标记完成。
+- 新增 `scripts/sync_wiki_todos.py` 和 `data/wiki-todos.*`，用 `gh api` 从 private personal-wiki 生成 MaxNow 可静态读取的待办缓存。
 - 建立 `AGENTS.md`，固定分支、语言、文件边界和 OpenClaw 边界。
 - 建立 `CONTEXT.md`，保存代理接力用的项目上下文地图。
 - 建立 `IDEAS.md`，记录未来想法和桌面伴随入口。

@@ -11,6 +11,21 @@
 
 ## 2026-06-16
 
+### 增加 personal-wiki 近期待办入口
+
+- 在 Home 主内容区新增 `Personal Wiki / 近期待办` 紧凑模块，位于“当前主线”和“今日推进”之间。
+- 新增 `scripts/sync_wiki_todos.py`，通过本地或服务器 `gh api` 读取 private personal-wiki `wiki/tasks/todo.json`。
+- 新增 `data/wiki-todos.json` 和 `data/wiki-todos.js`，作为 MaxNow 前端可静态读取的待办缓存。
+- 模块只读展示 `data/wiki-todos.json` 中的未完成待办，并提供跳转入口。
+- 顶部刷新按钮会重新读取本地缓存；前端不直接访问 private GitHub raw，不做自动轮询，也不支持编辑或标记完成。
+- 补充 `SPEC.md`，记录入口位置、只读边界和刷新策略。
+- 更新 `AGENTS.md`、`CONTEXT.md` 和 `ROADMAP.md`，纳入新的数据文件、同步脚本和维护边界。
+- 在 `ROADMAP.md` 记录服务器还需要安装并授权 GitHub CLI，才能自动读取 Owner 的 private personal-wiki 仓库。
+
+原因：
+
+- Owner 希望 MaxNow Home 能看见 personal-wiki 的近期待办，但不要把 Home 做成完整 todo app。
+
 ### 明确“合码 / 合入主分支”的 Git 语义
 
 - 更新 `AGENTS.md`，记录 Owner 表达“没问题了，合进去吧”“合码”“合入主分支”等意图时的固定流程。

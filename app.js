@@ -1,14 +1,20 @@
 const DATA_URL = "./data/dashboard.json";
 const AI_NEWS_URL = "./data/ai-news.json";
 const LAST30_URL = "./data/last-30.json";
+const WIKI_TODO_URL = "./data/wiki-todos.json";
+const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
+const WIKI_TASK_BASE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/";
 
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
 const fallbackAiNews = window.MAXNOW_AI_NEWS_DATA || { items: [] };
 const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
+const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
 
 let dashboardData = fallbackData;
 let aiNewsData = fallbackAiNews;
 let last30Data = fallbackLast30;
+let wikiTodoData = fallbackWikiTodo;
+let wikiTodoError = "";
 let activeTokenRange = "7d";
 
 const qs = (selector) => document.querySelector(selector);
@@ -43,6 +49,10 @@ const copy = {
   todayEvents: "\u4eca\u65e5\u5927\u4e8b",
   weekEvents: "\u672c\u5468\u5927\u4e8b",
   last30Mainlines: "\u8fd1 30 \u5929\u4e3b\u7ebf",
+  wikiTodoReady: "\u5df2\u8bfb\u53d6",
+  wikiTodoFailed: "\u8bfb\u53d6\u5931\u8d25",
+  wikiTodoEmpty: "\u6682\u65e0\u672a\u5b8c\u6210\u5f85\u529e",
+  dueAt: "\u622a\u6b62",
 };
 
 function formatToken(value) {
@@ -144,6 +154,28 @@ function createLast30Item(item) {
   return article;
 }
 
+function createWikiTodoItem(task) {
+  const article = document.createElement("article");
+  article.className = "wiki-todo-item";
+  article.dataset.tone = getTone(task.module || task.status || task.title);
+  article.innerHTML = `
+    <div>
+      <p class="item-title"></p>
+      <p class="item-copy"></p>
+    </div>
+    <span class="item-tag"></span>
+  `;
+
+  const dueText = task.due_at ? `${copy.dueAt} ${task.due_at}` : task.status || copy.item;
+  article.querySelector(".item-title").textContent = task.title || copy.unnamedTask;
+  article.querySelector(".item-copy").textContent = task.module || task.source_file || "";
+  article.querySelector(".item-tag").textContent = dueText;
+
+  const link = getWikiTodoLink(task);
+  if (link) appendLink(article, link);
+  return article;
+}
+
 function appendLink(container, url) {
   if (!url) return;
   const link = document.createElement("a");
@@ -152,6 +184,16 @@ function appendLink(container, url) {
   link.rel = "noreferrer";
   link.textContent = copy.open;
   container.appendChild(link);
+}
+
+function getWikiTodoLink(task) {
+  const firstLink = task.links?.[0]?.href;
+  if (!firstLink) return WIKI_TODO_SOURCE_URL;
+  try {
+    return new URL(firstLink, WIKI_TASK_BASE_URL).href;
+  } catch (error) {
+    return WIKI_TODO_SOURCE_URL;
+  }
 }
 
 function createTimelineItem(item) {
@@ -224,6 +266,35 @@ function renderLast30Column(key, titleSelector, summarySelector, listSelector, f
   clearAndFill(qs(listSelector), createLast30Item, getLast30Items(key).slice(0, 3));
 }
 
+function getOpenWikiTodos() {
+  const tasks = Array.isArray(wikiTodoData.tasks) ? wikiTodoData.tasks : [];
+  return tasks
+    .filter((task) => !task.completed_at && !["done", "completed", "closed"].includes(String(task.status || "").toLowerCase()))
+    .sort((a, b) => {
+      const left = a.due_at || "9999-12-31";
+      const right = b.due_at || "9999-12-31";
+      return left.localeCompare(right);
+    });
+}
+
+function renderWikiTodos() {
+  const openTodos = getOpenWikiTodos();
+  const status = wikiTodoError ? copy.wikiTodoFailed : `${copy.wikiTodoReady} ${openTodos.length}`;
+  const updatedAt = wikiTodoData.synced_at
+    ? `同步 ${wikiTodoData.synced_at}`
+    : wikiTodoData.updated_at
+      ? `更新 ${wikiTodoData.updated_at}`
+      : wikiTodoData.source_file || "todo.json";
+
+  setText("#wiki-todo-status", status);
+  setText("#wiki-todo-updated", wikiTodoError || updatedAt);
+  clearAndFill(qs("#wiki-todo-list"), createWikiTodoItem, openTodos.slice(0, 6));
+
+  if (!openTodos.length && !wikiTodoError) {
+    setText("#wiki-todo-list .empty-state", copy.wikiTodoEmpty);
+  }
+}
+
 function renderHome() {
   const mainlines = dashboardData.mainlines || dashboardData.projects || dashboardData.tasks || [];
   const actions = dashboardData.actions || dashboardData.tasks || [];
@@ -266,6 +337,7 @@ function renderHome() {
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   clearAndFill(qs("#system-list"), createSystemItem, dashboardData.system || []);
+  renderWikiTodos();
   renderLast30Column("today", "#last30-today-title", "#last30-today-summary", "#last30-today-list", copy.todayEvents);
   renderLast30Column("week", "#last30-week-title", "#last30-week-summary", "#last30-week-list", copy.weekEvents);
   renderLast30Column(
@@ -361,16 +433,34 @@ async function readJson(url, fallback) {
   }
 }
 
+async function readWikiTodo() {
+  try {
+    const response = await fetch(`${WIKI_TODO_URL}?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    wikiTodoError = "";
+    return await response.json();
+  } catch (error) {
+    if ((fallbackWikiTodo.tasks || []).length) {
+      wikiTodoError = "";
+      return fallbackWikiTodo;
+    }
+    wikiTodoError = "\u8bf7\u5148\u8fd0\u884c scripts/sync_wiki_todos.py";
+    return fallbackWikiTodo;
+  }
+}
+
 async function loadData() {
-  const [dashboard, aiNews, last30] = await Promise.all([
+  const [dashboard, aiNews, last30, wikiTodo] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
+    readWikiTodo(),
   ]);
 
   dashboardData = dashboard;
   aiNewsData = aiNews;
   last30Data = last30;
+  wikiTodoData = wikiTodo;
   renderAll();
 }
 

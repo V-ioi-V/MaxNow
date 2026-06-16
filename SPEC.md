@@ -28,6 +28,8 @@ MaxNow 由四类文件组成：
    - `data/ai-news.js`
    - `data/last-30.json`
    - `data/last-30.js`
+   - `data/wiki-todos.json`
+   - `data/wiki-todos.js`
    - 这是页面和自动化之间的数据契约。
 
 3. OpenClaw skill
@@ -40,7 +42,12 @@ MaxNow 由四类文件组成：
    - 由 Codex 或 Owner 维护。
    - 用来检查必要文件、JSON 合法性、wrapper 一致性和本地预览可访问性。
 
-5. 产品记忆文档
+5. 同步脚本
+   - `scripts/sync_wiki_todos.py`
+   - 由 Codex 或 Owner 维护。
+   - 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `data/wiki-todos.*`。
+
+6. 产品记忆文档
    - `CONTEXT.md`
    - `ROADMAP.md`
    - `IDEAS.md`
@@ -80,6 +87,7 @@ Home 按顺序回答这些问题：
 - 时间点：日程、截止时间、自动化运行时间。
 - 系统状态：OpenClaw 最近运行、服务器状态、数据同步状态、GitHub / 部署状态。
 - 外部输入：链接、信号和 AI 每日精选，但必须保持次要。
+- personal-wiki 近期待办入口：Home 主内容区的紧凑只读模块，用于查看近期未完成待办和跳转到 personal-wiki；v1 不支持编辑或标记完成。
 
 ## AI 每日精选
 
@@ -120,6 +128,8 @@ data/ai-news.json
 data/ai-news.js
 data/last-30.json
 data/last-30.js
+data/wiki-todos.json
+data/wiki-todos.js
 ```
 
 OpenClaw 日常维护不能更新这些文件：
@@ -144,12 +154,15 @@ UPDATE_LOG.md
 
 `data/last-30.json` 负责今日大事、本周大事、近 30 天主线、重要决定和等待项。
 
+`data/wiki-todos.json` 负责 personal-wiki 近期待办的只读缓存，由 `scripts/sync_wiki_todos.py` 从 personal-wiki `wiki/tasks/todo.json` 生成。
+
 每个 `.js` wrapper 必须从对应 JSON 文件生成，并把同一个对象暴露给浏览器：
 
 ```text
 window.MAXNOW_DASHBOARD_DATA
 window.MAXNOW_AI_NEWS_DATA
 window.MAXNOW_LAST30_DATA
+window.MAXNOW_WIKI_TODO_DATA
 ```
 
 ## 数据来源策略
@@ -161,6 +174,26 @@ window.MAXNOW_LAST30_DATA
 - 手动：今日一句话判断、精力 / 状态、真正优先级、重要决定。
 
 OpenClaw 记录事实并起草摘要。最终判断由 Owner 保留。
+
+## personal-wiki 待办入口
+
+Home 可以显示一个紧凑的 personal-wiki 近期待办入口。
+
+边界：
+
+- 入口放在 Home 主内容区，位于“当前主线”和“今日推进”之间，不进入一级导航。
+- 只读展示近期未完成待办，最多展示少量条目。
+- 每条可跳转到 personal-wiki 源文件或关联页面。
+- 不在 MaxNow 中编辑、完成或回写待办。
+- 数据来源是 `data/wiki-todos.json`，该文件由 `scripts/sync_wiki_todos.py` 从 personal-wiki 的 `wiki/tasks/todo.json` 生成。
+
+刷新策略：
+
+- 页面加载时读取本地缓存一次。
+- 顶部刷新按钮可以重新读取本地缓存。
+- 不做前端自动轮询，也不从前端直接访问 private GitHub raw。
+- 需要更新内容时，在本地或服务器运行 `python scripts/sync_wiki_todos.py`，由 `gh api` 读取 personal-wiki 并重写 `data/wiki-todos.*`。
+- GitHub token 不得进入前端页面代码。
 
 ## 产品记忆
 

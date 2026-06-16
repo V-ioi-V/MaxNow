@@ -427,10 +427,13 @@ a {
 
 .text-button {
   min-height: 32px;
+  display: inline-flex;
+  align-items: center;
   padding: 0 12px;
   color: var(--accent-strong);
   font-size: 13px;
   font-weight: 700;
+  text-decoration: none;
 }
 
 .icon-button:hover,
@@ -469,6 +472,7 @@ a {
 }
 
 .task-item,
+.wiki-todo-item,
 .ai-news-item,
 .feed-item,
 .project-item,
@@ -486,6 +490,57 @@ a {
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 12px;
   align-items: start;
+}
+
+.wiki-todo-panel .panel-head {
+  margin-bottom: 12px;
+}
+
+.wiki-todo-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.wiki-todo-summary small {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wiki-todo-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.wiki-todo-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+}
+
+.wiki-todo-item .item-title {
+  font-size: 14px;
+}
+
+.wiki-todo-item .item-copy {
+  margin-top: 4px;
+}
+
+.wiki-todo-item a {
+  grid-column: 1 / -1;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .focus-panel {
@@ -1019,6 +1074,18 @@ a {
 
   .task-item .item-tag {
     grid-column: 2;
+    width: max-content;
+  }
+
+  .wiki-todo-item {
+    grid-template-columns: 1fr;
+  }
+
+  .wiki-todo-list {
+    grid-template-columns: 1fr;
+  }
+
+  .wiki-todo-item .item-tag {
     width: max-content;
   }
 }
