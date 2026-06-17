@@ -163,11 +163,6 @@ a {
   color: var(--purple);
 }
 
-.nav-blog .nav-icon {
-  background: #ecfeff;
-  color: var(--cyan);
-}
-
 .side-nav-item:hover,
 .side-nav-item.is-active {
   border-color: color-mix(in srgb, var(--nav-color, var(--accent)) 22%, #ffffff);
@@ -181,10 +176,6 @@ a {
 
 .nav-token {
   --nav-color: var(--purple);
-}
-
-.nav-blog {
-  --nav-color: var(--cyan);
 }
 
 .workspace {
@@ -222,6 +213,25 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.topbar-link {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d8e1ec;
+  border-radius: 999px;
+  padding: 0 11px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.topbar-link:hover {
+  border-color: #b8d8f5;
+  color: var(--accent-strong);
 }
 
 .view {
@@ -1092,10 +1102,6 @@ a {
 
   .side-nav {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .nav-blog {
-    grid-column: 1 / -1;
   }
 
   .topbar {
