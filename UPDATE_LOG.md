@@ -66,6 +66,16 @@
 
 - Owner 反馈每次点击博客左侧 tab 时，tab 区域会跳动一下。
 
+### 统一博客公开品牌为 MaxNow
+
+- 将博客页左上角品牌、浏览器标题和可访问名称从 `V-ioi-V Blog` 调整为 `MaxNow Blog`。
+- 新增 `blog/assets/maxnow-mark.svg` 作为博客左侧品牌图标，替换原来的单字母方块。
+- 更新博客品牌图标样式，并将正式博客页样式版本提升到 `styles.css?v=8`。
+
+原因：
+
+- Owner 希望公开博客这里使用 MaxNow 品牌，不再展示 V-ioi-V。
+
 ### 调整 Dash 的 Blog 入口位置
 
 - 将 `dash.maxnow.cn` 左侧导航里的 `Blog` 外链移到顶部右侧，和博客页里的 `Dash` 外链保持同一类弱入口处理。
