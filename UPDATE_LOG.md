@@ -11,6 +11,22 @@
 
 ## 2026-06-17
 
+### 新增博客首页预览
+
+- 新增 `blog/index.html` 和 `blog/styles.css`，生成更接近正式 `blog.maxnow.cn` 的博客首页预览。
+- 首页预览使用旧博客归档里的真实内容分布和候选文章：算法、CS 大学生必备、算法短板、工程 / 总结 / 未分类等。
+- 保留 `blog/preview.html` 和 `blog/preview.css` 作为方案说明页，用于展示发布链路和边界。
+- 更新根目录本地入口 `index.html`，同时提供 Blog 首页预览和 Blog Plan 入口。
+- 更新 `scripts/check.py`，校验 `blog/index.html`、`blog/styles.css` 和本地 `/blog/` 访问。
+- 新增 `blog/topics.html` 专题页预览，让左侧“文章 / 专题”导航成为真实分页面切换，而不是在首页内滚动或筛选。
+- 调整博客导航边界：左侧只保留博客栏目，`Dash` 不再作为左侧栏目卡片，改为顶部弱外链。
+
+原因：
+
+- Owner 希望再看一个更像真实博客首页的预览，而不是只有方案说明界面。
+- Owner 反馈左侧“专题”点起来和文章页区别不明显，因此改成独立专题页。
+- Owner 反馈 `Dash` 放在博客左侧栏目导航里不合适，因此降低为顶部外部入口。
+
 ### 拆分 Dash 和 Blog 目录
 
 - 将 dashboard 页面代码和运行数据移动到 `dash/`：`dash/index.html`、`dash/styles.css`、`dash/app.js`、`dash/data/*`。

@@ -20,6 +20,9 @@ dash/
     wiki-todos.json
     wiki-todos.js
 blog/
+  index.html
+  topics.html
+  styles.css
   preview.html
   preview.css
 openclaw/
@@ -29,7 +32,7 @@ scripts/
   check.py
 ```
 
-`dash/` 是 `dash.maxnow.cn` 的静态站目录。`blog/` 是 `blog.maxnow.cn` 的发布层工作区，当前先放方案预览页。根目录 `index.html` 只作为本地开发入口，不是线上 dashboard 本体。
+`dash/` 是 `dash.maxnow.cn` 的静态站目录。`blog/` 是 `blog.maxnow.cn` 的发布层工作区，当前先放博客首页、专题页和方案说明页预览。根目录 `index.html` 只作为本地开发入口，不是线上 dashboard 本体。
 
 ## 本地预览
 
@@ -51,7 +54,19 @@ Dash 直达：
 http://127.0.0.1:4173/dash/
 ```
 
-个人博客方案预览页：
+个人博客首页预览页：
+
+```text
+http://127.0.0.1:4173/blog/
+```
+
+个人博客专题页预览：
+
+```text
+http://127.0.0.1:4173/blog/topics.html
+```
+
+博客方案说明页：
 
 ```text
 http://127.0.0.1:4173/blog/preview.html
