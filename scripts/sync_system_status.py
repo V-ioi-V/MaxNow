@@ -14,9 +14,9 @@ from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DASHBOARD_JSON = ROOT / "data" / "dashboard.json"
-DASHBOARD_JS = ROOT / "data" / "dashboard.js"
-WIKI_TODOS_JSON = ROOT / "data" / "wiki-todos.json"
+DASHBOARD_JSON = ROOT / "dash" / "data" / "dashboard.json"
+DASHBOARD_JS = ROOT / "dash" / "data" / "dashboard.js"
+WIKI_TODOS_JSON = ROOT / "dash" / "data" / "wiki-todos.json"
 GLOBAL_NAME = "MAXNOW_DASHBOARD_DATA"
 DEFAULT_SITE_URL = "https://dash.maxnow.cn/"
 METADATA_BASE_URL = "http://metadata.tencentyun.com/latest/meta-data"
@@ -32,10 +32,10 @@ KNOWN_SERVICE_UNITS = [
     "maxnow-dashboard-sync.service",
 ]
 GENERATED_DATA_PATHS = {
-    "data/dashboard.json",
-    "data/dashboard.js",
-    "data/wiki-todos.json",
-    "data/wiki-todos.js",
+    "dash/data/dashboard.json",
+    "dash/data/dashboard.js",
+    "dash/data/wiki-todos.json",
+    "dash/data/wiki-todos.js",
 }
 
 
@@ -501,7 +501,7 @@ def wiki_todos_state():
             "key": "wiki-todos",
             "name": "wiki 待办",
             "value": "Missing",
-            "note": "data/wiki-todos.json does not exist",
+            "note": "dash/data/wiki-todos.json does not exist",
         }, False
     except json.JSONDecodeError as error:
         return {

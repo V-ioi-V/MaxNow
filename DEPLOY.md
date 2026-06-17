@@ -1,4 +1,4 @@
-# MaxNow 部署说明
+﻿# MaxNow 部署说明
 
 推荐部署到：
 
@@ -6,7 +6,15 @@
 dash.maxnow.cn
 ```
 
-主域名 `maxnow.cn` 先保留给未来公开主页或个人发布入口。
+主域名 `maxnow.cn` 先保留给未来公开主页或个人入口。
+
+公开博客推荐单独部署到：
+
+```text
+blog.maxnow.cn
+```
+
+`blog.maxnow.cn` 用于发布从 personal-wiki `raw/blog-vioiv` 筛选和转换出来的公开文章；不要把完整博客挂在 `dash.maxnow.cn/blog`。
 
 ## 站点性质
 
@@ -15,8 +23,15 @@ MaxNow v1 是纯静态站点：
 - 不需要登录系统。
 - 不需要数据库。
 - 不需要后端 API。
-- 页面读取 `data/*.json`。
+- 页面读取 `dash/data/*.json`。
 - `.js` wrapper 作为静态兜底。
+
+公开博客第一阶段也保持纯静态站：
+
+- 不需要登录系统。
+- 不需要数据库。
+- 不需要后端 API。
+- 构建时从受控的发布清单读取文章，不从公开前端直接读取 private personal-wiki。
 
 ## 服务器目录
 
@@ -24,16 +39,28 @@ MaxNow v1 是纯静态站点：
 
 ```text
 /var/www/maxnow-dashboard
-  index.html
-  styles.css
-  app.js
-  data/
+  dash/index.html
+  dash/styles.css
+  dash/app.js
+  dash/data/
     dashboard.json
     dashboard.js
     ai-news.json
     ai-news.js
     last-30.json
     last-30.js
+```
+
+公开博客推荐使用独立目录：
+
+```text
+/var/www/maxnow-blog
+  index.html
+  posts/
+  tags/
+  archive/
+  assets/
+  feed.xml
 ```
 
 当前服务器操作细节、SSH 命令、nginx 配置和排障步骤见：
@@ -61,25 +88,25 @@ SERVER_RUNBOOK.md
 Dashboard 任务可写：
 
 ```text
-data/dashboard.json
-data/dashboard.js
-data/ai-news.json
-data/ai-news.js
+dash/data/dashboard.json
+dash/data/dashboard.js
+dash/data/ai-news.json
+dash/data/ai-news.js
 ```
 
 Last-30 任务可写：
 
 ```text
-data/last-30.json
-data/last-30.js
+dash/data/last-30.json
+dash/data/last-30.js
 ```
 
 OpenClaw 不应修改：
 
 ```text
-index.html
-styles.css
-app.js
+dash/index.html
+dash/styles.css
+dash/app.js
 AGENTS.md
 CONTEXT.md
 SPEC.md
@@ -102,14 +129,14 @@ python scripts/check.py
 
 - 必要文件是否存在。
 - JSON 是否可解析。
-- `data/*.js` wrapper 是否和对应 JSON 一致。
+- `dash/data/*.js` wrapper 是否和对应 JSON 一致。
 - 如果本地 4173 服务正在运行，页面是否返回 200。
 
 ## Caddy 示例
 
 ```caddyfile
 dash.maxnow.cn {
-  root * /var/www/maxnow-dashboard
+  root * /var/www/maxnow-dashboard/dash
   file_server
 
   header {
@@ -125,7 +152,7 @@ dash.maxnow.cn {
 server {
   listen 80;
   server_name dash.maxnow.cn;
-  root /var/www/maxnow-dashboard;
+  root /var/www/maxnow-dashboard/dash;
   index index.html;
 
   location / {
@@ -134,6 +161,21 @@ server {
 
   location /data/ {
     add_header Cache-Control "no-store";
+  }
+}
+```
+
+博客子域名示例：
+
+```nginx
+server {
+  listen 80;
+  server_name blog.maxnow.cn;
+  root /var/www/maxnow-blog;
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;
   }
 }
 ```

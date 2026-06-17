@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MaxNow Blog Preview</title>
+    <meta name="description" content="MaxNow blog.maxnow.cn concept preview." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./blog-preview.css" />
+  </head>
+  <body>
+    <div class="blog-shell">
+      <aside class="blog-sidebar" aria-label="Blog navigation">
+        <a class="brand" href="#" aria-label="MaxNow Blog">
+          <span class="brand-mark">M</span>
+          <span>
+            <strong>MaxNow</strong>
+            <small>blog.maxnow.cn</small>
+          </span>
+        </a>
+
+        <nav class="side-nav" aria-label="Blog sections">
+          <a class="side-nav-item is-active" href="#">
+            <span class="nav-icon">⌁</span>
+            <span>
+              <strong>文章</strong>
+              <small>旧博客精选</small>
+            </span>
+          </a>
+          <a class="side-nav-item" href="#">
+            <span class="nav-icon">#</span>
+            <span>
+              <strong>标签</strong>
+              <small>算法 / CS / 工程</small>
+            </span>
+          </a>
+          <a class="side-nav-item" href="#">
+            <span class="nav-icon">↗</span>
+            <span>
+              <strong>Dash</strong>
+              <small>返回私人工作站</small>
+            </span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="blog-workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Public Archive</p>
+            <strong>V-ioi-V 旧博客</strong>
+          </div>
+          <div class="topbar-actions">
+            <span class="status-pill">211 篇原文</span>
+            <span class="status-pill muted">167 个图片缓存</span>
+          </div>
+        </header>
+
+        <section class="blog-view">
+          <section class="summary-bar">
+            <div class="summary-copy">
+              <p class="eyebrow">blog.maxnow.cn</p>
+              <h1>把旧技术笔记变成可公开阅读的个人博客。</h1>
+              <p>
+                内容源来自 personal-wiki 的 <code>raw/blog-vioiv</code>。这里先发布经过筛选的文章，
+                保留原始学习轨迹，同时避免把私人 dashboard 和公开表达混在一起。
+              </p>
+              <div class="summary-meta" aria-label="Blog source">
+                <span>来源：private personal-wiki</span>
+                <span>发布：静态站</span>
+                <span>状态：方案预览</span>
+              </div>
+            </div>
+            <div class="summary-card" aria-label="Publishing status">
+              <span>第一阶段</span>
+              <strong>筛选发布</strong>
+              <small>public / published only</small>
+            </div>
+          </section>
+
+          <section class="status-strip" aria-label="Blog archive metrics">
+            <article>
+              <span>原始文章</span>
+              <strong>211</strong>
+              <small>Hexo Markdown</small>
+            </article>
+            <article>
+              <span>主要分类</span>
+              <strong>5</strong>
+              <small>算法、CS、工程等</small>
+            </article>
+            <article>
+              <span>图片缓存</span>
+              <strong>167</strong>
+              <small>来自 image-manifest</small>
+            </article>
+            <article>
+              <span>公开队列</span>
+              <strong>待定</strong>
+              <small>由发布清单控制</small>
+            </article>
+          </section>
+
+          <section class="blog-grid">
+            <section class="blog-main" aria-label="Post list">
+              <article class="panel featured-post">
+                <div class="post-kicker">
+                  <span class="item-tag blue">CS 大学生必备</span>
+                  <time>2020/04/03</time>
+                </div>
+                <h2>以太网、IP、TCP、UDP 头部格式</h2>
+                <p>
+                  适合作为第一批公开内容的计算机网络基础文。发布前需要清理 Hexo front matter、
+                  修正代码块和图片资源，再保留原始日期。
+                </p>
+                <a href="#">预览文章</a>
+              </article>
+
+              <div class="post-list">
+                <article class="post-card">
+                  <div class="post-kicker">
+                    <span class="item-tag orange">算法</span>
+                    <time>2020/04/29</time>
+                  </div>
+                  <h3>二叉搜索树与双向链表</h3>
+                  <p>旧 LeetCode 题解。适合做算法归档，但需要判断是否补充当前理解。</p>
+                </article>
+
+                <article class="post-card">
+                  <div class="post-kicker">
+                    <span class="item-tag purple">C++</span>
+                    <time>待确认</time>
+                  </div>
+                  <h3>C++11 新特性</h3>
+                  <p>可作为 CS 基础系列入口。发布前建议补充适用范围和过期内容说明。</p>
+                </article>
+
+                <article class="post-card">
+                  <div class="post-kicker">
+                    <span class="item-tag cyan">计算机网络</span>
+                    <time>2020/03/12</time>
+                  </div>
+                  <h3>HTTP 和 HTTPS 的区别</h3>
+                  <p>适合从旧博客迁到公开站，也可以后续拆成长期 wiki 知识页。</p>
+                </article>
+
+                <article class="post-card">
+                  <div class="post-kicker">
+                    <span class="item-tag green">DP</span>
+                    <time>2020/05/23</time>
+                  </div>
+                  <h3>DP 专题</h3>
+                  <p>适合作为算法专题页，但第一版先按文章发布，不急着做复杂知识图谱。</p>
+                </article>
+              </div>
+            </section>
+
+            <aside class="blog-aside" aria-label="Publishing plan">
+              <article class="panel">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Pipeline</p>
+                    <h2>发布链路</h2>
+                  </div>
+                  <span class="status-pill">static</span>
+                </header>
+                <ol class="steps">
+                  <li>
+                    <strong>筛选</strong>
+                    <span>在 personal-wiki 标记 public / published。</span>
+                  </li>
+                  <li>
+                    <strong>转换</strong>
+                    <span>将 Hexo front matter 转成 MaxNow 博客模型。</span>
+                  </li>
+                  <li>
+                    <strong>生成</strong>
+                    <span>输出文章页、标签、归档和 RSS。</span>
+                  </li>
+                  <li>
+                    <strong>部署</strong>
+                    <span>发布到 <code>/var/www/maxnow-blog</code>。</span>
+                  </li>
+                </ol>
+              </article>
+
+              <article class="panel">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Categories</p>
+                    <h2>内容分布</h2>
+                  </div>
+                </header>
+                <div class="category-list">
+                  <div>
+                    <span>算法</span>
+                    <strong>145</strong>
+                  </div>
+                  <div>
+                    <span>CS 大学生必备</span>
+                    <strong>55</strong>
+                  </div>
+                  <div>
+                    <span>算法短板</span>
+                    <strong>6</strong>
+                  </div>
+                  <div>
+                    <span>工程 / 总结 / 未分类</span>
+                    <strong>5</strong>
+                  </div>
+                </div>
+              </article>
+
+              <article class="panel">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Boundary</p>
+                    <h2>边界</h2>
+                  </div>
+                </header>
+                <div class="boundary-list">
+                  <p>不前端直读 private wiki。</p>
+                  <p>不把旧文全部无筛选公开。</p>
+                  <p>不把完整阅读体验放进 dashboard。</p>
+                </div>
+              </article>
+            </aside>
+          </section>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

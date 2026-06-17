@@ -118,6 +118,7 @@ a {
   background: transparent;
   color: var(--muted);
   text-align: left;
+  text-decoration: none;
 }
 
 .nav-icon {
@@ -162,6 +163,11 @@ a {
   color: var(--purple);
 }
 
+.nav-blog .nav-icon {
+  background: #ecfeff;
+  color: var(--cyan);
+}
+
 .side-nav-item:hover,
 .side-nav-item.is-active {
   border-color: color-mix(in srgb, var(--nav-color, var(--accent)) 22%, #ffffff);
@@ -175,6 +181,10 @@ a {
 
 .nav-token {
   --nav-color: var(--purple);
+}
+
+.nav-blog {
+  --nav-color: var(--cyan);
 }
 
 .workspace {
@@ -1082,6 +1092,10 @@ a {
 
   .side-nav {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .nav-blog {
+    grid-column: 1 / -1;
   }
 
   .topbar {

@@ -9,10 +9,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 DATASETS = [
-    ("dashboard", "data/dashboard.json", "data/dashboard.js", "MAXNOW_DASHBOARD_DATA"),
-    ("ai-news", "data/ai-news.json", "data/ai-news.js", "MAXNOW_AI_NEWS_DATA"),
-    ("last-30", "data/last-30.json", "data/last-30.js", "MAXNOW_LAST30_DATA"),
-    ("wiki-todos", "data/wiki-todos.json", "data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
+    ("dashboard", "dash/data/dashboard.json", "dash/data/dashboard.js", "MAXNOW_DASHBOARD_DATA"),
+    ("ai-news", "dash/data/ai-news.json", "dash/data/ai-news.js", "MAXNOW_AI_NEWS_DATA"),
+    ("last-30", "dash/data/last-30.json", "dash/data/last-30.js", "MAXNOW_LAST30_DATA"),
+    ("wiki-todos", "dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
 ]
 
 
@@ -43,8 +43,11 @@ def check_dataset(name, json_rel, js_rel, global_name):
 def check_required_files():
     required = [
         "index.html",
-        "styles.css",
-        "app.js",
+        "dash/index.html",
+        "dash/styles.css",
+        "dash/app.js",
+        "blog/preview.html",
+        "blog/preview.css",
         "AGENTS.md",
         "CONTEXT.md",
         "SPEC.md",
@@ -75,6 +78,8 @@ def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
     checks.append(check_local_server("http://127.0.0.1:4173/"))
+    checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
+    checks.append(check_local_server("http://127.0.0.1:4173/blog/preview.html"))
 
     for line in checks:
         print("[ok]", line)

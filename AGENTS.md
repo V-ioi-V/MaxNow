@@ -1,4 +1,4 @@
-# MaxNow Agent Notes
+﻿# MaxNow Agent Notes
 
 Read this file before making code changes in this repository.
 
@@ -39,9 +39,11 @@ MaxNow is a private status workstation for `dash.maxnow.cn`.
 Codex or the owner may edit:
 
 ```text
-index.html
-styles.css
-app.js
+dash/index.html
+dash/styles.css
+dash/app.js
+blog/preview.html
+blog/preview.css
 SPEC.md
 README.md
 DEPLOY.md
@@ -60,30 +62,30 @@ openclaw/last-30/SKILL.md
 OpenClaw routine jobs may edit only data files allowed by the active skill:
 
 ```text
-data/dashboard.json
-data/dashboard.js
-data/ai-news.json
-data/ai-news.js
-data/last-30.json
-data/last-30.js
-data/wiki-todos.json
-data/wiki-todos.js
+dash/data/dashboard.json
+dash/data/dashboard.js
+dash/data/ai-news.json
+dash/data/ai-news.js
+dash/data/last-30.json
+dash/data/last-30.js
+dash/data/wiki-todos.json
+dash/data/wiki-todos.js
 ```
 
 OpenClaw routine jobs must not edit page code or documentation.
 
 ## Data Rules
 
-- `data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, and Token usage.
-- `data/ai-news.json` owns AI external inputs only.
-- `data/last-30.json` owns rolling daily, weekly, and 30-day context.
-- `data/wiki-todos.json` owns the read-only MaxNow cache generated from personal-wiki `wiki/tasks/todo.json`.
-- Do not update `data/*.json` or `data/*.js` when the owner asks for MaxNow project todos, feature planning, roadmap updates, or "what should MaxNow build next"; update `ROADMAP.md`, `IDEAS.md`, `CONTEXT.md`, or `UPDATE_LOG.md` instead.
+- `dash/data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, and Token usage.
+- `dash/data/ai-news.json` owns AI external inputs only.
+- `dash/data/last-30.json` owns rolling daily, weekly, and 30-day context.
+- `dash/data/wiki-todos.json` owns the read-only MaxNow cache generated from personal-wiki `wiki/tasks/todo.json`.
+- Do not update `dash/data/*.json` or `dash/data/*.js` when the owner asks for MaxNow project todos, feature planning, roadmap updates, or "what should MaxNow build next"; update `ROADMAP.md`, `IDEAS.md`, `CONTEXT.md`, or `UPDATE_LOG.md` instead.
 - Only change data files when the owner explicitly asks to update the displayed dashboard/status data, or when running an approved data maintenance task.
 - Regenerate each `.js` wrapper from its matching JSON file.
 - Validate JSON before finishing data changes.
-- Use `python scripts/sync_wiki_todos.py` to refresh `data/wiki-todos.*` from private personal-wiki through the local or server `gh` login; never put GitHub tokens in frontend code.
-- Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `data/dashboard.*`; do not let it overwrite owner judgment fields such as today, mainlines, actions, or journal.
+- Use `python scripts/sync_wiki_todos.py` to refresh `dash/data/wiki-todos.*` from private personal-wiki through the local or server `gh` login; never put GitHub tokens in frontend code.
+- Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `dash/data/dashboard.*`; do not let it overwrite owner judgment fields such as today, mainlines, actions, or journal.
 - Use `python scripts/check.py` for local consistency checks when data wrappers or docs change.
 
 ## Product Direction
