@@ -17,6 +17,15 @@ Read this file before making code changes in this repository.
 - Read `SERVER_RUNBOOK.md` before operating the MaxNow server over SSH or changing nginx/server deployment state.
 - For OpenClaw behavior, read `openclaw/maxnow-dashboard/SKILL.md`.
 
+## Completion Records
+
+- After completing a feature, server operation, automation setup, data pipeline, or project-structure change, update the repository records in the same branch before finishing.
+- Move completed work out of `ROADMAP.md` Now / Next / Blocked and into Done when applicable.
+- Add an `UPDATE_LOG.md` entry for meaningful changes to page behavior, data flow, server state, deployment, automation, or repository rules.
+- Update `CONTEXT.md` when the change affects agent handoff context, current gaps, file responsibilities, automation boundaries, server state, or recommended next steps.
+- Update `SERVER_RUNBOOK.md` when the change affects SSH, nginx, GitHub CLI, deployment, cron/systemd timers, server paths, auth state, or operational commands.
+- Do not leave completed work only in chat. If the owner asks to "记个待办", "优化待办", "做完了", "服务器搞好了", or similar, reflect that in the relevant repository documents.
+
 ## Project Shape
 
 MaxNow is a private status workstation for `dash.maxnow.cn`.
@@ -38,6 +47,7 @@ README.md
 DEPLOY.md
 SERVER_RUNBOOK.md
 scripts/check.py
+scripts/sync_system_status.py
 scripts/sync_wiki_todos.py
 CONTEXT.md
 ROADMAP.md
@@ -73,6 +83,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Regenerate each `.js` wrapper from its matching JSON file.
 - Validate JSON before finishing data changes.
 - Use `python scripts/sync_wiki_todos.py` to refresh `data/wiki-todos.*` from private personal-wiki through the local or server `gh` login; never put GitHub tokens in frontend code.
+- Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `data/dashboard.*`; do not let it overwrite owner judgment fields such as today, mainlines, actions, or journal.
 - Use `python scripts/check.py` for local consistency checks when data wrappers or docs change.
 
 ## Product Direction

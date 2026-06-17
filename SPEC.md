@@ -44,8 +44,10 @@ MaxNow 由四类文件组成：
 
 5. 同步脚本
    - `scripts/sync_wiki_todos.py`
+   - `scripts/sync_system_status.py`
    - 由 Codex 或 Owner 维护。
-   - 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `data/wiki-todos.*`。
+   - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `data/wiki-todos.*`。
+   - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `data/dashboard.*` 中的 `automation` 和 `system` 字段。
 
 6. 产品记忆文档
    - `CONTEXT.md`
@@ -149,6 +151,8 @@ UPDATE_LOG.md
 ```
 
 `data/dashboard.json` 负责个人状态、主线、行动、日常记录、时间线、系统状态和 Token 使用。
+
+其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`today`、`mainlines`、`actions` 和 `journal` 仍保留 Owner 判断或受控草稿，不由系统状态脚本覆盖。
 
 `data/ai-news.json` 只负责外部 AI 输入。
 
