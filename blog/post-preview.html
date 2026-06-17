@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>以太网、IP、TCP、UDP 头部格式 | MaxNow Blog</title>
     <meta name="description" content="以太网、IP、TCP、UDP 头部格式的旧博客文章详情预览。" />
-    <link rel="stylesheet" href="./styles.css?v=9" />
+    <link rel="stylesheet" href="./styles.css?v=10" />
   </head>
   <body>
     <div class="site-shell">
@@ -15,9 +15,9 @@
           <span><strong>MaxNow</strong><small>blog.maxnow.cn</small></span>
         </a>
         <nav class="side-nav" aria-label="博客栏目">
-          <a class="side-nav-item is-active" href="./index.html"><span class="nav-icon">文</span><span><strong>文章</strong><small>按时间浏览</small></span></a>
-          <a class="side-nav-item" href="./topics.html"><span class="nav-icon">#</span><span><strong>专题</strong><small>按分类进入</small></span></a>
-          <a class="side-nav-item" href="./overview.html"><span class="nav-icon">览</span><span><strong>总览</strong><small>归档数据</small></span></a>
+          <a class="side-nav-item" href="./index.html" data-section="articles"><span class="nav-icon">文</span><span><strong>文章</strong><small>按时间浏览</small></span></a>
+          <a class="side-nav-item" href="./topics.html" data-section="topics"><span class="nav-icon">#</span><span><strong>专题</strong><small>按分类进入</small></span></a>
+          <a class="side-nav-item" href="./overview.html" data-section="overview"><span class="nav-icon">览</span><span><strong>总览</strong><small>归档数据</small></span></a>
         </nav>
       </aside>
 
@@ -25,13 +25,13 @@
         <header class="topbar">
           <div><p class="eyebrow">Post</p><strong>文章详情预览</strong></div>
           <div class="topbar-actions">
-            <a class="topbar-link" href="./index.html">返回文章</a>
+            <a class="topbar-link" href="./index.html" data-back-link>返回文章</a>
             <a class="topbar-link" href="https://dash.maxnow.cn">Dash</a>
           </div>
         </header>
 
         <article class="post-detail">
-          <a class="back-link" href="./index.html">← 返回文章流</a>
+          <a class="back-link" href="./index.html" data-back-link>← 返回文章流</a>
           <div class="article-meta">
             <span class="tag cyan">CS 大学生必备</span>
             <time>2020/04/03</time>
@@ -114,6 +114,27 @@
         </article>
       </main>
     </div>
+    <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        const referrer = document.referrer ? new URL(document.referrer) : null;
+        const sameBlogReferrer = referrer && referrer.origin === window.location.origin && referrer.pathname.startsWith("/blog/");
+        const fromParam = params.get("from");
+        const cameFromTopic = fromParam === "topics" || (sameBlogReferrer && /\/blog\/topic/.test(referrer.pathname));
+        const section = cameFromTopic ? "topics" : "articles";
+        document.querySelectorAll(".side-nav-item").forEach((item) => {
+          item.classList.toggle("is-active", item.dataset.section === section);
+        });
+
+        const fallbackHref = cameFromTopic ? "./topics.html" : "./index.html";
+        const backHref = sameBlogReferrer ? `${referrer.pathname.split("/").pop()}${referrer.search}` : fallbackHref;
+        const label = cameFromTopic ? "返回专题" : "返回文章";
+        document.querySelectorAll("[data-back-link]").forEach((link) => {
+          link.href = backHref;
+          link.textContent = link.classList.contains("back-link") ? `← ${label}` : label;
+        });
+      })();
+    </script>
   </body>
 </html>
 
