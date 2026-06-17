@@ -52,9 +52,9 @@ def git_state():
     _, status, _ = run_command(["git", "status", "--short"])
     changed_paths = []
     for line in status.splitlines():
-        if len(line) < 4:
+        if len(line) < 3:
             continue
-        changed_paths.append(line[3:].strip().replace("\\", "/"))
+        changed_paths.append(line[2:].strip().replace("\\", "/"))
     dirty = any(path not in GENERATED_DATA_PATHS for path in changed_paths)
     value = commit or "--"
     if dirty:
