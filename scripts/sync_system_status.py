@@ -254,12 +254,16 @@ def disk_state():
     used_pct = round((usage.used / usage.total) * 100)
     free_gb = usage.free / (1024 ** 3)
     total_gb = usage.total / (1024 ** 3)
+    mount = ROOT.anchor or "/"
+    note = f"{free_gb:.1f} / {total_gb:.1f} GB available"
+    if mount != "/":
+        note = f"{note} on {mount}"
     ok = used_pct < 85
     return {
         "key": "disk",
         "name": "磁盘",
         "value": f"{used_pct}%",
-        "note": f"{free_gb:.1f} / {total_gb:.1f} GB available on {ROOT.anchor or '/'}",
+        "note": note,
     }, ok
 
 
@@ -302,11 +306,11 @@ def cpu_state():
     usage_pct = 0 if total_delta <= 0 else round(((total_delta - idle_delta) / total_delta) * 100)
 
     loadavg = Path("/proc/loadavg")
-    load_text = "load unavailable"
+    load_text = "1/5/15 min load unavailable"
     if loadavg.exists():
         loads = loadavg.read_text(encoding="utf-8").split()[:3]
         if len(loads) == 3:
-            load_text = f"load {' / '.join(loads)}"
+            load_text = f"1/5/15 min load {' / '.join(loads)}"
 
     cores = "unknown cores"
     code, stdout, _ = run_command(["nproc"], timeout=2)
@@ -523,51 +527,35 @@ def server_identity():
 
 def build_status(site_url):
     checks = []
-    deploy, dirty = git_state()
     nginx, nginx_ok = nginx_state()
-    https, https_ok = site_state(site_url)
-    cloud_location, cloud_location_ok = cloud_location_state()
-    billing, billing_ok = billing_state()
-    certificate, certificate_ok = certificate_state(site_url)
     cpu, cpu_ok = cpu_state()
     disk, disk_ok = disk_state()
     memory, memory_ok = memory_state()
     uptime, uptime_ok = uptime_state()
-    git_pull, git_pull_ok = git_pull_state()
-    timers, timers_ok = timer_state()
-    failure_log, failure_log_ok = failure_log_state()
-    wiki, wiki_ok = wiki_todos_state()
 
     checks.extend([
         nginx_ok,
-        https_ok,
-        certificate_ok,
-        cloud_location_ok,
-        billing_ok,
         cpu_ok,
         disk_ok,
         memory_ok,
         uptime_ok,
-        git_pull_ok,
-        timers_ok,
-        failure_log_ok,
-        wiki_ok,
     ])
     failed = [item for item in checks if item is False]
     unknown = [item for item in checks if item is None]
 
     if failed:
         status = "异常"
-    elif unknown or dirty:
+    elif unknown:
         status = "注意"
     else:
         status = "正常"
 
     summary_parts = [
-        f"HTTPS {https['value']}",
         f"nginx {nginx['value']}",
-        f"wiki {wiki['value']}",
-        f"commit {deploy['value']}",
+        f"CPU {cpu['value']}",
+        f"disk {disk['value']}",
+        f"memory {memory['value']}",
+        f"uptime {uptime['value']}",
     ]
     if failed:
         summary_parts.append(f"{len(failed)} checks failed")
@@ -581,17 +569,7 @@ def build_status(site_url):
             "lastRun": now_text(),
         },
         "system": [
-            server_identity(),
             nginx,
-            https,
-            certificate,
-            cloud_location,
-            billing,
-            deploy,
-            git_pull,
-            wiki,
-            timers,
-            failure_log,
             cpu,
             disk,
             memory,
