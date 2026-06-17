@@ -34,7 +34,8 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Inter, "Noto Sans SC", system-ui, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  text-rendering: geometricPrecision;
 }
 
 a {
@@ -72,6 +73,7 @@ a {
 .brand-mark {
   width: 40px;
   height: 40px;
+  aspect-ratio: 1;
   display: block;
   flex: 0 0 auto;
   border-radius: 12px;
@@ -156,6 +158,7 @@ a {
   position: sticky;
   top: 0;
   z-index: 10;
+  min-height: 78px;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
@@ -267,6 +270,7 @@ a {
 .hero-panel {
   display: grid;
   gap: 10px;
+  min-height: 158px;
 }
 
 .hero-panel div {
