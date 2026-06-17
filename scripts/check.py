@@ -52,6 +52,7 @@ def check_required_files():
         "blog/topic-cs.html",
         "blog/topic-algorithm-gap.html",
         "blog/topic-engineering.html",
+        "blog/post-preview.html",
         "blog/styles.css",
         "blog/preview.html",
         "blog/preview.css",
@@ -92,6 +93,7 @@ def main():
     checks.append(check_local_server("http://127.0.0.1:4173/blog/topic-cs.html"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/topic-algorithm-gap.html"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/topic-engineering.html"))
+    checks.append(check_local_server("http://127.0.0.1:4173/blog/post-preview.html"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/preview.html"))
 
     for line in checks:

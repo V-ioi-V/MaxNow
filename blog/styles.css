@@ -378,17 +378,29 @@ a {
 }
 
 .article-feed {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
   padding: 0 clamp(18px, 1.2vw, 26px) 58px;
 }
 
 .article-preview {
   display: grid;
+  align-content: start;
   gap: 10px;
   background: #f9fbfe;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
 .article-preview.is-featured {
   background: linear-gradient(180deg, #ffffff, #f8fbff);
+}
+
+.article-preview:hover {
+  border-color: #b8d8f5;
+  background: #ffffff;
+  transform: translateY(-1px);
 }
 
 .article-preview h2 {
@@ -423,7 +435,6 @@ a {
   white-space: nowrap;
 }
 
-.read-link,
 .back-link {
   width: max-content;
   min-height: 34px;
@@ -746,6 +757,36 @@ a {
   padding-top: 0;
 }
 
+.post-detail {
+  display: grid;
+  gap: 16px;
+  max-width: 920px;
+  margin: 28px clamp(18px, 1.2vw, 26px) 58px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 26px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.post-detail h1 {
+  margin: 0;
+  font-size: clamp(32px, 3vw, 44px);
+  line-height: 1.12;
+}
+
+.post-detail h2 {
+  margin: 8px 0 0;
+  font-size: 22px;
+}
+
+.post-detail p,
+.post-detail li {
+  color: var(--soft);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
 @media (max-width: 1180px) {
   .hero,
   .content-grid {
@@ -794,6 +835,7 @@ a {
   }
 
   .hero-panel,
+  .article-feed,
   .post-list,
   .category-grid,
   .topic-layout {
