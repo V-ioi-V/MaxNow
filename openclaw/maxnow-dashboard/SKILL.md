@@ -1,4 +1,4 @@
----
+﻿---
 name: maxnow-data
 description: Maintain MaxNow personal status workstation data. Use when OpenClaw updates daily personal state, current mainlines, actions, logs, automation status, token usage, and AI external inputs for the static dashboard without changing page code.
 ---
@@ -14,26 +14,26 @@ MaxNow is not a news site and not an OpenClaw report page. It is the owner's per
 Routine OpenClaw runs may update only:
 
 ```text
-data/dashboard.json
-data/dashboard.js
-data/ai-news.json
-data/ai-news.js
+dash/data/dashboard.json
+dash/data/dashboard.js
+dash/data/ai-news.json
+dash/data/ai-news.js
 ```
 
 Routine OpenClaw runs must not edit:
 
 ```text
-index.html
-styles.css
-app.js
+dash/index.html
+dash/styles.css
+dash/app.js
 SPEC.md
 README.md
 DEPLOY.md
 CONTEXT.md
 IDEAS.md
 UPDATE_LOG.md
-data/last-30.json
-data/last-30.js
+dash/data/last-30.json
+dash/data/last-30.js
 ```
 
 If a page structure or style change is needed, stop and report it. Do not modify page code.
@@ -55,9 +55,9 @@ OpenClaw records facts and drafts summaries. The owner keeps final judgment. Do 
 
 ## Data Files
 
-`data/dashboard.json` is the main data source for Home and Token. `data/dashboard.js` must contain the same object assigned to `window.MAXNOW_DASHBOARD_DATA`.
+`dash/data/dashboard.json` is the main data source for Home and Token. `dash/data/dashboard.js` must contain the same object assigned to `window.MAXNOW_DASHBOARD_DATA`.
 
-`data/ai-news.json` is only for AI external inputs. `data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
+`dash/data/ai-news.json` is only for AI external inputs. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
 
 ## Dashboard Data Shape
 
@@ -108,7 +108,7 @@ Preserve this shape when possible:
     {
       "time": "00:10",
       "title": "AI 外部输入更新",
-      "note": "OpenClaw 更新 data/ai-news.*。"
+      "note": "OpenClaw 更新 dash/data/ai-news.*。"
     }
   ],
   "feeds": [
@@ -152,7 +152,7 @@ Keep arrays short:
 
 ## AI External Input Shape
 
-`data/ai-news.json` should contain:
+`dash/data/ai-news.json` should contain:
 
 ```json
 {
@@ -204,15 +204,15 @@ Do not invent personal feelings. If unsure, keep a neutral status such as `待�
 Before finishing every routine update:
 
 ```bash
-python -m json.tool data/dashboard.json >/dev/null
-python -m json.tool data/ai-news.json >/dev/null
+python -m json.tool dash/data/dashboard.json >/dev/null
+python -m json.tool dash/data/ai-news.json >/dev/null
 ```
 
 Regenerate wrappers from the JSON files:
 
 ```bash
-python -c "import json; from pathlib import Path; d=json.loads(Path('data/dashboard.json').read_text(encoding='utf-8')); Path('data/dashboard.js').write_text('window.MAXNOW_DASHBOARD_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
-python -c "import json; from pathlib import Path; d=json.loads(Path('data/ai-news.json').read_text(encoding='utf-8')); Path('data/ai-news.js').write_text('window.MAXNOW_AI_NEWS_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
+python -c "import json; from pathlib import Path; d=json.loads(Path('dash/data/dashboard.json').read_text(encoding='utf-8')); Path('dash/data/dashboard.js').write_text('window.MAXNOW_DASHBOARD_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
+python -c "import json; from pathlib import Path; d=json.loads(Path('dash/data/ai-news.json').read_text(encoding='utf-8')); Path('dash/data/ai-news.js').write_text('window.MAXNOW_AI_NEWS_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
 ```
 
 If a source fails, keep the last safe value or write a short fallback note. Do not clear the dashboard.

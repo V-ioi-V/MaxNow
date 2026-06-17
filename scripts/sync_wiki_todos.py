@@ -11,8 +11,8 @@ REPO = "V-ioi-V/personal-wiki"
 REF = "main"
 SOURCE_PATH = "wiki/tasks/todo.json"
 SOURCE_URL = f"https://github.com/{REPO}/blob/{REF}/{SOURCE_PATH}"
-JSON_PATH = ROOT / "data" / "wiki-todos.json"
-JS_PATH = ROOT / "data" / "wiki-todos.js"
+JSON_PATH = ROOT / "dash" / "data" / "wiki-todos.json"
+JS_PATH = ROOT / "dash" / "data" / "wiki-todos.js"
 GLOBAL_NAME = "MAXNOW_WIKI_TODO_DATA"
 
 

@@ -1,4 +1,4 @@
-# MaxNow 路线图
+﻿# MaxNow 路线图
 
 这个文件记录 MaxNow 接下来真正要推进的事情。
 
@@ -19,20 +19,31 @@
 
 ## Now
 
+### 规划个人博客发布链路
+
+- 建议分支：`feature/blog-module-plan`
+- 公开博客使用 `blog.maxnow.cn`，不要放进 `dash.maxnow.cn/blog`，也暂时不新买独立域名。
+- 内容源使用 private personal-wiki 的 `raw/blog-vioiv`：当前已归档旧 Hexo Markdown 211 篇，图片缓存 167 个。
+- MaxNow 仓库负责发布层：构建脚本、公开文章数据、静态页面、归档、标签、RSS、部署说明和 dashboard 发布状态入口。
+- `dash.maxnow.cn` 继续作为私人状态工作站；最多显示博客发布进度、待筛选数量和跳转入口，不承载完整博客阅读体验。
+- `dash.maxnow.cn` 左侧导航已预留 `Blog` 外链，指向 `https://blog.maxnow.cn`。
+- 第一阶段先做只读静态博客：筛选 public/published 文章，转换 front matter，复制必要图片，生成 `blog.maxnow.cn` 页面。
+- 方案预览页：`blog/preview.html`，用于确认博客首页信息架构和视觉风格，不作为正式线上入口。
+
 ### 接入服务器自动同步 wiki-todos
 
 - 建议分支：`feature/wiki-todo-cron`
 - 在服务器上用 cron 或 systemd timer 定时运行 `python3 scripts/sync_wiki_todos.py` 和 `python3 scripts/sync_system_status.py`。
 - 同步完成后运行 `python3 scripts/check.py`，失败时记录日志，不静默吞错。
 - 明确日志路径、运行用户、失败摘要和手动重跑命令，并写进 `DEPLOY.md` / `SERVER_RUNBOOK.md`。
-- 保持前端只读 `data/wiki-todos.json`，不在浏览器里放 GitHub token。
+- 保持前端只读 `dash/data/wiki-todos.json`，不在浏览器里放 GitHub token。
 
 ### 接入系统状态定时采集
 
 - 建议分支：`feature/system-status-cron`
 - `scripts/sync_system_status.py` 已建立；下一步把它放进服务器定时任务。
 - 采集机器可判断的数据：nginx 状态、站点 HTTPS 返回、当前 git commit、磁盘、内存、最近一次 wiki-todos 同步时间。
-- 输出到 `data/dashboard.json` 的 `automation` 和 `system` 字段，并重新生成 `data/dashboard.js`。
+- 输出到 `dash/data/dashboard.json` 的 `automation` 和 `system` 字段，并重新生成 `dash/data/dashboard.js`。
 - 不把 Owner 的今日判断、主线优先级和日常记录混进自动采集脚本。
 
 ### 做本地/服务器数据更新工具
@@ -60,7 +71,7 @@
 
 ### 让 Last-30 进入增量更新节奏
 
-- 当前 `data/last-30.json` 还是 2026-06-14 的草稿，需要进入日常增量更新。
+- 当前 `dash/data/last-30.json` 还是 2026-06-14 的草稿，需要进入日常增量更新。
 - 每天基于昨天已有摘要和当天新增事实更新，不从零总结 30 天。
 - 先同步更新时间、今日大事、本周大事和等待项，再考虑更复杂的长期主线抽取。
 
@@ -74,7 +85,7 @@
 
 ### 恢复 AI 外部输入真实更新
 
-- 当前 `data/ai-news.json` 仍是旧占位内容。
+- 当前 `dash/data/ai-news.json` 仍是旧占位内容。
 - 先确定低噪音来源：官方博客 / release、GitHub、Hacker News、Reddit 或项目 RSS。
 - Home 最多保留 3 条，只展示和 Owner 当前项目、工具选择或成本有关的输入。
 
@@ -100,18 +111,11 @@
 
 ## Later
 
-### 个人博客联动
-
-- 来源 ID：`maxnow-blog-module`
-- 个人博客属于未来公开表达方向，不并入 MaxNow v1 的私人状态工作站范围。
-- 拆分归属：旧博客 211 篇文章的内容筛选、清理和隐私判断留在 personal-wiki；博客模块开发、发布状态入口和必要的页面能力放在 MaxNow。
-- 后续可以考虑只在 MaxNow 中显示博客迁移 / 发布进度，而不是把完整博客阅读体验塞进私人 Home。
-
 ### 桌面伴随入口
 
 - macOS：顶部状态栏 app，点击后出现下拉个人面板。
 - Windows：桌面壁纸式个人看板，作为平静常驻的状态层。
-- 两个平台尽量复用 `data/*.json` 的同一套数据契约。
+- 两个平台尽量复用 `dash/data/*.json` 的同一套数据契约。
 
 ### 公开 MaxNow 主页或灵感宇宙
 
@@ -133,9 +137,9 @@
 
 ### 个人博客模块待确认
 
-- 个人博客面向自己、公开访客，还是两者兼有。
-- 博客读取 personal-wiki 的哪些知识页面，以及是否需要发布 / 隐私筛选机制。
-- 旧博客 211 篇文章中，哪些适合公开发布、哪些只保留归档、哪些需要拆成长期 wiki 知识页。
+- 第一批公开文章清单待 Owner 确认：哪些适合直接公开，哪些只保留归档，哪些需要改写成长期 wiki 知识页。
+- 旧文章 front matter 规范待定：是否在 personal-wiki 原文里直接补 `visibility` / `status`，还是由 MaxNow 维护一个独立发布清单。
+- 博客是否需要评论、订阅邮件、搜索索引、统计分析等公开站能力待后续确认；第一阶段先不做。
 
 ### 服务器定时任务
 
@@ -148,20 +152,28 @@
 
 ## Done
 
+### 已完成的结构整理
+
+- 将 dashboard 页面代码移动到 `dash/`，包括 `dash/index.html`、`dash/styles.css`、`dash/app.js` 和 `dash/data/*`。
+- 将博客方案预览移动到 `blog/preview.html` 和 `blog/preview.css`，作为 `blog.maxnow.cn` 发布层工作区的起点。
+- 根目录 `index.html` 改为本地开发入口，只负责跳转到 Dash 和 Blog Preview，不再作为线上 dashboard 本体。
+- 更新 `scripts/check.py`、`scripts/sync_wiki_todos.py` 和 `scripts/sync_system_status.py`，以 `dash/data/*` 为运行数据路径。
+- 明确当前仍采用单 GitHub 仓库，不拆 repo；根目录 MD 文件继续承担项目级规则、规格、路线图、上下文、想法、更新记录、部署和服务器操作说明。
+
 ### 已完成的基础能力
 
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；已验证服务器能读取 `wiki/tasks/todo.json` 并运行 `scripts/sync_wiki_todos.py`。
 - 本地预览已可通过 `http://127.0.0.1:8000/` 运行和访问。
 - 新增 `scripts/sync_system_status.py`，可采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，并只更新 dashboard 的 `automation` / `system` 字段。
 - 在 Home 主内容区增加 personal-wiki 近期待办入口，位于“当前主线”和“今日推进”之间，当前为只读展示 / 跳转，不支持编辑或标记完成。
-- 新增 `scripts/sync_wiki_todos.py` 和 `data/wiki-todos.*`，用 `gh api` 从 private personal-wiki 生成 MaxNow 可静态读取的待办缓存。
+- 新增 `scripts/sync_wiki_todos.py` 和 `dash/data/wiki-todos.*`，用 `gh api` 从 private personal-wiki 生成 MaxNow 可静态读取的待办缓存。
 - 建立 `AGENTS.md`，固定分支、语言、文件边界和 OpenClaw 边界。
 - 建立 `CONTEXT.md`，保存代理接力用的项目上下文地图。
 - 建立 `IDEAS.md`，记录未来想法和桌面伴随入口。
 - 建立 `UPDATE_LOG.md`，记录重要项目更新。
 - 建立 `openclaw/maxnow-dashboard/SKILL.md`，约束 dashboard / ai-news 数据维护。
 - 建立 `openclaw/last-30/SKILL.md`，约束 Last-30 滚动记忆维护。
-- 建立 `data/last-30.*`，承载今日、本周、近 30 天上下文。
+- 建立 `dash/data/last-30.*`，承载今日、本周、近 30 天上下文。
 - 在 Home 页面接入 Last-30 模块。
 - 中文化 `README.md` 和 `DEPLOY.md`。
 - 新增 `scripts/check.py`，用于本地一致性校验。

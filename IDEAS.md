@@ -11,6 +11,41 @@
 
 ## 正在研究
 
+### MaxNow 个人博客
+
+- 日期：2026-06-17
+- 状态：active
+- 来源：Owner 想法
+
+给 MaxNow 增加公开博客，但不把博客混进私人状态工作站。
+
+推荐域名结构：
+
+- `dash.maxnow.cn`：私人状态工作站，继续保持内部、紧凑、偏操作型。
+- `blog.maxnow.cn`：公开博客，用于发布筛选后的旧文和未来文章。
+- `maxnow.cn`：未来公开主页或个人入口，后续链接到博客和项目。
+
+内容源：
+
+- private personal-wiki 的 `raw/blog-vioiv` 保存旧博客原始归档。
+- 当前已归档 211 篇 Hexo Markdown 和 167 个缓存图片。
+- personal-wiki 负责原文、筛选、隐私判断和长期知识归档。
+- MaxNow 负责发布层、公开页面、静态构建和部署状态入口。
+
+第一阶段方向：
+
+- 做静态博客，不引入登录、数据库或后端 API。
+- 只发布明确标记为 public / published 的文章。
+- 将 Hexo front matter 转成 MaxNow 博客模型：标题、日期、分类、标签、slug、来源文件、封面/图片。
+- `dash.maxnow.cn` 只显示博客发布状态和跳转入口，不承载完整阅读体验。
+
+待判断问题：
+
+- 第一批公开文章从哪些分类开始：CS 基础、算法模板、个人总结，还是先做精选。
+- 发布标记写在 personal-wiki 原文 front matter，还是由 MaxNow 维护独立 manifest。
+- 旧文是否保留原始日期和语气，还是发布前逐篇加编辑说明。
+- 是否需要站内搜索、RSS、访问统计、评论或邮件订阅。
+
 ### Last-30 滚动记忆
 
 - 日期：2026-06-14
@@ -82,7 +117,7 @@ Windows 方向：
 - 状态：parked
 - 来源：早期产品方向
 
-先把 `maxnow.cn` 留给未来公开主页或个人发布入口。当前私人看板放在 `dash.maxnow.cn`。
+先把 `maxnow.cn` 留给未来公开主页或个人入口。当前私人看板放在 `dash.maxnow.cn`，公开博客优先使用 `blog.maxnow.cn`。
 
 ### 灵感宇宙
 

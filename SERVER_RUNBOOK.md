@@ -1,4 +1,4 @@
-# MaxNow 服务器操作说明
+﻿# MaxNow 服务器操作说明
 
 这个文件记录 MaxNow 服务器的 SSH 连接方式、前端静态站部署方式和常用排障命令。
 
@@ -8,7 +8,8 @@
 Host: 43.160.240.244
 User: ubuntu
 Domain: dash.maxnow.cn
-Site root: /var/www/maxnow-dashboard
+Repo root: /var/www/maxnow-dashboard
+Dash web root: /var/www/maxnow-dashboard/dash
 Web server: nginx
 ```
 
@@ -34,7 +35,7 @@ ssh -i "$env:USERPROFILE\.ssh\id_ed25519" ubuntu@43.160.240.244 "hostname && who
 /var/www/maxnow-dashboard
 ```
 
-该目录来自 GitHub 仓库：
+该目录来自 GitHub 仓库；nginx 的 dash 站点根目录指向其中的 `dash/` 子目录：
 
 ```text
 https://github.com/V-ioi-V/MaxNow.git
@@ -89,7 +90,7 @@ python3 scripts/sync_system_status.py
 python3 scripts/check.py
 ```
 
-`scripts/sync_system_status.py` 只更新 `data/dashboard.json` / `data/dashboard.js` 中的 `automation` 和 `system` 字段，用来展示 nginx、HTTPS、证书到期、腾讯云位置、计费/有效期、git commit、最近拉取、wiki-todos 同步、定时任务、失败日志、CPU、磁盘、内存和 uptime。它不应该覆盖今日状态、当前主线、今日推进或日常记录。
+`scripts/sync_system_status.py` 只更新 `dash/data/dashboard.json` / `dash/data/dashboard.js` 中的 `automation` 和 `system` 字段，用来展示 nginx、HTTPS、证书到期、腾讯云位置、计费/有效期、git commit、最近拉取、wiki-todos 同步、定时任务、失败日志、CPU、磁盘、内存和 uptime。它不应该覆盖今日状态、当前主线、今日推进或日常记录。
 
 在腾讯云服务器上，它还会通过 metadata 服务读取：
 
@@ -127,10 +128,10 @@ maxnow-dashboard-sync.timer
 python3 scripts/sync_system_status.py --dry-run
 ```
 
-注意：运行同步脚本会改写 `data/wiki-todos.*` 或 `data/dashboard.*`。如果只是验证能力而不想保留工作区改动，可以执行：
+注意：运行同步脚本会改写 `dash/data/wiki-todos.*` 或 `dash/data/dashboard.*`。如果只是验证能力而不想保留工作区改动，可以执行：
 
 ```bash
-git checkout -- data/wiki-todos.json data/wiki-todos.js data/dashboard.json data/dashboard.js
+git checkout -- dash/data/wiki-todos.json dash/data/wiki-todos.js dash/data/dashboard.json dash/data/dashboard.js
 ```
 
 ## 首次部署命令
@@ -150,7 +151,7 @@ server {
   listen 80;
   server_name dash.maxnow.cn;
 
-  root /var/www/maxnow-dashboard;
+  root /var/www/maxnow-dashboard/dash;
   index index.html;
 
   location / {
@@ -237,7 +238,7 @@ sudo tail -n 100 /var/log/auth.log
 可能原因：
 
 - nginx 没有安装或没有运行。
-- nginx 配置没有指向 `/var/www/maxnow-dashboard`。
+- nginx 配置没有指向 `/var/www/maxnow-dashboard/dash`。
 - 域名已解析，但站点配置未启用。
 
 检查：
@@ -253,4 +254,4 @@ ls -la /var/www/maxnow-dashboard
 
 - 决定是否加 Basic Auth、VPN、IP 限制或其他访问保护。
 - 给 `scripts/sync_wiki_todos.py` 和 `scripts/sync_system_status.py` 配置 cron 或 systemd timer，并记录日志路径和失败提醒方式。
-- 做数据更新工具和服务器定时任务，让 `data/*.json` 与 `.js` wrapper 自动保持一致。
+- 做数据更新工具和服务器定时任务，让 `dash/data/*.json` 与 `.js` wrapper 自动保持一致。

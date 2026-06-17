@@ -1,4 +1,4 @@
-# MaxNow 更新记录
+﻿# MaxNow 更新记录
 
 这个文件记录 MaxNow 的重要更新，让产品方向、数据边界和实现决定可以被追溯。
 
@@ -10,6 +10,32 @@
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
 ## 2026-06-17
+
+### 拆分 Dash 和 Blog 目录
+
+- 将 dashboard 页面代码和运行数据移动到 `dash/`：`dash/index.html`、`dash/styles.css`、`dash/app.js`、`dash/data/*`。
+- 将博客方案预览移动到 `blog/preview.html` 和 `blog/preview.css`，作为 `blog.maxnow.cn` 发布层工作区的起点。
+- 根目录新增本地开发入口 `index.html`，只负责跳转到 Dash 和 Blog Preview，不再作为线上 dashboard 本体。
+- 更新 `scripts/check.py`、`scripts/sync_wiki_todos.py` 和 `scripts/sync_system_status.py`，统一使用 `dash/data/*`。
+- 更新 `AGENTS.md`、`SPEC.md`、`CONTEXT.md`、`ROADMAP.md`、`DEPLOY.md`、`SERVER_RUNBOOK.md`、OpenClaw skill 和 README，记录新的文件边界和部署根目录。
+- 明确当前 MD 文件不需要拆目录：根目录文档继续分别承担规则、规格、路线、上下文、想法、更新记录、部署和服务器操作说明。
+
+原因：
+
+- Owner 希望先在一个 repo 内拆分 dash 和 blog 内容，同时判断当前上下文、待办、更新日志和 agent 文档是否冗余。
+
+### 确定个人博客技术方案
+
+- 将个人博客推荐域名确定为 `blog.maxnow.cn`，不挂在 `dash.maxnow.cn/blog`，也暂时不新买独立域名。
+- 明确 `dash.maxnow.cn` 继续作为私人状态工作站；博客完整阅读体验属于独立公开站，dashboard 最多展示发布状态和跳转入口。
+- 在 `dash.maxnow.cn` 左侧导航增加 `Blog` 外链，指向 `https://blog.maxnow.cn`，不新增 dashboard 内部博客页面。
+- 确认内容源使用 private personal-wiki 的 `raw/blog-vioiv`，当前包含旧 Hexo Markdown 211 篇和缓存图片 167 个。
+- 更新 `SPEC.md`、`ROADMAP.md`、`IDEAS.md`、`CONTEXT.md` 和 `DEPLOY.md`，记录内容归属、发布边界、部署目录和后续待办。
+- 新增 `blog/preview.html` 和 `blog/preview.css`，作为接近当前 MaxNow 风格的博客首页视觉预览，不作为正式线上入口。
+
+原因：
+
+- Owner 希望基于 personal-wiki 旧博客内容启动个人博客，并先确认域名结构、技术方案、文档待办和页面风格。
 
 ### 优化系统状态数值文案
 
@@ -23,7 +49,7 @@
 
 ### 收敛系统状态卡片
 
-- 调整 `scripts/sync_system_status.py`，`data/dashboard.*` 的 `system` 字段只写入 nginx、CPU、磁盘、内存和运行时间。
+- 调整 `scripts/sync_system_status.py`，`dash/data/dashboard.*` 的 `system` 字段只写入 nginx、CPU、磁盘、内存和运行时间。
 - 系统状态摘要也只根据这 5 项判断，不再受服务器详情、HTTPS、部署版本、wiki 同步、证书、定时任务等隐藏检查影响。
 - 优化 CPU 说明，把 load average 写成 `1/5/15 min load` 供前端翻译为 `1/5/15 分钟负载`。
 - 优化磁盘说明：根目录 `/` 不再显示“挂载点 /”，只有非根挂载点才显示挂载位置。
@@ -86,8 +112,8 @@
 
 - 在 Home 主内容区新增 `Personal Wiki / 近期待办` 紧凑模块，位于“当前主线”和“今日推进”之间。
 - 新增 `scripts/sync_wiki_todos.py`，通过本地或服务器 `gh api` 读取 private personal-wiki `wiki/tasks/todo.json`。
-- 新增 `data/wiki-todos.json` 和 `data/wiki-todos.js`，作为 MaxNow 前端可静态读取的待办缓存。
-- 模块只读展示 `data/wiki-todos.json` 中的未完成待办，并提供跳转入口。
+- 新增 `dash/data/wiki-todos.json` 和 `dash/data/wiki-todos.js`，作为 MaxNow 前端可静态读取的待办缓存。
+- 模块只读展示 `dash/data/wiki-todos.json` 中的未完成待办，并提供跳转入口。
 - 顶部刷新按钮会重新读取本地缓存；前端不直接访问 private GitHub raw，不做自动轮询，也不支持编辑或标记完成。
 - 补充 `SPEC.md`，记录入口位置、只读边界和刷新策略。
 - 更新 `AGENTS.md`、`CONTEXT.md` 和 `ROADMAP.md`，纳入新的数据文件、同步脚本和维护边界。
@@ -133,9 +159,9 @@
 
 ### 约束 MaxNow 功能待办的维护位置
 
-- 更新 `AGENTS.md`，明确当 Owner 询问 MaxNow 项目待办、功能规划或下一步实现内容时，不要修改 `data/*.json` 或 `data/*.js`。
+- 更新 `AGENTS.md`，明确当 Owner 询问 MaxNow 项目待办、功能规划或下一步实现内容时，不要修改 `dash/data/*.json` 或 `dash/data/*.js`。
 - 更新 `ROADMAP.md`，将当前 MaxNow 功能待办整理为：服务器自动更新链路、数据更新工具、Home 真实项目状态、Token 真数据、访问控制、运行日志和 Last-30 视觉确认。
-- 更新 `CONTEXT.md`，强调 MaxNow 功能待办以 `ROADMAP.md` 为准，运行数据仍归 `data/*.json`。
+- 更新 `CONTEXT.md`，强调 MaxNow 功能待办以 `ROADMAP.md` 为准，运行数据仍归 `dash/data/*.json`。
 
 原因：
 
@@ -178,7 +204,7 @@
 ### 启动 Last-30 首页展示分支
 
 - 创建 `feature/last-30-home-context` 分支，继续推进 Last-30 首页展示。
-- 将 `data/last-30.*` 和 `openclaw/last-30/SKILL.md` 纳入项目文件边界和数据契约。
+- 将 `dash/data/last-30.*` 和 `openclaw/last-30/SKILL.md` 纳入项目文件边界和数据契约。
 - 更新 `CONTEXT.md`，标记 Last-30 数据文件和 skill 已建立，下一步重点转为首页展示和服务器自动更新。
 
 原因：
@@ -192,7 +218,7 @@
 - 将 `CONTEXT.md` 纳入 `AGENTS.md` 和 `SPEC.md` 的文件边界。
 - 在 `SPEC.md` 中补充 “Last-30 滚动记忆” 未来方向。
 - 在 `IDEAS.md` 中记录 Last-30 滚动记忆想法。
-- 修复 `data/dashboard.json` 的中文内容，使它和 `data/dashboard.js` 保持一致，避免页面读取 JSON 后出现乱码。
+- 修复 `dash/data/dashboard.json` 的中文内容，使它和 `dash/data/dashboard.js` 保持一致，避免页面读取 JSON 后出现乱码。
 - 将 OpenClaw dashboard skill 的内部名字从 `maxnow-dashboard-maintainer` 缩短为 `maxnow-data`。
 
 原因：

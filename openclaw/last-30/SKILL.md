@@ -1,4 +1,4 @@
----
+﻿---
 name: maxnow-last30
 description: Maintain MaxNow rolling 30-day context data. Use when OpenClaw updates today's highlights, weekly highlights, 30-day mainlines, decisions, and waiting items without changing page code or product documents.
 ---
@@ -14,26 +14,26 @@ This skill updates the Last-30 data files only. It does not update page code, pr
 Routine Last-30 runs may update only:
 
 ```text
-data/last-30.json
-data/last-30.js
+dash/data/last-30.json
+dash/data/last-30.js
 ```
 
 Routine Last-30 runs must not edit:
 
 ```text
-index.html
-styles.css
-app.js
+dash/index.html
+dash/styles.css
+dash/app.js
 SPEC.md
 README.md
 DEPLOY.md
 CONTEXT.md
 IDEAS.md
 UPDATE_LOG.md
-data/dashboard.json
-data/dashboard.js
-data/ai-news.json
-data/ai-news.js
+dash/data/dashboard.json
+dash/data/dashboard.js
+dash/data/ai-news.json
+dash/data/ai-news.js
 ```
 
 If the data shape, page structure, or product boundary needs to change, stop and report it. Do not modify code or documentation during routine runs.
@@ -53,7 +53,7 @@ Do not rebuild the full 30-day memory from scratch every day. Update incremental
 
 ## Data Files
 
-`data/last-30.json` is the source of truth. `data/last-30.js` must contain the same object assigned to `window.MAXNOW_LAST30_DATA`.
+`dash/data/last-30.json` is the source of truth. `dash/data/last-30.js` must contain the same object assigned to `window.MAXNOW_LAST30_DATA`.
 
 ## Data Shape
 
@@ -135,13 +135,13 @@ Keep arrays compact:
 Before finishing every routine update:
 
 ```bash
-python -m json.tool data/last-30.json >/dev/null
+python -m json.tool dash/data/last-30.json >/dev/null
 ```
 
 Regenerate the wrapper:
 
 ```bash
-python -c "import json; from pathlib import Path; d=json.loads(Path('data/last-30.json').read_text(encoding='utf-8')); Path('data/last-30.js').write_text('window.MAXNOW_LAST30_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
+python -c "import json; from pathlib import Path; d=json.loads(Path('dash/data/last-30.json').read_text(encoding='utf-8')); Path('dash/data/last-30.js').write_text('window.MAXNOW_LAST30_DATA = '+json.dumps(d, ensure_ascii=True, indent=2)+';\n', encoding='ascii')"
 ```
 
 If a source fails, keep the last safe value and add a short waiting item if the failure matters. Do not clear the file.

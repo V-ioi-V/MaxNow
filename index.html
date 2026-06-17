@@ -3,333 +3,98 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MaxNow</title>
-    <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./styles.css?v=18" />
+    <title>MaxNow Local Index</title>
+    <meta name="description" content="Local entry points for MaxNow dash and blog." />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --line: #dfe7f1;
+        --text: #142033;
+        --muted: #6c7a8c;
+        --accent: #1d9bf0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, "Noto Sans SC", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(680px, calc(100% - 32px));
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 28px;
+        background: var(--surface);
+        box-shadow: 0 10px 26px rgba(27, 39, 62, 0.08);
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .links {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      a {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 16px;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      a:hover {
+        border-color: #b8d8f5;
+        color: var(--accent);
+      }
+
+      strong,
+      small {
+        display: block;
+      }
+
+      small {
+        margin-top: 6px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 640px) {
+        .links {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Main navigation">
-        <div class="brand" aria-label="MaxNow">
-          <span class="brand-mark">M</span>
-          <span>
-            <strong>MaxNow</strong>
-          </span>
-        </div>
-
-        <nav class="side-nav" aria-label="Pages">
-          <button class="side-nav-item nav-home is-active" type="button" data-view="home">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg>
-            </span>
-            <span class="nav-copy">
-              <strong>&#39318;&#39029;</strong>
-              <small>&#20170;&#26085;&#27010;&#35272;</small>
-            </span>
-          </button>
-          <button class="side-nav-item nav-token" type="button" data-view="tokens">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7zm0 2.2L17.6 8 12 10.8 6.4 8zm-6 4.6 5 2.5v5.9l-5-2.5zm7 8.4v-5.9l5-2.5v5.9z"/></svg>
-            </span>
-            <span class="nav-copy">
-              <strong>Token</strong>
-              <small id="sidebar-token-total">--</small>
-            </span>
-          </button>
-        </nav>
-      </aside>
-
-      <main class="workspace">
-        <header class="topbar" aria-label="Site status">
-          <div>
-            <p class="eyebrow">dash.maxnow.cn</p>
-            <strong id="view-title">&#20170;&#22825;</strong>
-          </div>
-
-          <div class="topbar-actions">
-            <span class="status-pill" id="operator-status">&#31561;&#24453;&#21516;&#27493;</span>
-            <button
-              class="icon-button"
-              id="refresh-button"
-              type="button"
-              data-action="refresh"
-              aria-label="Refresh data"
-              title="Refresh data"
-            >
-              &#8635;
-            </button>
-          </div>
-        </header>
-
-        <section class="view is-active" id="home-view" data-view-panel="home">
-          <header class="summary-bar" id="overview">
-            <div class="summary-copy">
-              <p class="eyebrow">Today Status</p>
-              <h1 id="today-mode">&#20170;&#26085;&#29366;&#24577;</h1>
-              <p id="daily-brief">&#31561;&#24453; OpenClaw &#20889;&#20837;&#20170;&#22825;&#30340;&#25688;&#35201;&#12290;</p>
-              <div class="summary-meta" aria-label="Today personal state">
-                <span id="today-energy">&#33021;&#37327; --</span>
-                <span id="today-focus">&#20027;&#32447; --</span>
-                <span id="today-updated">&#24453;&#30830;&#35748;</span>
-              </div>
-            </div>
-            <div class="summary-clock" aria-label="Current time">
-              <span id="today-label">--</span>
-              <strong id="clock-label">--:--</strong>
-            </div>
-          </header>
-
-          <section class="status-strip" aria-label="Today status">
-            <article class="metric-mainline">
-              <span>&#24403;&#21069;&#20027;&#32447;</span>
-              <strong id="metric-mainlines">0</strong>
-              <small id="metric-mainlines-note">&#26242;&#26080;&#25968;&#25454;</small>
-            </article>
-            <article class="metric-action">
-              <span>&#20170;&#26085;&#25512;&#36827;</span>
-              <strong id="metric-actions">0</strong>
-              <small id="metric-actions-note">&#26242;&#26080;&#25968;&#25454;</small>
-            </article>
-            <article class="metric-token">
-              <span>Token 7&#22825;</span>
-              <strong id="metric-token-total">--</strong>
-              <small id="metric-token-note">&#31561;&#24453;&#21516;&#27493;</small>
-            </article>
-            <article class="metric-data">
-              <span>&#25968;&#25454;</span>
-              <strong id="metric-automation">--</strong>
-              <small id="metric-automation-note">&#31561;&#24453;&#21516;&#27493;</small>
-            </article>
-          </section>
-
-          <section class="home-workspace">
-            <div class="home-main">
-              <article class="panel focus-panel" id="focus">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Mainlines</p>
-                    <h2>&#24403;&#21069;&#20027;&#32447;</h2>
-                  </div>
-                  <span class="status-pill" id="automation-summary">&#31561;&#24453;&#25968;&#25454;&#21516;&#27493;</span>
-                </header>
-                <div class="task-list" id="mainline-list"></div>
-              </article>
-
-              <article class="panel wiki-todo-panel" id="wiki-todos">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Personal Wiki</p>
-                    <h2>近期待办</h2>
-                  </div>
-                  <a
-                    class="text-button"
-                    id="wiki-todo-source"
-                    href="https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json"
-                    target="_blank"
-                    rel="noreferrer"
-                  >查看</a>
-                </header>
-                <div class="wiki-todo-summary">
-                  <span class="status-pill" id="wiki-todo-status">等待读取</span>
-                  <small id="wiki-todo-updated">todo.json</small>
-                </div>
-                <div class="wiki-todo-list" id="wiki-todo-list"></div>
-              </article>
-
-              <article class="panel actions-panel" id="actions">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Actions</p>
-                    <h2>&#20170;&#26085;&#25512;&#36827;</h2>
-                  </div>
-                </header>
-                <div class="task-list" id="action-list"></div>
-              </article>
-
-              <article class="panel last30-panel" id="last-30" aria-label="近期大事">
-                <header class="panel-head last30-head">
-                  <div>
-                    <p class="eyebrow">Last-30</p>
-                    <h2>近期大事</h2>
-                  </div>
-                  <span class="status-pill" id="last30-source">等待同步</span>
-                </header>
-                <div class="last30-grid">
-                  <section class="last30-column" aria-label="今日大事">
-                    <div class="last30-column-head">
-                      <span>Today</span>
-                      <strong id="last30-today-title">今日大事</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-today-summary"></p>
-                    <div class="last30-list" id="last30-today-list"></div>
-                  </section>
-                  <section class="last30-column" aria-label="本周大事">
-                    <div class="last30-column-head">
-                      <span>Week</span>
-                      <strong id="last30-week-title">本周大事</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-week-summary"></p>
-                    <div class="last30-list" id="last30-week-list"></div>
-                  </section>
-                  <section class="last30-column" aria-label="近 30 天主线">
-                    <div class="last30-column-head">
-                      <span>30 Days</span>
-                      <strong id="last30-mainline-title">近 30 天主线</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-mainline-summary"></p>
-                    <div class="last30-list" id="last30-mainline-list"></div>
-                  </section>
-                </div>
-              </article>
-
-              <article class="panel" id="journal">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Daily Log</p>
-                    <h2>&#20170;&#26085;&#35760;&#24405;</h2>
-                  </div>
-                  <span class="status-pill" id="journal-source">&#29366;&#24577;&#24555;&#29031;</span>
-                </header>
-                <div class="feed-list journal-list" id="journal-list"></div>
-              </article>
-
-              <article class="panel ai-news-panel" id="ai-news">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">External Input</p>
-                    <h2>AI &#22806;&#37096;&#36755;&#20837;</h2>
-                  </div>
-                  <span class="status-pill" id="ai-news-source">OpenClaw</span>
-                </header>
-                <div class="ai-news-list" id="ai-news-list"></div>
-              </article>
-
-              <article class="panel" id="feeds">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Links</p>
-                    <h2>&#31245;&#21518;&#30041;&#24847;</h2>
-                  </div>
-                  <span class="status-pill" id="feed-source">OpenClaw</span>
-                </header>
-                <div class="feed-list" id="feed-list"></div>
-              </article>
-            </div>
-
-            <aside class="home-aside" aria-label="Secondary information">
-              <article class="panel rhythm-panel">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Schedule</p>
-                    <h2>&#26102;&#38388;&#28857;</h2>
-                  </div>
-                </header>
-                <ol class="timeline" id="timeline"></ol>
-              </article>
-
-              <article class="panel token-mini-panel">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Tokens</p>
-                    <h2>&#36817;&#26399;&#29992;&#37327;</h2>
-                  </div>
-                  <button class="text-button" type="button" data-view="tokens">&#26597;&#30475;</button>
-                </header>
-                <div class="mini-token-grid">
-                  <div>
-                    <span>24&#23567;&#26102;</span>
-                    <strong id="mini-token-24h">--</strong>
-                  </div>
-                  <div>
-                    <span>30&#22825;</span>
-                    <strong id="mini-token-30d">--</strong>
-                  </div>
-                </div>
-              </article>
-
-              <article class="panel system-panel">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">System</p>
-                    <h2>&#31995;&#32479;&#29366;&#24577;</h2>
-                  </div>
-                </header>
-                <div class="system-list" id="system-list"></div>
-              </article>
-            </aside>
-          </section>
-        </section>
-
-        <section class="view" id="tokens-view" data-view-panel="tokens">
-          <header class="token-page-head">
-            <div>
-              <p class="eyebrow">Token Usage</p>
-              <h1>Token &#29992;&#37327;</h1>
-              <p id="token-updated">&#31561;&#24453;&#21516;&#27493;</p>
-            </div>
-            <div class="range-tabs" id="token-ranges" role="tablist" aria-label="Token ranges"></div>
-          </header>
-
-          <section class="token-summary" aria-label="Current token summary">
-            <article>
-              <span>&#24635;&#37327;</span>
-              <strong id="token-total">--</strong>
-            </article>
-            <article>
-              <span>&#36755;&#20837;</span>
-              <strong id="token-input">--</strong>
-            </article>
-            <article>
-              <span>&#36755;&#20986;</span>
-              <strong id="token-output">--</strong>
-            </article>
-            <article>
-              <span>&#36153;&#29992;</span>
-              <strong id="token-cost">--</strong>
-            </article>
-          </section>
-
-          <p class="token-note panel" id="token-note">&#26242;&#26080;&#35828;&#26126;&#12290;</p>
-
-          <section class="token-detail-grid">
-            <article class="panel">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Models</p>
-                  <h2>&#27169;&#22411;&#21344;&#27604;</h2>
-                </div>
-              </header>
-              <div class="model-list" id="token-models"></div>
-            </article>
-
-            <article class="panel">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Daily</p>
-                  <h2>&#26368;&#36817; 7 &#22825;</h2>
-                </div>
-              </header>
-              <div class="token-bars" id="token-bars"></div>
-            </article>
-          </section>
-        </section>
-      </main>
-    </div>
-
-    <template id="empty-template">
-      <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
-    </template>
-
-    <script src="./data/dashboard.js?v=5"></script>
-    <script src="./data/ai-news.js?v=1"></script>
-    <script src="./data/last-30.js?v=1"></script>
-    <script src="./data/wiki-todos.js?v=1"></script>
-    <script src="./app.js?v=17"></script>
+    <main>
+      <h1>MaxNow</h1>
+      <p>本地开发入口。线上部署时，dash 和 blog 应分别指向自己的目录。</p>
+      <div class="links">
+        <a href="./dash/">
+          <strong>Dash</strong>
+          <small>dash.maxnow.cn</small>
+        </a>
+        <a href="./blog/preview.html">
+          <strong>Blog Preview</strong>
+          <small>blog.maxnow.cn 方案预览</small>
+        </a>
+      </div>
+    </main>
   </body>
 </html>
