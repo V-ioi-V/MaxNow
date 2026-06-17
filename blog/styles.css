@@ -757,7 +757,7 @@ a {
 
 .post-detail {
   display: grid;
-  gap: 16px;
+  gap: 18px;
   max-width: 920px;
   margin: 28px clamp(18px, 1.2vw, 26px) 58px;
   border: 1px solid var(--line);
@@ -773,9 +773,25 @@ a {
   line-height: 1.12;
 }
 
+.post-source {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #f7fbff;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.post-detail section {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+
 .post-detail h2 {
-  margin: 8px 0 0;
-  font-size: 22px;
+  margin: 0;
+  font-size: 24px;
 }
 
 .post-detail p,
@@ -783,6 +799,36 @@ a {
   color: var(--soft);
   font-size: 15px;
   line-height: 1.8;
+}
+
+.post-detail p {
+  margin: 0;
+}
+
+.post-detail ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.post-detail strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.post-detail figure {
+  margin: 4px 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #f8fbff;
+}
+
+.post-detail img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 @media (max-width: 1180px) {

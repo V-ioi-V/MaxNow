@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>文章预览 | V-ioi-V Blog</title>
-    <meta name="description" content="V-ioi-V Blog 的文章详情页预览。" />
+    <title>以太网、IP、TCP、UDP 头部格式 | V-ioi-V Blog</title>
+    <meta name="description" content="以太网、IP、TCP、UDP 头部格式的旧博客文章详情预览。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=5" />
+    <link rel="stylesheet" href="./styles.css?v=6" />
   </head>
   <body>
     <div class="site-shell">
@@ -43,17 +43,79 @@
             <time>2020/04/03</time>
           </div>
           <h1>以太网、IP、TCP、UDP 头部格式</h1>
-          <p>
-            这是文章详情页的结构预览。真实发布后，这里会展示从 personal-wiki 筛选出来并转换后的 Markdown 正文、
-            图片、代码块、目录和来源信息。
-          </p>
+          <p class="post-source">来源预览：personal-wiki/raw/blog-vioiv/posts/20200403-以太网、IP、TCP、UDP头部格式.md</p>
+
           <section>
-            <h2>发布前需要处理</h2>
+            <h2>以太网帧的格式</h2>
+            <figure>
+              <img src="https://i.loli.net/2020/04/03/o4rU1WO9PNEGKHa.png" alt="以太网帧格式图" />
+            </figure>
+            <p>其中的源地址和目的地址是指网卡的硬件地址，也叫 MAC 地址，长度是 48 位，也就是 6 个字节，是在网卡出厂时固化的。</p>
+            <p>注意网卡芯片收到的数据就是如上所示的一长串数据，其中包括以太网帧头、IP 报头、传输层协议段头和应用层所需数据。</p>
+            <p>以太网帧中的数据长度规定最小 46 字节，最大 1500 字节。ARP 和 RARP 数据包的长度不够 46 字节时，要在后面补填充位。最大值 1500 称为以太网的最大传输单元 MTU。</p>
+            <p><strong>MTU 是指数据帧中有效载荷的最大长度，不包括帧首部的长度。</strong></p>
+          </section>
+
+          <section>
+            <h2>IP 报头格式</h2>
+            <p>IP 是 TCP/IP 协议簇中最为重要的协议。所有的 TCP、UDP、ICMP 和 IGMP 数据都以 IP 数据报格式传输。IP 提供的是不可靠、无连接的协议。</p>
+            <figure>
+              <img src="https://i.loli.net/2020/04/03/cDwF3V1BSv4uCWq.png" alt="IP 报头格式图" />
+            </figure>
+            <p>普通的 IP 首部长为 20 个字节，除非含有选项字段。</p>
+            <p><strong>4 位版本：</strong>目前协议版本号是 4，因此 IP 有时也称作 IPv4。</p>
+            <p><strong>4 位首部长度：</strong>首部长度指的是首部占 32 bit 字的数目，包括任何选项。由于它是一个 4 bit 字段，最大表示 15 行，一行 4 个字节，因此首部长度最长为 60 个字节。</p>
+            <p><strong>服务类型 TOS：</strong>服务类型字段包括优先权字段、TOS 子字段和未用位。TOS 可表示最小时延、最大吞吐量、最高可靠性和最小费用。</p>
+            <p><strong>总长度：</strong>总长度字段是指整个 IP 数据报的长度，以字节为单位。利用首部长度和总长度字段，就可以知道 IP 数据报中数据内容的起始位置和长度。</p>
+            <p><strong>标识字段：</strong>标识字段唯一地标识主机发送的每一份数据报。如果分片的话，每一片的标识字段都是一样的，便于目的主机把这些分片组装起来。</p>
+            <p><strong>3 位标志：</strong></p>
             <ul>
-              <li>转换 front matter，生成稳定 slug、分类和标签。</li>
-              <li>复制必要图片，修正文章内图片路径。</li>
-              <li>检查代码块、标题层级和旧链接是否还能访问。</li>
+              <li>CU：保留位。</li>
+              <li>DF：表示如果这个包大于 MTU，不要分片，直接丢掉，并通过 ICMP 告诉源主机当前 MTU。</li>
+              <li>MF：1 表示这一片不是最后一片，后面还有分片；0 表示这是最后一片。</li>
             </ul>
+            <p><strong>片偏移量：</strong>用于在目的主机把分片按顺序串起来。</p>
+            <p><strong>生存时间：</strong>TTL 字段设置数据报可以经过的最多路由器数，每经过一个路由器值减 1，值为 0 时数据报被丢弃，并发送 ICMP 报文通知源主机。</p>
+            <p><strong>协议：</strong>这个字段定义了 IP 数据报的数据部分使用的协议类型，常见值包括 ICMP、IGMP、TCP、UDP、IGRP 和 OSPF。</p>
+            <p><strong>首部检验和：</strong>首部检验和字段是根据 IP 首部计算的检验和码，不对首部后面的数据进行计算。</p>
+          </section>
+
+          <section>
+            <h2>TCP 首部格式</h2>
+            <p>尽管 TCP 和 UDP 都使用相同的网络层 IP，TCP 却向应用层提供与 UDP 完全不同的服务。TCP 提供一种面向连接的、可靠的字节流服务。</p>
+            <p>如果不计任选字段，TCP 首部通常是 20 个字节。</p>
+            <figure>
+              <img src="https://i.loli.net/2020/04/03/XoIRQwPr392GDSx.jpg" alt="TCP 首部格式图" />
+            </figure>
+            <p><strong>源端口号和目的端口号：</strong>用于寻找发送端和接收端应用进程。这两个值加上 IP 首部中的源端 IP 地址和目的端 IP 地址，可以唯一确定一个 TCP 连接。</p>
+            <p><strong>序号字段：</strong>序号用来标识从 TCP 发送端向 TCP 接收端发送的数据字节流，表示在这个报文段中的第一个数据字节。</p>
+            <p>当建立一个新的连接时，SYN 标志变为 1。序号字段包含由这个主机选择的连接初始序号 ISN。该主机要发送数据的第一个字节序号为 ISN 加 1，因为 SYN 标志消耗了一个序号。</p>
+            <p><strong>确认序号：</strong>确认序号包含发送确认的一端所期望收到的下一个序号，因此确认序号应当是上次已成功收到的数据字节序号加 1。只有 ACK 标志为 1 时确认序号字段才有效。</p>
+            <p><strong>首部长度：</strong>给出首部中 32 bit 字的数目。由于任选字段长度可变，需要这个值确定 TCP 首部实际长度。</p>
+            <p><strong>标志字段：</strong></p>
+            <ul>
+              <li>URG：紧急指针有效。</li>
+              <li>ACK：确认序号有效。</li>
+              <li>PSH：接收方应该尽快将这个报文段交给应用层。</li>
+              <li>RST：重建连接。</li>
+              <li>SYN：同步序号，用来发起一个连接。</li>
+              <li>FIN：发送端完成发送任务。</li>
+            </ul>
+            <p><strong>窗口大小：</strong>TCP 的流量控制由连接的每一端通过声明窗口大小来提供。窗口大小为字节数，起始于确认序号字段指明的值。</p>
+            <p><strong>检验和：</strong>检验和覆盖整个 TCP 报文段，包括 TCP 首部和 TCP 数据。</p>
+            <p><strong>紧急指针：</strong>只有当 URG 标志置 1 时紧急指针才有效。它表示紧急数据最后一个字节的序号。</p>
+            <p><strong>选项：</strong>最常见的可选字段是最长报文大小 MSS。每个连接方通常都在建立连接的 SYN 报文段中指明这个选项。</p>
+          </section>
+
+          <section>
+            <h2>UDP 首部</h2>
+            <p>UDP 是一个简单的面向数据报的运输层协议。进程的每个输出操作都正好产生一个 UDP 数据报，并组装成一份待发送的 IP 数据报。</p>
+            <figure>
+              <img src="https://i.loli.net/2020/04/03/HAyzpmasobgUZwc.jpg" alt="UDP 首部格式图" />
+            </figure>
+            <p><strong>端口号：</strong>用来表示发送和接收进程。TCP 端口号与 UDP 端口号是相互独立的。</p>
+            <p><strong>长度：</strong>UDP 长度字段指的是 UDP 首部和 UDP 数据的字节长度。该字段的最小值为 8 字节。</p>
+            <p><strong>检验和：</strong>UDP 检验和是一个端到端的检验和，由发送端计算，然后由接收端验证，用于发现 UDP 首部和数据在传输过程中发生的改动。</p>
           </section>
         </article>
       </main>
