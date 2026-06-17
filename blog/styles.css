@@ -832,6 +832,9 @@ a {
 }
 
 .post-detail figure {
+  min-height: clamp(280px, 32vw, 520px);
+  display: grid;
+  place-items: center;
   margin: 4px 0;
   overflow: hidden;
   border: 1px solid #e3ebf4;
@@ -841,8 +844,11 @@ a {
 
 .post-detail img {
   display: block;
-  width: 100%;
+  width: auto;
+  max-width: min(780px, 86%);
+  max-height: clamp(220px, 28vw, 460px);
   height: auto;
+  object-fit: contain;
 }
 
 @media (max-width: 1180px) {
