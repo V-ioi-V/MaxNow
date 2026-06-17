@@ -11,6 +11,16 @@
 
 ## 2026-06-17
 
+### 补充服务器云位置和计费信息
+
+- 更新 `scripts/sync_system_status.py`，从腾讯云 metadata 读取实例 ID、公网 IP、region、zone、计费类型、创建时间和 termination time。
+- 系统状态模块新增“云位置”和“计费/有效期”信息；当前服务器是 `ap-singapore-2`，按量计费，无固定到期时间。
+- 更新 `SERVER_RUNBOOK.md`，记录相关 metadata 查询命令和当前服务器可读到的信息。
+
+原因：
+
+- Owner 希望在系统状态里看到服务器位置、有效期，并理解系统状态前几项的含义。
+
 ### 优化动态数据待办顺序
 
 - 更新 `ROADMAP.md`，把近期实现顺序调整为：服务器自动同步 wiki-todos、系统状态动态化、统一数据 wrapper 工具。

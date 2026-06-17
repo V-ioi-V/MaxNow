@@ -91,6 +91,20 @@ python3 scripts/check.py
 
 `scripts/sync_system_status.py` 只更新 `data/dashboard.json` / `data/dashboard.js` 中的 `automation` 和 `system` 字段，用来展示 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态。它不应该覆盖今日状态、当前主线、今日推进或日常记录。
 
+在腾讯云服务器上，它还会通过 metadata 服务读取：
+
+```bash
+curl http://metadata.tencentyun.com/latest/meta-data/instance-id
+curl http://metadata.tencentyun.com/latest/meta-data/public-ipv4
+curl http://metadata.tencentyun.com/latest/meta-data/placement/region
+curl http://metadata.tencentyun.com/latest/meta-data/placement/zone
+curl http://metadata.tencentyun.com/latest/meta-data/payment/charge-type
+curl http://metadata.tencentyun.com/latest/meta-data/payment/termination-time
+curl http://metadata.tencentyun.com/latest/meta-data/payment/create-time
+```
+
+当前服务器可读到：`ap-singapore` / `ap-singapore-2`，实例 `ins-2814k2h0`，按量计费 `POSTPAID_BY_HOUR`，`termination-time=null`，因此没有固定包年包月到期日。
+
 如果只想预览将采集到的状态，不写文件：
 
 ```bash

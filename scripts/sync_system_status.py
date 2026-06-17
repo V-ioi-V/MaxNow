@@ -17,6 +17,7 @@ DASHBOARD_JS = ROOT / "data" / "dashboard.js"
 WIKI_TODOS_JSON = ROOT / "data" / "wiki-todos.json"
 GLOBAL_NAME = "MAXNOW_DASHBOARD_DATA"
 DEFAULT_SITE_URL = "https://dash.maxnow.cn/"
+METADATA_BASE_URL = "http://metadata.tencentyun.com/latest/meta-data"
 GENERATED_DATA_PATHS = {
     "data/dashboard.json",
     "data/dashboard.js",
@@ -117,6 +118,84 @@ def site_state(url):
             "value": "Fail",
             "note": str(getattr(error, "reason", error)),
         }, False
+
+
+def metadata_value(path):
+    try:
+        url = f"{METADATA_BASE_URL}/{path}"
+        request = urllib.request.Request(url, headers={"User-Agent": "MaxNow status check"})
+        with urllib.request.urlopen(request, timeout=2) as response:
+            return response.read().decode("utf-8").strip()
+    except (urllib.error.URLError, TimeoutError, UnicodeDecodeError):
+        return ""
+
+
+def cloud_location_state():
+    instance_id = metadata_value("instance-id")
+    public_ip = metadata_value("public-ipv4")
+    region = metadata_value("placement/region")
+    zone = metadata_value("placement/zone")
+
+    if not any([instance_id, public_ip, region, zone]):
+        return {
+            "key": "cloud-location",
+            "name": "云位置",
+            "value": "Unknown",
+            "note": "Tencent Cloud metadata is not available",
+        }, None
+
+    value = zone or region or "Tencent Cloud"
+    note_parts = []
+    if region:
+        note_parts.append(f"region {region}")
+    if instance_id:
+        note_parts.append(f"instance {instance_id}")
+    if public_ip:
+        note_parts.append(f"public IP {public_ip}")
+    return {
+        "key": "cloud-location",
+        "name": "云位置",
+        "value": value,
+        "note": "; ".join(note_parts),
+    }, True
+
+
+def billing_state():
+    charge_type = metadata_value("payment/charge-type")
+    termination_time = metadata_value("payment/termination-time")
+    create_time = metadata_value("payment/create-time")
+
+    if not any([charge_type, termination_time, create_time]):
+        return {
+            "key": "billing",
+            "name": "计费/有效期",
+            "value": "Unknown",
+            "note": "Tencent Cloud payment metadata is not available",
+        }, None
+
+    if charge_type == "POSTPAID_BY_HOUR":
+        value = "按量计费"
+    elif charge_type:
+        value = charge_type
+    else:
+        value = "Unknown"
+
+    note_parts = []
+    if termination_time and termination_time != "null":
+        note_parts.append(f"expires {termination_time}")
+    elif charge_type == "POSTPAID_BY_HOUR":
+        note_parts.append("no fixed expiry")
+    elif termination_time == "null":
+        note_parts.append("termination time null")
+    if create_time:
+        note_parts.append(f"created {create_time}")
+
+    return {
+        "key": "billing",
+        "name": "计费/有效期",
+        "value": value,
+        "note": "; ".join(note_parts),
+    }, value != "Unknown"
 
 
 def disk_state():
@@ -277,12 +356,14 @@ def build_status(site_url):
     deploy, dirty = git_state()
     nginx, nginx_ok = nginx_state()
     https, https_ok = site_state(site_url)
+    cloud_location, cloud_location_ok = cloud_location_state()
+    billing, billing_ok = billing_state()
     cpu, cpu_ok = cpu_state()
     disk, disk_ok = disk_state()
     memory, memory_ok = memory_state()
     wiki, wiki_ok = wiki_todos_state()
 
-    checks.extend([nginx_ok, https_ok, cpu_ok, disk_ok, memory_ok, wiki_ok])
+    checks.extend([nginx_ok, https_ok, cloud_location_ok, billing_ok, cpu_ok, disk_ok, memory_ok, wiki_ok])
     failed = [item for item in checks if item is False]
     unknown = [item for item in checks if item is None]
 
@@ -314,6 +395,8 @@ def build_status(site_url):
             server_identity(),
             nginx,
             https,
+            cloud_location,
+            billing,
             deploy,
             wiki,
             cpu,
