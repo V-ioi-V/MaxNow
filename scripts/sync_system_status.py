@@ -16,6 +16,12 @@ DASHBOARD_JS = ROOT / "data" / "dashboard.js"
 WIKI_TODOS_JSON = ROOT / "data" / "wiki-todos.json"
 GLOBAL_NAME = "MAXNOW_DASHBOARD_DATA"
 DEFAULT_SITE_URL = "https://dash.maxnow.cn/"
+GENERATED_DATA_PATHS = {
+    "data/dashboard.json",
+    "data/dashboard.js",
+    "data/wiki-todos.json",
+    "data/wiki-todos.js",
+}
 
 
 def now_text():
@@ -44,13 +50,20 @@ def git_state():
     _, commit, _ = run_command(["git", "rev-parse", "--short", "HEAD"])
     _, branch, _ = run_command(["git", "branch", "--show-current"])
     _, status, _ = run_command(["git", "status", "--short"])
-    dirty = bool(status.strip())
+    changed_paths = []
+    for line in status.splitlines():
+        if len(line) < 4:
+            continue
+        changed_paths.append(line[3:].strip().replace("\\", "/"))
+    dirty = any(path not in GENERATED_DATA_PATHS for path in changed_paths)
     value = commit or "--"
     if dirty:
         value = f"{value}*"
     note = f"{branch or 'unknown'} branch"
     if dirty:
-        note += "; working tree has local changes"
+        note += "; working tree has non-generated local changes"
+    elif changed_paths:
+        note += "; generated data has local updates"
     return {
         "key": "deploy",
         "name": "部署版本",
