@@ -144,6 +144,47 @@ a {
   font-weight: 800;
 }
 
+.archive-summary {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  background: #f9fbfe;
+}
+
+.archive-summary h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.archive-summary dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.archive-summary dl div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
+.archive-summary dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.archive-summary dd {
+  margin: 0;
+  color: var(--accent-strong);
+  font-size: 16px;
+  font-weight: 800;
+}
+
 .workspace {
   min-width: 0;
 }
@@ -223,9 +264,13 @@ a {
 }
 
 .hero,
+.compact-hero,
 .featured-card,
 .post-card,
-.panel {
+.panel,
+.article-preview,
+.category-card,
+.topic-page-head {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -282,6 +327,26 @@ a {
   font-size: 22px;
 }
 
+.compact-hero {
+  margin: 28px clamp(18px, 1.2vw, 26px) 14px;
+  padding: 22px;
+}
+
+.compact-hero h1 {
+  max-width: 980px;
+  margin: 8px 0;
+  font-size: clamp(28px, 2.6vw, 38px);
+  line-height: 1.14;
+}
+
+.compact-hero p:not(.eyebrow) {
+  max-width: 880px;
+  margin: 0;
+  color: var(--soft);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
 .content-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(340px, 0.3fr);
@@ -293,7 +358,9 @@ a {
 .post-column,
 .aside-column,
 .post-list,
+.article-feed,
 .topic-list,
+.category-grid,
 .topic-layout,
 .queue-list {
   display: grid;
@@ -303,8 +370,72 @@ a {
 .featured-card,
 .post-card,
 .panel,
-.topic-detail {
+.topic-detail,
+.article-preview,
+.category-card,
+.topic-page-head {
   padding: 20px;
+}
+
+.article-feed {
+  padding: 0 clamp(18px, 1.2vw, 26px) 58px;
+}
+
+.article-preview {
+  display: grid;
+  gap: 10px;
+  background: #f9fbfe;
+}
+
+.article-preview.is-featured {
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+}
+
+.article-preview h2 {
+  margin: 0;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.2;
+}
+
+.article-preview:not(.is-featured) h2 {
+  font-size: clamp(19px, 1.7vw, 24px);
+}
+
+.article-preview p {
+  max-width: 920px;
+  margin: 0;
+  color: var(--soft);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.article-meta time {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.read-link,
+.back-link {
+  width: max-content;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #b8d8f5;
+  border-radius: var(--radius);
+  padding: 0 12px;
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
 }
 
 .featured-card {
@@ -491,6 +622,36 @@ a {
   margin-bottom: 16px;
 }
 
+.category-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0 clamp(18px, 1.2vw, 26px) 58px;
+}
+
+.category-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.category-card:hover {
+  border-color: #b8d8f5;
+  background: #f8fbff;
+}
+
+.category-card h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.category-card p {
+  margin: 0;
+  color: var(--soft);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 .topic-layout {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   padding: 0 clamp(18px, 1.2vw, 26px) 58px;
@@ -561,6 +722,30 @@ a {
   color: var(--accent-strong);
 }
 
+.topic-page-head {
+  display: grid;
+  gap: 10px;
+  margin: 28px clamp(18px, 1.2vw, 26px) 14px;
+}
+
+.topic-page-head h1 {
+  margin: 0;
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 1.1;
+}
+
+.topic-page-head p {
+  max-width: 820px;
+  margin: 0;
+  color: var(--soft);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.topic-feed {
+  padding-top: 0;
+}
+
 @media (max-width: 1180px) {
   .hero,
   .content-grid {
@@ -594,18 +779,23 @@ a {
   }
 
   .hero,
-  .content-grid {
+  .compact-hero,
+  .content-grid,
+  .topic-page-head {
     margin: 16px 14px 0;
     padding: 18px;
   }
 
   .content-grid,
+  .article-feed,
+  .category-grid,
   .topic-layout {
     padding: 0 14px 38px;
   }
 
   .hero-panel,
   .post-list,
+  .category-grid,
   .topic-layout {
     grid-template-columns: 1fr;
   }

@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=2" />
   </head>
   <body>
     <div class="site-shell">
@@ -29,17 +29,40 @@
             <span class="nav-icon">文</span>
             <span>
               <strong>文章</strong>
-              <small>旧博客精选</small>
+              <small>按时间浏览</small>
             </span>
           </a>
           <a class="side-nav-item" href="./topics.html">
             <span class="nav-icon">#</span>
             <span>
               <strong>专题</strong>
-              <small>算法 / CS / 工程</small>
+              <small>按分类进入</small>
             </span>
           </a>
         </nav>
+
+        <section class="archive-summary" aria-label="归档总览">
+          <p class="eyebrow">Archive</p>
+          <h2>归档总览</h2>
+          <dl>
+            <div>
+              <dt>原始文章</dt>
+              <dd>211</dd>
+            </div>
+            <div>
+              <dt>缓存图片</dt>
+              <dd>167</dd>
+            </div>
+            <div>
+              <dt>专题分类</dt>
+              <dd>4</dd>
+            </div>
+            <div>
+              <dt>当前状态</dt>
+              <dd>Preview</dd>
+            </div>
+          </dl>
+        </section>
       </aside>
 
       <main class="workspace">
@@ -55,152 +78,118 @@
           </div>
         </header>
 
-        <section class="hero">
-          <div class="hero-copy">
-            <p class="eyebrow">blog.maxnow.cn</p>
-            <h1>把早期写下的算法、CS 基础和工程笔记，整理成一个可以公开翻阅的地方。</h1>
-            <p>
-              这些内容来自 personal-wiki 的旧 Hexo 归档。第一版只做精选和归档，不追求宏大叙事，
-              先让值得保留的学习轨迹重新被看见。
-            </p>
-          </div>
-          <div class="hero-panel" aria-label="归档概况">
-            <div>
-              <span>原始文章</span>
-              <strong>211</strong>
-            </div>
-            <div>
-              <span>缓存图片</span>
-              <strong>167</strong>
-            </div>
-            <div>
-              <span>当前状态</span>
-              <strong>Preview</strong>
-            </div>
-          </div>
+        <section class="compact-hero">
+          <p class="eyebrow">blog.maxnow.cn</p>
+          <h1>把早期写下的算法、CS 基础和工程笔记，整理成可以一直向下翻阅的公开归档。</h1>
+          <p>
+            首页先展示文章预览流。后续真实发布时，每篇文章会来自受控发布清单，并带有标题、日期、slug、
+            分类、标签、摘要和可发布状态。
+          </p>
         </section>
 
-        <section class="content-grid">
-          <section class="post-column" id="posts" aria-label="文章列表">
-            <article class="featured-card" data-topic="cs network">
-              <div class="card-meta">
-                <span class="tag cyan">CS 大学生必备</span>
-                <time>2020/04/03</time>
-              </div>
-              <h2>以太网、IP、TCP、UDP 头部格式</h2>
-              <p>
-                计算机网络基础笔记，适合作为第一批公开内容。发布前需要完成 front matter 转换、
-                图片路径整理和代码块校对。
-              </p>
-              <a href="#">阅读全文</a>
-            </article>
-
-            <div class="post-list">
-              <article class="post-card" data-topic="algorithm">
-                <div class="card-meta">
-                  <span class="tag orange">算法</span>
-                  <time>2020/04/29</time>
-                </div>
-                <h3>二叉搜索树与双向链表</h3>
-                <p>旧 LeetCode 题解，适合做算法归档，也可以后续补一段当前理解。</p>
-              </article>
-
-              <article class="post-card" data-topic="cs cpp">
-                <div class="card-meta">
-                  <span class="tag purple">C++</span>
-                  <time>待确认</time>
-                </div>
-                <h3>C++11 新特性</h3>
-                <p>一篇典型 CS 基础文章，适合进入公开博客的基础知识系列。</p>
-              </article>
-
-              <article class="post-card" data-topic="cs network">
-                <div class="card-meta">
-                  <span class="tag blue">计算机网络</span>
-                  <time>2020/03/12</time>
-                </div>
-                <h3>HTTP 和 HTTPS 的区别</h3>
-                <p>基础概念类旧文，发布前可以加一段“写于 2020 年”的编辑说明。</p>
-              </article>
-
-              <article class="post-card" data-topic="algorithm dp">
-                <div class="card-meta">
-                  <span class="tag green">DP</span>
-                  <time>2020/05/23</time>
-                </div>
-                <h3>DP 专题</h3>
-                <p>算法专题入口。第一版按文章展示，后续再考虑整理成专题页。</p>
-              </article>
-
-              <article class="post-card" data-topic="algorithm template">
-                <div class="card-meta">
-                  <span class="tag orange">算法模板</span>
-                  <time>2019/03/01</time>
-                </div>
-                <h3>线段树模板</h3>
-                <p>模板类文章适合归档展示，但需要标注适用年代和使用场景。</p>
-              </article>
-
-              <article class="post-card" data-topic="cs os">
-                <div class="card-meta">
-                  <span class="tag cyan">操作系统</span>
-                  <time>2020/03/22</time>
-                </div>
-                <h3>进程和线程</h3>
-                <p>CS 基础系列候选文章，可以和 IO、内存、进程通信形成一个专题。</p>
-              </article>
+        <section class="article-feed" aria-label="文章预览列表">
+          <article class="article-preview is-featured">
+            <div class="article-meta">
+              <span class="tag cyan">CS 大学生必备</span>
+              <time>2020/04/03</time>
             </div>
-          </section>
+            <h2>以太网、IP、TCP、UDP 头部格式</h2>
+            <p>
+              计算机网络基础笔记，适合作为第一批公开内容。发布前需要完成 front matter 转换、
+              图片路径整理和代码块校对。
+            </p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
 
-          <aside class="aside-column" aria-label="博客状态和专题">
-            <article class="panel" id="topics">
-              <div class="panel-head">
-                <div>
-                  <p class="eyebrow">Topics</p>
-                  <h2>内容分布</h2>
-                </div>
-              </div>
-              <div class="topic-list">
-                <a href="./topics.html#algorithm">
-                  <span>算法</span>
-                  <strong>145</strong>
-                </a>
-                <a href="./topics.html#cs">
-                  <span>CS 大学生必备</span>
-                  <strong>55</strong>
-                </a>
-                <a href="./topics.html#algorithm-gap">
-                  <span>算法短板</span>
-                  <strong>6</strong>
-                </a>
-                <a href="./topics.html#engineering">
-                  <span>工程 / 总结 / 未分类</span>
-                  <strong>5</strong>
-                </a>
-              </div>
-            </article>
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag orange">算法</span>
+              <time>2020/04/29</time>
+            </div>
+            <h2>二叉搜索树与双向链表</h2>
+            <p>旧 LeetCode 题解，适合做算法归档，也可以后续补一段当前理解。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
 
-            <article class="panel">
-              <div class="panel-head">
-                <div>
-                  <p class="eyebrow">Publish Queue</p>
-                  <h2>第一批候选</h2>
-                </div>
-              </div>
-              <ul class="queue-list">
-                <li>计算机网络基础</li>
-                <li>操作系统基础</li>
-                <li>C++ 基础知识</li>
-                <li>算法模板和专题</li>
-              </ul>
-            </article>
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag purple">C++</span>
+              <time>待确认</time>
+            </div>
+            <h2>C++11 新特性</h2>
+            <p>一篇典型 CS 基础文章，适合进入公开博客的基础知识系列。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
 
-            <article class="panel note-panel">
-              <p class="eyebrow">Boundary</p>
-              <h2>发布边界</h2>
-              <p>这里只展示筛选后的公开内容。原文、隐私判断和长期知识整理仍然留在 personal-wiki。</p>
-            </article>
-          </aside>
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag blue">计算机网络</span>
+              <time>2020/03/12</time>
+            </div>
+            <h2>HTTP 和 HTTPS 的区别</h2>
+            <p>基础概念类旧文，发布前可以加一段“写于 2020 年”的编辑说明。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
+
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag green">DP</span>
+              <time>2020/05/23</time>
+            </div>
+            <h2>DP 专题</h2>
+            <p>算法专题入口。第一版按文章展示，后续再考虑整理成专题页。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
+
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag orange">算法模板</span>
+              <time>2019/03/01</time>
+            </div>
+            <h2>线段树模板</h2>
+            <p>模板类文章适合归档展示，但需要标注适用年代和使用场景。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
+
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag cyan">操作系统</span>
+              <time>2020/03/22</time>
+            </div>
+            <h2>进程和线程</h2>
+            <p>CS 基础系列候选文章，可以和 IO、内存、进程通信形成一个专题。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
+
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag orange">算法</span>
+              <time>2019/08/14</time>
+            </div>
+            <h2>并查集模板整理</h2>
+            <p>适合进入算法模板分类，发布时补充适用题型和复杂度说明。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
+
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag blue">计算机网络</span>
+              <time>2020/03/18</time>
+            </div>
+            <h2>浏览器输入 URL 后发生了什么</h2>
+            <p>网络、DNS、TCP、HTTP 和渲染链路的串联型笔记，适合作为 CS 基础入口文章。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
+
+          <article class="article-preview">
+            <div class="article-meta">
+              <span class="tag purple">工程总结</span>
+              <time>待筛选</time>
+            </div>
+            <h2>旧项目复盘</h2>
+            <p>数量不多但更有个人轨迹。发布前需要确认是否适合公开，以及是否需要删去私人细节。</p>
+            <a class="read-link" href="#">阅读全文</a>
+          </article>
         </section>
       </main>
     </div>
