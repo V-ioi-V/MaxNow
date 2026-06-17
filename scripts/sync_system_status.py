@@ -4,6 +4,7 @@ import shutil
 import socket
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
@@ -122,13 +123,72 @@ def disk_state():
     usage = shutil.disk_usage(ROOT)
     used_pct = round((usage.used / usage.total) * 100)
     free_gb = usage.free / (1024 ** 3)
+    total_gb = usage.total / (1024 ** 3)
     ok = used_pct < 85
     return {
         "key": "disk",
         "name": "磁盘",
         "value": f"{used_pct}%",
-        "note": f"{free_gb:.1f} GB free on {ROOT.anchor or '/'}",
+        "note": f"{free_gb:.1f} / {total_gb:.1f} GB available on {ROOT.anchor or '/'}",
     }, ok
+
+
+def read_cpu_totals():
+    stat = Path("/proc/stat")
+    if not stat.exists():
+        return None
+    first_line = stat.read_text(encoding="utf-8").splitlines()[0]
+    parts = first_line.split()
+    if not parts or parts[0] != "cpu":
+        return None
+    values = [int(part) for part in parts[1:]]
+    idle = values[3] + (values[4] if len(values) > 4 else 0)
+    total = sum(values)
+    return total, idle
+
+
+def cpu_state():
+    first = read_cpu_totals()
+    if first is None:
+        return {
+            "key": "cpu",
+            "name": "CPU",
+            "value": "Unknown",
+            "note": "CPU info is only collected on Linux",
+        }, None
+
+    time.sleep(0.25)
+    second = read_cpu_totals()
+    if second is None:
+        return {
+            "key": "cpu",
+            "name": "CPU",
+            "value": "Unknown",
+            "note": "could not read /proc/stat twice",
+        }, None
+
+    total_delta = second[0] - first[0]
+    idle_delta = second[1] - first[1]
+    usage_pct = 0 if total_delta <= 0 else round(((total_delta - idle_delta) / total_delta) * 100)
+
+    loadavg = Path("/proc/loadavg")
+    load_text = "load unavailable"
+    if loadavg.exists():
+        loads = loadavg.read_text(encoding="utf-8").split()[:3]
+        if len(loads) == 3:
+            load_text = f"load {' / '.join(loads)}"
+
+    cores = "unknown cores"
+    code, stdout, _ = run_command(["nproc"], timeout=2)
+    if code == 0 and stdout:
+        cores = f"{stdout.strip()} cores"
+
+    return {
+        "key": "cpu",
+        "name": "CPU",
+        "value": f"{usage_pct}%",
+        "note": f"{cores}; {load_text}",
+    }, usage_pct < 85
 
 
 def memory_state():
@@ -162,11 +222,12 @@ def memory_state():
 
     used_pct = round(((total - available) / total) * 100)
     available_gb = available / (1024 ** 2)
+    total_gb = total / (1024 ** 2)
     return {
         "key": "memory",
         "name": "内存",
         "value": f"{used_pct}%",
-        "note": f"{available_gb:.1f} GB available",
+        "note": f"{available_gb:.1f} / {total_gb:.1f} GB available",
     }, used_pct < 90
 
 
@@ -216,11 +277,12 @@ def build_status(site_url):
     deploy, dirty = git_state()
     nginx, nginx_ok = nginx_state()
     https, https_ok = site_state(site_url)
+    cpu, cpu_ok = cpu_state()
     disk, disk_ok = disk_state()
     memory, memory_ok = memory_state()
     wiki, wiki_ok = wiki_todos_state()
 
-    checks.extend([nginx_ok, https_ok, disk_ok, memory_ok, wiki_ok])
+    checks.extend([nginx_ok, https_ok, cpu_ok, disk_ok, memory_ok, wiki_ok])
     failed = [item for item in checks if item is False]
     unknown = [item for item in checks if item is None]
 
@@ -254,6 +316,7 @@ def build_status(site_url):
             https,
             deploy,
             wiki,
+            cpu,
             disk,
             memory,
         ],
