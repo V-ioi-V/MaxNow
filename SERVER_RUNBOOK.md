@@ -51,10 +51,57 @@ branch: main
 站点访问：
 
 ```text
-http://dash.maxnow.cn
+https://dash.maxnow.cn
 ```
 
-当前还没有配置 HTTPS。后续需要补充证书和 HTTPS 跳转。
+当前 HTTPS 已启用，HTTP 请求会跳转到 HTTPS。
+
+## GitHub CLI / private 仓库读取
+
+2026-06-17 已确认服务器安装了 GitHub CLI：
+
+```bash
+command -v gh
+gh auth status
+```
+
+当前服务器上的 `gh` 已授权为 `V-ioi-V`，scope 包含 `repo`，可读取 private `V-ioi-V/personal-wiki`。
+
+验证 private personal-wiki 读取：
+
+```bash
+gh api 'repos/V-ioi-V/personal-wiki/contents/wiki/tasks/todo.json?ref=main' --jq .name
+```
+
+刷新 MaxNow 的 personal-wiki 待办缓存：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/sync_wiki_todos.py
+python3 scripts/check.py
+```
+
+刷新 MaxNow 的系统状态缓存：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/sync_system_status.py
+python3 scripts/check.py
+```
+
+`scripts/sync_system_status.py` 只更新 `data/dashboard.json` / `data/dashboard.js` 中的 `automation` 和 `system` 字段，用来展示 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态。它不应该覆盖今日状态、当前主线、今日推进或日常记录。
+
+如果只想预览将采集到的状态，不写文件：
+
+```bash
+python3 scripts/sync_system_status.py --dry-run
+```
+
+注意：运行同步脚本会改写 `data/wiki-todos.*` 或 `data/dashboard.*`。如果只是验证能力而不想保留工作区改动，可以执行：
+
+```bash
+git checkout -- data/wiki-todos.json data/wiki-todos.js data/dashboard.json data/dashboard.js
+```
 
 ## 首次部署命令
 
@@ -174,6 +221,6 @@ ls -la /var/www/maxnow-dashboard
 
 ## 后续待补
 
-- 配置 HTTPS 证书。
 - 决定是否加 Basic Auth、VPN、IP 限制或其他访问保护。
+- 给 `scripts/sync_wiki_todos.py` 和 `scripts/sync_system_status.py` 配置 cron 或 systemd timer，并记录日志路径和失败提醒方式。
 - 做数据更新工具和服务器定时任务，让 `data/*.json` 与 `.js` wrapper 自动保持一致。

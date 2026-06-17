@@ -9,6 +9,23 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-06-17
+
+### 优化动态数据待办顺序
+
+- 更新 `ROADMAP.md`，把近期实现顺序调整为：服务器自动同步 wiki-todos、系统状态动态化、统一数据 wrapper 工具。
+- 将 Token 真实数据、AI 外部输入、Last-30 增量更新等任务放入后续队列，避免在数据来源未明确前先做复杂页面能力。
+- 标记服务器 GitHub CLI 已具备读取 private personal-wiki 的条件，服务器定时任务剩余重点转为 cron / systemd timer、日志和失败提醒。
+- 新增 `scripts/sync_system_status.py`，用于采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，并只更新 dashboard 的 `automation` / `system` 字段。
+- 更新 `SPEC.md`、`CONTEXT.md`、`SERVER_RUNBOOK.md` 和 `ROADMAP.md`，记录系统状态脚本的边界、手动运行命令和后续定时化任务。
+- 更新 `AGENTS.md`，要求完成功能、服务器操作、自动化或数据链路后，同步维护 `ROADMAP.md`、`UPDATE_LOG.md`、`CONTEXT.md` 和必要的 runbook，不允许只停留在聊天记录。
+- 更新 `CONTEXT.md` 和 `SERVER_RUNBOOK.md`，记录服务器 GitHub CLI 已安装授权、本地预览可通过 `127.0.0.1:8000` 访问、服务器可读取 private personal-wiki 并运行 `scripts/sync_wiki_todos.py`。
+
+原因：
+
+- Owner 希望根据当前页面模块和现有数据链路，重新整理哪些待办现在最值得推进。
+- Owner 指出完成实际功能或服务器操作后，必须同步更新仓库里的待办、已完成记录、日志和上下文。
+
 ## 2026-06-16
 
 ### 增加 personal-wiki 近期待办入口

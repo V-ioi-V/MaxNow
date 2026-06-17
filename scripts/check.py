@@ -50,6 +50,7 @@ def check_required_files():
         "SPEC.md",
         "IDEAS.md",
         "UPDATE_LOG.md",
+        "scripts/sync_system_status.py",
         "scripts/sync_wiki_todos.py",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
