@@ -137,7 +137,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 - 不从公开前端直接读取 private personal-wiki。
 - 不把所有旧文一次性公开发布；先通过 public / published 标记或发布 manifest 筛选。
-- `dash.maxnow.cn` 左侧导航可放一个指向 `blog.maxnow.cn` 的外部链接；页面内最多展示发布进度、待筛选数量和最近发布摘要。
+- `dash.maxnow.cn` 顶部右侧可放一个指向 `blog.maxnow.cn` 的弱外部链接；左侧导航只保留 Dash 内部页面。页面内最多展示发布进度、待筛选数量和最近发布摘要。
 
 ## 上下文更新规则
 

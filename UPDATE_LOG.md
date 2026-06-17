@@ -11,6 +11,16 @@
 
 ## 2026-06-17
 
+### 调整 Dash 的 Blog 入口位置
+
+- 将 `dash.maxnow.cn` 左侧导航里的 `Blog` 外链移到顶部右侧，和博客页里的 `Dash` 外链保持同一类弱入口处理。
+- 左侧导航只保留 Dash 内部页面：`首页` 和 `Token`。
+- 更新 `CONTEXT.md` 和 `ROADMAP.md`，将博客入口描述从左侧导航改为顶部右侧弱外链。
+
+原因：
+
+- Owner 反馈 Blog 放在 Dash 左侧导航里不合适，和博客页中 Dash 外链的边界问题相同。
+
 ### 部署博客预览到服务器
 
 - 将博客首页和专题页预览合入 `origin/main`，服务器 `/var/www/maxnow-dashboard` 已拉取到提交 `6017791`。

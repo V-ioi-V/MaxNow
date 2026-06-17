@@ -26,7 +26,7 @@
 - 内容源使用 private personal-wiki 的 `raw/blog-vioiv`：当前已归档旧 Hexo Markdown 211 篇，图片缓存 167 个。
 - MaxNow 仓库负责发布层：构建脚本、公开文章数据、静态页面、归档、标签、RSS、部署说明和 dashboard 发布状态入口。
 - `dash.maxnow.cn` 继续作为私人状态工作站；最多显示博客发布进度、待筛选数量和跳转入口，不承载完整博客阅读体验。
-- `dash.maxnow.cn` 左侧导航已预留 `Blog` 外链，指向 `https://blog.maxnow.cn`。
+- `dash.maxnow.cn` 顶部右侧已预留 `Blog` 弱外链，指向 `https://blog.maxnow.cn`；左侧导航只保留 Dash 内部页面。
 - 第一阶段先做只读静态博客：筛选 public/published 文章，转换 front matter，复制必要图片，生成 `blog.maxnow.cn` 页面。
 - 首页预览页：`blog/index.html`，用于确认真实博客首页的信息架构和视觉风格。
 - 专题预览页：`blog/topics.html`，用于确认左侧“文章 / 专题”分页面导航和专题索引组织方式。
