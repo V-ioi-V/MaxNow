@@ -14,7 +14,7 @@
 ### 调整博客文章流和专题层级
 
 - 将 `blog/index.html` 从卡片拼版改为文章预览流：首页按文章逐条展示，适合持续向下浏览。
-- 在博客左侧增加归档总览，展示原始文章数、缓存图片数、专题分类数和当前状态。
+- 将博客左侧导航整理为 `文章 / 专题 / 总览` 三个同级 tab；归档统计后续放在独立总览页，不放在文章页 sidebar 卡片。
 - 将 `blog/topics.html` 调整为专题分类索引页；新增 `blog/topic-algorithm.html`、`blog/topic-cs.html`、`blog/topic-algorithm-gap.html` 和 `blog/topic-engineering.html` 作为分类二级页。
 - 分类二级页展示该分类下的文章列表，并提供返回专题索引的入口。
 - 更新 `scripts/check.py`、`README.md`、`CONTEXT.md` 和 `ROADMAP.md`，覆盖新增页面和新的浏览结构。
@@ -35,6 +35,16 @@
 
 - Owner 希望点击文章 cell 任意位置都能进入文章，不再依赖小按钮；同时希望大屏下一行两篇文章，提升信息密度。
 - Owner 发现算法分类写着 145 篇但页面只显示几篇，容易误解为数据缺失。
+
+### 调整博客总览为左侧独立 tab
+
+- 新增 `blog/overview.html` 作为博客左侧 `总览` tab，展示原始文章数、缓存图片数、专题分类数和发布状态。
+- 从 `blog/index.html` 和 `blog/topics.html` 移除归档/分类统计 sidebar 卡片，左侧只保留 `文章 / 专题 / 总览` 导航。
+- 将博客样式版本提升到 `styles.css?v=5`，覆盖新的总览页和导航结构。
+
+原因：
+
+- Owner 明确希望总览是左侧独立 tab，而不是放在左侧栏里的信息卡片。
 
 ### 调整 Dash 的 Blog 入口位置
 

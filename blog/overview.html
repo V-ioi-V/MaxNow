@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>总览 | V-ioi-V Blog</title>
+    <meta name="description" content="V-ioi-V 旧技术博客归档总览。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css?v=5" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <aside class="sidebar" aria-label="站点导航">
+        <a class="brand" href="./index.html" aria-label="V-ioi-V Blog">
+          <span class="brand-mark">V</span>
+          <span><strong>V-ioi-V</strong><small>blog.maxnow.cn</small></span>
+        </a>
+        <nav class="side-nav" aria-label="博客栏目">
+          <a class="side-nav-item" href="./index.html"><span class="nav-icon">文</span><span><strong>文章</strong><small>按时间浏览</small></span></a>
+          <a class="side-nav-item" href="./topics.html"><span class="nav-icon">#</span><span><strong>专题</strong><small>按分类进入</small></span></a>
+          <a class="side-nav-item is-active" href="./overview.html"><span class="nav-icon">览</span><span><strong>总览</strong><small>归档数据</small></span></a>
+        </nav>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div><p class="eyebrow">Overview</p><strong>归档总览</strong></div>
+          <div class="topbar-actions">
+            <span class="status-pill">211 篇原文</span>
+            <span class="status-pill muted">筛选发布中</span>
+            <a class="topbar-link" href="https://dash.maxnow.cn">Dash</a>
+          </div>
+        </header>
+
+        <section class="compact-hero">
+          <p class="eyebrow">Archive</p>
+          <h1>单独看这个旧博客归档现在处在什么状态。</h1>
+          <p>总览作为左侧独立 tab，只放归档数量、分类分布和发布边界，不再塞进文章页或专题页的左栏。</p>
+        </section>
+
+        <section class="overview-grid" aria-label="归档指标">
+          <article class="overview-card"><span>原始文章</span><strong>211</strong><p>来自 personal-wiki/raw/blog-vioiv/posts 的旧 Hexo Markdown 归档。</p></article>
+          <article class="overview-card"><span>缓存图片</span><strong>167</strong><p>后续发布前需要按公开文章筛选并复制到公开 assets。</p></article>
+          <article class="overview-card"><span>专题分类</span><strong>4</strong><p>算法、CS 大学生必备、算法短板、工程 / 总结 / 未分类。</p></article>
+          <article class="overview-card"><span>当前状态</span><strong>Preview</strong><p>真实发布前还需要补 public/published manifest。</p></article>
+        </section>
+
+        <section class="category-grid overview-categories" aria-label="分类分布">
+          <a class="category-card" href="./topic-algorithm.html"><div class="topic-detail-head"><span class="tag orange">算法</span><strong>145 篇</strong></div><h2>算法题解与模板</h2><p>题解、模板和专题整理，是旧博客里数量最大的分类。</p></a>
+          <a class="category-card" href="./topic-cs.html"><div class="topic-detail-head"><span class="tag cyan">CS 大学生必备</span><strong>55 篇</strong></div><h2>计算机基础</h2><p>网络、操作系统、C++ 和基础工程知识。</p></a>
+          <a class="category-card" href="./topic-algorithm-gap.html"><div class="topic-detail-head"><span class="tag green">算法短板</span><strong>6 篇</strong></div><h2>补弱专题</h2><p>针对薄弱项的算法记录和复盘。</p></a>
+          <a class="category-card" href="./topic-engineering.html"><div class="topic-detail-head"><span class="tag purple">工程 / 总结 / 未分类</span><strong>5 篇</strong></div><h2>工程与杂项</h2><p>暂未归入主分类的工程记录和总结。</p></a>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
