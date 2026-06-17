@@ -103,8 +103,10 @@ function createFeed(feed) {
   article.className = "feed-item";
   article.dataset.tone = getTone(feed.source || feed.title);
   article.innerHTML = `
-    <span class="item-tag"></span>
-    <p class="item-title"></p>
+    <div class="item-head">
+      <p class="item-title"></p>
+      <span class="item-tag"></span>
+    </div>
     <p class="item-copy"></p>
   `;
   article.querySelector(".item-tag").textContent = feed.source || "Note";
@@ -119,11 +121,13 @@ function createAiNewsItem(item) {
   article.className = "ai-news-item";
   article.dataset.tone = getTone(item.signal || item.source);
   article.innerHTML = `
-    <div class="ai-news-meta">
-      <span class="item-tag"></span>
-      <time></time>
+    <div class="item-head">
+      <p class="item-title"></p>
+      <div class="item-head-meta">
+        <span class="item-tag"></span>
+        <time></time>
+      </div>
     </div>
-    <p class="item-title"></p>
     <p class="item-copy"></p>
   `;
   article.querySelector(".item-tag").textContent = item.source || "AI";

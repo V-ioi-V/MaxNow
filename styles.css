@@ -697,6 +697,24 @@ a {
   font-weight: 700;
 }
 
+.item-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+}
+
+.item-head-meta {
+  display: grid;
+  justify-self: end;
+  justify-items: end;
+  gap: 6px;
+}
+
+.item-head > .item-tag {
+  justify-self: end;
+}
+
 .item-meta,
 .item-copy {
   margin: 6px 0 0;
@@ -794,15 +812,7 @@ a {
   align-content: start;
 }
 
-.ai-news-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.ai-news-meta time {
+.item-head-meta time {
   color: var(--muted);
   font-size: 12px;
   white-space: nowrap;
@@ -1123,6 +1133,19 @@ a {
   .task-item .item-tag {
     grid-column: 2;
     width: max-content;
+  }
+
+  .item-head {
+    grid-template-columns: 1fr;
+  }
+
+  .item-head-meta {
+    justify-self: start;
+    justify-items: start;
+  }
+
+  .item-head > .item-tag {
+    justify-self: start;
   }
 
   .wiki-todo-item {
