@@ -89,7 +89,7 @@ python3 scripts/sync_system_status.py
 python3 scripts/check.py
 ```
 
-`scripts/sync_system_status.py` 只更新 `data/dashboard.json` / `data/dashboard.js` 中的 `automation` 和 `system` 字段，用来展示 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态。它不应该覆盖今日状态、当前主线、今日推进或日常记录。
+`scripts/sync_system_status.py` 只更新 `data/dashboard.json` / `data/dashboard.js` 中的 `automation` 和 `system` 字段，用来展示 nginx、HTTPS、证书到期、腾讯云位置、计费/有效期、git commit、最近拉取、wiki-todos 同步、定时任务、失败日志、CPU、磁盘、内存和 uptime。它不应该覆盖今日状态、当前主线、今日推进或日常记录。
 
 在腾讯云服务器上，它还会通过 metadata 服务读取：
 
@@ -104,6 +104,22 @@ curl http://metadata.tencentyun.com/latest/meta-data/payment/create-time
 ```
 
 当前服务器可读到：`ap-singapore` / `ap-singapore-2`，实例 `ins-2814k2h0`，按量计费 `POSTPAID_BY_HOUR`，`termination-time=null`，因此没有固定包年包月到期日。
+
+证书到期由脚本直接检查 `https://dash.maxnow.cn` 的 TLS 证书。最近拉取时间来自 `.git/FETCH_HEAD` 的修改时间。定时任务目前按以下 unit 名称检测：
+
+```text
+maxnow-wiki-todos.timer
+maxnow-system-status.timer
+maxnow-dashboard-sync.timer
+```
+
+失败日志目前按以下位置检测：
+
+```text
+/var/www/maxnow-dashboard/logs/wiki-todos.log
+/var/www/maxnow-dashboard/logs/system-status.log
+/var/www/maxnow-dashboard/maxnow-sync.log
+```
 
 如果只想预览将采集到的状态，不写文件：
 

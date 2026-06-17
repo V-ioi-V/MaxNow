@@ -1,6 +1,7 @@
 import argparse
 import json
 import shutil
+import ssl
 import socket
 import subprocess
 import sys
@@ -9,6 +10,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,6 +20,17 @@ WIKI_TODOS_JSON = ROOT / "data" / "wiki-todos.json"
 GLOBAL_NAME = "MAXNOW_DASHBOARD_DATA"
 DEFAULT_SITE_URL = "https://dash.maxnow.cn/"
 METADATA_BASE_URL = "http://metadata.tencentyun.com/latest/meta-data"
+LOG_DIR = ROOT / "logs"
+KNOWN_TIMER_UNITS = [
+    "maxnow-wiki-todos.timer",
+    "maxnow-system-status.timer",
+    "maxnow-dashboard-sync.timer",
+]
+KNOWN_SERVICE_UNITS = [
+    "maxnow-wiki-todos.service",
+    "maxnow-system-status.service",
+    "maxnow-dashboard-sync.service",
+]
 GENERATED_DATA_PATHS = {
     "data/dashboard.json",
     "data/dashboard.js",
@@ -28,6 +41,10 @@ GENERATED_DATA_PATHS = {
 
 def now_text():
     return datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M")
+
+
+def format_local_datetime(timestamp):
+    return datetime.fromtimestamp(timestamp, timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M")
 
 
 def run_command(args, timeout=5):
@@ -117,6 +134,40 @@ def site_state(url):
             "name": "HTTPS",
             "value": "Fail",
             "note": str(getattr(error, "reason", error)),
+        }, False
+
+
+def certificate_state(url):
+    parsed = urlparse(url)
+    hostname = parsed.hostname
+    if parsed.scheme != "https" or not hostname:
+        return {
+            "key": "certificate",
+            "name": "证书",
+            "value": "Unknown",
+            "note": "site URL is not HTTPS",
+        }, None
+
+    try:
+        context = ssl.create_default_context()
+        with socket.create_connection((hostname, 443), timeout=6) as sock:
+            with context.wrap_socket(sock, server_hostname=hostname) as wrapped:
+                cert = wrapped.getpeercert()
+        expires_raw = cert.get("notAfter")
+        expires = datetime.strptime(expires_raw, "%b %d %H:%M:%S %Y %Z").replace(tzinfo=timezone.utc)
+        remaining_days = (expires - datetime.now(timezone.utc)).days
+        return {
+            "key": "certificate",
+            "name": "证书",
+            "value": f"{remaining_days}d",
+            "note": f"expires {expires.astimezone().strftime('%Y-%m-%d %H:%M')}",
+        }, remaining_days >= 14
+    except Exception as error:
+        return {
+            "key": "certificate",
+            "name": "证书",
+            "value": "Check",
+            "note": str(error),
         }, False
 
 
@@ -310,6 +361,125 @@ def memory_state():
     }, used_pct < 90
 
 
+def uptime_state():
+    code, stdout, _ = run_command(["uptime", "-p"], timeout=2)
+    if code == 0 and stdout:
+        return {
+            "key": "uptime",
+            "name": "运行时间",
+            "value": stdout.replace("up ", ""),
+            "note": "system uptime",
+        }, True
+
+    uptime_path = Path("/proc/uptime")
+    if uptime_path.exists():
+        seconds = float(uptime_path.read_text(encoding="utf-8").split()[0])
+        days = int(seconds // 86400)
+        hours = int((seconds % 86400) // 3600)
+        return {
+            "key": "uptime",
+            "name": "运行时间",
+            "value": f"{days}d {hours}h",
+            "note": "from /proc/uptime",
+        }, True
+
+    return {
+        "key": "uptime",
+        "name": "运行时间",
+        "value": "Unknown",
+        "note": "uptime is not available",
+    }, None
+
+
+def git_pull_state():
+    fetch_head = ROOT / ".git" / "FETCH_HEAD"
+    if not fetch_head.exists():
+        return {
+            "key": "git-pull",
+            "name": "最近拉取",
+            "value": "Unknown",
+            "note": ".git/FETCH_HEAD is missing",
+        }, None
+
+    timestamp = fetch_head.stat().st_mtime
+    return {
+        "key": "git-pull",
+        "name": "最近拉取",
+        "value": format_local_datetime(timestamp),
+        "note": "from .git/FETCH_HEAD mtime",
+    }, True
+
+
+def unit_state(unit):
+    code, stdout, _ = run_command(["systemctl", "is-enabled", unit], timeout=2)
+    enabled = stdout if code == 0 and stdout else "not-enabled"
+    code, stdout, _ = run_command(["systemctl", "is-active", unit], timeout=2)
+    active = stdout if stdout else "inactive"
+    return enabled, active
+
+
+def timer_state():
+    code, _, _ = run_command(["systemctl", "--version"], timeout=2)
+    if code == 127:
+        return {
+            "key": "timers",
+            "name": "定时任务",
+            "value": "Unknown",
+            "note": "systemctl is not available",
+        }, None
+
+    states = []
+    found = 0
+    for unit in KNOWN_TIMER_UNITS:
+        enabled, active = unit_state(unit)
+        if enabled != "not-enabled" or active == "active":
+            found += 1
+        states.append(f"{unit}:{enabled}/{active}")
+
+    value = f"{found} active" if found else "Not set"
+    note = "; ".join(states) if states else "no known timer units"
+    return {
+        "key": "timers",
+        "name": "定时任务",
+        "value": value,
+        "note": note,
+    }, True
+
+
+def failure_log_state():
+    candidates = [
+        LOG_DIR / "wiki-todos.log",
+        LOG_DIR / "system-status.log",
+        ROOT / "maxnow-sync.log",
+    ]
+    existing = [path for path in candidates if path.exists()]
+    if not existing:
+        return {
+            "key": "failure-log",
+            "name": "失败日志",
+            "value": "No log",
+            "note": f"expected logs under {LOG_DIR}",
+        }, True
+
+    latest = max(existing, key=lambda path: path.stat().st_mtime)
+    lines = latest.read_text(encoding="utf-8", errors="replace").splitlines()
+    failure_lines = [line for line in lines[-80:] if "[fail]" in line.lower() or "error" in line.lower()]
+    if failure_lines:
+        return {
+            "key": "failure-log",
+            "name": "失败日志",
+            "value": "Check",
+            "note": failure_lines[-1][:140],
+        }, False
+
+    return {
+        "key": "failure-log",
+        "name": "失败日志",
+        "value": "Clear",
+        "note": f"latest {latest.relative_to(ROOT)} at {format_local_datetime(latest.stat().st_mtime)}",
+    }, True
+
+
 def wiki_todos_state():
     try:
         data = json.loads(WIKI_TODOS_JSON.read_text(encoding="utf-8"))
@@ -358,12 +528,31 @@ def build_status(site_url):
     https, https_ok = site_state(site_url)
     cloud_location, cloud_location_ok = cloud_location_state()
     billing, billing_ok = billing_state()
+    certificate, certificate_ok = certificate_state(site_url)
     cpu, cpu_ok = cpu_state()
     disk, disk_ok = disk_state()
     memory, memory_ok = memory_state()
+    uptime, uptime_ok = uptime_state()
+    git_pull, git_pull_ok = git_pull_state()
+    timers, timers_ok = timer_state()
+    failure_log, failure_log_ok = failure_log_state()
     wiki, wiki_ok = wiki_todos_state()
 
-    checks.extend([nginx_ok, https_ok, cloud_location_ok, billing_ok, cpu_ok, disk_ok, memory_ok, wiki_ok])
+    checks.extend([
+        nginx_ok,
+        https_ok,
+        certificate_ok,
+        cloud_location_ok,
+        billing_ok,
+        cpu_ok,
+        disk_ok,
+        memory_ok,
+        uptime_ok,
+        git_pull_ok,
+        timers_ok,
+        failure_log_ok,
+        wiki_ok,
+    ])
     failed = [item for item in checks if item is False]
     unknown = [item for item in checks if item is None]
 
@@ -395,13 +584,18 @@ def build_status(site_url):
             server_identity(),
             nginx,
             https,
+            certificate,
             cloud_location,
             billing,
             deploy,
+            git_pull,
             wiki,
+            timers,
+            failure_log,
             cpu,
             disk,
             memory,
+            uptime,
         ],
     }
 
