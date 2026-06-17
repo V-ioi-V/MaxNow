@@ -24,6 +24,8 @@
 
 html {
   min-height: 100%;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
   background: var(--bg);
 }
 
@@ -43,11 +45,13 @@ a {
   display: grid;
   grid-template-columns: 210px minmax(0, 1fr);
   min-height: 100vh;
+  width: 100%;
 }
 
 .sidebar {
   position: sticky;
   top: 0;
+  width: 210px;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -97,6 +101,7 @@ a {
 }
 
 .side-nav-item {
+  width: 100%;
   min-height: 58px;
   display: flex;
   align-items: center;
@@ -106,6 +111,7 @@ a {
   padding: 10px 12px;
   color: var(--muted);
   text-decoration: none;
+  contain: layout paint;
 }
 
 .side-nav-item:hover,
