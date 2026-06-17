@@ -253,7 +253,10 @@ function getSystemPercent(item) {
 function formatSystemNote(item) {
   const note = item.note || "";
   if (item.key === "cpu") {
-    return note.replace("cores;", "核；").replace("load", "负载");
+    return note
+      .replace("cores;", "核；")
+      .replace("1/5/15 min load", "1/5/15 分钟负载")
+      .replace("load", "负载");
   }
   if (item.key === "disk" || item.key === "memory") {
     return note.replace("available on", "可用，挂载点").replace("available", "可用");
