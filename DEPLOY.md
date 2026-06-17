@@ -51,17 +51,18 @@ MaxNow v1 是纯静态站点：
     last-30.js
 ```
 
-公开博客推荐使用独立目录：
+公开博客当前预览页随同 MaxNow 仓库部署，nginx 指向同仓库下的 `blog/`：
 
 ```text
-/var/www/maxnow-blog
+/var/www/maxnow-dashboard/blog
   index.html
-  posts/
-  tags/
-  archive/
-  assets/
-  feed.xml
+  topics.html
+  preview.html
+  styles.css
+  preview.css
 ```
+
+等公开博客形成独立构建、独立发布节奏和完整文章生成链路后，再考虑迁出到 `/var/www/maxnow-blog` 或独立仓库。
 
 当前服务器操作细节、SSH 命令、nginx 配置和排障步骤见：
 
@@ -171,7 +172,7 @@ server {
 server {
   listen 80;
   server_name blog.maxnow.cn;
-  root /var/www/maxnow-blog;
+  root /var/www/maxnow-dashboard/blog;
   index index.html;
 
   location / {

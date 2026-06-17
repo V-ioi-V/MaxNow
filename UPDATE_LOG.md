@@ -11,6 +11,18 @@
 
 ## 2026-06-17
 
+### 部署博客预览到服务器
+
+- 将博客首页和专题页预览合入 `origin/main`，服务器 `/var/www/maxnow-dashboard` 已拉取到提交 `6017791`。
+- 调整 nginx：`dash.maxnow.cn` 指向 `/var/www/maxnow-dashboard/dash`，`blog.maxnow.cn` 指向 `/var/www/maxnow-dashboard/blog`。
+- 为 `blog.maxnow.cn` 通过 certbot 启用 HTTPS，证书到期日为 2026-09-15，并由 certbot 自动续期。
+- 部署前备份服务器旧路径运行数据到 `~/maxnow-deploy-backups/20260617-180826`，并恢复到新的 `dash/data/dashboard.*` 与 `dash/data/wiki-todos.*` 路径。
+- 验证 `https://dash.maxnow.cn`、`https://blog.maxnow.cn` 和 `https://blog.maxnow.cn/topics.html` 均返回 200。
+
+原因：
+
+- Owner 要求先提交合码，再将当前测试改动部署到服务端。
+
 ### 新增博客首页预览
 
 - 新增 `blog/index.html` 和 `blog/styles.css`，生成更接近正式 `blog.maxnow.cn` 的博客首页预览。
