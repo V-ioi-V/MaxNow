@@ -766,18 +766,19 @@ a {
 .post-detail {
   display: grid;
   gap: 18px;
-  max-width: 920px;
+  max-width: 1180px;
   margin: 28px clamp(18px, 1.2vw, 26px) 58px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 26px;
+  padding: clamp(24px, 2vw, 34px);
   background: var(--surface);
   box-shadow: var(--shadow);
 }
 
 .post-detail h1 {
   margin: 0;
-  font-size: clamp(32px, 3vw, 44px);
+  max-width: 980px;
+  font-size: clamp(34px, 3vw, 48px);
   line-height: 1.12;
 }
 
@@ -793,6 +794,7 @@ a {
 .post-detail section {
   display: grid;
   gap: 12px;
+  max-width: 1040px;
   border-top: 1px solid var(--line);
   padding-top: 22px;
 }
