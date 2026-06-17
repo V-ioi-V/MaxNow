@@ -66,6 +66,15 @@ https://blog.maxnow.cn
 
 当前 HTTPS 已启用，HTTP 请求会跳转到 HTTPS。`blog.maxnow.cn` 证书由 certbot 在 2026-06-17 申请，当前到期日为 2026-09-15，certbot 已配置自动续期。
 
+2026-06-17 晚间已部署参考风格刷新版本：
+
+```text
+deployed commit: 2290eca Merge reference style refresh
+dash.maxnow.cn: 200 MaxNow
+blog.maxnow.cn: 200 MaxNow Blog
+nginx: config test ok, reload ok
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text

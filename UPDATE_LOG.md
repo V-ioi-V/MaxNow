@@ -109,6 +109,17 @@
 
 - Owner 希望 Dash 和 Blog 都按照参考截图的清爽用户中心风格优化。
 
+### 部署参考风格版本到服务器
+
+- 已推送 `main` 到 GitHub，并在服务器 `/var/www/maxnow-dashboard` 快进到 `2290eca Merge reference style refresh`。
+- 已运行 `python3 scripts/check.py`，JSON wrapper 一致性通过；服务器未启动 4173 本地预览服务，因此本地预览 URL 检查按预期跳过。
+- 已执行 `sudo nginx -t` 并 reload nginx。
+- 已验证 `https://dash.maxnow.cn`、`https://blog.maxnow.cn`、`https://blog.maxnow.cn/topics.html` 和 `https://blog.maxnow.cn/post-preview.html?from=topics` 返回 200。
+
+原因：
+
+- Owner 确认参考风格版本可以部署上线。
+
 ### 调整 Dash 的 Blog 入口位置
 
 - 将 `dash.maxnow.cn` 左侧导航里的 `Blog` 外链移到顶部右侧，和博客页里的 `Dash` 外链保持同一类弱入口处理。
