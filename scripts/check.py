@@ -47,6 +47,7 @@ def check_required_files():
         "dash/styles.css",
         "dash/app.js",
         "blog/index.html",
+        "blog/overview.html",
         "blog/topics.html",
         "blog/topic-algorithm.html",
         "blog/topic-cs.html",
@@ -88,6 +89,7 @@ def main():
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/"))
+    checks.append(check_local_server("http://127.0.0.1:4173/blog/overview.html"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/topics.html"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/topic-algorithm.html"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/topic-cs.html"))
