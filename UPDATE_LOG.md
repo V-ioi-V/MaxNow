@@ -15,6 +15,7 @@
 
 - 更新 `scripts/sync_system_status.py`，从腾讯云 metadata 读取实例 ID、公网 IP、region、zone、计费类型、创建时间和 termination time。
 - 系统状态模块新增“云位置”和“计费/有效期”信息；当前服务器是 `ap-singapore-2`，按量计费，无固定到期时间。
+- 继续补充证书到期、最近 git pull 时间、定时任务状态、失败日志摘要和系统 uptime，方便 Owner 在线上先看一版再决定保留哪些卡片。
 - 更新 `SERVER_RUNBOOK.md`，记录相关 metadata 查询命令和当前服务器可读到的信息。
 
 原因：
