@@ -11,6 +11,18 @@
 
 ## 2026-06-17
 
+### 调整博客文章流和专题层级
+
+- 将 `blog/index.html` 从卡片拼版改为文章预览流：首页按文章逐条展示，适合持续向下浏览。
+- 在博客左侧增加归档总览，展示原始文章数、缓存图片数、专题分类数和当前状态。
+- 将 `blog/topics.html` 调整为专题分类索引页；新增 `blog/topic-algorithm.html`、`blog/topic-cs.html`、`blog/topic-algorithm-gap.html` 和 `blog/topic-engineering.html` 作为分类二级页。
+- 分类二级页展示该分类下的文章列表，并提供返回专题索引的入口。
+- 更新 `scripts/check.py`、`README.md`、`CONTEXT.md` 和 `ROADMAP.md`，覆盖新增页面和新的浏览结构。
+
+原因：
+
+- Owner 希望博客首页更像文章归档流；专题先展示分类，点击分类后进入二级页查看具体文章，并能返回上一级。
+
 ### 调整 Dash 的 Blog 入口位置
 
 - 将 `dash.maxnow.cn` 左侧导航里的 `Blog` 外链移到顶部右侧，和博客页里的 `Dash` 外链保持同一类弱入口处理。

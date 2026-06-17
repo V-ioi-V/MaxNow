@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=2" />
   </head>
   <body>
     <div class="site-shell">
@@ -29,17 +29,36 @@
             <span class="nav-icon">文</span>
             <span>
               <strong>文章</strong>
-              <small>旧博客精选</small>
+              <small>按时间浏览</small>
             </span>
           </a>
           <a class="side-nav-item is-active" href="./topics.html">
             <span class="nav-icon">#</span>
             <span>
               <strong>专题</strong>
-              <small>算法 / CS / 工程</small>
+              <small>按分类进入</small>
             </span>
           </a>
         </nav>
+
+        <section class="archive-summary" aria-label="专题总览">
+          <p class="eyebrow">Topics</p>
+          <h2>分类总览</h2>
+          <dl>
+            <div>
+              <dt>分类数</dt>
+              <dd>4</dd>
+            </div>
+            <div>
+              <dt>最大分类</dt>
+              <dd>算法</dd>
+            </div>
+            <div>
+              <dt>可浏览文章</dt>
+              <dd>10</dd>
+            </div>
+          </dl>
+        </section>
       </aside>
 
       <main class="workspace">
@@ -50,92 +69,55 @@
           </div>
           <div class="topbar-actions">
             <span class="status-pill">4 个主题簇</span>
-            <span class="status-pill muted">预览结构</span>
+            <span class="status-pill muted">分类预览</span>
             <a class="topbar-link" href="https://dash.maxnow.cn">Dash</a>
           </div>
         </header>
 
-        <section class="hero topics-hero">
-          <div class="hero-copy">
-            <p class="eyebrow">Knowledge Map</p>
-            <h1>先按问题域整理旧文，再决定哪些内容值得公开发布。</h1>
-            <p>
-              专题页不是简单标签云，而是给旧博客一个重新进入阅读的入口：算法题解、CS 基础、
-              算法短板和工程总结分别承担不同的复习与归档价值。
-            </p>
-          </div>
-          <div class="hero-panel" aria-label="专题概况">
-            <div>
-              <span>算法相关</span>
-              <strong>145</strong>
-            </div>
-            <div>
-              <span>CS 基础</span>
-              <strong>55</strong>
-            </div>
-            <div>
-              <span>待整理</span>
-              <strong>11</strong>
-            </div>
-          </div>
+        <section class="compact-hero">
+          <p class="eyebrow">Knowledge Map</p>
+          <h1>先选一个分类，再进入二级页看这个分类下面具体有哪些文章。</h1>
+          <p>
+            专题页作为上一级目录，只负责分类和数量总览；分类详情页负责文章列表和返回上一级。
+          </p>
         </section>
 
-        <section class="topic-layout" aria-label="专题列表">
-          <article class="topic-detail" id="algorithm">
+        <section class="category-grid" aria-label="专题分类">
+          <a class="category-card" href="./topic-algorithm.html">
             <div class="topic-detail-head">
               <span class="tag orange">算法</span>
               <strong>145 篇</strong>
             </div>
             <h2>算法题解与模板</h2>
-            <p>旧博客里数量最大的内容，适合作为第一批归档骨架。第一版按题解、模板、专题三类整理。</p>
-            <ul class="article-links">
-              <li><a href="./index.html">二叉搜索树与双向链表</a></li>
-              <li><a href="./index.html">DP 专题</a></li>
-              <li><a href="./index.html">线段树模板</a></li>
-            </ul>
-          </article>
+            <p>题解、模板、DP、数据结构和常见竞赛算法，是旧博客里数量最大的内容。</p>
+          </a>
 
-          <article class="topic-detail" id="cs">
+          <a class="category-card" href="./topic-cs.html">
             <div class="topic-detail-head">
               <span class="tag cyan">CS 大学生必备</span>
               <strong>55 篇</strong>
             </div>
             <h2>计算机基础</h2>
-            <p>计算机网络、操作系统、C++ 基础和常见概念解释，适合做成比较稳定的长期阅读入口。</p>
-            <ul class="article-links">
-              <li><a href="./index.html">以太网、IP、TCP、UDP 头部格式</a></li>
-              <li><a href="./index.html">HTTP 和 HTTPS 的区别</a></li>
-              <li><a href="./index.html">进程和线程</a></li>
-            </ul>
-          </article>
+            <p>网络、操作系统、C++ 和基础概念解释，适合做稳定的长期阅读入口。</p>
+          </a>
 
-          <article class="topic-detail" id="algorithm-gap">
+          <a class="category-card" href="./topic-algorithm-gap.html">
             <div class="topic-detail-head">
               <span class="tag green">算法短板</span>
               <strong>6 篇</strong>
             </div>
             <h2>薄弱点复盘</h2>
-            <p>这类文章更适合保留当时的学习痕迹，发布时需要补上背景说明，避免像零散错题本。</p>
-            <ul class="article-links">
-              <li><a href="./index.html">动态规划复盘</a></li>
-              <li><a href="./index.html">图论薄弱题</a></li>
-              <li><a href="./index.html">字符串专题补漏</a></li>
-            </ul>
-          </article>
+            <p>保留当时的学习痕迹，发布前需要补上背景说明，避免像零散错题本。</p>
+          </a>
 
-          <article class="topic-detail" id="engineering">
+          <a class="category-card" href="./topic-engineering.html">
             <div class="topic-detail-head">
               <span class="tag purple">工程 / 总结 / 未分类</span>
               <strong>5 篇</strong>
             </div>
             <h2>工程笔记和阶段总结</h2>
-            <p>数量不多，但可能最能体现个人轨迹。先保守筛选，再决定是否放进公开博客。</p>
-            <ul class="article-links">
-              <li><a href="./index.html">旧项目复盘</a></li>
-              <li><a href="./index.html">学习路线总结</a></li>
-              <li><a href="./index.html">未分类候选</a></li>
-            </ul>
-          </article>
+            <p>数量不多，但更能体现个人轨迹；发布前先确认隐私边界和公开价值。</p>
+          </a>
         </section>
       </main>
     </div>
