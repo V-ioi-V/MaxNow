@@ -215,6 +215,8 @@ function createSystemItem(item) {
   const article = document.createElement("article");
   article.className = "system-item";
   article.dataset.tone = getTone(item.key || item.value || item.name);
+  const percent = getSystemPercent(item);
+  if (percent !== null) article.classList.add("has-ring");
   article.innerHTML = `
     <div>
       <p class="item-title"></p>
@@ -223,9 +225,36 @@ function createSystemItem(item) {
     <span class="system-value"></span>
   `;
   article.querySelector(".item-title").textContent = item.name || item.key || "System";
-  article.querySelector(".item-copy").textContent = item.note || "";
-  article.querySelector(".system-value").textContent = item.value || "--";
+  article.querySelector(".item-copy").textContent = formatSystemNote(item);
+  const value = article.querySelector(".system-value");
+  if (percent !== null) {
+    value.classList.add("system-ring");
+    value.style.setProperty("--value", `${percent}%`);
+    value.dataset.level = percent >= 85 ? "high" : percent >= 65 ? "medium" : "low";
+    value.innerHTML = `<span>${percent}%</span>`;
+  } else {
+    value.textContent = item.value || "--";
+  }
   return article;
+}
+
+function getSystemPercent(item) {
+  const text = String(item.value || "").trim();
+  if (!text.endsWith("%")) return null;
+  const value = Number.parseInt(text, 10);
+  if (!Number.isFinite(value)) return null;
+  return Math.max(0, Math.min(100, value));
+}
+
+function formatSystemNote(item) {
+  const note = item.note || "";
+  if (item.key === "cpu") {
+    return note.replace("cores;", "核；").replace("load", "负载");
+  }
+  if (item.key === "disk" || item.key === "memory") {
+    return note.replace("available on", "可用，挂载点").replace("available", "可用");
+  }
+  return note;
 }
 
 function getTone(value = "") {

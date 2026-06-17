@@ -203,6 +203,11 @@ a {
   font-size: 20px;
 }
 
+.topbar .eyebrow {
+  color: #5a8ec2;
+  font-size: 11px;
+}
+
 .topbar-actions {
   display: flex;
   align-items: center;
@@ -955,6 +960,49 @@ a {
 .system-value {
   color: var(--text);
   font-weight: 800;
+}
+
+.system-item.has-ring {
+  grid-template-columns: minmax(0, 1fr) 58px;
+}
+
+.system-ring {
+  --ring-color: var(--accent);
+  --ring-bg: #e8eef6;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, #f9fbfe 0 56%, transparent 57%),
+    conic-gradient(var(--ring-color) var(--value), var(--ring-bg) 0);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.system-ring span {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px rgba(214, 224, 236, 0.72);
+}
+
+.system-ring[data-level="low"] {
+  --ring-color: var(--accent);
+}
+
+.system-ring[data-level="medium"] {
+  --ring-color: var(--orange);
+}
+
+.system-ring[data-level="high"] {
+  --ring-color: var(--danger);
 }
 
 .system-item[data-tone="blue"] .system-value {
