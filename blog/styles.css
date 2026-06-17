@@ -832,21 +832,21 @@ a {
 }
 
 .post-detail figure {
-  min-height: clamp(280px, 32vw, 520px);
   display: grid;
   place-items: center;
-  margin: 4px 0;
-  overflow: hidden;
-  border: 1px solid #e3ebf4;
-  border-radius: var(--radius);
-  background: #f8fbff;
+  margin: 6px 0 10px;
+  padding: clamp(10px, 1.2vw, 18px) 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .post-detail img {
   display: block;
-  width: auto;
-  max-width: min(780px, 86%);
-  max-height: clamp(220px, 28vw, 460px);
+  width: min(900px, 92%);
+  max-width: 100%;
+  max-height: clamp(280px, 34vw, 560px);
   height: auto;
   object-fit: contain;
 }
