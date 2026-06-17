@@ -10,6 +10,7 @@ User: ubuntu
 Domain: dash.maxnow.cn
 Repo root: /var/www/maxnow-dashboard
 Dash web root: /var/www/maxnow-dashboard/dash
+Blog web root: /var/www/maxnow-dashboard/blog
 Web server: nginx
 ```
 
@@ -29,13 +30,20 @@ ssh -i "$env:USERPROFILE\.ssh\id_ed25519" ubuntu@43.160.240.244 "hostname && who
 
 ## 当前部署状态
 
-2026-06-16 已完成首次静态站部署：
+2026-06-16 已完成首次静态站部署，2026-06-17 已切换为同仓库双出口部署：
 
 ```text
 /var/www/maxnow-dashboard
 ```
 
-该目录来自 GitHub 仓库；nginx 的 dash 站点根目录指向其中的 `dash/` 子目录：
+该目录来自 GitHub 仓库；nginx 的两个站点根目录分别指向：
+
+```text
+dash.maxnow.cn -> /var/www/maxnow-dashboard/dash
+blog.maxnow.cn -> /var/www/maxnow-dashboard/blog
+```
+
+Git 来源：
 
 ```text
 https://github.com/V-ioi-V/MaxNow.git
@@ -53,9 +61,18 @@ branch: main
 
 ```text
 https://dash.maxnow.cn
+https://blog.maxnow.cn
 ```
 
-当前 HTTPS 已启用，HTTP 请求会跳转到 HTTPS。
+当前 HTTPS 已启用，HTTP 请求会跳转到 HTTPS。`blog.maxnow.cn` 证书由 certbot 在 2026-06-17 申请，当前到期日为 2026-09-15，certbot 已配置自动续期。
+
+服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
+
+```text
+~/maxnow-deploy-backups/20260617-180826
+```
+
+拉取新目录结构后，这些运行数据已恢复到 `dash/data/dashboard.*` 和 `dash/data/wiki-todos.*`。因此服务器工作区允许这些数据文件保持未提交状态，由后续同步脚本继续维护。
 
 ## GitHub CLI / private 仓库读取
 
@@ -148,7 +165,6 @@ sudo chown -R ubuntu:www-data /var/www/maxnow-dashboard
 
 sudo tee /etc/nginx/sites-available/maxnow-dashboard >/dev/null <<'EOF'
 server {
-  listen 80;
   server_name dash.maxnow.cn;
 
   root /var/www/maxnow-dashboard/dash;
@@ -161,6 +177,41 @@ server {
   location /data/ {
     add_header Cache-Control "no-store";
   }
+
+  listen 443 ssl;
+  ssl_certificate /etc/letsencrypt/live/dash.maxnow.cn/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/dash.maxnow.cn/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+server {
+  listen 80;
+  server_name dash.maxnow.cn;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  server_name blog.maxnow.cn;
+
+  root /var/www/maxnow-dashboard/blog;
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  listen 443 ssl;
+  ssl_certificate /etc/letsencrypt/live/blog.maxnow.cn/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/blog.maxnow.cn/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+server {
+  listen 80;
+  server_name blog.maxnow.cn;
+  return 301 https://$host$request_uri;
 }
 EOF
 
@@ -197,12 +248,16 @@ sudo chown -R ubuntu:www-data /var/www/maxnow-dashboard
 sudo nginx -t
 sudo systemctl status nginx --no-pager
 curl -I -H 'Host: dash.maxnow.cn' http://127.0.0.1/
+curl -I https://dash.maxnow.cn
+curl -I https://blog.maxnow.cn
+curl -I https://blog.maxnow.cn/topics.html
 ```
 
 本地 Windows 检查域名：
 
 ```powershell
 Invoke-WebRequest -Uri "http://dash.maxnow.cn" -UseBasicParsing
+Invoke-WebRequest -Uri "https://blog.maxnow.cn" -UseBasicParsing
 ```
 
 正常结果应返回 HTTP 200，页面标题为 `MaxNow`。
