@@ -317,7 +317,7 @@ function renderWikiTodos() {
 
   setText("#wiki-todo-status", status);
   setText("#wiki-todo-updated", wikiTodoError || updatedAt);
-  clearAndFill(qs("#wiki-todo-list"), createWikiTodoItem, openTodos.slice(0, 6));
+  clearAndFill(qs("#wiki-todo-list"), createWikiTodoItem, openTodos);
 
   if (!openTodos.length && !wikiTodoError) {
     setText("#wiki-todo-list .empty-state", copy.wikiTodoEmpty);
