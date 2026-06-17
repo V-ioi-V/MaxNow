@@ -305,17 +305,24 @@ def cpu_state():
     idle_delta = second[1] - first[1]
     usage_pct = 0 if total_delta <= 0 else round(((total_delta - idle_delta) / total_delta) * 100)
 
+    cores = "unknown cores"
+    core_count = None
+    code, stdout, _ = run_command(["nproc"], timeout=2)
+    if code == 0 and stdout:
+        core_text = stdout.strip()
+        cores = f"{core_text} cores"
+        if core_text.isdigit() and int(core_text) > 0:
+            core_count = int(core_text)
+
     loadavg = Path("/proc/loadavg")
     load_text = "1/5/15 min load unavailable"
     if loadavg.exists():
         loads = loadavg.read_text(encoding="utf-8").split()[:3]
-        if len(loads) == 3:
+        if len(loads) == 3 and core_count:
+            load_pcts = [f"{round((float(load) / core_count) * 100)}%" for load in loads]
+            load_text = f"1/5/15 min load {' / '.join(load_pcts)}"
+        elif len(loads) == 3:
             load_text = f"1/5/15 min load {' / '.join(loads)}"
-
-    cores = "unknown cores"
-    code, stdout, _ = run_command(["nproc"], timeout=2)
-    if code == 0 and stdout:
-        cores = f"{stdout.strip()} cores"
 
     return {
         "key": "cpu",
@@ -366,25 +373,14 @@ def memory_state():
 
 
 def uptime_state():
-    code, stdout, _ = run_command(["uptime", "-p"], timeout=2)
-    if code == 0 and stdout:
-        return {
-            "key": "uptime",
-            "name": "运行时间",
-            "value": stdout.replace("up ", ""),
-            "note": "system uptime",
-        }, True
-
     uptime_path = Path("/proc/uptime")
     if uptime_path.exists():
         seconds = float(uptime_path.read_text(encoding="utf-8").split()[0])
-        days = int(seconds // 86400)
-        hours = int((seconds % 86400) // 3600)
         return {
             "key": "uptime",
             "name": "运行时间",
-            "value": f"{days}d {hours}h",
-            "note": "from /proc/uptime",
+            "value": format_uptime(seconds),
+            "note": "持续运行",
         }, True
 
     return {
@@ -393,6 +389,19 @@ def uptime_state():
         "value": "Unknown",
         "note": "uptime is not available",
     }, None
+
+
+def format_uptime(seconds):
+    minutes = int(seconds // 60)
+    days = minutes // (24 * 60)
+    hours = (minutes % (24 * 60)) // 60
+    mins = minutes % 60
+
+    if days:
+        return f"{days} 天 {hours} 小时" if hours else f"{days} 天"
+    if hours:
+        return f"{hours} 小时 {mins} 分钟" if mins else f"{hours} 小时"
+    return f"{mins} 分钟"
 
 
 def git_pull_state():

@@ -11,6 +11,16 @@
 
 ## 2026-06-17
 
+### 优化系统状态数值文案
+
+- 调整 CPU 负载展示：把 Linux load average 按核心数换算为百分比，显示为 `1/5/15 分钟负载 x% / y% / z%`。
+- 调整运行时间展示：不再使用 `uptime -p` 的英文 weeks/days/hours 输出，改为从 `/proc/uptime` 生成中文短格式，例如 `48 天 17 小时`。
+- 运行时间说明从 `system uptime` 改为 `持续运行`，避免卡片左侧出现英文命令行描述。
+
+原因：
+
+- Owner 觉得运行时间英文天数太丑，CPU 负载原始小数也不直观，希望用百分比表达。
+
 ### 收敛系统状态卡片
 
 - 调整 `scripts/sync_system_status.py`，`data/dashboard.*` 的 `system` 字段只写入 nginx、CPU、磁盘、内存和运行时间。
