@@ -29,6 +29,7 @@
 - `dash.maxnow.cn` 顶部右侧已预留 `Blog` 弱外链，指向 `https://blog.maxnow.cn`；左侧导航只保留 Dash 内部页面。
 - 第一阶段先做只读静态博客：筛选 public/published 文章，转换 front matter，复制必要图片，生成 `blog.maxnow.cn` 页面。
 - 首页预览页：`blog/index.html`，用于确认文章流首页的信息架构和视觉风格，首页按文章预览卡片持续向下浏览。
+- 文章 cell 交互：整张文章卡片都可点击进入文章详情，桌面端文章流按一行两篇展示。
 - 专题索引页：`blog/topics.html`，用于确认分类总览。
 - 专题分类二级页：`blog/topic-*.html`，用于确认点击分类后查看该分类文章、再返回专题索引的浏览方式。
 - 方案说明页：`blog/preview.html`，用于保留博客发布链路和边界说明，不作为正式线上入口。

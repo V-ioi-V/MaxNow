@@ -26,6 +26,7 @@ blog/
   topic-cs.html
   topic-algorithm-gap.html
   topic-engineering.html
+  post-preview.html
   styles.css
   preview.html
   preview.css
@@ -74,6 +75,12 @@ http://127.0.0.1:4173/blog/topics.html
 
 ```text
 http://127.0.0.1:4173/blog/topic-algorithm.html
+```
+
+文章详情页预览：
+
+```text
+http://127.0.0.1:4173/blog/post-preview.html
 ```
 
 博客方案说明页：
