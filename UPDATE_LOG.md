@@ -11,6 +11,15 @@
 
 ## 2026-06-17
 
+### 修正 personal-wiki 待办展示数量
+
+- 调整 Home 左侧 `Personal Wiki / 近期待办` 模块，显示当前全部未完成待办，不再只截取前 6 条。
+- 更新 `SPEC.md`，将 personal-wiki 待办入口的规则改为只读展示当前未完成集合；如果后续数量明显过多，再增加折叠或分页。
+
+原因：
+
+- Owner 发现左侧模块只显示 6 条，但系统状态里的 wiki 待办显示 `8 open`，两处口径不一致容易误解。
+
 ### 补充服务器云位置和计费信息
 
 - 更新 `scripts/sync_system_status.py`，从腾讯云 metadata 读取实例 ID、公网 IP、region、zone、计费类型、创建时间和 termination time。
