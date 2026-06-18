@@ -73,13 +73,15 @@ MaxNow 由四类文件组成：
 
 ## 导航
 
-v1 只保留两个一级入口：
+v1 保留三个一级入口：
 
 1. Home
    - 私人状态工作站。
    - 默认页面。
 2. Token
    - Token 使用详情页。
+3. 豆奶
+   - 豆奶签到详情页，展示近 30 天流量和账号有效期延长时长。
 
 不要随便新增页面。只有当某个问题无法放进 Home，且会明显伤害日常扫读体验时，才考虑新增页面。
 
@@ -104,7 +106,7 @@ Home 按顺序回答这些问题：
 - 日常记录：保存个人上下文和关键决定的短记录。
 - 时间点：日程、截止时间、自动化运行时间。
 - 系统状态：只保留 nginx、CPU、磁盘、内存和运行时间，用来快速判断机器是否健康；服务器详情、HTTPS、部署版本、wiki 同步等不放在 Home 系统状态卡片里。
-- 豆奶签到：只读展示每日签到结果、累计签到天数、累计获得流量和近 7 天流量趋势；数据来自 `dash/data/dounai_checkin.json`。
+- 豆奶签到：Home 只展示每日签到摘要入口，包括今日/累计流量、今日/累计账号有效期延长时长和累计签到天数；不在 Home 放趋势图。点击卡片进入“豆奶”详情页。数据来自 `dash/data/dounai_checkin.json`。豆丁仅作为原始数据保留，不进入页面展示口径。
 - 外部输入：链接、信号和 AI 每日精选，但必须保持次要。
 - personal-wiki 近期待办入口：Home 主内容区的紧凑只读模块，用于查看近期未完成待办和跳转到 personal-wiki；v1 不支持编辑或标记完成。
 
@@ -136,6 +138,17 @@ Token 页面只回答 Token 相关问题：
 
 不要把完整 Token 页面复制到 Home。Home 只需要显示紧凑的使用状态。
 
+## 豆奶页面
+
+豆奶页面只回答签到资源相关问题：
+
+- 今日获得流量和账号有效期延长时长。
+- 累计签到天数、累计获得流量和累计延长时长。
+- 近 30 天签到流量折线图，必须有 x / y 轴、日期刻度和每日具体数值。
+- 近 30 天账号有效期延长时长折线图，必须有 x / y 轴、日期刻度和每日具体数值。
+
+不要在豆奶页面加入签到操作、账号登录、豆丁展示或 cron 管理。豆丁只作为原始数据保留。
+
 ## 数据契约
 
 OpenClaw 日常维护只能更新这些文件：
@@ -149,6 +162,7 @@ dash/data/last-30.json
 dash/data/last-30.js
 dash/data/wiki-todos.json
 dash/data/wiki-todos.js
+dash/data/dounai_checkin.json
 ```
 
 OpenClaw 日常维护不能更新这些文件：
@@ -178,7 +192,7 @@ UPDATE_LOG.md
 
 `dash/data/wiki-todos.json` 负责 personal-wiki 近期待办的只读缓存，由 `scripts/sync_wiki_todos.py` 从 personal-wiki `wiki/tasks/todo.json` 生成。
 
-`dash/data/dounai_checkin.json` 负责豆奶每日签到记录，由 OpenClaw 签到自动化更新；前端只读取展示，不编辑、不回写，也不修改签到脚本或 cron。
+`dash/data/dounai_checkin.json` 负责豆奶每日签到记录，由 OpenClaw 签到自动化更新；前端只读取流量、账号有效期延长时长、累计签到天数和近 30 天记录，不编辑、不回写，也不修改签到脚本或 cron。
 
 当前带 `.js` wrapper 的数据集必须从对应 JSON 文件生成，并把同一个对象暴露给浏览器：
 
@@ -319,7 +333,7 @@ maxnow.cn       -> 未来公开主页 / 个人入口
 
 ## 实现边界
 
-- v1 只保留 Home 和 Token。
+- v1 保留 Home、Token 和豆奶。
 - v1 保持静态站点：不加登录、数据库或后端 API。
 - 任何新的日常维护数据字段，都必须同时写进这里和 OpenClaw skill。
 - 页面代码变化需要 Codex 或 Owner 明确意图；OpenClaw 永远不能改变页面结构。

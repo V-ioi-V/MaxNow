@@ -78,8 +78,10 @@ a {
   aspect-ratio: 1;
   display: block;
   flex: 0 0 auto;
-  border-radius: 12px;
-  box-shadow: 0 8px 18px rgba(29, 155, 240, 0.18);
+  border: 1px solid #cfe8ff;
+  border-radius: 14px;
+  background: #e7f6ff;
+  box-shadow: 0 6px 14px rgba(29, 155, 240, 0.1);
 }
 
 .brand strong,
@@ -103,6 +105,10 @@ a {
 }
 
 .side-nav-item {
+  --nav-color: var(--accent);
+  --nav-bg: #eef8ff;
+  --nav-border: #cfe8ff;
+  --nav-icon-bg: #e8f4ff;
   width: 100%;
   min-height: 58px;
   display: flex;
@@ -119,9 +125,9 @@ a {
 
 .side-nav-item:hover,
 .side-nav-item.is-active {
-  border-color: #cfe8ff;
-  background: #eef8ff;
-  box-shadow: inset 3px 0 0 var(--accent), var(--shadow-soft);
+  border-color: var(--nav-border);
+  background: var(--nav-bg);
+  box-shadow: inset 3px 0 0 var(--nav-color), var(--shadow-soft);
 }
 
 .side-nav-item:hover {
@@ -151,10 +157,24 @@ a {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 10px;
-  background: #e8f4ff;
-  color: var(--accent);
+  background: var(--nav-icon-bg);
+  color: var(--nav-color);
   font-size: 13px;
   font-weight: 800;
+}
+
+.side-nav-item:nth-child(2) {
+  --nav-color: var(--purple);
+  --nav-bg: #f7edff;
+  --nav-border: #e5ccff;
+  --nav-icon-bg: #f4e8ff;
+}
+
+.side-nav-item:nth-child(3) {
+  --nav-color: var(--cyan);
+  --nav-bg: #eafaff;
+  --nav-border: #c7f2ff;
+  --nav-icon-bg: #e1f9ff;
 }
 
 .workspace {
@@ -257,6 +277,43 @@ a {
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
+}
+
+.hero,
+.compact-hero,
+.featured-card,
+.post-card,
+.panel,
+.article-preview,
+.category-card,
+.topic-page-head,
+.overview-card,
+.subtopic-index,
+.subtopic-card,
+.subtopic-group-head,
+.post-detail {
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero:hover,
+  .compact-hero:hover,
+  .featured-card:hover,
+  .post-card:hover,
+  .panel:hover,
+  .article-preview:hover,
+  .category-card:hover,
+  .topic-page-head:hover,
+  .overview-card:hover,
+  .subtopic-index:hover,
+  .subtopic-card:hover,
+  .subtopic-group-head:hover,
+  .post-detail:hover {
+    border-color: #8fd0ff;
+    background: #ffffff;
+    box-shadow: 0 14px 32px rgba(25, 43, 72, 0.12), 0 1px 2px rgba(25, 43, 72, 0.08);
+    transform: translateY(-2px);
+  }
 }
 
 .hero {
@@ -374,20 +431,13 @@ a {
   display: grid;
   align-content: start;
   gap: 10px;
-  background: #f8fbff;
+  background: #ffffff;
   color: inherit;
   text-decoration: none;
-  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
 .article-preview.is-featured {
-  background: linear-gradient(180deg, #ffffff, #f8fbff);
-}
-
-.article-preview:hover {
-  border-color: #b8d8f5;
   background: #ffffff;
-  transform: translateY(-1px);
 }
 
 .article-preview h2 {
@@ -439,7 +489,7 @@ a {
 .featured-card {
   display: grid;
   gap: 12px;
-  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  background: #ffffff;
 }
 
 .featured-card h2 {
@@ -479,7 +529,7 @@ a {
   display: grid;
   align-content: start;
   gap: 10px;
-  background: #f8fbff;
+  background: #ffffff;
 }
 
 .post-card h3 {
@@ -564,7 +614,7 @@ a {
   border: 1px solid #e3ebf4;
   border-radius: var(--radius);
   padding: 12px;
-  background: #f8fbff;
+  background: #ffffff;
   text-decoration: none;
 }
 
@@ -602,7 +652,7 @@ a {
   border: 1px solid #e3ebf4;
   border-radius: var(--radius);
   padding: 12px;
-  background: #f8fbff;
+  background: #ffffff;
   color: var(--soft);
   font-size: 13px;
 }
@@ -670,11 +720,6 @@ a {
   gap: 10px;
   color: inherit;
   text-decoration: none;
-}
-
-.category-card:hover {
-  border-color: #b8d8f5;
-  background: #ffffff;
 }
 
 .category-card h2 {
@@ -746,7 +791,7 @@ a {
   border: 1px solid #e3ebf4;
   border-radius: var(--radius);
   padding: 8px 10px;
-  background: #f8fbff;
+  background: #ffffff;
   color: var(--soft);
   font-size: 13px;
   font-weight: 700;
@@ -838,14 +883,9 @@ a {
   border: 1px solid #e1ebf5;
   border-radius: var(--radius);
   padding: 14px;
-  background: #f8fbff;
+  background: #ffffff;
   color: inherit;
   text-decoration: none;
-}
-
-.subtopic-card:hover {
-  border-color: #bfddf8;
-  background: #eef8ff;
 }
 
 .subtopic-card strong {

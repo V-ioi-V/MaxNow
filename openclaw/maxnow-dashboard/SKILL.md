@@ -18,6 +18,7 @@ dash/data/dashboard.json
 dash/data/dashboard.js
 dash/data/ai-news.json
 dash/data/ai-news.js
+dash/data/dounai_checkin.json
 ```
 
 Routine OpenClaw runs must not edit:
@@ -58,6 +59,8 @@ OpenClaw records facts and drafts summaries. The owner keeps final judgment. Do 
 `dash/data/dashboard.json` is the main data source for Home and Token. `dash/data/dashboard.js` must contain the same object assigned to `window.MAXNOW_DASHBOARD_DATA`.
 
 `dash/data/ai-news.json` is only for AI external inputs. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
+
+`dash/data/dounai_checkin.json` stores Dounai daily check-in results. OpenClaw check-in automation may update it, but MaxNow should only display traffic, account-extension hours, cumulative check-in days, and recent records for charts/tables; beans are raw data only and should not drive UI.
 
 ## Dashboard Data Shape
 
@@ -206,6 +209,7 @@ Before finishing every routine update:
 ```bash
 python -m json.tool dash/data/dashboard.json >/dev/null
 python -m json.tool dash/data/ai-news.json >/dev/null
+python -m json.tool dash/data/dounai_checkin.json >/dev/null
 ```
 
 Regenerate wrappers from the JSON files:

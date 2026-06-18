@@ -44,7 +44,7 @@ code {
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 1px 5px;
-  background: #f8fbff;
+  background: #ffffff;
   color: #1570be;
   font-family: "SFMono-Regular", Consolas, monospace;
   font-size: 0.94em;
@@ -82,8 +82,10 @@ code {
   aspect-ratio: 1;
   display: block;
   flex: 0 0 auto;
-  border-radius: 12px;
-  box-shadow: 0 8px 18px rgba(29, 155, 240, 0.18);
+  border: 1px solid #cfe8ff;
+  border-radius: 14px;
+  background: #e7f6ff;
+  box-shadow: 0 6px 14px rgba(29, 155, 240, 0.1);
 }
 
 .brand strong,
@@ -107,6 +109,10 @@ code {
 }
 
 .side-nav-item {
+  --nav-color: var(--accent);
+  --nav-bg: #eef8ff;
+  --nav-border: #cfe8ff;
+  --nav-icon-bg: #e8f4ff;
   min-height: 58px;
   display: flex;
   align-items: center;
@@ -121,9 +127,9 @@ code {
 
 .side-nav-item:hover,
 .side-nav-item.is-active {
-  border-color: #cfe8ff;
-  background: #eef8ff;
-  box-shadow: inset 3px 0 0 var(--accent);
+  border-color: var(--nav-border);
+  background: var(--nav-bg);
+  box-shadow: inset 3px 0 0 var(--nav-color), var(--shadow-soft);
 }
 
 .side-nav-item strong,
@@ -149,9 +155,23 @@ code {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 8px;
-  background: #e8f4ff;
-  color: var(--accent);
+  background: var(--nav-icon-bg);
+  color: var(--nav-color);
   font-weight: 800;
+}
+
+.side-nav-item:nth-child(2) {
+  --nav-color: var(--purple);
+  --nav-bg: #f7edff;
+  --nav-border: #e5ccff;
+  --nav-icon-bg: #f4e8ff;
+}
+
+.side-nav-item:nth-child(3) {
+  --nav-color: var(--cyan);
+  --nav-bg: #eafaff;
+  --nav-border: #c7f2ff;
+  --nav-icon-bg: #e1f9ff;
 }
 
 .blog-workspace {
@@ -197,6 +217,27 @@ code {
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
+}
+
+.summary-bar,
+.summary-card,
+.panel,
+.status-strip article,
+.post-card {
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .summary-bar:hover,
+  .summary-card:hover,
+  .panel:hover,
+  .status-strip article:hover,
+  .post-card:hover {
+    border-color: #8fd0ff;
+    background: #ffffff;
+    box-shadow: 0 14px 32px rgba(25, 43, 72, 0.12), 0 1px 2px rgba(25, 43, 72, 0.08);
+    transform: translateY(-2px);
+  }
 }
 
 .summary-bar {
@@ -272,7 +313,7 @@ code {
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #f8fbff;
+  background: #ffffff;
   text-align: center;
 }
 
@@ -335,7 +376,7 @@ code {
 .featured-post {
   display: grid;
   gap: 12px;
-  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  background: #ffffff;
 }
 
 .post-kicker {

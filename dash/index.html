@@ -36,6 +36,15 @@
               <small id="sidebar-token-total">--</small>
             </span>
           </button>
+          <button class="side-nav-item nav-dounai" type="button" data-view="dounai">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3.5c3.7 4.2 6 7.7 6 10.5a6 6 0 0 1-12 0c0-2.8 2.3-6.3 6-10.5zm0 3.1C9.5 9.7 8 12.3 8 14a4 4 0 0 0 8 0c0-1.7-1.5-4.3-4-7.4z"/></svg>
+            </span>
+            <span class="nav-copy">
+              <strong>豆奶</strong>
+              <small id="sidebar-dounai-flow">--</small>
+            </span>
+          </button>
         </nav>
       </aside>
 
@@ -228,6 +237,38 @@
                 <ol class="timeline" id="timeline"></ol>
               </article>
 
+              <article class="panel checkin-panel" id="dounai-checkin" role="button" tabindex="0" aria-label="打开豆奶详情">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Dounai</p>
+                    <h2>签到</h2>
+                  </div>
+                  <small id="checkin-updated">等待同步</small>
+                </header>
+                <div class="checkin-grid" aria-label="豆奶签到摘要">
+                  <div>
+                    <span>今日流量</span>
+                    <strong id="checkin-today">--</strong>
+                  </div>
+                  <div>
+                    <span>今日延长</span>
+                    <strong id="checkin-today-hours">--</strong>
+                  </div>
+                  <div>
+                    <span>累计签到</span>
+                    <strong id="checkin-days">--</strong>
+                  </div>
+                  <div>
+                    <span>累计流量</span>
+                    <strong id="checkin-total-flow">--</strong>
+                  </div>
+                  <div>
+                    <span>累计延长</span>
+                    <strong id="checkin-total-hours">--</strong>
+                  </div>
+                </div>
+              </article>
+
               <article class="panel token-mini-panel">
                 <header class="panel-head">
                   <div>
@@ -246,31 +287,6 @@
                     <strong id="mini-token-30d">--</strong>
                   </div>
                 </div>
-              </article>
-
-              <article class="panel checkin-panel" id="dounai-checkin">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Dounai</p>
-                    <h2>签到</h2>
-                  </div>
-                  <small id="checkin-updated">等待同步</small>
-                </header>
-                <div class="checkin-grid" aria-label="豆奶签到摘要">
-                  <div>
-                    <span>今日</span>
-                    <strong id="checkin-today">--</strong>
-                  </div>
-                  <div>
-                    <span>累计签到</span>
-                    <strong id="checkin-days">--</strong>
-                  </div>
-                  <div>
-                    <span>累计流量</span>
-                    <strong id="checkin-total-flow">--</strong>
-                  </div>
-                </div>
-                <div class="checkin-trend" id="checkin-trend" aria-label="近7天签到流量趋势"></div>
               </article>
 
               <article class="panel system-panel">
@@ -338,6 +354,46 @@
               <div class="token-bars" id="token-bars"></div>
             </article>
           </section>
+        </section>
+
+        <section class="view" id="dounai-view" data-view-panel="dounai">
+          <header class="token-page-head">
+            <div>
+              <p class="eyebrow">Dounai Check-in</p>
+              <h1>豆奶签到</h1>
+              <p id="dounai-updated">等待同步</p>
+            </div>
+            <div class="dounai-page-summary" aria-label="豆奶签到摘要">
+              <span>累计签到 <strong id="dounai-days">--</strong></span>
+              <span>累计流量 <strong id="dounai-total-flow">--</strong></span>
+              <span>累计延长 <strong id="dounai-total-hours">--</strong></span>
+            </div>
+          </header>
+
+          <section class="dounai-chart-grid" aria-label="近 30 天豆奶签到趋势">
+            <article class="panel dounai-chart-card">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Traffic</p>
+                  <h2>近 30 天流量</h2>
+                </div>
+                <span class="status-pill">MB / 日</span>
+              </header>
+              <div class="line-chart" id="dounai-flow-chart"></div>
+            </article>
+
+            <article class="panel dounai-chart-card">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Hours</p>
+                  <h2>近 30 天时长</h2>
+                </div>
+                <span class="status-pill">小时 / 日</span>
+              </header>
+              <div class="line-chart" id="dounai-hours-chart"></div>
+            </article>
+          </section>
+
         </section>
       </main>
     </div>
