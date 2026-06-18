@@ -436,15 +436,11 @@ def unit_state(unit):
 def timer_state():
     code, crontab, _ = run_command(["crontab", "-l"], timeout=2)
     if code == 0 and CRON_MARKER in crontab:
-        cron_line = next(
-            (line.strip() for line in crontab.splitlines() if "maxnow-dashboard-sync.lock" in line),
-            "",
-        )
         return {
             "key": "timers",
-            "name": "瀹氭椂浠诲姟",
+            "name": "定时同步",
             "value": "Cron 10m",
-            "note": cron_line or f"crontab block {CRON_MARKER}",
+            "note": f"{CRON_MARKER} active; runs update_data.py runtime every 10 minutes",
         }, True
 
     code, _, _ = run_command(["systemctl", "--version"], timeout=2)

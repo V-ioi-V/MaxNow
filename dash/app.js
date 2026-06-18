@@ -266,9 +266,11 @@ function formatSystemNote(item) {
 }
 
 function getSystemHealth(item) {
-  const text = `${item.value || ""} ${item.note || ""}`.toLowerCase();
-  if (text.includes("fail") || text.includes("check") || text.includes("not set") || text.includes("failed")) return "bad";
-  if (text.includes("unknown") || text.includes("pending")) return "unknown";
+  const value = String(item.value || "").toLowerCase();
+  const note = String(item.note || "").toLowerCase();
+  if (["fail", "failed", "check", "not set"].includes(value)) return "bad";
+  if (value === "unknown" || value === "pending") return "unknown";
+  if (item.key === "failure-log" && note.includes("[fail]")) return "bad";
   return "ok";
 }
 
