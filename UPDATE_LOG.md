@@ -9,6 +9,16 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-06-18
+
+### 接入 wiki-todos 服务器自动同步
+
+- 在服务器 `/var/www/maxnow-dashboard` 上为 `ubuntu` 用户配置 crontab 标记块 `MAXNOW-DASHBOARD-SYNC`。
+- 当前频率为每 10 分钟一次，执行 `scripts/sync_wiki_todos.py`、`scripts/sync_system_status.py` 和 `scripts/check.py`。
+- 运行日志写入 `logs/maxnow-sync.log`，并分别追加 `logs/wiki-todos.log` 与 `logs/system-status.log`。
+- 已验证自动同步链路：cron 在 `2026-06-18T19:00:01+08:00` 自动运行成功，personal-wiki 待办缓存开放待办从 8 条变为 7 条。
+- 更新 `DEPLOY.md`、`SERVER_RUNBOOK.md`、`CONTEXT.md` 和 `ROADMAP.md`，把自动同步从待办移动到已完成记录。
+
 ## 2026-06-17
 
 ### 优化博客文章图片边框和尺寸

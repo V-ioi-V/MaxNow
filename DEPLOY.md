@@ -82,6 +82,29 @@ SERVER_RUNBOOK.md
 6. 每次数据更新后重新生成对应 `.js` wrapper。
 7. 运行校验，确认 JSON 和 wrapper 一致。
 
+## 服务器数据同步
+
+`dash.maxnow.cn` 的 personal-wiki 待办缓存由服务器定时任务更新，不由浏览器直接读取 private GitHub。
+
+当前线上配置：
+
+- 运行用户：`ubuntu`
+- 触发方式：用户 crontab，标记块 `MAXNOW-DASHBOARD-SYNC`
+- 频率：每 10 分钟一次
+- 工作目录：`/var/www/maxnow-dashboard`
+- 执行内容：`python3 scripts/sync_wiki_todos.py`、`python3 scripts/sync_system_status.py`、`python3 scripts/check.py`
+- 锁：`/tmp/maxnow-dashboard-sync.lock`，避免上一次未结束时重叠执行
+- 日志：`/var/www/maxnow-dashboard/logs/maxnow-sync.log`，并分别追加 `logs/wiki-todos.log`、`logs/system-status.log`
+
+手动重跑：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/sync_wiki_todos.py
+python3 scripts/sync_system_status.py
+python3 scripts/check.py
+```
+
 ## OpenClaw 写权限
 
 建议把 OpenClaw 的写权限限制到数据文件。

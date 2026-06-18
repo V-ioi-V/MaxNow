@@ -164,18 +164,17 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 ## 当前缺口
 
 - Home 页面已接入“今日 / 本周 / 近 30 天大事”的展示模块，但还需要 Owner 视觉确认和必要微调。
-- wiki-todos 的手动同步链路已跑通，但服务器定时自动同步还没有落地：需要决定用 cron 还是 systemd timer，并补日志与失败提醒。
+- wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
 - 系统状态采集脚本已建立，但还没有接入服务器定时任务。
 - `dash/data/dashboard.json` 里的信息仍是旧快照，更新时间停留在 2026-05-26。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
-- 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；后续重点是把同步命令固化为定时任务。
+- 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，后续重点是补失败提醒或更正式的运行日志展示。
 - 个人博客已确定推荐走 `blog.maxnow.cn`，但还缺发布 manifest / front matter 策略、构建脚本、nginx 子域名配置和第一批公开文章清单。
 - MaxNow 功能待办以 `ROADMAP.md` 为准，不应混入 dashboard / last-30 运行数据。
 - 当前可执行任务以 `ROADMAP.md` 为准。
 
 ## 建议下一步
 
-1. 给 `scripts/sync_wiki_todos.py` 和 `scripts/sync_system_status.py` 接服务器 cron 或 systemd timer，并记录日志路径。
-2. 让 Home 系统状态显示服务器定时采集后的 nginx、HTTPS、git commit、磁盘、内存和最近同步状态。
-3. 补一个本地/服务器数据更新工具，减少手工重写 wrapper 的错误。
-4. 为 `blog.maxnow.cn` 补静态博客构建链路：发布 manifest、Markdown 转换、图片复制、文章列表、标签归档和 nginx 配置。
+1. 让 Home 系统状态显示服务器定时采集后的 nginx、HTTPS、git commit、磁盘、内存和最近同步状态。
+2. 补一个本地/服务器数据更新工具，减少手工重写 wrapper 的错误。
+3. 为 `blog.maxnow.cn` 补静态博客构建链路：发布 manifest、Markdown 转换、图片复制、文章列表、标签归档和 nginx 配置。

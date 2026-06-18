@@ -132,12 +132,18 @@ curl http://metadata.tencentyun.com/latest/meta-data/payment/create-time
 
 当前服务器可读到：`ap-singapore` / `ap-singapore-2`，实例 `ins-2814k2h0`，按量计费 `POSTPAID_BY_HOUR`，`termination-time=null`，因此没有固定包年包月到期日。
 
-证书到期由脚本直接检查 `https://dash.maxnow.cn` 的 TLS 证书。最近拉取时间来自 `.git/FETCH_HEAD` 的修改时间。定时任务目前按以下 unit 名称检测：
+证书到期由脚本直接检查 `https://dash.maxnow.cn` 的 TLS 证书。最近拉取时间来自 `.git/FETCH_HEAD` 的修改时间。
 
-```text
-maxnow-wiki-todos.timer
-maxnow-system-status.timer
-maxnow-dashboard-sync.timer
+2026-06-18 已用 `ubuntu` 用户 crontab 接入 dashboard 数据同步，标记块为 `MAXNOW-DASHBOARD-SYNC`：
+
+```cron
+*/10 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-dashboard-sync.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow dashboard sync start"; python3 scripts/sync_wiki_todos.py 2>&1 | tee -a logs/wiki-todos.log; python3 scripts/sync_system_status.py 2>&1 | tee -a logs/system-status.log; python3 scripts/check.py; echo "[$(date -Is)] maxnow dashboard sync ok"' >> /var/www/maxnow-dashboard/logs/maxnow-sync.log 2>&1
+```
+
+查看当前 crontab：
+
+```bash
+crontab -l
 ```
 
 失败日志目前按以下位置检测：
@@ -145,7 +151,7 @@ maxnow-dashboard-sync.timer
 ```text
 /var/www/maxnow-dashboard/logs/wiki-todos.log
 /var/www/maxnow-dashboard/logs/system-status.log
-/var/www/maxnow-dashboard/maxnow-sync.log
+/var/www/maxnow-dashboard/logs/maxnow-sync.log
 ```
 
 如果只想预览将采集到的状态，不写文件：
@@ -317,5 +323,5 @@ ls -la /var/www/maxnow-dashboard
 ## 后续待补
 
 - 决定是否加 Basic Auth、VPN、IP 限制或其他访问保护。
-- 给 `scripts/sync_wiki_todos.py` 和 `scripts/sync_system_status.py` 配置 cron 或 systemd timer，并记录日志路径和失败提醒方式。
-- 做数据更新工具和服务器定时任务，让 `dash/data/*.json` 与 `.js` wrapper 自动保持一致。
+- 给定时同步补失败提醒，或让 Home 更明确展示最近一次自动同步结果。
+- 做数据更新工具，让 `dash/data/*.json` 与 `.js` wrapper 自动保持一致。

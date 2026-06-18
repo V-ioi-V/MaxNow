@@ -35,14 +35,6 @@
 - 归档总览页：`blog/overview.html`，作为左侧独立 tab 展示原始文章数、缓存图片数、专题分类数和发布状态；不要把这些统计放成左栏信息卡。
 - 方案说明页：`blog/preview.html`，用于保留博客发布链路和边界说明，不作为正式线上入口。
 
-### 接入服务器自动同步 wiki-todos
-
-- 建议分支：`feature/wiki-todo-cron`
-- 在服务器上用 cron 或 systemd timer 定时运行 `python3 scripts/sync_wiki_todos.py` 和 `python3 scripts/sync_system_status.py`。
-- 同步完成后运行 `python3 scripts/check.py`，失败时记录日志，不静默吞错。
-- 明确日志路径、运行用户、失败摘要和手动重跑命令，并写进 `DEPLOY.md` / `SERVER_RUNBOOK.md`。
-- 保持前端只读 `dash/data/wiki-todos.json`，不在浏览器里放 GitHub token。
-
 ### 接入系统状态定时采集
 
 - 建议分支：`feature/system-status-cron`
@@ -146,10 +138,6 @@
 - 旧文章 front matter 规范待定：是否在 personal-wiki 原文里直接补 `visibility` / `status`，还是由 MaxNow 维护一个独立发布清单。
 - 博客是否需要评论、订阅邮件、搜索索引、统计分析等公开站能力待后续确认；第一阶段先不做。
 
-### 服务器定时任务
-
-- 剩余待确认：使用 cron 还是 systemd timer、日志路径、失败提醒方式和是否自动提交/推送同步后的数据缓存。
-
 ### Token 使用自动化
 
 - 阻塞原因：需要明确 Token 数据来源、读取方式和权限边界。
@@ -168,6 +156,7 @@
 ### 已完成的基础能力
 
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；已验证服务器能读取 `wiki/tasks/todo.json` 并运行 `scripts/sync_wiki_todos.py`。
+- 服务器已通过 `ubuntu` 用户 crontab 接入 `MAXNOW-DASHBOARD-SYNC`：每 10 分钟运行 `scripts/sync_wiki_todos.py`、`scripts/sync_system_status.py` 和 `scripts/check.py`，日志写入 `/var/www/maxnow-dashboard/logs/`。
 - 本地预览已可通过 `http://127.0.0.1:8000/` 运行和访问。
 - 新增 `scripts/sync_system_status.py`，可采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，并只更新 dashboard 的 `automation` / `system` 字段。
 - 在 Home 主内容区增加 personal-wiki 近期待办入口，位于“当前主线”和“今日推进”之间，当前为只读展示 / 跳转，不支持编辑或标记完成。
