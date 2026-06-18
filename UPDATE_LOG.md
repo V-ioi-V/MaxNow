@@ -11,11 +11,6 @@
 
 ## 2026-06-18
 
-### 精简 Home 系统状态列表
-
-- 将 Home 右侧系统状态从详细诊断清单收敛为 5 个聚合项：站点、定时同步、wiki 待办、失败日志和资源。
-- 隐藏常驻展示中的证书、部署 commit、最近 pull、云位置和计费等细节，避免右侧信息过载；这些信息仍由脚本参与健康判断。
-
 ### 收尾系统状态和数据更新入口
 
 - 扩展 `scripts/sync_system_status.py`，让 Home 系统状态展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、CPU、磁盘、内存、uptime、云位置和计费状态。
