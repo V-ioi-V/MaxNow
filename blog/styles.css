@@ -770,6 +770,102 @@ a {
   padding-top: 0;
 }
 
+.topic-feed.is-grouped {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.subtopic-index {
+  display: grid;
+  gap: 16px;
+  margin: 0 clamp(24px, 3vw, 64px) 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 20px 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.subtopic-index-head,
+.subtopic-group-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.subtopic-index-head h2,
+.subtopic-group-head h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.subtopic-index-head span,
+.subtopic-group-head span {
+  color: var(--accent-strong);
+  font-size: 16px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.subtopic-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.subtopic-card {
+  min-height: 112px;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 8px;
+  border: 1px solid #e1ebf5;
+  border-radius: var(--radius);
+  padding: 14px;
+  background: #f8fbff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.subtopic-card:hover {
+  border-color: #bfddf8;
+  background: #eef8ff;
+}
+
+.subtopic-card strong {
+  color: var(--accent-strong);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.subtopic-card p {
+  margin: 0;
+  color: var(--soft);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.subtopic-group {
+  display: grid;
+  gap: 12px;
+}
+
+.subtopic-group-head {
+  border: 1px solid #dfeaf5;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: #ffffff;
+}
+
+.subtopic-articles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
 .post-detail {
   display: grid;
   gap: 18px;
@@ -887,7 +983,8 @@ a {
   .hero,
   .compact-hero,
   .content-grid,
-  .topic-page-head {
+  .topic-page-head,
+  .subtopic-index {
     margin: 16px 14px 0;
     padding: 18px;
   }
@@ -905,7 +1002,15 @@ a {
   .overview-grid,
   .post-list,
   .category-grid,
-  .topic-layout {
+  .topic-layout,
+  .subtopic-grid,
+  .subtopic-articles {
     grid-template-columns: 1fr;
+  }
+
+  .subtopic-index-head,
+  .subtopic-group-head {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

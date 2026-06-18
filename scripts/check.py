@@ -54,6 +54,7 @@ def check_required_files():
         "blog/topic-algorithm-gap.html",
         "blog/topic-engineering.html",
         "blog/post-preview.html",
+        "blog/topic-tags.js",
         "blog/styles.css",
         "blog/preview.html",
         "blog/preview.css",

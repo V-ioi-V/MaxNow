@@ -28,6 +28,7 @@ blog/
   topic-algorithm-gap.html
   topic-engineering.html
   post-preview.html
+  topic-tags.js
   styles.css
   preview.html
   preview.css
@@ -41,7 +42,7 @@ scripts/
   sync_wiki_todos.py
 ```
 
-`dash/` 是 `dash.maxnow.cn` 的静态站目录。`blog/` 是 `blog.maxnow.cn` 的发布层工作区，当前先放文章流首页、归档总览、专题索引、分类二级页和方案说明页预览。根目录 `index.html` 只作为本地开发入口，不是线上 dashboard 本体。
+`dash/` 是 `dash.maxnow.cn` 的静态站目录。`blog/` 是 `blog.maxnow.cn` 的发布层工作区，当前先放文章流首页、归档总览、专题索引、分类二级页、细分标签索引和方案说明页预览。根目录 `index.html` 只作为本地开发入口，不是线上 dashboard 本体。
 
 ## 本地预览
 
