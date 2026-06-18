@@ -2,7 +2,6 @@ const DATA_URL = "./data/dashboard.json";
 const AI_NEWS_URL = "./data/ai-news.json";
 const LAST30_URL = "./data/last-30.json";
 const WIKI_TODO_URL = "./data/wiki-todos.json";
-const CHECKIN_URL = "./data/dounai_checkin.json";
 const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
 const WIKI_TASK_BASE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/";
 
@@ -10,13 +9,11 @@ const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
 const fallbackAiNews = window.MAXNOW_AI_NEWS_DATA || { items: [] };
 const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
 const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
-const fallbackCheckin = {};
 
 let dashboardData = fallbackData;
 let aiNewsData = fallbackAiNews;
 let last30Data = fallbackLast30;
 let wikiTodoData = fallbackWikiTodo;
-let checkinData = fallbackCheckin;
 let wikiTodoError = "";
 let activeTokenRange = "7d";
 
@@ -28,12 +25,6 @@ const refreshButton = qs("#refresh-button");
 const viewTitle = qs("#view-title");
 
 const copy = {
-  checkinTitle: "豆奶签到",
-  checkinToday: "今日流量",
-  checkinTotal: "累计流量",
-  checkinDays: "累计天数",
-  checkinWait: "等待同步",
-
   unnamedTask: "\u672a\u547d\u540d\u4e8b\u9879",
   unnamedInfo: "\u672a\u547d\u540d\u4fe1\u606f",
   unnamedTime: "\u672a\u547d\u540d\u65f6\u95f4\u70b9",
@@ -352,37 +343,6 @@ function renderWikiTodos() {
   }
 }
 
-function renderCheckin() {
-  if (!checkinData?.today) {
-    setText('#checkin-today', '--');
-    setText('#checkin-total', '--');
-    setText('#checkin-days', '--');
-    setText('#checkin-updated', '');
-    qs('#checkin-bars')?.replaceChildren();
-    return;
-  }
-
-  const today = checkinData.today;
-  const total = checkinData.total;
-  const records = (checkinData.records || []).slice(0, 7).reverse();
-
-  setText('#checkin-today', today.flow_mb != null ? today.flow_mb + ' MB' : '--');
-  setText('#checkin-total', total.flow_mb != null ? (total.flow_mb / 1000).toFixed(1) + ' GB' : '--');
-  setText('#checkin-days', total.days != null ? total.days + ' 天' : '--');
-  setText('#checkin-updated', checkinData.updatedAt ? '更新 ' + checkinData.updatedAt : '');
-
-  var barsContainer = qs('#checkin-bars');
-  if (!barsContainer) return;
-  var maxFlow = Math.max.apply(null, records.map(function(r) { return r.flow_mb || 0; }), 1);
-  barsContainer.replaceChildren.apply(barsContainer, records.map(function(r) {
-    var bar = document.createElement('span');
-    bar.className = 'checkin-bar-item';
-    var pct = ((r.flow_mb || 0) / maxFlow) * 100;
-    bar.innerHTML = '<span style="height:' + Math.max(4, pct) + '%"></span><small>' + (r.flow_mb || 0) + '</small>';
-    return bar;
-  }));
-}
-
 function renderHome() {
   const mainlines = dashboardData.mainlines || dashboardData.projects || dashboardData.tasks || [];
   const actions = dashboardData.actions || dashboardData.tasks || [];
@@ -425,7 +385,6 @@ function renderHome() {
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   clearAndFill(qs("#system-list"), createSystemItem, dashboardData.system || []);
-  renderCheckin();
   renderWikiTodos();
   renderLast30Column("today", "#last30-today-title", "#last30-today-summary", "#last30-today-list", copy.todayEvents);
   renderLast30Column("week", "#last30-week-title", "#last30-week-summary", "#last30-week-list", copy.weekEvents);
@@ -539,19 +498,17 @@ async function readWikiTodo() {
 }
 
 async function loadData() {
-  const [dashboard, aiNews, last30, wikiTodo, checkin] = await Promise.all([
+  const [dashboard, aiNews, last30, wikiTodo] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
     readWikiTodo(),
-    readJson(CHECKIN_URL, fallbackCheckin),
   ]);
 
   dashboardData = dashboard;
   aiNewsData = aiNews;
   last30Data = last30;
   wikiTodoData = wikiTodo;
-  checkinData = checkin;
   renderAll();
 }
 

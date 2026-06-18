@@ -41,7 +41,6 @@ MaxNow 由四类文件组成：
    - `dash/data/last-30.js`
    - `dash/data/wiki-todos.json`
    - `dash/data/wiki-todos.js`
-   - `dash/data/dounai_checkin.json`
    - 这是页面和自动化之间的数据契约。
 
 3. OpenClaw skill
@@ -147,7 +146,7 @@ dash/data/ai-news.js
 dash/data/last-30.json
 dash/data/last-30.js
 dash/data/wiki-todos.json
-dash/data/dounai_checkin.json
+dash/data/wiki-todos.js
 ```
 
 OpenClaw 日常维护不能更新这些文件：
