@@ -556,7 +556,6 @@ def server_identity():
 
 def build_status(site_url):
     checks = []
-    server = server_identity()
     nginx, nginx_ok = nginx_state()
     site, site_ok = site_state(site_url)
     certificate, certificate_ok = certificate_state(site_url)
@@ -598,9 +597,20 @@ def build_status(site_url):
     else:
         status = "正常"
 
+    site_summary = {
+        "key": "site",
+        "name": "站点",
+        "value": site["value"],
+        "note": f"nginx {nginx['value']}; cert {certificate['value']}; {site['note']}",
+    }
+    resource_summary = {
+        "key": "resources",
+        "name": "资源",
+        "value": f"CPU {cpu['value']}",
+        "note": f"disk {disk['value']}; memory {memory['value']}; uptime {uptime['value']}",
+    }
     summary_parts = [
-        f"nginx {nginx['value']}",
-        f"HTTPS {site['value']}",
+        f"site {site['value']}",
         f"wiki {wiki_todos['value']}",
         f"cron {timers['value']}",
         f"log {failure_log['value']}",
@@ -617,21 +627,11 @@ def build_status(site_url):
             "lastRun": now_text(),
         },
         "system": [
-            server,
-            nginx,
-            site,
-            certificate,
-            deploy,
-            git_pull,
+            site_summary,
             timers,
             wiki_todos,
             failure_log,
-            cpu,
-            disk,
-            memory,
-            uptime,
-            cloud_location,
-            billing,
+            resource_summary,
         ],
     }
 
