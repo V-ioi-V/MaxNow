@@ -50,8 +50,10 @@ MaxNow 由四类文件组成：
 
 4. 校验脚本
    - `scripts/check.py`
+   - `scripts/update_data.py`
    - 由 Codex 或 Owner 维护。
-   - 用来检查必要文件、JSON 合法性、wrapper 一致性和本地预览可访问性。
+   - `scripts/check.py` 用来检查必要文件、JSON 合法性、wrapper 一致性和本地预览可访问性。
+   - `scripts/update_data.py` 用来统一刷新运行数据、重生成 `.js` wrapper，并在结束时运行一致性校验。
 
 5. 同步脚本
    - `scripts/sync_wiki_todos.py`
@@ -157,6 +159,7 @@ SPEC.md
 README.md
 DEPLOY.md
 scripts/check.py
+scripts/update_data.py
 CONTEXT.md
 ROADMAP.md
 IDEAS.md
@@ -209,7 +212,7 @@ Home 可以显示一个紧凑的 personal-wiki 近期待办入口。
 - 页面加载时读取本地缓存一次。
 - 顶部刷新按钮可以重新读取本地缓存。
 - 不做前端自动轮询，也不从前端直接访问 private GitHub raw。
-- 需要更新内容时，在本地或服务器运行 `python scripts/sync_wiki_todos.py`，由 `gh api` 读取 personal-wiki 并重写 `dash/data/wiki-todos.*`。
+- 需要更新内容时，在本地或服务器运行 `python scripts/update_data.py runtime` 或 `python scripts/sync_wiki_todos.py`，由服务器 `gh` 登录态读取 personal-wiki 并重写 `dash/data/wiki-todos.*`。
 - GitHub token 不得进入前端页面代码。
 
 ## 产品记忆

@@ -1,14 +1,14 @@
 {
   "brief": "今天主要把 MaxNow 从信息展示页收敛成个人状态工作站，并把 OpenClaw 的数据边界写清楚。",
-  "feedSource": "今日整理",
-  "journalSource": "状态快照",
+  "feedSource": "ROADMAP.md",
+  "journalSource": "Repo status",
   "today": {
     "mode": "define",
     "modeLabel": "整理模式",
     "energy": "中",
-    "focus": "MaxNow / OpenClaw 边界",
-    "summary": "今天最重要的是明确 MaxNow 记录个人状态，OpenClaw 只负责更新数据。",
-    "updatedAt": "2026-05-26 00:40"
+    "focus": "规划个人博客发布链路",
+    "summary": "当前优先推进：规划个人博客发布链路。",
+    "updatedAt": "2026-06-18 19:53"
   },
   "automation": {
     "status": "正常",
@@ -17,42 +17,30 @@
   },
   "mainlines": [
     {
-      "title": "MaxNow 个人状态工作站",
-      "note": "核心从新闻/信息流转为今日状态、当前主线、今日推进和记录沉淀。",
-      "label": "产品定位",
+      "title": "规划个人博客发布链路",
+      "note": "建议分支：`feature/blog-module-plan`",
+      "label": "Now",
       "status": "active"
-    },
-    {
-      "title": "OpenClaw 数据维护",
-      "note": "用 skill 固定写入路径、权限边界和校验方式，避免自动化误改页面代码。",
-      "label": "自动化",
-      "status": "active"
-    },
-    {
-      "title": "服务器部署闭环",
-      "note": "页面代码由 GitHub 管理，服务器跑静态站，OpenClaw 定时刷新数据。",
-      "label": "部署",
-      "status": "waiting"
     }
   ],
   "actions": [
     {
-      "title": "恢复并更新 SPEC.md",
-      "note": "把 MaxNow 定义成个人状态工作站，并写清楚首页、Token、数据和 OpenClaw 边界。",
-      "label": "Spec",
+      "title": "规划个人博客发布链路",
+      "note": "建议分支：`feature/blog-module-plan`",
+      "label": "Now",
       "status": "active"
     },
     {
-      "title": "更新 OpenClaw skill",
-      "note": "让 OpenClaw 知道 MaxNow 是什么、数据放哪里、哪些文件不能碰、如何校验。",
-      "label": "Skill",
-      "status": "active"
+      "title": "让 Last-30 进入增量更新节奏",
+      "note": "当前 `dash/data/last-30.json` 还是 2026-06-14 的草稿，需要进入日常增量更新。",
+      "label": "Next",
+      "status": "waiting"
     },
     {
-      "title": "收敛首页数据结构",
-      "note": "dashboard 管个人状态、主线、推进、记录、系统和 Token；ai-news 只管外部 AI 输入。",
-      "label": "Data",
-      "status": "active"
+      "title": "补充 Token 使用页真实数据",
+      "note": "来源 ID：`maxnow-token-usage`",
+      "label": "Next",
+      "status": "waiting"
     }
   ],
   "journal": [
@@ -94,21 +82,15 @@
   ],
   "feeds": [
     {
-      "source": "GitHub",
-      "title": "V-ioi-V/MaxNow",
-      "summary": "页面代码和 spec 由 Git 管理，服务器后续从仓库拉取部署。",
-      "url": "https://github.com/V-ioi-V/MaxNow"
+      "source": "Roadmap",
+      "title": "当前可执行任务",
+      "summary": "Home 的当前主线和今日推进由 scripts/update_data.py project-status 从 ROADMAP.md 显式刷新。",
+      "url": "https://github.com/V-ioi-V/MaxNow/blob/main/ROADMAP.md"
     },
     {
-      "source": "Server",
-      "title": "dash.maxnow.cn",
-      "summary": "适合先做静态站，OpenClaw 在服务器侧定时刷新数据文件。",
-      "url": ""
-    },
-    {
-      "source": "OpenClaw",
-      "title": "数据接口已明确",
-      "summary": "dashboard 负责个人状态和 Token，ai-news 只负责外部 AI 输入。",
+      "source": "Automation",
+      "title": "服务器同步链路",
+      "summary": "wiki-todos 与系统状态每 10 分钟由服务器 crontab 刷新，失败信息进入系统状态列表。",
       "url": ""
     }
   ],

@@ -221,6 +221,7 @@ function createSystemItem(item) {
   article.dataset.tone = getTone(item.key || item.value || item.name);
   const percent = getSystemPercent(item);
   if (percent !== null) article.classList.add("has-ring");
+  article.dataset.health = getSystemHealth(item);
   article.innerHTML = `
     <div>
       <p class="item-title"></p>
@@ -264,11 +265,20 @@ function formatSystemNote(item) {
   return note;
 }
 
+function getSystemHealth(item) {
+  const text = `${item.value || ""} ${item.note || ""}`.toLowerCase();
+  if (text.includes("fail") || text.includes("check") || text.includes("not set") || text.includes("failed")) return "bad";
+  if (text.includes("unknown") || text.includes("pending")) return "unknown";
+  return "ok";
+}
+
 function getTone(value = "") {
   const text = String(value).toLowerCase();
+  if (text.includes("failure") || text.includes("fail") || text.includes("check")) return "red";
   if (text.includes("token") || text.includes("data") || text.includes("github")) return "blue";
   if (text.includes("auto") || text.includes("openclaw") || text.includes("skill")) return "cyan";
   if (text.includes("server") || text.includes("deploy") || text.includes("\u90e8\u7f72")) return "orange";
+  if (text.includes("https") || text.includes("certificate") || text.includes("cron") || text.includes("timer")) return "green";
   if (text.includes("ai") || text.includes("official") || text.includes("openai")) return "purple";
   if (text.includes("wait") || text.includes("pending") || text.includes("\u7b49")) return "gray";
   if (text.includes("done") || text.includes("online") || text.includes("\u6b63\u5e38")) return "green";

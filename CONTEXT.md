@@ -62,6 +62,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `openclaw/maxnow-dashboard/SKILL.md`：OpenClaw 更新 dashboard / ai-news 数据时的执行规则。
 - `openclaw/last-30/SKILL.md`：OpenClaw 更新 Last-30 滚动记忆时的执行规则。
 - `scripts/check.py`：本地一致性校验脚本。
+- `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新 Home 项目状态。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
 - `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
@@ -89,7 +90,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - OpenClaw 日常任务可以更新。
 - 每次更新后必须校验 JSON，并重新生成对应 `.js` wrapper。
 - 这里保存“今天要看的状态”，不要塞长期产品讨论。
-- private personal-wiki 待办不能由前端直接读取；需要先运行 `python scripts/sync_wiki_todos.py` 生成 MaxNow 本地缓存。
+- private personal-wiki 待办不能由前端直接读取；需要先运行 `python scripts/update_data.py runtime` 或 `python scripts/sync_wiki_todos.py` 生成 MaxNow 本地缓存。
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；服务器上已验证 `python3 scripts/sync_wiki_todos.py` 能成功生成待办缓存。
 - 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、今日推进或日常记录。
 
@@ -156,7 +157,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 重要变更写进 `UPDATE_LOG.md`。
 - 会影响代理接力、文件职责、自动化边界或下一步路线的上下文写进 `CONTEXT.md`。
 - 每天变化的数据写进 `dash/data/*.json`；MaxNow 功能待办、产品路线和“下一步要实现什么”不要写进数据文件。
-- 本地一致性校验逻辑写进 `scripts/check.py`。
+- 本地一致性校验逻辑写进 `scripts/check.py`，数据更新入口写进 `scripts/update_data.py`。
 - 自动化执行边界写进 `AGENTS.md` 和对应 OpenClaw skill。
 - 服务器 SSH、nginx、域名部署和排障步骤写进 `SERVER_RUNBOOK.md`。
 - 给 Owner 看的内容用中文；给代理执行的规则可以用英文。
@@ -164,17 +165,17 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 ## 当前缺口
 
 - Home 页面已接入“今日 / 本周 / 近 30 天大事”的展示模块，但还需要 Owner 视觉确认和必要微调。
-- wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
-- 系统状态采集脚本已建立，但还没有接入服务器定时任务。
-- `dash/data/dashboard.json` 里的信息仍是旧快照，更新时间停留在 2026-05-26。
+- wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，通过 `python3 scripts/update_data.py runtime` 刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
+- 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
+- `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
-- 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，后续重点是补失败提醒或更正式的运行日志展示。
+- 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，失败日志会进入 Home 系统状态。
 - 个人博客已确定推荐走 `blog.maxnow.cn`，但还缺发布 manifest / front matter 策略、构建脚本、nginx 子域名配置和第一批公开文章清单。
 - MaxNow 功能待办以 `ROADMAP.md` 为准，不应混入 dashboard / last-30 运行数据。
 - 当前可执行任务以 `ROADMAP.md` 为准。
 
 ## 建议下一步
 
-1. 让 Home 系统状态显示服务器定时采集后的 nginx、HTTPS、git commit、磁盘、内存和最近同步状态。
-2. 补一个本地/服务器数据更新工具，减少手工重写 wrapper 的错误。
-3. 为 `blog.maxnow.cn` 补静态博客构建链路：发布 manifest、Markdown 转换、图片复制、文章列表、标签归档和 nginx 配置。
+1. 为 `blog.maxnow.cn` 补静态博客构建链路：发布 manifest、Markdown 转换、图片复制、文章列表、标签归档和 nginx 配置。
+2. 让 Last-30 进入日常增量更新节奏。
+3. 明确 Token 真实数据来源和刷新频率。

@@ -92,7 +92,7 @@ SERVER_RUNBOOK.md
 - 触发方式：用户 crontab，标记块 `MAXNOW-DASHBOARD-SYNC`
 - 频率：每 10 分钟一次
 - 工作目录：`/var/www/maxnow-dashboard`
-- 执行内容：`python3 scripts/sync_wiki_todos.py`、`python3 scripts/sync_system_status.py`、`python3 scripts/check.py`
+- 执行内容：`python3 scripts/update_data.py runtime`
 - 锁：`/tmp/maxnow-dashboard-sync.lock`，避免上一次未结束时重叠执行
 - 日志：`/var/www/maxnow-dashboard/logs/maxnow-sync.log`，并分别追加 `logs/wiki-todos.log`、`logs/system-status.log`
 
@@ -100,9 +100,14 @@ SERVER_RUNBOOK.md
 
 ```bash
 cd /var/www/maxnow-dashboard
-python3 scripts/sync_wiki_todos.py
-python3 scripts/sync_system_status.py
-python3 scripts/check.py
+python3 scripts/update_data.py runtime
+```
+
+需要显式刷新 Home 的当前主线 / 今日推进时：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/update_data.py project-status
 ```
 
 ## OpenClaw 写权限

@@ -11,6 +11,15 @@
 
 ## 2026-06-18
 
+### 收尾系统状态和数据更新入口
+
+- 扩展 `scripts/sync_system_status.py`，让 Home 系统状态展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、CPU、磁盘、内存、uptime、云位置和计费状态。
+- 新增 `scripts/update_data.py`，统一提供 `runtime`、`project-status`、`wrap all` 等数据更新入口；`runtime` 不覆盖 Owner 判断字段。
+- 服务器 crontab 的 `MAXNOW-DASHBOARD-SYNC` 改为调用 `python3 scripts/update_data.py runtime`，保留分日志和总日志。
+- 更新 Home 系统状态项的异常/未知视觉状态，让失败日志或同步异常能直接在页面中显色。
+- 用 `python scripts/update_data.py project-status` 将当前主线 / 今日推进显式刷新为 `ROADMAP.md` 中的当前任务。
+- 更新 `AGENTS.md`、`SPEC.md`、`README.md`、`DEPLOY.md`、`SERVER_RUNBOOK.md`、`CONTEXT.md` 和 `ROADMAP.md`，记录新的工具入口、cron 命令和完成状态。
+
 ### 接入 wiki-todos 服务器自动同步
 
 - 在服务器 `/var/www/maxnow-dashboard` 上为 `ubuntu` 用户配置 crontab 标记块 `MAXNOW-DASHBOARD-SYNC`。

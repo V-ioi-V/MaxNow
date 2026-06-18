@@ -108,6 +108,16 @@ python3 scripts/sync_wiki_todos.py
 python3 scripts/check.py
 ```
 
+统一运行入口：
+
+```bash
+python3 scripts/update_data.py runtime
+python3 scripts/update_data.py project-status
+python3 scripts/update_data.py wrap all
+```
+
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、系统状态和 wrapper，不覆盖 Owner 的今日判断。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。
+
 刷新 MaxNow 的系统状态缓存：
 
 ```bash
@@ -137,7 +147,7 @@ curl http://metadata.tencentyun.com/latest/meta-data/payment/create-time
 2026-06-18 已用 `ubuntu` 用户 crontab 接入 dashboard 数据同步，标记块为 `MAXNOW-DASHBOARD-SYNC`：
 
 ```cron
-*/10 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-dashboard-sync.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow dashboard sync start"; python3 scripts/sync_wiki_todos.py 2>&1 | tee -a logs/wiki-todos.log; python3 scripts/sync_system_status.py 2>&1 | tee -a logs/system-status.log; python3 scripts/check.py; echo "[$(date -Is)] maxnow dashboard sync ok"' >> /var/www/maxnow-dashboard/logs/maxnow-sync.log 2>&1
+*/10 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-dashboard-sync.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow dashboard sync start"; python3 scripts/update_data.py runtime; echo "[$(date -Is)] maxnow dashboard sync ok"' >> /var/www/maxnow-dashboard/logs/maxnow-sync.log 2>&1
 ```
 
 查看当前 crontab：

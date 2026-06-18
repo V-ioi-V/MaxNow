@@ -36,6 +36,9 @@ openclaw/
   last-30/SKILL.md
 scripts/
   check.py
+  update_data.py
+  sync_system_status.py
+  sync_wiki_todos.py
 ```
 
 `dash/` 是 `dash.maxnow.cn` 的静态站目录。`blog/` 是 `blog.maxnow.cn` 的发布层工作区，当前先放文章流首页、归档总览、专题索引、分类二级页和方案说明页预览。根目录 `index.html` 只作为本地开发入口，不是线上 dashboard 本体。
@@ -101,8 +104,23 @@ Home 页面读取：
 - `dash/data/dashboard.json`
 - `dash/data/ai-news.json`
 - `dash/data/last-30.json`
+- `dash/data/wiki-todos.json`
 
 对应的 `.js` wrapper 是静态兜底，必须和 JSON 保持一致。
+
+## 数据更新工具
+
+统一入口：
+
+```powershell
+python scripts/update_data.py wrap all
+python scripts/update_data.py project-status
+python scripts/update_data.py runtime
+```
+
+- `wrap all`：只从 JSON 重新生成所有 `.js` wrapper，并运行校验。
+- `project-status`：显式从 `ROADMAP.md` 刷新 Home 的当前主线 / 今日推进，不由 cron 自动覆盖。
+- `runtime`：服务器定时任务使用，刷新 wiki-todos 和系统状态，然后运行校验。
 
 ## 本地校验
 
@@ -115,7 +133,7 @@ python scripts/check.py
 校验内容：
 
 - 必要文件是否存在。
-- `dashboard` / `ai-news` / `last-30` 的 JSON 是否能解析。
+- `dashboard` / `ai-news` / `last-30` / `wiki-todos` 的 JSON 是否能解析。
 - 每个 `.js` wrapper 是否和对应 JSON 内容一致。
 - 如果本地服务正在运行，检查 `http://127.0.0.1:4173/` 是否可访问。
 

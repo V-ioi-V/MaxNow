@@ -49,6 +49,7 @@ README.md
 DEPLOY.md
 SERVER_RUNBOOK.md
 scripts/check.py
+scripts/update_data.py
 scripts/sync_system_status.py
 scripts/sync_wiki_todos.py
 CONTEXT.md
@@ -86,6 +87,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Validate JSON before finishing data changes.
 - Use `python scripts/sync_wiki_todos.py` to refresh `dash/data/wiki-todos.*` from private personal-wiki through the local or server `gh` login; never put GitHub tokens in frontend code.
 - Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `dash/data/dashboard.*`; do not let it overwrite owner judgment fields such as today, mainlines, actions, or journal.
+- Prefer `python scripts/update_data.py runtime` for server runtime refreshes, `python scripts/update_data.py wrap all` for wrapper regeneration, and `python scripts/update_data.py project-status` only when the owner wants Home project status refreshed from `ROADMAP.md`.
 - Use `python scripts/check.py` for local consistency checks when data wrappers or docs change.
 
 ## Product Direction

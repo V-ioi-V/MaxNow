@@ -35,36 +35,7 @@
 - 归档总览页：`blog/overview.html`，作为左侧独立 tab 展示原始文章数、缓存图片数、专题分类数和发布状态；不要把这些统计放成左栏信息卡。
 - 方案说明页：`blog/preview.html`，用于保留博客发布链路和边界说明，不作为正式线上入口。
 
-### 接入系统状态定时采集
-
-- 建议分支：`feature/system-status-cron`
-- `scripts/sync_system_status.py` 已建立；下一步把它放进服务器定时任务。
-- 采集机器可判断的数据：nginx 状态、站点 HTTPS 返回、当前 git commit、磁盘、内存、最近一次 wiki-todos 同步时间。
-- 输出到 `dash/data/dashboard.json` 的 `automation` 和 `system` 字段，并重新生成 `dash/data/dashboard.js`。
-- 不把 Owner 的今日判断、主线优先级和日常记录混进自动采集脚本。
-
-### 做本地/服务器数据更新工具
-
-- 建议分支：`feature/data-update-tooling`
-- 提供一个明确命令，用来从 JSON 重新生成对应 `.js` wrapper。
-- 让命令可以单独更新 dashboard、ai-news、last-30、wiki-todos，也可以一次更新全部数据 wrapper。
-- 在命令结束时自动跑 `python scripts/check.py`，减少手工维护出错。
-
 ## Next
-
-### 让 Home 支持更真实的项目状态
-
-- 把 Home 的“今日推进 / 当前主线”表达稳定下来，明确哪些字段是手动判断，哪些字段来自自动采集。
-- 在系统状态动态化之后，再让“今日推进 / 当前主线”引用更真实的项目状态。
-- 候选来源：`ROADMAP.md`、personal-wiki 待办、最近 git activity、服务器同步结果。
-- 自动化只生成候选和草稿，真正优先级仍由 Owner 判断。
-- 让 Last-30 模块只承担滚动上下文，不抢首页主信息层级。
-
-### 补充自动化运行日志
-
-- 定义 OpenClaw 或自动更新脚本的运行日志格式。
-- 至少记录：运行时间、更新文件、是否成功、错误摘要。
-- 让 Home 的系统状态能反映最近一次自动更新。
 
 ### 让 Last-30 进入增量更新节奏
 
@@ -156,7 +127,10 @@
 ### 已完成的基础能力
 
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；已验证服务器能读取 `wiki/tasks/todo.json` 并运行 `scripts/sync_wiki_todos.py`。
-- 服务器已通过 `ubuntu` 用户 crontab 接入 `MAXNOW-DASHBOARD-SYNC`：每 10 分钟运行 `scripts/sync_wiki_todos.py`、`scripts/sync_system_status.py` 和 `scripts/check.py`，日志写入 `/var/www/maxnow-dashboard/logs/`。
+- 服务器已通过 `ubuntu` 用户 crontab 接入 `MAXNOW-DASHBOARD-SYNC`：每 10 分钟运行 `python3 scripts/update_data.py runtime`，日志写入 `/var/www/maxnow-dashboard/logs/`。
+- 新增 `scripts/update_data.py` 作为统一数据更新入口，支持 `runtime`、`project-status` 和 `wrap all`；服务器 cron 改为调用 `python3 scripts/update_data.py runtime`。
+- Home 系统状态已展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、CPU、磁盘、内存、uptime、云位置和计费状态，异常项会在页面中显色。
+- Home 的“当前主线 / 今日推进”可通过 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新，避免定时任务自动覆盖 Owner 判断。
 - 本地预览已可通过 `http://127.0.0.1:8000/` 运行和访问。
 - 新增 `scripts/sync_system_status.py`，可采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，并只更新 dashboard 的 `automation` / `system` 字段。
 - 在 Home 主内容区增加 personal-wiki 近期待办入口，位于“当前主线”和“今日推进”之间，当前为只读展示 / 跳转，不支持编辑或标记完成。

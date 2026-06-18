@@ -21,6 +21,8 @@ GLOBAL_NAME = "MAXNOW_DASHBOARD_DATA"
 DEFAULT_SITE_URL = "https://dash.maxnow.cn/"
 METADATA_BASE_URL = "http://metadata.tencentyun.com/latest/meta-data"
 LOG_DIR = ROOT / "logs"
+SYNC_LOG = LOG_DIR / "maxnow-sync.log"
+CRON_MARKER = "MAXNOW-DASHBOARD-SYNC"
 KNOWN_TIMER_UNITS = [
     "maxnow-wiki-todos.timer",
     "maxnow-system-status.timer",
@@ -88,7 +90,7 @@ def git_state():
         "name": "部署版本",
         "value": value,
         "note": note,
-    }, dirty
+    }, not dirty
 
 
 def nginx_state():
@@ -432,6 +434,19 @@ def unit_state(unit):
 
 
 def timer_state():
+    code, crontab, _ = run_command(["crontab", "-l"], timeout=2)
+    if code == 0 and CRON_MARKER in crontab:
+        cron_line = next(
+            (line.strip() for line in crontab.splitlines() if "maxnow-dashboard-sync.lock" in line),
+            "",
+        )
+        return {
+            "key": "timers",
+            "name": "瀹氭椂浠诲姟",
+            "value": "Cron 10m",
+            "note": cron_line or f"crontab block {CRON_MARKER}",
+        }, True
+
     code, _, _ = run_command(["systemctl", "--version"], timeout=2)
     if code == 127:
         return {
@@ -456,14 +471,14 @@ def timer_state():
         "name": "定时任务",
         "value": value,
         "note": note,
-    }, True
+    }, bool(found)
 
 
 def failure_log_state():
     candidates = [
         LOG_DIR / "wiki-todos.log",
         LOG_DIR / "system-status.log",
-        ROOT / "maxnow-sync.log",
+        SYNC_LOG,
     ]
     existing = [path for path in candidates if path.exists()]
     if not existing:
@@ -476,7 +491,16 @@ def failure_log_state():
 
     latest = max(existing, key=lambda path: path.stat().st_mtime)
     lines = latest.read_text(encoding="utf-8", errors="replace").splitlines()
-    failure_lines = [line for line in lines[-80:] if "[fail]" in line.lower() or "error" in line.lower()]
+    recent_lines = lines[-160:]
+    for index in range(len(recent_lines) - 1, -1, -1):
+        if "maxnow dashboard sync start" in recent_lines[index]:
+            recent_lines = recent_lines[index:]
+            break
+    failure_markers = ("[fail]", "error", "traceback", "failed")
+    failure_lines = [
+        line for line in recent_lines
+        if any(marker in line.lower() for marker in failure_markers)
+    ]
     if failure_lines:
         return {
             "key": "failure-log",
@@ -536,7 +560,17 @@ def server_identity():
 
 def build_status(site_url):
     checks = []
+    server = server_identity()
     nginx, nginx_ok = nginx_state()
+    site, site_ok = site_state(site_url)
+    certificate, certificate_ok = certificate_state(site_url)
+    deploy, deploy_ok = git_state()
+    git_pull, git_pull_ok = git_pull_state()
+    timers, timers_ok = timer_state()
+    wiki_todos, wiki_todos_ok = wiki_todos_state()
+    failure_log, failure_log_ok = failure_log_state()
+    cloud_location, cloud_location_ok = cloud_location_state()
+    billing, billing_ok = billing_state()
     cpu, cpu_ok = cpu_state()
     disk, disk_ok = disk_state()
     memory, memory_ok = memory_state()
@@ -544,6 +578,15 @@ def build_status(site_url):
 
     checks.extend([
         nginx_ok,
+        site_ok,
+        certificate_ok,
+        deploy_ok,
+        git_pull_ok,
+        timers_ok,
+        wiki_todos_ok,
+        failure_log_ok,
+        cloud_location_ok,
+        billing_ok,
         cpu_ok,
         disk_ok,
         memory_ok,
@@ -561,10 +604,10 @@ def build_status(site_url):
 
     summary_parts = [
         f"nginx {nginx['value']}",
-        f"CPU {cpu['value']}",
-        f"disk {disk['value']}",
-        f"memory {memory['value']}",
-        f"uptime {uptime['value']}",
+        f"HTTPS {site['value']}",
+        f"wiki {wiki_todos['value']}",
+        f"cron {timers['value']}",
+        f"log {failure_log['value']}",
     ]
     if failed:
         summary_parts.append(f"{len(failed)} checks failed")
@@ -578,11 +621,21 @@ def build_status(site_url):
             "lastRun": now_text(),
         },
         "system": [
+            server,
             nginx,
+            site,
+            certificate,
+            deploy,
+            git_pull,
+            timers,
+            wiki_todos,
+            failure_log,
             cpu,
             disk,
             memory,
             uptime,
+            cloud_location,
+            billing,
         ],
     }
 
