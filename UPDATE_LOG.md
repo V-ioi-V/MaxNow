@@ -11,6 +11,11 @@
 
 ## 2026-06-19
 
+### 部署豆奶和 Blog 视觉更新
+
+- 已将豆奶详情页、首页豆奶摘要、Blog 卡片 hover、品牌图标和白底卡片视觉更新部署到 `dash.maxnow.cn` / `blog.maxnow.cn`。
+- 线上部署提交：`8d099f1`；服务器执行 `git pull --ff-only origin main`、`python3 scripts/check.py`、`sudo nginx -t` 和 `sudo systemctl reload nginx` 后，`dash.maxnow.cn`、`blog.maxnow.cn`、`blog.maxnow.cn/topics.html` 均返回 200。
+
 ### 品牌图标改为轻量线性风格
 
 - 将 Dash 和 Blog 左上角 MaxNow 标识从重渐变方块改为浅蓝底线性图标，和侧栏业务图标保持更一致的简约风格。
