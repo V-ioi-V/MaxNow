@@ -41,6 +41,7 @@ MaxNow 由四类文件组成：
    - `dash/data/last-30.js`
    - `dash/data/wiki-todos.json`
    - `dash/data/wiki-todos.js`
+   - `dash/data/dounai_checkin.json`
    - 这是页面和自动化之间的数据契约。
 
 3. OpenClaw skill
@@ -103,6 +104,7 @@ Home 按顺序回答这些问题：
 - 日常记录：保存个人上下文和关键决定的短记录。
 - 时间点：日程、截止时间、自动化运行时间。
 - 系统状态：只保留 nginx、CPU、磁盘、内存和运行时间，用来快速判断机器是否健康；服务器详情、HTTPS、部署版本、wiki 同步等不放在 Home 系统状态卡片里。
+- 豆奶签到：只读展示每日签到结果、累计签到天数、累计获得流量和近 7 天流量趋势；数据来自 `dash/data/dounai_checkin.json`。
 - 外部输入：链接、信号和 AI 每日精选，但必须保持次要。
 - personal-wiki 近期待办入口：Home 主内容区的紧凑只读模块，用于查看近期未完成待办和跳转到 personal-wiki；v1 不支持编辑或标记完成。
 
@@ -176,7 +178,9 @@ UPDATE_LOG.md
 
 `dash/data/wiki-todos.json` 负责 personal-wiki 近期待办的只读缓存，由 `scripts/sync_wiki_todos.py` 从 personal-wiki `wiki/tasks/todo.json` 生成。
 
-每个 `.js` wrapper 必须从对应 JSON 文件生成，并把同一个对象暴露给浏览器：
+`dash/data/dounai_checkin.json` 负责豆奶每日签到记录，由 OpenClaw 签到自动化更新；前端只读取展示，不编辑、不回写，也不修改签到脚本或 cron。
+
+当前带 `.js` wrapper 的数据集必须从对应 JSON 文件生成，并把同一个对象暴露给浏览器：
 
 ```text
 window.MAXNOW_DASHBOARD_DATA

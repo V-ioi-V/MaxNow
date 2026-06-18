@@ -46,6 +46,7 @@ def check_required_files():
         "dash/index.html",
         "dash/styles.css",
         "dash/app.js",
+        "dash/data/dounai_checkin.json",
         "blog/index.html",
         "blog/overview.html",
         "blog/topics.html",
@@ -89,6 +90,8 @@ def check_local_server(url):
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
+    load_json(ROOT / "dash/data/dounai_checkin.json")
+    checks.append("dounai-checkin: json is valid")
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/"))

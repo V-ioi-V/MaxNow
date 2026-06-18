@@ -2,6 +2,7 @@ const DATA_URL = "./data/dashboard.json";
 const AI_NEWS_URL = "./data/ai-news.json";
 const LAST30_URL = "./data/last-30.json";
 const WIKI_TODO_URL = "./data/wiki-todos.json";
+const CHECKIN_URL = "./data/dounai_checkin.json";
 const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
 const WIKI_TASK_BASE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/";
 
@@ -9,11 +10,13 @@ const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
 const fallbackAiNews = window.MAXNOW_AI_NEWS_DATA || { items: [] };
 const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
 const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
+const fallbackCheckin = {};
 
 let dashboardData = fallbackData;
 let aiNewsData = fallbackAiNews;
 let last30Data = fallbackLast30;
 let wikiTodoData = fallbackWikiTodo;
+let checkinData = fallbackCheckin;
 let wikiTodoError = "";
 let activeTokenRange = "7d";
 
@@ -60,6 +63,14 @@ function formatToken(value) {
   if (value >= 1000000) return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1)}M`;
   if (value >= 1000) return `${Math.round(value / 1000)}K`;
   return String(value);
+}
+
+function formatFlow(value, unit = "auto") {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "--";
+  if (unit === "mb") return `${Math.round(amount)} MB`;
+  if (unit === "gb" || amount >= 1024) return `${(amount / 1024).toFixed(1)} GB`;
+  return `${Math.round(amount)} MB`;
 }
 
 function setText(selector, value) {
@@ -343,6 +354,45 @@ function renderWikiTodos() {
   }
 }
 
+function createCheckinBar(record, maxFlow) {
+  const item = document.createElement("span");
+  item.className = "checkin-bar-item";
+  const flow = Number(record.flow_mb) || 0;
+  const percent = maxFlow > 0 ? (flow / maxFlow) * 100 : 0;
+  const date = record.date || "";
+  const label = date.slice(5) || "--";
+  item.title = `${date} ${formatFlow(flow, "mb")}`;
+  item.innerHTML = `
+    <span class="checkin-bar-fill" aria-hidden="true"></span>
+    <small></small>
+  `;
+  item.querySelector(".checkin-bar-fill").style.height = `${Math.max(6, percent)}%`;
+  item.querySelector("small").textContent = label;
+  return item;
+}
+
+function renderCheckin() {
+  const today = checkinData.today || {};
+  const total = checkinData.total || {};
+  const records = Array.isArray(checkinData.records) ? checkinData.records.slice(0, 7).reverse() : [];
+
+  setText("#checkin-today", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
+  setText("#checkin-days", Number.isFinite(Number(total.days)) ? `${total.days} 天` : "--");
+  setText("#checkin-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
+  setText("#checkin-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
+
+  const trend = qs("#checkin-trend");
+  if (!trend) return;
+  trend.replaceChildren();
+  if (!records.length) {
+    trend.appendChild(emptyTemplate.content.cloneNode(true));
+    return;
+  }
+
+  const maxFlow = Math.max(...records.map((record) => Number(record.flow_mb) || 0), 1);
+  records.forEach((record) => trend.appendChild(createCheckinBar(record, maxFlow)));
+}
+
 function renderHome() {
   const mainlines = dashboardData.mainlines || dashboardData.projects || dashboardData.tasks || [];
   const actions = dashboardData.actions || dashboardData.tasks || [];
@@ -385,6 +435,7 @@ function renderHome() {
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   clearAndFill(qs("#system-list"), createSystemItem, dashboardData.system || []);
+  renderCheckin();
   renderWikiTodos();
   renderLast30Column("today", "#last30-today-title", "#last30-today-summary", "#last30-today-list", copy.todayEvents);
   renderLast30Column("week", "#last30-week-title", "#last30-week-summary", "#last30-week-list", copy.weekEvents);
@@ -498,17 +549,19 @@ async function readWikiTodo() {
 }
 
 async function loadData() {
-  const [dashboard, aiNews, last30, wikiTodo] = await Promise.all([
+  const [dashboard, aiNews, last30, wikiTodo, checkin] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
     readWikiTodo(),
+    readJson(CHECKIN_URL, fallbackCheckin),
   ]);
 
   dashboardData = dashboard;
   aiNewsData = aiNews;
   last30Data = last30;
   wikiTodoData = wikiTodo;
+  checkinData = checkin;
   renderAll();
 }
 

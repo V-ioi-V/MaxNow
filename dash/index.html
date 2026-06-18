@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
-    <link rel="stylesheet" href="./styles.css?v=21" />
+    <link rel="stylesheet" href="./styles.css?v=22" />
   </head>
   <body>
     <div class="app-shell">
@@ -248,6 +248,31 @@
                 </div>
               </article>
 
+              <article class="panel checkin-panel" id="dounai-checkin">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Dounai</p>
+                    <h2>签到</h2>
+                  </div>
+                  <small id="checkin-updated">等待同步</small>
+                </header>
+                <div class="checkin-grid" aria-label="豆奶签到摘要">
+                  <div>
+                    <span>今日</span>
+                    <strong id="checkin-today">--</strong>
+                  </div>
+                  <div>
+                    <span>累计签到</span>
+                    <strong id="checkin-days">--</strong>
+                  </div>
+                  <div>
+                    <span>累计流量</span>
+                    <strong id="checkin-total-flow">--</strong>
+                  </div>
+                </div>
+                <div class="checkin-trend" id="checkin-trend" aria-label="近7天签到流量趋势"></div>
+              </article>
+
               <article class="panel system-panel">
                 <header class="panel-head">
                   <div>
@@ -325,6 +350,6 @@
     <script src="./data/ai-news.js?v=1"></script>
     <script src="./data/last-30.js?v=1"></script>
     <script src="./data/wiki-todos.js?v=1"></script>
-    <script src="./app.js?v=17"></script>
+    <script src="./app.js?v=18"></script>
   </body>
 </html>
