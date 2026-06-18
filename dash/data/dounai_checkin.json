@@ -1,0 +1,382 @@
+{
+  "updatedAt": "2026-06-18 22:33",
+  "today": {
+    "date": "2026-06-18",
+    "flow_mb": 751,
+    "beans": 1,
+    "hours": 2.32,
+    "note": ""
+  },
+  "total": {
+    "days": 52,
+    "flow_mb": 24050,
+    "beans": 43,
+    "hours": 82.98
+  },
+  "records": [
+    {
+      "date": "2026-06-18",
+      "flow_mb": 751,
+      "beans": 1,
+      "hours": 2.32,
+      "note": ""
+    },
+    {
+      "date": "2026-06-17",
+      "flow_mb": 525,
+      "beans": 1,
+      "hours": 2.4,
+      "note": ""
+    },
+    {
+      "date": "2026-06-16",
+      "flow_mb": 245,
+      "beans": 1,
+      "hours": 1.57,
+      "note": ""
+    },
+    {
+      "date": "2026-06-15",
+      "flow_mb": 851,
+      "beans": 1,
+      "hours": 2.72,
+      "note": ""
+    },
+    {
+      "date": "2026-06-14",
+      "flow_mb": 832,
+      "beans": 1,
+      "hours": 2.0,
+      "note": ""
+    },
+    {
+      "date": "2026-06-13",
+      "flow_mb": 822,
+      "beans": 1,
+      "hours": 2.09,
+      "note": ""
+    },
+    {
+      "date": "2026-06-12",
+      "flow_mb": 482,
+      "beans": 1,
+      "hours": 1.85,
+      "note": ""
+    },
+    {
+      "date": "2026-06-11",
+      "flow_mb": 536,
+      "beans": 1,
+      "hours": 2.09,
+      "note": ""
+    },
+    {
+      "date": "2026-06-10",
+      "flow_mb": 277,
+      "beans": 1,
+      "hours": 1.16,
+      "note": ""
+    },
+    {
+      "date": "2026-06-09",
+      "flow_mb": 899,
+      "beans": 1,
+      "hours": 1.85,
+      "note": ""
+    },
+    {
+      "date": "2026-06-08",
+      "flow_mb": 285,
+      "beans": 1,
+      "hours": 1.02,
+      "note": ""
+    },
+    {
+      "date": "2026-06-07",
+      "flow_mb": 178,
+      "beans": 1,
+      "hours": 1.39,
+      "note": ""
+    },
+    {
+      "date": "2026-06-06",
+      "flow_mb": 835,
+      "beans": 1,
+      "hours": 2.92,
+      "note": ""
+    },
+    {
+      "date": "2026-06-05",
+      "flow_mb": 331,
+      "beans": 1,
+      "hours": 2.23,
+      "note": ""
+    },
+    {
+      "date": "2026-06-04",
+      "flow_mb": 825,
+      "beans": 1,
+      "hours": 2.78,
+      "note": ""
+    },
+    {
+      "date": "2026-06-03",
+      "flow_mb": 329,
+      "beans": 1,
+      "hours": 1.77,
+      "note": ""
+    },
+    {
+      "date": "2026-06-02",
+      "flow_mb": 565,
+      "beans": 1,
+      "hours": 2.91,
+      "note": ""
+    },
+    {
+      "date": "2026-06-01",
+      "flow_mb": 204,
+      "beans": 1,
+      "hours": 1.95,
+      "note": ""
+    },
+    {
+      "date": "2026-05-31",
+      "flow_mb": 724,
+      "beans": 1,
+      "hours": 1.12,
+      "note": ""
+    },
+    {
+      "date": "2026-05-30",
+      "flow_mb": 583,
+      "beans": 1,
+      "hours": 1.29,
+      "note": ""
+    },
+    {
+      "date": "2026-05-29",
+      "flow_mb": 909,
+      "beans": 1,
+      "hours": 1.68,
+      "note": ""
+    },
+    {
+      "date": "2026-05-28",
+      "flow_mb": 792,
+      "beans": 1,
+      "hours": 1.33,
+      "note": ""
+    },
+    {
+      "date": "2026-05-27",
+      "flow_mb": 762,
+      "beans": 1,
+      "hours": 2.75,
+      "note": ""
+    },
+    {
+      "date": "2026-05-26",
+      "flow_mb": 738,
+      "beans": 1,
+      "hours": 2.03,
+      "note": ""
+    },
+    {
+      "date": "2026-05-25",
+      "flow_mb": 551,
+      "beans": 1,
+      "hours": 2.25,
+      "note": ""
+    },
+    {
+      "date": "2026-05-24",
+      "flow_mb": 751,
+      "beans": 1,
+      "hours": 1.92,
+      "note": ""
+    },
+    {
+      "date": "2026-05-23",
+      "flow_mb": 679,
+      "beans": 1,
+      "hours": 1.28,
+      "note": ""
+    },
+    {
+      "date": "2026-05-22",
+      "flow_mb": 179,
+      "beans": 1,
+      "hours": 2.62,
+      "note": ""
+    },
+    {
+      "date": "2026-05-21",
+      "flow_mb": 264,
+      "beans": 1,
+      "hours": 1.42,
+      "note": ""
+    },
+    {
+      "date": "2026-05-20",
+      "flow_mb": 552,
+      "beans": 1,
+      "hours": 1.48,
+      "note": ""
+    },
+    {
+      "date": "2026-05-19",
+      "flow_mb": 731,
+      "beans": 1,
+      "hours": 2.83,
+      "note": ""
+    },
+    {
+      "date": "2026-05-18",
+      "flow_mb": 129,
+      "beans": 1,
+      "hours": 2.67,
+      "note": ""
+    },
+    {
+      "date": "2026-05-17",
+      "flow_mb": 154,
+      "beans": 1,
+      "hours": 2.31,
+      "note": ""
+    },
+    {
+      "date": "2026-05-16",
+      "flow_mb": 740,
+      "beans": 1,
+      "hours": 1.11,
+      "note": ""
+    },
+    {
+      "date": "2026-05-15",
+      "flow_mb": 936,
+      "beans": 1,
+      "hours": 1.82,
+      "note": ""
+    },
+    {
+      "date": "2026-05-14",
+      "flow_mb": 720,
+      "beans": 1,
+      "hours": 1.86,
+      "note": ""
+    },
+    {
+      "date": "2026-05-13",
+      "flow_mb": 232,
+      "beans": 1,
+      "hours": 1.76,
+      "note": ""
+    },
+    {
+      "date": "2026-05-12",
+      "flow_mb": 615,
+      "beans": 1,
+      "hours": 1.27,
+      "note": ""
+    },
+    {
+      "date": "2026-05-11",
+      "flow_mb": 891,
+      "beans": 1,
+      "hours": 1.56,
+      "note": ""
+    },
+    {
+      "date": "2026-05-10",
+      "flow_mb": 389,
+      "beans": 1,
+      "hours": 2.88,
+      "note": ""
+    },
+    {
+      "date": "2026-05-09",
+      "flow_mb": 169,
+      "beans": 1,
+      "hours": 1.22,
+      "note": ""
+    },
+    {
+      "date": "2026-05-08",
+      "flow_mb": 913,
+      "beans": 1,
+      "hours": 1.69,
+      "note": ""
+    },
+    {
+      "date": "2026-05-07",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "今日已签到"
+    },
+    {
+      "date": "2026-05-06",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "今日已签到"
+    },
+    {
+      "date": "2026-05-05",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "今日已签到"
+    },
+    {
+      "date": "2026-05-04",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "按钮问题，签到失败"
+    },
+    {
+      "date": "2026-05-03",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "今日已签到"
+    },
+    {
+      "date": "2026-05-02",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "今日已签到"
+    },
+    {
+      "date": "2026-05-01",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "今日已签到"
+    },
+    {
+      "date": "2026-04-30",
+      "flow_mb": 175,
+      "beans": 1,
+      "hours": 1.81,
+      "note": "晚7:44手动重试成功"
+    },
+    {
+      "date": "2026-04-29",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "今日已签到"
+    },
+    {
+      "date": "2026-04-28",
+      "flow_mb": null,
+      "beans": null,
+      "hours": null,
+      "note": "仅记录已签到，无数据"
+    }
+  ]
+}
