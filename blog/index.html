@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MaxNow Blog</title>
     <meta name="description" content="MaxNow 的旧技术博客公开预览。" />
-    <link rel="stylesheet" href="./styles.css?v=12" />
+    <link rel="stylesheet" href="./styles.css?v=13" />
   </head>
   <body>
     <div class="site-shell">
@@ -35,6 +35,7 @@
           <div class="topbar-actions">
             <span class="status-pill">211 篇原文</span>
             <span class="status-pill muted">筛选发布中</span>
+            <button class="topbar-link random-button" type="button" data-random-articles>换一批</button>
             <a class="topbar-link" href="https://dash.maxnow.cn">Dash</a>
           </div>
         </header>
@@ -48,7 +49,7 @@
           </p>
         </section>
 
-        <section class="article-feed" aria-label="文章预览列表">
+        <section class="article-feed" aria-label="文章预览列表" data-article-feed>
           <a class="article-preview is-featured" href="./post-preview.html?from=articles">
             <div class="article-meta">
               <span class="tag cyan">CS 大学生必备</span>
@@ -144,6 +145,7 @@
         </section>
       </main>
     </div>
+    <script src="./random-articles.js?v=1"></script>
   </body>
 </html>
 

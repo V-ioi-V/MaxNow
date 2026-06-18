@@ -236,6 +236,15 @@ a {
   color: var(--accent-strong);
 }
 
+.topbar-link.random-button {
+  cursor: pointer;
+}
+
+.topbar-link.random-button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .hero,
 .compact-hero,
 .featured-card,

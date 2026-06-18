@@ -28,6 +28,7 @@ blog/
   topic-algorithm-gap.html
   topic-engineering.html
   post-preview.html
+  random-articles.js
   topic-tags.js
   styles.css
   preview.html
