@@ -75,6 +75,16 @@ blog.maxnow.cn: 200 MaxNow Blog
 nginx: config test ok, reload ok
 ```
 
+2026-06-19 已部署豆奶详情页和 Blog / Dash 视觉微调版本：
+
+```text
+deployed commit: 8d099f1 Merge dounai and blog UI polish
+dash.maxnow.cn: 200
+blog.maxnow.cn: 200
+blog.maxnow.cn/topics.html: 200
+nginx: config test ok, reload ok
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
