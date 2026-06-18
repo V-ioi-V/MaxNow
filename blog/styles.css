@@ -366,6 +366,10 @@ a {
   padding: 0 clamp(24px, 3vw, 64px) 64px;
 }
 
+[data-article-feed] {
+  padding-top: 34px;
+}
+
 .article-preview {
   display: grid;
   align-content: start;
@@ -1004,6 +1008,10 @@ a {
   .category-grid,
   .topic-layout {
     padding: 0 14px 38px;
+  }
+
+  [data-article-feed] {
+    padding-top: 16px;
   }
 
   .hero-panel,
