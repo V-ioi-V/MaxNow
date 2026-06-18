@@ -83,6 +83,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
 - `dash/data/wiki-todos.json`：从 private personal-wiki `wiki/tasks/todo.json` 同步而来的近期待办只读缓存。
 - `dash/data/wiki-todos.js`：从 `wiki-todos.json` 生成的浏览器 wrapper。
+- `dash/data/dounai_checkin.json`：豆奶每日签到数据，由 OpenClaw 每日 9:00 更新。
 - `scripts/sync_wiki_todos.py`：通过本地或服务器 `gh` 登录态刷新 `dash/data/wiki-todos.*`，避免前端暴露 GitHub token。
 
 维护方式：

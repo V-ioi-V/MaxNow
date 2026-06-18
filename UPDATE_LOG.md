@@ -483,3 +483,17 @@
 原因：
 
 - `dash.maxnow.cn` 需要通过 HTTPS 提供访问，并保留 HTTP 请求的稳定跳转路径。
+
+## 2026-06-18
+
+### 新增豆奶签到模块
+
+- 在 Home 右侧侧栏新增豆奶签到紧凑卡片，位于 Token 迷你面板和系统状态之间。
+- 展示今日流量、累计流量（GB）、累计签到天数。
+- 新增近 7 天流量迷你条形趋势图。
+- 新增 `dash/data/dounai_checkin.json` 作为数据源，由 OpenClaw 每日 9:00 签到后自动更新。
+- 更新 `dash/index.html`、`dash/app.js`、`dash/styles.css`。
+
+原因：
+
+- Owner 希望将豆奶签到流量表现在 MaxNow 首页上。
