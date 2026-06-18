@@ -44,6 +44,7 @@ const copy = {
   updatedAt: "\u66f4\u65b0\u4e8e",
   noNote: "\u6682\u65e0\u8bf4\u660e\u3002",
   tokenTitle: "Token \u7528\u91cf",
+  dounaiTitle: "\u8c46\u5976\u7b7e\u5230",
   today: "\u4eca\u5929",
   energy: "\u80fd\u91cf",
   focus: "\u4e3b\u7ebf",
@@ -71,6 +72,28 @@ function formatFlow(value, unit = "auto") {
   if (unit === "mb") return `${Math.round(amount)} MB`;
   if (unit === "gb" || amount >= 1024) return `${(amount / 1024).toFixed(1)} GB`;
   return `${Math.round(amount)} MB`;
+}
+
+function formatHours(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "--";
+  return `${amount.toFixed(amount >= 10 ? 1 : 2)} h`;
+}
+
+function formatDuration(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "--";
+  let days = Math.floor(amount / 24);
+  let hours = Math.round(amount - days * 24);
+  if (hours === 24) {
+    days += 1;
+    hours = 0;
+  }
+  return days > 0 ? `${days}d ${hours}h` : `${hours}h`;
+}
+
+function formatDateShort(date = "") {
+  return date.slice(5) || "--";
 }
 
 function setText(selector, value) {
@@ -354,43 +377,124 @@ function renderWikiTodos() {
   }
 }
 
-function createCheckinBar(record, maxFlow) {
-  const item = document.createElement("span");
-  item.className = "checkin-bar-item";
-  const flow = Number(record.flow_mb) || 0;
-  const percent = maxFlow > 0 ? (flow / maxFlow) * 100 : 0;
-  const date = record.date || "";
-  const label = date.slice(5) || "--";
-  item.title = `${date} ${formatFlow(flow, "mb")}`;
-  item.innerHTML = `
-    <span class="checkin-bar-fill" aria-hidden="true"></span>
-    <small></small>
+function getCheckinRecords(limit = 30) {
+  return Array.isArray(checkinData.records) ? checkinData.records.slice(0, limit).reverse() : [];
+}
+
+function getNiceMax(values) {
+  const max = Math.max(...values.map((value) => Number(value) || 0), 1);
+  const magnitude = 10 ** Math.floor(Math.log10(max));
+  return Math.ceil(max / magnitude) * magnitude;
+}
+
+function createLineChart(records, options) {
+  const { key, unit, formatter, stroke } = options;
+  const width = Math.max(920, records.length * 46 + 96);
+  const height = 340;
+  const padding = { top: 28, right: 26, bottom: 64, left: 56 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  const values = records.map((record) => Number(record[key]) || 0);
+  const yMax = getNiceMax(values);
+  const points = records.map((record, index) => {
+    const x = padding.left + (records.length <= 1 ? 0 : (index / (records.length - 1)) * chartWidth);
+    const y = padding.top + chartHeight - ((Number(record[key]) || 0) / yMax) * chartHeight;
+    return { record, value: Number(record[key]) || 0, x, y };
+  });
+  const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ");
+  const yTicks = Array.from({ length: 5 }, (_, index) => {
+    const value = (yMax / 4) * index;
+    const y = padding.top + chartHeight - (value / yMax) * chartHeight;
+    return { value, y };
+  });
+  const labelInterval = 5;
+  const xLabelIndexes = new Set();
+  records.forEach((_, index) => {
+    if (index % labelInterval === 0) xLabelIndexes.add(index);
+  });
+  if (records.length > 0 && records.length - 1 - Math.max(...xLabelIndexes) >= 3) {
+    xLabelIndexes.add(records.length - 1);
+  }
+
+  if (!records.length) return `<p class="empty-state">${copy.noData}</p>`;
+
+  return `
+    <svg class="line-chart-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${options.title}">
+      <line class="chart-axis" x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${padding.top + chartHeight}" />
+      <line class="chart-axis" x1="${padding.left}" y1="${padding.top + chartHeight}" x2="${padding.left + chartWidth}" y2="${padding.top + chartHeight}" />
+      ${yTicks
+        .map(
+          (tick) => `
+            <line class="chart-grid-line" x1="${padding.left}" y1="${tick.y.toFixed(1)}" x2="${padding.left + chartWidth}" y2="${tick.y.toFixed(1)}" />
+            <text class="chart-y-label" x="${padding.left - 10}" y="${tick.y + 4}" text-anchor="end">${Math.round(tick.value)}${unit}</text>
+          `,
+        )
+        .join("")}
+      <path class="chart-line" d="${linePath}" style="--chart-stroke: ${stroke}" />
+      ${points
+        .map(
+          (point, index) => `
+            <g class="chart-point-group">
+              <circle class="chart-point" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4">
+                <title>${point.record.date}: ${formatter(point.value)}</title>
+              </circle>
+              <text class="chart-value-label" x="${point.x.toFixed(1)}" y="${Math.max(12, point.y - 9).toFixed(1)}" text-anchor="middle">${formatter(point.value)}</text>
+              ${
+                xLabelIndexes.has(index)
+                  ? `<text class="chart-x-label" x="${point.x.toFixed(1)}" y="${padding.top + chartHeight + 24}" text-anchor="middle">${formatDateShort(point.record.date)}</text>`
+                  : ""
+              }
+            </g>
+          `,
+        )
+        .join("")}
+    </svg>
   `;
-  item.querySelector(".checkin-bar-fill").style.height = `${Math.max(6, percent)}%`;
-  item.querySelector("small").textContent = label;
-  return item;
 }
 
 function renderCheckin() {
   const today = checkinData.today || {};
   const total = checkinData.total || {};
-  const records = Array.isArray(checkinData.records) ? checkinData.records.slice(0, 7).reverse() : [];
 
   setText("#checkin-today", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
+  setText("#checkin-today-hours", formatHours(today.hours));
   setText("#checkin-days", Number.isFinite(Number(total.days)) ? `${total.days} 天` : "--");
   setText("#checkin-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
+  setText("#checkin-total-hours", formatDuration(total.hours));
   setText("#checkin-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
+  setText("#sidebar-dounai-flow", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
+}
 
-  const trend = qs("#checkin-trend");
-  if (!trend) return;
-  trend.replaceChildren();
-  if (!records.length) {
-    trend.appendChild(emptyTemplate.content.cloneNode(true));
-    return;
+function renderDounai() {
+  const total = checkinData.total || {};
+  const records = getCheckinRecords(30);
+  setText("#dounai-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
+  setText("#dounai-days", Number.isFinite(Number(total.days)) ? `${total.days} 天` : "--");
+  setText("#dounai-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
+  setText("#dounai-total-hours", formatDuration(total.hours));
+
+  const flowChart = qs("#dounai-flow-chart");
+  if (flowChart) {
+    flowChart.innerHTML = createLineChart(records, {
+      key: "flow_mb",
+      title: "近 30 天签到流量",
+      unit: "MB",
+      stroke: "#2688e8",
+      formatter: (value) => `${Math.round(value)} MB`,
+    });
   }
 
-  const maxFlow = Math.max(...records.map((record) => Number(record.flow_mb) || 0), 1);
-  records.forEach((record) => trend.appendChild(createCheckinBar(record, maxFlow)));
+  const hoursChart = qs("#dounai-hours-chart");
+  if (hoursChart) {
+    hoursChart.innerHTML = createLineChart(records, {
+      key: "hours",
+      title: "近 30 天账号有效期延长时长",
+      unit: "h",
+      stroke: "#00a6c8",
+      formatter: (value) => `${value.toFixed(2)} h`,
+    });
+  }
+
 }
 
 function renderHome() {
@@ -436,6 +540,7 @@ function renderHome() {
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   clearAndFill(qs("#system-list"), createSystemItem, dashboardData.system || []);
   renderCheckin();
+  renderDounai();
   renderWikiTodos();
   renderLast30Column("today", "#last30-today-title", "#last30-today-summary", "#last30-today-list", copy.todayEvents);
   renderLast30Column("week", "#last30-week-title", "#last30-week-summary", "#last30-week-list", copy.weekEvents);
@@ -520,6 +625,7 @@ function createDailyBar(day) {
 function renderAll() {
   renderHome();
   renderTokens();
+  renderDounai();
 }
 
 async function readJson(url, fallback) {
@@ -566,15 +672,18 @@ async function loadData() {
 }
 
 function setView(view) {
-  const nextView = view === "tokens" ? "tokens" : "home";
+  const nextView = ["home", "tokens", "dounai"].includes(view) ? view : "home";
   qsa("[data-view-panel]").forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.viewPanel === nextView);
   });
   qsa("[data-view]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.view === nextView);
   });
-  if (viewTitle) viewTitle.textContent = nextView === "tokens" ? copy.tokenTitle : copy.today;
+  if (viewTitle) {
+    viewTitle.textContent = nextView === "tokens" ? copy.tokenTitle : nextView === "dounai" ? copy.dounaiTitle : copy.today;
+  }
   if (location.hash !== `#${nextView}`) location.hash = nextView;
+  window.scrollTo({ top: 0, behavior: "auto" });
 }
 
 function updateClock() {
@@ -596,6 +705,14 @@ function updateClock() {
 
 qsa("[data-view]").forEach((button) => {
   button.addEventListener("click", () => setView(button.dataset.view));
+});
+
+qs("#dounai-checkin")?.addEventListener("click", () => setView("dounai"));
+qs("#dounai-checkin")?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    setView("dounai");
+  }
 });
 
 refreshButton?.addEventListener("click", async () => {
