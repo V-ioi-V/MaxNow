@@ -11,6 +11,11 @@
 
 ## 2026-06-18
 
+### 固定 Home 系统状态展示项
+
+- Home 右侧系统状态只保留 Owner 指定的 `nginx`、证书、部署版本、CPU、磁盘、内存和运行时间。
+- HTTPS、最近拉取、定时同步、wiki 待办、失败日志、云位置和计费等细节不再写入首页 `system` 列表，避免系统状态区过载。
+
 ### 收尾系统状态和数据更新入口
 
 - 扩展 `scripts/sync_system_status.py`，让 Home 系统状态展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、CPU、磁盘、内存、uptime、云位置和计费状态。

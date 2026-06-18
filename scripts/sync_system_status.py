@@ -556,7 +556,6 @@ def server_identity():
 
 def build_status(site_url):
     checks = []
-    server = server_identity()
     nginx, nginx_ok = nginx_state()
     site, site_ok = site_state(site_url)
     certificate, certificate_ok = certificate_state(site_url)
@@ -600,10 +599,11 @@ def build_status(site_url):
 
     summary_parts = [
         f"nginx {nginx['value']}",
-        f"HTTPS {site['value']}",
-        f"wiki {wiki_todos['value']}",
-        f"cron {timers['value']}",
-        f"log {failure_log['value']}",
+        f"cert {certificate['value']}",
+        f"deploy {deploy['value']}",
+        f"CPU {cpu['value']}",
+        f"disk {disk['value']}",
+        f"memory {memory['value']}",
     ]
     if failed:
         summary_parts.append(f"{len(failed)} checks failed")
@@ -617,21 +617,13 @@ def build_status(site_url):
             "lastRun": now_text(),
         },
         "system": [
-            server,
             nginx,
-            site,
             certificate,
             deploy,
-            git_pull,
-            timers,
-            wiki_todos,
-            failure_log,
             cpu,
             disk,
             memory,
             uptime,
-            cloud_location,
-            billing,
         ],
     }
 
