@@ -55,8 +55,9 @@ def run_python(script, log_name=None):
         )
         assert process.stdout is not None
         for line in process.stdout:
-            print(line, end="")
+            print(line, end="", flush=True)
             log.write(line)
+            log.flush()
         code = process.wait()
     if code:
         raise subprocess.CalledProcessError(code, [sys.executable, script])
