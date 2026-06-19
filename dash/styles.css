@@ -382,7 +382,10 @@ a {
 .token-page-head,
 .status-strip article,
 .mini-token-grid div,
+.dounai-page-summary span,
 .token-summary article {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
   transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
@@ -392,15 +395,18 @@ a {
   .token-page-head:hover,
   .status-strip article:hover,
   .mini-token-grid div:hover,
+  .dounai-page-summary span:hover,
   .token-summary article:hover {
-    border-color: #8fd0ff;
+    border-color: var(--card-border);
     background: #ffffff;
-    box-shadow: 0 14px 32px rgba(25, 43, 72, 0.12), 0 1px 2px rgba(25, 43, 72, 0.08);
+    box-shadow: 0 14px 32px color-mix(in srgb, var(--card-color) 18%, transparent), 0 1px 2px rgba(25, 43, 72, 0.08);
     transform: translateY(-2px);
   }
 }
 
 .status-strip article {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
   min-height: 88px;
   display: grid;
   gap: 8px;
@@ -427,12 +433,27 @@ a {
   color: var(--accent-strong);
 }
 
+.metric-action {
+  --card-color: var(--orange);
+  --card-border: #ffd29a;
+}
+
 .metric-action strong {
   color: var(--orange);
 }
 
+.metric-token {
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
+}
+
 .metric-token strong {
   color: var(--purple);
+}
+
+.metric-data {
+  --card-color: var(--ok);
+  --card-border: #a8e9c2;
 }
 
 .metric-data strong {
@@ -905,10 +926,28 @@ a {
 
 .mini-token-grid div,
 .token-summary article {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
   border: 1px solid #e3ebf4;
   border-radius: var(--radius);
   padding: 14px;
   background: #ffffff;
+}
+
+.mini-token-grid div:nth-child(2),
+.token-summary article:nth-child(2) {
+  --card-color: var(--cyan);
+  --card-border: #9eeaf8;
+}
+
+.token-summary article:nth-child(3) {
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
+}
+
+.token-summary article:nth-child(4) {
+  --card-color: var(--orange);
+  --card-border: #ffd29a;
 }
 
 .mini-token-grid span,
@@ -922,6 +961,7 @@ a {
 .token-summary strong {
   display: block;
   margin-top: 6px;
+  color: var(--card-color);
   font-size: 24px;
 }
 
@@ -959,6 +999,8 @@ a {
 }
 
 .checkin-grid div {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
   min-width: 0;
   display: grid;
   justify-items: center;
@@ -967,6 +1009,17 @@ a {
   padding: 12px;
   background: #ffffff;
   text-align: center;
+}
+
+.checkin-grid div:nth-child(2),
+.checkin-grid div:nth-child(5) {
+  --card-color: var(--cyan);
+  --card-border: #9eeaf8;
+}
+
+.checkin-grid div:nth-child(3) {
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
 }
 
 .checkin-grid span,
@@ -979,7 +1032,7 @@ a {
 .checkin-grid strong {
   display: block;
   margin-top: 6px;
-  color: var(--accent-strong);
+  color: var(--card-color);
   font-size: 17px;
   line-height: 1.1;
   white-space: nowrap;
@@ -992,6 +1045,8 @@ a {
 }
 
 .dounai-page-summary span {
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
   min-height: 52px;
   display: grid;
   justify-items: center;
@@ -1005,8 +1060,18 @@ a {
   text-align: center;
 }
 
+.dounai-page-summary span:nth-child(2) {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
+}
+
+.dounai-page-summary span:nth-child(3) {
+  --card-color: var(--cyan);
+  --card-border: #9eeaf8;
+}
+
 .dounai-page-summary strong {
-  color: var(--accent-strong);
+  color: var(--card-color);
   font-size: 20px;
 }
 
