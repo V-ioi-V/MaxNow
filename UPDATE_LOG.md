@@ -11,6 +11,13 @@
 
 ## 2026-06-19
 
+### 修复豆奶签到线上数据路径
+
+- 排查确认 2026-06-19 豆奶签到已在 root/OpenClaw 侧成功执行，结果为 846 MB、1 豆丁、有效期延长 2.46 小时，但线上 `dash.maxnow.cn` 仍读取停在 2026-06-18 的 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
+- 已在服务器将 `/root/.openclaw/gen_checkin_data.py` 调整为双写：同时更新 `/root/MaxNow/dash/data/dounai_checkin.json` 和 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
+- 立即重跑生成脚本并通过 `/var/www/maxnow-dashboard/scripts/check.py` 校验，线上部署目录已经包含 2026-06-19 的豆奶签到记录。
+- 更新 `SERVER_RUNBOOK.md` 和 `CONTEXT.md`，记录豆奶签到由 root/OpenClaw 维护、线上页面读取 `/var/www/maxnow-dashboard` 数据出口。
+
 ### 修复线上静态资源缓存
 
 - 将 Dash `app.js` 从 `v=18` 提升到 `v=19`、`styles.css` 从 `v=22` 提升到 `v=23`，避免浏览器继续使用旧脚本导致豆奶详情页无法切换、时长字段不更新。

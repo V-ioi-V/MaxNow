@@ -85,6 +85,18 @@ blog.maxnow.cn/topics.html: 200
 nginx: config test ok, reload ok
 ```
 
+2026-06-19 已修复豆奶签到数据写入路径分叉问题：
+
+```text
+root 签到脚本: /root/.openclaw/daily_checkin.sh
+root 数据生成脚本: /root/.openclaw/gen_checkin_data.py
+备份: /root/.openclaw/gen_checkin_data.py.bak-20260619-dounai-sync
+旧数据出口: /root/MaxNow/dash/data/dounai_checkin.json
+线上数据出口: /var/www/maxnow-dashboard/dash/data/dounai_checkin.json
+```
+
+豆奶签到仍由 root 的 OpenClaw 自动化在每天 9 点左右执行。`gen_checkin_data.py` 现在会把同一份 `dounai_checkin.json` 同时写入旧 OpenClaw 工作区和 nginx 正在读取的线上部署目录，避免页面继续停留在旧记录。
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
@@ -184,6 +196,41 @@ python3 scripts/sync_system_status.py --dry-run
 
 ```bash
 git checkout -- dash/data/wiki-todos.json dash/data/wiki-todos.js dash/data/dashboard.json dash/data/dashboard.js
+```
+
+## 豆奶签到数据同步
+
+豆奶签到自动化不由 `ubuntu` 用户的 `MAXNOW-DASHBOARD-SYNC` cron 直接执行；它由 root/OpenClaw 侧脚本维护：
+
+```bash
+sudo crontab -l
+sudo tail -120 /root/.openclaw/checkin.log
+sudo python3 /root/.openclaw/gen_checkin_data.py
+```
+
+日常预期：
+
+- 签到脚本先更新 `/root/.openclaw/dounai_weekly.json`。
+- `gen_checkin_data.py` 从 weekly 数据生成最近 60 天的 `dounai_checkin.json`。
+- 同一份结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
+- 线上 `dash.maxnow.cn` 读取 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
+
+验证今天是否进入线上页面：
+
+```bash
+sudo python3 - <<'PY'
+import json
+from pathlib import Path
+for path in [
+    Path('/root/MaxNow/dash/data/dounai_checkin.json'),
+    Path('/var/www/maxnow-dashboard/dash/data/dounai_checkin.json'),
+]:
+    data = json.loads(path.read_text(encoding='utf-8'))
+    print(path, data.get('updatedAt'), data.get('today'))
+PY
+
+cd /var/www/maxnow-dashboard
+python3 scripts/check.py
 ```
 
 ## 首次部署命令
