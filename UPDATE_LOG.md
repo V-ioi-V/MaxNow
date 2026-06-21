@@ -11,6 +11,39 @@
 
 ## 2026-06-21
 
+### 接入 OpenClaw Token 页面和每日刷新
+
+- Token 页面改为优先读取 `dash/data/openclaw-usage.*`，提供 1d / 7d / 30d / all 范围切换。
+- 模型占比会随当前范围变化，趋势图展示最近 30 天日桶。
+- Home 的 Token 摘要从 24 小时改为 1 天 / 30 天。
+- `scripts/sync_openclaw_usage.py` 默认采集长期窗口，让 all 覆盖当前可读的全部 OpenClaw trajectory。
+- 服务器侧新增计划任务：每天 00:20 单独运行 `python3 scripts/update_data.py openclaw-usage`，日志写入 `logs/openclaw-usage.log`。
+
+#### 背景
+
+- Owner 希望 Token 页直接展示 OpenClaw 真实用量，并按 1d / 7d / 30d / all 查看，同时每天自动更新。
+
+### 调整豆奶详情页今日签到区
+
+- 将豆奶详情页顶部左侧从单纯“豆奶签到”标题卡改为今日签到指标区。
+- 新增今日流量、今日豆丁、今日延长三张白底小指标卡，和 Home 豆奶摘要使用同一份今日数据。
+- 顶栏 tab 标题从“豆奶签到”收敛为“豆奶”，并将 Dash 缓存版本提升到 `styles.css?v=43`、`app.js?v=32`。
+
+#### 背景
+
+- Owner 希望去掉豆奶页左侧大标题里的“豆奶签到”，改成参考 Home 摘要的小卡片布局。
+
+### 建立 OpenClaw Token 用量账本
+
+- 新增 `scripts/sync_openclaw_usage.py`，从服务器 OpenClaw trajectory 只读解析 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`。
+- 新增 `dash/data/openclaw-usage.json` 和 `dash/data/openclaw-usage.js`，按北京时间日桶、模型和任务聚合 OpenClaw 用量，并保留 `futureSources.codex` 作为后续 Codex 用量接入基础。
+- 费用字段统一标记为 `pricingBasis: openrouter-equivalent`，通过 OpenRouter 模型价格估算，不作为真实扣费账单。
+- 将 `openclaw-usage` 纳入 `scripts/update_data.py` 和 `scripts/check.py`，并更新 `AGENTS.md`、`SPEC.md`、`CONTEXT.md`、`ROADMAP.md`、`SERVER_RUNBOOK.md` 的数据边界和运行说明。
+
+#### 背景
+
+- Owner 希望先看到 OpenClaw 每日 token 消耗、模型来源和按 OpenRouter 标准折算的费用，同时为后续统计本地 / 服务器 Codex 用量预留统一结构。
+
 ### 修正豆奶桌面指标宽度
 
 - 恢复豆奶详情页桌面端顶部三块 tab 的原始横排比例，避免大屏下账号余量和签到累计被压成窄小卡片。

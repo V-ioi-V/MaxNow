@@ -3,6 +3,7 @@ const AI_NEWS_URL = "./data/ai-news.json";
 const LAST30_URL = "./data/last-30.json";
 const WIKI_TODO_URL = "./data/wiki-todos.json";
 const CHECKIN_URL = "./data/dounai_checkin.json";
+const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
 const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
 const WIKI_TASK_BASE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/";
 
@@ -11,12 +12,14 @@ const fallbackAiNews = window.MAXNOW_AI_NEWS_DATA || { items: [] };
 const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
 const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
 const fallbackCheckin = {};
+const fallbackOpenclawUsage = window.MAXNOW_OPENCLAW_USAGE_DATA || { days: [] };
 
 let dashboardData = fallbackData;
 let aiNewsData = fallbackAiNews;
 let last30Data = fallbackLast30;
 let wikiTodoData = fallbackWikiTodo;
 let checkinData = fallbackCheckin;
+let openclawUsageData = fallbackOpenclawUsage;
 let wikiTodoError = "";
 let activeTokenRange = "7d";
 
@@ -41,10 +44,11 @@ const copy = {
   checkWaiting: "\u7b49\u5f85\u68c0\u6d4b",
   sync: "\u7b49\u5f85\u540c\u6b65",
   hour24: "24\u5c0f\u65f6",
+  day1: "1d",
   updatedAt: "\u66f4\u65b0\u4e8e",
   noNote: "\u6682\u65e0\u8bf4\u660e\u3002",
   tokenTitle: "Token \u7528\u91cf",
-  dounaiTitle: "\u8c46\u5976\u7b7e\u5230",
+  dounaiTitle: "\u8c46\u5976",
   today: "\u4eca\u5929",
   energy: "\u80fd\u91cf",
   focus: "\u4e3b\u7ebf",
@@ -64,6 +68,14 @@ function formatToken(value) {
   if (value >= 1000000) return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1)}M`;
   if (value >= 1000) return `${Math.round(value / 1000)}K`;
   return String(value);
+}
+
+function formatCost(value) {
+  if (!Number.isFinite(value)) return "--";
+  if (value >= 1) return `$${value.toFixed(2)}`;
+  if (value >= 0.01) return `$${value.toFixed(3)}`;
+  if (value > 0) return `$${value.toFixed(4)}`;
+  return "$0";
 }
 
 function formatFlow(value, unit = "auto") {
@@ -366,8 +378,102 @@ function getSystemItem(key) {
 }
 
 function getTokenRange(key = activeTokenRange) {
-  const ranges = dashboardData.tokenUsage?.ranges || [];
+  const usage = getTokenUsage();
+  const ranges = usage.ranges || [];
   return ranges.find((range) => range.key === key) || ranges[0] || {};
+}
+
+function normalizeUsageDay(day) {
+  return {
+    ...day,
+    input: Number(day.inputTokens || day.input || 0),
+    output: Number(day.outputTokens || day.output || 0),
+    cacheRead: Number(day.cacheReadTokens || day.cacheRead || 0),
+    total: Number(day.totalTokens || day.total || 0),
+    cost: Number(day.estimatedCostUsd || day.cost || 0),
+  };
+}
+
+function sumUsage(days) {
+  return days.reduce(
+    (sum, day) => ({
+      input: sum.input + Number(day.input || 0),
+      output: sum.output + Number(day.output || 0),
+      cacheRead: sum.cacheRead + Number(day.cacheRead || 0),
+      total: sum.total + Number(day.total || 0),
+      cost: sum.cost + Number(day.cost || 0),
+      runs: sum.runs + Number(day.runs || 0),
+    }),
+    { input: 0, output: 0, cacheRead: 0, total: 0, cost: 0, runs: 0 },
+  );
+}
+
+function formatDateLabel(dateText) {
+  const parts = String(dateText || "").split("-");
+  return parts.length === 3 ? `${Number(parts[1])}/${Number(parts[2])}` : dateText || "";
+}
+
+function buildModelBreakdown(days) {
+  const byModel = new Map();
+  days.forEach((day) => {
+    (day.byModel || []).forEach((model) => {
+      const name = model.model || model.name || "Model";
+      const current = byModel.get(name) || { name, total: 0, cost: 0 };
+      current.total += Number(model.totalTokens || model.total || 0);
+      current.cost += Number(model.estimatedCostUsd || model.cost || 0);
+      byModel.set(name, current);
+    });
+  });
+  const models = [...byModel.values()].sort((a, b) => b.total - a.total);
+  const total = models.reduce((sum, model) => sum + model.total, 0) || 1;
+  return models.map((model) => ({
+    ...model,
+    share: Math.round((model.total / total) * 100),
+  }));
+}
+
+function getOpenclawTokenUsage() {
+  const rawDays = Array.isArray(openclawUsageData.days) ? openclawUsageData.days : [];
+  if (!rawDays.length) return null;
+
+  const days = rawDays.map(normalizeUsageDay).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const rangeDefs = [
+    { key: "1d", label: "1d", count: 1 },
+    { key: "7d", label: "7d", count: 7 },
+    { key: "30d", label: "30d", count: 30 },
+    { key: "all", label: "all", count: Infinity },
+  ];
+  const ranges = rangeDefs.map((range) => {
+    const selected = Number.isFinite(range.count) ? days.slice(0, range.count) : days;
+    const summary = sumUsage(selected);
+    const sourceLabel = openclawUsageData.pricingBasis === "openrouter-equivalent" ? "OpenRouter 等价估算" : "估算";
+    return {
+      key: range.key,
+      label: range.label,
+      ...summary,
+      note: `OpenClaw ${range.label} 用量，费用为 ${sourceLabel}，不是实际扣费账单。`,
+      selectedDays: selected,
+    };
+  });
+
+  const active = ranges.find((range) => range.key === activeTokenRange) || ranges[1] || ranges[0];
+  const chartDays = [...days].reverse().slice(-30);
+  return {
+    updatedAt: openclawUsageData.updatedAt,
+    ranges,
+    models: buildModelBreakdown(active.selectedDays || []),
+    daily: chartDays.map((day) => ({
+      date: day.date,
+      label: formatDateLabel(day.date),
+      total: day.total,
+      cost: day.cost,
+    })),
+    sourceSummary: "OpenClaw usage ledger",
+  };
+}
+
+function getTokenUsage() {
+  return getOpenclawTokenUsage() || dashboardData.tokenUsage || {};
 }
 
 function getLast30Group(key) {
@@ -535,6 +641,7 @@ function renderCheckin() {
 }
 
 function renderDounai() {
+  const today = checkinData.today || {};
   const total = checkinData.total || {};
   const account = checkinData.account || {};
   const records = getCheckinRecords(30);
@@ -553,6 +660,9 @@ function renderDounai() {
       : NaN;
 
   setText("#dounai-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
+  setText("#dounai-today-flow", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
+  setText("#dounai-today-beans", Number.isFinite(Number(today.beans)) ? `${today.beans}` : "--");
+  setText("#dounai-today-hours", formatHours(today.hours));
   setText("#dounai-days", Number.isFinite(Number(total.days)) ? `${total.days}d` : "--");
   setText("#dounai-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
   setText("#dounai-total-hours", formatDuration(total.hours));
@@ -605,7 +715,7 @@ function renderHome() {
   const feeds = dashboardData.feeds || [];
   const aiItems = (aiNewsData.items || []).slice(0, 3);
   const token7d = getTokenRange("7d");
-  const token24h = getTokenRange("24h");
+  const token1d = getTokenRange("1d");
   const token30d = getTokenRange("30d");
   const today = dashboardData.today || {};
 
@@ -625,10 +735,10 @@ function renderHome() {
   setText("#metric-actions", String(actions.length));
   setText("#metric-actions-note", `${actions.length} ${copy.taskCount}`);
   setText("#metric-token-total", formatToken(token7d.total));
-  setText("#metric-token-note", `${copy.hour24} ${formatToken(token24h.total)}`);
+  setText("#metric-token-note", `${copy.day1} ${formatToken(token1d.total)}`);
   setText("#metric-automation", dashboardData.automation?.status || "--");
   setText("#metric-automation-note", dashboardData.automation?.lastRun || copy.sync);
-  setText("#mini-token-24h", formatToken(token24h.total));
+  setText("#mini-token-24h", formatToken(token1d.total));
   setText("#mini-token-30d", formatToken(token30d.total));
   setText("#sidebar-token-total", formatToken(token7d.total));
 
@@ -667,7 +777,7 @@ function createRangeButton(range) {
 }
 
 function renderTokens() {
-  const usage = dashboardData.tokenUsage || {};
+  const usage = getTokenUsage();
   const ranges = usage.ranges || [];
   const range = getTokenRange();
 
@@ -684,7 +794,7 @@ function renderTokens() {
   setText("#token-total", formatToken(range.total));
   setText("#token-input", formatToken(range.input));
   setText("#token-output", formatToken(range.output));
-  setText("#token-cost", Number.isFinite(range.cost) ? `$${range.cost.toFixed(2)}` : "--");
+  setText("#token-cost", formatCost(range.cost));
   setText("#token-note", range.note || copy.noNote);
 
   clearAndFill(qs("#token-models"), createModelItem, usage.models || []);
@@ -710,7 +820,7 @@ function createModelItem(model) {
 function createDailyBar(day) {
   const article = document.createElement("article");
   article.className = "token-bar";
-  const max = Math.max(...(dashboardData.tokenUsage?.daily || []).map((item) => item.total || 0), 1);
+  const max = Math.max(...(getTokenUsage().daily || []).map((item) => item.total || 0), 1);
   article.innerHTML = `
     <span></span>
     <div class="bar-track"><span></span></div>
@@ -755,12 +865,13 @@ async function readWikiTodo() {
 }
 
 async function loadData() {
-  const [dashboard, aiNews, last30, wikiTodo, checkin] = await Promise.all([
+  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
     readWikiTodo(),
     readJson(CHECKIN_URL, fallbackCheckin),
+    readJson(OPENCLAW_USAGE_URL, window.MAXNOW_OPENCLAW_USAGE_DATA || fallbackOpenclawUsage),
   ]);
 
   dashboardData = dashboard;
@@ -768,6 +879,7 @@ async function loadData() {
   last30Data = last30;
   wikiTodoData = wikiTodo;
   checkinData = checkin;
+  openclawUsageData = openclawUsage;
   renderAll();
 }
 

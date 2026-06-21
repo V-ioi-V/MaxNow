@@ -41,6 +41,8 @@ MaxNow 由四类文件组成：
    - `dash/data/last-30.js`
    - `dash/data/wiki-todos.json`
    - `dash/data/wiki-todos.js`
+   - `dash/data/openclaw-usage.json`
+   - `dash/data/openclaw-usage.js`
    - `dash/data/dounai_checkin.json`
    - 这是页面和自动化之间的数据契约。
 
@@ -59,9 +61,11 @@ MaxNow 由四类文件组成：
 5. 同步脚本
    - `scripts/sync_wiki_todos.py`
    - `scripts/sync_system_status.py`
+   - `scripts/sync_openclaw_usage.py`
    - 由 Codex 或 Owner 维护。
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
    - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `dash/data/dashboard.*` 中的 `automation` 和 `system` 字段。
+   - `scripts/sync_openclaw_usage.py` 只读 OpenClaw 服务器轨迹，生成 Token 使用账本和 OpenRouter 等价费用估算，为后续 Codex 用量接入预留同一账本结构。
 
 6. 产品记忆文档
    - `CONTEXT.md`
@@ -129,14 +133,20 @@ AI 每日精选属于外部输入的一小块，不是新闻产品。
 
 Token 页面只回答 Token 相关问题：
 
-- 最近 1 小时使用量
-- 最近 24 小时使用量
+- 最近 1 天使用量
 - 最近 7 天使用量
 - 最近 30 天使用量
+- 全部已采集使用量
 - input / output / total / cost
 - 模型占比
 - 最近 7 天趋势
 - 可用时显示异常峰值
+
+Token 真实数据可以分来源接入。第一阶段先接入 OpenClaw：
+
+- `dash/data/openclaw-usage.json` 保存 OpenClaw 的 input / output / cacheRead / total token、按天、按模型、按任务拆分，以及按 OpenRouter 价格折算的等价费用。
+- `pricingBasis` 必须标记为 `openrouter-equivalent`，不要把它当作真实扣费账单。
+- 后续 Codex 接入应复用同类日账本结构，再由汇总层合并 OpenClaw / Codex / 其他来源。
 
 不要把完整 Token 页面复制到 Home。Home 只需要显示紧凑的使用状态。
 
@@ -145,6 +155,7 @@ Token 页面只回答 Token 相关问题：
 豆奶页面只回答签到资源相关问题：
 
 - 今日获得流量和账号有效期延长时长。
+- 顶部今日签到区展示今日流量、今日豆丁、今日延长，和 Home 豆奶摘要使用同一组今日数据。
 - 累计签到天数、累计获得流量和累计延长时长。
 - 当前账号剩余可用流量、有效期和按剩余天数折算的每日可用流量。
 - 近 30 天账号日均可用流量折线图，数据来自服务器侧每日账号余量快照。
@@ -166,6 +177,8 @@ dash/data/last-30.json
 dash/data/last-30.js
 dash/data/wiki-todos.json
 dash/data/wiki-todos.js
+dash/data/openclaw-usage.json
+dash/data/openclaw-usage.js
 dash/data/dounai_checkin.json
 ```
 
@@ -196,6 +209,8 @@ UPDATE_LOG.md
 
 `dash/data/wiki-todos.json` 负责 personal-wiki 近期待办的只读缓存，由 `scripts/sync_wiki_todos.py` 从 personal-wiki `wiki/tasks/todo.json` 生成。
 
+`dash/data/openclaw-usage.json` 负责 OpenClaw 用量账本，由 `scripts/sync_openclaw_usage.py` 从服务器 `/root/.openclaw/agents/main/sessions/*.trajectory.jsonl` 等只读轨迹生成。它记录北京时间日桶、模型、任务、input / output / cacheRead / total token，并按 OpenRouter 模型价格生成等价费用估算。该费用不是实际供应商账单。
+
 `dash/data/dounai_checkin.json` 负责豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化更新；前端只读取流量、豆丁、账号有效期延长时长、累计签到天数、近 30 天记录、剩余可用流量、有效期、每日可用预算和 `account_history`，不编辑、不回写，也不修改签到脚本或 cron。
 
 当前带 `.js` wrapper 的数据集必须从对应 JSON 文件生成，并把同一个对象暴露给浏览器：
@@ -205,6 +220,7 @@ window.MAXNOW_DASHBOARD_DATA
 window.MAXNOW_AI_NEWS_DATA
 window.MAXNOW_LAST30_DATA
 window.MAXNOW_WIKI_TODO_DATA
+window.MAXNOW_OPENCLAW_USAGE_DATA
 ```
 
 ## 数据来源策略

@@ -13,6 +13,7 @@ DATASETS = {
     "ai-news": ("dash/data/ai-news.json", "dash/data/ai-news.js", "MAXNOW_AI_NEWS_DATA"),
     "last-30": ("dash/data/last-30.json", "dash/data/last-30.js", "MAXNOW_LAST30_DATA"),
     "wiki-todos": ("dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
+    "openclaw-usage": ("dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
 }
 LOG_DIR = ROOT / "logs"
 
@@ -166,6 +167,7 @@ def parse_args():
 
     subparsers.add_parser("wiki-todos", help="Sync personal-wiki todos and validate data.")
     subparsers.add_parser("system-status", help="Refresh machine-collected system status and validate data.")
+    subparsers.add_parser("openclaw-usage", help="Refresh OpenClaw token usage ledger and validate data.")
     subparsers.add_parser("runtime", help="Run server runtime sync without changing owner judgment fields.")
     subparsers.add_parser("project-status", help="Refresh Home project status from ROADMAP.md and validate data.")
     subparsers.add_parser("all", help="Run wiki todos, system status, project status, wrappers, and checks.")
@@ -187,6 +189,10 @@ def main():
 
     if args.command in {"system-status", "runtime", "all"}:
         run_python("scripts/sync_system_status.py", "system-status.log")
+
+    if args.command in {"openclaw-usage", "all"}:
+        run_python("scripts/sync_openclaw_usage.py", "openclaw-usage.log")
+        write_wrapper("openclaw-usage")
 
     if args.command in {"project-status", "all"}:
         refresh_project_status()

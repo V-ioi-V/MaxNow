@@ -95,6 +95,7 @@
 
 ## 修改样式时的检查
 
+- 豆奶详情页顶部三块 tab 当前为：今日签到、账号余量、签到累计；今日签到 tab 展示今日流量、今日豆丁、今日延长，使用和 Home 豆奶摘要一致的白底小指标卡结构。
 - 改 Dash 样式时提升 `dash/index.html` 中的 `styles.css?v=...`。
 - 改 Dash 脚本渲染时提升 `dash/index.html` 中的 `app.js?v=...`。
 - 改 Blog 样式时提升所有 Blog 页面里的 `styles.css?v=...`。
