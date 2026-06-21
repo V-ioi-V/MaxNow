@@ -532,7 +532,7 @@ function renderDounai() {
   if (flowChart) {
     flowChart.innerHTML = createLineChart(records, {
       key: "flow_mb",
-      title: "近 30 天签到流量",
+      title: "近 30 天获取流量",
       unit: "MB",
       stroke: "#2688e8",
       formatter: (value) => `${Math.round(value)} MB`,
@@ -543,7 +543,7 @@ function renderDounai() {
   if (hoursChart) {
     hoursChart.innerHTML = createLineChart(records, {
       key: "hours",
-      title: "近 30 天账号有效期延长时长",
+      title: "近 30 天获取时长",
       unit: "h",
       stroke: "#00a6c8",
       formatter: (value) => `${value.toFixed(2)} h`,
