@@ -994,7 +994,7 @@ a {
 
 .checkin-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
   gap: 8px;
 }
 
@@ -1033,9 +1033,9 @@ a {
   display: block;
   margin-top: 6px;
   color: var(--card-color);
-  font-size: 17px;
-  line-height: 1.1;
-  white-space: nowrap;
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .dounai-chart-grid {
