@@ -1059,7 +1059,9 @@ a {
 }
 
 .line-chart-svg {
-  min-width: 100%;
+  width: 100%;
+  min-width: 920px;
+  height: 340px;
   display: block;
 }
 
