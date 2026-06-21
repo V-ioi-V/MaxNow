@@ -382,7 +382,8 @@ a {
 .token-page-head,
 .status-strip article,
 .mini-token-grid div,
-.dounai-top-tabs span,
+.dounai-title-tab,
+.dounai-top-tabs,
 .token-summary article {
   --card-color: var(--accent-strong);
   --card-border: #8fd0ff;
@@ -395,7 +396,8 @@ a {
   .token-page-head:hover,
   .status-strip article:hover,
   .mini-token-grid div:hover,
-  .dounai-top-tabs span:hover,
+  .dounai-title-tab:hover,
+  .dounai-top-tabs:hover,
   .token-summary article:hover {
     border-color: var(--card-border);
     background: #ffffff;
@@ -1138,6 +1140,18 @@ a {
   display: grid;
   align-content: center;
   padding: 24px;
+}
+
+.dounai-title-tab,
+.dounai-balance-tab,
+.dounai-total-tab {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
+}
+
+.dounai-total-tab {
+  --card-color: var(--cyan);
+  --card-border: #9eeaf8;
 }
 
 .dounai-top-tabs {

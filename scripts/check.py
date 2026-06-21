@@ -91,24 +91,31 @@ def check_local_server(url):
 def check_dounai_checkin():
     data = load_json(ROOT / "dash/data/dounai_checkin.json")
     account = data.get("account")
-    if not account:
-        return "dounai-checkin: json is valid"
 
-    if "remaining_flow_mb" in account:
+    if account and "remaining_flow_mb" in account:
         remaining = float(account["remaining_flow_mb"])
         if remaining < 0:
             raise ValueError("dounai-checkin: account.remaining_flow_mb cannot be negative")
 
-    expiry = account.get("effective_expires_at") or account.get("vip_expires_at") or account.get("account_expires_at")
+    expiry = account.get("effective_expires_at") or account.get("vip_expires_at") or account.get("account_expires_at") if account else None
     if expiry:
         datetime.strptime(expiry, "%Y-%m-%d %H:%M:%S")
 
-    if "daily_available_mb" in account:
+    if account and "daily_available_mb" in account:
         daily = float(account["daily_available_mb"])
         if daily < 0:
             raise ValueError("dounai-checkin: account.daily_available_mb cannot be negative")
 
-    return "dounai-checkin: json and account snapshot are valid"
+    history = data.get("account_history", [])
+    if not isinstance(history, list):
+        raise ValueError("dounai-checkin: account_history must be a list")
+    for item in history:
+        datetime.strptime(item["date"], "%Y-%m-%d")
+        daily = float(item["daily_available_mb"])
+        if daily < 0:
+            raise ValueError("dounai-checkin: account_history.daily_available_mb cannot be negative")
+
+    return "dounai-checkin: json, account snapshot, and account history are valid"
 
 
 def main():

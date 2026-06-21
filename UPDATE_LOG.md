@@ -11,6 +11,18 @@
 
 ## 2026-06-21
 
+### 增加豆奶日均可用趋势
+
+- 将豆奶顶部三个大 tab 的 hover 反馈改为卡片自身上浮，避免只让内部小指标响应鼠标。
+- 新增「近 30 天账号日均可用流量」趋势图，从 `dash/data/dounai_checkin.json` 的 `account_history` 读取每日 `daily_available_mb`。
+- 扩展服务器 `/root/.openclaw/gen_checkin_data.py`，每天生成 `account` 时同步按日期覆盖 / 追加 `account_history`，用于长期维护账号日均可用趋势。
+- 更新 `SPEC.md`、`CONTEXT.md`、`SERVER_RUNBOOK.md`、OpenClaw skill 和 `scripts/check.py`，记录新的数据契约与校验。
+- 将 Dash 样式版本提升到 `styles.css?v=31`、脚本版本提升到 `app.js?v=25`。
+
+原因：
+
+- Owner 希望三个顶部 tab 分别具有和其他卡片一致的 hover 上浮效果，并希望每天更新账号日均可用流量趋势。
+
 ### 修复豆奶页头整体悬浮
 
 - 覆盖豆奶详情页顶部外层 `.dounai-page-head` 的 hover 效果，避免鼠标移入时三个顶部区域作为整体上浮。

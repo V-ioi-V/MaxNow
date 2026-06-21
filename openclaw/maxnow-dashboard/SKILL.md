@@ -60,7 +60,7 @@ OpenClaw records facts and drafts summaries. The owner keeps final judgment. Do 
 
 `dash/data/ai-news.json` is only for AI external inputs. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
 
-`dash/data/dounai_checkin.json` stores Dounai daily check-in results and account balance snapshots. OpenClaw check-in automation may update it, but MaxNow should only display traffic, account-extension hours, cumulative check-in days, remaining usable traffic, expiry, daily traffic budget, and recent records for charts/tables; beans are raw data only and should not drive UI.
+`dash/data/dounai_checkin.json` stores Dounai daily check-in results, account balance snapshots, and account daily-budget history. OpenClaw check-in automation may update it, but MaxNow should only display traffic, account-extension hours, cumulative check-in days, remaining usable traffic, expiry, daily traffic budget, daily-budget history, and recent records for charts/tables; beans are raw data only and should not drive UI.
 
 ## Dashboard Data Shape
 

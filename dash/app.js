@@ -419,6 +419,29 @@ function getCheckinRecords(limit = 30) {
   return Array.isArray(checkinData.records) ? checkinData.records.slice(0, limit).reverse() : [];
 }
 
+function getAccountHistoryRecords(limit = 30) {
+  const history = Array.isArray(checkinData.account_history) ? checkinData.account_history : [];
+  const records = history
+    .filter((record) => Number.isFinite(Number(record.daily_available_mb)))
+    .slice(0, limit)
+    .reverse()
+    .map((record) => ({
+      ...record,
+      daily_available_gb: Number(record.daily_available_mb) / 1024,
+    }));
+
+  if (records.length || !Number.isFinite(Number(checkinData.account?.daily_available_mb))) return records;
+
+  const syncedAt = checkinData.account?.synced_at || checkinData.updatedAt || "";
+  return [
+    {
+      date: syncedAt.slice(0, 10) || copy.today,
+      daily_available_mb: Number(checkinData.account.daily_available_mb),
+      daily_available_gb: Number(checkinData.account.daily_available_mb) / 1024,
+    },
+  ];
+}
+
 function getNiceMax(values) {
   const max = Math.max(...values.map((value) => Number(value) || 0), 1);
   const magnitude = 10 ** Math.floor(Math.log10(max));
@@ -507,6 +530,7 @@ function renderDounai() {
   const total = checkinData.total || {};
   const account = checkinData.account || {};
   const records = getCheckinRecords(30);
+  const accountHistory = getAccountHistoryRecords(30);
   const remainingFlow = Number.isFinite(Number(account.remaining_flow_mb))
     ? Number(account.remaining_flow_mb)
     : parseTrafficLabel(account.remaining_flow_label || account.remaining_flow);
@@ -547,6 +571,17 @@ function renderDounai() {
       unit: "h",
       stroke: "#00a6c8",
       formatter: (value) => `${value.toFixed(2)} h`,
+    });
+  }
+
+  const dailyBudgetChart = qs("#dounai-daily-budget-chart");
+  if (dailyBudgetChart) {
+    dailyBudgetChart.innerHTML = createLineChart(accountHistory, {
+      key: "daily_available_gb",
+      title: "近 30 天账号日均可用流量",
+      unit: "GB",
+      stroke: "#7c3aed",
+      formatter: (value) => `${value.toFixed(1)} GB`,
     });
   }
 

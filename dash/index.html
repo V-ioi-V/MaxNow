@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
-    <link rel="stylesheet" href="./styles.css?v=30" />
+    <link rel="stylesheet" href="./styles.css?v=31" />
   </head>
   <body>
     <div class="app-shell">
@@ -404,6 +404,17 @@
               </header>
               <div class="line-chart" id="dounai-hours-chart"></div>
             </article>
+
+            <article class="panel dounai-chart-card">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Budget</p>
+                  <h2>近 30 天账号日均可用流量</h2>
+                </div>
+                <span class="status-pill">GB / 天</span>
+              </header>
+              <div class="line-chart" id="dounai-daily-budget-chart"></div>
+            </article>
           </section>
 
         </section>
@@ -418,6 +429,6 @@
     <script src="./data/ai-news.js?v=1"></script>
     <script src="./data/last-30.js?v=1"></script>
     <script src="./data/wiki-todos.js?v=1"></script>
-    <script src="./app.js?v=24"></script>
+    <script src="./app.js?v=25"></script>
   </body>
 </html>
