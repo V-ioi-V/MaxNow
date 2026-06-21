@@ -858,12 +858,6 @@ a {
   color: #64748b;
 }
 
-#automation-summary {
-  max-width: min(520px, 44vw);
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .timeline {
   display: grid;
   gap: 12px;

@@ -514,7 +514,6 @@ function renderHome() {
   setText("#today-focus", `${copy.focus} ${today.focus || "--"}`);
   setText("#today-updated", today.updatedAt ? `${copy.updatedAtShort} ${today.updatedAt}` : "\u5f85\u786e\u8ba4");
   setText("#operator-status", `OpenClaw ${dashboardData.automation?.status || copy.waiting}`);
-  setText("#automation-summary", dashboardData.automation?.summary || copy.syncWaiting);
   setText("#feed-source", dashboardData.feedSource || "OpenClaw");
   setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
   setText("#ai-news-source", aiNewsData.sourceSummary || "OpenClaw AI Daily");
