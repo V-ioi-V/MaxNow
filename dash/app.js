@@ -432,6 +432,45 @@ function buildModelBreakdown(days) {
   }));
 }
 
+function buildTaskBreakdown(days) {
+  const byTask = new Map();
+  days.forEach((day) => {
+    (day.byTask || []).forEach((task) => {
+      const label = task.label || task.kind || "OpenClaw session";
+      const model = task.model || "";
+      const key = `${task.kind || ""}:${label}:${model}`;
+      const current = byTask.get(key) || { label, model, kind: task.kind || "", total: 0, cost: 0, runs: 0 };
+      current.total += Number(task.totalTokens || task.total || 0);
+      current.cost += Number(task.estimatedCostUsd || task.cost || 0);
+      current.runs += Number(task.runs || 0);
+      byTask.set(key, current);
+    });
+  });
+  return [...byTask.values()].sort((a, b) => b.total - a.total);
+}
+
+function buildSessionBreakdown(selectedDays) {
+  const selectedDates = new Set(selectedDays.map((day) => day.date));
+  const runs = Array.isArray(openclawUsageData.recentRuns) ? openclawUsageData.recentRuns : [];
+  const sessions = runs
+    .filter((run) => !selectedDates.size || selectedDates.has(run.date))
+    .map((run) => ({
+      label: run.label || run.kind || "OpenClaw session",
+      model: run.model || run.openrouterModel || "",
+      kind: run.kind || "",
+      total: Number(run.totalTokens || run.total || 0),
+      input: Number(run.inputTokens || run.input || 0),
+      output: Number(run.outputTokens || run.output || 0),
+      cacheRead: Number(run.cacheReadTokens || run.cacheRead || 0),
+      cost: Number(run.estimatedCostUsd || run.cost || 0),
+      timestamp: run.timestamp || run.date || "",
+      runs: 1,
+    }))
+    .sort((a, b) => b.total - a.total);
+
+  return sessions.length ? sessions : buildTaskBreakdown(selectedDays);
+}
+
 function getOpenclawTokenUsage() {
   const rawDays = Array.isArray(openclawUsageData.days) ? openclawUsageData.days : [];
   if (!rawDays.length) return null;
@@ -462,6 +501,7 @@ function getOpenclawTokenUsage() {
     updatedAt: openclawUsageData.updatedAt,
     ranges,
     models: buildModelBreakdown(active.selectedDays || []),
+    sessions: buildSessionBreakdown(active.selectedDays || []).slice(0, 8),
     daily: chartDays.map((day) => ({
       date: day.date,
       label: formatDateLabel(day.date),
@@ -563,6 +603,7 @@ function getChartRenderWidth(container) {
 
 function createLineChart(records, options) {
   const { key, unit, formatter, stroke } = options;
+  const yFormatter = options.yFormatter || ((value) => `${Math.round(value)}${unit}`);
   const width = options.width || Math.max(920, records.length * 46 + 96);
   const height = 340;
   const padding = { top: 28, right: 26, bottom: 64, left: 56 };
@@ -600,7 +641,7 @@ function createLineChart(records, options) {
         .map(
           (tick) => `
             <line class="chart-grid-line" x1="${padding.left}" y1="${tick.y.toFixed(1)}" x2="${padding.left + chartWidth}" y2="${tick.y.toFixed(1)}" />
-            <text class="chart-y-label" x="${padding.left - 10}" y="${tick.y + 4}" text-anchor="end">${Math.round(tick.value)}${unit}</text>
+            <text class="chart-y-label" x="${padding.left - 10}" y="${tick.y + 4}" text-anchor="end">${yFormatter(tick.value)}</text>
           `,
         )
         .join("")}
@@ -794,11 +835,25 @@ function renderTokens() {
   setText("#token-total", formatToken(range.total));
   setText("#token-input", formatToken(range.input));
   setText("#token-output", formatToken(range.output));
+  setText("#token-cache", formatToken(range.cacheRead));
   setText("#token-cost", formatCost(range.cost));
   setText("#token-note", range.note || copy.noNote);
 
   clearAndFill(qs("#token-models"), createModelItem, usage.models || []);
-  clearAndFill(qs("#token-bars"), createDailyBar, usage.daily || []);
+  clearAndFill(qs("#token-sessions"), createSessionItem, usage.sessions || []);
+
+  const trendChart = qs("#token-trend-chart");
+  if (trendChart) {
+    trendChart.innerHTML = createLineChart(usage.daily || [], {
+      key: "total",
+      title: "最近 30 天 Token 用量",
+      unit: "",
+      stroke: "#2688e8",
+      width: getChartRenderWidth(trendChart),
+      formatter: formatToken,
+      yFormatter: formatToken,
+    });
+  }
 }
 
 function createModelItem(model) {
@@ -829,6 +884,28 @@ function createDailyBar(day) {
   article.querySelector("span").textContent = day.label || day.date || "";
   article.querySelector(".bar-track span").style.width = `${Math.max(4, ((day.total || 0) / max) * 100)}%`;
   article.querySelector("strong").textContent = formatToken(day.total);
+  return article;
+}
+
+function createSessionItem(session) {
+  const article = document.createElement("article");
+  article.className = "session-item";
+  const timestamp = String(session.timestamp || "");
+  const timeLabel = timestamp.includes("T") ? timestamp.slice(5, 16).replace("T", " ") : timestamp.slice(5, 16);
+  article.innerHTML = `
+    <div class="session-main">
+      <strong></strong>
+      <small></small>
+    </div>
+    <div class="session-meta">
+      <span></span>
+      <strong></strong>
+    </div>
+  `;
+  article.querySelector(".session-main strong").textContent = session.label || "OpenClaw session";
+  article.querySelector(".session-main small").textContent = [session.model, timeLabel].filter(Boolean).join(" · ");
+  article.querySelector(".session-meta span").textContent = session.runs > 1 ? `${session.runs} runs` : formatCost(session.cost || 0);
+  article.querySelector(".session-meta strong").textContent = formatToken(session.total);
   return article;
 }
 
