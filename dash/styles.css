@@ -17,7 +17,7 @@
   --pink: #ff6fae;
   --danger: #ef476f;
   --ok: #20a96b;
-  --radius: 8px;
+  --radius: 14px;
   --shadow: 0 10px 24px rgba(25, 43, 72, 0.08), 0 1px 2px rgba(25, 43, 72, 0.06);
   --shadow-soft: 0 4px 12px rgba(25, 43, 72, 0.06);
 }
@@ -133,7 +133,7 @@ a {
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 .nav-icon svg {
@@ -1113,7 +1113,7 @@ a {
 }
 
 #dounai-view .token-page-head {
-  grid-template-columns: minmax(280px, 1fr) minmax(360px, 1.25fr) minmax(360px, 1.25fr);
+  grid-template-columns: minmax(240px, 0.9fr) minmax(0, 1.15fr) minmax(0, 1.15fr);
 }
 
 .dounai-page-head {
@@ -1172,6 +1172,7 @@ a {
 
 .dounai-top-tabs span {
   --card-color: var(--accent-strong);
+  min-width: 0;
   min-height: 52px;
   display: grid;
   align-content: center;
@@ -1185,6 +1186,22 @@ a {
   font-size: 12px;
   font-weight: 700;
   text-align: center;
+}
+
+.dounai-metric-label {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.metric-icon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  fill: var(--card-color);
 }
 
 .dounai-top-tabs span[data-tone="purple"] {
@@ -1204,10 +1221,11 @@ a {
 }
 
 .dounai-top-tabs strong {
+  max-width: 100%;
   color: var(--card-color);
   font-size: 20px;
   line-height: 1.1;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .range-tabs {
