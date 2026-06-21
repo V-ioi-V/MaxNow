@@ -113,6 +113,13 @@ vip_expires_at: 2027-04-30 10:15:41
 daily_available_mb: 4321.61
 ```
 
+2026-06-21 已部署 Dash 顶栏和豆奶详情页自适应微调版本：
+
+```text
+changes: 移除 Dash 顶栏重复域名；豆奶详情页顶部 tab 和内部指标改为按宽度自适应换行
+dash styles version: styles.css?v=41
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
