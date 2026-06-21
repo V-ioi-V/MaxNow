@@ -552,6 +552,17 @@ function renderDounai() {
   setText("#dounai-expiry", formatDateOnly(expiry));
   setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatTraffic(dailyAvailable)} / 天` : "--");
 
+  const dailyBudgetChart = qs("#dounai-daily-budget-chart");
+  if (dailyBudgetChart) {
+    dailyBudgetChart.innerHTML = createLineChart(accountHistory, {
+      key: "daily_available_gb",
+      title: "近 30 天日均可用流量",
+      unit: "GB",
+      stroke: "#7c3aed",
+      formatter: (value) => `${value.toFixed(1)} GB`,
+    });
+  }
+
   const flowChart = qs("#dounai-flow-chart");
   if (flowChart) {
     flowChart.innerHTML = createLineChart(records, {
@@ -571,17 +582,6 @@ function renderDounai() {
       unit: "h",
       stroke: "#00a6c8",
       formatter: (value) => `${value.toFixed(2)} h`,
-    });
-  }
-
-  const dailyBudgetChart = qs("#dounai-daily-budget-chart");
-  if (dailyBudgetChart) {
-    dailyBudgetChart.innerHTML = createLineChart(accountHistory, {
-      key: "daily_available_gb",
-      title: "近 30 天账号日均可用流量",
-      unit: "GB",
-      stroke: "#7c3aed",
-      formatter: (value) => `${value.toFixed(1)} GB`,
     });
   }
 
