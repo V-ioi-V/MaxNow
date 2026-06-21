@@ -943,6 +943,7 @@ a {
 .token-summary article {
   --card-color: var(--accent-strong);
   --card-border: #8fd0ff;
+  min-width: 0;
   border: 1px solid #e3ebf4;
   border-radius: var(--radius);
   padding: 14px;
@@ -953,6 +954,17 @@ a {
 .token-summary article:nth-child(2) {
   --card-color: var(--cyan);
   --card-border: #9eeaf8;
+}
+
+.mini-token-grid div {
+  min-height: 86px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 14px 10px;
+  text-align: center;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
 .token-summary article:nth-child(3) {
@@ -970,7 +982,7 @@ a {
   --card-border: #ffd29a;
 }
 
-.mini-token-grid span,
+.mini-token-grid > div > span:not(.metric-label),
 .token-summary span {
   display: block;
   color: var(--muted);
@@ -980,8 +992,16 @@ a {
 .mini-token-grid strong,
 .token-summary strong {
   display: block;
-  margin-top: 6px;
   color: var(--card-color);
+  line-height: 1.15;
+}
+
+.mini-token-grid strong {
+  font-size: clamp(28px, 2.1vw, 36px);
+}
+
+.token-summary strong {
+  margin-top: 6px;
   font-size: 24px;
 }
 
