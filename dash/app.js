@@ -787,6 +787,151 @@ function setView(view) {
   window.scrollTo({ top: 0, behavior: "auto" });
 }
 
+const lunarMonths = [
+  "\u6b63\u6708",
+  "\u4e8c\u6708",
+  "\u4e09\u6708",
+  "\u56db\u6708",
+  "\u4e94\u6708",
+  "\u516d\u6708",
+  "\u4e03\u6708",
+  "\u516b\u6708",
+  "\u4e5d\u6708",
+  "\u5341\u6708",
+  "\u51ac\u6708",
+  "\u814a\u6708",
+];
+
+const lunarDays = [
+  "",
+  "\u521d\u4e00",
+  "\u521d\u4e8c",
+  "\u521d\u4e09",
+  "\u521d\u56db",
+  "\u521d\u4e94",
+  "\u521d\u516d",
+  "\u521d\u4e03",
+  "\u521d\u516b",
+  "\u521d\u4e5d",
+  "\u521d\u5341",
+  "\u5341\u4e00",
+  "\u5341\u4e8c",
+  "\u5341\u4e09",
+  "\u5341\u56db",
+  "\u5341\u4e94",
+  "\u5341\u516d",
+  "\u5341\u4e03",
+  "\u5341\u516b",
+  "\u5341\u4e5d",
+  "\u4e8c\u5341",
+  "\u5eff\u4e00",
+  "\u5eff\u4e8c",
+  "\u5eff\u4e09",
+  "\u5eff\u56db",
+  "\u5eff\u4e94",
+  "\u5eff\u516d",
+  "\u5eff\u4e03",
+  "\u5eff\u516b",
+  "\u5eff\u4e5d",
+  "\u4e09\u5341",
+];
+
+const lunarHolidayMap = {
+  "\u6b63\u6708-\u521d\u4e00": "\u6625\u8282",
+  "\u6b63\u6708-\u5341\u4e94": "\u5143\u5bb5\u8282",
+  "\u4e8c\u6708-\u521d\u4e8c": "\u9f99\u62ac\u5934",
+  "\u4e94\u6708-\u521d\u4e94": "\u7aef\u5348\u8282",
+  "\u4e03\u6708-\u521d\u4e03": "\u4e03\u5915",
+  "\u516b\u6708-\u5341\u4e94": "\u4e2d\u79cb\u8282",
+  "\u4e5d\u6708-\u521d\u4e5d": "\u91cd\u9633\u8282",
+  "\u814a\u6708-\u521d\u516b": "\u814a\u516b\u8282",
+};
+
+function normalizeLunarMonth(value) {
+  const text = String(value || "").replace(/^\u95f0/, "");
+  const numeric = Number.parseInt(text, 10);
+  return Number.isFinite(numeric) && lunarMonths[numeric - 1] ? lunarMonths[numeric - 1] : text;
+}
+
+function normalizeLunarDay(value) {
+  const text = String(value || "");
+  const numeric = Number.parseInt(text, 10);
+  return Number.isFinite(numeric) && lunarDays[numeric] ? lunarDays[numeric] : text;
+}
+
+function getLunarParts(date) {
+  try {
+    const parts = new Intl.DateTimeFormat("zh-CN-u-ca-chinese", {
+      month: "long",
+      day: "numeric",
+    }).formatToParts(date);
+    return {
+      month: normalizeLunarMonth(parts.find((part) => part.type === "month")?.value),
+      day: normalizeLunarDay(parts.find((part) => part.type === "day")?.value),
+    };
+  } catch (error) {
+    return { month: "", day: "" };
+  }
+}
+
+function formatLunarDate(date) {
+  const lunar = getLunarParts(date);
+  return lunar.month && lunar.day ? `\u519c\u5386 ${lunar.month}${lunar.day}` : "\u519c\u5386 --";
+}
+
+function addDays(date, days) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function isSameDay(first, second) {
+  return (
+    first.getFullYear() === second.getFullYear() &&
+    first.getMonth() === second.getMonth() &&
+    first.getDate() === second.getDate()
+  );
+}
+
+function getNthWeekdayOfMonth(year, monthIndex, weekday, nth) {
+  const date = new Date(year, monthIndex, 1);
+  const offset = (weekday - date.getDay() + 7) % 7;
+  date.setDate(1 + offset + (nth - 1) * 7);
+  return date;
+}
+
+function getHolidayLabels(date) {
+  const labels = [];
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const fixedHolidayMap = {
+    "1-1": "\u5143\u65e6",
+    "2-14": "\u60c5\u4eba\u8282",
+    "3-8": "\u5987\u5973\u8282",
+    "5-1": "\u52b3\u52a8\u8282",
+    "6-1": "\u513f\u7ae5\u8282",
+    "10-1": "\u56fd\u5e86\u8282",
+    "12-25": "\u5723\u8bde\u8282",
+  };
+  const fixedHoliday = fixedHolidayMap[`${month}-${day}`];
+  if (fixedHoliday) labels.push(fixedHoliday);
+
+  const year = date.getFullYear();
+  if (isSameDay(date, getNthWeekdayOfMonth(year, 4, 0, 2))) labels.push("\u6bcd\u4eb2\u8282");
+  if (isSameDay(date, getNthWeekdayOfMonth(year, 5, 0, 3))) labels.push("\u7236\u4eb2\u8282");
+
+  const lunar = getLunarParts(date);
+  const lunarHoliday = lunarHolidayMap[`${lunar.month}-${lunar.day}`];
+  if (lunarHoliday) labels.push(lunarHoliday);
+
+  const tomorrowLunar = getLunarParts(addDays(date, 1));
+  if (tomorrowLunar.month === "\u6b63\u6708" && tomorrowLunar.day === "\u521d\u4e00") {
+    labels.push("\u9664\u5915");
+  }
+
+  return [...new Set(labels)];
+}
+
 function updateClock() {
   const now = new Date();
   const date = new Intl.DateTimeFormat("zh-CN", {
@@ -802,6 +947,9 @@ function updateClock() {
 
   setText("#today-label", date);
   setText("#clock-label", time);
+  setText("#lunar-label", formatLunarDate(now));
+  const holidays = getHolidayLabels(now);
+  setText("#holiday-label", holidays.length ? holidays.join(" \u00b7 ") : "\u4eca\u65e5\u65e0\u8282\u65e5");
 }
 
 qsa("[data-view]").forEach((button) => {

@@ -326,9 +326,11 @@ a {
 
 .summary-clock {
   min-width: 154px;
-  min-height: 104px;
+  min-height: 124px;
   display: grid;
-  place-items: center;
+  align-content: center;
+  justify-items: center;
+  gap: 5px;
   padding: 16px;
   border: 1px solid #e0e8f2;
   border-radius: var(--radius);
@@ -349,9 +351,21 @@ a {
 }
 
 .summary-clock strong {
-  margin-top: 10px;
+  margin-top: 4px;
   font-size: 30px;
   line-height: 1;
+}
+
+.summary-clock small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.summary-clock .holiday-label {
+  color: var(--orange);
 }
 
 .status-strip {
