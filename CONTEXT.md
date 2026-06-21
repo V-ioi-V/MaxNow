@@ -83,7 +83,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
 - `dash/data/wiki-todos.json`：从 private personal-wiki `wiki/tasks/todo.json` 同步而来的近期待办只读缓存。
 - `dash/data/wiki-todos.js`：从 `wiki-todos.json` 生成的浏览器 wrapper。
-- `dash/data/dounai_checkin.json`：豆奶每日签到记录，由 OpenClaw 签到自动化每天更新；Home 只读展示今日/累计流量、今日/累计账号有效期延长时长和累计签到天数，并作为豆奶详情页入口。豆奶详情页展示近 30 天流量/时长折线图。
+- `dash/data/dounai_checkin.json`：豆奶每日签到记录和账号余量快照，由 OpenClaw 签到自动化每天更新；Home 只读展示今日/累计流量、今日/累计账号有效期延长时长和累计签到天数，并作为豆奶详情页入口。豆奶详情页展示近 30 天流量/时长折线图，以及剩余流量、有效期和每日可用预算。
 - `scripts/sync_wiki_todos.py`：通过本地或服务器 `gh` 登录态刷新 `dash/data/wiki-todos.*`，避免前端暴露 GitHub token。
 
 维护方式：
@@ -94,8 +94,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - private personal-wiki 待办不能由前端直接读取；需要先运行 `python scripts/update_data.py runtime` 或 `python scripts/sync_wiki_todos.py` 生成 MaxNow 本地缓存。
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；服务器上已验证 `python3 scripts/sync_wiki_todos.py` 能成功生成待办缓存。
 - 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、今日推进或日常记录。
-- 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、时长、累计签到天数和近 30 天 records；豆丁不进入页面展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。
-- 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。
+- 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、时长、累计签到天数、账号余量快照和近 30 天 records；豆丁不进入页面展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。
+- 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段。
 
 ### 4. 滚动记忆上下文
 

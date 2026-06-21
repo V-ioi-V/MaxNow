@@ -3,6 +3,7 @@ import re
 import sys
 import urllib.error
 import urllib.request
+from datetime import datetime
 from pathlib import Path
 
 
@@ -87,11 +88,33 @@ def check_local_server(url):
         return f"local server skipped: {url} is not reachable ({error.reason})"
 
 
+def check_dounai_checkin():
+    data = load_json(ROOT / "dash/data/dounai_checkin.json")
+    account = data.get("account")
+    if not account:
+        return "dounai-checkin: json is valid"
+
+    if "remaining_flow_mb" in account:
+        remaining = float(account["remaining_flow_mb"])
+        if remaining < 0:
+            raise ValueError("dounai-checkin: account.remaining_flow_mb cannot be negative")
+
+    expiry = account.get("effective_expires_at") or account.get("vip_expires_at") or account.get("account_expires_at")
+    if expiry:
+        datetime.strptime(expiry, "%Y-%m-%d %H:%M:%S")
+
+    if "daily_available_mb" in account:
+        daily = float(account["daily_available_mb"])
+        if daily < 0:
+            raise ValueError("dounai-checkin: account.daily_available_mb cannot be negative")
+
+    return "dounai-checkin: json and account snapshot are valid"
+
+
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
-    load_json(ROOT / "dash/data/dounai_checkin.json")
-    checks.append("dounai-checkin: json is valid")
+    checks.append(check_dounai_checkin())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/"))

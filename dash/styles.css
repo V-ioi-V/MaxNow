@@ -1141,6 +1141,68 @@ a {
   margin-bottom: 14px;
 }
 
+#dounai-view .token-page-head {
+  grid-template-columns: minmax(230px, 1fr) minmax(360px, 520px) auto;
+}
+
+.dounai-account-summary {
+  min-width: 0;
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  border: 1px solid #d8e8f8;
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #f8fcff 0%, #ffffff 100%);
+}
+
+.dounai-account-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.dounai-account-title small {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dounai-account-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dounai-account-grid span {
+  min-height: 52px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  border: 1px solid #e3ebf4;
+  border-radius: var(--radius);
+  padding: 9px 10px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.dounai-account-grid strong {
+  color: var(--accent-strong);
+  font-size: 18px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
 .range-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(80px, 1fr));
@@ -1396,6 +1458,11 @@ a {
 
   .summary-bar,
   .token-page-head {
+    grid-template-columns: 1fr;
+  }
+
+  #dounai-view .token-page-head,
+  .dounai-account-grid {
     grid-template-columns: 1fr;
   }
 

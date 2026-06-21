@@ -97,6 +97,21 @@ root 数据生成脚本: /root/.openclaw/gen_checkin_data.py
 
 豆奶签到仍由 root 的 OpenClaw 自动化在每天 9 点左右执行。`gen_checkin_data.py` 现在会把同一份 `dounai_checkin.json` 同时写入旧 OpenClaw 工作区和 nginx 正在读取的线上部署目录，避免页面继续停留在旧记录。
 
+2026-06-21 已扩展 `/root/.openclaw/gen_checkin_data.py`：生成 `dounai_checkin.json` 时会用现有豆奶登录态只读打开 `https://dounai.pro/user/panel`，抓取 `剩余流量(主)`、`账号有效期 (0级)` 和 `VIP有效期 (1级)`，写入 `account` 字段。页面据此展示剩余可用流量、到期日和按剩余天数折算的每日可用流量。脚本更新前已备份到：
+
+```text
+/root/.openclaw/gen_checkin_data.py.bak-20260621-account-summary
+```
+
+当前已验证抓到的账号快照：
+
+```text
+remaining_flow_label: 1.29TB
+account_expires_at: 2027-05-01 20:04:52
+vip_expires_at: 2027-04-30 10:15:41
+daily_available_mb: 4321.61
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
@@ -213,6 +228,7 @@ sudo python3 /root/.openclaw/gen_checkin_data.py
 - 签到脚本先更新 `/root/.openclaw/dounai_weekly.json`。
 - `gen_checkin_data.py` 从 weekly 数据生成最近 60 天的 `dounai_checkin.json`。
 - 同一份结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
+- `gen_checkin_data.py` 还会抓取豆奶用户面板上的剩余流量和有效期，写入 `account` 字段；如果抓取失败，会尽量保留上一份 `account` 并标记 `stale` / `last_error`。
 - 线上 `dash.maxnow.cn` 读取 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 
 验证今天是否进入线上页面：

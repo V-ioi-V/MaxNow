@@ -74,6 +74,44 @@ function formatFlow(value, unit = "auto") {
   return `${Math.round(amount)} MB`;
 }
 
+function formatTraffic(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "--";
+  if (amount >= 1024 * 1024) return `${(amount / 1024 / 1024).toFixed(2)} TB`;
+  if (amount >= 1024) return `${(amount / 1024).toFixed(1)} GB`;
+  return `${Math.round(amount)} MB`;
+}
+
+function parseTrafficLabel(label) {
+  const match = String(label || "").trim().match(/^([\d.]+)\s*(TB|GB|MB|B)$/i);
+  if (!match) return NaN;
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount)) return NaN;
+  const unit = match[2].toUpperCase();
+  if (unit === "TB") return amount * 1024 * 1024;
+  if (unit === "GB") return amount * 1024;
+  if (unit === "MB") return amount;
+  return amount / 1024 / 1024;
+}
+
+function parseDounaiDate(value) {
+  if (!value) return null;
+  const normalized = String(value).trim().replace(" ", "T");
+  const date = new Date(`${normalized}+08:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatDateOnly(value) {
+  const dateText = String(value || "").trim();
+  return dateText ? dateText.slice(0, 10) : "--";
+}
+
+function getDaysRemaining(value) {
+  const date = parseDounaiDate(value);
+  if (!date) return NaN;
+  return Math.max(0, Math.ceil((date.getTime() - Date.now()) / 86400000));
+}
+
 function formatHours(value) {
   const amount = Number(value);
   if (!Number.isFinite(amount)) return "--";
@@ -467,11 +505,32 @@ function renderCheckin() {
 
 function renderDounai() {
   const total = checkinData.total || {};
+  const account = checkinData.account || {};
   const records = getCheckinRecords(30);
+  const remainingFlow = Number.isFinite(Number(account.remaining_flow_mb))
+    ? Number(account.remaining_flow_mb)
+    : parseTrafficLabel(account.remaining_flow_label || account.remaining_flow);
+  const expiry = account.effective_expires_at || account.vip_expires_at || account.account_expires_at;
+  const daysRemaining = Number.isFinite(Number(account.days_remaining))
+    ? Number(account.days_remaining)
+    : getDaysRemaining(expiry);
+  const dailyAvailable = Number.isFinite(Number(account.daily_available_mb))
+    ? Number(account.daily_available_mb)
+    : Number.isFinite(remainingFlow) && Number.isFinite(daysRemaining) && daysRemaining > 0
+      ? remainingFlow / daysRemaining
+      : NaN;
+
   setText("#dounai-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
   setText("#dounai-days", Number.isFinite(Number(total.days)) ? `${total.days} 天` : "--");
   setText("#dounai-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
   setText("#dounai-total-hours", formatDuration(total.hours));
+  setText("#dounai-remaining-flow", Number.isFinite(remainingFlow) ? formatTraffic(remainingFlow) : account.remaining_flow_label || "--");
+  setText("#dounai-expiry", formatDateOnly(expiry));
+  setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatTraffic(dailyAvailable)} / 天` : "--");
+  setText(
+    "#dounai-account-source",
+    account.synced_at ? `同步 ${account.synced_at}` : account.source ? account.source : copy.syncWaiting,
+  );
 
   const flowChart = qs("#dounai-flow-chart");
   if (flowChart) {

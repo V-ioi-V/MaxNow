@@ -11,6 +11,18 @@
 
 ## 2026-06-21
 
+### 豆奶页增加账号余量模块
+
+- 在豆奶详情页顶部空白区域新增账号余量模块，展示剩余可用流量、VIP 到期日和按剩余天数折算的每日可用流量。
+- 扩展 `dash/data/dounai_checkin.json`，允许 `account` 字段保存 `remaining_flow_mb`、`account_expires_at`、`vip_expires_at`、`effective_expires_at`、`days_remaining` 和 `daily_available_mb`。
+- 更新服务器 `/root/.openclaw/gen_checkin_data.py`，使用现有豆奶登录态只读抓取豆奶用户面板中的账号余量字段，并写入 `/root/MaxNow/dash/data/dounai_checkin.json` 与 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
+- 当前服务器实测可读取：剩余流量 `1.29TB`、账号有效期 `2027-05-01 20:04:52`、VIP 有效期 `2027-04-30 10:15:41`、日均可用 `4321.61MB`。
+- 更新 `SPEC.md`、`CONTEXT.md`、`SERVER_RUNBOOK.md`、OpenClaw skill 和 `scripts/check.py`，记录新的数据契约与校验。
+
+原因：
+
+- Owner 希望在豆奶页顶部空白处看到当前还剩多少流量、什么时候到期，以及平均每天可用多少流量。
+
 ### 移除当前主线标题状态摘要
 
 - 移除 Home「当前主线」标题右侧的自动化状态摘要胶囊，避免 nginx、证书、部署版本、CPU、磁盘、内存和失败检查等系统信息挤在主线模块标题区。
