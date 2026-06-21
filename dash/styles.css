@@ -1195,6 +1195,14 @@ a {
   --card-color: var(--cyan);
 }
 
+.dounai-top-tabs span[data-tone="orange"] {
+  --card-color: var(--orange);
+}
+
+.dounai-top-tabs span[data-tone="green"] {
+  --card-color: var(--ok);
+}
+
 .dounai-top-tabs strong {
   color: var(--card-color);
   font-size: 20px;
