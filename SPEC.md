@@ -19,7 +19,7 @@ dash/  -> dash.maxnow.cn 私人状态工作站
 blog/  -> blog.maxnow.cn 公开博客发布层
 ```
 
-根目录保留 `AGENTS.md`、`SPEC.md`、`ROADMAP.md`、`CONTEXT.md`、`IDEAS.md`、`UPDATE_LOG.md`、`DEPLOY.md` 和 `SERVER_RUNBOOK.md`，用于统一维护产品规则、路线图、上下文、部署和操作记录。暂时不拆成多个 GitHub 仓库。
+根目录保留 `AGENTS.md`、`SPEC.md`、`STYLE_CONTEXT.md`、`ROADMAP.md`、`CONTEXT.md`、`IDEAS.md`、`UPDATE_LOG.md`、`DEPLOY.md` 和 `SERVER_RUNBOOK.md`，用于统一维护产品规则、视觉样式上下文、路线图、上下文、部署和操作记录。暂时不拆成多个 GitHub 仓库。
 
 ## 系统组成
 
@@ -65,11 +65,12 @@ MaxNow 由四类文件组成：
 
 6. 产品记忆文档
    - `CONTEXT.md`
+   - `STYLE_CONTEXT.md`
    - `ROADMAP.md`
    - `IDEAS.md`
    - `UPDATE_LOG.md`
    - 由 Codex 或 Owner 维护。
-   - 用来跨会话保存上下文地图、路线图、未来想法和项目更新记录。
+   - 用来跨会话保存上下文地图、前端视觉约定、路线图、未来想法和项目更新记录。
 
 ## 导航
 

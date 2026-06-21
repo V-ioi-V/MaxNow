@@ -34,6 +34,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 这些文件保存“MaxNow 是什么”和“为什么这样做”，其中 `CONTEXT.md` 主要服务于代理接力。
 
 - `SPEC.md`：已经确定的产品定义、页面边界、数据契约和实现约束。
+- `STYLE_CONTEXT.md`：Dash / Blog 的前端视觉上下文，记录品牌图标、圆角、hover、语义配色、豆奶展示和样式检查规则。
 - `ROADMAP.md`：当前可执行路线图，保存 Now / Next / Later / Blocked / Done。
 - `IDEAS.md`：尚未确定的想法、未来入口、待研究问题。
 - `UPDATE_LOG.md`：重要产品方向、规则、结构变化的更新记录。
@@ -44,7 +45,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 维护方式：
 
 - `CONTEXT.md` 主要面向 Codex / 代理接力，使用中文以便 Owner 随时检查。
-- `SPEC.md`、`ROADMAP.md`、`IDEAS.md`、`UPDATE_LOG.md` 主要面向 Owner 和 Codex 共同阅读。
+- `SPEC.md`、`STYLE_CONTEXT.md`、`ROADMAP.md`、`IDEAS.md`、`UPDATE_LOG.md` 主要面向 Owner 和 Codex 共同阅读。
 - Codex 或 Owner 可以更新。
 - OpenClaw 日常任务不能修改这些文件。
 
@@ -52,6 +53,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 - 当前 MD 文件不算冗余严重；它们分别承担规则、规格、路线、上下文、想法、更新记录、部署和服务器操作。
 - 轻微重叠主要出现在 `SPEC.md` 和 `CONTEXT.md`：`SPEC.md` 写稳定产品规则，`CONTEXT.md` 写代理接手时需要知道的当前状态和文件地图。
+- 前端视觉规则不要继续散落在聊天或 `CONTEXT.md` 段落里；稳定的样式口径写进 `STYLE_CONTEXT.md`。
 - 暂时不把文档移入 `docs/`，因为根目录文档更容易被 Owner 和代理第一时间发现；等文档数量继续增长后再考虑整理目录。
 
 ### 2. 代理执行上下文
@@ -143,7 +145,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `blog/preview.html` 是博客方案说明页，不是正式线上入口。
 - 博客左侧导航当前为 `文章 / 专题 / 总览` 三个同级 tab；`文章` 看时间流，`专题` 进分类，`总览` 看归档统计。
 - Dash 和 Blog 当前视觉基调统一参考轻量用户中心风格：白色 sidebar、浅蓝灰背景、柔和白卡片、淡边框、彩色图标入口和稳定系统字体；不要回退到深色重阴影或外部 Web Font 依赖。
-- Dash 和 Blog 当前页卡圆角基准为 14px，内部小图标容器约 12px；豆奶顶部参数使用小 SVG 图标加语义色，不要回退到纯文字参数块。
+- Dash 和 Blog 当前页卡圆角基准为 14px，内部小图标容器约 12px；豆奶顶部参数使用小 SVG 图标加语义色，不要回退到纯文字参数块。详细前端样式规则以 `STYLE_CONTEXT.md` 为准。
 - MaxNow 正式品牌图标使用 Owner 于 2026-06-21 确认的深蓝 `M/N` 标识，资产为 `dash/assets/maxnow-icon.png` 和 `blog/assets/maxnow-icon.png`；左侧品牌区使用 28px 无底框小图标并只显示 `MaxNow`，不要再回退到旧的浅蓝 `M` SVG 或在 Blog 品牌区显示 `blog.maxnow.cn` 副标题。
 
 维护边界：

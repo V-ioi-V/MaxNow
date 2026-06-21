@@ -12,6 +12,7 @@ Read this file before making code changes in this repository.
 - 当 Owner 表达“没问题了，合进去吧”“合码”“合入主分支”等意图时，固定理解为：把已完成工作合入远端 `origin/main`，然后切回本地 `main` 并执行 `git pull`，让本地 `main` 与远端保持一致。
 - If there are unrelated user changes, preserve them and work around them.
 - Read `SPEC.md` before changing product behavior.
+- Read `STYLE_CONTEXT.md` before changing Dash or Blog frontend styles.
 - Read `CONTEXT.md` when the task depends on project direction, context strategy, automation scope, or next-step planning.
 - Read `ROADMAP.md` when the task asks what remains, what to do next, or how to sequence work.
 - Read `SERVER_RUNBOOK.md` before operating the MaxNow server over SSH or changing nginx/server deployment state.
@@ -45,6 +46,7 @@ dash/app.js
 blog/preview.html
 blog/preview.css
 SPEC.md
+STYLE_CONTEXT.md
 README.md
 DEPLOY.md
 SERVER_RUNBOOK.md
