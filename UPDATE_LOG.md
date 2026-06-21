@@ -17,7 +17,7 @@
 - 模型占比会随当前范围变化，趋势图展示最近 30 天日桶。
 - Home 的 Token 摘要从 24 小时改为 1 天 / 30 天。
 - `scripts/sync_openclaw_usage.py` 默认采集长期窗口，让 all 覆盖当前可读的全部 OpenClaw trajectory。
-- 服务器侧新增计划任务：每天 00:20 单独运行 `python3 scripts/update_data.py openclaw-usage`，日志写入 `logs/openclaw-usage.log`。
+- 服务器侧新增 root 计划任务：每天 00:20 单独运行 `python3 scripts/update_data.py openclaw-usage`，日志写入 `logs/openclaw-usage.log`；任务结束后把生成的数据文件归属恢复为 `ubuntu:www-data`。
 
 #### 背景
 

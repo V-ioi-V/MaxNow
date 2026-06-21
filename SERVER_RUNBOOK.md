@@ -181,11 +181,11 @@ python3 scripts/check.py
 
 `scripts/sync_openclaw_usage.py` 只读 `/root/.openclaw/agents/main/sessions/*.trajectory.jsonl`、cron runs 和 sessions 元数据，生成 `dash/data/openclaw-usage.json` / `dash/data/openclaw-usage.js`。它按 Asia/Shanghai 日期聚合 input / output / cacheRead / total token，并用 OpenRouter 模型价格生成 `openrouter-equivalent` 费用估算。该费用不是真实供应商账单。默认采集长期窗口，Token 页面再切分 1d / 7d / 30d / all。
 
-计划用 `ubuntu` 用户 crontab 单独每天刷新一次 OpenClaw 用量，不混进每 10 分钟的 `MAXNOW-DASHBOARD-SYNC`：
+计划用 root crontab 单独每天刷新一次 OpenClaw 用量，不混进每 10 分钟的 `MAXNOW-DASHBOARD-SYNC`。原因是 OpenClaw trajectory 位于 `/root/.openclaw`，普通 `ubuntu` 用户不能直接读取；任务结束后需要把生成的前端数据文件归属恢复为 `ubuntu:www-data`：
 
 ```cron
 # BEGIN MAXNOW-OPENCLAW-USAGE
-20 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-openclaw-usage.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow openclaw usage sync start"; python3 scripts/update_data.py openclaw-usage; echo "[$(date -Is)] maxnow openclaw usage sync ok"' >> /var/www/maxnow-dashboard/logs/openclaw-usage.log 2>&1
+20 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-openclaw-usage.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow openclaw usage sync start"; python3 scripts/update_data.py openclaw-usage; chown ubuntu:www-data dash/data/openclaw-usage.json dash/data/openclaw-usage.js logs/openclaw-usage.log; echo "[$(date -Is)] maxnow openclaw usage sync ok"' >> /var/www/maxnow-dashboard/logs/openclaw-usage.log 2>&1
 # END MAXNOW-OPENCLAW-USAGE
 ```
 
