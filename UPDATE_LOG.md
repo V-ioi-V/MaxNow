@@ -11,6 +11,15 @@
 
 ## 2026-06-21
 
+### 缩小品牌图标并刷新缓存
+
+- 将 Dash 和 Blog 左侧品牌图标从 34px 继续缩小到 28px，使视觉重量更接近 `MaxNow` 字体。
+- 将 Dash 样式版本提升到 `styles.css?v=32`，Blog 样式版本提升到 `styles.css?v=16`，Blog 预览页提升到 `preview.css?v=2`。
+
+原因：
+
+- Owner 反馈图标仍然偏大，且 Blog 可能因为旧样式缓存继续显示蓝色底框，需要强制刷新样式。
+
 ### 调整 MaxNow 品牌区尺寸
 
 - 将 Dash 和 Blog 左侧品牌图标从 42px 缩小到 34px，让图标视觉重量与 `MaxNow` 字体更匹配。
