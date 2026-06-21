@@ -11,6 +11,16 @@
 
 ## 2026-06-21
 
+### 替换 MaxNow 正式品牌图标
+
+- 使用 Owner 确认的深蓝 `M/N` 标识生成透明背景 PNG 资产，并分别放入 Dash 与 Blog 的 `assets/maxnow-icon.png`。
+- 将 Dash 和 Blog 左侧品牌区改为使用正式图标，去掉旧 `brand-mark` 自带的浅蓝底框样式。
+- 在 `CONTEXT.md` 记录该图标是 MaxNow 后续正式 icon，不再回退到旧版浅蓝 `M` SVG。
+
+原因：
+
+- Owner 明确指定该图作为 MaxNow 之后的 icon，并要求替换 Dash 和 Blog。
+
 ### 更新 MaxNow 品牌图标
 
 - 重新绘制 Dash 和 Blog 共用的 `maxnow-mark.svg`，替换左侧品牌区的小 `M` 图标。

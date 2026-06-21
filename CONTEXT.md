@@ -143,6 +143,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `blog/preview.html` 是博客方案说明页，不是正式线上入口。
 - 博客左侧导航当前为 `文章 / 专题 / 总览` 三个同级 tab；`文章` 看时间流，`专题` 进分类，`总览` 看归档统计。
 - Dash 和 Blog 当前视觉基调统一参考轻量用户中心风格：白色 sidebar、浅蓝灰背景、柔和白卡片、淡边框、彩色图标入口和稳定系统字体；不要回退到深色重阴影或外部 Web Font 依赖。
+- MaxNow 正式品牌图标使用 Owner 于 2026-06-21 确认的深蓝 `M/N` 标识，资产为 `dash/assets/maxnow-icon.png` 和 `blog/assets/maxnow-icon.png`；不要再回退到旧的浅蓝 `M` SVG。
 
 维护边界：
 
