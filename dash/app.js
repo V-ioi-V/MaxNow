@@ -448,9 +448,14 @@ function getNiceMax(values) {
   return Math.ceil(max / magnitude) * magnitude;
 }
 
+function getChartRenderWidth(container) {
+  const width = container?.clientWidth || 0;
+  return Math.max(920, Math.floor(width));
+}
+
 function createLineChart(records, options) {
   const { key, unit, formatter, stroke } = options;
-  const width = Math.max(920, records.length * 46 + 96);
+  const width = options.width || Math.max(920, records.length * 46 + 96);
   const height = 340;
   const padding = { top: 28, right: 26, bottom: 64, left: 56 };
   const chartWidth = width - padding.left - padding.right;
@@ -559,6 +564,7 @@ function renderDounai() {
       title: "近 30 天日均可用流量",
       unit: "GB",
       stroke: "#7c3aed",
+      width: getChartRenderWidth(dailyBudgetChart),
       formatter: (value) => `${value.toFixed(1)} GB`,
     });
   }
@@ -570,6 +576,7 @@ function renderDounai() {
       title: "近 30 天获取流量",
       unit: "MB",
       stroke: "#2688e8",
+      width: getChartRenderWidth(flowChart),
       formatter: (value) => `${Math.round(value)} MB`,
     });
   }
@@ -581,6 +588,7 @@ function renderDounai() {
       title: "近 30 天获取时长",
       unit: "h",
       stroke: "#00a6c8",
+      width: getChartRenderWidth(hoursChart),
       formatter: (value) => `${value.toFixed(2)} h`,
     });
   }
@@ -771,6 +779,7 @@ function setView(view) {
   if (viewTitle) {
     viewTitle.textContent = nextView === "tokens" ? copy.tokenTitle : nextView === "dounai" ? copy.dounaiTitle : copy.today;
   }
+  if (nextView === "dounai") requestAnimationFrame(renderDounai);
   if (location.hash !== `#${nextView}`) location.hash = nextView;
   window.scrollTo({ top: 0, behavior: "auto" });
 }
@@ -815,6 +824,13 @@ refreshButton?.addEventListener("click", async () => {
 
 window.addEventListener("hashchange", () => {
   setView(location.hash.replace("#", ""));
+});
+
+let resizeTimer = 0;
+window.addEventListener("resize", () => {
+  if (!qs("#dounai-view")?.classList.contains("is-active")) return;
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderDounai, 120);
 });
 
 updateClock();
