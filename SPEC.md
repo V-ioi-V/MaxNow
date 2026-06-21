@@ -137,9 +137,9 @@ Token 页面只回答 Token 相关问题：
 - 最近 7 天使用量
 - 最近 30 天使用量
 - 全部已采集使用量
-- input / output / total / cost
-- 模型占比
-- 最近 7 天趋势
+- total / input / output / cacheRead / cost
+- 模型占比和会话消耗
+- 最近 30 天折线趋势
 - 可用时显示异常峰值
 
 Token 真实数据可以分来源接入。第一阶段先接入 OpenClaw：
