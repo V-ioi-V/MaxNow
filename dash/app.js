@@ -458,6 +458,7 @@ function buildSessionBreakdown(selectedDays) {
       label: run.label || run.kind || "OpenClaw session",
       model: run.model || run.openrouterModel || "",
       kind: run.kind || "",
+      runId: run.runId || "",
       total: Number(run.totalTokens || run.total || 0),
       input: Number(run.inputTokens || run.input || 0),
       output: Number(run.outputTokens || run.output || 0),
@@ -892,6 +893,7 @@ function createSessionItem(session) {
   article.className = "session-item";
   const timestamp = String(session.timestamp || "");
   const timeLabel = timestamp.includes("T") ? timestamp.slice(5, 16).replace("T", " ") : timestamp.slice(5, 16);
+  const title = session.runs > 1 || !timeLabel ? session.label || "OpenClaw session" : `${session.label || "OpenClaw"} ${timeLabel}`;
   article.innerHTML = `
     <div class="session-main">
       <strong></strong>
@@ -902,8 +904,8 @@ function createSessionItem(session) {
       <strong></strong>
     </div>
   `;
-  article.querySelector(".session-main strong").textContent = session.label || "OpenClaw session";
-  article.querySelector(".session-main small").textContent = [session.model, timeLabel].filter(Boolean).join(" · ");
+  article.querySelector(".session-main strong").textContent = title;
+  article.querySelector(".session-main small").textContent = [session.model, session.runId ? `#${String(session.runId).slice(0, 8)}` : ""].filter(Boolean).join(" · ");
   article.querySelector(".session-meta span").textContent = session.runs > 1 ? `${session.runs} runs` : formatCost(session.cost || 0);
   article.querySelector(".session-meta strong").textContent = formatToken(session.total);
   return article;
@@ -972,6 +974,7 @@ function setView(view) {
     viewTitle.textContent = nextView === "tokens" ? copy.tokenTitle : nextView === "dounai" ? copy.dounaiTitle : copy.today;
   }
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
+  if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));
   if (location.hash !== `#${nextView}`) location.hash = nextView;
   window.scrollTo({ top: 0, behavior: "auto" });
 }
@@ -1168,9 +1171,11 @@ window.addEventListener("hashchange", () => {
 
 let resizeTimer = 0;
 window.addEventListener("resize", () => {
-  if (!qs("#dounai-view")?.classList.contains("is-active")) return;
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(renderDounai, 120);
+  resizeTimer = setTimeout(() => {
+    if (qs("#dounai-view")?.classList.contains("is-active")) renderDounai();
+    if (qs("#tokens-view")?.classList.contains("is-active")) renderTokens();
+  }, 120);
 });
 
 updateClock();
