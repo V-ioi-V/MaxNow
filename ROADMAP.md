@@ -47,6 +47,8 @@
 
 - 来源 ID：`maxnow-token-usage`
 - 为本地 Codex 和服务器 Codex 补 collector，复用 OpenClaw 用量账本的按天 / 来源 / 模型 / 任务结构。
+- 先确认本地 Codex、服务器 Codex 的可读日志 / usage 来源，以及是否能区分模型、input、output、cache read 和日期。
+- 生成独立 `codex-usage` 日账本后，再合并进 Token 页统一总账。
 - 将 OpenClaw / Codex / 其他来源合并成统一 Token 总账。
 - 保留 1d / 7d / 30d / all、模型占比、趋势和异常峰值展示。
 - 费用统一使用 `pricingBasis: openrouter-equivalent` 的估算口径，避免误读为真实扣费账单。

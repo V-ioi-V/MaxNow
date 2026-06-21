@@ -997,7 +997,8 @@ a {
 }
 
 .mini-token-grid strong {
-  font-size: clamp(28px, 2.1vw, 36px);
+  font-size: clamp(14px, 1.15vw, 17px);
+  overflow-wrap: anywhere;
 }
 
 .token-summary strong {
