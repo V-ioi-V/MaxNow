@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=35" />
+    <link rel="stylesheet" href="./styles.css?v=36" />
   </head>
   <body>
     <div class="app-shell">
@@ -251,6 +251,10 @@
                     <strong id="checkin-today">--</strong>
                   </div>
                   <div>
+                    <span>今日豆丁</span>
+                    <strong id="checkin-today-beans">--</strong>
+                  </div>
+                  <div>
                     <span>今日延长</span>
                     <strong id="checkin-today-hours">--</strong>
                   </div>
@@ -426,7 +430,7 @@
                   <p class="eyebrow">Budget</p>
                   <h2>近 30 天日均可用流量</h2>
                 </div>
-                <span class="status-pill">GB / 天</span>
+                <span class="status-pill">GB/d</span>
               </header>
               <div class="line-chart" id="dounai-daily-budget-chart"></div>
             </article>
@@ -437,7 +441,7 @@
                   <p class="eyebrow">Traffic</p>
                   <h2>近 30 天获取流量</h2>
                 </div>
-                <span class="status-pill">MB / 天</span>
+                <span class="status-pill">MB/d</span>
               </header>
               <div class="line-chart" id="dounai-flow-chart"></div>
             </article>
@@ -448,7 +452,7 @@
                   <p class="eyebrow">Hours</p>
                   <h2>近 30 天获取时长</h2>
                 </div>
-                <span class="status-pill">小时 / 天</span>
+                <span class="status-pill">h/d</span>
               </header>
               <div class="line-chart" id="dounai-hours-chart"></div>
             </article>
@@ -466,6 +470,6 @@
     <script src="./data/ai-news.js?v=1"></script>
     <script src="./data/last-30.js?v=1"></script>
     <script src="./data/wiki-todos.js?v=1"></script>
-    <script src="./app.js?v=29"></script>
+    <script src="./app.js?v=30"></script>
   </body>
 </html>

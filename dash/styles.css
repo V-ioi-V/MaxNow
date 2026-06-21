@@ -994,7 +994,7 @@ a {
 
 .checkin-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -1012,14 +1012,19 @@ a {
 }
 
 .checkin-grid div:nth-child(2),
-.checkin-grid div:nth-child(5) {
+.checkin-grid div:nth-child(4) {
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
+}
+
+.checkin-grid div:nth-child(3) {
   --card-color: var(--cyan);
   --card-border: #9eeaf8;
 }
 
-.checkin-grid div:nth-child(3) {
-  --card-color: var(--purple);
-  --card-border: #e1c4ff;
+.checkin-grid div:nth-child(6) {
+  --card-color: var(--ok);
+  --card-border: #a8e9c2;
 }
 
 .checkin-grid span,
@@ -1505,7 +1510,7 @@ a {
   }
 
   .checkin-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .status-strip article,

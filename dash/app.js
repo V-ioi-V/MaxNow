@@ -115,7 +115,7 @@ function getDaysRemaining(value) {
 function formatHours(value) {
   const amount = Number(value);
   if (!Number.isFinite(amount)) return "--";
-  return `${amount.toFixed(amount >= 10 ? 1 : 2)} h`;
+  return `${amount.toFixed(amount >= 10 ? 1 : 2)}h`;
 }
 
 function formatDuration(value) {
@@ -127,7 +127,9 @@ function formatDuration(value) {
     days += 1;
     hours = 0;
   }
-  return days > 0 ? `${days} 天 ${hours} 小时` : `${hours} 小时`;
+  if (days > 0 && hours > 0) return `${days}d ${hours}h`;
+  if (days > 0) return `${days}d`;
+  return `${hours}h`;
 }
 
 function formatDateShort(date = "") {
@@ -523,8 +525,9 @@ function renderCheckin() {
   const total = checkinData.total || {};
 
   setText("#checkin-today", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
+  setText("#checkin-today-beans", Number.isFinite(Number(today.beans)) ? `${today.beans}` : "--");
   setText("#checkin-today-hours", formatHours(today.hours));
-  setText("#checkin-days", Number.isFinite(Number(total.days)) ? `${total.days} 天` : "--");
+  setText("#checkin-days", Number.isFinite(Number(total.days)) ? `${total.days}d` : "--");
   setText("#checkin-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
   setText("#checkin-total-hours", formatDuration(total.hours));
   setText("#checkin-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
@@ -550,12 +553,12 @@ function renderDounai() {
       : NaN;
 
   setText("#dounai-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
-  setText("#dounai-days", Number.isFinite(Number(total.days)) ? `${total.days} 天` : "--");
+  setText("#dounai-days", Number.isFinite(Number(total.days)) ? `${total.days}d` : "--");
   setText("#dounai-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
   setText("#dounai-total-hours", formatDuration(total.hours));
   setText("#dounai-remaining-flow", Number.isFinite(remainingFlow) ? formatTraffic(remainingFlow) : account.remaining_flow_label || "--");
   setText("#dounai-expiry", formatDateOnly(expiry));
-  setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatTraffic(dailyAvailable)} / 天` : "--");
+  setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatTraffic(dailyAvailable)}/d` : "--");
 
   const dailyBudgetChart = qs("#dounai-daily-budget-chart");
   if (dailyBudgetChart) {
@@ -589,7 +592,7 @@ function renderDounai() {
       unit: "h",
       stroke: "#00a6c8",
       width: getChartRenderWidth(hoursChart),
-      formatter: (value) => `${value.toFixed(2)} h`,
+      formatter: (value) => `${value.toFixed(2)}h`,
     });
   }
 
