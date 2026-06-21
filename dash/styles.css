@@ -995,7 +995,7 @@ a {
 .checkin-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 14px 12px;
 }
 
 .checkin-grid div {
@@ -1003,15 +1003,18 @@ a {
   --card-border: #8fd0ff;
   min-width: 0;
   display: grid;
-  justify-items: center;
-  border: 1px solid #e3ebf4;
-  border-radius: var(--radius);
-  padding: 12px;
-  background: #ffffff;
-  text-align: center;
+  align-content: start;
+  justify-items: start;
+  gap: 6px;
+  padding: 2px 0;
+  text-align: left;
 }
 
-.checkin-grid div:nth-child(2),
+.checkin-grid div:nth-child(2) {
+  --card-color: var(--orange);
+  --card-border: #ffd29a;
+}
+
 .checkin-grid div:nth-child(4) {
   --card-color: var(--purple);
   --card-border: #e1c4ff;
@@ -1027,7 +1030,7 @@ a {
   --card-border: #a8e9c2;
 }
 
-.checkin-grid span,
+.checkin-grid > div > span:not(.metric-label),
 .checkin-bar-item small {
   display: block;
   color: var(--muted);
@@ -1175,30 +1178,31 @@ a {
   line-height: 1.1;
 }
 
-.dounai-top-tabs span {
+.dounai-top-tabs > span {
   --card-color: var(--accent-strong);
   min-width: 0;
   min-height: 52px;
   display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 4px;
-  border: 1px solid #e3ebf4;
-  border-radius: var(--radius);
-  padding: 10px 12px;
-  background: #ffffff;
+  align-content: start;
+  justify-items: start;
+  gap: 8px;
+  padding: 6px 0 4px;
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
 }
 
-.dounai-metric-label {
+.metric-label {
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
   white-space: nowrap;
 }
 
@@ -1209,23 +1213,23 @@ a {
   fill: var(--card-color);
 }
 
-.dounai-top-tabs span[data-tone="purple"] {
+.dounai-top-tabs > span[data-tone="purple"] {
   --card-color: var(--purple);
 }
 
-.dounai-top-tabs span[data-tone="cyan"] {
+.dounai-top-tabs > span[data-tone="cyan"] {
   --card-color: var(--cyan);
 }
 
-.dounai-top-tabs span[data-tone="orange"] {
+.dounai-top-tabs > span[data-tone="orange"] {
   --card-color: var(--orange);
 }
 
-.dounai-top-tabs span[data-tone="green"] {
+.dounai-top-tabs > span[data-tone="green"] {
   --card-color: var(--ok);
 }
 
-.dounai-top-tabs strong {
+.dounai-top-tabs > span > strong {
   max-width: 100%;
   color: var(--card-color);
   font-size: 20px;
