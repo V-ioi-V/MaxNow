@@ -1140,7 +1140,7 @@ a {
 }
 
 #dounai-view .token-page-head {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  grid-template-columns: minmax(240px, 0.9fr) minmax(0, 1.15fr) minmax(0, 1.15fr);
 }
 
 .dounai-page-head {
@@ -1180,7 +1180,7 @@ a {
 
 .dounai-top-tabs {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-content: center;
   gap: 8px;
   padding: 18px;
@@ -1474,6 +1474,10 @@ a {
 
   .token-detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  #dounai-view .token-page-head {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   }
 }
 

@@ -120,6 +120,13 @@ changes: 移除 Dash 顶栏重复域名；豆奶详情页顶部 tab 和内部指
 dash styles version: styles.css?v=41
 ```
 
+同日已补充部署桌面端豆奶指标宽度修正：
+
+```text
+changes: 恢复豆奶详情页桌面端顶部 tab 原始横排比例；内部指标桌面端三列铺满，中小屏再换行
+dash styles version: styles.css?v=42
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
