@@ -1139,6 +1139,17 @@ a {
   padding: 18px;
 }
 
+.dounai-section-head {
+  grid-column: 1 / -1;
+  margin-bottom: 2px;
+}
+
+.dounai-section-head h2 {
+  margin: 4px 0 0;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
 .dounai-top-tabs span {
   --card-color: var(--accent-strong);
   min-height: 52px;
