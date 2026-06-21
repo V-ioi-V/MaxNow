@@ -1105,14 +1105,38 @@ a {
 }
 
 #dounai-view .token-page-head {
-  grid-template-columns: minmax(230px, 1fr) minmax(720px, auto);
+  grid-template-columns: minmax(280px, 1fr) minmax(360px, 1.25fr) minmax(360px, 1.25fr);
+}
+
+.dounai-page-head {
+  align-items: stretch;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dounai-title-tab,
+.dounai-top-tabs {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.dounai-title-tab {
+  display: grid;
+  align-content: center;
+  padding: 24px;
 }
 
 .dounai-top-tabs {
-  min-width: 0;
   display: grid;
-  grid-template-columns: repeat(6, minmax(92px, 1fr));
+  grid-template-columns: repeat(3, minmax(96px, 1fr));
+  align-content: center;
   gap: 8px;
+  padding: 18px;
 }
 
 .dounai-top-tabs span {
