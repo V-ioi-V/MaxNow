@@ -325,13 +325,13 @@ a {
 }
 
 .summary-clock {
-  min-width: 154px;
-  min-height: 124px;
+  min-width: 190px;
+  min-height: 148px;
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 5px;
-  padding: 16px;
+  gap: 7px;
+  padding: 18px 22px;
   border: 1px solid #e0e8f2;
   border-radius: var(--radius);
   background: #ffffff;
@@ -346,20 +346,21 @@ a {
 
 .summary-clock span {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1.2;
 }
 
 .summary-clock strong {
   margin-top: 4px;
-  font-size: 30px;
+  font-size: 38px;
   line-height: 1;
 }
 
 .summary-clock small {
   display: block;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -1524,7 +1525,7 @@ a {
 
   .summary-clock {
     width: 100%;
-    text-align: left;
+    text-align: center;
   }
 
   .status-strip,
