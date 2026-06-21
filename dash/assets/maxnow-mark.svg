@@ -1,5 +1,18 @@
 <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MaxNow">
-  <rect x="10" y="10" width="60" height="60" rx="18" fill="#E7F6FF"/>
-  <path d="M24 54V28L40 44L56 28V54" stroke="#1D9BF0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M26 24H54" stroke="#8BD5FF" stroke-width="4" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="maxnow-bg" x1="16" y1="12" x2="64" y2="68" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F3FBFF"/>
+      <stop offset="1" stop-color="#DFF4FF"/>
+    </linearGradient>
+    <linearGradient id="maxnow-mark" x1="20" y1="26" x2="60" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1D9BF0"/>
+      <stop offset="1" stop-color="#00B8D9"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="64" height="64" rx="20" fill="url(#maxnow-bg)"/>
+  <rect x="8.5" y="8.5" width="63" height="63" rx="19.5" stroke="#BFE6FF"/>
+  <path d="M21 53V27L33.6 41.2L40 33.4L46.4 41.2L59 27V53" stroke="url(#maxnow-mark)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M27 24H46" stroke="#9DDEFF" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="56" cy="24" r="4.5" fill="#00B8D9"/>
+  <circle cx="56" cy="24" r="8" stroke="#8BD5FF" stroke-width="2" opacity=".55"/>
 </svg>
