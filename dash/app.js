@@ -127,7 +127,7 @@ function formatDuration(value) {
     days += 1;
     hours = 0;
   }
-  return days > 0 ? `${days}d ${hours}h` : `${hours}h`;
+  return days > 0 ? `${days} 天 ${hours} 小时` : `${hours} 小时`;
 }
 
 function formatDateShort(date = "") {
