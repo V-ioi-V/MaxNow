@@ -43,13 +43,13 @@
 - 每天基于昨天已有摘要和当天新增事实更新，不从零总结 30 天。
 - 先同步更新时间、今日大事、本周大事和等待项，再考虑更复杂的长期主线抽取。
 
-### 补充 Token 使用页真实数据
+### 接入 Codex 用量
 
 - 来源 ID：`maxnow-token-usage`
-- 明确 Token 数据来源、读取方式、权限边界和刷新频率。
-- 将当前占位数据替换成可追溯的真实数据或明确标记为手动快照。
-- 保留 1h / 24h / 7d / 30d、模型占比、趋势和异常峰值展示。
-- 这项是资源监控的一部分；实现时避免和资源监控模块重复建两套数据链路。
+- 为本地 Codex 和服务器 Codex 补 collector，复用 OpenClaw 用量账本的按天 / 来源 / 模型 / 任务结构。
+- 将 OpenClaw / Codex / 其他来源合并成统一 Token 总账。
+- 保留 1d / 7d / 30d / all、模型占比、趋势和异常峰值展示。
+- 费用统一使用 `pricingBasis: openrouter-equivalent` 的估算口径，避免误读为真实扣费账单。
 
 ### 恢复 AI 外部输入真实更新
 
@@ -126,6 +126,8 @@
 
 ### 已完成的基础能力
 
+- 新增 `scripts/sync_openclaw_usage.py` 和 `dash/data/openclaw-usage.*`，可从 OpenClaw trajectory 解析 input / output / cacheRead / total token，按北京时间日桶、模型和任务聚合，并按 OpenRouter 价格生成等价费用估算；数据结构预留 Codex 来源接入。
+- Token 页面已接入 OpenClaw 用量账本，支持 1d / 7d / 30d / all 范围切换、模型占比和最近 30 天趋势。
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；已验证服务器能读取 `wiki/tasks/todo.json` 并运行 `scripts/sync_wiki_todos.py`。
 - 服务器已通过 `ubuntu` 用户 crontab 接入 `MAXNOW-DASHBOARD-SYNC`：每 10 分钟运行 `python3 scripts/update_data.py runtime`，日志写入 `/var/www/maxnow-dashboard/logs/`。
 - 新增 `scripts/update_data.py` 作为统一数据更新入口，支持 `runtime`、`project-status` 和 `wrap all`；服务器 cron 改为调用 `python3 scripts/update_data.py runtime`。

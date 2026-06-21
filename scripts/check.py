@@ -14,6 +14,7 @@ DATASETS = [
     ("ai-news", "dash/data/ai-news.json", "dash/data/ai-news.js", "MAXNOW_AI_NEWS_DATA"),
     ("last-30", "dash/data/last-30.json", "dash/data/last-30.js", "MAXNOW_LAST30_DATA"),
     ("wiki-todos", "dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
+    ("openclaw-usage", "dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
 ]
 
 
@@ -68,6 +69,7 @@ def check_required_files():
         "UPDATE_LOG.md",
         "scripts/sync_system_status.py",
         "scripts/sync_wiki_todos.py",
+        "scripts/sync_openclaw_usage.py",
         "scripts/update_data.py",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
@@ -118,10 +120,29 @@ def check_dounai_checkin():
     return "dounai-checkin: json, account snapshot, and account history are valid"
 
 
+def check_openclaw_usage():
+    data = load_json(ROOT / "dash/data/openclaw-usage.json")
+    if data.get("pricingBasis") != "openrouter-equivalent":
+        raise ValueError("openclaw-usage: pricingBasis must be openrouter-equivalent")
+    if data.get("currency") != "USD":
+        raise ValueError("openclaw-usage: currency must be USD")
+    if not isinstance(data.get("days", []), list):
+        raise ValueError("openclaw-usage: days must be a list")
+    for day in data.get("days", []):
+        datetime.strptime(day["date"], "%Y-%m-%d")
+        for key in ["inputTokens", "outputTokens", "cacheReadTokens", "totalTokens", "runs"]:
+            if int(day.get(key, 0)) < 0:
+                raise ValueError(f"openclaw-usage: {key} cannot be negative")
+        if float(day.get("estimatedCostUsd", 0)) < 0:
+            raise ValueError("openclaw-usage: estimatedCostUsd cannot be negative")
+    return "openclaw-usage: ledger shape is valid"
+
+
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
     checks.append(check_dounai_checkin())
+    checks.append(check_openclaw_usage())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/"))

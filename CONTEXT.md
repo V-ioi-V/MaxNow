@@ -67,6 +67,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新 Home 项目状态。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
 - `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段。
+- `scripts/sync_openclaw_usage.py`：只读服务器 `/root/.openclaw` 轨迹，生成 OpenClaw Token 用量账本和 OpenRouter 等价费用估算。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
 
 维护方式：
@@ -85,6 +86,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
 - `dash/data/wiki-todos.json`：从 private personal-wiki `wiki/tasks/todo.json` 同步而来的近期待办只读缓存。
 - `dash/data/wiki-todos.js`：从 `wiki-todos.json` 生成的浏览器 wrapper。
+- `dash/data/openclaw-usage.json`：OpenClaw 每日 token 用量、按模型 / 任务拆分和 OpenRouter 等价费用估算；这是 Token 真实数据接入的第一阶段。
+- `dash/data/openclaw-usage.js`：从 `openclaw-usage.json` 生成的浏览器 wrapper。
 - `dash/data/dounai_checkin.json`：豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化每天更新；Home 只读展示今日流量、今日豆丁、今日账号有效期延长时长、累计签到天数、累计流量和累计账号有效期延长时长，并作为豆奶详情页入口。豆奶详情页展示近 30 天流量/时长折线图，以及剩余流量、有效期、每日可用预算和近 30 天账号日均可用趋势。
 - `scripts/sync_wiki_todos.py`：通过本地或服务器 `gh` 登录态刷新 `dash/data/wiki-todos.*`，避免前端暴露 GitHub token。
 
@@ -96,6 +99,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - private personal-wiki 待办不能由前端直接读取；需要先运行 `python scripts/update_data.py runtime` 或 `python scripts/sync_wiki_todos.py` 生成 MaxNow 本地缓存。
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；服务器上已验证 `python3 scripts/sync_wiki_todos.py` 能成功生成待办缓存。
 - 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、今日推进或日常记录。
+- OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。
+- `dash/data/openclaw-usage.json` 的结构预留 `futureSources.codex`，后续本地 Codex 和服务器 Codex 用量接入时应复用同类日账本结构。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。
 - 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段，并按日期维护 `account_history`。
 
@@ -177,6 +182,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 2026-06-19 已修复豆奶签到数据路径分叉：当天签到成功写入 `/root/MaxNow`，但线上部署目录仍停在 2026-06-18；现在 root 数据生成脚本会双写旧工作区和 `/var/www/maxnow-dashboard`。
 - wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，通过 `python3 scripts/update_data.py runtime` 刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
 - 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
+- OpenClaw Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；页面支持 1d / 7d / 30d / all、模型占比和最近 30 天趋势。费用为 OpenRouter 等价估算，后续还需要补 Codex 用量 collector。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
 - 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，失败日志会进入 Home 系统状态。
@@ -188,4 +194,4 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 1. 为 `blog.maxnow.cn` 补静态博客构建链路：发布 manifest、Markdown 转换、图片复制、文章列表、标签归档和 nginx 配置。
 2. 让 Last-30 进入日常增量更新节奏。
-3. 明确 Token 真实数据来源和刷新频率。
+3. 继续补 Codex 用量 collector，并把 OpenClaw / Codex 合并成统一 Token 总账。

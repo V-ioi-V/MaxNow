@@ -165,10 +165,29 @@ python3 scripts/check.py
 ```bash
 python3 scripts/update_data.py runtime
 python3 scripts/update_data.py project-status
+python3 scripts/update_data.py openclaw-usage
 python3 scripts/update_data.py wrap all
 ```
 
 `runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、系统状态和 wrapper，不覆盖 Owner 的今日判断。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。
+
+刷新 OpenClaw Token 用量账本：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/update_data.py openclaw-usage
+python3 scripts/check.py
+```
+
+`scripts/sync_openclaw_usage.py` 只读 `/root/.openclaw/agents/main/sessions/*.trajectory.jsonl`、cron runs 和 sessions 元数据，生成 `dash/data/openclaw-usage.json` / `dash/data/openclaw-usage.js`。它按 Asia/Shanghai 日期聚合 input / output / cacheRead / total token，并用 OpenRouter 模型价格生成 `openrouter-equivalent` 费用估算。该费用不是真实供应商账单。默认采集长期窗口，Token 页面再切分 1d / 7d / 30d / all。
+
+计划用 `ubuntu` 用户 crontab 单独每天刷新一次 OpenClaw 用量，不混进每 10 分钟的 `MAXNOW-DASHBOARD-SYNC`：
+
+```cron
+# BEGIN MAXNOW-OPENCLAW-USAGE
+20 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-openclaw-usage.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow openclaw usage sync start"; python3 scripts/update_data.py openclaw-usage; echo "[$(date -Is)] maxnow openclaw usage sync ok"' >> /var/www/maxnow-dashboard/logs/openclaw-usage.log 2>&1
+# END MAXNOW-OPENCLAW-USAGE
+```
 
 刷新 MaxNow 的系统状态缓存：
 
