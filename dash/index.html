@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
-    <link rel="stylesheet" href="./styles.css?v=25" />
+    <link rel="stylesheet" href="./styles.css?v=26" />
   </head>
   <body>
     <div class="app-shell">
@@ -362,21 +362,13 @@
               <h1>豆奶签到</h1>
               <p id="dounai-updated">等待同步</p>
             </div>
-            <div class="dounai-account-summary" aria-label="豆奶账户余量">
-              <div class="dounai-account-title">
-                <span>账户余量</span>
-                <small id="dounai-account-source">等待同步</small>
-              </div>
-              <div class="dounai-account-grid">
-                <span>剩余流量 <strong id="dounai-remaining-flow">--</strong></span>
-                <span>VIP 到期 <strong id="dounai-expiry">--</strong></span>
-                <span>日均可用 <strong id="dounai-daily-flow">--</strong></span>
-              </div>
-            </div>
-            <div class="dounai-page-summary" aria-label="豆奶签到摘要">
-              <span>累计签到 <strong id="dounai-days">--</strong></span>
-              <span>累计流量 <strong id="dounai-total-flow">--</strong></span>
-              <span>累计延长 <strong id="dounai-total-hours">--</strong></span>
+            <div class="dounai-top-tabs" aria-label="豆奶账号与签到摘要">
+              <span data-tone="blue">剩余流量 <strong id="dounai-remaining-flow">--</strong></span>
+              <span data-tone="blue">VIP 到期 <strong id="dounai-expiry">--</strong></span>
+              <span data-tone="cyan">日均可用 <strong id="dounai-daily-flow">--</strong></span>
+              <span data-tone="purple">累计签到 <strong id="dounai-days">--</strong></span>
+              <span data-tone="blue">累计流量 <strong id="dounai-total-flow">--</strong></span>
+              <span data-tone="cyan">累计延长 <strong id="dounai-total-hours">--</strong></span>
             </div>
           </header>
 
@@ -416,6 +408,6 @@
     <script src="./data/ai-news.js?v=1"></script>
     <script src="./data/last-30.js?v=1"></script>
     <script src="./data/wiki-todos.js?v=1"></script>
-    <script src="./app.js?v=21"></script>
+    <script src="./app.js?v=22"></script>
   </body>
 </html>

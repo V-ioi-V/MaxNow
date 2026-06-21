@@ -382,7 +382,7 @@ a {
 .token-page-head,
 .status-strip article,
 .mini-token-grid div,
-.dounai-page-summary span,
+.dounai-top-tabs span,
 .token-summary article {
   --card-color: var(--accent-strong);
   --card-border: #8fd0ff;
@@ -395,7 +395,7 @@ a {
   .token-page-head:hover,
   .status-strip article:hover,
   .mini-token-grid div:hover,
-  .dounai-page-summary span:hover,
+  .dounai-top-tabs span:hover,
   .token-summary article:hover {
     border-color: var(--card-border);
     background: #ffffff;
@@ -1032,43 +1032,6 @@ a {
   white-space: nowrap;
 }
 
-.dounai-page-summary {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(110px, 1fr));
-  gap: 8px;
-}
-
-.dounai-page-summary span {
-  --card-color: var(--purple);
-  --card-border: #e1c4ff;
-  min-height: 52px;
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  border: 1px solid #e3ebf4;
-  border-radius: var(--radius);
-  padding: 10px 12px;
-  background: #ffffff;
-  color: var(--muted);
-  font-size: 12px;
-  text-align: center;
-}
-
-.dounai-page-summary span:nth-child(2) {
-  --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
-}
-
-.dounai-page-summary span:nth-child(3) {
-  --card-color: var(--cyan);
-  --card-border: #9eeaf8;
-}
-
-.dounai-page-summary strong {
-  color: var(--card-color);
-  font-size: 20px;
-}
-
 .dounai-chart-grid {
   min-width: 0;
   display: grid;
@@ -1142,63 +1105,44 @@ a {
 }
 
 #dounai-view .token-page-head {
-  grid-template-columns: minmax(230px, 1fr) minmax(360px, 520px) auto;
+  grid-template-columns: minmax(230px, 1fr) minmax(720px, auto);
 }
 
-.dounai-account-summary {
+.dounai-top-tabs {
   min-width: 0;
-  align-self: stretch;
   display: grid;
-  align-content: center;
-  gap: 10px;
-  border: 1px solid #d8e8f8;
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  background: linear-gradient(180deg, #f8fcff 0%, #ffffff 100%);
-}
-
-.dounai-account-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--soft);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.dounai-account-title small {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dounai-account-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(92px, 1fr));
   gap: 8px;
 }
 
-.dounai-account-grid span {
+.dounai-top-tabs span {
+  --card-color: var(--accent-strong);
   min-height: 52px;
   display: grid;
   align-content: center;
+  justify-items: center;
   gap: 4px;
   border: 1px solid #e3ebf4;
   border-radius: var(--radius);
-  padding: 9px 10px;
+  padding: 10px 12px;
   background: #ffffff;
   color: var(--muted);
   font-size: 12px;
+  font-weight: 700;
+  text-align: center;
 }
 
-.dounai-account-grid strong {
-  color: var(--accent-strong);
-  font-size: 18px;
+.dounai-top-tabs span[data-tone="purple"] {
+  --card-color: var(--purple);
+}
+
+.dounai-top-tabs span[data-tone="cyan"] {
+  --card-color: var(--cyan);
+}
+
+.dounai-top-tabs strong {
+  color: var(--card-color);
+  font-size: 20px;
   line-height: 1.1;
   white-space: nowrap;
 }
@@ -1462,7 +1406,7 @@ a {
   }
 
   #dounai-view .token-page-head,
-  .dounai-account-grid {
+  .dounai-top-tabs {
     grid-template-columns: 1fr;
   }
 
@@ -1481,10 +1425,6 @@ a {
 
   .checkin-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .dounai-page-summary {
-    grid-template-columns: 1fr;
   }
 
   .status-strip article,

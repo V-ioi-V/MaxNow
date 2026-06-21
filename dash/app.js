@@ -527,10 +527,6 @@ function renderDounai() {
   setText("#dounai-remaining-flow", Number.isFinite(remainingFlow) ? formatTraffic(remainingFlow) : account.remaining_flow_label || "--");
   setText("#dounai-expiry", formatDateOnly(expiry));
   setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatTraffic(dailyAvailable)} / 天` : "--");
-  setText(
-    "#dounai-account-source",
-    account.synced_at ? `同步 ${account.synced_at}` : account.source ? account.source : copy.syncWaiting,
-  );
 
   const flowChart = qs("#dounai-flow-chart");
   if (flowChart) {
