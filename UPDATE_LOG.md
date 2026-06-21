@@ -21,6 +21,12 @@
 
 - Owner 反馈首页当前主线区域出现一串系统状态文案，影响主线信息扫描，希望去掉。
 
+### 部署当前主线标题修复
+
+- 已将当前主线标题状态摘要修复推送到 `origin/main`，并在服务器 `/var/www/maxnow-dashboard` 快进部署。
+- 服务器部署提交：`8809daa Remove mainline automation summary pill`。
+- 服务器已运行 `python3 scripts/check.py`、`sudo nginx -t` 和 `sudo systemctl reload nginx`，检查通过。
+
 ## 2026-06-19
 
 ### 修复豆奶签到线上数据路径
