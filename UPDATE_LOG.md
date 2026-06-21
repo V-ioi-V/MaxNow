@@ -11,6 +11,16 @@
 
 ## 2026-06-21
 
+### 调整 MaxNow 品牌区尺寸
+
+- 将 Dash 和 Blog 左侧品牌图标从 42px 缩小到 34px，让图标视觉重量与 `MaxNow` 字体更匹配。
+- 移除 Blog 左侧品牌区的 `blog.maxnow.cn` 副标题，使 Blog 与 Dash 的品牌区保持同一结构。
+- 保持正式深蓝 `M/N` 图标无额外底框显示。
+
+原因：
+
+- Owner 反馈新图标在侧边栏里偏大，Blog 品牌区还残留底色感和网址副标题，需要跟 Dash 对齐。
+
 ### 替换 MaxNow 正式品牌图标
 
 - 使用 Owner 确认的深蓝 `M/N` 标识生成透明背景 PNG 资产，并分别放入 Dash 与 Blog 的 `assets/maxnow-icon.png`。
