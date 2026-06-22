@@ -80,7 +80,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 这些文件驱动当前网页。
 
-- `dash/data/dashboard.json`：个人状态、主线、今日推进、日常记录、时间点、系统状态、Token 使用。
+- `dash/data/dashboard.json`：个人状态、主线、今日推进、日常记录、时间点、系统状态、Token 使用和 Home 时间卡片的手动特殊日期列表。
 - `dash/data/dashboard.js`：从 `dashboard.json` 生成的浏览器 wrapper。
 - `dash/data/ai-news.json`：外部 AI 输入。
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
@@ -187,6 +187,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
 - OpenClaw Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线趋势。费用为 OpenRouter 等价估算，后续还需要补 Codex 用量 collector。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
+- Home 时间卡片已支持 `dashboard.json.specialDates`：用手动维护的公历日期或一次性日期在当天显示生日、纪念日等轻量提醒；没有命中时继续显示“今日无节日”。
+- Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留原有三个入口，不做折叠侧栏。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
 - 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，失败日志会进入 Home 系统状态。
 - 个人博客已确定推荐走 `blog.maxnow.cn`，但还缺发布 manifest / front matter 策略、构建脚本、nginx 子域名配置和第一批公开文章清单。
