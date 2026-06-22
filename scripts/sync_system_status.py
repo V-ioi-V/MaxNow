@@ -84,8 +84,6 @@ def read_version():
 
 
 def git_state():
-    _, commit, _ = run_command(["git", "rev-parse", "--short", "HEAD"])
-    _, branch, _ = run_command(["git", "branch", "--show-current"])
     _, status, _ = run_command(["git", "status", "--short"])
     changed_paths = []
     for line in status.splitlines():
@@ -94,18 +92,11 @@ def git_state():
         changed_paths.append(line[2:].strip().replace("\\", "/"))
     dirty = any(path not in GENERATED_DATA_PATHS for path in changed_paths)
     value = f"v{read_version()}"
-    note = f"{branch or 'unknown'} branch"
-    if dirty:
-        note += f"; commit {commit or '--'}; \u6709\u672a\u63d0\u4ea4\u4ee3\u7801\u6539\u52a8"
-    elif changed_paths:
-        note += f"; commit {commit or '--'}; \u8fd0\u884c\u6570\u636e\u5df2\u66f4\u65b0"
-    else:
-        note += f"; commit {commit or '--'}; \u5e72\u51c0"
     return {
         "key": "deploy",
         "name": "MaxNow \u7248\u672c",
         "value": value,
-        "note": note,
+        "note": "",
     }, not dirty
 
 
