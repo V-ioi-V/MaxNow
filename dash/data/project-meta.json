@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-06-22 23:04",
+  "updatedAt": "2026-06-22 23:29",
   "version": "1.0.0.00",
   "versionLabel": "v1.0.0.00",
-  "branch": "feature/special-dates-sidebar",
-  "commit": "eeed547",
+  "branch": "bugfix/sidebar-alignment",
+  "commit": "f39e8c4",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/special-dates-sidebar · commit eeed547 · 有未提交代码改动",
+  "deployNote": "bugfix/sidebar-alignment · commit f39e8c4 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-06-22",
+      "title": "微调左侧导航对齐",
+      "summary": "品牌区增加和导航项一致的左侧内缩，让 MaxNow 图标 / 文本与下方导航图标 / 文本共用同一组视觉轴。"
+    },
     {
       "date": "2026-06-22",
       "title": "完成时间卡片特殊日期和侧栏收窄",
@@ -28,11 +33,6 @@
       "date": "2026-06-22",
       "title": "增加 MaxNow 版本和最近更新模块",
       "summary": "新增根目录 `VERSION`，版本号格式固定为 `x.x.x.xx`，当前为 `1.0.0.00`。"
-    },
-    {
-      "date": "2026-06-22",
-      "title": "记录左侧导航栏收窄待办",
-      "summary": "更新 `ROADMAP.md`，将“收窄左侧导航栏”加入 `Next`。"
     }
   ]
 }

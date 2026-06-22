@@ -73,9 +73,11 @@ a {
 }
 
 .brand {
+  width: 100%;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 13px;
+  padding: 0 11px;
   text-decoration: none;
   cursor: default;
   user-select: none;
@@ -112,13 +114,13 @@ a {
 
 .side-nav-item {
   width: 100%;
-  min-height: 56px;
+  min-height: 54px;
   display: flex;
   align-items: center;
   gap: 9px;
   border: 1px solid transparent;
   border-radius: var(--radius);
-  padding: 10px 10px;
+  padding: 9px 10px;
   background: transparent;
   color: var(--muted);
   text-align: left;
