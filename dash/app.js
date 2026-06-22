@@ -365,6 +365,7 @@ function getSystemPercent(item) {
 }
 
 function formatSystemNote(item) {
+  if (item.key === "deploy") return "";
   const note = item.note || "";
   if (item.key === "cpu") {
     return note

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-06-22 22:18",
+  "updatedAt": "2026-06-22 22:44",
   "version": "1.0.0.00",
   "versionLabel": "v1.0.0.00",
-  "branch": "bugfix/dounai-budget-axis",
-  "commit": "7a54861",
+  "branch": "bugfix/system-version-note",
+  "commit": "ffe6691",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/dounai-budget-axis · commit 7a54861 · 有未提交代码改动",
+  "deployNote": "bugfix/system-version-note · commit ffe6691 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-06-22",
+      "title": "精简系统状态版本展示",
+      "summary": "Home 系统状态里的 `MaxNow 版本` 只保留版本号，不再显示 branch、commit 和运行数据说明。"
+    },
     {
       "date": "2026-06-22",
       "title": "修正豆奶日均可用显示",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-06-22",
       "title": "记录时间卡片特殊日期待办",
       "summary": "更新 `ROADMAP.md`，将“时间卡片智能显示纪念日、生日等特殊日期”加入 `Next`。"
-    },
-    {
-      "date": "2026-06-21",
-      "title": "微调 Token 趋势和调用列表",
-      "summary": "Token 最近 30 天折线图在进入 Token 页后会二次按实际容器宽度重绘，避免首次进入时图表只占左半边。"
     }
   ]
 };
