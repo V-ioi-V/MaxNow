@@ -1,103 +1,145 @@
 {
-  "updatedAt": "2026-06-14 00:00",
-  "sourceSummary": "Last-30 rolling context draft",
+  "updatedAt": "2026-06-23 00:08",
+  "sourceSummary": "免费 AI 外部信号滚动记忆",
   "today": {
-    "date": "2026-06-14",
-    "title": "今日大事",
-    "summary": "今天主要补齐 MaxNow 的项目上下文结构，并启动 Last-30 滚动记忆建设。",
-    "items": [
-      {
-        "date": "2026-06-14",
-        "title": "补齐项目上下文地图",
-        "summary": "新增 CONTEXT.md，明确长期上下文、代理执行上下文、每日状态上下文和滚动记忆上下文的分层。",
-        "source": "Codex / repo docs",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": ""
-      },
-      {
-        "date": "2026-06-14",
-        "title": "启动 Last-30 滚动记忆",
-        "summary": "确定要用最近 30 天滚动摘要记录今日、本周、近 30 天主线、决定和等待项。",
-        "source": "Owner idea",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": ""
-      }
-    ]
+    "date": "2026-06-23",
+    "title": "今日 AI 信号",
+    "summary": "暂无新的今日 AI 信号，保留观察。",
+    "items": []
   },
   "week": {
-    "range": "2026-06-08/2026-06-14",
-    "title": "本周大事",
-    "summary": "本周重点从单页看板推进到可接力的上下文系统，并开始拆分自动化维护边界。",
+    "range": "2026-06-17/2026-06-23",
+    "title": "本周 AI 变化",
+    "summary": "本次从 OpenAI, Anthropic, GitHub Blog, Anthropic SDK 捕捉到 7 条高相关 AI 信号。",
     "items": [
       {
-        "date": "2026-06-13",
-        "title": "确定文档语言分工",
-        "summary": "Owner 阅读的产品文档使用中文，代理执行规则可以使用英文。",
-        "source": "Owner constraint",
+        "date": "2026-06-22",
+        "title": "Samsung Electronics brings ChatGPT and Codex to employees",
+        "summary": "OpenAI：Samsung Electronics deploys ChatGPT Enterprise and Codex to employees worldwide, marking one of OpenAI’s largest enterprise AI rol；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "OpenAI",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": ""
+        "url": "https://openai.com/index/samsung-electronics-chatgpt-codex-deployment"
       },
       {
-        "date": "2026-06-14",
-        "title": "明确 CONTEXT.md 主要给代理接力",
-        "summary": "CONTEXT.md 用于 Codex 快速恢复项目上下文，不作为 Owner-facing 汇报文档。",
-        "source": "Owner constraint",
+        "date": "2026-06-19",
+        "title": "New usage analytics and updated spend controls for enterprises",
+        "summary": "OpenAI：OpenAI introduces new spend controls and usage analytics for ChatGPT Enterprise, helping organizations manage costs and scale AI w；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "OpenAI",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": ""
+        "url": "https://openai.com/index/chatgpt-enterprise-spend-controls"
+      },
+      {
+        "date": "2026-06-17",
+        "title": "Announcements Anthropic opens Seoul office and announces new partnerships across the Korean AI ecosystem",
+        "summary": "Anthropic：Announcements Anthropic opens Seoul office and announces new partnerships across the Korean AI ecosystem；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "Anthropic",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://www.anthropic.com/news/seoul-office-partnerships-korean-ai-ecosystem"
+      },
+      {
+        "date": "2026-06-20",
+        "title": "How we built an internal data analytics agent",
+        "summary": "GitHub Blog：Qubot, our internal Copilot-powered analytics agent, allows any GitHub employee to ask questions about our data in plain language.；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "GitHub Blog",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.blog/ai-and-ml/github-copilot/how-we-built-an-internal-data-analytics-agent/"
+      },
+      {
+        "date": "2026-06-19",
+        "title": "v0.110.0",
+        "summary": "Anthropic SDK：0.110.0 (2026-06-18) Full Changelog: v0.109.2...v0.110.0 Features api: add support for new code_execution_20260120 tool ( 5e23212；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
+        "source": "Anthropic SDK",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.110.0"
+      },
+      {
+        "date": "2026-06-17",
+        "title": "v2.42.0",
+        "summary": "OpenAI Python：2.42.0 (2026-06-16) Full Changelog: v2.41.1...v2.42.0 Features api: admin spend_alerts ( 6134198 ) api: manual updates ( f337bf4 )；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
+        "source": "OpenAI Python",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.com/openai/openai-python/releases/tag/v2.42.0"
+      },
+      {
+        "date": "2026-06-18",
+        "title": "Using AI to help physicians diagnose rare genetic diseases affecting children",
+        "summary": "OpenAI：Researchers used an OpenAI reasoning model to help diagnose rare diseases, identifying 18 new diagnoses in previously unsolved cas；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "OpenAI",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://openai.com/index/diagnose-rare-childhood-diseases"
       }
     ]
   },
   "last30": {
-    "range": "2026-05-16/2026-06-14",
-    "title": "近 30 天主线",
-    "summary": "MaxNow 从早期个人站/灵感宇宙方向收敛为私人状态工作站，并逐步建立数据、自动化、上下文和未来桌面入口。",
+    "range": "2026-05-25/2026-06-23",
+    "title": "近 30 天 AI 主线",
+    "summary": "用免费公开源追踪模型、agent、开发者工具、成本和开源生态的持续变化。",
     "mainlines": [
       {
-        "title": "私人状态工作站",
-        "summary": "核心定位从公开展示或新闻聚合，收敛为 Owner 每天查看个人状态、主线、推进和系统状态的工作站。",
+        "title": "模型与 API 更新",
+        "summary": "近 30 天捕捉到 11 条相关信号，代表来源包括 Anthropic, Anthropic SDK, OpenAI。",
         "status": "active",
-        "source": "SPEC.md",
-        "confidence": "high",
+        "source": "free external sources",
+        "confidence": "medium",
         "needsOwnerConfirm": false
       },
       {
-        "title": "OpenClaw 数据自动化边界",
-        "summary": "OpenClaw 日常只更新数据文件，页面代码、产品文档和上下文文档由 Codex 或 Owner 维护。",
+        "title": "Agent 与工具调用",
+        "summary": "近 30 天捕捉到 11 条相关信号，代表来源包括 Anthropic, Anthropic SDK, Hacker News。",
         "status": "active",
-        "source": "AGENTS.md / OpenClaw skill",
-        "confidence": "high",
+        "source": "free external sources",
+        "confidence": "medium",
         "needsOwnerConfirm": false
       },
       {
-        "title": "桌面伴随入口",
-        "summary": "未来可能增加 macOS 状态栏面板和 Windows 桌面壁纸式看板，让 MaxNow 不只存在于浏览器。",
-        "status": "research",
-        "source": "IDEAS.md",
+        "title": "开发者工具与 SDK",
+        "summary": "近 30 天捕捉到 7 条相关信号，代表来源包括 Anthropic SDK, Hacker News, OpenAI。",
+        "status": "active",
+        "source": "free external sources",
+        "confidence": "medium",
+        "needsOwnerConfirm": false
+      },
+      {
+        "title": "成本与 Token",
+        "summary": "近 30 天捕捉到 1 条相关信号，代表来源包括 OpenAI。",
+        "status": "active",
+        "source": "free external sources",
+        "confidence": "medium",
+        "needsOwnerConfirm": false
+      },
+      {
+        "title": "开源与研究",
+        "summary": "近 30 天捕捉到 1 条相关信号，代表来源包括 OpenAI。",
+        "status": "active",
+        "source": "free external sources",
         "confidence": "medium",
         "needsOwnerConfirm": false
       }
     ],
     "decisions": [
       {
-        "date": "2026-06-13",
-        "title": "用户可见文档中文优先",
-        "summary": "给 Owner 看的产品文档用中文，给代理执行的规则可以用英文。",
-        "source": "Owner constraint",
+        "date": "2026-06-23",
+        "title": "Last-30 先采用免费公开源",
+        "summary": "初版不接 X/Twitter 付费 API，优先使用官方 RSS、GitHub、HN、GDELT 和 arXiv。",
+        "source": "Owner direction",
         "confidence": "high",
         "needsOwnerConfirm": false
       }
     ],
     "waiting": [
       {
-        "title": "自动更新执行器",
-        "summary": "还需要决定服务器上由 OpenClaw cron、普通脚本 cron，还是其他执行器负责每天更新 Last-30。",
-        "source": "CONTEXT.md",
+        "title": "部分免费源抓取失败",
+        "summary": "免费 RSS/API 偶尔会超时或限流，本次已保留其他来源结果，下一次同步继续尝试。",
+        "source": "sync_ai_last30.py",
         "confidence": "medium",
-        "needsOwnerConfirm": true
+        "needsOwnerConfirm": false
       }
     ]
   }

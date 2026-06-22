@@ -166,11 +166,22 @@ python3 scripts/check.py
 python3 scripts/update_data.py runtime
 python3 scripts/update_data.py project-status
 python3 scripts/update_data.py openclaw-usage
+python3 scripts/update_data.py ai-last30
 python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+
+刷新免费 AI 外部信号和 Last-30：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/update_data.py ai-last30
+python3 scripts/check.py
+```
+
+当前免费源包括官方 RSS / 博客、GitHub releases、Hacker News、GDELT 和 arXiv 等。免费源偶发超时或限流时，脚本会记录部分失败并保留其他结果；X / Twitter 暂不作为基础来源。
 
 刷新 MaxNow 版本号和最近更新模块：
 

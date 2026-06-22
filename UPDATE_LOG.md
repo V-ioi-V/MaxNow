@@ -11,6 +11,14 @@
 
 ## 2026-06-22
 
+### 接入免费 AI 外部信号版 Last-30
+
+- 新增 `scripts/sync_ai_last30.py`，用免费公开源抓取、打分、去重并刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
+- 新增 `python scripts/update_data.py ai-last30` 统一入口，并把脚本纳入 `scripts/check.py` 必要文件检查。
+- 将 Last-30 产品口径调整为“AI 外部信号滚动记忆”，不再默认记录 MaxNow 内部项目流水。
+- 明确 X / Twitter 暂不作为基础来源；只有 Owner 批准付费 API 和博主白名单后再接入。
+- 采集脚本本身不调用模型、不消耗 token；若后续让 OpenClaw 二次摘要，应只处理少量候选。
+
 ### 微调左侧导航对齐
 
 - 品牌区增加和导航项一致的左侧内缩，让 MaxNow 图标 / 文本与下方导航图标 / 文本共用同一组视觉轴。

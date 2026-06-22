@@ -72,6 +72,7 @@ def check_required_files():
         "scripts/sync_system_status.py",
         "scripts/sync_wiki_todos.py",
         "scripts/sync_openclaw_usage.py",
+        "scripts/sync_ai_last30.py",
         "scripts/sync_project_meta.py",
         "scripts/update_data.py",
         "openclaw/maxnow-dashboard/SKILL.md",

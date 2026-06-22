@@ -1,13 +1,13 @@
 ﻿---
 name: maxnow-last30
-description: Maintain MaxNow rolling 30-day context data. Use when OpenClaw updates today's highlights, weekly highlights, 30-day mainlines, decisions, and waiting items without changing page code or product documents.
+description: Maintain MaxNow rolling 30-day external AI signal data. Use when OpenClaw updates AI news, weekly AI changes, 30-day AI mainlines, impact notes, and watch items without changing page code or product documents.
 ---
 
 # MaxNow Last-30
 
-Maintain rolling context for the private MaxNow workstation.
+Maintain rolling external AI signal context for the private MaxNow workstation.
 
-This skill updates the Last-30 data files only. It does not update page code, product documents, or the main dashboard data unless explicitly instructed by the owner.
+This skill updates the Last-30 data files only. It does not update page code, product documents, or the main dashboard data unless explicitly instructed by the owner. Last-30 is for external AI signals, not MaxNow internal project logs.
 
 ## Hard Boundary
 
@@ -42,14 +42,16 @@ If the data shape, page structure, or product boundary needs to change, stop and
 
 Keep a concise rolling memory of:
 
-- today's important events
-- this week's important events
-- recent 30-day mainlines
-- owner-confirmed decisions
-- waiting items and blockers
+- today's important external AI signals
+- this week's AI changes
+- recent 30-day AI mainlines
+- potential impact on MaxNow, Codex, OpenClaw, model choices, or token cost
+- watch items and uncertain signals
 - judgments that still need owner confirmation
 
-Do not rebuild the full 30-day memory from scratch every day. Update incrementally from the previous Last-30 JSON plus newly available facts.
+Prefer free public sources first: official blogs/RSS, GitHub releases, Hacker News, Reddit/public community sources, arXiv, GDELT, or similar free indexes. X/Twitter is not a hard dependency; do not use paid X API unless the owner explicitly approves budget and account list.
+
+Do not feed large full-text news dumps into the model. Use scripts or source snippets to prefilter candidates, then summarize only a small candidate set.
 
 ## Data Files
 
@@ -65,7 +67,7 @@ Preserve this shape when possible:
   "sourceSummary": "Last-30 rolling context",
   "today": {
     "date": "YYYY-MM-DD",
-    "title": "今日大事",
+    "title": "今日 AI 信号",
     "summary": "一句话摘要。",
     "items": [
       {
@@ -81,13 +83,13 @@ Preserve this shape when possible:
   },
   "week": {
     "range": "YYYY-MM-DD/YYYY-MM-DD",
-    "title": "本周大事",
+    "title": "本周 AI 变化",
     "summary": "一句话摘要。",
     "items": []
   },
   "last30": {
     "range": "YYYY-MM-DD/YYYY-MM-DD",
-    "title": "近 30 天主线",
+    "title": "近 30 天 AI 主线",
     "summary": "一句话摘要。",
     "mainlines": [],
     "decisions": [],
@@ -109,18 +111,19 @@ Common item fields:
 
 Prefer automatic facts:
 
-- Git commits and file changes
-- OpenClaw run results
-- server/deployment state
-- Token usage changes
-- owner-confirmed notes already present in data files
+- official AI model/API/tool announcements
+- GitHub releases for relevant AI developer tools
+- high-signal Hacker News or public community links
+- arXiv/research signals when relevant to agents, coding, models, or cost
+- GDELT/free news index results when available
+- already-collected candidates from `scripts/sync_ai_last30.py`
 
 Be careful with judgments:
 
-- Do not invent personal feelings.
+- Do not invent impact on the owner.
 - Do not decide true priority for the owner.
-- Do not mark a decision as owner-confirmed unless it is clearly stated by the owner or already recorded as confirmed.
-- Use `needsOwnerConfirm: true` for inferred priorities, uncertain blockers, and subjective conclusions.
+- Do not mark a signal as important unless it has a clear relation to tools, models, agents, developer workflow, or cost.
+- Use `needsOwnerConfirm: true` for inferred importance, uncertain impact, and subjective conclusions.
 
 Keep arrays compact:
 

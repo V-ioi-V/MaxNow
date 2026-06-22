@@ -58,7 +58,7 @@ OpenClaw records facts and drafts summaries. The owner keeps final judgment. Do 
 
 `dash/data/dashboard.json` is the main data source for Home and Token. `dash/data/dashboard.js` must contain the same object assigned to `window.MAXNOW_DASHBOARD_DATA`.
 
-`dash/data/ai-news.json` is only for AI external inputs. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
+`dash/data/ai-news.json` is only for Home AI external inputs. It normally contains 0-3 high-signal items from the free external AI signal collector or Last-30 AI signal memory. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
 
 `dash/data/dounai_checkin.json` stores Dounai daily check-in results, account balance snapshots, and account daily-budget history. OpenClaw check-in automation may update it, but MaxNow should only display traffic, account-extension hours, cumulative check-in days, remaining usable traffic, expiry, daily traffic budget, daily-budget history, and recent records for charts/tables; beans are raw data only and should not drive UI.
 
@@ -184,7 +184,7 @@ Keep arrays short:
 }
 ```
 
-Show at most 3 items on the page. X/Twitter is useful for early signals but is not required. If X is unavailable, use official blogs/RSS, Hacker News, GitHub, Reddit, releases, and research labs.
+Show at most 3 items on the page. Use free public sources first: official blogs/RSS, Hacker News, GitHub releases, Reddit/public community sources, arXiv, GDELT, and research labs. X/Twitter is useful for early signals but is not required and must not be used through paid API unless the owner explicitly approves budget and account list.
 
 ## Source Policy
 
