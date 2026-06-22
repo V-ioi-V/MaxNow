@@ -97,6 +97,14 @@ function formatTraffic(value) {
   return `${Math.round(amount)} MB`;
 }
 
+function formatDailyTraffic(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "--";
+  if (amount >= 1024 * 1024) return `${(amount / 1024 / 1024).toFixed(2)} TB`;
+  if (amount >= 1024) return `${(amount / 1024).toFixed(2)} GB`;
+  return `${Math.round(amount)} MB`;
+}
+
 function parseTrafficLabel(label) {
   const match = String(label || "").trim().match(/^([\d.]+)\s*(TB|GB|MB|B)$/i);
   if (!match) return NaN;
@@ -647,7 +655,7 @@ function createLineChart(records, options) {
   records.forEach((_, index) => {
     if (index % labelInterval === 0) xLabelIndexes.add(index);
   });
-  if (records.length > 0 && records.length - 1 - Math.max(...xLabelIndexes) >= 3) {
+  if (records.length > 0) {
     xLabelIndexes.add(records.length - 1);
   }
 
@@ -729,7 +737,7 @@ function renderDounai() {
   setText("#dounai-total-hours", formatDuration(total.hours));
   setText("#dounai-remaining-flow", Number.isFinite(remainingFlow) ? formatTraffic(remainingFlow) : account.remaining_flow_label || "--");
   setText("#dounai-expiry", formatDateOnly(expiry));
-  setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatTraffic(dailyAvailable)}/d` : "--");
+  setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatDailyTraffic(dailyAvailable)}/d` : "--");
 
   const dailyBudgetChart = qs("#dounai-daily-budget-chart");
   if (dailyBudgetChart) {
@@ -739,7 +747,7 @@ function renderDounai() {
       unit: "GB",
       stroke: "#7c3aed",
       width: getChartRenderWidth(dailyBudgetChart),
-      formatter: (value) => `${value.toFixed(1)} GB`,
+      formatter: (value) => `${value.toFixed(2)} GB`,
     });
   }
 
