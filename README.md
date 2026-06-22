@@ -41,6 +41,7 @@ scripts/
   update_data.py
   sync_system_status.py
   sync_wiki_todos.py
+  sync_ai_last30.py
 ```
 
 `dash/` 是 `dash.maxnow.cn` 的静态站目录。`blog/` 是 `blog.maxnow.cn` 的发布层工作区，当前先放文章流首页、归档总览、专题索引、分类二级页、细分标签索引和方案说明页预览。根目录 `index.html` 只作为本地开发入口，不是线上 dashboard 本体。
@@ -116,11 +117,13 @@ Home 页面读取：
 
 ```powershell
 python scripts/update_data.py wrap all
+python scripts/update_data.py ai-last30
 python scripts/update_data.py project-status
 python scripts/update_data.py runtime
 ```
 
 - `wrap all`：只从 JSON 重新生成所有 `.js` wrapper，并运行校验。
+- `ai-last30`：从免费公开源刷新首页 AI 输入和 Last-30 AI 外部信号滚动记忆。
 - `project-status`：显式从 `ROADMAP.md` 刷新 Home 的当前主线 / 今日推进，不由 cron 自动覆盖。
 - `runtime`：服务器定时任务使用，刷新 wiki-todos 和系统状态，然后运行校验。
 
@@ -159,11 +162,13 @@ python scripts/check.py
 
 `dash/data/last-30.json`：
 
-- 今日大事
-- 本周大事
-- 近 30 天主线
-- 重要决定
-- 等待项 / 待 Owner 确认判断
+- 今日 AI 信号
+- 本周 AI 变化
+- 近 30 天 AI 主线
+- 可能影响 MaxNow、Codex、OpenClaw、模型选择或 token 成本的信号
+- 等待观察 / 待 Owner 确认判断
+
+`scripts/sync_ai_last30.py` 使用免费公开源做本地抓取、关键词打分、去重和短摘要，采集本身不调用模型、不消耗 token。X / Twitter 暂不作为基础来源。
 
 ## OpenClaw 分工
 

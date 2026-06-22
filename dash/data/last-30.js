@@ -1,103 +1,145 @@
 window.MAXNOW_LAST30_DATA = {
-  "updatedAt": "2026-06-14 00:00",
-  "sourceSummary": "Last-30 rolling context draft",
+  "updatedAt": "2026-06-23 00:08",
+  "sourceSummary": "免费 AI 外部信号滚动记忆",
   "today": {
-    "date": "2026-06-14",
-    "title": "\u4eca\u65e5\u5927\u4e8b",
-    "summary": "\u4eca\u5929\u4e3b\u8981\u8865\u9f50 MaxNow \u7684\u9879\u76ee\u4e0a\u4e0b\u6587\u7ed3\u6784\uff0c\u5e76\u542f\u52a8 Last-30 \u6eda\u52a8\u8bb0\u5fc6\u5efa\u8bbe\u3002",
-    "items": [
-      {
-        "date": "2026-06-14",
-        "title": "\u8865\u9f50\u9879\u76ee\u4e0a\u4e0b\u6587\u5730\u56fe",
-        "summary": "\u65b0\u589e CONTEXT.md\uff0c\u660e\u786e\u957f\u671f\u4e0a\u4e0b\u6587\u3001\u4ee3\u7406\u6267\u884c\u4e0a\u4e0b\u6587\u3001\u6bcf\u65e5\u72b6\u6001\u4e0a\u4e0b\u6587\u548c\u6eda\u52a8\u8bb0\u5fc6\u4e0a\u4e0b\u6587\u7684\u5206\u5c42\u3002",
-        "source": "Codex / repo docs",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": ""
-      },
-      {
-        "date": "2026-06-14",
-        "title": "\u542f\u52a8 Last-30 \u6eda\u52a8\u8bb0\u5fc6",
-        "summary": "\u786e\u5b9a\u8981\u7528\u6700\u8fd1 30 \u5929\u6eda\u52a8\u6458\u8981\u8bb0\u5f55\u4eca\u65e5\u3001\u672c\u5468\u3001\u8fd1 30 \u5929\u4e3b\u7ebf\u3001\u51b3\u5b9a\u548c\u7b49\u5f85\u9879\u3002",
-        "source": "Owner idea",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": ""
-      }
-    ]
+    "date": "2026-06-23",
+    "title": "今日 AI 信号",
+    "summary": "暂无新的今日 AI 信号，保留观察。",
+    "items": []
   },
   "week": {
-    "range": "2026-06-08/2026-06-14",
-    "title": "\u672c\u5468\u5927\u4e8b",
-    "summary": "\u672c\u5468\u91cd\u70b9\u4ece\u5355\u9875\u770b\u677f\u63a8\u8fdb\u5230\u53ef\u63a5\u529b\u7684\u4e0a\u4e0b\u6587\u7cfb\u7edf\uff0c\u5e76\u5f00\u59cb\u62c6\u5206\u81ea\u52a8\u5316\u7ef4\u62a4\u8fb9\u754c\u3002",
+    "range": "2026-06-17/2026-06-23",
+    "title": "本周 AI 变化",
+    "summary": "本次从 OpenAI, Anthropic, GitHub Blog, Anthropic SDK 捕捉到 7 条高相关 AI 信号。",
     "items": [
       {
-        "date": "2026-06-13",
-        "title": "\u786e\u5b9a\u6587\u6863\u8bed\u8a00\u5206\u5de5",
-        "summary": "Owner \u9605\u8bfb\u7684\u4ea7\u54c1\u6587\u6863\u4f7f\u7528\u4e2d\u6587\uff0c\u4ee3\u7406\u6267\u884c\u89c4\u5219\u53ef\u4ee5\u4f7f\u7528\u82f1\u6587\u3002",
-        "source": "Owner constraint",
+        "date": "2026-06-22",
+        "title": "Samsung Electronics brings ChatGPT and Codex to employees",
+        "summary": "OpenAI：Samsung Electronics deploys ChatGPT Enterprise and Codex to employees worldwide, marking one of OpenAI’s largest enterprise AI rol；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "OpenAI",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": ""
+        "url": "https://openai.com/index/samsung-electronics-chatgpt-codex-deployment"
       },
       {
-        "date": "2026-06-14",
-        "title": "\u660e\u786e CONTEXT.md \u4e3b\u8981\u7ed9\u4ee3\u7406\u63a5\u529b",
-        "summary": "CONTEXT.md \u7528\u4e8e Codex \u5feb\u901f\u6062\u590d\u9879\u76ee\u4e0a\u4e0b\u6587\uff0c\u4e0d\u4f5c\u4e3a Owner-facing \u6c47\u62a5\u6587\u6863\u3002",
-        "source": "Owner constraint",
+        "date": "2026-06-19",
+        "title": "New usage analytics and updated spend controls for enterprises",
+        "summary": "OpenAI：OpenAI introduces new spend controls and usage analytics for ChatGPT Enterprise, helping organizations manage costs and scale AI w；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "OpenAI",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": ""
+        "url": "https://openai.com/index/chatgpt-enterprise-spend-controls"
+      },
+      {
+        "date": "2026-06-17",
+        "title": "Announcements Anthropic opens Seoul office and announces new partnerships across the Korean AI ecosystem",
+        "summary": "Anthropic：Announcements Anthropic opens Seoul office and announces new partnerships across the Korean AI ecosystem；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "Anthropic",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://www.anthropic.com/news/seoul-office-partnerships-korean-ai-ecosystem"
+      },
+      {
+        "date": "2026-06-20",
+        "title": "How we built an internal data analytics agent",
+        "summary": "GitHub Blog：Qubot, our internal Copilot-powered analytics agent, allows any GitHub employee to ask questions about our data in plain language.；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "GitHub Blog",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.blog/ai-and-ml/github-copilot/how-we-built-an-internal-data-analytics-agent/"
+      },
+      {
+        "date": "2026-06-19",
+        "title": "v0.110.0",
+        "summary": "Anthropic SDK：0.110.0 (2026-06-18) Full Changelog: v0.109.2...v0.110.0 Features api: add support for new code_execution_20260120 tool ( 5e23212；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
+        "source": "Anthropic SDK",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.110.0"
+      },
+      {
+        "date": "2026-06-17",
+        "title": "v2.42.0",
+        "summary": "OpenAI Python：2.42.0 (2026-06-16) Full Changelog: v2.41.1...v2.42.0 Features api: admin spend_alerts ( 6134198 ) api: manual updates ( f337bf4 )；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
+        "source": "OpenAI Python",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.com/openai/openai-python/releases/tag/v2.42.0"
+      },
+      {
+        "date": "2026-06-18",
+        "title": "Using AI to help physicians diagnose rare genetic diseases affecting children",
+        "summary": "OpenAI：Researchers used an OpenAI reasoning model to help diagnose rare diseases, identifying 18 new diagnoses in previously unsolved cas；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "OpenAI",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://openai.com/index/diagnose-rare-childhood-diseases"
       }
     ]
   },
   "last30": {
-    "range": "2026-05-16/2026-06-14",
-    "title": "\u8fd1 30 \u5929\u4e3b\u7ebf",
-    "summary": "MaxNow \u4ece\u65e9\u671f\u4e2a\u4eba\u7ad9/\u7075\u611f\u5b87\u5b99\u65b9\u5411\u6536\u655b\u4e3a\u79c1\u4eba\u72b6\u6001\u5de5\u4f5c\u7ad9\uff0c\u5e76\u9010\u6b65\u5efa\u7acb\u6570\u636e\u3001\u81ea\u52a8\u5316\u3001\u4e0a\u4e0b\u6587\u548c\u672a\u6765\u684c\u9762\u5165\u53e3\u3002",
+    "range": "2026-05-25/2026-06-23",
+    "title": "近 30 天 AI 主线",
+    "summary": "用免费公开源追踪模型、agent、开发者工具、成本和开源生态的持续变化。",
     "mainlines": [
       {
-        "title": "\u79c1\u4eba\u72b6\u6001\u5de5\u4f5c\u7ad9",
-        "summary": "\u6838\u5fc3\u5b9a\u4f4d\u4ece\u516c\u5f00\u5c55\u793a\u6216\u65b0\u95fb\u805a\u5408\uff0c\u6536\u655b\u4e3a Owner \u6bcf\u5929\u67e5\u770b\u4e2a\u4eba\u72b6\u6001\u3001\u4e3b\u7ebf\u3001\u63a8\u8fdb\u548c\u7cfb\u7edf\u72b6\u6001\u7684\u5de5\u4f5c\u7ad9\u3002",
+        "title": "模型与 API 更新",
+        "summary": "近 30 天捕捉到 11 条相关信号，代表来源包括 Anthropic, Anthropic SDK, OpenAI。",
         "status": "active",
-        "source": "SPEC.md",
-        "confidence": "high",
+        "source": "free external sources",
+        "confidence": "medium",
         "needsOwnerConfirm": false
       },
       {
-        "title": "OpenClaw \u6570\u636e\u81ea\u52a8\u5316\u8fb9\u754c",
-        "summary": "OpenClaw \u65e5\u5e38\u53ea\u66f4\u65b0\u6570\u636e\u6587\u4ef6\uff0c\u9875\u9762\u4ee3\u7801\u3001\u4ea7\u54c1\u6587\u6863\u548c\u4e0a\u4e0b\u6587\u6587\u6863\u7531 Codex \u6216 Owner \u7ef4\u62a4\u3002",
+        "title": "Agent 与工具调用",
+        "summary": "近 30 天捕捉到 11 条相关信号，代表来源包括 Anthropic, Anthropic SDK, Hacker News。",
         "status": "active",
-        "source": "AGENTS.md / OpenClaw skill",
-        "confidence": "high",
+        "source": "free external sources",
+        "confidence": "medium",
         "needsOwnerConfirm": false
       },
       {
-        "title": "\u684c\u9762\u4f34\u968f\u5165\u53e3",
-        "summary": "\u672a\u6765\u53ef\u80fd\u589e\u52a0 macOS \u72b6\u6001\u680f\u9762\u677f\u548c Windows \u684c\u9762\u58c1\u7eb8\u5f0f\u770b\u677f\uff0c\u8ba9 MaxNow \u4e0d\u53ea\u5b58\u5728\u4e8e\u6d4f\u89c8\u5668\u3002",
-        "status": "research",
-        "source": "IDEAS.md",
+        "title": "开发者工具与 SDK",
+        "summary": "近 30 天捕捉到 7 条相关信号，代表来源包括 Anthropic SDK, Hacker News, OpenAI。",
+        "status": "active",
+        "source": "free external sources",
+        "confidence": "medium",
+        "needsOwnerConfirm": false
+      },
+      {
+        "title": "成本与 Token",
+        "summary": "近 30 天捕捉到 1 条相关信号，代表来源包括 OpenAI。",
+        "status": "active",
+        "source": "free external sources",
+        "confidence": "medium",
+        "needsOwnerConfirm": false
+      },
+      {
+        "title": "开源与研究",
+        "summary": "近 30 天捕捉到 1 条相关信号，代表来源包括 OpenAI。",
+        "status": "active",
+        "source": "free external sources",
         "confidence": "medium",
         "needsOwnerConfirm": false
       }
     ],
     "decisions": [
       {
-        "date": "2026-06-13",
-        "title": "\u7528\u6237\u53ef\u89c1\u6587\u6863\u4e2d\u6587\u4f18\u5148",
-        "summary": "\u7ed9 Owner \u770b\u7684\u4ea7\u54c1\u6587\u6863\u7528\u4e2d\u6587\uff0c\u7ed9\u4ee3\u7406\u6267\u884c\u7684\u89c4\u5219\u53ef\u4ee5\u7528\u82f1\u6587\u3002",
-        "source": "Owner constraint",
+        "date": "2026-06-23",
+        "title": "Last-30 先采用免费公开源",
+        "summary": "初版不接 X/Twitter 付费 API，优先使用官方 RSS、GitHub、HN、GDELT 和 arXiv。",
+        "source": "Owner direction",
         "confidence": "high",
         "needsOwnerConfirm": false
       }
     ],
     "waiting": [
       {
-        "title": "\u81ea\u52a8\u66f4\u65b0\u6267\u884c\u5668",
-        "summary": "\u8fd8\u9700\u8981\u51b3\u5b9a\u670d\u52a1\u5668\u4e0a\u7531 OpenClaw cron\u3001\u666e\u901a\u811a\u672c cron\uff0c\u8fd8\u662f\u5176\u4ed6\u6267\u884c\u5668\u8d1f\u8d23\u6bcf\u5929\u66f4\u65b0 Last-30\u3002",
-        "source": "CONTEXT.md",
+        "title": "部分免费源抓取失败",
+        "summary": "免费 RSS/API 偶尔会超时或限流，本次已保留其他来源结果，下一次同步继续尝试。",
+        "source": "sync_ai_last30.py",
         "confidence": "medium",
-        "needsOwnerConfirm": true
+        "needsOwnerConfirm": false
       }
     ]
   }

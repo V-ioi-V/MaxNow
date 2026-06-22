@@ -110,6 +110,15 @@ cd /var/www/maxnow-dashboard
 python3 scripts/update_data.py project-status
 ```
 
+需要刷新免费 AI 外部信号和 Last-30 时：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/update_data.py ai-last30
+```
+
+`ai-last30` 使用免费公开源，采集脚本本身不调用模型、不消耗 token。若后续交给 OpenClaw 二次摘要，应只传入少量候选，避免把新闻全文大量喂给模型。
+
 ## OpenClaw 写权限
 
 建议把 OpenClaw 的写权限限制到数据文件。

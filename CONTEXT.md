@@ -82,7 +82,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 - `dash/data/dashboard.json`：个人状态、主线、今日推进、日常记录、时间点、系统状态、Token 使用和 Home 时间卡片的手动特殊日期列表。
 - `dash/data/dashboard.js`：从 `dashboard.json` 生成的浏览器 wrapper。
-- `dash/data/ai-news.json`：外部 AI 输入。
+- `dash/data/ai-news.json`：首页展示用的外部 AI 输入，取免费 AI 外部信号中的 0-3 条高相关内容。
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
 - `dash/data/wiki-todos.json`：从 private personal-wiki `wiki/tasks/todo.json` 同步而来的近期待办只读缓存。
 - `dash/data/wiki-todos.js`：从 `wiki-todos.json` 生成的浏览器 wrapper。
@@ -92,6 +92,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/project-meta.js`：从 `project-meta.json` 生成的浏览器 wrapper。
 - `dash/data/dounai_checkin.json`：豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化每天更新；Home 只读展示今日流量、今日豆丁、今日账号有效期延长时长、累计签到天数、累计流量和累计账号有效期延长时长，并作为豆奶详情页入口。豆奶详情页展示近 30 天流量/时长折线图，以及剩余流量、有效期、每日可用预算和近 30 天账号日均可用趋势。
 - `scripts/sync_wiki_todos.py`：通过本地或服务器 `gh` 登录态刷新 `dash/data/wiki-todos.*`，避免前端暴露 GitHub token。
+- `scripts/sync_ai_last30.py`：抓取免费公开 AI 信号源，刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`；采集脚本本身不调用模型，不消耗 token。
 
 维护方式：
 
@@ -107,9 +108,9 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。
 - 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段，并按日期维护 `account_history`。
 
-### 4. 滚动记忆上下文
+### 4. AI 外部信号滚动记忆
 
-这是下一阶段要持续完善的上下文层。数据文件和 OpenClaw skill 已建立，页面展示和自动更新仍在推进。
+这是 Last-30 当前定位：保存今天、本周和近 30 天的 AI 外部信号。它不是 MaxNow 内部项目日志，也不是泛新闻流；只保留和 Owner 当前工具、模型选择、agent 能力、开发者生态或成本有关的信号。
 
 已经新增：
 
@@ -119,17 +120,18 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 它负责保存：
 
-- 今日大事。
-- 本周大事。
-- 近 30 天主线。
-- 重要决定。
-- 卡点 / 等待项。
-- 需要 Owner 确认的判断。
+- 今日 AI 信号。
+- 本周 AI 变化。
+- 近 30 天 AI 主线。
+- 对 MaxNow、Codex、OpenClaw、模型选择或 token 成本的潜在影响。
+- 需要继续观察或 Owner 确认的信号。
 
 维护方式：
 
-- 不要每天从零总结 30 天。
-- 用“昨天已有滚动摘要 + 今天新增事实”做增量更新。
+- 免费版由 `scripts/sync_ai_last30.py` 抓取官方 RSS / 博客、GitHub releases、Hacker News、GDELT、arXiv 等免费公开源，写入 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
+- 脚本先做本地抓取、关键词打分、去重和短摘要，不调用模型；采集本身不消耗 token。
+- 如果让 OpenClaw 二次总结，只应喂少量候选，避免把新闻全文直接交给模型。
+- X / Twitter 官方 API 暂不接入，除非 Owner 明确批准付费 API 和博主白名单。
 - 每条记录尽量带来源、置信度、是否需要 Owner 确认。
 
 ### 5. 公开博客上下文

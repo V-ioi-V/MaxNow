@@ -88,11 +88,12 @@ OpenClaw routine jobs must not edit page code or documentation.
 
 - `dash/data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, and Token usage.
 - `dash/data/ai-news.json` owns AI external inputs only.
-- `dash/data/last-30.json` owns rolling daily, weekly, and 30-day context.
+- `dash/data/last-30.json` owns the rolling 30-day external AI signal memory: daily AI signals, weekly AI changes, 30-day AI mainlines, impact notes, and watch items.
 - `dash/data/wiki-todos.json` owns the read-only MaxNow cache generated from personal-wiki `wiki/tasks/todo.json`.
 - `dash/data/openclaw-usage.json` owns OpenClaw token usage aggregates and OpenRouter-equivalent cost estimates generated from server-side OpenClaw trajectory logs.
 - `dash/data/project-meta.json` owns the displayed MaxNow version, deploy note, and recent update summaries generated from `VERSION`, Git state, and `UPDATE_LOG.md`.
 - Do not update `dash/data/*.json` or `dash/data/*.js` when the owner asks for MaxNow project todos, feature planning, roadmap updates, or "what should MaxNow build next"; update `ROADMAP.md`, `IDEAS.md`, `CONTEXT.md`, or `UPDATE_LOG.md` instead.
+- For Last-30 AI external signals, prefer free public sources first: official blogs/RSS, GitHub releases, Hacker News, Reddit/public community sources, arXiv, GDELT or similar free indexes. Do not make X/Twitter a hard dependency unless the owner explicitly approves paid API usage.
 - Only change data files when the owner explicitly asks to update the displayed dashboard/status data, or when running an approved data maintenance task.
 - Regenerate each `.js` wrapper from its matching JSON file.
 - Validate JSON before finishing data changes.
@@ -100,6 +101,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `dash/data/dashboard.*`; do not let it overwrite owner judgment fields such as today, mainlines, actions, or journal.
 - Use `python scripts/sync_openclaw_usage.py` or `python scripts/update_data.py openclaw-usage` on the server to refresh OpenClaw token usage from `/root/.openclaw`; costs are estimates using OpenRouter model prices, not real provider billing.
 - Use `python scripts/sync_project_meta.py` or `python scripts/update_data.py project-meta` to refresh the MaxNow version and recent update module.
+- Use `python scripts/sync_ai_last30.py` or `python scripts/update_data.py ai-last30` to refresh free external AI signals into `dash/data/ai-news.*` and `dash/data/last-30.*`.
 - Prefer `python scripts/update_data.py runtime` for server runtime refreshes, `python scripts/update_data.py wrap all` for wrapper regeneration, and `python scripts/update_data.py project-status` only when the owner wants Home project status refreshed from `ROADMAP.md`.
 - Use `python scripts/check.py` for local consistency checks when data wrappers or docs change.
 
