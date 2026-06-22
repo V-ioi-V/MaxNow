@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-06-22 22:03",
+  "updatedAt": "2026-06-22 22:18",
   "version": "1.0.0.00",
   "versionLabel": "v1.0.0.00",
-  "branch": "main",
-  "commit": "8e1778c",
+  "branch": "bugfix/dounai-budget-axis",
+  "commit": "7a54861",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "main · commit 8e1778c · 有未提交代码改动",
+  "deployNote": "bugfix/dounai-budget-axis · commit 7a54861 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-06-22",
+      "title": "修正豆奶日均可用显示",
+      "summary": "豆奶账号余量里的“日均可用”改为 GB/TB 两位小数展示，例如 `4.20 GB/d`。"
+    },
     {
       "date": "2026-06-22",
       "title": "增加 MaxNow 版本和最近更新模块",
@@ -28,11 +33,6 @@
       "date": "2026-06-21",
       "title": "微调 Token 趋势和调用列表",
       "summary": "Token 最近 30 天折线图在进入 Token 页后会二次按实际容器宽度重绘，避免首次进入时图表只占左半边。"
-    },
-    {
-      "date": "2026-06-21",
-      "title": "对齐 Home Token 摘要样式",
-      "summary": "Home 右侧 Token 摘要卡改为和豆奶摘要一致的指标结构：标题前补小图标，标题和数字居中。"
     }
   ]
 }
