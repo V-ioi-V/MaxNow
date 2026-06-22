@@ -183,6 +183,14 @@ python3 scripts/check.py
 
 当前免费源包括官方 RSS / 博客、GitHub releases、Hacker News、GDELT 和 arXiv 等。免费源偶发超时或限流时，脚本会记录部分失败并保留其他结果；X / Twitter 暂不作为基础来源。
 
+2026-06-23 已用 `ubuntu` 用户 crontab 接入 AI Last-30 免费外部信号同步，标记块为 `MAXNOW-AI-LAST30-SYNC`：
+
+```cron
+0 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-ai-last30.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow ai-last30 sync start"; python3 scripts/update_data.py ai-last30; echo "[$(date -Is)] maxnow ai-last30 sync ok"' >> /var/www/maxnow-dashboard/logs/ai-last30.log 2>&1
+```
+
+该任务每天服务器本地时间 00:00 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。脚本只使用免费公开源，本身不调用模型、不消耗 token。
+
 刷新 MaxNow 版本号和最近更新模块：
 
 ```bash
@@ -252,6 +260,7 @@ crontab -l
 失败日志目前按以下位置检测：
 
 ```text
+/var/www/maxnow-dashboard/logs/ai-last30.log
 /var/www/maxnow-dashboard/logs/wiki-todos.log
 /var/www/maxnow-dashboard/logs/system-status.log
 /var/www/maxnow-dashboard/logs/maxnow-sync.log

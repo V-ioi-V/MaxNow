@@ -129,6 +129,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 维护方式：
 
 - 免费版由 `scripts/sync_ai_last30.py` 抓取官方 RSS / 博客、GitHub releases、Hacker News、GDELT、arXiv 等免费公开源，写入 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
+- 服务器已通过 `ubuntu` 用户 crontab 接入 `MAXNOW-AI-LAST30-SYNC`：每天服务器本地时间 00:00 运行 `python3 scripts/update_data.py ai-last30`，日志写入 `/var/www/maxnow-dashboard/logs/ai-last30.log`。
 - 脚本先做本地抓取、关键词打分、去重和短摘要，不调用模型；采集本身不消耗 token。
 - 如果让 OpenClaw 二次总结，只应喂少量候选，避免把新闻全文直接交给模型。
 - X / Twitter 官方 API 暂不接入，除非 Owner 明确批准付费 API 和博主白名单。
@@ -186,6 +187,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天流量/时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本和 9:00 cron 由 OpenClaw 管理。
 - 2026-06-19 已修复豆奶签到数据路径分叉：当天签到成功写入 `/root/MaxNow`，但线上部署目录仍停在 2026-06-18；现在 root 数据生成脚本会双写旧工作区和 `/var/www/maxnow-dashboard`。
 - wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，通过 `python3 scripts/update_data.py runtime` 刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
+- Last-30 AI 外部信号服务器自动同步已落地：`ubuntu` 用户 crontab 每天 00:00 运行一次 `MAXNOW-AI-LAST30-SYNC`，通过 `python3 scripts/update_data.py ai-last30` 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
 - 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
 - OpenClaw Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线趋势。费用为 OpenRouter 等价估算，后续还需要补 Codex 用量 collector。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
@@ -200,5 +202,5 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 ## 建议下一步
 
 1. 为 `blog.maxnow.cn` 补静态博客构建链路：发布 manifest、Markdown 转换、图片复制、文章列表、标签归档和 nginx 配置。
-2. 让 Last-30 进入日常增量更新节奏。
+2. 观察 Last-30 免费 AI 外部信号的来源稳定性，并在必要时替换长期失败的免费源。
 3. 继续补 Codex 用量 collector，并把 OpenClaw / Codex 合并成统一 Token 总账。

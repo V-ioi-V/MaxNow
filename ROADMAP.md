@@ -49,7 +49,7 @@
 
 ### 让 Last-30 免费 AI 信号稳定运行
 
-- 当前已新增 `scripts/sync_ai_last30.py`，可用免费公开源刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
+- 当前已新增 `scripts/sync_ai_last30.py`，并已接入服务器 `MAXNOW-AI-LAST30-SYNC` 每天 00:00 自动刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
 - 观察免费源稳定性：官方 RSS / 博客、GitHub releases、Hacker News、GDELT、arXiv。
 - 如果某些免费源长期失败，再替换成更稳定的 RSS 或项目 release 源。
 - X / Twitter 暂不接入；只有 Owner 明确批准付费 API 和博主白名单后再做。
@@ -130,6 +130,7 @@
 ### 已完成的基础能力
 
 - 新增 `scripts/sync_ai_last30.py` 和 `python scripts/update_data.py ai-last30`，用免费公开源刷新 AI 外部输入和 Last-30 AI 外部信号滚动记忆；采集脚本本身不调用模型，不消耗 token。
+- 服务器已通过 `ubuntu` 用户 crontab 接入 `MAXNOW-AI-LAST30-SYNC`：每天 00:00 自动运行 `python3 scripts/update_data.py ai-last30`，日志写入 `logs/ai-last30.log`。
 - 新增 `scripts/sync_openclaw_usage.py` 和 `dash/data/openclaw-usage.*`，可从 OpenClaw trajectory 解析 input / output / cacheRead / total token，按北京时间日桶、模型和任务聚合，并按 OpenRouter 价格生成等价费用估算；数据结构预留 Codex 来源接入。
 - Token 页面已接入 OpenClaw 用量账本，支持 1d / 7d / 30d / all 范围切换、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线趋势。
 - 新增 `VERSION`、`scripts/sync_project_meta.py` 和 `dash/data/project-meta.*`，Home 可展示 MaxNow 当前版本和最近更新摘要；版本号采用 `x.x.x.xx` 格式。

@@ -9,6 +9,15 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-06-23
+
+### 接入 AI Last-30 每日 0 点同步
+
+- 服务器 `ubuntu` 用户 crontab 新增 `MAXNOW-AI-LAST30-SYNC` 标记块。
+- 每天服务器本地时间 00:00 运行 `python3 scripts/update_data.py ai-last30`。
+- 日志写入 `/var/www/maxnow-dashboard/logs/ai-last30.log`。
+- 同步更新 `SERVER_RUNBOOK.md`、`CONTEXT.md` 和 `ROADMAP.md` 中的自动化状态记录。
+
 ## 2026-06-22
 
 ### 接入免费 AI 外部信号版 Last-30
