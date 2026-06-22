@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-06-22 22:44",
+  "updatedAt": "2026-06-22 23:04",
   "version": "1.0.0.00",
   "versionLabel": "v1.0.0.00",
-  "branch": "bugfix/system-version-note",
-  "commit": "ffe6691",
+  "branch": "feature/special-dates-sidebar",
+  "commit": "eeed547",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/system-version-note · commit ffe6691 · 有未提交代码改动",
+  "deployNote": "feature/special-dates-sidebar · commit eeed547 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-06-22",
+      "title": "完成时间卡片特殊日期和侧栏收窄",
+      "summary": "Home 时间卡片新增 `dashboard.json.specialDates` 支持，可按固定公历日期或一次性日期显示生日、纪念日等当天提醒。"
+    },
     {
       "date": "2026-06-22",
       "title": "精简系统状态版本展示",
@@ -28,11 +33,6 @@
       "date": "2026-06-22",
       "title": "记录左侧导航栏收窄待办",
       "summary": "更新 `ROADMAP.md`，将“收窄左侧导航栏”加入 `Next`。"
-    },
-    {
-      "date": "2026-06-22",
-      "title": "记录时间卡片特殊日期待办",
-      "summary": "更新 `ROADMAP.md`，将“时间卡片智能显示纪念日、生日等特殊日期”加入 `Next`。"
     }
   ]
 }

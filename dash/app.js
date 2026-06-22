@@ -48,6 +48,7 @@ const copy = {
   sync: "\u7b49\u5f85\u540c\u6b65",
   hour24: "24\u5c0f\u65f6",
   day1: "1d",
+  noHoliday: "\u4eca\u65e5\u65e0\u8282\u65e5",
   updatedAt: "\u66f4\u65b0\u4e8e",
   noNote: "\u6682\u65e0\u8bf4\u660e\u3002",
   tokenTitle: "Token \u7528\u91cf",
@@ -1158,6 +1159,31 @@ function getHolidayLabels(date) {
   return [...new Set(labels)];
 }
 
+function getSpecialDateLabels(date) {
+  const specialDates = Array.isArray(dashboardData.specialDates) ? dashboardData.specialDates : [];
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const dateKey = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+  return specialDates
+    .filter((item) => {
+      if (item.date) return String(item.date).slice(0, 10) === dateKey;
+      return Number(item.month) === month && Number(item.day) === day;
+    })
+    .map((item) => {
+      const title = item.title || item.label || item.name || "";
+      if (!title) return "";
+      const startYear = Number(item.startYear || item.year);
+      if (Number.isFinite(startYear) && startYear > 0 && year > startYear) {
+        const years = year - startYear;
+        return `${title} ${years}\u5468\u5e74`;
+      }
+      return title;
+    })
+    .filter(Boolean);
+}
+
 function updateClock() {
   const now = new Date();
   const date = new Intl.DateTimeFormat("zh-CN", {
@@ -1174,8 +1200,8 @@ function updateClock() {
   setText("#today-label", date);
   setText("#clock-label", time);
   setText("#lunar-label", formatLunarDate(now));
-  const holidays = getHolidayLabels(now);
-  setText("#holiday-label", holidays.length ? holidays.join(" \u00b7 ") : "\u4eca\u65e5\u65e0\u8282\u65e5");
+  const labels = [...getHolidayLabels(now), ...getSpecialDateLabels(now)];
+  setText("#holiday-label", labels.length ? [...new Set(labels)].join(" \u00b7 ") : copy.noHoliday);
 }
 
 qsa("[data-view]").forEach((button) => {

@@ -114,6 +114,14 @@ Preserve this shape when possible:
       "note": "OpenClaw 更新 dash/data/ai-news.*。"
     }
   ],
+  "specialDates": [
+    {
+      "month": 7,
+      "day": 18,
+      "title": "77 生日",
+      "type": "birthday"
+    }
+  ],
   "feeds": [
     {
       "source": "GitHub / RSS / HN / Server",
@@ -152,6 +160,8 @@ Keep arrays short:
 - `journal`: 2-5
 - `timeline`: 3-5
 - `feeds`: 0-3
+
+`specialDates` is optional and manually maintained. It powers only the Home time card's same-day birthday / anniversary hint. Use either fixed Gregorian dates with `month` and `day`, or one-time dates with `date: "YYYY-MM-DD"`. Do not expand it into a calendar system.
 
 ## AI External Input Shape
 
