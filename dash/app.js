@@ -4,6 +4,7 @@ const LAST30_URL = "./data/last-30.json";
 const WIKI_TODO_URL = "./data/wiki-todos.json";
 const CHECKIN_URL = "./data/dounai_checkin.json";
 const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
+const PROJECT_META_URL = "./data/project-meta.json";
 const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
 const WIKI_TASK_BASE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/";
 
@@ -13,6 +14,7 @@ const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
 const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
 const fallbackCheckin = {};
 const fallbackOpenclawUsage = window.MAXNOW_OPENCLAW_USAGE_DATA || { days: [] };
+const fallbackProjectMeta = window.MAXNOW_PROJECT_META_DATA || { recentUpdates: [] };
 
 let dashboardData = fallbackData;
 let aiNewsData = fallbackAiNews;
@@ -20,6 +22,7 @@ let last30Data = fallbackLast30;
 let wikiTodoData = fallbackWikiTodo;
 let checkinData = fallbackCheckin;
 let openclawUsageData = fallbackOpenclawUsage;
+let projectMetaData = fallbackProjectMeta;
 let wikiTodoError = "";
 let activeTokenRange = "7d";
 
@@ -263,6 +266,22 @@ function createWikiTodoItem(task) {
 
   const link = getWikiTodoLink(task);
   if (link) appendLink(article, link);
+  return article;
+}
+
+function createProjectUpdateItem(item) {
+  const article = document.createElement("article");
+  article.className = "project-update-item";
+  article.innerHTML = `
+    <div>
+      <p class="item-title"></p>
+      <p class="item-copy"></p>
+    </div>
+    <span class="item-tag"></span>
+  `;
+  article.querySelector(".item-title").textContent = item.title || copy.unnamedInfo;
+  article.querySelector(".item-copy").textContent = item.summary || "";
+  article.querySelector(".item-tag").textContent = item.date || "Update";
   return article;
 }
 
@@ -758,7 +777,7 @@ function renderHome() {
   const aiItems = (aiNewsData.items || []).slice(0, 3);
   const token7d = getTokenRange("7d");
   const token1d = getTokenRange("1d");
-  const token30d = getTokenRange("30d");
+  const tokenAll = getTokenRange("all");
   const today = dashboardData.today || {};
 
   setText("#today-mode", today.modeLabel || "\u4eca\u65e5\u72b6\u6001");
@@ -780,8 +799,9 @@ function renderHome() {
   setText("#metric-token-note", `${copy.day1} ${formatToken(token1d.total)}`);
   setText("#metric-automation", dashboardData.automation?.status || "--");
   setText("#metric-automation-note", dashboardData.automation?.lastRun || copy.sync);
-  setText("#mini-token-24h", formatToken(token1d.total));
-  setText("#mini-token-30d", formatToken(token30d.total));
+  setText("#mini-token-1d", formatToken(token1d.total));
+  setText("#mini-token-7d", formatToken(token7d.total));
+  setText("#mini-token-all", formatToken(tokenAll.total));
   setText("#sidebar-token-total", formatToken(token7d.total));
 
   clearAndFill(qs("#mainline-list"), createTask, mainlines);
@@ -791,6 +811,9 @@ function renderHome() {
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   clearAndFill(qs("#system-list"), createSystemItem, dashboardData.system || []);
+  setText("#project-version", projectMetaData.versionLabel || "v--");
+  setText("#project-version-note", projectMetaData.deployNote || projectMetaData.updatedAt || copy.sync);
+  clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
   renderCheckin();
   renderDounai();
   renderWikiTodos();
@@ -944,13 +967,14 @@ async function readWikiTodo() {
 }
 
 async function loadData() {
-  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage] = await Promise.all([
+  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage, projectMeta] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
     readWikiTodo(),
     readJson(CHECKIN_URL, fallbackCheckin),
     readJson(OPENCLAW_USAGE_URL, window.MAXNOW_OPENCLAW_USAGE_DATA || fallbackOpenclawUsage),
+    readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta),
   ]);
 
   dashboardData = dashboard;
@@ -959,6 +983,7 @@ async function loadData() {
   wikiTodoData = wikiTodo;
   checkinData = checkin;
   openclawUsageData = openclawUsage;
+  projectMetaData = projectMeta;
   renderAll();
 }
 

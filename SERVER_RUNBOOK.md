@@ -166,10 +166,21 @@ python3 scripts/check.py
 python3 scripts/update_data.py runtime
 python3 scripts/update_data.py project-status
 python3 scripts/update_data.py openclaw-usage
+python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、系统状态和 wrapper，不覆盖 Owner 的今日判断。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。
+
+刷新 MaxNow 版本号和最近更新模块：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/update_data.py project-meta
+python3 scripts/check.py
+```
+
+版本号由仓库根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`，例如 `1.0.0.00`。`scripts/sync_project_meta.py` 会读取 `VERSION`、Git 状态和 `UPDATE_LOG.md`，生成 `dash/data/project-meta.json` / `dash/data/project-meta.js`。
 
 刷新 OpenClaw Token 用量账本：
 

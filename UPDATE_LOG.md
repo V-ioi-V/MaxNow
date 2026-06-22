@@ -9,6 +9,20 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-06-22
+
+### 增加 MaxNow 版本和最近更新模块
+
+- 新增根目录 `VERSION`，版本号格式固定为 `x.x.x.xx`，当前为 `1.0.0.00`。
+- 新增 `scripts/sync_project_meta.py` 和 `dash/data/project-meta.*`，从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成前端可读的项目元信息。
+- Home 右侧新增“MaxNow 最近更新”模块，展示版本号、部署说明和最近更新摘要。
+- 系统状态里的部署项改为显示 `MaxNow 版本`，主值使用 `v1.0.0.00`，commit 和工作区状态放进说明。
+- Home Token 摘要改为三格：`1d`、`7d`、`all day`。
+
+#### 背景
+
+- Owner 希望部署版本显示更直白，并能在 Home 看见 MaxNow 最近做了什么。
+
 ## 2026-06-21
 
 ### 微调 Token 趋势和调用列表

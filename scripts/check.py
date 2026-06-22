@@ -15,6 +15,7 @@ DATASETS = [
     ("last-30", "dash/data/last-30.json", "dash/data/last-30.js", "MAXNOW_LAST30_DATA"),
     ("wiki-todos", "dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
     ("openclaw-usage", "dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
+    ("project-meta", "dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
 ]
 
 
@@ -67,9 +68,11 @@ def check_required_files():
         "SPEC.md",
         "IDEAS.md",
         "UPDATE_LOG.md",
+        "VERSION",
         "scripts/sync_system_status.py",
         "scripts/sync_wiki_todos.py",
         "scripts/sync_openclaw_usage.py",
+        "scripts/sync_project_meta.py",
         "scripts/update_data.py",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
@@ -138,11 +141,24 @@ def check_openclaw_usage():
     return "openclaw-usage: ledger shape is valid"
 
 
+def check_project_meta():
+    data = load_json(ROOT / "dash/data/project-meta.json")
+    version = data.get("version", "")
+    if not re.fullmatch(r"\d+\.\d+\.\d+\.\d{2}", version):
+        raise ValueError("project-meta: version must match x.x.x.xx")
+    if data.get("versionLabel") != f"v{version}":
+        raise ValueError("project-meta: versionLabel must be v + version")
+    if not isinstance(data.get("recentUpdates", []), list):
+        raise ValueError("project-meta: recentUpdates must be a list")
+    return "project-meta: version and recent updates are valid"
+
+
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
     checks.append(check_dounai_checkin())
     checks.append(check_openclaw_usage())
+    checks.append(check_project_meta())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/"))

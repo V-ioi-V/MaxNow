@@ -43,6 +43,8 @@ MaxNow 由四类文件组成：
    - `dash/data/wiki-todos.js`
    - `dash/data/openclaw-usage.json`
    - `dash/data/openclaw-usage.js`
+   - `dash/data/project-meta.json`
+   - `dash/data/project-meta.js`
    - `dash/data/dounai_checkin.json`
    - 这是页面和自动化之间的数据契约。
 
@@ -62,10 +64,12 @@ MaxNow 由四类文件组成：
    - `scripts/sync_wiki_todos.py`
    - `scripts/sync_system_status.py`
    - `scripts/sync_openclaw_usage.py`
+   - `scripts/sync_project_meta.py`
    - 由 Codex 或 Owner 维护。
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
    - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `dash/data/dashboard.*` 中的 `automation` 和 `system` 字段。
    - `scripts/sync_openclaw_usage.py` 只读 OpenClaw 服务器轨迹，生成 Token 使用账本和 OpenRouter 等价费用估算，为后续 Codex 用量接入预留同一账本结构。
+   - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
 
 6. 产品记忆文档
    - `CONTEXT.md`
@@ -115,6 +119,7 @@ Home 按顺序回答这些问题：
 - 豆奶签到：Home 只展示每日签到摘要入口，第一排展示今日流量、今日豆丁和今日账号有效期延长时长，第二排展示累计签到天数、累计流量和累计账号有效期延长时长；不在 Home 放趋势图。点击卡片进入“豆奶”详情页。数据来自 `dash/data/dounai_checkin.json`。
 - 外部输入：链接、信号和 AI 每日精选，但必须保持次要。
 - personal-wiki 近期待办入口：Home 主内容区的紧凑只读模块，用于查看近期未完成待办和跳转到 personal-wiki；v1 不支持编辑或标记完成。
+- MaxNow 最近更新：Home 右侧展示当前可读版本号、部署说明和最近几条 `UPDATE_LOG.md` 更新摘要；版本号由根目录 `VERSION` 维护，格式为 `x.x.x.xx`。
 
 ## AI 每日精选
 
@@ -179,6 +184,8 @@ dash/data/wiki-todos.json
 dash/data/wiki-todos.js
 dash/data/openclaw-usage.json
 dash/data/openclaw-usage.js
+dash/data/project-meta.json
+dash/data/project-meta.js
 dash/data/dounai_checkin.json
 ```
 
@@ -210,6 +217,8 @@ UPDATE_LOG.md
 `dash/data/wiki-todos.json` 负责 personal-wiki 近期待办的只读缓存，由 `scripts/sync_wiki_todos.py` 从 personal-wiki `wiki/tasks/todo.json` 生成。
 
 `dash/data/openclaw-usage.json` 负责 OpenClaw 用量账本，由 `scripts/sync_openclaw_usage.py` 从服务器 `/root/.openclaw/agents/main/sessions/*.trajectory.jsonl` 等只读轨迹生成。它记录北京时间日桶、模型、任务、input / output / cacheRead / total token，并按 OpenRouter 模型价格生成等价费用估算。该费用不是实际供应商账单。
+
+`dash/data/project-meta.json` 负责 MaxNow 自身版本和最近更新展示，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成；页面只读展示，不在前端修改版本号。`VERSION` 采用 `x.x.x.xx` 格式，例如 `1.0.0.00`。
 
 `dash/data/dounai_checkin.json` 负责豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化更新；前端只读取流量、豆丁、账号有效期延长时长、累计签到天数、近 30 天记录、剩余可用流量、有效期、每日可用预算和 `account_history`，不编辑、不回写，也不修改签到脚本或 cron。
 

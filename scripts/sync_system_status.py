@@ -36,8 +36,17 @@ KNOWN_SERVICE_UNITS = [
 GENERATED_DATA_PATHS = {
     "dash/data/dashboard.json",
     "dash/data/dashboard.js",
+    "dash/data/ai-news.json",
+    "dash/data/ai-news.js",
+    "dash/data/last-30.json",
+    "dash/data/last-30.js",
     "dash/data/wiki-todos.json",
     "dash/data/wiki-todos.js",
+    "dash/data/openclaw-usage.json",
+    "dash/data/openclaw-usage.js",
+    "dash/data/dounai_checkin.json",
+    "dash/data/project-meta.json",
+    "dash/data/project-meta.js",
 }
 
 
@@ -67,6 +76,13 @@ def run_command(args, timeout=5):
         return 124, "", "command timed out"
 
 
+def read_version():
+    path = ROOT / "VERSION"
+    if not path.exists():
+        return "0.0.0.00"
+    return path.read_text(encoding="utf-8").strip() or "0.0.0.00"
+
+
 def git_state():
     _, commit, _ = run_command(["git", "rev-parse", "--short", "HEAD"])
     _, branch, _ = run_command(["git", "branch", "--show-current"])
@@ -77,17 +93,17 @@ def git_state():
             continue
         changed_paths.append(line[2:].strip().replace("\\", "/"))
     dirty = any(path not in GENERATED_DATA_PATHS for path in changed_paths)
-    value = commit or "--"
-    if dirty:
-        value = f"{value}*"
+    value = f"v{read_version()}"
     note = f"{branch or 'unknown'} branch"
     if dirty:
-        note += "; working tree has non-generated local changes"
+        note += f"; commit {commit or '--'}; \u6709\u672a\u63d0\u4ea4\u4ee3\u7801\u6539\u52a8"
     elif changed_paths:
-        note += "; generated data has local updates"
+        note += f"; commit {commit or '--'}; \u8fd0\u884c\u6570\u636e\u5df2\u66f4\u65b0"
+    else:
+        note += f"; commit {commit or '--'}; \u5e72\u51c0"
     return {
         "key": "deploy",
-        "name": "部署版本",
+        "name": "MaxNow \u7248\u672c",
         "value": value,
         "note": note,
     }, not dirty
