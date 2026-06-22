@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-06-22 21:47",
+  "version": "1.0.0.00",
+  "versionLabel": "v1.0.0.00",
+  "branch": "feature/maxnow-version-updates",
+  "commit": "1c3ff17",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/maxnow-version-updates · commit 1c3ff17 · 有未提交代码改动",
+  "recentUpdates": [
+    {
+      "date": "2026-06-22",
+      "title": "增加 MaxNow 版本和最近更新模块",
+      "summary": "新增根目录 `VERSION`，版本号格式固定为 `x.x.x.xx`，当前为 `1.0.0.00`。"
+    },
+    {
+      "date": "2026-06-21",
+      "title": "微调 Token 趋势和调用列表",
+      "summary": "Token 最近 30 天折线图在进入 Token 页后会二次按实际容器宽度重绘，避免首次进入时图表只占左半边。"
+    },
+    {
+      "date": "2026-06-21",
+      "title": "对齐 Home Token 摘要样式",
+      "summary": "Home 右侧 Token 摘要卡改为和豆奶摘要一致的指标结构：标题前补小图标，标题和数字居中。"
+    },
+    {
+      "date": "2026-06-21",
+      "title": "调整 Token 页结构和统计口径",
+      "summary": "Token 顶部统计从总量 / 输入 / 输出 / 费用扩展为总量 / 输入 / 输出 / 缓存 / 费用，解释 OpenClaw total 与 input + output 的差异。"
+    },
+    {
+      "date": "2026-06-21",
+      "title": "接入 OpenClaw Token 页面和每日刷新",
+      "summary": "Token 页面改为优先读取 `dash/data/openclaw-usage.*`，提供 1d / 7d / 30d / all 范围切换。"
+    }
+  ]
+}
