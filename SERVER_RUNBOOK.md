@@ -127,6 +127,17 @@ changes: 恢复豆奶详情页桌面端顶部 tab 原始横排比例；内部指
 dash styles version: styles.css?v=42
 ```
 
+2026-06-23 已部署 Home 顶部天气卡和小日历 widget 调整版本：
+
+```text
+deployed commit: f7ee6bb Scale top widget content further
+changes: Home 顶部新增北京市海淀区天气卡；天气卡与小日历拆成独立同级 widget；两个 widget 外框等高，内部内容放大；天气数据由 runtime 定时刷新
+dash styles version: styles.css?v=58
+dash app version: app.js?v=42
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260623-235840-before-weather-widgets
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
