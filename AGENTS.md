@@ -14,6 +14,8 @@ Read this file before making code changes in this repository.
 - If there are unrelated user changes, preserve them and work around them.
 - Read `SPEC.md` before changing product behavior.
 - Read `STYLE_CONTEXT.md` before changing Dash or Blog frontend styles.
+- For Dash or Blog UI changes, treat `STYLE_CONTEXT.md` as an execution checklist: new or moved cards/widgets must inherit their component family's hover/focus selectors, transitions, border/shadow treatment, responsive constraints, and cache-version updates.
+- When UI elements are meant to align in one row, verify geometry in the browser or DOM measurements, including same top, same bottom, same height, and no horizontal overflow; do not rely on visual placement alone.
 - Read `CONTEXT.md` when the task depends on project direction, context strategy, automation scope, or next-step planning.
 - Read `ROADMAP.md` when the task asks what remains, what to do next, or how to sequence work.
 - Read `SERVER_RUNBOOK.md` before operating the MaxNow server over SSH or changing nginx/server deployment state.

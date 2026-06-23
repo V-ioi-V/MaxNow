@@ -11,6 +11,16 @@
 
 ## 2026-06-23
 
+### 记录 UI widget 约束和验收规则
+
+- 更新 `STYLE_CONTEXT.md`，明确新增或移动卡片 / widget 时必须继承同族组件规则，包括圆角、边框、阴影、hover / focus、transition、语义色、响应式约束和缓存版本。
+- 补充 Home 顶部天气卡 / 小日历这一组 widget 的等高规则：桌面端必须与 Today Status 卡片同顶、同底、等高，并保持同组悬浮反馈。
+- 更新 `AGENTS.md`，要求 UI 改动把 `STYLE_CONTEXT.md` 当执行清单，并用浏览器或 DOM measurement 验证同排卡片的 top、bottom、height 和横向溢出。
+
+原因：
+
+- Owner 反馈新增天气卡和小日历漏套既有卡片约束，导致高度不齐、hover 反馈不一致；以后同类改动需要在仓库规则里直接拦住。
+
 ### Home 顶部增加海淀天气卡和定时刷新
 
 - 将天气从小日历中拆出，放到 Home 顶部右侧、小日历左边的独立天气卡。
