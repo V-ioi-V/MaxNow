@@ -18,6 +18,15 @@
 - 日志写入 `/var/www/maxnow-dashboard/logs/ai-last30.log`。
 - 同步更新 `SERVER_RUNBOOK.md`、`CONTEXT.md` 和 `ROADMAP.md` 中的自动化状态记录。
 
+### 补充 UI 交付质检清单
+
+- 在 `STYLE_CONTEXT.md` 增加 UI 质检清单，覆盖 4px 间距、图标对齐、少量颜色变量、字体层级、轻量微动效、资产导出和标识方向边界。
+- 明确这些内容作为样式检查 checklist 使用，不升级为复杂设计系统或年度趋势驱动的 logo 改造。
+
+原因：
+
+- Owner 希望把 GPT 推荐的设计规范中真正有用的部分沉淀到 MaxNow 项目上下文里。
+
 ## 2026-06-22
 
 ### 接入免费 AI 外部信号版 Last-30
