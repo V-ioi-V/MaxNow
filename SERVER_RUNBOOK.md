@@ -138,6 +138,14 @@ runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260623-2
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200
 ```
 
+2026-06-24 已部署 Home 天气卡底部信息分隔点微调：
+
+```text
+deployed commit: fd7b997 Add weather meta separators
+changes: 天气卡底部地点、天气状态和低温 / 高温之间加入轻量小圆点分隔；Dash 样式缓存版本提升到 styles.css?v=59
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://blog.maxnow.cn 200
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
