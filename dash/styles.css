@@ -369,8 +369,8 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  min-height: 24px;
+  gap: 8px;
+  min-height: 34px;
   color: var(--muted);
   font-size: 14px;
   font-weight: 700;
@@ -378,19 +378,19 @@ a {
 }
 
 .weather-icon {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 12px;
   background: transparent;
   color: var(--accent);
 }
 
 .weather-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
   display: block;
 }
 
@@ -409,8 +409,22 @@ a {
 
 .weather-copy strong {
   color: var(--ink);
-  font-size: 38px;
+  font-size: 34px;
   line-height: 1;
+}
+
+.weather-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  white-space: nowrap;
+}
+
+.weather-meta small + small::before {
+  content: "·";
+  margin-right: 7px;
+  color: #9aa9bc;
 }
 
 .weather-range {
