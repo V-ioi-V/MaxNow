@@ -152,7 +152,7 @@ verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://da
 feature merge commit: 8aa8400 Merge cloud services dashboard tab
 changes: Dash 左侧导航在 Token 下方新增“云服务”tab，只读列出服务器自动化、数据同步、Token 用量采集方案、豆奶签到和 nginx / HTTPS 托管边界
 dash styles version: styles.css?v=60
-dash app version: app.js?v=43
+dash app version: app.js?v=44
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200
 ```
 

@@ -15,7 +15,7 @@
 
 - Dash 左侧导航在 Token 下方新增“云服务”tab。
 - 新增云服务只读页面，列出服务器上的基础运行同步、Last-30 AI 信号、豆奶签到、OpenClaw Token 用量方案、nginx / HTTPS 托管等自动化与日志边界。
-- 将 Dash 缓存版本提升到 `styles.css?v=60`、`app.js?v=43`。
+- 将 Dash 缓存版本提升到 `styles.css?v=60`，沿用最新脚本版本 `app.js?v=44`。
 - 更新 `SPEC.md` 和 `CONTEXT.md`，记录云服务页的定位和只读边界。
 - 已将云服务 tab 部署到 `dash.maxnow.cn`，服务器快进到提交 `8aa8400`，并通过 `python3 scripts/check.py`、`sudo nginx -t` 和 nginx reload。
 
