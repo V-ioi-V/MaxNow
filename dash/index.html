@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=58" />
+    <link rel="stylesheet" href="./styles.css?v=59" />
   </head>
   <body>
     <div class="app-shell">
@@ -44,6 +44,15 @@
             <span class="nav-copy">
               <strong>Token</strong>
               <small id="sidebar-token-total">--</small>
+            </span>
+          </button>
+          <button class="side-nav-item nav-cloud" type="button" data-view="cloud">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M17.6 18H7.3A4.8 4.8 0 0 1 8 8.5a6.2 6.2 0 0 1 11.8 2.4A3.8 3.8 0 0 1 17.6 18ZM7.3 16h10.3a1.8 1.8 0 0 0 .5-3.5 1 1 0 0 1-.7-1.1A4.2 4.2 0 0 0 9.5 9.3a1 1 0 0 1-1 .9H7.3A2.8 2.8 0 0 0 7.3 16Z"/></svg>
+            </span>
+            <span class="nav-copy">
+              <strong>&#20113;&#26381;&#21153;</strong>
+              <small>&#26381;&#21153;&#22120;&#33258;&#21160;&#21270;</small>
             </span>
           </button>
         </nav>
@@ -434,6 +443,122 @@
           </section>
         </section>
 
+        <section class="view" id="cloud-view" data-view-panel="cloud">
+          <header class="token-page-head cloud-page-head">
+            <div>
+              <p class="eyebrow">Cloud Services</p>
+              <h1>&#20113;&#26381;&#21153;</h1>
+              <p>&#26381;&#21153;&#22120;&#19978;&#30340;&#33258;&#21160;&#21270;&#12289;&#25968;&#25454;&#21516;&#27493;&#21644;&#36816;&#34892;&#36793;&#30028;&#12290;</p>
+            </div>
+            <span class="status-pill">dash.maxnow.cn</span>
+          </header>
+
+          <section class="cloud-summary" aria-label="Cloud service summary">
+            <article>
+              <span>Host</span>
+              <strong>43.160.240.244</strong>
+              <small>ubuntu / Tencent Cloud Singapore</small>
+            </article>
+            <article>
+              <span>Runtime</span>
+              <strong>10 min</strong>
+              <small>MAXNOW-DASHBOARD-SYNC</small>
+            </article>
+            <article>
+              <span>Daily AI</span>
+              <strong>00:00</strong>
+              <small>MAXNOW-AI-LAST30-SYNC</small>
+            </article>
+            <article>
+              <span>Dounai</span>
+              <strong>09:00</strong>
+              <small>root / OpenClaw check-in</small>
+            </article>
+          </section>
+
+          <section class="cloud-grid">
+            <article class="panel cloud-card" data-tone="blue">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Every 10 min</p>
+                  <h2>&#22522;&#30784;&#36816;&#34892;&#21516;&#27493;</h2>
+                </div>
+                <span class="status-pill">&#24050;&#25509;&#20837;</span>
+              </header>
+              <p class="item-copy">ubuntu crontab &#36816;&#34892; <code>python3 scripts/update_data.py runtime</code>&#65292;&#21047;&#26032; wiki-todos&#12289;&#22825;&#27668;&#12289;&#31995;&#32479;&#29366;&#24577;&#12289;MaxNow &#39033;&#30446;&#20803;&#20449;&#24687;&#21644; wrapper&#12290;</p>
+              <dl class="cloud-meta">
+                <div><dt>&#26631;&#35760;</dt><dd>MAXNOW-DASHBOARD-SYNC</dd></div>
+                <div><dt>&#26085;&#24535;</dt><dd>logs/maxnow-sync.log</dd></div>
+                <div><dt>&#36793;&#30028;</dt><dd>&#19981;&#35206;&#30422; Owner &#30340;&#20170;&#26085;&#21028;&#26029;&#23383;&#27573;</dd></div>
+              </dl>
+            </article>
+
+            <article class="panel cloud-card" data-tone="purple">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Daily 00:00</p>
+                  <h2>Last-30 AI &#20449;&#21495;</h2>
+                </div>
+                <span class="status-pill">&#24050;&#25509;&#20837;</span>
+              </header>
+              <p class="item-copy"><code>python3 scripts/update_data.py ai-last30</code> &#21047;&#26032; AI &#22806;&#37096;&#36755;&#20837;&#21644; Last-30 &#28378;&#21160;&#35760;&#24518;&#12290;&#22522;&#30784;&#37319;&#38598;&#21482;&#29992;&#20813;&#36153;&#20844;&#24320;&#28304;&#65292;&#19981;&#35843;&#29992;&#27169;&#22411;&#12290;</p>
+              <dl class="cloud-meta">
+                <div><dt>&#26631;&#35760;</dt><dd>MAXNOW-AI-LAST30-SYNC</dd></div>
+                <div><dt>&#26085;&#24535;</dt><dd>logs/ai-last30.log</dd></div>
+                <div><dt>&#20889;&#20837;</dt><dd>dash/data/ai-news.* / last-30.*</dd></div>
+              </dl>
+            </article>
+
+            <article class="panel cloud-card" data-tone="cyan">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Daily 09:00</p>
+                  <h2>&#35910;&#22902;&#31614;&#21040;</h2>
+                </div>
+                <span class="status-pill">root</span>
+              </header>
+              <p class="item-copy">root / OpenClaw &#20391;&#33050;&#26412;&#32500;&#25252;&#35910;&#22902;&#31614;&#21040;&#21644;&#36134;&#21495;&#20313;&#37327;&#24555;&#29031;&#65292;&#32467;&#26524;&#21452;&#20889;&#21040; OpenClaw &#24037;&#20316;&#21306;&#21644;&#32447;&#19978;&#37096;&#32626;&#30446;&#24405;&#12290;</p>
+              <dl class="cloud-meta">
+                <div><dt>&#33050;&#26412;</dt><dd>/root/.openclaw/daily_checkin.sh</dd></div>
+                <div><dt>&#29983;&#25104;</dt><dd>/root/.openclaw/gen_checkin_data.py</dd></div>
+                <div><dt>&#20889;&#20837;</dt><dd>/var/www/maxnow-dashboard/dash/data/dounai_checkin.json</dd></div>
+              </dl>
+            </article>
+
+            <article class="panel cloud-card" data-tone="orange">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Daily 00:20</p>
+                  <h2>OpenClaw Token &#29992;&#37327;</h2>
+                </div>
+                <span class="status-pill">&#24453;&#30830;&#35748;</span>
+              </header>
+              <p class="item-copy"><code>python3 scripts/update_data.py openclaw-usage</code> &#35835;&#21462; <code>/root/.openclaw</code> trajectory&#65292;&#29983;&#25104; Token &#29992;&#37327;&#36134;&#26412;&#12290;&#22240;&#26435;&#38480;&#22312; root &#20391;&#65292;runbook &#24050;&#35760;&#24405;&#21333;&#29420; cron &#26041;&#26696;&#12290;</p>
+              <dl class="cloud-meta">
+                <div><dt>&#38145;</dt><dd>/tmp/maxnow-openclaw-usage.lock</dd></div>
+                <div><dt>&#26085;&#24535;</dt><dd>logs/openclaw-usage.log</dd></div>
+                <div><dt>&#20889;&#20837;</dt><dd>dash/data/openclaw-usage.*</dd></div>
+              </dl>
+            </article>
+
+            <article class="panel cloud-card" data-tone="green">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">TLS / nginx</p>
+                  <h2>&#31449;&#28857;&#25176;&#31649;</h2>
+                </div>
+                <span class="status-pill">HTTPS</span>
+              </header>
+              <p class="item-copy">nginx &#25176;&#31649; <code>dash.maxnow.cn</code> &#21644; <code>blog.maxnow.cn</code>&#12290;certbot &#32500;&#25252; HTTPS &#35777;&#20070;&#33258;&#21160;&#32493;&#26399;&#65292;&#31995;&#32479;&#29366;&#24577;&#33050;&#26412;&#20250;&#26816;&#26597;&#35777;&#20070;&#21040;&#26399;&#21644; nginx &#29366;&#24577;&#12290;</p>
+              <dl class="cloud-meta">
+                <div><dt>&#26681;&#30446;&#24405;</dt><dd>/var/www/maxnow-dashboard</dd></div>
+                <div><dt>&#37197;&#32622;</dt><dd>/etc/nginx/sites-available/maxnow-dashboard</dd></div>
+                <div><dt>&#26816;&#26597;</dt><dd>nginx / HTTPS / certificate</dd></div>
+              </dl>
+            </article>
+          </section>
+        </section>
+
         <section class="view" id="dounai-view" data-view-panel="dounai">
           <header class="token-page-head dounai-page-head">
             <div class="dounai-title-tab dounai-today-tab" aria-label="豆奶今日签到">
@@ -571,6 +696,6 @@
     <script src="./data/wiki-todos.js?v=1"></script>
     <script src="./data/openclaw-usage.js?v=1"></script>
     <script src="./data/project-meta.js?v=1"></script>
-    <script src="./app.js?v=42"></script>
+    <script src="./app.js?v=43"></script>
   </body>
 </html>
