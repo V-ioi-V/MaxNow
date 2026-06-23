@@ -10,6 +10,7 @@ Read this file before making code changes in this repository.
 - Use `feature/<short-demand-name>` for new features and `bugfix/<short-bug-name>` for fixes, unless the owner asks for another branch name.
 - After the work is checked, merge the branch back into `main` or ask the owner before merging if the change is risky.
 - 当 Owner 表达“没问题了，合进去吧”“合码”“合入主分支”等意图时，固定理解为：把已完成工作合入远端 `origin/main`，然后切回本地 `main` 并执行 `git pull`，让本地 `main` 与远端保持一致。
+- 当 Owner 要求“记录一下”“加个待办”“记个待办”等轻量文档记录时，完成文档更新和必要检查后，默认直接合入远端 `origin/main`，不要停在本地分支或 PR，除非本次改动存在明显风险、包含无关改动、或 Owner 明确要求不要合并。
 - If there are unrelated user changes, preserve them and work around them.
 - Read `SPEC.md` before changing product behavior.
 - Read `STYLE_CONTEXT.md` before changing Dash or Blog frontend styles.
