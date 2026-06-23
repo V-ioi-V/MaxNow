@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=54" />
+    <link rel="stylesheet" href="./styles.css?v=55" />
   </head>
   <body>
     <div class="app-shell">
@@ -87,12 +87,12 @@
             </header>
             <div class="home-widgets" aria-label="Home widgets">
               <div class="summary-weather" aria-label="北京市海淀区今日天气">
-                <div class="weather-kicker">
-                  <span class="weather-icon" id="weather-icon" aria-hidden="true"></span>
-                  <span id="weather-location">海淀</span>
-                </div>
+                <span class="weather-icon" id="weather-icon" aria-hidden="true"></span>
                 <div class="weather-copy">
-                  <strong id="weather-temp">--°C</strong>
+                  <div class="weather-primary">
+                    <span id="weather-location">海淀</span>
+                    <strong id="weather-temp">--°C</strong>
+                  </div>
                   <div class="weather-meta">
                     <small id="weather-condition">天气 --</small>
                     <small class="weather-range" id="weather-range">今日 --</small>
@@ -573,6 +573,6 @@
     <script src="./data/wiki-todos.js?v=1"></script>
     <script src="./data/openclaw-usage.js?v=1"></script>
     <script src="./data/project-meta.js?v=1"></script>
-    <script src="./app.js?v=41"></script>
+    <script src="./app.js?v=42"></script>
   </body>
 </html>

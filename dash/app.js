@@ -1204,7 +1204,7 @@ function renderWeather() {
   const low = Number(weather.lowC);
   const currentLabel = Number.isFinite(current) ? `${Math.round(current)}\u00b0C` : "--\u00b0C";
   const rangeLabel =
-    Number.isFinite(high) && Number.isFinite(low) ? `\u4eca\u65e5 ${Math.round(high)}\u00b0/${Math.round(low)}\u00b0` : "\u4eca\u65e5 --";
+    Number.isFinite(high) && Number.isFinite(low) ? `${Math.round(low)}\u00b0/${Math.round(high)}\u00b0` : "--";
   const card = qs(".summary-weather");
   const iconNode = qs("#weather-icon");
 
