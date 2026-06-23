@@ -414,12 +414,18 @@ a {
 }
 
 .weather-meta {
+  --weather-meta-font-size: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  max-width: 100%;
   color: var(--muted);
   white-space: nowrap;
+}
+
+.weather-meta small {
+  font-size: var(--weather-meta-font-size);
 }
 
 .weather-meta small + small::before {
