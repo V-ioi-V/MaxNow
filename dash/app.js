@@ -25,6 +25,7 @@ let openclawUsageData = fallbackOpenclawUsage;
 let projectMetaData = fallbackProjectMeta;
 let wikiTodoError = "";
 let activeTokenRange = "7d";
+let weatherMetaFitFrame = 0;
 
 const qs = (selector) => document.querySelector(selector);
 const qsa = (selector) => [...document.querySelectorAll(selector)];
@@ -1214,6 +1215,35 @@ function renderWeather() {
   setText("#weather-temp", currentLabel);
   setText("#weather-condition", condition);
   setText("#weather-range", rangeLabel);
+  scheduleWeatherMetaFit();
+}
+
+function scheduleWeatherMetaFit() {
+  cancelAnimationFrame(weatherMetaFitFrame);
+  weatherMetaFitFrame = requestAnimationFrame(fitWeatherMeta);
+}
+
+function fitWeatherMeta() {
+  const meta = qs(".weather-meta");
+  const card = qs(".summary-weather");
+  if (!meta || !card) return;
+
+  const baseSize = 14;
+  const minSize = 10;
+  meta.style.setProperty("--weather-meta-font-size", `${baseSize}px`);
+
+  const cardStyle = getComputedStyle(card);
+  const available =
+    card.clientWidth -
+    Number.parseFloat(cardStyle.paddingLeft || "0") -
+    Number.parseFloat(cardStyle.paddingRight || "0");
+  if (!Number.isFinite(available) || available <= 0 || meta.scrollWidth <= available) return;
+
+  const estimatedSize = Math.max(minSize, Math.floor((available / meta.scrollWidth) * baseSize * 10) / 10);
+  for (let size = estimatedSize; size >= minSize; size -= 0.2) {
+    meta.style.setProperty("--weather-meta-font-size", `${size.toFixed(1)}px`);
+    if (meta.scrollWidth <= available) return;
+  }
 }
 
 function updateClock() {
@@ -1265,6 +1295,7 @@ let resizeTimer = 0;
 window.addEventListener("resize", () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
+    scheduleWeatherMetaFit();
     if (qs("#dounai-view")?.classList.contains("is-active")) renderDounai();
     if (qs("#tokens-view")?.classList.contains("is-active")) renderTokens();
   }, 120);
