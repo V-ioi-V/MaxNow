@@ -270,8 +270,8 @@ a {
 
 .home-top-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.32fr);
+  gap: 20px;
   align-items: center;
 }
 
@@ -289,8 +289,8 @@ a {
 
 .home-widgets {
   display: grid;
-  grid-template-columns: auto auto;
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
   align-items: stretch;
 }
 
@@ -341,15 +341,19 @@ a {
 
 .summary-weather,
 .summary-clock {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
+  width: 100%;
+  min-width: 0;
   min-height: 148px;
   border: 1px solid #e0e8f2;
   border-radius: var(--radius);
   background: #ffffff;
   box-shadow: var(--shadow);
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .summary-weather {
-  width: 172px;
   display: grid;
   align-content: center;
   justify-items: center;
@@ -426,7 +430,6 @@ a {
 }
 
 .summary-clock {
-  min-width: 190px;
   display: grid;
   align-content: center;
   justify-items: center;
@@ -487,6 +490,8 @@ a {
 
 .panel,
 .summary-bar,
+.summary-weather,
+.summary-clock,
 .token-page-head,
 .status-strip article,
 .mini-token-grid div,
@@ -501,6 +506,8 @@ a {
 @media (hover: hover) and (pointer: fine) {
   .panel:hover,
   .summary-bar:hover,
+  .summary-weather:hover,
+  .summary-clock:hover,
   .token-page-head:hover,
   .status-strip article:hover,
   .mini-token-grid div:hover,
@@ -1739,6 +1746,7 @@ a {
 }
 
 @media (min-width: 1500px) {
+  .home-top-grid,
   .home-workspace {
     grid-template-columns: minmax(0, 1fr) minmax(390px, 0.3fr);
   }
