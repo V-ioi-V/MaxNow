@@ -62,6 +62,7 @@ const copy = {
   noNote: "\u6682\u65e0\u8bf4\u660e\u3002",
   tokenTitle: "Token \u7528\u91cf",
   dounaiTitle: "\u8c46\u5976",
+  cloudTitle: "\u4e91\u670d\u52a1",
   today: "\u4eca\u5929",
   energy: "\u80fd\u91cf",
   focus: "\u4e3b\u7ebf",
@@ -1008,7 +1009,7 @@ async function loadData() {
 }
 
 function setView(view) {
-  const nextView = ["home", "tokens", "dounai"].includes(view) ? view : "home";
+  const nextView = ["home", "tokens", "cloud", "dounai"].includes(view) ? view : "home";
   qsa("[data-view-panel]").forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.viewPanel === nextView);
   });
@@ -1016,7 +1017,14 @@ function setView(view) {
     button.classList.toggle("is-active", button.dataset.view === nextView);
   });
   if (viewTitle) {
-    viewTitle.textContent = nextView === "tokens" ? copy.tokenTitle : nextView === "dounai" ? copy.dounaiTitle : copy.today;
+    viewTitle.textContent =
+      nextView === "tokens"
+        ? copy.tokenTitle
+        : nextView === "cloud"
+          ? copy.cloudTitle
+          : nextView === "dounai"
+            ? copy.dounaiTitle
+            : copy.today;
   }
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
   if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));

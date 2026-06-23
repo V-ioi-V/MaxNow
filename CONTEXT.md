@@ -194,6 +194,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Last-30 AI 外部信号服务器自动同步已落地：`ubuntu` 用户 crontab 每天 00:00 运行一次 `MAXNOW-AI-LAST30-SYNC`，通过 `python3 scripts/update_data.py ai-last30` 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
 - 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
 - OpenClaw Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线趋势。费用为 OpenRouter 等价估算，后续还需要补 Codex 用量 collector。
+- Dash 左侧导航已新增“云服务”tab，位于 Token 下方。该页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
 - Home 时间卡片已支持 `dashboard.json.specialDates`：用手动维护的公历日期或一次性日期在当天显示生日、纪念日等轻量提醒；没有命中时继续显示“今日无节日”。
 - Home 顶部已新增北京市海淀区天气卡：地点、天气、当前温度、今日高低温和图标来自 `dashboard.json.weather`，并由 `runtime` 定时刷新。

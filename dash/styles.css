@@ -176,6 +176,11 @@ a {
   color: var(--cyan);
 }
 
+.nav-cloud .nav-icon {
+  background: #fff4e6;
+  color: var(--orange);
+}
+
 .side-nav-item:hover,
 .side-nav-item.is-active {
   border-color: color-mix(in srgb, var(--nav-color, var(--accent)) 22%, #ffffff);
@@ -197,6 +202,10 @@ a {
 
 .nav-dounai {
   --nav-color: var(--cyan);
+}
+
+.nav-cloud {
+  --nav-color: var(--orange);
 }
 
 .workspace {
@@ -530,6 +539,7 @@ a {
   .summary-clock:hover,
   .token-page-head:hover,
   .status-strip article:hover,
+  .cloud-summary article:hover,
   .mini-token-grid div:hover,
   .dounai-title-tab:hover,
   .dounai-top-tabs:hover,
@@ -1582,6 +1592,149 @@ a {
   min-height: 340px;
 }
 
+.cloud-page-head {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+}
+
+.cloud-page-head .status-pill {
+  align-self: start;
+}
+
+.cloud-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.cloud-summary article {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
+  min-width: 0;
+  min-height: 112px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.cloud-summary article:nth-child(2) {
+  --card-color: var(--cyan);
+  --card-border: #9eeaf8;
+}
+
+.cloud-summary article:nth-child(3) {
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
+}
+
+.cloud-summary article:nth-child(4) {
+  --card-color: var(--orange);
+  --card-border: #ffd29a;
+}
+
+.cloud-summary span,
+.cloud-summary small {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.cloud-summary strong {
+  color: var(--card-color);
+  font-size: 24px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.cloud-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.cloud-card {
+  --card-color: var(--accent-strong);
+  --card-border: #8fd0ff;
+}
+
+.cloud-card .panel-head {
+  flex-wrap: wrap;
+}
+
+.cloud-card[data-tone="cyan"] {
+  --card-color: var(--cyan);
+  --card-border: #9eeaf8;
+}
+
+.cloud-card[data-tone="purple"] {
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
+}
+
+.cloud-card[data-tone="orange"] {
+  --card-color: var(--orange);
+  --card-border: #ffd29a;
+}
+
+.cloud-card[data-tone="green"] {
+  --card-color: var(--ok);
+  --card-border: #a8e9c2;
+}
+
+.cloud-card code {
+  color: var(--card-color);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.cloud-card .item-copy {
+  overflow-wrap: anywhere;
+}
+
+.cloud-meta {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+}
+
+.cloud-meta div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  border: 1px solid #e3ebf4;
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  background: #ffffff;
+}
+
+.cloud-meta dt,
+.cloud-meta dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.cloud-meta dt {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.cloud-meta dd {
+  min-width: 0;
+  color: var(--text);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
 .model-row {
   grid-template-columns: minmax(0, 1fr) auto;
 }
@@ -1760,6 +1913,11 @@ a {
     grid-template-columns: 1fr;
   }
 
+  .cloud-summary,
+  .cloud-grid {
+    grid-template-columns: 1fr;
+  }
+
   #dounai-view .token-page-head {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   }
@@ -1785,17 +1943,18 @@ a {
   }
 
   .side-nav {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .topbar {
+    grid-template-columns: 1fr;
     align-items: stretch;
-    flex-direction: column;
     padding: 14px;
   }
 
   .topbar-actions {
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   .view {
@@ -1805,7 +1964,8 @@ a {
   .home-top-grid,
   .home-widgets,
   .summary-bar,
-  .token-page-head {
+  .token-page-head,
+  .cloud-page-head {
     grid-template-columns: 1fr;
   }
 
@@ -1819,8 +1979,16 @@ a {
   .ai-news-list,
   .feed-list,
   .token-summary,
+  .cloud-summary,
+  .cloud-grid,
   .range-tabs {
     grid-template-columns: 1fr;
+  }
+
+  .cloud-card .panel-head {
+    display: grid;
+    justify-content: start;
+    justify-items: start;
   }
 
   .checkin-grid {
