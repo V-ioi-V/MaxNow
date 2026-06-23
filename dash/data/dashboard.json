@@ -10,6 +10,18 @@
     "summary": "当前优先推进：规划个人博客发布链路。",
     "updatedAt": "2026-06-18 19:53"
   },
+  "weather": {
+    "city": "北京市",
+    "district": "海淀",
+    "location": "北京市海淀区",
+    "condition": "晴",
+    "tempC": 22,
+    "highC": 35,
+    "lowC": 23,
+    "updatedAt": "2026-06-23 20:04",
+    "source": "wttr.in",
+    "sourceUrl": "https://wttr.in/Haidian,Beijing?format=j1"
+  },
   "automation": {
     "status": "正常",
     "summary": "OpenClaw 日常只更新 data/ 下的数据文件",

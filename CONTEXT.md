@@ -99,6 +99,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - OpenClaw 日常任务可以更新。
 - 每次更新后必须校验 JSON，并重新生成对应 `.js` wrapper。
 - 这里保存“今天要看的状态”，不要塞长期产品讨论。
+- Home 小日历的北京市海淀区天气摘要读取 `dash/data/dashboard.json.weather`，当前是静态只读状态字段；前端不直接请求外部天气接口。
 - private personal-wiki 待办不能由前端直接读取；需要先运行 `python scripts/update_data.py runtime` 或 `python scripts/sync_wiki_todos.py` 生成 MaxNow 本地缓存。
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；服务器上已验证 `python3 scripts/sync_wiki_todos.py` 能成功生成待办缓存。
 - 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、今日推进或日常记录。
@@ -192,6 +193,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - OpenClaw Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线趋势。费用为 OpenRouter 等价估算，后续还需要补 Codex 用量 collector。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
 - Home 时间卡片已支持 `dashboard.json.specialDates`：用手动维护的公历日期或一次性日期在当天显示生日、纪念日等轻量提醒；没有命中时继续显示“今日无节日”。
+- Home 时间卡片已显示北京市海淀区天气摘要：地点、天气、当前温度和今日高低温来自 `dashboard.json.weather`。
 - Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留原有三个入口，不做折叠侧栏。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
 - 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，失败日志会进入 Home 系统状态。

@@ -327,13 +327,13 @@ a {
 }
 
 .summary-clock {
-  min-width: 190px;
-  min-height: 148px;
+  min-width: 206px;
+  min-height: 168px;
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 7px;
-  padding: 18px 22px;
+  gap: 6px;
+  padding: 18px 20px;
   border: 1px solid #e0e8f2;
   border-radius: var(--radius);
   background: #ffffff;
@@ -369,6 +369,15 @@ a {
 
 .summary-clock .holiday-label {
   color: var(--orange);
+}
+
+.summary-clock .weather-label {
+  color: var(--blue);
+}
+
+.summary-clock .weather-range {
+  color: var(--soft);
+  font-size: 12px;
 }
 
 .status-strip {

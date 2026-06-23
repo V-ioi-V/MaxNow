@@ -800,6 +800,7 @@ function renderHome() {
   setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
   setText("#ai-news-source", aiNewsData.sourceSummary || "OpenClaw AI Daily");
   setText("#last30-source", last30Data.sourceSummary || last30Data.updatedAt || copy.syncWaiting);
+  renderWeather();
 
   setText("#metric-mainlines", String(mainlines.length));
   setText("#metric-mainlines-note", `${mainlines.length} ${copy.taskCount}`);
@@ -1182,6 +1183,21 @@ function getSpecialDateLabels(date) {
       return title;
     })
     .filter(Boolean);
+}
+
+function renderWeather() {
+  const weather = dashboardData.weather || {};
+  const location = weather.district || weather.location || "\u6d77\u6dc0";
+  const condition = weather.condition || weather.summary || "--";
+  const current = Number(weather.tempC);
+  const high = Number(weather.highC);
+  const low = Number(weather.lowC);
+  const currentLabel = Number.isFinite(current) ? `${Math.round(current)}\u00b0C` : "--";
+  const rangeLabel =
+    Number.isFinite(high) && Number.isFinite(low) ? `\u4eca\u65e5 ${Math.round(high)}\u00b0/${Math.round(low)}\u00b0` : "\u4eca\u65e5 --";
+
+  setText("#weather-label", `${location} \u00b7 ${condition} ${currentLabel}`);
+  setText("#weather-range", rangeLabel);
 }
 
 function updateClock() {
