@@ -480,6 +480,7 @@ def timer_state():
 def failure_log_state():
     candidates = [
         LOG_DIR / "wiki-todos.log",
+        LOG_DIR / "weather.log",
         LOG_DIR / "system-status.log",
         SYNC_LOG,
     ]

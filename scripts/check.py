@@ -74,6 +74,7 @@ def check_required_files():
         "scripts/sync_openclaw_usage.py",
         "scripts/sync_ai_last30.py",
         "scripts/sync_project_meta.py",
+        "scripts/sync_weather.py",
         "scripts/update_data.py",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
@@ -154,12 +155,28 @@ def check_project_meta():
     return "project-meta: version and recent updates are valid"
 
 
+def check_dashboard_weather():
+    data = load_json(ROOT / "dash/data/dashboard.json")
+    weather = data.get("weather", {})
+    if weather:
+        if weather.get("location") != "北京市海淀区":
+            raise ValueError("dashboard weather: location must be 北京市海淀区")
+        if weather.get("icon") not in {"sun", "cloud", "rain", "storm", "snow", "fog"}:
+            raise ValueError("dashboard weather: icon is not supported")
+        for key in ["tempC", "highC", "lowC"]:
+            value = float(weather[key])
+            if value < -50 or value > 60:
+                raise ValueError(f"dashboard weather: {key} is out of range")
+    return "dashboard weather: shape is valid"
+
+
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
     checks.append(check_dounai_checkin())
     checks.append(check_openclaw_usage())
     checks.append(check_project_meta())
+    checks.append(check_dashboard_weather())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/"))

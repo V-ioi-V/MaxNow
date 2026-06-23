@@ -271,7 +271,7 @@ a {
 .summary-bar,
 .token-page-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 24px;
   align-items: center;
   padding: 24px;
@@ -326,19 +326,100 @@ a {
   font-weight: 700;
 }
 
+.summary-weather,
 .summary-clock {
-  min-width: 206px;
-  min-height: 168px;
+  min-height: 148px;
+  border: 1px solid #e0e8f2;
+  border-radius: var(--radius);
+  background: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.summary-weather {
+  width: 172px;
   display: grid;
   align-content: center;
   justify-items: center;
   gap: 6px;
-  padding: 18px 20px;
-  border: 1px solid #e0e8f2;
-  border-radius: var(--radius);
-  background: #ffffff;
+  padding: 10px 16px;
   text-align: center;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.weather-icon {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: #eef8ff;
+  color: var(--accent);
+}
+
+.weather-icon svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.weather-copy {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+}
+
+.weather-copy span,
+.weather-copy small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.weather-copy strong {
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.weather-copy small:first-of-type {
+  color: var(--blue);
+}
+
+.summary-weather[data-weather="sun"] .weather-icon {
+  background: #fff7de;
+  color: var(--orange);
+}
+
+.summary-weather[data-weather="cloud"] .weather-icon,
+.summary-weather[data-weather="fog"] .weather-icon {
+  background: #edf3f8;
+  color: var(--soft);
+}
+
+.summary-weather[data-weather="rain"] .weather-icon {
+  background: #eaf7ff;
+  color: var(--cyan);
+}
+
+.summary-weather[data-weather="storm"] .weather-icon {
+  background: #f3efff;
+  color: var(--purple);
+}
+
+.summary-weather[data-weather="snow"] .weather-icon {
+  background: #edfaff;
+  color: var(--cyan);
+}
+
+.summary-clock {
+  min-width: 190px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+  padding: 18px 22px;
+  text-align: center;
 }
 
 .summary-clock span,
@@ -369,15 +450,6 @@ a {
 
 .summary-clock .holiday-label {
   color: var(--orange);
-}
-
-.summary-clock .weather-label {
-  color: var(--blue);
-}
-
-.summary-clock .weather-range {
-  color: var(--soft);
-  font-size: 12px;
 }
 
 .status-strip {
@@ -1690,6 +1762,10 @@ a {
   .summary-clock {
     width: 100%;
     text-align: center;
+  }
+
+  .summary-weather {
+    width: 100%;
   }
 
   .status-strip,

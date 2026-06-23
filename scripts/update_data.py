@@ -54,10 +54,15 @@ def run_python(script, log_name=None):
             stderr=subprocess.STDOUT,
             text=True,
             encoding="utf-8",
+            errors="replace",
         )
         assert process.stdout is not None
         for line in process.stdout:
-            print(line, end="", flush=True)
+            printable = line.encode(sys.stdout.encoding or "utf-8", errors="replace").decode(
+                sys.stdout.encoding or "utf-8",
+                errors="replace",
+            )
+            print(printable, end="", flush=True)
             log.write(line)
             log.flush()
         code = process.wait()
@@ -168,6 +173,7 @@ def parse_args():
 
     subparsers.add_parser("wiki-todos", help="Sync personal-wiki todos and validate data.")
     subparsers.add_parser("system-status", help="Refresh machine-collected system status and validate data.")
+    subparsers.add_parser("weather", help="Refresh Beijing Haidian weather and validate data.")
     subparsers.add_parser("openclaw-usage", help="Refresh OpenClaw token usage ledger and validate data.")
     subparsers.add_parser("ai-last30", help="Refresh free external AI signals for ai-news and Last-30.")
     subparsers.add_parser("project-meta", help="Refresh MaxNow version and recent update metadata.")
@@ -189,6 +195,9 @@ def main():
 
     if args.command in {"wiki-todos", "runtime", "all"}:
         run_python("scripts/sync_wiki_todos.py", "wiki-todos.log")
+
+    if args.command in {"weather", "runtime", "all"}:
+        run_python("scripts/sync_weather.py", "weather.log")
 
     if args.command in {"system-status", "runtime", "all"}:
         run_python("scripts/sync_system_status.py", "system-status.log")

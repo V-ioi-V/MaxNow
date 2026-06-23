@@ -64,12 +64,14 @@ MaxNow 由四类文件组成：
    - `scripts/sync_wiki_todos.py`
    - `scripts/sync_system_status.py`
    - `scripts/sync_openclaw_usage.py`
-   - `scripts/sync_project_meta.py`
+  - `scripts/sync_project_meta.py`
+  - `scripts/sync_weather.py`
    - 由 Codex 或 Owner 维护。
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
    - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `dash/data/dashboard.*` 中的 `automation` 和 `system` 字段。
    - `scripts/sync_openclaw_usage.py` 只读 OpenClaw 服务器轨迹，生成 Token 使用账本和 OpenRouter 等价费用估算，为后续 Codex 用量接入预留同一账本结构。
-   - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
+  - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
+  - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
 
 6. 产品记忆文档
    - `CONTEXT.md`
@@ -110,7 +112,8 @@ Home 按顺序回答这些问题：
 必备模块：
 
 - 今日状态：模式、精力、焦点、一句话判断、更新时间。
-- 今日小日历：Home 顶部右侧展示公历日期、当前时间、北京市海淀区今日天气 / 当前温度 / 今日高低温、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。天气来自 `dash/data/dashboard.json` 的 `weather` 字段，先作为只读状态显示，不在前端实时请求外部天气接口。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
+- 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
+- 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
 - 当前主线：1-3 条重要线索，包含状态、下一步和必要时的卡点。
 - 今日推进：1-3 个今天应该移动的动作；这里不是完整 todo app。
 - 日常记录：保存个人上下文和关键决定的短记录。
@@ -206,7 +209,7 @@ IDEAS.md
 UPDATE_LOG.md
 ```
 
-`dash/data/dashboard.json` 负责个人状态、主线、行动、日常记录、时间线、系统状态、Token 使用、Home 时间卡片的天气摘要和手动特殊日期列表。
+`dash/data/dashboard.json` 负责个人状态、主线、行动、日常记录、时间线、系统状态、Token 使用、Home 天气卡和时间卡片的手动特殊日期列表。
 
 其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`today`、`mainlines`、`actions` 和 `journal` 仍保留 Owner 判断或受控草稿，不由系统状态脚本覆盖。
 
@@ -224,22 +227,23 @@ UPDATE_LOG.md
 
 如果提供 `startYear`，页面会在标题后显示周年数。没有命中当天特殊日期时，页面保持“今日无节日”的低干扰提示。
 
-`weather` 是可选对象，用于 Home 小日历展示北京市海淀区的今日天气摘要：
+`weather` 是可选对象，用于 Home 顶部天气卡展示北京市海淀区的今日天气摘要：
 
 ```json
 {
   "location": "北京市海淀区",
   "district": "海淀",
   "condition": "晴",
+  "icon": "sun",
   "tempC": 22,
   "highC": 35,
   "lowC": 23,
   "updatedAt": "2026-06-23 20:04",
-  "source": "wttr.in"
+  "source": "Open-Meteo"
 }
 ```
 
-页面只读取这些字段展示，不从浏览器端请求天气 API。后续如果接自动刷新，应由受控脚本更新 `dashboard.json` 并重新生成 `dashboard.js`。
+`icon` 支持 `sun`、`cloud`、`rain`、`storm`、`snow`、`fog`。页面只读取这些字段展示，不从浏览器端请求天气 API。日常刷新由 `scripts/sync_weather.py` 更新 `dashboard.json` 并重新生成 `dashboard.js`；服务器 `runtime` 定时任务会一并运行该刷新。
 
 `dash/data/ai-news.json` 只负责首页展示用的外部 AI 输入，通常取 Last-30 外部信号中的 0-3 条高相关内容。
 

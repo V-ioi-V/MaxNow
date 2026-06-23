@@ -122,6 +122,17 @@ Preserve this shape when possible:
       "type": "birthday"
     }
   ],
+  "weather": {
+    "location": "北京市海淀区",
+    "district": "海淀",
+    "condition": "晴",
+    "icon": "sun",
+    "tempC": 22,
+    "highC": 35,
+    "lowC": 23,
+    "updatedAt": "YYYY-MM-DD HH:mm",
+    "source": "Open-Meteo"
+  },
   "feeds": [
     {
       "source": "GitHub / RSS / HN / Server",
@@ -162,6 +173,8 @@ Keep arrays short:
 - `feeds`: 0-3
 
 `specialDates` is optional and manually maintained. It powers only the Home time card's same-day birthday / anniversary hint. Use either fixed Gregorian dates with `month` and `day`, or one-time dates with `date: "YYYY-MM-DD"`. Do not expand it into a calendar system.
+
+`weather` is maintained by `scripts/sync_weather.py` / `python scripts/update_data.py runtime`. Preserve it when editing dashboard data manually. Supported `icon` values are `sun`, `cloud`, `rain`, `storm`, `snow`, and `fog`.
 
 ## AI External Input Shape
 

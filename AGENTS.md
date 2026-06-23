@@ -57,6 +57,7 @@ scripts/sync_system_status.py
 scripts/sync_wiki_todos.py
 scripts/sync_openclaw_usage.py
 scripts/sync_project_meta.py
+scripts/sync_weather.py
 VERSION
 CONTEXT.md
 ROADMAP.md
@@ -87,7 +88,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 
 ## Data Rules
 
-- `dash/data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, and Token usage.
+- `dash/data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, Home weather, and Token usage.
 - `dash/data/ai-news.json` owns AI external inputs only.
 - `dash/data/last-30.json` owns the rolling 30-day external AI signal memory: daily AI signals, weekly AI changes, 30-day AI mainlines, impact notes, and watch items.
 - `dash/data/wiki-todos.json` owns the read-only MaxNow cache generated from personal-wiki `wiki/tasks/todo.json`.
@@ -100,6 +101,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Validate JSON before finishing data changes.
 - Use `python scripts/sync_wiki_todos.py` to refresh `dash/data/wiki-todos.*` from private personal-wiki through the local or server `gh` login; never put GitHub tokens in frontend code.
 - Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `dash/data/dashboard.*`; do not let it overwrite owner judgment fields such as today, mainlines, actions, or journal.
+- Use `python scripts/sync_weather.py` or `python scripts/update_data.py weather` to refresh the Home weather card for Beijing Haidian District; `runtime` also runs this refresh.
 - Use `python scripts/sync_openclaw_usage.py` or `python scripts/update_data.py openclaw-usage` on the server to refresh OpenClaw token usage from `/root/.openclaw`; costs are estimates using OpenRouter model prices, not real provider billing.
 - Use `python scripts/sync_project_meta.py` or `python scripts/update_data.py project-meta` to refresh the MaxNow version and recent update module.
 - Use `python scripts/sync_ai_last30.py` or `python scripts/update_data.py ai-last30` to refresh free external AI signals into `dash/data/ai-news.*` and `dash/data/last-30.*`.

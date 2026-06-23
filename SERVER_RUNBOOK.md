@@ -164,6 +164,7 @@ python3 scripts/check.py
 
 ```bash
 python3 scripts/update_data.py runtime
+python3 scripts/update_data.py weather
 python3 scripts/update_data.py project-status
 python3 scripts/update_data.py openclaw-usage
 python3 scripts/update_data.py ai-last30
@@ -171,7 +172,17 @@ python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+
+刷新 Home 天气卡：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/update_data.py weather
+python3 scripts/check.py
+```
+
+天气卡读取 `dash/data/dashboard.json.weather`，由 `scripts/sync_weather.py` 写入并同步生成 `dash/data/dashboard.js`。当前位置固定为北京市海淀区，坐标约 `39.96, 116.30`。前端只读本地数据，不直接请求天气接口。
 
 刷新免费 AI 外部信号和 Last-30：
 
@@ -251,6 +262,8 @@ curl http://metadata.tencentyun.com/latest/meta-data/payment/create-time
 */10 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-dashboard-sync.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow dashboard sync start"; python3 scripts/update_data.py runtime; echo "[$(date -Is)] maxnow dashboard sync ok"' >> /var/www/maxnow-dashboard/logs/maxnow-sync.log 2>&1
 ```
 
+该任务会通过 `runtime` 一并刷新 wiki-todos、北京市海淀区天气、系统状态和项目元信息。
+
 查看当前 crontab：
 
 ```bash
@@ -262,6 +275,7 @@ crontab -l
 ```text
 /var/www/maxnow-dashboard/logs/ai-last30.log
 /var/www/maxnow-dashboard/logs/wiki-todos.log
+/var/www/maxnow-dashboard/logs/weather.log
 /var/www/maxnow-dashboard/logs/system-status.log
 /var/www/maxnow-dashboard/logs/maxnow-sync.log
 ```

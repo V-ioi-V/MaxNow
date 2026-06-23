@@ -33,6 +33,15 @@ const emptyTemplate = qs("#empty-template");
 const refreshButton = qs("#refresh-button");
 const viewTitle = qs("#view-title");
 
+const weatherIcons = {
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>',
+  cloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 18H8a4.5 4.5 0 1 1 .9-8.9 6 6 0 0 1 11.4 2.6A3.2 3.2 0 0 1 17.5 18Z"/></svg>',
+  rain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 15H8a4.5 4.5 0 1 1 .9-8.9 6 6 0 0 1 11.4 2.6A3.2 3.2 0 0 1 17.5 15Z"/><path d="M8 19l-1 2M13 18l-1 2M18 19l-1 2"/></svg>',
+  storm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 14.8H8a4.5 4.5 0 1 1 .9-8.9 6 6 0 0 1 11.4 2.6A3.2 3.2 0 0 1 17.5 14.8Z"/><path d="m12.5 14-2.2 4h3l-1.8 3.5"/></svg>',
+  snow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 15H8a4.5 4.5 0 1 1 .9-8.9 6 6 0 0 1 11.4 2.6A3.2 3.2 0 0 1 17.5 15Z"/><path d="M8 20h.01M12 19h.01M16 20h.01"/></svg>',
+  fog: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 14H8a4.5 4.5 0 1 1 .9-8.9 6 6 0 0 1 11.4 2.6A3.2 3.2 0 0 1 17.5 14Z"/><path d="M4 18h16M6 21h12"/></svg>',
+};
+
 const copy = {
   unnamedTask: "\u672a\u547d\u540d\u4e8b\u9879",
   unnamedInfo: "\u672a\u547d\u540d\u4fe1\u606f",
@@ -1189,14 +1198,21 @@ function renderWeather() {
   const weather = dashboardData.weather || {};
   const location = weather.district || weather.location || "\u6d77\u6dc0";
   const condition = weather.condition || weather.summary || "--";
+  const icon = weatherIcons[weather.icon] ? weather.icon : "cloud";
   const current = Number(weather.tempC);
   const high = Number(weather.highC);
   const low = Number(weather.lowC);
-  const currentLabel = Number.isFinite(current) ? `${Math.round(current)}\u00b0C` : "--";
+  const currentLabel = Number.isFinite(current) ? `${Math.round(current)}\u00b0C` : "--\u00b0C";
   const rangeLabel =
     Number.isFinite(high) && Number.isFinite(low) ? `\u4eca\u65e5 ${Math.round(high)}\u00b0/${Math.round(low)}\u00b0` : "\u4eca\u65e5 --";
+  const card = qs(".summary-weather");
+  const iconNode = qs("#weather-icon");
 
-  setText("#weather-label", `${location} \u00b7 ${condition} ${currentLabel}`);
+  if (card) card.dataset.weather = icon;
+  if (iconNode) iconNode.innerHTML = weatherIcons[icon];
+  setText("#weather-location", location);
+  setText("#weather-temp", currentLabel);
+  setText("#weather-condition", condition);
   setText("#weather-range", rangeLabel);
 }
 

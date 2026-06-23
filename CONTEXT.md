@@ -68,6 +68,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
 - `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段。
 - `scripts/sync_openclaw_usage.py`：只读服务器 `/root/.openclaw` 轨迹，生成 OpenClaw Token 用量账本和 OpenRouter 等价费用估算。
+- `scripts/sync_weather.py`：从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，写入 `dash/data/dashboard.*` 的 `weather` 字段。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
 
 维护方式：
@@ -80,7 +81,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 这些文件驱动当前网页。
 
-- `dash/data/dashboard.json`：个人状态、主线、今日推进、日常记录、时间点、系统状态、Token 使用和 Home 时间卡片的手动特殊日期列表。
+- `dash/data/dashboard.json`：个人状态、主线、今日推进、日常记录、时间点、系统状态、Token 使用、Home 天气卡和 Home 时间卡片的手动特殊日期列表。
 - `dash/data/dashboard.js`：从 `dashboard.json` 生成的浏览器 wrapper。
 - `dash/data/ai-news.json`：首页展示用的外部 AI 输入，取免费 AI 外部信号中的 0-3 条高相关内容。
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
@@ -92,6 +93,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/project-meta.js`：从 `project-meta.json` 生成的浏览器 wrapper。
 - `dash/data/dounai_checkin.json`：豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化每天更新；Home 只读展示今日流量、今日豆丁、今日账号有效期延长时长、累计签到天数、累计流量和累计账号有效期延长时长，并作为豆奶详情页入口。豆奶详情页展示近 30 天流量/时长折线图，以及剩余流量、有效期、每日可用预算和近 30 天账号日均可用趋势。
 - `scripts/sync_wiki_todos.py`：通过本地或服务器 `gh` 登录态刷新 `dash/data/wiki-todos.*`，避免前端暴露 GitHub token。
+- `scripts/sync_weather.py`：抓取北京市海淀区天气、温度、高低温和天气图标类型，只刷新 dashboard 的 `weather` 字段。
 - `scripts/sync_ai_last30.py`：抓取免费公开 AI 信号源，刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`；采集脚本本身不调用模型，不消耗 token。
 
 维护方式：
@@ -99,10 +101,11 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - OpenClaw 日常任务可以更新。
 - 每次更新后必须校验 JSON，并重新生成对应 `.js` wrapper。
 - 这里保存“今天要看的状态”，不要塞长期产品讨论。
-- Home 小日历的北京市海淀区天气摘要读取 `dash/data/dashboard.json.weather`，当前是静态只读状态字段；前端不直接请求外部天气接口。
+- Home 顶部天气卡读取 `dash/data/dashboard.json.weather`，展示在小日历左侧；前端不直接请求外部天气接口。
 - private personal-wiki 待办不能由前端直接读取；需要先运行 `python scripts/update_data.py runtime` 或 `python scripts/sync_wiki_todos.py` 生成 MaxNow 本地缓存。
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；服务器上已验证 `python3 scripts/sync_wiki_todos.py` 能成功生成待办缓存。
 - 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、今日推进或日常记录。
+- 天气可以由 `python scripts/update_data.py weather` 或服务器 `runtime` 定时刷新，数据源是 Open-Meteo 免费 forecast API。
 - OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。
 - MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与最近更新模块。
 - `dash/data/openclaw-usage.json` 的结构预留 `futureSources.codex`，后续本地 Codex 和服务器 Codex 用量接入时应复用同类日账本结构。
@@ -193,7 +196,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - OpenClaw Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线趋势。费用为 OpenRouter 等价估算，后续还需要补 Codex 用量 collector。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
 - Home 时间卡片已支持 `dashboard.json.specialDates`：用手动维护的公历日期或一次性日期在当天显示生日、纪念日等轻量提醒；没有命中时继续显示“今日无节日”。
-- Home 时间卡片已显示北京市海淀区天气摘要：地点、天气、当前温度和今日高低温来自 `dashboard.json.weather`。
+- Home 顶部已新增北京市海淀区天气卡：地点、天气、当前温度、今日高低温和图标来自 `dashboard.json.weather`，并由 `runtime` 定时刷新。
 - Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留原有三个入口，不做折叠侧栏。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
 - 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，失败日志会进入 Home 系统状态。
