@@ -14,6 +14,7 @@
 ### Home 顶部增加海淀天气卡和定时刷新
 
 - 将天气从小日历中拆出，放到 Home 顶部右侧、小日历左边的独立天气卡。
+- 将天气卡和小日历从 Today Status / 整理模式卡片中拆出，作为顶部同级小组件展示。
 - 天气卡增加 SVG 图标，支持晴、多云 / 阴、雨、雷阵雨、雪、雾等状态。
 - 新增 `scripts/sync_weather.py`，用 Open-Meteo 免费 forecast API 刷新北京市海淀区天气、温度、今日高低温和图标类型。
 - `python scripts/update_data.py weather` 可单独刷新天气，`runtime` 也会一并刷新，因此服务器现有 10 分钟定时任务部署后即可更新天气。

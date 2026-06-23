@@ -72,33 +72,37 @@
         </header>
 
         <section class="view is-active" id="home-view" data-view-panel="home">
-          <header class="summary-bar" id="overview">
-            <div class="summary-copy">
-              <p class="eyebrow">Today Status</p>
-              <h1 id="today-mode">&#20170;&#26085;&#29366;&#24577;</h1>
-              <p id="daily-brief">&#31561;&#24453; OpenClaw &#20889;&#20837;&#20170;&#22825;&#30340;&#25688;&#35201;&#12290;</p>
-              <div class="summary-meta" aria-label="Today personal state">
-                <span id="today-energy">&#33021;&#37327; --</span>
-                <span id="today-focus">&#20027;&#32447; --</span>
-                <span id="today-updated">&#24453;&#30830;&#35748;</span>
+          <div class="home-top-grid">
+            <header class="summary-bar" id="overview">
+              <div class="summary-copy">
+                <p class="eyebrow">Today Status</p>
+                <h1 id="today-mode">&#20170;&#26085;&#29366;&#24577;</h1>
+                <p id="daily-brief">&#31561;&#24453; OpenClaw &#20889;&#20837;&#20170;&#22825;&#30340;&#25688;&#35201;&#12290;</p>
+                <div class="summary-meta" aria-label="Today personal state">
+                  <span id="today-energy">&#33021;&#37327; --</span>
+                  <span id="today-focus">&#20027;&#32447; --</span>
+                  <span id="today-updated">&#24453;&#30830;&#35748;</span>
+                </div>
+              </div>
+            </header>
+            <div class="home-widgets" aria-label="Home widgets">
+              <div class="summary-weather" aria-label="北京市海淀区今日天气">
+                <span class="weather-icon" id="weather-icon" aria-hidden="true"></span>
+                <div class="weather-copy">
+                  <span id="weather-location">海淀</span>
+                  <strong id="weather-temp">--°C</strong>
+                  <small id="weather-condition">天气 --</small>
+                  <small id="weather-range">今日 --</small>
+                </div>
+              </div>
+              <div class="summary-clock" aria-label="Current time">
+                <span id="today-label">--</span>
+                <strong id="clock-label">--:--</strong>
+                <small id="lunar-label">农历 --</small>
+                <small class="holiday-label" id="holiday-label">--</small>
               </div>
             </div>
-            <div class="summary-weather" aria-label="北京市海淀区今日天气">
-              <span class="weather-icon" id="weather-icon" aria-hidden="true"></span>
-              <div class="weather-copy">
-                <span id="weather-location">海淀</span>
-                <strong id="weather-temp">--°C</strong>
-                <small id="weather-condition">天气 --</small>
-                <small id="weather-range">今日 --</small>
-              </div>
-            </div>
-            <div class="summary-clock" aria-label="Current time">
-              <span id="today-label">--</span>
-              <strong id="clock-label">--:--</strong>
-              <small id="lunar-label">农历 --</small>
-              <small class="holiday-label" id="holiday-label">--</small>
-            </div>
-          </header>
+          </div>
 
           <section class="status-strip" aria-label="Today status">
             <article class="metric-mainline">
