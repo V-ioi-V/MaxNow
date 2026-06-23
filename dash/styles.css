@@ -408,9 +408,20 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--muted);
   white-space: nowrap;
+}
+
+.weather-meta small + small::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  display: inline-block;
+  margin: 0 8px 2px 2px;
+  border-radius: 999px;
+  background: #b7c3d2;
+  vertical-align: middle;
 }
 
 .weather-range {
