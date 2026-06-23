@@ -361,14 +361,14 @@ a {
   align-content: center;
   justify-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   padding: 18px 16px;
   text-align: center;
 }
 
 .weather-icon {
-  width: 64px;
-  height: 64px;
+  width: 70px;
+  height: 70px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -378,29 +378,29 @@ a {
 }
 
 .weather-icon svg {
-  width: 58px;
-  height: 58px;
+  width: 64px;
+  height: 64px;
   display: block;
 }
 
 .weather-copy {
   display: grid;
   justify-items: center;
-  gap: 8px;
+  gap: 9px;
   min-width: 0;
   text-align: center;
 }
 
 .weather-copy small {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   line-height: 1.2;
 }
 
 .weather-copy strong {
   color: var(--ink);
-  font-size: 30px;
+  font-size: 34px;
   line-height: 1;
 }
 
@@ -408,7 +408,7 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -442,7 +442,7 @@ a {
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 8px;
+  gap: 9px;
   padding: 18px 22px;
   text-align: center;
 }
@@ -454,21 +454,21 @@ a {
 
 .summary-clock span {
   color: var(--muted);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.2;
 }
 
 .summary-clock strong {
   margin-top: 4px;
-  font-size: 42px;
+  font-size: 46px;
   line-height: 1;
 }
 
 .summary-clock small {
   display: block;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.2;
 }
