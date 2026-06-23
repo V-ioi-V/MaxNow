@@ -16,11 +16,12 @@
 - 将天气从小日历中拆出，放到 Home 顶部右侧、小日历左边的独立天气卡。
 - 将天气卡和小日历从 Today Status / 整理模式卡片中拆出，作为顶部同级小组件展示。
 - 对齐顶部小组件区和 Home 右侧栏宽度，并为天气卡、小日历补齐统一 hover 悬浮效果。
+- 将顶部天气卡、小日历和 Today Status 卡片高度锁为同一行等高。
 - 天气卡增加 SVG 图标，支持晴、多云 / 阴、雨、雷阵雨、雪、雾等状态。
 - 新增 `scripts/sync_weather.py`，用 Open-Meteo 免费 forecast API 刷新北京市海淀区天气、温度、今日高低温和图标类型。
 - `python scripts/update_data.py weather` 可单独刷新天气，`runtime` 也会一并刷新，因此服务器现有 10 分钟定时任务部署后即可更新天气。
 - 前端只读取本地数据展示，不在浏览器端请求外部天气接口。
-- 将 Dash 缓存版本提升到 `styles.css?v=51`、`app.js?v=41`。
+- 将 Dash 缓存版本提升到 `styles.css?v=52`、`app.js?v=41`。
 
 原因：
 

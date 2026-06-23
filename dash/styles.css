@@ -272,7 +272,7 @@ a {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(360px, 0.32fr);
   gap: 20px;
-  align-items: center;
+  align-items: stretch;
 }
 
 .summary-bar,
@@ -280,6 +280,7 @@ a {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
+  height: 100%;
   padding: 24px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -292,6 +293,7 @@ a {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
   align-items: stretch;
+  height: 100%;
 }
 
 .eyebrow {
@@ -345,6 +347,7 @@ a {
   --card-border: #8fd0ff;
   width: 100%;
   min-width: 0;
+  height: 100%;
   min-height: 148px;
   border: 1px solid #e0e8f2;
   border-radius: var(--radius);
