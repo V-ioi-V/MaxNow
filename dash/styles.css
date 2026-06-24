@@ -1828,6 +1828,11 @@ a {
   --card-border: #ffc1dc;
 }
 
+#ricky-view {
+  padding-right: clamp(16px, 1.8vw, 36px);
+  padding-left: clamp(16px, 1.8vw, 36px);
+}
+
 .ricky-page-head .status-pill {
   border-color: #ffd3e5;
   background: #fff3f8;
@@ -1891,7 +1896,7 @@ a {
 
 .ricky-map {
   position: relative;
-  min-height: 480px;
+  min-height: 540px;
   overflow: hidden;
   border: 1px solid #f5c9dc;
   border-radius: 22px;
@@ -2390,7 +2395,7 @@ a {
   }
 
   .ricky-map {
-    min-height: 330px;
+    min-height: 430px;
   }
 
   .ricky-pin-label {

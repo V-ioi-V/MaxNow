@@ -775,8 +775,8 @@ function renderRickyLeaflet(places) {
   });
 
   rickyMap.fitBounds(bounds, {
-    padding: [28, 28],
-    maxZoom: 4,
+    padding: [16, 16],
+    maxZoom: 3,
   });
   requestAnimationFrame(() => rickyMap.invalidateSize());
 }

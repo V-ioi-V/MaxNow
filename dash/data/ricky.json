@@ -4,7 +4,7 @@
   "source_file": "wiki/relationships/ricky-travel.json",
   "source_url": "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/relationships/ricky-travel.json",
   "source_loaded_from": "local personal-wiki",
-  "synced_at": "2026-06-24T20:51:52+08:00",
+  "synced_at": "2026-06-24T21:15:19+08:00",
   "title": "我和 Ricky",
   "subtitle": "一起走过的地方和以后还想去的地方。",
   "summary": "从我和 Ricky 的权威时间线中抽取旅行、出游和共同去过的地点，供 MaxNow 同行记页面只读展示。",
@@ -82,8 +82,8 @@
     },
     {
       "id": "hokkaido",
-      "name": "北海道",
-      "city": "北海道",
+      "name": "北海",
+      "city": "北海",
       "country": "日本",
       "region": "北海道",
       "lat": 43.2203,
@@ -215,7 +215,7 @@
       "places": [
         "札幌",
         "东京",
-        "北海道"
+        "北海"
       ],
       "url": "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/relationships/ricky-travel.json"
     },
