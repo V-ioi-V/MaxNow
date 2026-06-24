@@ -209,6 +209,18 @@ runtime data stash before deploy: before-ricky-map-tune-runtime-data
 verification: python3 scripts/update_data.py runtime ok，同步 11 个 Ricky 地点和 4 条记录；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/ricky.json 200；https://dash.maxnow.cn/styles.css?v=70 200；https://dash.maxnow.cn/app.js?v=53 200
 ```
 
+2026-06-24 已部署同行记显式地图标签和正方形地图：
+
+```text
+deployed commit: df771be Merge explicit Ricky map labels
+changes: personal-wiki Ricky 旅行地点新增 map_label；MaxNow 同步为 mapLabel，marker 不再取地点名前两个字；11 个标签为北京、札幌、东京、北海、大理、大同、天路、天津、沈阳、布统、阿那亚；同行记地图容器改为正方形居中展示
+dash styles version: styles.css?v=71
+dash app version: app.js?v=54
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-214401-before-ricky-labels-square
+runtime data stash before deploy: before-ricky-labels-square-runtime-data
+verification: python3 scripts/update_data.py runtime ok，同步 11 个 Ricky 地点和 4 条记录；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/ricky.json 200；https://dash.maxnow.cn/styles.css?v=71 200；https://dash.maxnow.cn/app.js?v=54 200；线上 ricky.json mapLabel 列表确认正确
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
