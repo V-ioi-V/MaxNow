@@ -189,6 +189,7 @@ Token 真实数据可以分来源接入。第一阶段先接入 OpenClaw：
 - v1 为只读静态页面：真实地图和少量统计；地点与旅行记录先只作为地图点位和 popup 数据，不在页面上单独铺列表。
 - 数据来自 `dash/data/ricky.json`，由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 同步；前端不编辑、不回写、不直接读取 private personal-wiki。
 - 地点点位优先使用 `lat` / `lng` 放在 Leaflet + OpenStreetMap 真实地图上；`x` / `y` 只作为网络或地图脚本不可用时的静态 fallback。
+- 地图 marker 显示 `mapLabel`，由 personal-wiki 源数据显式维护，避免用地点名前两个字自动截断出“乌兰”等不完整标签。
 - 记录字段优先保持轻量：地点、日期、国家 / 地区、简短备注、可选照片或来源链接；列表展示后续需要时再恢复。
 
 ## 数据契约

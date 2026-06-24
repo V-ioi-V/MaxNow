@@ -109,6 +109,7 @@ def build_cache(source, source_loaded_from):
             {
                 "id": place.get("id") or "",
                 "name": place.get("name") or "",
+                "mapLabel": place.get("map_label") or "",
                 "city": place.get("name") or "",
                 "country": place.get("country") or "",
                 "region": place.get("region") or "",

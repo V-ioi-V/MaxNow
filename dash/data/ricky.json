@@ -4,7 +4,7 @@
   "source_file": "wiki/relationships/ricky-travel.json",
   "source_url": "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/relationships/ricky-travel.json",
   "source_loaded_from": "local personal-wiki",
-  "synced_at": "2026-06-24T21:15:19+08:00",
+  "synced_at": "2026-06-24T21:36:47+08:00",
   "title": "我和 Ricky",
   "subtitle": "一起走过的地方和以后还想去的地方。",
   "summary": "从我和 Ricky 的权威时间线中抽取旅行、出游和共同去过的地点，供 MaxNow 同行记页面只读展示。",
@@ -38,6 +38,7 @@
     {
       "id": "beijing",
       "name": "北京",
+      "mapLabel": "北京",
       "city": "北京",
       "country": "中国",
       "region": "华北",
@@ -53,6 +54,7 @@
     {
       "id": "sapporo",
       "name": "札幌",
+      "mapLabel": "札幌",
       "city": "札幌",
       "country": "日本",
       "region": "北海道",
@@ -68,6 +70,7 @@
     {
       "id": "tokyo",
       "name": "东京",
+      "mapLabel": "东京",
       "city": "东京",
       "country": "日本",
       "region": "关东",
@@ -83,6 +86,7 @@
     {
       "id": "hokkaido",
       "name": "北海",
+      "mapLabel": "北海",
       "city": "北海",
       "country": "日本",
       "region": "北海道",
@@ -98,6 +102,7 @@
     {
       "id": "dali",
       "name": "大理",
+      "mapLabel": "大理",
       "city": "大理",
       "country": "中国",
       "region": "云南",
@@ -113,6 +118,7 @@
     {
       "id": "datong",
       "name": "大同",
+      "mapLabel": "大同",
       "city": "大同",
       "country": "中国",
       "region": "山西",
@@ -128,6 +134,7 @@
     {
       "id": "grassland-sky-road",
       "name": "草原天路",
+      "mapLabel": "天路",
       "city": "草原天路",
       "country": "中国",
       "region": "河北 / 内蒙古周边",
@@ -143,6 +150,7 @@
     {
       "id": "tianjin",
       "name": "天津",
+      "mapLabel": "天津",
       "city": "天津",
       "country": "中国",
       "region": "华北",
@@ -158,6 +166,7 @@
     {
       "id": "shenyang",
       "name": "沈阳",
+      "mapLabel": "沈阳",
       "city": "沈阳",
       "country": "中国",
       "region": "东北",
@@ -173,6 +182,7 @@
     {
       "id": "ulan-butong",
       "name": "乌兰布统",
+      "mapLabel": "布统",
       "city": "乌兰布统",
       "country": "中国",
       "region": "内蒙古",
@@ -188,6 +198,7 @@
     {
       "id": "aranya",
       "name": "阿那亚",
+      "mapLabel": "阿那亚",
       "city": "阿那亚",
       "country": "中国",
       "region": "秦皇岛",

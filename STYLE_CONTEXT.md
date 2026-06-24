@@ -102,7 +102,7 @@
 
 - 左侧导航名称为“同行记”，副标题为“我和 Ricky”，避免把它做成泛旅行产品。
 - 同行记页面顶部沿用 `token-page-head` 页头族，地图沿用 `panel` 卡片族；地点和旅行记录列表先不展示。
-- 同行记地图优先使用 Leaflet + OpenStreetMap/CARTO Voyager 真实地图，点位来自 `dash/data/ricky.json` 的 `lat` / `lng`；视觉要偏柔和、卡通、手账感，不要像严肃 GIS 后台；内置浅色 SVG 只作为地图脚本或网络不可用时的 fallback。
+- 同行记地图优先使用 Leaflet + OpenStreetMap/CARTO Voyager 真实地图，点位来自 `dash/data/ricky.json` 的 `lat` / `lng`；地图容器保持正方形、居中展示，marker 文案使用显式 `mapLabel`，不要用地点名前两个字自动截断；视觉要偏柔和、卡通、手账感，不要像严肃 GIS 后台；内置浅色 SVG 只作为地图脚本或网络不可用时的 fallback。
 - 没有真实旅行记录时显示克制空状态，不编造地点或经历。
 - 地图卡和右侧地点 / 记录卡在桌面端并列，窄屏下堆叠；页面不得横向溢出。
 - 真实地图 marker 使用彩色圆润自定义 marker 和 Leaflet popup 展示地点摘要；fallback 地图默认只显示点位，hover / focus 时显示标签。
