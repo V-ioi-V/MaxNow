@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=63" />
+    <link rel="stylesheet" href="./styles.css?v=65" />
   </head>
   <body>
     <div class="app-shell">
@@ -163,7 +163,7 @@
                     href="https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json"
                     target="_blank"
                     rel="noreferrer"
-                  >查看</a>
+                  >更多</a>
                 </header>
                 <div class="wiki-todo-summary">
                   <span class="status-pill" id="wiki-todo-status">等待读取</span>
@@ -323,7 +323,7 @@
                     <p class="eyebrow">Tokens</p>
                     <h2>&#36817;&#26399;&#29992;&#37327;</h2>
                   </div>
-                  <button class="text-button" type="button" data-view="tokens">&#26597;&#30475;</button>
+                  <small class="panel-updated" id="mini-token-updated">等待同步</small>
                 </header>
                 <div class="mini-token-grid">
                   <div>
@@ -362,12 +362,13 @@
                 <div class="project-update-list" id="project-update-list"></div>
               </article>
 
-              <article class="panel system-panel">
+              <article class="panel system-panel" id="system-panel" role="button" tabindex="0" aria-label="打开云服务系统状态">
                 <header class="panel-head">
                   <div>
                     <p class="eyebrow">System</p>
                     <h2>&#31995;&#32479;&#29366;&#24577;</h2>
                   </div>
+                  <span class="status-pill">云服务</span>
                 </header>
                 <div class="system-list" id="system-list"></div>
               </article>
@@ -478,6 +479,18 @@
           </section>
 
           <section class="cloud-grid">
+            <article class="panel cloud-card cloud-system-card" data-tone="green">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">System</p>
+                  <h2>&#31995;&#32479;&#29366;&#24577;</h2>
+                </div>
+                <span class="status-pill">runtime</span>
+              </header>
+              <p class="item-copy">nginx&#12289;HTTPS &#35777;&#20070;&#12289;&#37096;&#32626;&#29256;&#26412;&#12289;CPU&#12289;&#30913;&#30424;&#12289;&#20869;&#23384;&#21644;&#36816;&#34892;&#26102;&#38388;&#30340;&#26368;&#26032;&#24555;&#29031;&#12290;</p>
+              <div class="system-list cloud-system-list" id="cloud-system-list"></div>
+            </article>
+
             <article class="panel cloud-card" data-tone="blue">
               <header class="panel-head">
                 <div>
@@ -699,6 +712,6 @@
     <script src="./data/wiki-todos.js?v=1"></script>
     <script src="./data/openclaw-usage.js?v=1"></script>
     <script src="./data/project-meta.js?v=1"></script>
-    <script src="./app.js?v=45"></script>
+    <script src="./app.js?v=47"></script>
   </body>
 </html>

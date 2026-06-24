@@ -635,6 +635,15 @@ a {
   color: var(--ok);
 }
 
+.system-panel {
+  cursor: pointer;
+}
+
+.system-panel:focus-visible {
+  outline: 3px solid rgba(35, 156, 231, 0.22);
+  outline-offset: 3px;
+}
+
 .home-workspace,
 .home-main,
 .home-aside,
@@ -1116,6 +1125,15 @@ a {
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
+}
+
+.panel-updated {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .mini-token-grid,
@@ -1733,6 +1751,15 @@ a {
   --card-border: #a8e9c2;
 }
 
+.cloud-system-card {
+  grid-column: 1 / -1;
+}
+
+.cloud-system-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
 .cloud-card code {
   color: var(--card-color);
   font-size: 12px;
@@ -1966,6 +1993,10 @@ a {
 
   .cloud-summary,
   .cloud-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cloud-system-list {
     grid-template-columns: 1fr;
   }
 

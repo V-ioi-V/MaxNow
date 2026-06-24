@@ -66,7 +66,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/check.py`：本地一致性校验脚本。
 - `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新 Home 项目状态。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
-- `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段。
+- `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段；Home 系统状态卡作为入口，云服务页复用同一份快照展示更完整的服务器状态。
 - `scripts/sync_openclaw_usage.py`：只读服务器 `/root/.openclaw` 轨迹，生成 OpenClaw Token 用量账本和 OpenRouter 等价费用估算。
 - `scripts/sync_weather.py`：从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，写入 `dash/data/dashboard.*` 的 `weather` 字段。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
