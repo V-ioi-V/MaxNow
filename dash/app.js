@@ -784,11 +784,11 @@ function renderRickyLeaflet(places) {
 function createRickyMapIcon(place) {
   const isWaiting = place.dateStatus === "needs_confirmation";
   const color = isWaiting ? "#ff980f" : "#ff6fae";
-  const label = escapeHtml((place.name || place.city || copy.item).slice(0, 2));
+  const label = escapeHtml(place.mapLabel || place.name || place.city || copy.item);
   return window.L.divIcon({
     className: "ricky-leaflet-marker",
     html: `<span style="--marker-color: ${color}"><strong>${label}</strong></span>`,
-    iconSize: [42, 48],
+    iconSize: [48, 52],
     iconAnchor: [21, 44],
     popupAnchor: [0, -40],
   });

@@ -1896,7 +1896,10 @@ a {
 
 .ricky-map {
   position: relative;
-  min-height: 540px;
+  width: min(100%, 980px);
+  aspect-ratio: 1;
+  min-height: 0;
+  margin: 0 auto;
   overflow: hidden;
   border: 1px solid #f5c9dc;
   border-radius: 22px;
@@ -2005,8 +2008,10 @@ a {
 
 .ricky-leaflet-marker span {
   position: relative;
-  width: 42px;
+  min-width: 42px;
+  width: max-content;
   height: 42px;
+  padding: 0 8px;
   display: grid;
   place-items: center;
   border: 3px solid #ffffff;
@@ -2028,8 +2033,10 @@ a {
 .ricky-leaflet-marker strong {
   position: relative;
   z-index: 1;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 900;
   line-height: 1;
+  white-space: nowrap;
   transform: rotate(45deg);
 }
 
@@ -2395,7 +2402,7 @@ a {
   }
 
   .ricky-map {
-    min-height: 430px;
+    width: 100%;
   }
 
   .ricky-pin-label {
