@@ -1197,6 +1197,11 @@ a {
 }
 
 .token-summary article:nth-child(5) {
+  --card-color: var(--green);
+  --card-border: #a7f3d0;
+}
+
+.token-summary article:nth-child(6) {
   --card-color: var(--orange);
   --card-border: #ffd29a;
 }
@@ -1546,7 +1551,7 @@ a {
 }
 
 .token-summary {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   margin-bottom: 14px;
 }
 

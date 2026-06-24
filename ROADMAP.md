@@ -44,7 +44,7 @@
 - 给本机 Codex 用量补 Windows Task Scheduler 自动刷新；当前先手动运行 `python scripts/update_data.py codex-usage`。
 - 给服务器 Codex 用量补 cron 自动刷新，并确认日志、锁、文件权限和部署目录写入方式。
 - 将 Token 页来源列表 / 说明继续优化为更明确的 OpenClaw、Codex local、Codex server 分源展示。
-- 后续如果需要费用估算，只能在明确 Codex 真实计费口径后单独设计；当前 Codex 只统计 token 流量，不折算订阅费用。
+- Codex 费用已按 OpenAI API 等价价格估算；后续如果要对齐 Codex 订阅真实账单，需要另行确认官方账单口径。
 
 ### 让 Last-30 免费 AI 信号稳定运行
 

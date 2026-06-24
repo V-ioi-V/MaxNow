@@ -156,7 +156,7 @@ def merge_ledgers(ledgers):
         "timezone": "Asia/Shanghai",
         "currency": "USD",
         "pricingBasis": "mixed",
-        "pricingSource": "openclaw-openrouter-equivalent-and-codex-session-token-count",
+        "pricingSource": "openclaw-openrouter-equivalent-and-codex-openai-api-equivalent",
         "pricingStale": any(ledger.get("pricingStale") for ledger in ledgers if ledger),
         "summary": total,
         "sources": sorted(sources.values(), key=lambda item: item["totalTokens"], reverse=True),
@@ -165,7 +165,7 @@ def merge_ledgers(ledgers):
         "pricingSnapshot": pricing_snapshot,
         "notes": [
             "OpenClaw cost is OpenRouter-equivalent estimation.",
-            "Codex cost is not estimated; token flow comes from session token_count events.",
+            "Codex cost is OpenAI API-equivalent estimation from session token_count events.",
         ],
         "warnings": warnings,
     }

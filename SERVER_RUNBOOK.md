@@ -294,7 +294,7 @@ python scripts/update_data.py codex-usage
 python scripts/check.py
 ```
 
-Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 事件，导出 input / output / cached input / total token、时间、来源和模型标签；不要导出 prompt / response 正文。Windows Task Scheduler 和服务器 cron 自动化尚未落地，已记录在 `ROADMAP.md`。
+Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。Windows Task Scheduler 和服务器 cron 自动化尚未落地，已记录在 `ROADMAP.md`。
 
 刷新 Home 天气卡：
 

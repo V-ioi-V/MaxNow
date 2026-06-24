@@ -172,11 +172,11 @@ def check_usage_ledger(name, rel_path, allowed_pricing_basis):
 
 
 def check_codex_usage():
-    return check_usage_ledger("codex-usage", "dash/data/codex-usage.json", {"subscription-usage"})
+    return check_usage_ledger("codex-usage", "dash/data/codex-usage.json", {"openai-api-equivalent"})
 
 
 def check_token_usage():
-    return check_usage_ledger("token-usage", "dash/data/token-usage.json", {"mixed", "openrouter-equivalent", "subscription-usage"})
+    return check_usage_ledger("token-usage", "dash/data/token-usage.json", {"mixed", "openrouter-equivalent", "openai-api-equivalent"})
 
 
 def check_project_meta():

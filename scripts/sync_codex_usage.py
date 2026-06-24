@@ -10,6 +10,25 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_STATE_DIR = Path.home() / ".codex"
 OUTPUT_REL = "dash/data/codex-usage.json"
+PRICING_SOURCE = "openai-api-pricing"
+DEFAULT_PRICING_MODEL = "gpt-5.5"
+MODEL_PRICING = {
+    "gpt-5.5": {
+        "input": 5.00,
+        "cachedInput": 0.50,
+        "output": 30.00,
+    },
+    "gpt-5.4": {
+        "input": 2.50,
+        "cachedInput": 0.25,
+        "output": 15.00,
+    },
+    "gpt-5.4-mini": {
+        "input": 0.75,
+        "cachedInput": 0.075,
+        "output": 4.50,
+    },
+}
 try:
     TZ = ZoneInfo("Asia/Shanghai")
 except ZoneInfoNotFoundError:
@@ -44,6 +63,33 @@ def display_label(cwd, originator, source_label):
         if parts:
             return parts[-1]
     return originator or source_label
+
+
+def normalize_model(value):
+    text = str(value or "").strip()
+    lowered = text.lower()
+    if "gpt-5.4" in lowered and "mini" in lowered:
+        return "gpt-5.4-mini"
+    if "gpt-5.5" in lowered:
+        return "gpt-5.5"
+    if "gpt-5.4" in lowered:
+        return "gpt-5.4"
+    return DEFAULT_PRICING_MODEL
+
+
+def estimate_cost(usage, pricing_model):
+    pricing = MODEL_PRICING.get(pricing_model)
+    if not pricing:
+        return 0.0
+    input_tokens = to_int(usage.get("inputTokens"))
+    cache_tokens = min(to_int(usage.get("cacheReadTokens")), input_tokens)
+    uncached_input = max(input_tokens - cache_tokens, 0)
+    output_tokens = to_int(usage.get("outputTokens"))
+    return (
+        (uncached_input / 1_000_000) * pricing["input"]
+        + (cache_tokens / 1_000_000) * pricing["cachedInput"]
+        + (output_tokens / 1_000_000) * pricing["output"]
+    )
 
 
 def empty_usage():
@@ -81,7 +127,7 @@ def load_session_usage(path, source_key, source_label, cutoff):
     event_count = 0
     final_total = None
     last_timestamp = None
-    last_model = "Codex"
+    last_model = DEFAULT_PRICING_MODEL
     last_context_window = 0
 
     try:
@@ -107,6 +153,11 @@ def load_session_usage(path, source_key, source_label, cutoff):
                     "modelProvider": payload.get("model_provider") or "openai",
                 }
                 continue
+            if record_type == "turn_context":
+                turn_model = (record.get("payload") or {}).get("model")
+                if turn_model:
+                    last_model = normalize_model(turn_model)
+                continue
 
             if record_type != "event_msg":
                 continue
@@ -125,7 +176,7 @@ def load_session_usage(path, source_key, source_label, cutoff):
             final_total = total_usage
             last_timestamp = happened_at
             rate_limits = record.get("rate_limits") or {}
-            last_model = rate_limits.get("limit_name") or last_model
+            last_model = normalize_model(rate_limits.get("limit_name") or last_model)
             last_context_window = to_int(info.get("model_context_window"))
 
     if not final_total or not last_timestamp:
@@ -133,29 +184,29 @@ def load_session_usage(path, source_key, source_label, cutoff):
 
     session_id = session_meta.get("sessionId") or path.stem
     label = display_label(session_meta.get("cwd"), session_meta.get("originator"), source_label)
-    return [
-        {
-            "date": last_timestamp.strftime("%Y-%m-%d"),
-            "timestamp": last_timestamp.isoformat(timespec="seconds"),
-            "source": source_key,
-            "provider": session_meta.get("modelProvider") or "openai",
-            "model": last_model,
-            "openrouterModel": None,
-            "sessionId": session_id,
-            "runId": session_id,
-            "kind": "codex-session",
-            "label": label,
-            "inputTokens": to_int(final_total.get("input_tokens")),
-            "outputTokens": to_int(final_total.get("output_tokens")),
-            "cacheReadTokens": to_int(final_total.get("cached_input_tokens")),
-            "reasoningOutputTokens": to_int(final_total.get("reasoning_output_tokens")),
-            "totalTokens": to_int(final_total.get("total_tokens")),
-            "estimatedCostUsd": None,
-            "pricingEstimated": False,
-            "contextWindow": last_context_window,
-            "tokenCountEvents": event_count,
-        }
-    ]
+    item = {
+        "date": last_timestamp.strftime("%Y-%m-%d"),
+        "timestamp": last_timestamp.isoformat(timespec="seconds"),
+        "source": source_key,
+        "provider": session_meta.get("modelProvider") or "openai",
+        "model": last_model,
+        "openrouterModel": None,
+        "sessionId": session_id,
+        "runId": session_id,
+        "kind": "codex-session",
+        "label": label,
+        "inputTokens": to_int(final_total.get("input_tokens")),
+        "outputTokens": to_int(final_total.get("output_tokens")),
+        "cacheReadTokens": to_int(final_total.get("cached_input_tokens")),
+        "reasoningOutputTokens": to_int(final_total.get("reasoning_output_tokens")),
+        "totalTokens": to_int(final_total.get("total_tokens")),
+        "pricingEstimated": True,
+        "pricingModel": last_model,
+        "contextWindow": last_context_window,
+        "tokenCountEvents": event_count,
+    }
+    item["estimatedCostUsd"] = round(estimate_cost(item, last_model), 8)
+    return [item]
 
 
 def collect_runs(state_dir, source_key, source_label, since_days):
@@ -177,10 +228,11 @@ def summarize_runs(runs, source_key, source_label, since_days):
                 **empty_usage(),
                 "byModel": {},
                 "byTask": {},
-                "pricingEstimated": False,
+                "pricingEstimated": True,
             },
         )
         add_usage(day, run)
+        day["estimatedCostUsd"] += float(run.get("estimatedCostUsd") or 0)
         if run["source"] not in day["sources"]:
             day["sources"].append(run["source"])
 
@@ -192,10 +244,12 @@ def summarize_runs(runs, source_key, source_label, since_days):
                 "provider": run["provider"],
                 "openrouterModel": run["openrouterModel"],
                 **empty_usage(),
-                "pricingEstimated": False,
+                "pricingEstimated": True,
+                "pricingModel": run.get("pricingModel") or run["model"],
             },
         )
         add_usage(model, run)
+        model["estimatedCostUsd"] += float(run.get("estimatedCostUsd") or 0)
 
         task_key = f"{run['kind']}:{run['label']}:{model_key}"
         task = day["byTask"].setdefault(
@@ -205,10 +259,12 @@ def summarize_runs(runs, source_key, source_label, since_days):
                 "label": run["label"],
                 "model": model_key,
                 **empty_usage(),
-                "pricingEstimated": False,
+                "pricingEstimated": True,
+                "pricingModel": run.get("pricingModel") or model_key,
             },
         )
         add_usage(task, run)
+        task["estimatedCostUsd"] += float(run.get("estimatedCostUsd") or 0)
 
     day_list = []
     for day in sorted(days.values(), key=lambda item: item["date"], reverse=True):
@@ -224,6 +280,9 @@ def summarize_runs(runs, source_key, source_label, since_days):
     for run in runs:
         add_usage(total, run)
         add_usage(by_source[run["source"]], run)
+        cost = float(run.get("estimatedCostUsd") or 0)
+        total["estimatedCostUsd"] += cost
+        by_source[run["source"]]["estimatedCostUsd"] += cost
     total["estimatedCostUsd"] = rounded_cost(total["estimatedCostUsd"])
 
     sources = []
@@ -241,19 +300,25 @@ def summarize_runs(runs, source_key, source_label, since_days):
         "updatedAt": now_text(),
         "timezone": "Asia/Shanghai",
         "currency": "USD",
-        "pricingBasis": "subscription-usage",
-        "pricingSource": "codex-session-token-count",
+        "pricingBasis": "openai-api-equivalent",
+        "pricingSource": PRICING_SOURCE,
         "pricingStale": False,
         "sinceDays": since_days,
         "summary": total,
         "sources": sources,
         "days": day_list,
         "recentRuns": list(reversed(runs[-30:])),
-        "pricingSnapshot": [],
+        "pricingSnapshot": [
+            {
+                "model": model,
+                "pricing": pricing,
+            }
+            for model, pricing in sorted(MODEL_PRICING.items())
+        ],
         "notes": [
             "Codex usage is collected from local session token_count events.",
             "No prompt or response body is exported into this ledger.",
-            "estimatedCostUsd is intentionally 0 because Codex subscription usage is not an OpenRouter bill.",
+            "estimatedCostUsd is an OpenAI API-equivalent estimate, not an actual Codex subscription bill.",
         ],
     }
 

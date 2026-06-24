@@ -104,6 +104,13 @@ function formatCost(value) {
   return "$0";
 }
 
+function formatPercent(value) {
+  if (!Number.isFinite(value)) return "--";
+  if (value >= 99.5) return `${value.toFixed(0)}%`;
+  if (value >= 10) return `${value.toFixed(1)}%`;
+  return `${value.toFixed(2)}%`;
+}
+
 function formatFlow(value, unit = "auto") {
   const amount = Number(value);
   if (!Number.isFinite(amount)) return "--";
@@ -500,7 +507,7 @@ function normalizeUsageDay(day) {
 }
 
 function sumUsage(days) {
-  return days.reduce(
+  const summary = days.reduce(
     (sum, day) => ({
       input: sum.input + Number(day.input || 0),
       output: sum.output + Number(day.output || 0),
@@ -511,6 +518,8 @@ function sumUsage(days) {
     }),
     { input: 0, output: 0, cacheRead: 0, total: 0, cost: 0, runs: 0 },
   );
+  summary.cacheHitRate = summary.input > 0 ? (summary.cacheRead / summary.input) * 100 : NaN;
+  return summary;
 }
 
 function formatDateLabel(dateText) {
@@ -609,7 +618,7 @@ function getOpenclawTokenUsage() {
   ranges.forEach((range) => {
     const hasCodex = (range.selectedDays || []).some((day) => (day.sources || []).some((source) => String(source).startsWith("codex")));
     range.note = hasCodex
-      ? `Token ${range.label}: OpenClaw cost is estimated; Codex is token flow only. Not an actual billing statement.`
+      ? `Token ${range.label}: cost includes OpenClaw OpenRouter-equivalent and Codex OpenAI API-equivalent estimates. Cache hit rate = cached input / input.`
       : range.note;
   });
 
@@ -1090,6 +1099,7 @@ function renderTokens() {
   setText("#token-input", formatToken(range.input));
   setText("#token-output", formatToken(range.output));
   setText("#token-cache", formatToken(range.cacheRead));
+  setText("#token-cache-hit", formatPercent(range.cacheHitRate));
   setText("#token-cost", formatCost(range.cost));
   setText("#token-note", range.note || copy.noNote);
 

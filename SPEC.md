@@ -171,8 +171,8 @@ Token 真实数据可以分来源接入。第一阶段先接入 OpenClaw：
 - `dash/data/openclaw-usage.json` 保存 OpenClaw 的 input / output / cacheRead / total token、按天、按模型、按任务拆分，以及按 OpenRouter 价格折算的等价费用。
 - `dash/data/codex-usage.json` 保存 Codex 的 input / output / cacheRead / total token、按天、按模型、按任务拆分；来源为 `.codex/sessions` 中的 `token_count` 事件，不导出 prompt / response 正文。
 - `dash/data/token-usage.json` 保存合并后的统一 Token 总账，Token 页面优先读取这个文件。
-- OpenClaw 源账本的 `pricingBasis` 必须标记为 `openrouter-equivalent`，不要把它当作真实扣费账单；Codex 源账本使用 `subscription-usage`，统一总账使用 `mixed`。
-- OpenClaw 费用使用 OpenRouter 等价估算；Codex 当前只统计 token 流量，不估算真实订阅扣费。
+- OpenClaw 源账本的 `pricingBasis` 必须标记为 `openrouter-equivalent`，不要把它当作真实扣费账单；Codex 源账本使用 `openai-api-equivalent`，统一总账使用 `mixed`。
+- OpenClaw 费用使用 OpenRouter 等价估算；Codex 费用使用 OpenAI API 等价估算。两者都是估算口径，不等同于真实供应商账单或订阅账单。
 - 后续其他来源应复用同类日账本结构，再由汇总层合并 OpenClaw / Codex / 其他来源。
 
 不要把完整 Token 页面复制到 Home。Home 只需要显示紧凑的使用状态。
