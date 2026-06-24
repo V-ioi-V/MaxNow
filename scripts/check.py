@@ -15,6 +15,8 @@ DATASETS = [
     ("last-30", "dash/data/last-30.json", "dash/data/last-30.js", "MAXNOW_LAST30_DATA"),
     ("wiki-todos", "dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
     ("openclaw-usage", "dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
+    ("codex-usage", "dash/data/codex-usage.json", "dash/data/codex-usage.js", "MAXNOW_CODEX_USAGE_DATA"),
+    ("token-usage", "dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
     ("project-meta", "dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
     ("ricky", "dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
 ]
@@ -75,6 +77,8 @@ def check_required_files():
         "scripts/sync_system_status.py",
         "scripts/sync_wiki_todos.py",
         "scripts/sync_openclaw_usage.py",
+        "scripts/sync_codex_usage.py",
+        "scripts/sync_token_usage.py",
         "scripts/sync_ai_last30.py",
         "scripts/sync_project_meta.py",
         "scripts/sync_weather.py",
@@ -147,6 +151,34 @@ def check_openclaw_usage():
     return "openclaw-usage: ledger shape is valid"
 
 
+def check_usage_ledger(name, rel_path, allowed_pricing_basis):
+    data = load_json(ROOT / rel_path)
+    if data.get("pricingBasis") not in allowed_pricing_basis:
+        raise ValueError(f"{name}: pricingBasis is not supported")
+    if data.get("currency") != "USD":
+        raise ValueError(f"{name}: currency must be USD")
+    if not isinstance(data.get("days", []), list):
+        raise ValueError(f"{name}: days must be a list")
+    if not isinstance(data.get("sources", []), list):
+        raise ValueError(f"{name}: sources must be a list")
+    for day in data.get("days", []):
+        datetime.strptime(day["date"], "%Y-%m-%d")
+        for key in ["inputTokens", "outputTokens", "cacheReadTokens", "totalTokens", "runs"]:
+            if int(day.get(key, 0)) < 0:
+                raise ValueError(f"{name}: {key} cannot be negative")
+        if float(day.get("estimatedCostUsd", 0)) < 0:
+            raise ValueError(f"{name}: estimatedCostUsd cannot be negative")
+    return f"{name}: ledger shape is valid"
+
+
+def check_codex_usage():
+    return check_usage_ledger("codex-usage", "dash/data/codex-usage.json", {"subscription-usage"})
+
+
+def check_token_usage():
+    return check_usage_ledger("token-usage", "dash/data/token-usage.json", {"mixed", "openrouter-equivalent", "subscription-usage"})
+
+
 def check_project_meta():
     data = load_json(ROOT / "dash/data/project-meta.json")
     version = data.get("version", "")
@@ -179,6 +211,8 @@ def main():
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
     checks.append(check_dounai_checkin())
     checks.append(check_openclaw_usage())
+    checks.append(check_codex_usage())
+    checks.append(check_token_usage())
     checks.append(check_project_meta())
     checks.append(check_dashboard_weather())
     checks.append(check_local_server("http://127.0.0.1:4173/"))

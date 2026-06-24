@@ -14,6 +14,8 @@ DATASETS = {
     "last-30": ("dash/data/last-30.json", "dash/data/last-30.js", "MAXNOW_LAST30_DATA"),
     "wiki-todos": ("dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
     "openclaw-usage": ("dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
+    "codex-usage": ("dash/data/codex-usage.json", "dash/data/codex-usage.js", "MAXNOW_CODEX_USAGE_DATA"),
+    "token-usage": ("dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
     "project-meta": ("dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
     "ricky": ("dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
 }
@@ -176,6 +178,8 @@ def parse_args():
     subparsers.add_parser("system-status", help="Refresh machine-collected system status and validate data.")
     subparsers.add_parser("weather", help="Refresh Beijing Haidian weather and validate data.")
     subparsers.add_parser("openclaw-usage", help="Refresh OpenClaw token usage ledger and validate data.")
+    subparsers.add_parser("codex-usage", help="Refresh local Codex token usage ledger and validate data.")
+    subparsers.add_parser("token-usage", help="Merge OpenClaw and Codex token ledgers and validate data.")
     subparsers.add_parser("ai-last30", help="Refresh free external AI signals for ai-news and Last-30.")
     subparsers.add_parser("project-meta", help="Refresh MaxNow version and recent update metadata.")
     subparsers.add_parser("ricky-travel", help="Sync Ricky travel records from personal-wiki.")
@@ -207,6 +211,14 @@ def main():
     if args.command in {"openclaw-usage", "all"}:
         run_python("scripts/sync_openclaw_usage.py", "openclaw-usage.log")
         write_wrapper("openclaw-usage")
+
+    if args.command in {"codex-usage", "all"}:
+        run_python("scripts/sync_codex_usage.py", "codex-usage.log")
+        write_wrapper("codex-usage")
+
+    if args.command in {"openclaw-usage", "codex-usage", "token-usage", "all"}:
+        run_python("scripts/sync_token_usage.py", "token-usage.log")
+        write_wrapper("token-usage")
 
     if args.command in {"ai-last30"}:
         run_python("scripts/sync_ai_last30.py", "ai-last30.log")

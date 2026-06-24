@@ -43,6 +43,10 @@ MaxNow 由四类文件组成：
    - `dash/data/wiki-todos.js`
    - `dash/data/openclaw-usage.json`
    - `dash/data/openclaw-usage.js`
+   - `dash/data/codex-usage.json`
+   - `dash/data/codex-usage.js`
+   - `dash/data/token-usage.json`
+   - `dash/data/token-usage.js`
    - `dash/data/project-meta.json`
    - `dash/data/project-meta.js`
    - `dash/data/dounai_checkin.json`
@@ -66,16 +70,20 @@ MaxNow 由四类文件组成：
    - `scripts/sync_wiki_todos.py`
    - `scripts/sync_system_status.py`
    - `scripts/sync_openclaw_usage.py`
-  - `scripts/sync_project_meta.py`
-  - `scripts/sync_weather.py`
-  - `scripts/sync_ricky_travel.py`
+   - `scripts/sync_codex_usage.py`
+   - `scripts/sync_token_usage.py`
+   - `scripts/sync_project_meta.py`
+   - `scripts/sync_weather.py`
+   - `scripts/sync_ricky_travel.py`
    - 由 Codex 或 Owner 维护。
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
    - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `dash/data/dashboard.*` 中的 `automation` 和 `system` 字段。
-   - `scripts/sync_openclaw_usage.py` 只读 OpenClaw 服务器轨迹，生成 Token 使用账本和 OpenRouter 等价费用估算，为后续 Codex 用量接入预留同一账本结构。
-  - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
-  - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
-  - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
+   - `scripts/sync_openclaw_usage.py` 只读 OpenClaw 服务器轨迹，生成 Token 使用账本和 OpenRouter 等价费用估算。
+   - `scripts/sync_codex_usage.py` 只读 Codex session `token_count` 事件，生成 Codex Token 使用账本，不导出对话正文。
+   - `scripts/sync_token_usage.py` 合并 OpenClaw / Codex 源账本，生成 Token 页面统一总账。
+   - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
+   - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
+   - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
 
 6. 产品记忆文档
    - `CONTEXT.md`
@@ -161,8 +169,11 @@ Token 页面只回答 Token 相关问题：
 Token 真实数据可以分来源接入。第一阶段先接入 OpenClaw：
 
 - `dash/data/openclaw-usage.json` 保存 OpenClaw 的 input / output / cacheRead / total token、按天、按模型、按任务拆分，以及按 OpenRouter 价格折算的等价费用。
-- `pricingBasis` 必须标记为 `openrouter-equivalent`，不要把它当作真实扣费账单。
-- 后续 Codex 接入应复用同类日账本结构，再由汇总层合并 OpenClaw / Codex / 其他来源。
+- `dash/data/codex-usage.json` 保存 Codex 的 input / output / cacheRead / total token、按天、按模型、按任务拆分；来源为 `.codex/sessions` 中的 `token_count` 事件，不导出 prompt / response 正文。
+- `dash/data/token-usage.json` 保存合并后的统一 Token 总账，Token 页面优先读取这个文件。
+- OpenClaw 源账本的 `pricingBasis` 必须标记为 `openrouter-equivalent`，不要把它当作真实扣费账单；Codex 源账本使用 `subscription-usage`，统一总账使用 `mixed`。
+- OpenClaw 费用使用 OpenRouter 等价估算；Codex 当前只统计 token 流量，不估算真实订阅扣费。
+- 后续其他来源应复用同类日账本结构，再由汇总层合并 OpenClaw / Codex / 其他来源。
 
 不要把完整 Token 页面复制到 Home。Home 只需要显示紧凑的使用状态。
 

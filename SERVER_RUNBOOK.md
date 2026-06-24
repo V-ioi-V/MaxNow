@@ -261,12 +261,31 @@ python3 scripts/update_data.py runtime
 python3 scripts/update_data.py weather
 python3 scripts/update_data.py project-status
 python3 scripts/update_data.py openclaw-usage
+python3 scripts/update_data.py codex-usage
+python3 scripts/update_data.py token-usage
 python3 scripts/update_data.py ai-last30
 python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+
+刷新本机或服务器 Codex Token 用量：
+
+```bash
+cd /var/www/maxnow-dashboard
+MAXNOW_CODEX_SOURCE_KEY=codex-server MAXNOW_CODEX_SOURCE_LABEL="Codex server" CODEX_STATE_DIR=/root/.codex python3 scripts/update_data.py codex-usage
+python3 scripts/check.py
+```
+
+本机 Windows 可直接在仓库目录运行：
+
+```powershell
+python scripts/update_data.py codex-usage
+python scripts/check.py
+```
+
+Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 事件，导出 input / output / cached input / total token、时间、来源和模型标签；不要导出 prompt / response 正文。Windows Task Scheduler 和服务器 cron 自动化尚未落地，已记录在 `ROADMAP.md`。
 
 刷新 Home 天气卡：
 

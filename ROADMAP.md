@@ -40,12 +40,11 @@
 ### 接入 Codex 用量
 
 - 来源 ID：`maxnow-token-usage`
-- 为本地 Codex 和服务器 Codex 补 collector，复用 OpenClaw 用量账本的按天 / 来源 / 模型 / 任务结构。
-- 先确认本地 Codex、服务器 Codex 的可读日志 / usage 来源，以及是否能区分模型、input、output、cache read 和日期。
-- 生成独立 `codex-usage` 日账本后，再合并进 Token 页统一总账。
-- 将 OpenClaw / Codex / 其他来源合并成统一 Token 总账。
-- 保留 1d / 7d / 30d / all、模型占比、趋势和异常峰值展示。
-- 费用统一使用 `pricingBasis: openrouter-equivalent` 的估算口径，避免误读为真实扣费账单。
+- 本地 Codex collector 已落地；下一步补服务器 Codex collector，使用 `MAXNOW_CODEX_SOURCE_KEY=codex-server` 和服务器侧 `.codex/sessions`。
+- 给本机 Codex 用量补 Windows Task Scheduler 自动刷新；当前先手动运行 `python scripts/update_data.py codex-usage`。
+- 给服务器 Codex 用量补 cron 自动刷新，并确认日志、锁、文件权限和部署目录写入方式。
+- 将 Token 页来源列表 / 说明继续优化为更明确的 OpenClaw、Codex local、Codex server 分源展示。
+- 后续如果需要费用估算，只能在明确 Codex 真实计费口径后单独设计；当前 Codex 只统计 token 流量，不折算订阅费用。
 
 ### 让 Last-30 免费 AI 信号稳定运行
 
@@ -126,10 +125,19 @@
 
 ### Token 使用自动化
 
-- 阻塞原因：需要明确 Token 数据来源、读取方式和权限边界。
-- 当前先用静态数据占位，不把 Token 页面做成不可靠的实时系统。
+- 本地 Codex 用量已有可读来源：`C:\Users\a\.codex\sessions` 中的 `token_count` 事件。
+- 待补 Windows Task Scheduler：每天运行 `python scripts/update_data.py codex-usage` 并记录 `logs/codex-usage.log`。
+- 待补服务器 cron：刷新服务器 Codex 用量并合入 `dash/data/token-usage.*`。
+- 待确认是否需要把本机生成的数据自动推送到远端；不要在未确认前自动暴露本机 Codex 使用明细。
 
 ## Done
+
+### 已完成的 Codex Token 本地统计
+
+- 新增 `scripts/sync_codex_usage.py`，只读 `.codex/sessions` 的 `token_count` 事件，生成 `dash/data/codex-usage.*`。
+- 新增 `scripts/sync_token_usage.py` 和 `dash/data/token-usage.*`，将 OpenClaw 与 Codex 源账本合并为统一 Token 总账。
+- Token 页面优先读取统一总账，保留 1d / 7d / 30d / all、模型占比、最近调用和 30 天趋势。
+- `scripts/update_data.py codex-usage` 会刷新 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py token-usage` 可单独合并现有账本。
 
 ### 已完成的同行记入口
 

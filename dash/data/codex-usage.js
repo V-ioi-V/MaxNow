@@ -1,0 +1,1795 @@
+window.MAXNOW_CODEX_USAGE_DATA = {
+  "updatedAt": "2026-06-24 22:53",
+  "timezone": "Asia/Shanghai",
+  "currency": "USD",
+  "pricingBasis": "subscription-usage",
+  "pricingSource": "codex-session-token-count",
+  "pricingStale": false,
+  "sinceDays": 3650,
+  "summary": {
+    "inputTokens": 663239349,
+    "outputTokens": 2145244,
+    "cacheReadTokens": 622109312,
+    "totalTokens": 665384593,
+    "estimatedCostUsd": 0.0,
+    "runs": 83
+  },
+  "sources": [
+    {
+      "key": "codex-local",
+      "label": "Codex local",
+      "inputTokens": 663239349,
+      "outputTokens": 2145244,
+      "cacheReadTokens": 622109312,
+      "totalTokens": 665384593,
+      "estimatedCostUsd": 0.0,
+      "runs": 83
+    }
+  ],
+  "days": [
+    {
+      "date": "2026-06-24",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 134189922,
+      "outputTokens": 398249,
+      "cacheReadTokens": 127311104,
+      "totalTokens": 134588171,
+      "estimatedCostUsd": 0.0,
+      "runs": 8,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 134189922,
+          "outputTokens": 398249,
+          "cacheReadTokens": 127311104,
+          "totalTokens": 134588171,
+          "estimatedCostUsd": 0.0,
+          "runs": 8,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 111731796,
+          "outputTokens": 313588,
+          "cacheReadTokens": 106033024,
+          "totalTokens": 112045384,
+          "estimatedCostUsd": 0.0,
+          "runs": 7,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "daily-ai-news",
+          "model": "Codex",
+          "inputTokens": 22458126,
+          "outputTokens": 84661,
+          "cacheReadTokens": 21278080,
+          "totalTokens": 22542787,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-23",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 83968304,
+      "outputTokens": 231825,
+      "cacheReadTokens": 79060480,
+      "totalTokens": 84200129,
+      "estimatedCostUsd": 0.0,
+      "runs": 5,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 83968304,
+          "outputTokens": 231825,
+          "cacheReadTokens": 79060480,
+          "totalTokens": 84200129,
+          "estimatedCostUsd": 0.0,
+          "runs": 5,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 81076994,
+          "outputTokens": 211343,
+          "cacheReadTokens": 76466688,
+          "totalTokens": 81288337,
+          "estimatedCostUsd": 0.0,
+          "runs": 3,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "personal-wiki",
+          "model": "Codex",
+          "inputTokens": 2891310,
+          "outputTokens": 20482,
+          "cacheReadTokens": 2593792,
+          "totalTokens": 2911792,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-22",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 3503183,
+      "outputTokens": 20693,
+      "cacheReadTokens": 3200896,
+      "totalTokens": 3523876,
+      "estimatedCostUsd": 0.0,
+      "runs": 2,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 3503183,
+          "outputTokens": 20693,
+          "cacheReadTokens": 3200896,
+          "totalTokens": 3523876,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "personal-wiki",
+          "model": "Codex",
+          "inputTokens": 3503183,
+          "outputTokens": 20693,
+          "cacheReadTokens": 3200896,
+          "totalTokens": 3523876,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-21",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 80919466,
+      "outputTokens": 207112,
+      "cacheReadTokens": 76247168,
+      "totalTokens": 81126578,
+      "estimatedCostUsd": 0.0,
+      "runs": 4,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 80919466,
+          "outputTokens": 207112,
+          "cacheReadTokens": 76247168,
+          "totalTokens": 81126578,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 79258962,
+          "outputTokens": 195475,
+          "cacheReadTokens": 74726144,
+          "totalTokens": 79454437,
+          "estimatedCostUsd": 0.0,
+          "runs": 3,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "personal-wiki",
+          "model": "Codex",
+          "inputTokens": 1660504,
+          "outputTokens": 11637,
+          "cacheReadTokens": 1521024,
+          "totalTokens": 1672141,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-20",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 21056,
+      "outputTokens": 559,
+      "cacheReadTokens": 4992,
+      "totalTokens": 21615,
+      "estimatedCostUsd": 0.0,
+      "runs": 1,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 21056,
+          "outputTokens": 559,
+          "cacheReadTokens": 4992,
+          "totalTokens": 21615,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "new-chat",
+          "model": "Codex",
+          "inputTokens": 21056,
+          "outputTokens": 559,
+          "cacheReadTokens": 4992,
+          "totalTokens": 21615,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-19",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 33440936,
+      "outputTokens": 97173,
+      "cacheReadTokens": 30489728,
+      "totalTokens": 33538109,
+      "estimatedCostUsd": 0.0,
+      "runs": 2,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 33440936,
+          "outputTokens": 97173,
+          "cacheReadTokens": 30489728,
+          "totalTokens": 33538109,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 33440936,
+          "outputTokens": 97173,
+          "cacheReadTokens": 30489728,
+          "totalTokens": 33538109,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-18",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 27823817,
+      "outputTokens": 78820,
+      "cacheReadTokens": 26405760,
+      "totalTokens": 27902637,
+      "estimatedCostUsd": 0.0,
+      "runs": 1,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 27823817,
+          "outputTokens": 78820,
+          "cacheReadTokens": 26405760,
+          "totalTokens": 27902637,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 27823817,
+          "outputTokens": 78820,
+          "cacheReadTokens": 26405760,
+          "totalTokens": 27902637,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-17",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 115072366,
+      "outputTokens": 282681,
+      "cacheReadTokens": 110078592,
+      "totalTokens": 115355047,
+      "estimatedCostUsd": 0.0,
+      "runs": 2,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 115072366,
+          "outputTokens": 282681,
+          "cacheReadTokens": 110078592,
+          "totalTokens": 115355047,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 115072366,
+          "outputTokens": 282681,
+          "cacheReadTokens": 110078592,
+          "totalTokens": 115355047,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-16",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 28428317,
+      "outputTokens": 111113,
+      "cacheReadTokens": 26627456,
+      "totalTokens": 28539430,
+      "estimatedCostUsd": 0.0,
+      "runs": 5,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 28428317,
+          "outputTokens": 111113,
+          "cacheReadTokens": 26627456,
+          "totalTokens": 28539430,
+          "estimatedCostUsd": 0.0,
+          "runs": 5,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "personal-wiki",
+          "model": "Codex",
+          "inputTokens": 14277421,
+          "outputTokens": 56347,
+          "cacheReadTokens": 13131904,
+          "totalTokens": 14333768,
+          "estimatedCostUsd": 0.0,
+          "runs": 3,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 14150896,
+          "outputTokens": 54766,
+          "cacheReadTokens": 13495552,
+          "totalTokens": 14205662,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-15",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 2846117,
+      "outputTokens": 29559,
+      "cacheReadTokens": 2316672,
+      "totalTokens": 2875676,
+      "estimatedCostUsd": 0.0,
+      "runs": 3,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 2846117,
+          "outputTokens": 29559,
+          "cacheReadTokens": 2316672,
+          "totalTokens": 2875676,
+          "estimatedCostUsd": 0.0,
+          "runs": 3,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "figma-plugin-figma-openai-curated-remote",
+          "model": "Codex",
+          "inputTokens": 1445958,
+          "outputTokens": 18918,
+          "cacheReadTokens": 1091456,
+          "totalTokens": 1464876,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 1199781,
+          "outputTokens": 7400,
+          "cacheReadTokens": 1060480,
+          "totalTokens": 1207181,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "d-maxnow",
+          "model": "Codex",
+          "inputTokens": 200378,
+          "outputTokens": 3241,
+          "cacheReadTokens": 164736,
+          "totalTokens": 203619,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-14",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 31312772,
+      "outputTokens": 118021,
+      "cacheReadTokens": 29692672,
+      "totalTokens": 31430793,
+      "estimatedCostUsd": 0.0,
+      "runs": 5,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 31312772,
+          "outputTokens": 118021,
+          "cacheReadTokens": 29692672,
+          "totalTokens": 31430793,
+          "estimatedCostUsd": 0.0,
+          "runs": 5,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 31312772,
+          "outputTokens": 118021,
+          "cacheReadTokens": 29692672,
+          "totalTokens": 31430793,
+          "estimatedCostUsd": 0.0,
+          "runs": 5,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-13",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 71483,
+      "outputTokens": 1784,
+      "cacheReadTokens": 33920,
+      "totalTokens": 73267,
+      "estimatedCostUsd": 0.0,
+      "runs": 1,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 71483,
+          "outputTokens": 1784,
+          "cacheReadTokens": 33920,
+          "totalTokens": 73267,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "1-2-rdi-hr-rdi-hr",
+          "model": "Codex",
+          "inputTokens": 71483,
+          "outputTokens": 1784,
+          "cacheReadTokens": 33920,
+          "totalTokens": 73267,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-09",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 5406892,
+      "outputTokens": 42099,
+      "cacheReadTokens": 4760832,
+      "totalTokens": 5448991,
+      "estimatedCostUsd": 0.0,
+      "runs": 6,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 5406892,
+          "outputTokens": 42099,
+          "cacheReadTokens": 4760832,
+          "totalTokens": 5448991,
+          "estimatedCostUsd": 0.0,
+          "runs": 6,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "hatch-pet-c-users-a-codex",
+          "model": "Codex",
+          "inputTokens": 5316886,
+          "outputTokens": 39926,
+          "cacheReadTokens": 4708096,
+          "totalTokens": 5356812,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "clash-verge",
+          "model": "Codex",
+          "inputTokens": 46034,
+          "outputTokens": 1191,
+          "cacheReadTokens": 26880,
+          "totalTokens": 47225,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "06-09-22-19-52info-icmp",
+          "model": "Codex",
+          "inputTokens": 43972,
+          "outputTokens": 982,
+          "cacheReadTokens": 25856,
+          "totalTokens": 44954,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-08",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 135856,
+      "outputTokens": 903,
+      "cacheReadTokens": 57472,
+      "totalTokens": 136759,
+      "estimatedCostUsd": 0.0,
+      "runs": 5,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 135856,
+          "outputTokens": 903,
+          "cacheReadTokens": 57472,
+          "totalTokens": 136759,
+          "estimatedCostUsd": 0.0,
+          "runs": 5,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "hatch-pet-c-users-a-codex",
+          "model": "Codex",
+          "inputTokens": 115390,
+          "outputTokens": 889,
+          "cacheReadTokens": 52480,
+          "totalTokens": 116279,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "hi",
+          "model": "Codex",
+          "inputTokens": 20466,
+          "outputTokens": 14,
+          "cacheReadTokens": 4992,
+          "totalTokens": 20480,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-07",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 47289769,
+      "outputTokens": 187122,
+      "cacheReadTokens": 42853376,
+      "totalTokens": 47476891,
+      "estimatedCostUsd": 0.0,
+      "runs": 12,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 47289769,
+          "outputTokens": 187122,
+          "cacheReadTokens": 42853376,
+          "totalTokens": 47476891,
+          "estimatedCostUsd": 0.0,
+          "runs": 12,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "figma-plugin-figma-openai-curated-4k",
+          "model": "Codex",
+          "inputTokens": 40606902,
+          "outputTokens": 137574,
+          "cacheReadTokens": 37220352,
+          "totalTokens": 40744476,
+          "estimatedCostUsd": 0.0,
+          "runs": 3,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "files-mentioned-by-the-user-brand",
+          "model": "Codex",
+          "inputTokens": 6359312,
+          "outputTokens": 47099,
+          "cacheReadTokens": 5462016,
+          "totalTokens": 6406411,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "hi-2",
+          "model": "Codex",
+          "inputTokens": 183862,
+          "outputTokens": 1302,
+          "cacheReadTokens": 127232,
+          "totalTokens": 185164,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "new-chat",
+          "model": "Codex",
+          "inputTokens": 48619,
+          "outputTokens": 350,
+          "cacheReadTokens": 25344,
+          "totalTokens": 48969,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "hi",
+          "model": "Codex",
+          "inputTokens": 41635,
+          "outputTokens": 28,
+          "cacheReadTokens": 8448,
+          "totalTokens": 41663,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "4k",
+          "model": "Codex",
+          "inputTokens": 28968,
+          "outputTokens": 538,
+          "cacheReadTokens": 4992,
+          "totalTokens": 29506,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "win",
+          "model": "Codex",
+          "inputTokens": 20471,
+          "outputTokens": 231,
+          "cacheReadTokens": 4992,
+          "totalTokens": 20702,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-02",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 11070380,
+      "outputTokens": 82378,
+      "cacheReadTokens": 10006144,
+      "totalTokens": 11152758,
+      "estimatedCostUsd": 0.0,
+      "runs": 4,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 11070380,
+          "outputTokens": 82378,
+          "cacheReadTokens": 10006144,
+          "totalTokens": 11152758,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "figma-plugin-figma-openai-curated-figma",
+          "model": "Codex",
+          "inputTokens": 11070380,
+          "outputTokens": 82378,
+          "cacheReadTokens": 10006144,
+          "totalTokens": 11152758,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-06-01",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 1361154,
+      "outputTokens": 13942,
+      "cacheReadTokens": 966400,
+      "totalTokens": 1375096,
+      "estimatedCostUsd": 0.0,
+      "runs": 4,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 1361154,
+          "outputTokens": 13942,
+          "cacheReadTokens": 966400,
+          "totalTokens": 1375096,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "figma-4k-3840-2160-1-apple",
+          "model": "Codex",
+          "inputTokens": 733983,
+          "outputTokens": 8110,
+          "cacheReadTokens": 547712,
+          "totalTokens": 742093,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "new-chat",
+          "model": "Codex",
+          "inputTokens": 416728,
+          "outputTokens": 4992,
+          "cacheReadTokens": 374912,
+          "totalTokens": 421720,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "figma-plugin-figma-openai-curated-figma",
+          "model": "Codex",
+          "inputTokens": 210443,
+          "outputTokens": 840,
+          "cacheReadTokens": 43776,
+          "totalTokens": 211283,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-05-28",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 2865353,
+      "outputTokens": 25669,
+      "cacheReadTokens": 2678144,
+      "totalTokens": 2891022,
+      "estimatedCostUsd": 0.0,
+      "runs": 1,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 2865353,
+          "outputTokens": 25669,
+          "cacheReadTokens": 2678144,
+          "totalTokens": 2891022,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "个人知识库",
+          "model": "Codex",
+          "inputTokens": 2865353,
+          "outputTokens": 25669,
+          "cacheReadTokens": 2678144,
+          "totalTokens": 2891022,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-05-27",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 10136916,
+      "outputTokens": 73106,
+      "cacheReadTokens": 8948864,
+      "totalTokens": 10210022,
+      "estimatedCostUsd": 0.0,
+      "runs": 7,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 10136916,
+          "outputTokens": 73106,
+          "cacheReadTokens": 8948864,
+          "totalTokens": 10210022,
+          "estimatedCostUsd": 0.0,
+          "runs": 7,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 9557162,
+          "outputTokens": 59658,
+          "cacheReadTokens": 8532992,
+          "totalTokens": 9616820,
+          "estimatedCostUsd": 0.0,
+          "runs": 3,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "个人知识库",
+          "model": "Codex",
+          "inputTokens": 309427,
+          "outputTokens": 732,
+          "cacheReadTokens": 203392,
+          "totalTokens": 310159,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "ppt",
+          "model": "Codex",
+          "inputTokens": 190499,
+          "outputTokens": 11122,
+          "cacheReadTokens": 165376,
+          "totalTokens": 201621,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "leet",
+          "model": "Codex",
+          "inputTokens": 41289,
+          "outputTokens": 686,
+          "cacheReadTokens": 23296,
+          "totalTokens": 41975,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "model-harness-agent-deepseek-agent-harness",
+          "model": "Codex",
+          "inputTokens": 38539,
+          "outputTokens": 908,
+          "cacheReadTokens": 23808,
+          "totalTokens": 39447,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-05-26",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 43257468,
+      "outputTokens": 140891,
+      "cacheReadTokens": 40275968,
+      "totalTokens": 43398359,
+      "estimatedCostUsd": 0.0,
+      "runs": 4,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 43257468,
+          "outputTokens": 140891,
+          "cacheReadTokens": 40275968,
+          "totalTokens": 43398359,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 43021856,
+          "outputTokens": 135139,
+          "cacheReadTokens": 40085760,
+          "totalTokens": 43156995,
+          "estimatedCostUsd": 0.0,
+          "runs": 3,
+          "pricingEstimated": false
+        },
+        {
+          "kind": "codex-session",
+          "label": "harness-engineering-context-prompt-engineering",
+          "model": "Codex",
+          "inputTokens": 235612,
+          "outputTokens": 5752,
+          "cacheReadTokens": 190208,
+          "totalTokens": 241364,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    },
+    {
+      "date": "2026-05-25",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 117822,
+      "outputTokens": 1545,
+      "cacheReadTokens": 92672,
+      "totalTokens": 119367,
+      "estimatedCostUsd": 0.0,
+      "runs": 1,
+      "byModel": [
+        {
+          "model": "Codex",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 117822,
+          "outputTokens": 1545,
+          "cacheReadTokens": 92672,
+          "totalTokens": 119367,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "Codex",
+          "inputTokens": 117822,
+          "outputTokens": 1545,
+          "cacheReadTokens": 92672,
+          "totalTokens": 119367,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": false
+        }
+      ],
+      "pricingEstimated": false
+    }
+  ],
+  "recentRuns": [
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T22:53:18+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef9ff-a1b0-7d02-a27a-4f0235773290",
+      "runId": "019ef9ff-a1b0-7d02-a27a-4f0235773290",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 6953685,
+      "outputTokens": 30713,
+      "cacheReadTokens": 6589696,
+      "reasoningOutputTokens": 4519,
+      "totalTokens": 6984398,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 62
+    },
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T22:41:05+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef958-c33e-7553-a32e-83dc41696d17",
+      "runId": "019ef958-c33e-7553-a32e-83dc41696d17",
+      "kind": "codex-session",
+      "label": "daily-ai-news",
+      "inputTokens": 22458126,
+      "outputTokens": 84661,
+      "cacheReadTokens": 21278080,
+      "reasoningOutputTokens": 15553,
+      "totalTokens": 22542787,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 198
+    },
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T21:55:31+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef937-77a1-7021-a694-9a49745d489a",
+      "runId": "019ef937-77a1-7021-a694-9a49745d489a",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 30921643,
+      "outputTokens": 82643,
+      "cacheReadTokens": 29102848,
+      "reasoningOutputTokens": 14747,
+      "totalTokens": 31004286,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 224
+    },
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T09:59:24+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef716-7820-74e0-998f-8802201411a7",
+      "runId": "019ef716-7820-74e0-998f-8802201411a7",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 22453361,
+      "outputTokens": 55746,
+      "cacheReadTokens": 21165056,
+      "reasoningOutputTokens": 11415,
+      "totalTokens": 22509107,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 161
+    },
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T08:45:59+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef713-52bc-7191-80e0-088ff2878caa",
+      "runId": "019ef713-52bc-7191-80e0-088ff2878caa",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 100538,
+      "outputTokens": 1636,
+      "cacheReadTokens": 51328,
+      "reasoningOutputTokens": 496,
+      "totalTokens": 102174,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 3
+    },
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T00:42:28+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef540-f265-78d1-909c-86658d9a9fe4",
+      "runId": "019ef540-f265-78d1-909c-86658d9a9fe4",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 9786686,
+      "outputTokens": 32123,
+      "cacheReadTokens": 9417856,
+      "reasoningOutputTokens": 8833,
+      "totalTokens": 9818809,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 95
+    },
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T00:42:07+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef541-b55b-7120-aaf4-ed6727163926",
+      "runId": "019ef541-b55b-7120-aaf4-ed6727163926",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 9284049,
+      "outputTokens": 27955,
+      "cacheReadTokens": 8810112,
+      "reasoningOutputTokens": 8619,
+      "totalTokens": 9312004,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 79
+    },
+    {
+      "date": "2026-06-24",
+      "timestamp": "2026-06-24T00:07:35+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef49f-383d-73c2-8505-72f37fddda98",
+      "runId": "019ef49f-383d-73c2-8505-72f37fddda98",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 32231834,
+      "outputTokens": 82772,
+      "cacheReadTokens": 30896128,
+      "reasoningOutputTokens": 14433,
+      "totalTokens": 32314606,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 241
+    },
+    {
+      "date": "2026-06-23",
+      "timestamp": "2026-06-23T00:34:14+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019eeff7-70cd-76c3-8806-7da8c4148108",
+      "runId": "019eeff7-70cd-76c3-8806-7da8c4148108",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 9821430,
+      "outputTokens": 38149,
+      "cacheReadTokens": 9431040,
+      "reasoningOutputTokens": 8982,
+      "totalTokens": 9859579,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 92
+    },
+    {
+      "date": "2026-06-23",
+      "timestamp": "2026-06-23T00:30:12+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019eea6d-3184-74c1-9e65-a2a3a9d7af80",
+      "runId": "019eea6d-3184-74c1-9e65-a2a3a9d7af80",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 71087384,
+      "outputTokens": 171089,
+      "cacheReadTokens": 66893440,
+      "reasoningOutputTokens": 34992,
+      "totalTokens": 71258473,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 517
+    },
+    {
+      "date": "2026-06-23",
+      "timestamp": "2026-06-23T00:27:34+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef026-b09c-7183-b66e-95e17a202b2b",
+      "runId": "019ef026-b09c-7183-b66e-95e17a202b2b",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 168180,
+      "outputTokens": 2105,
+      "cacheReadTokens": 142208,
+      "reasoningOutputTokens": 880,
+      "totalTokens": 170285,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 5
+    },
+    {
+      "date": "2026-06-23",
+      "timestamp": "2026-06-23T00:21:01+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef003-182d-7002-b2d2-770deba38005",
+      "runId": "019ef003-182d-7002-b2d2-770deba38005",
+      "kind": "codex-session",
+      "label": "personal-wiki",
+      "inputTokens": 2790912,
+      "outputTokens": 19290,
+      "cacheReadTokens": 2501632,
+      "reasoningOutputTokens": 6250,
+      "totalTokens": 2810202,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 56
+    },
+    {
+      "date": "2026-06-23",
+      "timestamp": "2026-06-23T00:18:35+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ef01d-ac39-7dc3-ac67-1c77814fdf51",
+      "runId": "019ef01d-ac39-7dc3-ac67-1c77814fdf51",
+      "kind": "codex-session",
+      "label": "personal-wiki",
+      "inputTokens": 100398,
+      "outputTokens": 1192,
+      "cacheReadTokens": 92160,
+      "reasoningOutputTokens": 417,
+      "totalTokens": 101590,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 4
+    },
+    {
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T22:59:54+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019eefd3-d4f9-7343-8e01-11dbc5a194c7",
+      "runId": "019eefd3-d4f9-7343-8e01-11dbc5a194c7",
+      "kind": "codex-session",
+      "label": "personal-wiki",
+      "inputTokens": 883049,
+      "outputTokens": 6264,
+      "cacheReadTokens": 779008,
+      "reasoningOutputTokens": 1090,
+      "totalTokens": 889313,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 18
+    },
+    {
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T00:24:19+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019eeaec-c888-7271-8f79-e6cc65868b31",
+      "runId": "019eeaec-c888-7271-8f79-e6cc65868b31",
+      "kind": "codex-session",
+      "label": "personal-wiki",
+      "inputTokens": 2620134,
+      "outputTokens": 14429,
+      "cacheReadTokens": 2421888,
+      "reasoningOutputTokens": 4273,
+      "totalTokens": 2634563,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 47
+    },
+    {
+      "date": "2026-06-21",
+      "timestamp": "2026-06-21T22:23:30+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019eea79-40fc-7480-9ccc-86da57c2048e",
+      "runId": "019eea79-40fc-7480-9ccc-86da57c2048e",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 4445651,
+      "outputTokens": 17113,
+      "cacheReadTokens": 4038272,
+      "reasoningOutputTokens": 5659,
+      "totalTokens": 4462764,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 59
+    },
+    {
+      "date": "2026-06-21",
+      "timestamp": "2026-06-21T21:55:26+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019eea73-54a0-7780-ac6a-90ceb9b64a94",
+      "runId": "019eea73-54a0-7780-ac6a-90ceb9b64a94",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 129940,
+      "outputTokens": 3482,
+      "cacheReadTokens": 60416,
+      "reasoningOutputTokens": 989,
+      "totalTokens": 133422,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 4
+    },
+    {
+      "date": "2026-06-21",
+      "timestamp": "2026-06-21T21:40:40+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ee840-87c9-7660-81ce-e85aba4fd23b",
+      "runId": "019ee840-87c9-7660-81ce-e85aba4fd23b",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 74683371,
+      "outputTokens": 174880,
+      "cacheReadTokens": 70627456,
+      "reasoningOutputTokens": 30093,
+      "totalTokens": 74858251,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 516
+    },
+    {
+      "date": "2026-06-21",
+      "timestamp": "2026-06-21T17:37:10+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ee97b-7f55-7743-9b3a-ca306979ddb0",
+      "runId": "019ee97b-7f55-7743-9b3a-ca306979ddb0",
+      "kind": "codex-session",
+      "label": "personal-wiki",
+      "inputTokens": 1660504,
+      "outputTokens": 11637,
+      "cacheReadTokens": 1521024,
+      "reasoningOutputTokens": 4984,
+      "totalTokens": 1672141,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 29
+    },
+    {
+      "date": "2026-06-20",
+      "timestamp": "2026-06-20T23:05:51+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ee58f-1d8a-7c23-bcd2-bc989b6008bc",
+      "runId": "019ee58f-1d8a-7c23-bcd2-bc989b6008bc",
+      "kind": "codex-session",
+      "label": "new-chat",
+      "inputTokens": 21056,
+      "outputTokens": 559,
+      "cacheReadTokens": 4992,
+      "reasoningOutputTokens": 109,
+      "totalTokens": 21615,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 1
+    },
+    {
+      "date": "2026-06-19",
+      "timestamp": "2026-06-19T19:43:00+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019edfa5-21fd-7b80-8423-26fff7ee92db",
+      "runId": "019edfa5-21fd-7b80-8423-26fff7ee92db",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 2240031,
+      "outputTokens": 14004,
+      "cacheReadTokens": 2068096,
+      "reasoningOutputTokens": 3569,
+      "totalTokens": 2254035,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 31
+    },
+    {
+      "date": "2026-06-19",
+      "timestamp": "2026-06-19T09:20:58+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019edb31-e78c-7230-9231-0f64029eaf4a",
+      "runId": "019edb31-e78c-7230-9231-0f64029eaf4a",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 31200905,
+      "outputTokens": 83169,
+      "cacheReadTokens": 28421632,
+      "reasoningOutputTokens": 16994,
+      "totalTokens": 31284074,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 239
+    },
+    {
+      "date": "2026-06-18",
+      "timestamp": "2026-06-18T22:25:12+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019eda4a-e95a-7510-ab63-f199fb3851da",
+      "runId": "019eda4a-e95a-7510-ab63-f199fb3851da",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 27823817,
+      "outputTokens": 78820,
+      "cacheReadTokens": 26405760,
+      "reasoningOutputTokens": 14950,
+      "totalTokens": 27902637,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 228
+    },
+    {
+      "date": "2026-06-17",
+      "timestamp": "2026-06-17T23:08:04+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ed4bb-b678-7f50-95c8-5d5a2d5fd92b",
+      "runId": "019ed4bb-b678-7f50-95c8-5d5a2d5fd92b",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 76730937,
+      "outputTokens": 188213,
+      "cacheReadTokens": 73658752,
+      "reasoningOutputTokens": 31019,
+      "totalTokens": 76919150,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 546
+    },
+    {
+      "date": "2026-06-17",
+      "timestamp": "2026-06-17T16:38:07+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ed10c-1306-77e1-b003-2b9374c8f7ab",
+      "runId": "019ed10c-1306-77e1-b003-2b9374c8f7ab",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 38341429,
+      "outputTokens": 94468,
+      "cacheReadTokens": 36419840,
+      "reasoningOutputTokens": 19441,
+      "totalTokens": 38435897,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 292
+    },
+    {
+      "date": "2026-06-16",
+      "timestamp": "2026-06-16T23:30:38+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ed0b9-8885-7490-94f2-5b3726a2d1bd",
+      "runId": "019ed0b9-8885-7490-94f2-5b3726a2d1bd",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 4144606,
+      "outputTokens": 15886,
+      "cacheReadTokens": 3961472,
+      "reasoningOutputTokens": 4276,
+      "totalTokens": 4160492,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 63
+    },
+    {
+      "date": "2026-06-16",
+      "timestamp": "2026-06-16T23:26:24+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ed0b9-e6fd-7de3-84a1-614f03d57e1b",
+      "runId": "019ed0b9-e6fd-7de3-84a1-614f03d57e1b",
+      "kind": "codex-session",
+      "label": "personal-wiki",
+      "inputTokens": 13565959,
+      "outputTokens": 47600,
+      "cacheReadTokens": 12584576,
+      "reasoningOutputTokens": 10103,
+      "totalTokens": 13613559,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 124
+    },
+    {
+      "date": "2026-06-16",
+      "timestamp": "2026-06-16T22:28:24+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ed0c8-0c3a-72b0-bf2a-8820ad6d9f07",
+      "runId": "019ed0c8-0c3a-72b0-bf2a-8820ad6d9f07",
+      "kind": "codex-session",
+      "label": "personal-wiki",
+      "inputTokens": 358437,
+      "outputTokens": 3289,
+      "cacheReadTokens": 279808,
+      "reasoningOutputTokens": 886,
+      "totalTokens": 361726,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 14
+    },
+    {
+      "date": "2026-06-16",
+      "timestamp": "2026-06-16T00:37:11+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ecbf9-449e-7cb0-96a2-bb68609e1e73",
+      "runId": "019ecbf9-449e-7cb0-96a2-bb68609e1e73",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 10006290,
+      "outputTokens": 38880,
+      "cacheReadTokens": 9534080,
+      "reasoningOutputTokens": 8877,
+      "totalTokens": 10045170,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 103
+    },
+    {
+      "date": "2026-06-16",
+      "timestamp": "2026-06-16T00:05:11+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "Codex",
+      "openrouterModel": null,
+      "sessionId": "019ecbae-e438-7e30-b47d-65372fcd8fb1",
+      "runId": "019ecbae-e438-7e30-b47d-65372fcd8fb1",
+      "kind": "codex-session",
+      "label": "personal-wiki",
+      "inputTokens": 353025,
+      "outputTokens": 5458,
+      "cacheReadTokens": 267520,
+      "reasoningOutputTokens": 1497,
+      "totalTokens": 358483,
+      "estimatedCostUsd": null,
+      "pricingEstimated": false,
+      "contextWindow": 258400,
+      "tokenCountEvents": 14
+    }
+  ],
+  "pricingSnapshot": [],
+  "notes": [
+    "Codex usage is collected from local session token_count events.",
+    "No prompt or response body is exported into this ledger.",
+    "estimatedCostUsd is intentionally 0 because Codex subscription usage is not an OpenRouter bill."
+  ],
+  "sourcePath": "C:\\Users\\a\\.codex"
+};

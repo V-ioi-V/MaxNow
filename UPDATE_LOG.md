@@ -11,6 +11,18 @@
 
 ## 2026-06-24
 
+### 接入本机 Codex Token 统计
+
+- 新增 `scripts/sync_codex_usage.py`，从 `.codex/sessions` 的 `token_count` 事件生成 `dash/data/codex-usage.*`，只导出 token 统计，不导出 prompt / response 正文。
+- 新增 `scripts/sync_token_usage.py` 和 `dash/data/token-usage.*`，把 OpenClaw 与 Codex 源账本合并成 Token 页统一总账。
+- Token 页优先读取 `token-usage.*`，保留原有 1d / 7d / 30d / all、模型占比、最近调用和 30 天趋势。
+- `scripts/update_data.py` 新增 `codex-usage` 和 `token-usage` 命令，`scripts/check.py` 纳入新账本和 wrapper 校验。
+- 将 Dash 缓存版本提升到 `app.js?v=55`。
+
+原因：
+
+- Owner 希望在已有 OpenClaw Token 消耗上报基础上统计 Codex 流量，并先把未落地的自动化记录为后续待办。
+
 ### 修正同行记地图标签和比例
 
 - personal-wiki 的 Ricky 旅行地点新增 `map_label`，MaxNow 同步为 `mapLabel`，地图 marker 不再自动截取地点名前两个字。

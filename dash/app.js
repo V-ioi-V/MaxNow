@@ -4,6 +4,7 @@ const LAST30_URL = "./data/last-30.json";
 const WIKI_TODO_URL = "./data/wiki-todos.json";
 const CHECKIN_URL = "./data/dounai_checkin.json";
 const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
+const TOKEN_USAGE_URL = "./data/token-usage.json";
 const PROJECT_META_URL = "./data/project-meta.json";
 const RICKY_URL = "./data/ricky.json";
 const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
@@ -15,6 +16,7 @@ const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
 const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
 const fallbackCheckin = {};
 const fallbackOpenclawUsage = window.MAXNOW_OPENCLAW_USAGE_DATA || { days: [] };
+const fallbackTokenUsage = window.MAXNOW_TOKEN_USAGE_DATA || { days: [] };
 const fallbackProjectMeta = window.MAXNOW_PROJECT_META_DATA || { recentUpdates: [] };
 const fallbackRicky = window.MAXNOW_RICKY_DATA || { stats: [], places: [], records: [] };
 
@@ -24,6 +26,7 @@ let last30Data = fallbackLast30;
 let wikiTodoData = fallbackWikiTodo;
 let checkinData = fallbackCheckin;
 let openclawUsageData = fallbackOpenclawUsage;
+let tokenUsageData = fallbackTokenUsage;
 let projectMetaData = fallbackProjectMeta;
 let rickyData = fallbackRicky;
 let wikiTodoError = "";
@@ -553,11 +556,12 @@ function buildTaskBreakdown(days) {
 
 function buildSessionBreakdown(selectedDays) {
   const selectedDates = new Set(selectedDays.map((day) => day.date));
-  const runs = Array.isArray(openclawUsageData.recentRuns) ? openclawUsageData.recentRuns : [];
+  const usage = getTokenLedgerData();
+  const runs = Array.isArray(usage.recentRuns) ? usage.recentRuns : [];
   const sessions = runs
     .filter((run) => !selectedDates.size || selectedDates.has(run.date))
     .map((run) => ({
-      label: run.label || run.kind || "OpenClaw session",
+      label: run.label || run.kind || "Token session",
       model: run.model || run.openrouterModel || "",
       kind: run.kind || "",
       runId: run.runId || "",
@@ -574,8 +578,13 @@ function buildSessionBreakdown(selectedDays) {
   return sessions.length ? sessions : buildTaskBreakdown(selectedDays);
 }
 
+function getTokenLedgerData() {
+  return Array.isArray(tokenUsageData.days) && tokenUsageData.days.length ? tokenUsageData : openclawUsageData;
+}
+
 function getOpenclawTokenUsage() {
-  const rawDays = Array.isArray(openclawUsageData.days) ? openclawUsageData.days : [];
+  const ledger = getTokenLedgerData();
+  const rawDays = Array.isArray(ledger.days) ? ledger.days : [];
   if (!rawDays.length) return null;
 
   const days = rawDays.map(normalizeUsageDay).sort((a, b) => String(b.date).localeCompare(String(a.date)));
@@ -597,11 +606,17 @@ function getOpenclawTokenUsage() {
       selectedDays: selected,
     };
   });
+  ranges.forEach((range) => {
+    const hasCodex = (range.selectedDays || []).some((day) => (day.sources || []).some((source) => String(source).startsWith("codex")));
+    range.note = hasCodex
+      ? `Token ${range.label}: OpenClaw cost is estimated; Codex is token flow only. Not an actual billing statement.`
+      : range.note;
+  });
 
   const active = ranges.find((range) => range.key === activeTokenRange) || ranges[1] || ranges[0];
   const chartDays = [...days].reverse().slice(-30);
   return {
-    updatedAt: openclawUsageData.updatedAt,
+    updatedAt: ledger.updatedAt,
     ranges,
     models: buildModelBreakdown(active.selectedDays || []),
     sessions: buildSessionBreakdown(active.selectedDays || []).slice(0, 8),
@@ -611,7 +626,7 @@ function getOpenclawTokenUsage() {
       total: day.total,
       cost: day.cost,
     })),
-    sourceSummary: "OpenClaw usage ledger",
+    sourceSummary: "Token usage ledger",
   };
 }
 
@@ -1183,13 +1198,14 @@ async function readWikiTodo() {
 }
 
 async function loadData() {
-  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage, projectMeta, ricky] = await Promise.all([
+  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage, tokenUsage, projectMeta, ricky] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
     readWikiTodo(),
     readJson(CHECKIN_URL, fallbackCheckin),
     readJson(OPENCLAW_USAGE_URL, window.MAXNOW_OPENCLAW_USAGE_DATA || fallbackOpenclawUsage),
+    readJson(TOKEN_USAGE_URL, window.MAXNOW_TOKEN_USAGE_DATA || fallbackTokenUsage),
     readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta),
     readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky),
   ]);
@@ -1200,6 +1216,7 @@ async function loadData() {
   wikiTodoData = wikiTodo;
   checkinData = checkin;
   openclawUsageData = openclawUsage;
+  tokenUsageData = tokenUsage;
   projectMetaData = projectMeta;
   rickyData = ricky;
   renderAll();
