@@ -829,6 +829,7 @@ function renderHome() {
   setText("#mini-token-1d", formatToken(token1d.total));
   setText("#mini-token-7d", formatToken(token7d.total));
   setText("#mini-token-all", formatToken(tokenAll.total));
+  setText("#mini-token-updated", getTokenUsage().updatedAt ? `${copy.updatedAtShort} ${getTokenUsage().updatedAt}` : copy.syncWaiting);
   setText("#sidebar-token-total", formatToken(token7d.total));
 
   clearAndFill(qs("#mainline-list"), createTask, mainlines);
@@ -837,7 +838,9 @@ function renderHome() {
   clearAndFill(qs("#ai-news-list"), createAiNewsItem, aiItems);
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
-  clearAndFill(qs("#system-list"), createSystemItem, dashboardData.system || []);
+  const systemItems = dashboardData.system || [];
+  clearAndFill(qs("#system-list"), createSystemItem, systemItems);
+  clearAndFill(qs("#cloud-system-list"), createSystemItem, systemItems);
   setText("#project-version", projectMetaData.versionLabel || "v--");
   setText("#project-version-note", projectMetaData.deployNote || projectMetaData.updatedAt || copy.sync);
   clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
@@ -1290,6 +1293,14 @@ qs("#dounai-checkin")?.addEventListener("keydown", (event) => {
   if (event.key === "Enter" || event.key === " ") {
     event.preventDefault();
     setView("dounai");
+  }
+});
+
+qs("#system-panel")?.addEventListener("click", () => setView("cloud"));
+qs("#system-panel")?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    setView("cloud");
   }
 });
 

@@ -63,6 +63,14 @@
 - 明确手机端如何触发 OpenClaw 记录 / 更新待办，以及 OpenClaw 如何受控操作同服务器上的 MaxNow。
 - 先形成最小闭环：记录待办、同步到 personal-wiki、MaxNow 读取或跳转查看。
 
+### 让噗噗每日提醒 personal-wiki 待办
+
+- 来源 ID：`maxnow-pupu-daily-todo-reminder`
+- 建议分支：`feature/pupu-daily-todo-reminder`
+- 尝试让服务器上的噗噗 / OpenClaw 每天通过 cron 汇总 personal-wiki 当天或近期未完成待办，并主动提醒 Owner。
+- 先确认提醒渠道、发送时间、消息格式和失败日志位置；真实发送消息前需要 Owner 明确确认发送目标和内容边界。
+- 数据源优先复用现有 `scripts/sync_wiki_todos.py` / `dash/data/wiki-todos.*`，避免前端或 cron 直接暴露 private personal-wiki 权限。
+
 ### 增加我和 77 的旅行地图
 
 - 来源 ID：`maxnow-travel-map`
