@@ -186,6 +186,17 @@ runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-0
 verification: python3 scripts/check.py ok；python3 scripts/update_data.py project-meta ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=65 200；https://dash.maxnow.cn/app.js?v=47 200；https://blog.maxnow.cn 200
 ```
 
+2026-06-24 已部署我和 Ricky 的同行记页面：
+
+```text
+deployed commit: b7d02aa Merge Ricky companion map
+changes: Dash 左侧导航新增“同行记”并放在最后一个 tab；页面使用 Leaflet + CARTO Voyager 真实地图展示我和 Ricky 的共同足迹；新增 dash/data/ricky.* 和 scripts/sync_ricky_travel.py，从 private personal-wiki 的 wiki/relationships/ricky-travel.json 同步数据；地点和旅行记录暂时只进入地图 marker / popup，不单独铺列表
+dash styles version: styles.css?v=69
+dash app version: app.js?v=52
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-210052-before-ricky-map
+verification: python3 scripts/update_data.py runtime ok，同步 11 个 Ricky 地点和 4 条记录；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=69 200；https://dash.maxnow.cn/app.js?v=52 200；https://blog.maxnow.cn 200
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
