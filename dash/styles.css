@@ -287,7 +287,6 @@ a {
 .summary-bar,
 .token-page-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   height: 100%;
   padding: 24px;
@@ -295,6 +294,15 @@ a {
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
+}
+
+.summary-bar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.token-page-head {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
 }
 
 .home-widgets {
@@ -441,6 +449,13 @@ a {
 
 .weather-range {
   color: var(--muted);
+}
+
+.weather-updated {
+  color: #8b9aab;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .summary-weather[data-weather="sun"] .weather-icon {
@@ -1343,6 +1358,7 @@ a {
 
 #dounai-view .token-page-head {
   grid-template-columns: minmax(360px, 1fr) minmax(0, 1.15fr) minmax(0, 1.15fr);
+  gap: 24px;
 }
 
 .dounai-page-head {
@@ -1483,6 +1499,8 @@ a {
   display: grid;
   grid-template-columns: repeat(4, minmax(80px, 1fr));
   gap: 8px;
+  justify-self: end;
+  width: min(100%, 430px);
 }
 
 .range-tab {
@@ -1671,6 +1689,28 @@ a {
 
 .cloud-card .panel-head {
   flex-wrap: wrap;
+  align-items: flex-start;
+  padding-bottom: 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--card-color) 12%, #e8eef6);
+}
+
+.cloud-card .eyebrow {
+  color: var(--card-color);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.cloud-card h2 {
+  margin-top: 5px;
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.cloud-card .status-pill {
+  border-color: color-mix(in srgb, var(--card-color) 24%, #dbe7f4);
+  background: color-mix(in srgb, var(--card-color) 10%, #f8fbff);
+  color: var(--card-color);
+  font-weight: 900;
 }
 
 .cloud-card[data-tone="cyan"] {
@@ -1701,13 +1741,18 @@ a {
 }
 
 .cloud-card .item-copy {
+  margin-top: 10px;
+  color: var(--soft);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.75;
   overflow-wrap: anywhere;
 }
 
 .cloud-meta {
   display: grid;
-  gap: 8px;
-  margin: 16px 0 0;
+  gap: 6px;
+  margin: 18px 0 0;
 }
 
 .cloud-meta div {
@@ -1716,16 +1761,16 @@ a {
   grid-template-columns: 76px minmax(0, 1fr);
   gap: 10px;
   align-items: start;
-  border: 1px solid #e3ebf4;
-  border-radius: var(--radius);
-  padding: 10px 12px;
-  background: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: 10px;
+  padding: 8px 11px;
+  background: #fbfdff;
 }
 
 .cloud-meta dt,
 .cloud-meta dd {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.45;
 }
 
@@ -1736,7 +1781,7 @@ a {
 
 .cloud-meta dd {
   min-width: 0;
-  color: var(--text);
+  color: var(--soft);
   font-weight: 700;
   overflow-wrap: anywhere;
 }

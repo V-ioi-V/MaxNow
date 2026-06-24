@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=60" />
+    <link rel="stylesheet" href="./styles.css?v=63" />
   </head>
   <body>
     <div class="app-shell">
@@ -104,6 +104,7 @@
                     <small id="weather-condition">天气 --</small>
                     <small class="weather-range" id="weather-range">今日 --</small>
                   </div>
+                  <small class="weather-updated" id="weather-updated">等待同步</small>
                 </div>
               </div>
               <div class="summary-clock" aria-label="Current time">
@@ -488,7 +489,9 @@
               <p class="item-copy">ubuntu crontab &#36816;&#34892; <code>python3 scripts/update_data.py runtime</code>&#65292;&#21047;&#26032; wiki-todos&#12289;&#22825;&#27668;&#12289;&#31995;&#32479;&#29366;&#24577;&#12289;MaxNow &#39033;&#30446;&#20803;&#20449;&#24687;&#21644; wrapper&#12290;</p>
               <dl class="cloud-meta">
                 <div><dt>&#26631;&#35760;</dt><dd>MAXNOW-DASHBOARD-SYNC</dd></div>
-                <div><dt>&#26085;&#24535;</dt><dd>logs/maxnow-sync.log</dd></div>
+                <div><dt>&#24635;&#26085;&#24535;</dt><dd>logs/maxnow-sync.log</dd></div>
+                <div><dt>&#22825;&#27668;</dt><dd>logs/weather.log</dd></div>
+                <div><dt>&#20889;&#20837;</dt><dd>dash/data/dashboard.* / wiki-todos.* / project-meta.*</dd></div>
                 <div><dt>&#36793;&#30028;</dt><dd>&#19981;&#35206;&#30422; Owner &#30340;&#20170;&#26085;&#21028;&#26029;&#23383;&#27573;</dd></div>
               </dl>
             </article>
@@ -696,6 +699,6 @@
     <script src="./data/wiki-todos.js?v=1"></script>
     <script src="./data/openclaw-usage.js?v=1"></script>
     <script src="./data/project-meta.js?v=1"></script>
-    <script src="./app.js?v=44"></script>
+    <script src="./app.js?v=45"></script>
   </body>
 </html>
