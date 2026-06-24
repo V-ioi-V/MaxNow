@@ -221,6 +221,15 @@ runtime data stash before deploy: before-ricky-labels-square-runtime-data
 verification: python3 scripts/update_data.py runtime ok，同步 11 个 Ricky 地点和 4 条记录；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/ricky.json 200；https://dash.maxnow.cn/styles.css?v=71 200；https://dash.maxnow.cn/app.js?v=54 200；线上 ricky.json mapLabel 列表确认正确
 ```
 
+2026-06-24 已部署 Codex Token 本机可读日志统计：
+
+```text
+deployed commit: 5e51d5c Add Codex token usage ledger
+changes: 新增 Codex session `token_count` 本机可读日志账本、OpenClaw / Codex 统一 Token 总账和 Token 页统一数据入口；Codex 口径为本机可读 `.codex/sessions` 最终 `total_token_usage`，不导出 prompt / response 正文
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-225818-before-codex-token-usage
+verification: python3 scripts/check.py ok；python3 scripts/update_data.py token-usage ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=55 200；https://dash.maxnow.cn/data/token-usage.json 200
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
