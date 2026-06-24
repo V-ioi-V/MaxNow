@@ -5,6 +5,7 @@ const WIKI_TODO_URL = "./data/wiki-todos.json";
 const CHECKIN_URL = "./data/dounai_checkin.json";
 const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
 const PROJECT_META_URL = "./data/project-meta.json";
+const RICKY_URL = "./data/ricky.json";
 const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
 const WIKI_TASK_BASE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/";
 
@@ -15,6 +16,7 @@ const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
 const fallbackCheckin = {};
 const fallbackOpenclawUsage = window.MAXNOW_OPENCLAW_USAGE_DATA || { days: [] };
 const fallbackProjectMeta = window.MAXNOW_PROJECT_META_DATA || { recentUpdates: [] };
+const fallbackRicky = window.MAXNOW_RICKY_DATA || { stats: [], places: [], records: [] };
 
 let dashboardData = fallbackData;
 let aiNewsData = fallbackAiNews;
@@ -23,9 +25,12 @@ let wikiTodoData = fallbackWikiTodo;
 let checkinData = fallbackCheckin;
 let openclawUsageData = fallbackOpenclawUsage;
 let projectMetaData = fallbackProjectMeta;
+let rickyData = fallbackRicky;
 let wikiTodoError = "";
 let activeTokenRange = "7d";
 let weatherMetaFitFrame = 0;
+let rickyMap = null;
+let rickyMarkerLayer = null;
 
 const qs = (selector) => document.querySelector(selector);
 const qsa = (selector) => [...document.querySelectorAll(selector)];
@@ -64,6 +69,7 @@ const copy = {
   tokenTitle: "Token \u7528\u91cf",
   dounaiTitle: "\u8c46\u5976",
   cloudTitle: "\u4e91\u670d\u52a1",
+  rickyTitle: "\u6211\u548c Ricky",
   today: "\u4eca\u5929",
   energy: "\u80fd\u91cf",
   focus: "\u4e3b\u7ebf",
@@ -76,6 +82,8 @@ const copy = {
   wikiTodoFailed: "\u8bfb\u53d6\u5931\u8d25",
   wikiTodoEmpty: "\u6682\u65e0\u672a\u5b8c\u6210\u5f85\u529e",
   dueAt: "\u622a\u6b62",
+  rickyEmptyPlaces: "\u8fd8\u6ca1\u6709\u5199\u5165\u5730\u70b9\u3002",
+  rickyEmptyRecords: "\u8fd8\u6ca1\u6709\u5199\u5165\u65c5\u884c\u8bb0\u5f55\u3002",
 };
 
 function formatToken(value) {
@@ -307,6 +315,55 @@ function createProjectUpdateItem(item) {
   article.querySelector(".item-title").textContent = item.title || copy.unnamedInfo;
   article.querySelector(".item-copy").textContent = item.summary || "";
   article.querySelector(".item-tag").textContent = item.date || "Update";
+  return article;
+}
+
+function createRickyStatItem(item) {
+  const article = document.createElement("article");
+  article.innerHTML = `
+    <span></span>
+    <strong></strong>
+    <small></small>
+  `;
+  article.querySelector("span").textContent = item.label || copy.item;
+  article.querySelector("strong").textContent = item.value ?? "--";
+  article.querySelector("small").textContent = item.unit || "";
+  return article;
+}
+
+function createRickyPlaceItem(place) {
+  const article = document.createElement("article");
+  article.className = "ricky-place-item";
+  article.dataset.tone = getTone(place.tone || place.country || place.city || place.name);
+  article.innerHTML = `
+    <div class="item-head">
+      <p class="item-title"></p>
+      <span class="item-tag"></span>
+    </div>
+    <p class="item-copy"></p>
+  `;
+  article.querySelector(".item-title").textContent = place.name || place.city || copy.unnamedInfo;
+  article.querySelector(".item-tag").textContent = place.date || place.country || copy.item;
+  article.querySelector(".item-copy").textContent = place.note || [place.city, place.country].filter(Boolean).join(" · ");
+  appendLink(article, place.url || place.photoUrl);
+  return article;
+}
+
+function createRickyRecordItem(record) {
+  const article = document.createElement("article");
+  article.className = "ricky-record-item";
+  article.dataset.tone = getTone(record.tone || record.type || record.title);
+  article.innerHTML = `
+    <div class="item-head">
+      <p class="item-title"></p>
+      <span class="item-tag"></span>
+    </div>
+    <p class="item-copy"></p>
+  `;
+  article.querySelector(".item-title").textContent = record.title || copy.unnamedInfo;
+  article.querySelector(".item-tag").textContent = record.date || record.type || copy.item;
+  article.querySelector(".item-copy").textContent = record.summary || record.note || "";
+  appendLink(article, record.url || record.photoUrl);
   return article;
 }
 
@@ -607,6 +664,134 @@ function renderWikiTodos() {
   if (!openTodos.length && !wikiTodoError) {
     setText("#wiki-todo-list .empty-state", copy.wikiTodoEmpty);
   }
+}
+
+function renderRicky() {
+  const stats = Array.isArray(rickyData.stats) ? rickyData.stats : [];
+  const places = Array.isArray(rickyData.places) ? rickyData.places : [];
+  const records = Array.isArray(rickyData.records) ? rickyData.records : [];
+  const pins = qs("#ricky-map-pins");
+
+  setText("#ricky-title", rickyData.title || copy.rickyTitle);
+  setText("#ricky-summary", rickyData.summary || rickyData.subtitle || "");
+  setText("#ricky-updated", rickyData.updated_at ? `更新 ${rickyData.updated_at}` : copy.syncWaiting);
+  setText("#ricky-map-count", `${places.length} 个地点`);
+  clearAndFill(qs("#ricky-stats"), createRickyStatItem, stats);
+
+  renderRickyLeaflet(places);
+  if (!pins) return;
+  pins.replaceChildren();
+  if (!places.length) {
+    const empty = document.createElement("p");
+    empty.className = "ricky-map-empty";
+    empty.textContent = copy.rickyEmptyPlaces;
+    pins.appendChild(empty);
+    return;
+  }
+
+  places.forEach((place, index) => {
+    const x = Math.max(0, Math.min(100, Number(place.x ?? place.mapX ?? 50)));
+    const y = Math.max(0, Math.min(100, Number(place.y ?? place.mapY ?? 50)));
+    const pin = document.createElement("span");
+    pin.className = "ricky-pin";
+    pin.tabIndex = 0;
+    pin.title = [place.name || place.city || copy.item, place.note || ""].filter(Boolean).join(" - ");
+    pin.style.left = `${x}%`;
+    pin.style.top = `${y}%`;
+    pin.style.setProperty("--pin-color", index % 3 === 1 ? "var(--accent-strong)" : index % 3 === 2 ? "var(--orange)" : "var(--pink)");
+    pin.innerHTML = `
+      <span class="ricky-pin-label"></span>
+      <span class="ricky-pin-dot" aria-hidden="true"></span>
+    `;
+    pin.querySelector(".ricky-pin-label").textContent = place.name || place.city || copy.item;
+    pins.appendChild(pin);
+  });
+}
+
+function getMappableRickyPlaces(places) {
+  return places
+    .map((place) => ({
+      ...place,
+      lat: Number(place.lat),
+      lng: Number(place.lng),
+    }))
+    .filter((place) => Number.isFinite(place.lat) && Number.isFinite(place.lng));
+}
+
+function createRickyPopup(place) {
+  const note = place.note ? `<p>${escapeHtml(place.note)}</p>` : "";
+  const meta = [place.region, place.country, place.date].filter(Boolean).join(" · ");
+  return `
+    <strong>${escapeHtml(place.name || place.city || copy.item)}</strong>
+    <small>${escapeHtml(meta)}</small>
+    ${note}
+  `;
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function renderRickyLeaflet(places) {
+  const mapNode = qs("#ricky-real-map");
+  const mapShell = qs(".ricky-map");
+  const mappable = getMappableRickyPlaces(places);
+  if (!mapNode || !mapShell) return;
+
+  if (!window.L || !mappable.length) {
+    mapShell.classList.remove("has-real-map");
+    return;
+  }
+
+  mapShell.classList.add("has-real-map");
+
+  if (!rickyMap) {
+    rickyMap = window.L.map(mapNode, {
+      zoomControl: true,
+      scrollWheelZoom: false,
+      worldCopyJump: true,
+    });
+    window.L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+      maxZoom: 18,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    }).addTo(rickyMap);
+    rickyMarkerLayer = window.L.layerGroup().addTo(rickyMap);
+  }
+
+  rickyMarkerLayer.clearLayers();
+  const bounds = [];
+  mappable.forEach((place) => {
+    const latLng = [place.lat, place.lng];
+    bounds.push(latLng);
+    window.L.marker(latLng, { icon: createRickyMapIcon(place) })
+      .bindPopup(createRickyPopup(place), { maxWidth: 260 })
+      .addTo(rickyMarkerLayer);
+  });
+
+  rickyMap.fitBounds(bounds, {
+    padding: [28, 28],
+    maxZoom: 4,
+  });
+  requestAnimationFrame(() => rickyMap.invalidateSize());
+}
+
+function createRickyMapIcon(place) {
+  const isWaiting = place.dateStatus === "needs_confirmation";
+  const color = isWaiting ? "#ff980f" : "#ff6fae";
+  const label = escapeHtml((place.name || place.city || copy.item).slice(0, 2));
+  return window.L.divIcon({
+    className: "ricky-leaflet-marker",
+    html: `<span style="--marker-color: ${color}"><strong>${label}</strong></span>`,
+    iconSize: [42, 48],
+    iconAnchor: [21, 44],
+    popupAnchor: [0, -40],
+  });
 }
 
 function getCheckinRecords(limit = 30) {
@@ -968,6 +1153,7 @@ function renderAll() {
   renderHome();
   renderTokens();
   renderDounai();
+  renderRicky();
 }
 
 async function readJson(url, fallback) {
@@ -997,7 +1183,7 @@ async function readWikiTodo() {
 }
 
 async function loadData() {
-  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage, projectMeta] = await Promise.all([
+  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage, projectMeta, ricky] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
@@ -1005,6 +1191,7 @@ async function loadData() {
     readJson(CHECKIN_URL, fallbackCheckin),
     readJson(OPENCLAW_USAGE_URL, window.MAXNOW_OPENCLAW_USAGE_DATA || fallbackOpenclawUsage),
     readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta),
+    readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky),
   ]);
 
   dashboardData = dashboard;
@@ -1014,11 +1201,12 @@ async function loadData() {
   checkinData = checkin;
   openclawUsageData = openclawUsage;
   projectMetaData = projectMeta;
+  rickyData = ricky;
   renderAll();
 }
 
 function setView(view) {
-  const nextView = ["home", "tokens", "cloud", "dounai"].includes(view) ? view : "home";
+  const nextView = ["home", "ricky", "tokens", "cloud", "dounai"].includes(view) ? view : "home";
   qsa("[data-view-panel]").forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.viewPanel === nextView);
   });
@@ -1029,13 +1217,16 @@ function setView(view) {
     viewTitle.textContent =
       nextView === "tokens"
         ? copy.tokenTitle
-        : nextView === "cloud"
-          ? copy.cloudTitle
-          : nextView === "dounai"
-            ? copy.dounaiTitle
-            : copy.today;
+        : nextView === "ricky"
+          ? copy.rickyTitle
+          : nextView === "cloud"
+            ? copy.cloudTitle
+            : nextView === "dounai"
+              ? copy.dounaiTitle
+              : copy.today;
   }
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
+  if (nextView === "ricky") requestAnimationFrame(renderRicky);
   if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));
   if (location.hash !== `#${nextView}`) location.hash = nextView;
   window.scrollTo({ top: 0, behavior: "auto" });

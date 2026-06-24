@@ -26,7 +26,7 @@
 - 内容源使用 private personal-wiki 的 `raw/blog-vioiv`：当前已归档旧 Hexo Markdown 211 篇，图片缓存 167 个。
 - MaxNow 仓库负责发布层：构建脚本、公开文章数据、静态页面、归档、标签、RSS、部署说明和 dashboard 发布状态入口。
 - `dash.maxnow.cn` 继续作为私人状态工作站；最多显示博客发布进度、待筛选数量和跳转入口，不承载完整博客阅读体验。
-- `dash.maxnow.cn` 顶部右侧已预留 `Blog` 弱外链，指向 `https://blog.maxnow.cn`；左侧导航只保留 Dash 内部页面：首页、Token、豆奶。
+- `dash.maxnow.cn` 顶部右侧已预留 `Blog` 弱外链，指向 `https://blog.maxnow.cn`；左侧导航只保留 Dash 内部页面：首页、豆奶、Token、云服务、同行记。
 - 第一阶段先做只读静态博客：筛选 public/published 文章，转换 front matter，复制必要图片，生成 `blog.maxnow.cn` 页面。
 - 首页预览页：`blog/index.html`，用于确认文章流首页的信息架构和视觉风格，首页按文章预览卡片持续向下浏览。
 - 文章 cell 交互：整张文章卡片都可点击进入文章详情，桌面端文章流按一行两篇展示。
@@ -70,15 +70,6 @@
 - 尝试让服务器上的噗噗 / OpenClaw 每天通过 cron 汇总 personal-wiki 当天或近期未完成待办，并主动提醒 Owner。
 - 先确认提醒渠道、发送时间、消息格式和失败日志位置；真实发送消息前需要 Owner 明确确认发送目标和内容边界。
 - 数据源优先复用现有 `scripts/sync_wiki_todos.py` / `dash/data/wiki-todos.*`，避免前端或 cron 直接暴露 private personal-wiki 权限。
-
-### 增加我和 77 的旅行地图
-
-- 来源 ID：`maxnow-travel-map`
-- 建议分支：`feature/travel-map`
-- 做一个只读旅行地图，用来记录“我和 77 一起去过哪里”。
-- v1 先维护地点、时间、同行人、简短备注和可选照片入口，不做完整游记、路线规划或社交分享。
-- 先确认数据源放在 personal-wiki 还是 MaxNow 本仓库；如果包含私人照片、精确住址或敏感行程，默认不要公开到 `blog.maxnow.cn`。
-- 展示入口优先考虑 Dash 内的独立轻量页面或 Home 弱入口，避免挤占当前主线和今日推进。
 
 ### 调研近 30 天流量使用情况
 
@@ -139,6 +130,14 @@
 - 当前先用静态数据占位，不把 Token 页面做成不可靠的实时系统。
 
 ## Done
+
+### 已完成的同行记入口
+
+- 左侧导航新增“同行记”tab，副标题为“我和 Ricky”，放在最后一个一级入口。
+- 新增只读页面展示真实地图和统计卡片，地点与旅行记录暂时只进入地图 marker / popup，不单独铺列表。
+- personal-wiki 新增 `wiki/relationships/ricky-travel.json`，从 `wiki/relationships/ricky.md` 抽取旅行、出游、地点和待确认日期。
+- 新增 `scripts/sync_ricky_travel.py` 和 `python scripts/update_data.py ricky-travel`，把 personal-wiki 的结构化旅行数据同步成 `dash/data/ricky.json` / `dash/data/ricky.js`。
+- `scripts/update_data.py wrap all` 和 `scripts/check.py` 已纳入 `ricky` wrapper 校验；当前同步得到 12 个地点和 4 条记录。
 
 ### 已完成的近期界面微调
 

@@ -11,6 +11,24 @@
 
 ## 2026-06-24
 
+### 新增我和 Ricky 的同行记 tab
+
+- Dash 左侧导航新增“同行记”tab，副标题为“我和 Ricky”。
+- 新增同行记页面，包含真实地图和统计卡片；地点与旅行记录暂时只进入地图 marker / popup，不单独铺列表。
+- personal-wiki 新增 `wiki/relationships/ricky-travel.json`，从 `wiki/relationships/ricky.md` 抽取旅行、出游、地点和待确认日期。
+- 新增 `scripts/sync_ricky_travel.py` 和 `python scripts/update_data.py ricky-travel`，将 personal-wiki 旅行数据同步到 `dash/data/ricky.json` / `dash/data/ricky.js`；当前同步得到 12 个地点和 4 条记录。
+- `scripts/update_data.py runtime`、`wrap all` 与 `scripts/check.py` 已纳入 `ricky` 数据刷新 / wrapper 校验。
+- 地图改为 Leaflet + OpenStreetMap 真实地图，使用 personal-wiki 中的经纬度渲染 12 个 marker；内置 SVG 地图保留为 fallback。
+- 地图瓦片改用更柔和的 CARTO Voyager 样式，并替换默认 marker 为圆润彩色自定义 marker，让同行记页面更接近卡通 / 手账感。
+- 撤下页面右侧的地点列表和旅行记录列表，让同行记先保持地图优先。
+- 左侧导航顺序调整为：首页、豆奶、Token、云服务、同行记，将同行记放到最后一个 tab。
+- 将 Dash 缓存版本提升到 `styles.css?v=69`、`app.js?v=52`。
+- 更新 `AGENTS.md`、`SPEC.md`、`STYLE_CONTEXT.md`、`CONTEXT.md` 和 `ROADMAP.md`，记录新入口、数据边界和后续维护口径。
+
+原因：
+
+- Owner 希望不要新增泛旅行 tab，而是新增一个“我和 Ricky”的独立左侧入口，用来承载两人的旅行记录和世界地图。
+
 ### 记录噗噗每日待办提醒待办
 
 - 更新 `ROADMAP.md`，加入“让噗噗每日提醒 personal-wiki 待办”后续项。

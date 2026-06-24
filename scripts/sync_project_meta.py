@@ -21,6 +21,8 @@ GENERATED_DATA_PATHS = {
     "dash/data/dounai_checkin.json",
     "dash/data/project-meta.json",
     "dash/data/project-meta.js",
+    "dash/data/ricky.json",
+    "dash/data/ricky.js",
 }
 
 

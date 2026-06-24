@@ -46,6 +46,8 @@ MaxNow 由四类文件组成：
    - `dash/data/project-meta.json`
    - `dash/data/project-meta.js`
    - `dash/data/dounai_checkin.json`
+   - `dash/data/ricky.json`
+   - `dash/data/ricky.js`
    - 这是页面和自动化之间的数据契约。
 
 3. OpenClaw skill
@@ -66,12 +68,14 @@ MaxNow 由四类文件组成：
    - `scripts/sync_openclaw_usage.py`
   - `scripts/sync_project_meta.py`
   - `scripts/sync_weather.py`
+  - `scripts/sync_ricky_travel.py`
    - 由 Codex 或 Owner 维护。
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
    - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `dash/data/dashboard.*` 中的 `automation` 和 `system` 字段。
    - `scripts/sync_openclaw_usage.py` 只读 OpenClaw 服务器轨迹，生成 Token 使用账本和 OpenRouter 等价费用估算，为后续 Codex 用量接入预留同一账本结构。
   - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
   - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
+  - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
 
 6. 产品记忆文档
    - `CONTEXT.md`
@@ -84,7 +88,7 @@ MaxNow 由四类文件组成：
 
 ## 导航
 
-v1 保留三个一级入口：
+v1 保留五个一级入口：
 
 1. Home
    - 私人状态工作站。
@@ -95,6 +99,8 @@ v1 保留三个一级入口：
    - Token 使用详情页。
 4. 云服务
    - 服务器自动化详情页，只读列出云服务器上的定时任务、数据同步、站点托管、系统状态和运行边界。
+5. 同行记
+   - “我和 Ricky”的只读共同记录页，当前先承载地图和轻量统计。
 
 不要随便新增页面。只有当某个问题无法放进 Home，且会明显伤害日常扫读体验时，才考虑新增页面。
 
@@ -173,6 +179,17 @@ Token 真实数据可以分来源接入。第一阶段先接入 OpenClaw：
 - 近 30 天账号有效期延长时长折线图，必须有 x / y 轴、日期刻度和每日具体数值。
 
 不要在豆奶页面加入签到操作、账号登录、豆丁展示或 cron 管理。豆丁只进入 Home 摘要，不进入豆奶详情页展示口径。账号余量只能从 OpenClaw / 服务器侧登录态生成的数据快照读取，前端不直接访问豆奶站点。
+
+## 同行记页面
+
+同行记页面只回答“我和 Ricky 一起去过哪里、留下过什么记录”：
+
+- 左侧导航显示为“同行记”，副标题为“我和 Ricky”。
+- 页面标题使用“我和 Ricky”，不做通用旅行社交产品。
+- v1 为只读静态页面：真实地图和少量统计；地点与旅行记录先只作为地图点位和 popup 数据，不在页面上单独铺列表。
+- 数据来自 `dash/data/ricky.json`，由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 同步；前端不编辑、不回写、不直接读取 private personal-wiki。
+- 地点点位优先使用 `lat` / `lng` 放在 Leaflet + OpenStreetMap 真实地图上；`x` / `y` 只作为网络或地图脚本不可用时的静态 fallback。
+- 记录字段优先保持轻量：地点、日期、国家 / 地区、简短备注、可选照片或来源链接；列表展示后续需要时再恢复。
 
 ## 数据契约
 
@@ -259,6 +276,8 @@ UPDATE_LOG.md
 
 `dash/data/dounai_checkin.json` 负责豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化更新；前端只读取流量、豆丁、账号有效期延长时长、累计签到天数、近 30 天记录、剩余可用流量、有效期、每日可用预算和 `account_history`，不编辑、不回写，也不修改签到脚本或 cron。
 
+`dash/data/ricky.json` 负责“我和 Ricky”页面的只读地图数据、地点、旅行记录、摘要和可选照片 / 来源链接。它由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 生成；本地优先读取相邻 personal-wiki checkout，服务器侧可通过 `gh api` 读取 private personal-wiki。
+
 当前带 `.js` wrapper 的数据集必须从对应 JSON 文件生成，并把同一个对象暴露给浏览器：
 
 ```text
@@ -267,6 +286,8 @@ window.MAXNOW_AI_NEWS_DATA
 window.MAXNOW_LAST30_DATA
 window.MAXNOW_WIKI_TODO_DATA
 window.MAXNOW_OPENCLAW_USAGE_DATA
+window.MAXNOW_PROJECT_META_DATA
+window.MAXNOW_RICKY_DATA
 ```
 
 ## 数据来源策略
@@ -401,7 +422,7 @@ maxnow.cn       -> 未来公开主页 / 个人入口
 
 ## 实现边界
 
-- v1 保留 Home、豆奶、Token 和云服务。
+- v1 保留 Home、豆奶、Token、云服务和同行记。
 - v1 保持静态站点：不加登录、数据库或后端 API。
 - 任何新的日常维护数据字段，都必须同时写进这里和 OpenClaw skill。
 - 页面代码变化需要 Codex 或 Owner 明确意图；OpenClaw 永远不能改变页面结构。

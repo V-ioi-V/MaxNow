@@ -64,7 +64,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `openclaw/maxnow-dashboard/SKILL.md`：OpenClaw 更新 dashboard / ai-news 数据时的执行规则。
 - `openclaw/last-30/SKILL.md`：OpenClaw 更新 Last-30 滚动记忆时的执行规则。
 - `scripts/check.py`：本地一致性校验脚本。
-- `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新 Home 项目状态。
+- `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新 wiki-todos、Ricky 旅行记录、天气、系统状态和项目元信息，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新 Home 项目状态。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
 - `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段；Home 系统状态卡作为入口，云服务页复用同一份快照展示更完整的服务器状态。
 - `scripts/sync_openclaw_usage.py`：只读服务器 `/root/.openclaw` 轨迹，生成 OpenClaw Token 用量账本和 OpenRouter 等价费用估算。
@@ -92,7 +92,10 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/project-meta.json`：MaxNow 当前版本、部署说明和最近更新摘要，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成。
 - `dash/data/project-meta.js`：从 `project-meta.json` 生成的浏览器 wrapper。
 - `dash/data/dounai_checkin.json`：豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化每天更新；Home 只读展示今日流量、今日豆丁、今日账号有效期延长时长、累计签到天数、累计流量和累计账号有效期延长时长，并作为豆奶详情页入口。豆奶详情页展示近 30 天流量/时长折线图，以及剩余流量、有效期、每日可用预算和近 30 天账号日均可用趋势。
+- `dash/data/ricky.json`：同行记页面的只读数据源，由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 生成，维护“我和 Ricky”的世界地图点位、地点、旅行记录、统计和可选照片 / 来源链接。
+- `dash/data/ricky.js`：从 `ricky.json` 生成的浏览器 wrapper。
 - `scripts/sync_wiki_todos.py`：通过本地或服务器 `gh` 登录态刷新 `dash/data/wiki-todos.*`，避免前端暴露 GitHub token。
+- `scripts/sync_ricky_travel.py`：通过本地相邻 personal-wiki checkout 或服务器 `gh` 登录态读取 `wiki/relationships/ricky-travel.json`，刷新 `dash/data/ricky.*`。
 - `scripts/sync_weather.py`：抓取北京市海淀区天气、温度、高低温和天气图标类型，只刷新 dashboard 的 `weather` 字段。
 - `scripts/sync_ai_last30.py`：抓取免费公开 AI 信号源，刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`；采集脚本本身不调用模型，不消耗 token。
 
@@ -110,6 +113,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与最近更新模块。
 - `dash/data/openclaw-usage.json` 的结构预留 `futureSources.codex`，后续本地 Codex 和服务器 Codex 用量接入时应复用同类日账本结构。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。
+- 同行记页面只读取 `dash/data/ricky.json`，不在前端编辑、不回写 personal-wiki、不依赖外部在线地图服务；事实来源归 personal-wiki 的 `wiki/relationships/ricky-travel.json`。
 - 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段，并按日期维护 `account_history`。
 
 ### 4. AI 外部信号滚动记忆
@@ -195,6 +199,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
 - OpenClaw Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线趋势。费用为 OpenRouter 等价估算，后续还需要补 Codex 用量 collector。
 - Dash 左侧导航已新增“云服务”tab，位于 Token 下方。该页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作。
+- Dash 左侧导航已新增“同行记”tab，副标题为“我和 Ricky”。该页用 Leaflet + OpenStreetMap 真实地图和轻量统计承载两人的共同足迹，地点和旅行记录暂时只进入 marker / popup 数据，不单独铺列表；内置 SVG 地图只作为 fallback。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
 - Home 时间卡片已支持 `dashboard.json.specialDates`：用手动维护的公历日期或一次性日期在当天显示生日、纪念日等轻量提醒；没有命中时继续显示“今日无节日”。
 - Home 顶部已新增北京市海淀区天气卡：地点、天气、当前温度、今日高低温和图标来自 `dashboard.json.weather`，并由 `runtime` 定时刷新。
@@ -202,6 +207,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
 - 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，失败日志会进入 Home 系统状态。
 - 个人博客已确定推荐走 `blog.maxnow.cn`，但还缺发布 manifest / front matter 策略、构建脚本、nginx 子域名配置和第一批公开文章清单。
+- 同行记已经有页面、数据契约和 personal-wiki 同步脚本；后续重点是继续在 personal-wiki 补真实地点、日期、备注和照片入口。
 - MaxNow 功能待办以 `ROADMAP.md` 为准，不应混入 dashboard / last-30 运行数据。
 - 当前可执行任务以 `ROADMAP.md` 为准。
 
