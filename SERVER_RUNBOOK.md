@@ -197,6 +197,18 @@ runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-2
 verification: python3 scripts/update_data.py runtime ok，同步 11 个 Ricky 地点和 4 条记录；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=69 200；https://dash.maxnow.cn/app.js?v=52 200；https://blog.maxnow.cn 200
 ```
 
+2026-06-24 已部署同行记地图微调：
+
+```text
+deployed commit: 72dfbd6 Merge Ricky map display tuning
+changes: 北海道地图点显示名缩短为“北海”；同行记页面左右留白收窄，地图高度提高，Leaflet fitBounds 最大缩放从 4 降到 3，让地图更宽并显示更多周边区域
+dash styles version: styles.css?v=70
+dash app version: app.js?v=53
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-212002-before-ricky-map-tune
+runtime data stash before deploy: before-ricky-map-tune-runtime-data
+verification: python3 scripts/update_data.py runtime ok，同步 11 个 Ricky 地点和 4 条记录；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/ricky.json 200；https://dash.maxnow.cn/styles.css?v=70 200；https://dash.maxnow.cn/app.js?v=53 200
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
