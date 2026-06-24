@@ -16,6 +16,7 @@ DATASETS = [
     ("wiki-todos", "dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
     ("openclaw-usage", "dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
     ("project-meta", "dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
+    ("ricky", "dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
 ]
 
 
@@ -50,6 +51,8 @@ def check_required_files():
         "dash/styles.css",
         "dash/app.js",
         "dash/data/dounai_checkin.json",
+        "dash/data/ricky.json",
+        "dash/data/ricky.js",
         "blog/index.html",
         "blog/overview.html",
         "blog/topics.html",
@@ -75,6 +78,7 @@ def check_required_files():
         "scripts/sync_ai_last30.py",
         "scripts/sync_project_meta.py",
         "scripts/sync_weather.py",
+        "scripts/sync_ricky_travel.py",
         "scripts/update_data.py",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
