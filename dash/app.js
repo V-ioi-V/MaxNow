@@ -171,6 +171,11 @@ function formatDateShort(date = "") {
   return date.slice(5) || "--";
 }
 
+function formatTimeShort(value = "") {
+  const match = String(value).match(/(\d{1,2}:\d{2})/);
+  return match ? match[1] : "";
+}
+
 function setText(selector, value) {
   const element = qs(selector);
   if (element) element.textContent = value ?? "";
@@ -1214,6 +1219,7 @@ function renderWeather() {
   const currentLabel = Number.isFinite(current) ? `${Math.round(current)}\u00b0C` : "--\u00b0C";
   const rangeLabel =
     Number.isFinite(high) && Number.isFinite(low) ? `${Math.round(low)}\u00b0/${Math.round(high)}\u00b0` : "--";
+  const updatedLabel = formatTimeShort(weather.updatedAt);
   const card = qs(".summary-weather");
   const iconNode = qs("#weather-icon");
 
@@ -1223,6 +1229,7 @@ function renderWeather() {
   setText("#weather-temp", currentLabel);
   setText("#weather-condition", condition);
   setText("#weather-range", rangeLabel);
+  setText("#weather-updated", updatedLabel ? `${updatedLabel} \u66f4\u65b0` : copy.syncWaiting);
   scheduleWeatherMetaFit();
 }
 
