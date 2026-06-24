@@ -230,6 +230,15 @@ runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-2
 verification: python3 scripts/check.py ok；python3 scripts/update_data.py token-usage ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=55 200；https://dash.maxnow.cn/data/token-usage.json 200
 ```
 
+2026-06-24 已部署 Token 缓存命中率和 Codex 模型 / 费用口径修正：
+
+```text
+deployed commit: 408cc6a Fix token cache rate and model cost basis
+changes: Token 顶部新增缓存命中率；Codex 模型占比和调用列表显示 `gpt-5.5` 等真实模型名；Codex 费用改为 OpenAI API 等价估算并计入总费用
+runtime data stash before deploy: before-token-model-cost-runtime-usage
+verification: python3 scripts/update_data.py token-usage ok；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=72 200；https://dash.maxnow.cn/app.js?v=56 200；https://dash.maxnow.cn/data/token-usage.json 200；线上 token-usage 显示模型 `gpt-5.5`、缓存命中率 94.49%、估算费用 $590.10
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
