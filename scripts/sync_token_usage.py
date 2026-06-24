@@ -36,6 +36,7 @@ def empty_usage():
         "inputTokens": 0,
         "outputTokens": 0,
         "cacheReadTokens": 0,
+        "cacheBaseTokens": 0,
         "totalTokens": 0,
         "estimatedCostUsd": 0.0,
         "runs": 0,
@@ -46,6 +47,10 @@ def add_usage(target, usage):
     target["inputTokens"] += int(usage.get("inputTokens") or usage.get("input") or 0)
     target["outputTokens"] += int(usage.get("outputTokens") or usage.get("output") or 0)
     target["cacheReadTokens"] += int(usage.get("cacheReadTokens") or usage.get("cacheRead") or 0)
+    target["cacheBaseTokens"] += int(
+        usage.get("cacheBaseTokens")
+        or max(int(usage.get("inputTokens") or usage.get("input") or 0), int(usage.get("cacheReadTokens") or usage.get("cacheRead") or 0))
+    )
     target["totalTokens"] += int(usage.get("totalTokens") or usage.get("total") or 0)
     target["estimatedCostUsd"] += float(usage.get("estimatedCostUsd") or usage.get("cost") or 0)
     target["runs"] += int(usage.get("runs") or 0)

@@ -143,7 +143,7 @@ def check_openclaw_usage():
         raise ValueError("openclaw-usage: days must be a list")
     for day in data.get("days", []):
         datetime.strptime(day["date"], "%Y-%m-%d")
-        for key in ["inputTokens", "outputTokens", "cacheReadTokens", "totalTokens", "runs"]:
+        for key in ["inputTokens", "outputTokens", "cacheReadTokens", "cacheBaseTokens", "totalTokens", "runs"]:
             if int(day.get(key, 0)) < 0:
                 raise ValueError(f"openclaw-usage: {key} cannot be negative")
         if float(day.get("estimatedCostUsd", 0)) < 0:
@@ -163,7 +163,7 @@ def check_usage_ledger(name, rel_path, allowed_pricing_basis):
         raise ValueError(f"{name}: sources must be a list")
     for day in data.get("days", []):
         datetime.strptime(day["date"], "%Y-%m-%d")
-        for key in ["inputTokens", "outputTokens", "cacheReadTokens", "totalTokens", "runs"]:
+        for key in ["inputTokens", "outputTokens", "cacheReadTokens", "cacheBaseTokens", "totalTokens", "runs"]:
             if int(day.get(key, 0)) < 0:
                 raise ValueError(f"{name}: {key} cannot be negative")
         if float(day.get("estimatedCostUsd", 0)) < 0:

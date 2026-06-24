@@ -97,6 +97,7 @@ def empty_usage():
         "inputTokens": 0,
         "outputTokens": 0,
         "cacheReadTokens": 0,
+        "cacheBaseTokens": 0,
         "totalTokens": 0,
         "estimatedCostUsd": 0.0,
         "runs": 0,
@@ -107,6 +108,7 @@ def add_usage(target, usage):
     target["inputTokens"] += to_int(usage.get("inputTokens"))
     target["outputTokens"] += to_int(usage.get("outputTokens"))
     target["cacheReadTokens"] += to_int(usage.get("cacheReadTokens"))
+    target["cacheBaseTokens"] += to_int(usage.get("cacheBaseTokens"))
     target["totalTokens"] += to_int(usage.get("totalTokens"))
     target["runs"] += 1
 
@@ -198,6 +200,7 @@ def load_session_usage(path, source_key, source_label, cutoff):
         "inputTokens": to_int(final_total.get("input_tokens")),
         "outputTokens": to_int(final_total.get("output_tokens")),
         "cacheReadTokens": to_int(final_total.get("cached_input_tokens")),
+        "cacheBaseTokens": to_int(final_total.get("input_tokens")),
         "reasoningOutputTokens": to_int(final_total.get("reasoning_output_tokens")),
         "totalTokens": to_int(final_total.get("total_tokens")),
         "pricingEstimated": True,

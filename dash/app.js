@@ -501,6 +501,7 @@ function normalizeUsageDay(day) {
     input: Number(day.inputTokens || day.input || 0),
     output: Number(day.outputTokens || day.output || 0),
     cacheRead: Number(day.cacheReadTokens || day.cacheRead || 0),
+    cacheBase: Number(day.cacheBaseTokens || day.cacheBase || Math.max(day.inputTokens || day.input || 0, day.cacheReadTokens || day.cacheRead || 0)),
     total: Number(day.totalTokens || day.total || 0),
     cost: Number(day.estimatedCostUsd || day.cost || 0),
   };
@@ -512,13 +513,14 @@ function sumUsage(days) {
       input: sum.input + Number(day.input || 0),
       output: sum.output + Number(day.output || 0),
       cacheRead: sum.cacheRead + Number(day.cacheRead || 0),
+      cacheBase: sum.cacheBase + Number(day.cacheBase || 0),
       total: sum.total + Number(day.total || 0),
       cost: sum.cost + Number(day.cost || 0),
       runs: sum.runs + Number(day.runs || 0),
     }),
-    { input: 0, output: 0, cacheRead: 0, total: 0, cost: 0, runs: 0 },
+    { input: 0, output: 0, cacheRead: 0, cacheBase: 0, total: 0, cost: 0, runs: 0 },
   );
-  summary.cacheHitRate = summary.input > 0 ? (summary.cacheRead / summary.input) * 100 : NaN;
+  summary.cacheHitRate = summary.cacheBase > 0 ? (summary.cacheRead / summary.cacheBase) * 100 : NaN;
   return summary;
 }
 
@@ -618,7 +620,7 @@ function getOpenclawTokenUsage() {
   ranges.forEach((range) => {
     const hasCodex = (range.selectedDays || []).some((day) => (day.sources || []).some((source) => String(source).startsWith("codex")));
     range.note = hasCodex
-      ? `Token ${range.label}: cost includes OpenClaw OpenRouter-equivalent and Codex OpenAI API-equivalent estimates. Cache hit rate = cached input / input.`
+      ? `Token ${range.label}: cost includes OpenClaw OpenRouter-equivalent and Codex OpenAI API-equivalent estimates. Cache hit rate = cached input / cacheable input.`
       : range.note;
   });
 

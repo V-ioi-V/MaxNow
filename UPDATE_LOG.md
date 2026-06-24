@@ -15,7 +15,7 @@
 
 - 新增 `scripts/sync_codex_usage.py`，从 `.codex/sessions` 的 `token_count` 事件生成 `dash/data/codex-usage.*`，只导出 token 统计，不导出 prompt / response 正文。
 - Codex 模型名优先读取 `turn_context.model`，模型占比和调用列表展示 `gpt-5.5` 等具体模型，而不是工具名 `Codex`。
-- Codex 费用按 OpenAI API 等价价格估算，缓存命中率按 `cached input / input` 展示。
+- Codex 费用按 OpenAI API 等价价格估算，缓存命中率按 `cached input / cacheable input` 展示。
 - 新增 `scripts/sync_token_usage.py` 和 `dash/data/token-usage.*`，把 OpenClaw 与 Codex 源账本合并成 Token 页统一总账。
 - Token 页优先读取 `token-usage.*`，保留原有 1d / 7d / 30d / all、模型占比、最近调用和 30 天趋势。
 - `scripts/update_data.py` 新增 `codex-usage` 和 `token-usage` 命令，`scripts/check.py` 纳入新账本和 wrapper 校验。

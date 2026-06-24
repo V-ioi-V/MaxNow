@@ -133,6 +133,7 @@ def empty_usage():
         "inputTokens": 0,
         "outputTokens": 0,
         "cacheReadTokens": 0,
+        "cacheBaseTokens": 0,
         "totalTokens": 0,
         "estimatedCostUsd": 0.0,
         "runs": 0,
@@ -143,6 +144,7 @@ def add_usage(target, usage, estimated_cost):
     target["inputTokens"] += int(usage.get("inputTokens", 0))
     target["outputTokens"] += int(usage.get("outputTokens", 0))
     target["cacheReadTokens"] += int(usage.get("cacheReadTokens", 0))
+    target["cacheBaseTokens"] += int(usage.get("cacheBaseTokens", usage.get("inputTokens", 0) + usage.get("cacheReadTokens", 0)))
     target["totalTokens"] += int(usage.get("totalTokens", 0))
     target["runs"] += 1
     if estimated_cost is not None:
@@ -153,12 +155,14 @@ def extract_usage(data):
     usage = data.get("usage") if isinstance(data, dict) else None
     if not isinstance(usage, dict):
         return None
-    return {
+    extracted = {
         "inputTokens": int(usage.get("input") or usage.get("prompt") or 0),
         "outputTokens": int(usage.get("output") or usage.get("completion") or 0),
         "cacheReadTokens": int(usage.get("cacheRead") or usage.get("cached") or 0),
         "totalTokens": int(usage.get("total") or 0),
     }
+    extracted["cacheBaseTokens"] = extracted["inputTokens"] + extracted["cacheReadTokens"]
+    return extracted
 
 
 def task_kind(session_key):
