@@ -175,6 +175,17 @@ runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-0
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=63 200；https://dash.maxnow.cn/app.js?v=45 200；https://blog.maxnow.cn 200
 ```
 
+2026-06-24 已部署 Home 卡片操作和云服务系统状态入口：
+
+```text
+deployed commit: c941944 Merge home card actions
+changes: Home 近期待办右上入口改为“更多”；Home Token 近期用量右上角改为更新时间；Home 系统状态卡支持点击 / Enter / Space 跳转云服务；云服务页新增系统状态卡复用 dashboardData.system；记录噗噗每日待办提醒后续项
+dash styles version: styles.css?v=65
+dash app version: app.js?v=47
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260624-095712-before-home-card-actions
+verification: python3 scripts/check.py ok；python3 scripts/update_data.py project-meta ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=65 200；https://dash.maxnow.cn/app.js?v=47 200；https://blog.maxnow.cn 200
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
