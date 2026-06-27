@@ -109,7 +109,7 @@ python3 scripts/check.py
 '@
 
     Write-ReportLog "merge token usage on server without refreshing server codex-usage"
-    ($remoteScript -replace "`r`n", "`n") | ssh @sshArgs "bash -s"
+    ($remoteScript -replace "`r", "") | ssh @sshArgs "bash -s"
     if ($LASTEXITCODE -ne 0) {
         throw "server token merge failed with exit code $LASTEXITCODE"
     }
