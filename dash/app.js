@@ -880,6 +880,16 @@ function getChartScale(values, tickCount = 5) {
   return { min, max, ticks };
 }
 
+function getIntegerChartScale(values) {
+  const cleanValues = values.map((value) => Number(value)).filter(Number.isFinite);
+  const rawMin = cleanValues.length ? Math.min(...cleanValues) : 0;
+  const rawMax = Math.max(...cleanValues, 1);
+  const min = Math.max(0, Math.floor(rawMin));
+  const max = Math.max(min + 1, Math.ceil(rawMax));
+  const ticks = Array.from({ length: max - min + 1 }, (_, index) => min + index);
+  return { min, max, ticks };
+}
+
 function getChartRenderWidth(container) {
   const width = container?.clientWidth || 0;
   return Math.max(920, Math.floor(width));
@@ -894,7 +904,7 @@ function createLineChart(records, options) {
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
   const values = records.map((record) => Number(record[key]) || 0);
-  const yScale = getChartScale(values);
+  const yScale = options.integerYScale ? getIntegerChartScale(values) : getChartScale(values);
   const yRange = yScale.max - yScale.min || 1;
   const points = records.map((record, index) => {
     const x = padding.left + (records.length <= 1 ? 0 : (index / (records.length - 1)) * chartWidth);
@@ -1004,7 +1014,8 @@ function renderDounai() {
       stroke: "#7c3aed",
       width: getChartRenderWidth(dailyBudgetChart),
       formatter: (value) => `${value.toFixed(2)} GB`,
-      yFormatter: (value) => `${value.toFixed(2)}GB`,
+      yFormatter: (value) => `${Math.round(value)}GB`,
+      integerYScale: true,
     });
   }
 
