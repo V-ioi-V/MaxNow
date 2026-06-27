@@ -303,7 +303,15 @@ python scripts/update_data.py codex-usage
 python scripts/check.py
 ```
 
-Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。Windows Task Scheduler 和服务器 cron 自动化尚未落地，已记录在 `ROADMAP.md`。
+本机 Windows 定期上报可以安装计划任务：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
+```
+
+默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 2 小时运行一次 `scripts/report_codex_usage.ps1`。该任务要求本地仓库在 `main` 且无无关脏文件；它只提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main`，并只运行 `python3 scripts/update_data.py token-usage`。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
+
+Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。服务器 Codex cron 自动化尚未落地，已记录在 `ROADMAP.md`。
 
 刷新 Home 天气卡：
 

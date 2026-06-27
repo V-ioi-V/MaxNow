@@ -62,6 +62,8 @@ scripts/sync_wiki_todos.py
 scripts/sync_openclaw_usage.py
 scripts/sync_codex_usage.py
 scripts/sync_token_usage.py
+scripts/report_codex_usage.ps1
+scripts/install_local_codex_usage_task.ps1
 scripts/sync_project_meta.py
 scripts/sync_weather.py
 scripts/sync_ricky_travel.py
@@ -119,6 +121,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Use `python scripts/sync_openclaw_usage.py` or `python scripts/update_data.py openclaw-usage` on the server to refresh OpenClaw token usage from `/root/.openclaw`; costs are estimates using OpenRouter model prices, not real provider billing.
 - Use `python scripts/sync_codex_usage.py` or `python scripts/update_data.py codex-usage` to refresh Codex token usage from `.codex/sessions`; export only token usage, model name, timestamp, source label, and equivalent cost fields, never prompt or response body text.
 - Use `python scripts/sync_token_usage.py` or `python scripts/update_data.py token-usage` to merge OpenClaw and Codex ledgers into the unified Token page ledger.
+- Use `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1` on the owner's Windows machine to install local Codex usage reporting. The scheduled task runs `scripts/report_codex_usage.ps1`, may only commit `dash/data/codex-usage.*` and `dash/data/token-usage.*`, and must not refresh server-side Codex usage when deploying the merged Token ledger.
 - Use `python scripts/sync_project_meta.py` or `python scripts/update_data.py project-meta` to refresh the MaxNow version and recent update module.
 - Use `python scripts/sync_ricky_travel.py` or `python scripts/update_data.py ricky-travel` to refresh the "我和 Ricky" travel map from personal-wiki `wiki/relationships/ricky-travel.json`.
 - Use `python scripts/sync_ai_last30.py` or `python scripts/update_data.py ai-last30` to refresh free external AI signals into `dash/data/ai-news.*` and `dash/data/last-30.*`.
