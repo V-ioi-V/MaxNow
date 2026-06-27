@@ -136,7 +136,7 @@
 - 新增 `scripts/sync_token_usage.py` 和 `dash/data/token-usage.*`，将 OpenClaw 与 Codex 源账本合并为统一 Token 总账。
 - Token 页面优先读取统一总账，保留 1d / 7d / 30d / all、模型占比、最近调用和 30 天趋势。
 - `scripts/update_data.py codex-usage` 会刷新 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py token-usage` 可单独合并现有账本。
-- 新增 `scripts/report_codex_usage.ps1` 和 `scripts/install_local_codex_usage_task.ps1`，将本机 Codex 用量接入 Windows Task Scheduler 定期上报；默认每 2 小时刷新本机账本、提交并推送 usage 数据，再让服务器只合并现有 Token 总账。
+- 新增 `scripts/report_codex_usage.ps1` 和 `scripts/install_local_codex_usage_task.ps1`，将本机 Codex 用量接入 Windows Task Scheduler 定期上报；默认每 1 小时静默刷新本机账本、提交并推送 usage 数据，再让服务器只合并现有 Token 总账。
 
 ### 已完成的同行记入口
 

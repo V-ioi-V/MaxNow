@@ -71,7 +71,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/sync_codex_usage.py`：只读 `.codex/sessions` 中的 `token_count` 事件，生成 Codex Token 用量账本；只导出 token 统计，不导出 prompt / response 正文。
 - `scripts/sync_token_usage.py`：合并 OpenClaw / Codex 源账本，生成 Token 页面优先读取的统一总账。
 - `scripts/report_codex_usage.ps1`：Owner Windows 本机的 Codex 用量上报脚本；刷新本机 `codex-usage.*` / `token-usage.*`，只提交这四个生成文件，并在推送后让服务器只合并现有 Token 总账。
-- `scripts/install_local_codex_usage_task.ps1`：注册 Windows Task Scheduler 任务 `MaxNow-Local-Codex-Usage-Report`，默认每 2 小时运行一次本机 Codex 用量上报。
+- `scripts/install_local_codex_usage_task.ps1`：注册 Windows Task Scheduler 任务 `MaxNow-Local-Codex-Usage-Report`，默认每 1 小时静默运行一次本机 Codex 用量上报。
 - `scripts/sync_weather.py`：从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，写入 `dash/data/dashboard.*` 的 `weather` 字段。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
 
@@ -118,7 +118,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。
 - MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与最近更新模块。
 - Codex 用量可以由 `python scripts/update_data.py codex-usage` 刷新。脚本默认读取本机 `~/.codex/sessions`，也可用 `CODEX_STATE_DIR`、`MAXNOW_CODEX_SOURCE_KEY` 和 `MAXNOW_CODEX_SOURCE_LABEL` 指向服务器或其他 Codex 状态目录；它优先从 `turn_context.model` 读取具体模型名，只导出 token 统计，不导出对话正文。Codex 费用按 OpenAI API 等价价格估算，刷新后会同步生成 `token-usage.*`。
-- 本机 Codex 用量自动化由 Windows Task Scheduler 调用 `scripts/report_codex_usage.ps1`。任务默认每 2 小时运行一次，要求本地仓库在 `main` 且无无关脏文件；成功后提交并推送 `codex-usage.*` / `token-usage.*`，再通过 SSH 让服务器拉取最新 `main` 并只运行 `python3 scripts/update_data.py token-usage`。不要在服务器部署步骤里运行无本机数据的 `codex-usage` 覆盖本地账本。
+- 本机 Codex 用量自动化由 Windows Task Scheduler 调用 `scripts/report_codex_usage.ps1`。任务默认每 1 小时静默运行一次，注册时使用 hidden task 和 `powershell.exe -WindowStyle Hidden`；要求本地仓库在 `main` 且无无关脏文件。成功后提交并推送 `codex-usage.*` / `token-usage.*`，再通过 SSH 让服务器拉取最新 `main` 并只运行 `python3 scripts/update_data.py token-usage`。不要在服务器部署步骤里运行无本机数据的 `codex-usage` 覆盖本地账本。
 - `dash/data/token-usage.json` 是 Token 页统一入口；后续服务器 Codex collector、其他来源和自动化都应合入这个总账。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。
 - 同行记页面只读取 `dash/data/ricky.json`，不在前端编辑、不回写 personal-wiki、不依赖外部在线地图服务；事实来源归 personal-wiki 的 `wiki/relationships/ricky-travel.json`。
@@ -205,7 +205,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，通过 `python3 scripts/update_data.py runtime` 刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
 - Last-30 AI 外部信号服务器自动同步已落地：`ubuntu` 用户 crontab 每天 00:00 运行一次 `MAXNOW-AI-LAST30-SYNC`，通过 `python3 scripts/update_data.py ai-last30` 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
 - 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
-- Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；`scripts/sync_codex_usage.py` 可读取 `.codex/sessions` 的 `token_count` 事件并生成 `dash/data/codex-usage.*`；`scripts/sync_token_usage.py` 合并为 `dash/data/token-usage.*`。本机 Codex 用量已补 Windows Task Scheduler 上报入口，默认每 2 小时刷新并推送本机账本。页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 缓存命中率 / 费用、模型占比、会话消耗和最近 30 天折线趋势。OpenClaw 费用为 OpenRouter 等价估算，Codex 费用为 OpenAI API 等价估算。
+- Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；`scripts/sync_codex_usage.py` 可读取 `.codex/sessions` 的 `token_count` 事件并生成 `dash/data/codex-usage.*`；`scripts/sync_token_usage.py` 合并为 `dash/data/token-usage.*`。本机 Codex 用量已补 Windows Task Scheduler 上报入口，默认每 1 小时静默刷新并推送本机账本。页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 缓存命中率 / 费用、模型占比、会话消耗和最近 30 天折线趋势。OpenClaw 费用为 OpenRouter 等价估算，Codex 费用为 OpenAI API 等价估算。
 - Dash 左侧导航已新增“云服务”tab，位于 Token 下方。该页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作。
 - Dash 左侧导航已新增“同行记”tab，副标题为“我和 Ricky”。该页用 Leaflet + OpenStreetMap 真实地图和轻量统计承载两人的共同足迹，地点和旅行记录暂时只进入 marker / popup 数据，不单独铺列表；内置 SVG 地图只作为 fallback。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
