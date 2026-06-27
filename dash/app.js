@@ -30,7 +30,7 @@ let tokenUsageData = fallbackTokenUsage;
 let projectMetaData = fallbackProjectMeta;
 let rickyData = fallbackRicky;
 let wikiTodoError = "";
-let activeTokenRange = "7d";
+let activeTokenRange = "1d";
 let weatherMetaFitFrame = 0;
 let rickyMap = null;
 let rickyMarkerLayer = null;
@@ -847,10 +847,37 @@ function getAccountHistoryRecords(limit = 30) {
   ];
 }
 
-function getNiceMax(values) {
-  const max = Math.max(...values.map((value) => Number(value) || 0), 1);
-  const magnitude = 10 ** Math.floor(Math.log10(max));
-  return Math.ceil(max / magnitude) * magnitude;
+function getNiceStep(value) {
+  const safeValue = Math.max(Number(value) || 0, Number.EPSILON);
+  const magnitude = 10 ** Math.floor(Math.log10(safeValue));
+  const normalized = safeValue / magnitude;
+  const niceNormalized = normalized < 1.5 ? 1 : normalized < 3 ? 2 : normalized < 7 ? 5 : 10;
+  return niceNormalized * magnitude;
+}
+
+function getChartScale(values, tickCount = 5) {
+  const cleanValues = values.map((value) => Number(value)).filter(Number.isFinite);
+  const rawMin = cleanValues.length ? Math.min(...cleanValues) : 0;
+  const rawMax = Math.max(...cleanValues, 1);
+  const spread = rawMax - rawMin;
+  const useTightScale = rawMin > 0 && rawMax > 0 && spread / rawMax <= 0.25;
+  const scaleMin = useTightScale ? rawMin - Math.max(spread * 0.1, rawMax * 0.005) : 0;
+  const scaleMax = useTightScale ? rawMax + Math.max(spread * 0.1, rawMax * 0.005) : rawMax;
+  let step = getNiceStep((scaleMax - scaleMin) / Math.max(tickCount - 1, 1));
+  let min = 0;
+  let max = step;
+  let ticks = [];
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    min = useTightScale ? Math.max(0, Math.floor(scaleMin / step) * step) : 0;
+    max = Math.max(step, Math.ceil(scaleMax / step) * step);
+    ticks = [];
+    for (let value = min; value <= max + step / 2; value += step) {
+      ticks.push(value);
+    }
+    if (ticks.length <= tickCount + 1) break;
+    step *= 2;
+  }
+  return { min, max, ticks };
 }
 
 function getChartRenderWidth(container) {
@@ -867,16 +894,16 @@ function createLineChart(records, options) {
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
   const values = records.map((record) => Number(record[key]) || 0);
-  const yMax = getNiceMax(values);
+  const yScale = getChartScale(values);
+  const yRange = yScale.max - yScale.min || 1;
   const points = records.map((record, index) => {
     const x = padding.left + (records.length <= 1 ? 0 : (index / (records.length - 1)) * chartWidth);
-    const y = padding.top + chartHeight - ((Number(record[key]) || 0) / yMax) * chartHeight;
+    const y = padding.top + chartHeight - (((Number(record[key]) || 0) - yScale.min) / yRange) * chartHeight;
     return { record, value: Number(record[key]) || 0, x, y };
   });
   const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ");
-  const yTicks = Array.from({ length: 5 }, (_, index) => {
-    const value = (yMax / 4) * index;
-    const y = padding.top + chartHeight - (value / yMax) * chartHeight;
+  const yTicks = yScale.ticks.map((value) => {
+    const y = padding.top + chartHeight - ((value - yScale.min) / yRange) * chartHeight;
     return { value, y };
   });
   const labelInterval = 5;
@@ -977,6 +1004,7 @@ function renderDounai() {
       stroke: "#7c3aed",
       width: getChartRenderWidth(dailyBudgetChart),
       formatter: (value) => `${value.toFixed(2)} GB`,
+      yFormatter: (value) => `${value.toFixed(2)}GB`,
     });
   }
 

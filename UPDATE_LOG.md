@@ -11,6 +11,16 @@
 
 ## 2026-06-27
 
+### 优化图表刻度和 Token 默认范围
+
+- 折线图 y 轴新增动态刻度：当数据长期处在高位小幅波动时，不再强制从 0 开始，避免豆奶日均可用流量这种 4GB 左右的波动被压成一条直线。
+- Token 页面默认范围从 `7d` 改为 `1d`，进入页面后直接展示当天用量。
+- 将 Dash 脚本缓存版本提升到 `app.js?v=57`。
+
+原因：
+
+- Owner 反馈豆奶日均可用流量图左侧刻度固定为 0-5GB，看不出 4GB 左右的细微变化；Token 页每次打开默认 7d，不符合当前查看习惯。
+
 ### 本机 Codex Token 定期上报
 
 - 新增 `scripts/report_codex_usage.ps1`，在 Windows 本机刷新 Codex 用量账本，只允许提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，遇到无关脏文件会停止。
