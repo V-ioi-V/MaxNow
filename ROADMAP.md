@@ -41,7 +41,6 @@
 
 - 来源 ID：`maxnow-token-usage`
 - 本地 Codex collector 已落地；下一步补服务器 Codex collector，使用 `MAXNOW_CODEX_SOURCE_KEY=codex-server` 和服务器侧 `.codex/sessions`。
-- 给本机 Codex 用量补 Windows Task Scheduler 自动刷新；当前先手动运行 `python scripts/update_data.py codex-usage`。
 - 给服务器 Codex 用量补 cron 自动刷新，并确认日志、锁、文件权限和部署目录写入方式。
 - 将 Token 页来源列表 / 说明继续优化为更明确的 OpenClaw、Codex local、Codex server 分源展示。
 - Codex 费用已按 OpenAI API 等价价格估算；后续如果要对齐 Codex 订阅真实账单，需要另行确认官方账单口径。
@@ -126,9 +125,8 @@
 ### Token 使用自动化
 
 - 本地 Codex 用量已有可读来源：`C:\Users\a\.codex\sessions` 中的 `token_count` 事件。
-- 待补 Windows Task Scheduler：每天运行 `python scripts/update_data.py codex-usage` 并记录 `logs/codex-usage.log`。
 - 待补服务器 cron：刷新服务器 Codex 用量并合入 `dash/data/token-usage.*`。
-- 待确认是否需要把本机生成的数据自动推送到远端；不要在未确认前自动暴露本机 Codex 使用明细。
+- 待确认服务器 Codex 来源是否应和本机 Codex 来源在 Token 页显式分栏展示。
 
 ## Done
 
@@ -138,6 +136,7 @@
 - 新增 `scripts/sync_token_usage.py` 和 `dash/data/token-usage.*`，将 OpenClaw 与 Codex 源账本合并为统一 Token 总账。
 - Token 页面优先读取统一总账，保留 1d / 7d / 30d / all、模型占比、最近调用和 30 天趋势。
 - `scripts/update_data.py codex-usage` 会刷新 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py token-usage` 可单独合并现有账本。
+- 新增 `scripts/report_codex_usage.ps1` 和 `scripts/install_local_codex_usage_task.ps1`，将本机 Codex 用量接入 Windows Task Scheduler 定期上报；默认每 2 小时刷新本机账本、提交并推送 usage 数据，再让服务器只合并现有 Token 总账。
 
 ### 已完成的同行记入口
 

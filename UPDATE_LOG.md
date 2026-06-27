@@ -9,6 +9,15 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-06-27
+
+### 本机 Codex Token 定期上报
+
+- 新增 `scripts/report_codex_usage.ps1`，在 Windows 本机刷新 Codex 用量账本，只允许提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，遇到无关脏文件会停止。
+- 新增 `scripts/install_local_codex_usage_task.ps1`，注册 `MaxNow-Local-Codex-Usage-Report` 计划任务，默认每 2 小时上报一次本机 Codex Token 用量。
+- 上报脚本推送后通过 SSH 让服务器拉取最新 `main`，并只运行 `python3 scripts/update_data.py token-usage` 合并现有源账本，避免在服务器上刷新空的本机 Codex 数据。
+- 更新 `SPEC.md`、`CONTEXT.md`、`ROADMAP.md`、`DEPLOY.md`、`SERVER_RUNBOOK.md`、`AGENTS.md` 和 `scripts/check.py`，记录本机定期上报边界与剩余服务器 Codex collector 待办。
+
 ## 2026-06-24
 
 ### 接入本机 Codex Token 统计

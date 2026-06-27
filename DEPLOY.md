@@ -119,6 +119,14 @@ python3 scripts/update_data.py ai-last30
 
 `ai-last30` 使用免费公开源，采集脚本本身不调用模型、不消耗 token。若后续交给 OpenClaw 二次摘要，应只传入少量候选，避免把新闻全文大量喂给模型。
 
+需要在 Owner Windows 本机定期上报 Codex Token 用量时：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
+```
+
+该计划任务默认每 2 小时刷新本机 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，只提交这四个数据文件并推送到 `origin/main`。服务器部署侧只做 `token-usage` 合并，不在服务器上刷新本机 Codex collector。
+
 ## OpenClaw 写权限
 
 建议把 OpenClaw 的写权限限制到数据文件。

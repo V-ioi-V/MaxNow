@@ -84,6 +84,8 @@ def check_required_files():
         "scripts/sync_weather.py",
         "scripts/sync_ricky_travel.py",
         "scripts/update_data.py",
+        "scripts/report_codex_usage.ps1",
+        "scripts/install_local_codex_usage_task.ps1",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
     ]
