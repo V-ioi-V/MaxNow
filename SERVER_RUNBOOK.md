@@ -249,6 +249,16 @@ hourly hidden update: 2026-06-27 将任务改为每 1 小时静默运行；Task 
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/token-usage.json 200；隐藏计划任务手动启动后 LastTaskResult=0；服务器 HEAD 17f537d
 ```
 
+2026-06-27 已部署豆奶图表动态刻度和 Token 默认范围修正：
+
+```text
+deployed commit: 613b64c Update local Codex token usage
+included code commit: 55a1247 Fix chart scaling and token default range
+changes: 折线图 y 轴对高位小波动数据使用动态刻度；豆奶日均可用流量图不再被 0 起点压扁；Token 页面默认范围从 7d 改为 1d
+dash app version: app.js?v=57
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=57 200；https://blog.maxnow.cn 200
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
