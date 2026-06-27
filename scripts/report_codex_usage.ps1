@@ -94,24 +94,28 @@ function Invoke-ServerTokenMerge {
     }
     $sshArgs += @($RemoteHost)
 
-    $remoteScript = @'
-set -e
-cd /var/www/maxnow-dashboard
-mkdir -p /tmp/maxnow-local-codex-usage-report
-cp -a dash/data/openclaw-usage.json /tmp/maxnow-local-codex-usage-report/openclaw-usage.json 2>/dev/null || true
-cp -a dash/data/openclaw-usage.js /tmp/maxnow-local-codex-usage-report/openclaw-usage.js 2>/dev/null || true
-git stash push -m before-local-codex-usage-report -- dash/data/openclaw-usage.json dash/data/openclaw-usage.js dash/data/codex-usage.json dash/data/codex-usage.js dash/data/token-usage.json dash/data/token-usage.js >/dev/null 2>&1 || true
-git pull --ff-only origin main
-if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.json ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.json dash/data/openclaw-usage.json; fi
-if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.js ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.js dash/data/openclaw-usage.js; fi
-python3 scripts/update_data.py token-usage
-python3 scripts/check.py
-'@
-
     Write-ReportLog "merge token usage on server without refreshing server codex-usage"
-    ($remoteScript -replace "`r", "") | ssh @sshArgs "bash -s"
-    if ($LASTEXITCODE -ne 0) {
-        throw "server token merge failed with exit code $LASTEXITCODE"
+    $remoteSteps = @(
+        "set -e",
+        "cd /var/www/maxnow-dashboard",
+        "mkdir -p /tmp/maxnow-local-codex-usage-report",
+        "cp -a dash/data/openclaw-usage.json /tmp/maxnow-local-codex-usage-report/openclaw-usage.json 2>/dev/null || true",
+        "cp -a dash/data/openclaw-usage.js /tmp/maxnow-local-codex-usage-report/openclaw-usage.js 2>/dev/null || true",
+        "git stash push -m before-local-codex-usage-report -- dash/data/openclaw-usage.json dash/data/openclaw-usage.js dash/data/codex-usage.json dash/data/codex-usage.js dash/data/token-usage.json dash/data/token-usage.js >/dev/null 2>&1 || true",
+        "git pull --ff-only origin main",
+        "if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.json ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.json dash/data/openclaw-usage.json; fi",
+        "if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.js ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.js dash/data/openclaw-usage.js; fi",
+        "python3 scripts/update_data.py token-usage",
+        "python3 scripts/check.py"
+    )
+    $remoteCommand = $remoteSteps -join "; "
+    $output = & ssh @sshArgs "bash" "-lc" $remoteCommand 2>&1
+    $exitCode = $LASTEXITCODE
+    foreach ($line in $output) {
+        Write-ReportLog "server: $line"
+    }
+    if ($exitCode -ne 0) {
+        throw "server token merge failed with exit code $exitCode"
     }
 }
 
