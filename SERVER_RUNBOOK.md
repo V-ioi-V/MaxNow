@@ -245,7 +245,8 @@ verification: python3 scripts/update_data.py token-usage ok；python3 scripts/ch
 deployed commit: 25859dc Merge local Codex report SSH fix
 changes: 新增 Windows 本机 Codex Token 上报脚本和 Task Scheduler 安装脚本；本机任务每 1 小时静默运行，只提交 codex-usage/token-usage 数据；服务器部署侧只合并 token-usage，不在服务器刷新本机 Codex collector；修复 PowerShell 远端 bash 脚本 CRLF 和 SSH 失败未冒泡问题
 first manual report: 本机采集 86 个 Codex usage sessions，提交 d3e3f7c Update local Codex token usage，并推送到 origin/main
-verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/token-usage.json 200；服务器 HEAD 25859dc
+hourly hidden update: 2026-06-27 将任务改为每 1 小时静默运行；Task Scheduler action 使用 powershell.exe -WindowStyle Hidden，任务设置 Hidden=true；远端 token 合并改为 base64 SSH payload，并按 SSH exit code 判断成败，避免 CRLF 和 git pull stderr 误判
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/token-usage.json 200；隐藏计划任务手动启动后 LastTaskResult=0；服务器 HEAD 17f537d
 ```
 
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
