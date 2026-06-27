@@ -18,6 +18,7 @@
 - 计划任务注册为 hidden task，并使用 `powershell.exe -WindowStyle Hidden`，避免自动运行时弹出命令行窗口。
 - 上报脚本推送后通过 SSH 让服务器拉取最新 `main`，并只运行 `python3 scripts/update_data.py token-usage` 合并现有源账本，避免在服务器上刷新空的本机 Codex 数据。
 - 首次手动上报采集到 86 个本机 Codex usage sessions；随后修复 PowerShell 远端 bash 脚本 CRLF 和 SSH 失败未冒泡问题。
+- 2026-06-27 进一步修复静默任务：远端合并改为 base64 SSH payload，服务器输出进入 `logs/local-codex-usage-report.log`，`git pull` 的 stderr 进度不再被误判为失败；隐藏计划任务手动启动验证 `LastTaskResult=0`。
 - 更新 `SPEC.md`、`CONTEXT.md`、`ROADMAP.md`、`DEPLOY.md`、`SERVER_RUNBOOK.md`、`AGENTS.md` 和 `scripts/check.py`，记录本机定期上报边界与剩余服务器 Codex collector 待办。
 
 ## 2026-06-24
