@@ -109,7 +109,9 @@ function Invoke-ServerTokenMerge {
         "python3 scripts/check.py"
     )
     $remoteCommand = $remoteSteps -join "; "
-    $output = & ssh @sshArgs "bash" "-lc" $remoteCommand 2>&1
+    $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($remoteCommand))
+    $remoteInvocation = "printf '%s' '$encodedCommand' | base64 -d | bash"
+    $output = & ssh @sshArgs $remoteInvocation 2>&1
     $exitCode = $LASTEXITCODE
     foreach ($line in $output) {
         Write-ReportLog "server: $line"
