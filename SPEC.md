@@ -82,7 +82,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_codex_usage.py` 只读 Codex session `token_count` 事件，生成 Codex Token 使用账本，不导出对话正文。
    - `scripts/sync_token_usage.py` 合并 OpenClaw / Codex 源账本，生成 Token 页面统一总账。
    - `scripts/report_codex_usage.ps1` 在 Owner 的 Windows 本机定时刷新本机 Codex 用量，只提交 `codex-usage.*` / `token-usage.*`，并把合并后的 Token 总账同步到线上。
-   - `scripts/install_local_codex_usage_task.ps1` 注册本机 Windows Task Scheduler 任务，默认每 2 小时运行一次本机 Codex 用量上报。
+   - `scripts/install_local_codex_usage_task.ps1` 注册本机 Windows Task Scheduler 任务，默认每 1 小时静默运行一次本机 Codex 用量上报。
    - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
    - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
    - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
@@ -175,7 +175,7 @@ Token 真实数据可以分来源接入。第一阶段先接入 OpenClaw：
 - `dash/data/token-usage.json` 保存合并后的统一 Token 总账，Token 页面优先读取这个文件。
 - OpenClaw 源账本的 `pricingBasis` 必须标记为 `openrouter-equivalent`，不要把它当作真实扣费账单；Codex 源账本使用 `openai-api-equivalent`，统一总账使用 `mixed`。
 - OpenClaw 费用使用 OpenRouter 等价估算；Codex 费用使用 OpenAI API 等价估算。两者都是估算口径，不等同于真实供应商账单或订阅账单。
-- 本机 Codex 用量由 Windows Task Scheduler 调用 `scripts/report_codex_usage.ps1` 定期上报；该脚本只允许提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，遇到无关工作区改动会停止，服务器端部署时只运行 `token-usage` 合并，避免用服务器空数据覆盖本机 Codex 账本。
+- 本机 Codex 用量由 Windows Task Scheduler 调用 `scripts/report_codex_usage.ps1` 定期上报；默认每 1 小时静默运行一次，Task Scheduler action 使用 `powershell.exe -WindowStyle Hidden`。该脚本只允许提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，遇到无关工作区改动会停止，服务器端部署时只运行 `token-usage` 合并，避免用服务器空数据覆盖本机 Codex 账本。
 - 后续其他来源应复用同类日账本结构，再由汇总层合并 OpenClaw / Codex / 其他来源。
 
 不要把完整 Token 页面复制到 Home。Home 只需要显示紧凑的使用状态。

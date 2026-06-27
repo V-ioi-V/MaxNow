@@ -125,7 +125,7 @@ python3 scripts/update_data.py ai-last30
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
 ```
 
-该计划任务默认每 2 小时刷新本机 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，只提交这四个数据文件并推送到 `origin/main`。服务器部署侧只做 `token-usage` 合并，不在服务器上刷新本机 Codex collector。
+该计划任务默认每 1 小时静默刷新本机 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，注册为 hidden task，并使用 `powershell.exe -WindowStyle Hidden` 避免自动运行时弹出命令行窗口。它只提交这四个数据文件并推送到 `origin/main`。服务器部署侧只做 `token-usage` 合并，不在服务器上刷新本机 Codex collector。
 
 ## OpenClaw 写权限
 
