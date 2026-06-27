@@ -259,6 +259,15 @@ dash app version: app.js?v=57
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=57 200；https://blog.maxnow.cn 200
 ```
 
+2026-06-27 已部署豆奶 GB 图表整数 y 轴刻度修正：
+
+```text
+deployed commit: fbe02f2 Use integer axis for dounai GB chart
+changes: 豆奶“近 30 天日均可用流量”图保留动态缩放，但 y 轴边界改为整数 GB；4.19-4.26GB 这类数据展示为 4GB 到 5GB，点位标签仍保留两位小数
+dash app version: app.js?v=58
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=58 200；线上 dash/app.js 确认 integerYScale 已启用
+```
+
 服务器部署博客预览时，曾将旧路径 `data/dashboard.*` 和 `data/wiki-todos.*` 备份到：
 
 ```text
