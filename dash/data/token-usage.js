@@ -1,5 +1,5 @@
 window.MAXNOW_TOKEN_USAGE_DATA = {
-  "updatedAt": "2026-06-30 18:22",
+  "updatedAt": "2026-07-01 08:59",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "mixed",
