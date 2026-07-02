@@ -17,6 +17,7 @@
 - 失败日志检查忽略自身写入的 `[ok] status ... checks failed` 摘要，避免上一轮状态摘要反复触发 `failure-log` 失败。
 - 部署状态检查忽略 Python 运行时生成的 `__pycache__` / `.pyc` 文件，避免只读诊断命令留下缓存后触发异常。
 - `scripts/update_data.py runtime` 将 system-status 调整到运行态同步最后执行，避免先检查、后改写 project-meta / ricky 等数据造成短暂误报。
+- system-status 摘要现在会输出失败项名称，例如 `checks failed: deploy`，避免只有失败数量但不可定位。
 
 原因：
 

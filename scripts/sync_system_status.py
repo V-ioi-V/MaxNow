@@ -595,24 +595,24 @@ def build_status(site_url):
     memory, memory_ok = memory_state()
     uptime, uptime_ok = uptime_state()
 
-    checks.extend([
-        nginx_ok,
-        site_ok,
-        certificate_ok,
-        deploy_ok,
-        git_pull_ok,
-        timers_ok,
-        wiki_todos_ok,
-        failure_log_ok,
-        cloud_location_ok,
-        billing_ok,
-        cpu_ok,
-        disk_ok,
-        memory_ok,
-        uptime_ok,
-    ])
-    failed = [item for item in checks if item is False]
-    unknown = [item for item in checks if item is None]
+    named_checks = [
+        ("nginx", nginx_ok),
+        ("site", site_ok),
+        ("certificate", certificate_ok),
+        ("deploy", deploy_ok),
+        ("git-pull", git_pull_ok),
+        ("timers", timers_ok),
+        ("wiki-todos", wiki_todos_ok),
+        ("failure-log", failure_log_ok),
+        ("cloud-location", cloud_location_ok),
+        ("billing", billing_ok),
+        ("cpu", cpu_ok),
+        ("disk", disk_ok),
+        ("memory", memory_ok),
+        ("uptime", uptime_ok),
+    ]
+    failed = [name for name, ok in named_checks if ok is False]
+    unknown = [name for name, ok in named_checks if ok is None]
 
     if failed:
         status = "异常"
@@ -630,9 +630,9 @@ def build_status(site_url):
         f"memory {memory['value']}",
     ]
     if failed:
-        summary_parts.append(f"{len(failed)} checks failed")
+        summary_parts.append(f"{len(failed)} checks failed: {', '.join(failed)}")
     elif unknown:
-        summary_parts.append(f"{len(unknown)} checks unknown")
+        summary_parts.append(f"{len(unknown)} checks unknown: {', '.join(unknown)}")
 
     return {
         "automation": {
