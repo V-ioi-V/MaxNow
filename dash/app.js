@@ -9,6 +9,7 @@ const PROJECT_META_URL = "./data/project-meta.json";
 const RICKY_URL = "./data/ricky.json";
 const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
 const WIKI_TASK_BASE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/";
+const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
 const fallbackAiNews = window.MAXNOW_AI_NEWS_DATA || { items: [] };
@@ -1685,3 +1686,4 @@ window.addEventListener("resize", () => {
 updateClock();
 setInterval(updateClock, 30000);
 loadData().then(() => setView(location.hash.replace("#", "")));
+setInterval(loadData, DATA_AUTO_REFRESH_INTERVAL_MS);
