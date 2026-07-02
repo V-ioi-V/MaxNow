@@ -11,6 +11,16 @@
 
 ## 2026-07-02
 
+### 避免 Home 自动化状态停留在旧异常
+
+- Home 顶部指标卡将“数据”改为“自动化”，和它实际展示的 `dashboardData.automation.status` 对齐。
+- Dash 前端新增每 5 分钟自动重新拉取数据，复用已有 `cache: no-store` 取数逻辑，避免浏览器长时间停留在旧页面时持续显示已恢复的异常状态。
+- 将 Dash 缓存版本提升到 `styles.css?v=75` / `app.js?v=62`。
+
+原因：
+
+- Owner 发现 Home 右侧状态卡一直显示 `异常`；线上数据已经恢复为 `正常`，但旧页面没有自动刷新，容易误导。
+
 ### 修正 OpenClaw 异常误报
 
 - `scripts/sync_system_status.py` 的部署状态检查补充 `codex-server-usage.*` 和 `ricky.*` 运行态数据白名单，避免服务器自动化生成的数据文件让 deploy check 误判失败。
