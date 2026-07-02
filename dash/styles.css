@@ -1563,18 +1563,19 @@ a {
 }
 
 .token-note {
-  margin: 0 0 14px;
-  padding: 16px;
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #edf3f9;
   color: var(--soft);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .token-source-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 14px;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
 .token-source-item {
@@ -1619,14 +1620,14 @@ a {
   display: block;
   margin-top: 4px;
   color: var(--source-color);
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.05;
   overflow-wrap: anywhere;
 }
 
 .token-detail-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr) minmax(0, 1.35fr);
   gap: 16px;
 }
 
@@ -2381,10 +2382,6 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .token-detail-grid {
-    grid-template-columns: 1fr;
-  }
-
   .token-source-grid {
     grid-template-columns: 1fr;
   }
@@ -2401,6 +2398,12 @@ a {
 
   #dounai-view .token-page-head {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .token-detail-grid {
+    grid-template-columns: 1fr;
   }
 }
 
