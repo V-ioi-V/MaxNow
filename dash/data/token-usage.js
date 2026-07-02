@@ -1,30 +1,30 @@
 window.MAXNOW_TOKEN_USAGE_DATA = {
-  "updatedAt": "2026-07-02 10:04",
+  "updatedAt": "2026-07-02 10:20",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "mixed",
   "pricingSource": "openclaw-openrouter-equivalent-and-codex-openai-api-equivalent",
   "pricingStale": false,
   "summary": {
-    "inputTokens": 727265499,
-    "outputTokens": 2339594,
-    "cacheReadTokens": 682397440,
-    "cacheBaseTokens": 727265499,
-    "totalTokens": 729605093,
-    "estimatedCostUsd": 635.726835,
-    "runs": 88
+    "inputTokens": 728985486,
+    "outputTokens": 2347020,
+    "cacheReadTokens": 683867648,
+    "cacheBaseTokens": 728985486,
+    "totalTokens": 731332506,
+    "estimatedCostUsd": 637.933614,
+    "runs": 89
   },
   "sources": [
     {
       "key": "codex-local",
       "label": "Codex local",
-      "inputTokens": 727265499,
-      "outputTokens": 2339594,
-      "cacheReadTokens": 682397440,
-      "cacheBaseTokens": 727265499,
-      "totalTokens": 729605093,
-      "estimatedCostUsd": 635.726835,
-      "runs": 88
+      "inputTokens": 728985486,
+      "outputTokens": 2347020,
+      "cacheReadTokens": 683867648,
+      "cacheBaseTokens": 728985486,
+      "totalTokens": 731332506,
+      "estimatedCostUsd": 637.933614,
+      "runs": 89
     },
     {
       "key": "openclaw",
@@ -39,6 +39,52 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     }
   ],
   "days": [
+    {
+      "date": "2026-07-02",
+      "sources": [
+        "codex-local"
+      ],
+      "inputTokens": 34685007,
+      "outputTokens": 112883,
+      "cacheReadTokens": 32480640,
+      "cacheBaseTokens": 34685007,
+      "totalTokens": 34797890,
+      "estimatedCostUsd": 30.648645,
+      "runs": 2,
+      "byModel": [
+        {
+          "model": "gpt-5.5",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 34685007,
+          "outputTokens": 112883,
+          "cacheReadTokens": 32480640,
+          "cacheBaseTokens": 34685007,
+          "totalTokens": 34797890,
+          "estimatedCostUsd": 30.648645,
+          "runs": 2,
+          "pricingEstimated": true,
+          "pricingModel": "gpt-5.5"
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "gpt-5.5",
+          "inputTokens": 34685007,
+          "outputTokens": 112883,
+          "cacheReadTokens": 32480640,
+          "cacheBaseTokens": 34685007,
+          "totalTokens": 34797890,
+          "estimatedCostUsd": 30.648645,
+          "runs": 2,
+          "pricingEstimated": true,
+          "pricingModel": "gpt-5.5"
+        }
+      ],
+      "pricingEstimated": true
+    },
     {
       "date": "2026-07-01",
       "sources": [
@@ -90,44 +136,30 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "sources": [
         "codex-local"
       ],
-      "inputTokens": 74590408,
-      "outputTokens": 252112,
-      "cacheReadTokens": 70173312,
-      "cacheBaseTokens": 74590408,
-      "totalTokens": 74842520,
-      "estimatedCostUsd": 64.735496,
-      "runs": 5,
+      "inputTokens": 41625388,
+      "outputTokens": 146655,
+      "cacheReadTokens": 39162880,
+      "cacheBaseTokens": 41625388,
+      "totalTokens": 41772043,
+      "estimatedCostUsd": 36.29363,
+      "runs": 4,
       "byModel": [
         {
           "model": "gpt-5.5",
           "provider": "openai",
           "openrouterModel": null,
-          "inputTokens": 74590408,
-          "outputTokens": 252112,
-          "cacheReadTokens": 70173312,
-          "cacheBaseTokens": 74590408,
-          "totalTokens": 74842520,
-          "estimatedCostUsd": 64.735496,
-          "runs": 5,
+          "inputTokens": 41625388,
+          "outputTokens": 146655,
+          "cacheReadTokens": 39162880,
+          "cacheBaseTokens": 41625388,
+          "totalTokens": 41772043,
+          "estimatedCostUsd": 36.29363,
+          "runs": 4,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
       ],
       "byTask": [
-        {
-          "kind": "codex-session",
-          "label": "MaxNow",
-          "model": "gpt-5.5",
-          "inputTokens": 39565532,
-          "outputTokens": 128713,
-          "cacheReadTokens": 37162240,
-          "cacheBaseTokens": 39565532,
-          "totalTokens": 39694245,
-          "estimatedCostUsd": 34.45897,
-          "runs": 2,
-          "pricingEstimated": true,
-          "pricingModel": "gpt-5.5"
-        },
         {
           "kind": "codex-session",
           "label": "daily-ai-news",
@@ -139,6 +171,20 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 29662890,
           "estimatedCostUsd": 23.351689,
           "runs": 2,
+          "pricingEstimated": true,
+          "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "codex-session",
+          "label": "MaxNow",
+          "model": "gpt-5.5",
+          "inputTokens": 6600512,
+          "outputTokens": 23256,
+          "cacheReadTokens": 6151808,
+          "cacheBaseTokens": 6600512,
+          "totalTokens": 6623768,
+          "estimatedCostUsd": 6.017104,
+          "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         },
@@ -1482,6 +1528,52 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
   ],
   "recentRuns": [
     {
+      "date": "2026-07-02",
+      "timestamp": "2026-07-02T10:20:01+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "openrouterModel": null,
+      "sessionId": "019f209b-c3ce-7c93-84f2-3c94b8c0aefb",
+      "runId": "019f209b-c3ce-7c93-84f2-3c94b8c0aefb",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 171681,
+      "outputTokens": 1979,
+      "cacheReadTokens": 105856,
+      "cacheBaseTokens": 171681,
+      "reasoningOutputTokens": 485,
+      "totalTokens": 173660,
+      "pricingEstimated": true,
+      "pricingModel": "gpt-5.5",
+      "contextWindow": 258400,
+      "tokenCountEvents": 5,
+      "estimatedCostUsd": 0.441423
+    },
+    {
+      "date": "2026-07-02",
+      "timestamp": "2026-07-02T10:19:44+08:00",
+      "source": "codex-local",
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "openrouterModel": null,
+      "sessionId": "019ef9ff-a1b0-7d02-a27a-4f0235773290",
+      "runId": "019ef9ff-a1b0-7d02-a27a-4f0235773290",
+      "kind": "codex-session",
+      "label": "MaxNow",
+      "inputTokens": 34513326,
+      "outputTokens": 110904,
+      "cacheReadTokens": 32374784,
+      "cacheBaseTokens": 34513326,
+      "reasoningOutputTokens": 22128,
+      "totalTokens": 34624230,
+      "pricingEstimated": true,
+      "pricingModel": "gpt-5.5",
+      "contextWindow": 258400,
+      "tokenCountEvents": 245,
+      "estimatedCostUsd": 30.207222
+    },
+    {
       "date": "2026-07-01",
       "timestamp": "2026-07-01T21:09:34+08:00",
       "source": "codex-local",
@@ -1526,29 +1618,6 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "contextWindow": 258400,
       "tokenCountEvents": 59,
       "estimatedCostUsd": 6.017104
-    },
-    {
-      "date": "2026-06-27",
-      "timestamp": "2026-06-27T14:38:59+08:00",
-      "source": "codex-local",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019ef9ff-a1b0-7d02-a27a-4f0235773290",
-      "runId": "019ef9ff-a1b0-7d02-a27a-4f0235773290",
-      "kind": "codex-session",
-      "label": "MaxNow",
-      "inputTokens": 32965020,
-      "outputTokens": 105457,
-      "cacheReadTokens": 31010432,
-      "cacheBaseTokens": 32965020,
-      "reasoningOutputTokens": 21028,
-      "totalTokens": 33070477,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 236,
-      "estimatedCostUsd": 28.441866
     },
     {
       "date": "2026-06-27",
@@ -2147,29 +2216,6 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "contextWindow": 258400,
       "tokenCountEvents": 228,
       "estimatedCostUsd": 22.657765
-    },
-    {
-      "date": "2026-06-17",
-      "timestamp": "2026-06-17T23:08:04+08:00",
-      "source": "codex-local",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019ed4bb-b678-7f50-95c8-5d5a2d5fd92b",
-      "runId": "019ed4bb-b678-7f50-95c8-5d5a2d5fd92b",
-      "kind": "codex-session",
-      "label": "MaxNow",
-      "inputTokens": 76730937,
-      "outputTokens": 188213,
-      "cacheReadTokens": 73658752,
-      "cacheBaseTokens": 76730937,
-      "reasoningOutputTokens": 31019,
-      "totalTokens": 76919150,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 546,
-      "estimatedCostUsd": 57.836691
     }
   ],
   "pricingSnapshot": [
