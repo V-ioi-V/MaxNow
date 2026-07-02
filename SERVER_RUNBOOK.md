@@ -352,6 +352,15 @@ Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 
 # END MAXNOW-CODEX-SERVER-USAGE
 ```
 
+2026-07-02 已部署 Token 来源卡范围口径修正：
+
+```text
+deployed commit: 5ff48a9 Merge token source range display fix
+changes: Token 来源卡恢复卡片样式；Dash 缓存版本提升到 styles.css?v=73、app.js?v=60；来源卡按当前 1d / 7d / 30d / all 范围聚合；本机来源显示为 Codex Windows，后续 macOS 采集端可显示为 Codex macOS
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260702-111659-before-token-source-range
+verification: python3 scripts/update_data.py token-usage ok；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=73 200；https://dash.maxnow.cn/app.js?v=60 200；https://dash.maxnow.cn/data/token-usage.json 200；线上 token-usage 有 46 个 day 写入 bySource；线上 1d 来源为 Codex Windows 36M，7d 来源为 Codex Windows 79M / OpenClaw 8.0M / Codex server 614K
+```
+
 刷新 Home 天气卡：
 
 ```bash
