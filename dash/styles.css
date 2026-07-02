@@ -2174,10 +2174,9 @@ a.last30-item {
 
 .ricky-map {
   position: relative;
-  width: min(100%, 980px);
-  aspect-ratio: 1;
+  width: 100%;
+  height: clamp(520px, 62vh, 760px);
   min-height: 0;
-  margin: 0 auto;
   overflow: hidden;
   border: 1px solid #f5c9dc;
   border-radius: 22px;
@@ -2696,6 +2695,7 @@ a.last30-item {
 
   .ricky-map {
     width: 100%;
+    height: clamp(360px, 58vh, 520px);
   }
 
   .ricky-pin-label {
