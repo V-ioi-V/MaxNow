@@ -411,6 +411,14 @@ changes: Home 指标卡 hover 不再被 status-strip 通用规则覆盖；待推
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=81 200；本地浏览器抽样确认天气、时间、待推进、Token、系统自动化、wiki、豆奶、近期 Token 均使用对应主题色 hover
 ```
 
+2026-07-02 已部署侧边栏 Token 范围口径同步：
+
+```text
+deployed commit: 4883cea Merge sidebar token range sync
+changes: 侧边栏 Token 摘要增加范围前缀；Token 页切换 1d / 7d / 30d / all 时同步当前范围；其他页面默认显示 7d 摘要；Dash 缓存版本提升到 app.js?v=68
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=68 200；本地浏览器验证 Token 页 1d 显示 1d 86M，切换 7d 后侧边栏与主卡同步，回 Home 显示 7d 摘要
+```
+
 刷新 Home 天气卡：
 
 ```bash
