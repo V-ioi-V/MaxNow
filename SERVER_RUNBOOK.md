@@ -370,6 +370,15 @@ runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260702-1
 verification: python3 scripts/update_data.py token-usage ok；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn/styles.css?v=74 200；https://dash.maxnow.cn/app.js?v=61 200；本地浏览器验证 Token 三个 detail 面板同顶同高、无横向溢出
 ```
 
+2026-07-02 已修正顶栏 `OpenClaw 异常` 误报：
+
+```text
+deployed commit: d3aeae3 Treat recovered sync logs as clear
+changes: system-status 将 codex-server/ricky 等运行态数据纳入 deploy 白名单；忽略 Python __pycache__；failure-log 只按每个日志最新 ok/fail 结果判断，旧 weather TLS 超时后续成功后不再持续告警；runtime 将 system-status 放在运行态同步末尾执行
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260702-114519-before-openclaw-status-false-alarm
+verification: python3 scripts/update_data.py runtime ok；python3 scripts/check.py ok；线上 dashboard automation.status=正常，summary=nginx Active；cert 73d；deploy v1.0.0.00；CPU 0%；disk 62%；memory 50%
+```
+
 刷新 Home 天气卡：
 
 ```bash
