@@ -86,7 +86,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 这些文件驱动当前网页。
 
-- `dash/data/dashboard.json`：个人状态、主线、今日推进、日常记录、时间点、系统状态、Token 使用、Home 天气卡和 Home 时间卡片的手动特殊日期列表。
+- `dash/data/dashboard.json`：个人状态、主线、待推进事项、日常记录、时间点、系统状态、Token 使用、Home 天气卡和 Home 时间卡片的手动特殊日期列表。
 - `dash/data/dashboard.js`：从 `dashboard.json` 生成的浏览器 wrapper。
 - `dash/data/ai-news.json`：首页展示用的外部 AI 输入，取免费 AI 外部信号中的 0-3 条高相关内容。
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
@@ -115,7 +115,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Home 顶部天气卡读取 `dash/data/dashboard.json.weather`，展示在小日历左侧；前端不直接请求外部天气接口。
 - private personal-wiki 待办不能由前端直接读取；需要先运行 `python scripts/update_data.py runtime` 或 `python scripts/sync_wiki_todos.py` 生成 MaxNow 本地缓存。
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；服务器上已验证 `python3 scripts/sync_wiki_todos.py` 能成功生成待办缓存。
-- 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、今日推进或日常记录。
+- 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、待推进事项或日常记录。
 - 天气可以由 `python scripts/update_data.py weather` 或服务器 `runtime` 定时刷新，数据源是 Open-Meteo 免费 forecast API。
 - OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。
 - MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与最近更新模块。

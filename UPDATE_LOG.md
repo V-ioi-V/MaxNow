@@ -11,6 +11,17 @@
 
 ## 2026-07-02
 
+### 将 Home 今日推进改为待推进
+
+- Home 指标卡和列表标题从“今日推进”改为“待推进”，避免误解为当天已完成事项或每日自动排班。
+- 待推进仍读取 `dash/data/dashboard.json` 的 `actions`，数据来自 `ROADMAP.md` 的 Now / Next，并由 `python scripts/update_data.py project-status` 显式刷新。
+- 更新 `scripts/update_data.py`、`SPEC.md`、`CONTEXT.md` 和 `ROADMAP.md` 中的对应口径。
+- 将 Dash 缓存版本提升到 `styles.css?v=78` / `app.js?v=65`。
+
+原因：
+
+- Owner 询问“今日推进”到底是今天要做还是今天已完成，并指出每天看到的数据相同；原标题不符合它的 ROADMAP 来源和非自动日更语义。
+
 ### 澄清 Home 系统自动化状态口径
 
 - 顶栏状态从 `OpenClaw 正常` 改为 `系统自动化 正常`，避免把服务器自动化聚合状态误解成 OpenClaw agent 本体状态。
