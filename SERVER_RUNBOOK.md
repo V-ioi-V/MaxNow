@@ -419,6 +419,16 @@ changes: 侧边栏 Token 摘要增加范围前缀；Token 页切换 1d / 7d / 30
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=68 200；本地浏览器验证 Token 页 1d 显示 1d 86M，切换 7d 后侧边栏与主卡同步，回 Home 显示 7d 摘要
 ```
 
+2026-07-02 已部署 Home / 同行记轻量交互整理：
+
+```text
+deployed commit: 7472f26 Remove wiki todo item links
+changes: Last-30 条目改为整卡跳转并展示来源 / 置信度摘要；侧边栏豆奶和 Token 改回描述文案；同行记地图铺满地图卡宽度；Personal Wiki 近期待办移除逐条“打开”链接且卡片不跳转
+dash styles version: styles.css?v=83
+dash app version: app.js?v=71
+verification: git pull --ff-only origin main ok；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=83 200；https://dash.maxnow.cn/app.js?v=71 200；https://blog.maxnow.cn 200
+```
+
 刷新 Home 天气卡：
 
 ```bash
