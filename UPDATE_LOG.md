@@ -15,6 +15,7 @@
 
 - `scripts/sync_system_status.py` 的部署状态检查补充 `codex-server-usage.*` 和 `ricky.*` 运行态数据白名单，避免服务器自动化生成的数据文件让 deploy check 误判失败。
 - 失败日志检查忽略自身写入的 `[ok] status ... checks failed` 摘要，避免上一轮状态摘要反复触发 `failure-log` 失败。
+- 部署状态检查忽略 Python 运行时生成的 `__pycache__` / `.pyc` 文件，避免只读诊断命令留下缓存后触发异常。
 
 原因：
 

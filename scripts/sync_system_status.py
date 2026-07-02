@@ -97,7 +97,10 @@ def git_state():
     for line in status.splitlines():
         if len(line) < 3:
             continue
-        changed_paths.append(line[2:].strip().replace("\\", "/"))
+        path = line[2:].strip().replace("\\", "/")
+        if "__pycache__/" in path or path.endswith(".pyc"):
+            continue
+        changed_paths.append(path)
     dirty = any(path not in GENERATED_DATA_PATHS for path in changed_paths)
     value = f"v{read_version()}"
     return {
