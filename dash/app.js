@@ -501,6 +501,15 @@ function getTokenRange(key = activeTokenRange) {
   return ranges.find((range) => range.key === key) || ranges[0] || {};
 }
 
+function updateSidebarTokenSummary(key = activeTokenRange) {
+  const range = getTokenRange(key);
+  if (!range || !Number.isFinite(Number(range.total))) {
+    setText("#sidebar-token-total", "--");
+    return;
+  }
+  setText("#sidebar-token-total", `${range.label || key} ${formatToken(range.total)}`);
+}
+
 function normalizeUsageDay(day) {
   return {
     ...day,
@@ -1161,7 +1170,7 @@ function renderHome() {
   setText("#mini-token-7d", formatToken(token7d.total));
   setText("#mini-token-all", formatToken(tokenAll.total));
   setText("#mini-token-updated", getTokenUsage().updatedAt ? `${copy.updatedAtShort} ${getTokenUsage().updatedAt}` : copy.syncWaiting);
-  setText("#sidebar-token-total", formatToken(token7d.total));
+  updateSidebarTokenSummary("7d");
 
   clearAndFill(qs("#mainline-list"), createTask, mainlines);
   clearAndFill(qs("#action-list"), createTask, actions);
@@ -1215,6 +1224,9 @@ function renderTokens() {
   qsa(".range-tab").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.range === range.key);
   });
+  if (qs("#tokens-view")?.classList.contains("is-active")) {
+    updateSidebarTokenSummary(range.key);
+  }
 
   setText("#token-updated", usage.updatedAt ? `${copy.updatedAt} ${usage.updatedAt}` : copy.sync);
   setText("#token-total", formatToken(range.total));
@@ -1396,6 +1408,7 @@ function setView(view) {
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
   if (nextView === "ricky") requestAnimationFrame(renderRicky);
   if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));
+  if (nextView !== "tokens") updateSidebarTokenSummary("7d");
   if (location.hash !== `#${nextView}`) location.hash = nextView;
   window.scrollTo({ top: 0, behavior: "auto" });
 }
