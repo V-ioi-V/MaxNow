@@ -8,17 +8,17 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$ReportScript = Join-Path $RepoRoot "scripts\report_codex_usage.ps1"
-if (-not (Test-Path $ReportScript)) {
-    throw "report script not found: $ReportScript"
+$HiddenLauncher = Join-Path $RepoRoot "scripts\report_codex_usage_hidden.vbs"
+if (-not (Test-Path $HiddenLauncher)) {
+    throw "hidden launcher not found: $HiddenLauncher"
 }
 
-$argument = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$ReportScript`""
+$argument = "`"$HiddenLauncher`""
 if ($NoDeploy) {
-    $argument += " -NoDeploy"
+    throw "-NoDeploy is not supported by the hidden scheduled task launcher; run scripts\report_codex_usage.ps1 manually with -NoDeploy when needed."
 }
 
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argument -WorkingDirectory $RepoRoot
+$action = New-ScheduledTaskAction -Execute "wscript.exe" -Argument $argument -WorkingDirectory $RepoRoot
 $startAt = (Get-Date).AddMinutes(5)
 $trigger = New-ScheduledTaskTrigger -Once -At $startAt -RepetitionInterval (New-TimeSpan -Minutes $EveryMinutes) -RepetitionDuration (New-TimeSpan -Days 3650)
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -Hidden

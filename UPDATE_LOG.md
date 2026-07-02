@@ -36,6 +36,7 @@
 - 新增 `scripts/report_codex_usage.ps1`，在 Windows 本机刷新 Codex 用量账本，只允许提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，遇到无关脏文件会停止。
 - 新增 `scripts/install_local_codex_usage_task.ps1`，注册 `MaxNow-Local-Codex-Usage-Report` 计划任务，默认每 1 小时静默上报一次本机 Codex Token 用量。
 - 计划任务注册为 hidden task，并使用 `powershell.exe -WindowStyle Hidden`，避免自动运行时弹出命令行窗口。
+- 2026-07-02 将计划任务 action 改为 `wscript.exe scripts/report_codex_usage_hidden.vbs`，由 VBS 以 window style 0 启动 PowerShell 上报脚本，避免 `powershell.exe -WindowStyle Hidden` 仍可能出现的一瞬间 console 闪窗。
 - 上报脚本推送后通过 SSH 让服务器拉取最新 `main`，并只运行 `python3 scripts/update_data.py token-usage` 合并现有源账本，避免在服务器上刷新空的本机 Codex 数据。
 - 首次手动上报采集到 86 个本机 Codex usage sessions；随后修复 PowerShell 远端 bash 脚本 CRLF 和 SSH 失败未冒泡问题。
 - 2026-06-27 进一步修复静默任务：远端合并改为 base64 SSH payload，服务器输出进入 `logs/local-codex-usage-report.log`，`git pull` 的 stderr 进度不再被误判为失败；隐藏计划任务手动启动验证 `LastTaskResult=0`。
