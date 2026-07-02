@@ -181,7 +181,7 @@ Token 真实数据按来源接入，并由统一总账合并展示：
 - OpenClaw 费用使用 OpenRouter 等价估算；Codex 费用使用 OpenAI API 等价估算。两者都是估算口径，不等同于真实供应商账单或订阅账单。
 - 本机 Codex 用量由 Windows Task Scheduler 定期上报；默认每 1 小时静默运行一次。Task Scheduler action 使用 `wscript.exe scripts/report_codex_usage_hidden.vbs`，由 VBS 以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 `powershell.exe` console 瞬时闪窗。该脚本只允许提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，遇到无关工作区改动会停止，服务器端部署时只运行 `token-usage` 合并，避免用服务器空数据覆盖本机 Codex 账本。
 - 服务器 Codex 用量由 root crontab 每天刷新 `codex-server-usage.*`，再合并 `token-usage.*`；本机上报脚本在服务器 pull 前会保留服务器侧账本，避免本机推送覆盖服务器统计。
-- Token 页在总量摘要下方显示来源列表，至少区分 OpenClaw、Codex Windows / macOS 和 Codex server；来源列表的 token、费用和 runs 必须跟随当前选中的 `1d` / `7d` / `30d` / `all` 范围更新。
+- Token 页在总量摘要下方显示来源费用面板，和模型占比、调用消耗并列为同一层信息区；至少区分 OpenClaw、Codex Windows / macOS 和 Codex server。来源列表的 token、费用和 runs 必须跟随当前选中的 `1d` / `7d` / `30d` / `all` 范围更新。
 - 后续其他来源应复用同类日账本结构，再由汇总层合并 OpenClaw / Codex / 其他来源。
 
 不要把完整 Token 页面复制到 Home。Home 只需要显示紧凑的使用状态。

@@ -690,14 +690,14 @@ function getOpenclawTokenUsage() {
       key: range.key,
       label: range.label,
       ...summary,
-      note: `OpenClaw ${range.label} 用量，费用为 ${sourceLabel}，不是实际扣费账单。`,
+      note: `费用为 ${sourceLabel}，不是实际账单。`,
       selectedDays: selected,
     };
   });
   ranges.forEach((range) => {
     const hasCodex = (range.selectedDays || []).some((day) => (day.sources || []).some((source) => String(source).startsWith("codex")));
     range.note = hasCodex
-      ? `Token ${range.label}: cost includes OpenClaw OpenRouter-equivalent and Codex OpenAI API-equivalent estimates. Cache hit rate = cached input / cacheable input.`
+      ? `费用为估算值；缓存命中率按可缓存输入计算。`
       : range.note;
   });
 
