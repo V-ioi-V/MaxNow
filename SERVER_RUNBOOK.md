@@ -361,6 +361,15 @@ runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260702-1
 verification: python3 scripts/update_data.py token-usage ok；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=73 200；https://dash.maxnow.cn/app.js?v=60 200；https://dash.maxnow.cn/data/token-usage.json 200；线上 token-usage 有 46 个 day 写入 bySource；线上 1d 来源为 Codex Windows 36M，7d 来源为 Codex Windows 79M / OpenClaw 8.0M / Codex server 614K
 ```
 
+2026-07-02 已部署 Token 来源费用并列面板：
+
+```text
+deployed commit: 79ba56f Merge token source inline panel
+changes: Token 页将来源费用移动到和模型占比、调用消耗同一行；删除独占横向说明条；说明收敛为来源面板底部短中文提示；Dash 缓存版本提升到 styles.css?v=74、app.js?v=61
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260702-113616-before-token-inline-panel
+verification: python3 scripts/update_data.py token-usage ok；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn/styles.css?v=74 200；https://dash.maxnow.cn/app.js?v=61 200；本地浏览器验证 Token 三个 detail 面板同顶同高、无横向溢出
+```
+
 刷新 Home 天气卡：
 
 ```bash
