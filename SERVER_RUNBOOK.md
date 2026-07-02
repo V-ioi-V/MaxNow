@@ -387,6 +387,14 @@ changes: Dash 大模块和内部模块统一使用主题色 hover；大模块按
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=79 200；https://dash.maxnow.cn/app.js?v=66 200；本地浏览器验证 Home / Token / 云服务 / 豆奶 / 同行记桌面和移动端无横向溢出，抽样 hover 使用对应主题色
 ```
 
+2026-07-02 已移除顶栏系统自动化重复状态：
+
+```text
+deployed commit: 7566242 Merge duplicate automation badge removal
+changes: 删除 Dash 顶栏右侧 `系统自动化 正常` badge；保留 Home 首屏“系统自动化”状态卡作为唯一健康状态入口；Dash 缓存版本提升到 app.js?v=67
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=67 200；线上 dash/index.html 和 dash/app.js 确认无 operator-status 残留
+```
+
 刷新 Home 天气卡：
 
 ```bash
