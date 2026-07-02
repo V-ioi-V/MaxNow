@@ -1,90 +1,118 @@
 {
-  "updatedAt": "2026-06-23 00:08",
+  "updatedAt": "2026-07-02 12:33",
   "sourceSummary": "免费 AI 外部信号滚动记忆",
   "today": {
-    "date": "2026-06-23",
+    "date": "2026-07-02",
     "title": "今日 AI 信号",
-    "summary": "暂无新的今日 AI 信号，保留观察。",
-    "items": []
-  },
-  "week": {
-    "range": "2026-06-17/2026-06-23",
-    "title": "本周 AI 变化",
-    "summary": "本次从 OpenAI, Anthropic, GitHub Blog, Anthropic SDK 捕捉到 7 条高相关 AI 信号。",
+    "summary": "本次从 Anthropic SDK, Google AI 捕捉到 3 条高相关 AI 信号。",
     "items": [
       {
-        "date": "2026-06-22",
-        "title": "Samsung Electronics brings ChatGPT and Codex to employees",
-        "summary": "OpenAI：Samsung Electronics deploys ChatGPT Enterprise and Codex to employees worldwide, marking one of OpenAI’s largest enterprise AI rol；可能影响模型选择、开发工具、agent 能力或使用成本。",
-        "source": "OpenAI",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": "https://openai.com/index/samsung-electronics-chatgpt-codex-deployment"
-      },
-      {
-        "date": "2026-06-19",
-        "title": "New usage analytics and updated spend controls for enterprises",
-        "summary": "OpenAI：OpenAI introduces new spend controls and usage analytics for ChatGPT Enterprise, helping organizations manage costs and scale AI w；可能影响模型选择、开发工具、agent 能力或使用成本。",
-        "source": "OpenAI",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": "https://openai.com/index/chatgpt-enterprise-spend-controls"
-      },
-      {
-        "date": "2026-06-17",
-        "title": "Announcements Anthropic opens Seoul office and announces new partnerships across the Korean AI ecosystem",
-        "summary": "Anthropic：Announcements Anthropic opens Seoul office and announces new partnerships across the Korean AI ecosystem；可能影响模型选择、开发工具、agent 能力或使用成本。",
-        "source": "Anthropic",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": "https://www.anthropic.com/news/seoul-office-partnerships-korean-ai-ecosystem"
-      },
-      {
-        "date": "2026-06-20",
-        "title": "How we built an internal data analytics agent",
-        "summary": "GitHub Blog：Qubot, our internal Copilot-powered analytics agent, allows any GitHub employee to ask questions about our data in plain language.；可能影响模型选择、开发工具、agent 能力或使用成本。",
-        "source": "GitHub Blog",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": "https://github.blog/ai-and-ml/github-copilot/how-we-built-an-internal-data-analytics-agent/"
-      },
-      {
-        "date": "2026-06-19",
-        "title": "v0.110.0",
-        "summary": "Anthropic SDK：0.110.0 (2026-06-18) Full Changelog: v0.109.2...v0.110.0 Features api: add support for new code_execution_20260120 tool ( 5e23212；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
+        "date": "2026-07-02",
+        "title": "v0.115.1",
+        "summary": "Anthropic SDK：0.115.1 (2026-07-01) Full Changelog: v0.115.0...v0.115.1 Chores api: remove some nonfunctional types from the SDKs ( 5e7c431 )；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
         "source": "Anthropic SDK",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.110.0"
+        "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.115.1"
       },
       {
-        "date": "2026-06-17",
-        "title": "v2.42.0",
-        "summary": "OpenAI Python：2.42.0 (2026-06-16) Full Changelog: v2.41.1...v2.42.0 Features api: admin spend_alerts ( 6134198 ) api: manual updates ( f337bf4 )；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
-        "source": "OpenAI Python",
+        "date": "2026-07-02",
+        "title": "The latest AI news we announced in June 2026",
+        "summary": "Google AI：Here are Google’s latest AI updates from June 2026.；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "Google AI",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": "https://github.com/openai/openai-python/releases/tag/v2.42.0"
+        "url": "https://blog.google/innovation-and-ai/technology/ai/google-ai-updates-june-2026/"
       },
       {
-        "date": "2026-06-18",
-        "title": "Using AI to help physicians diagnose rare genetic diseases affecting children",
-        "summary": "OpenAI：Researchers used an OpenAI reasoning model to help diagnose rare diseases, identifying 18 new diagnoses in previously unsolved cas；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "date": "2026-07-02",
+        "title": "New York City educators and industry leaders gathered at Google’s offices to shape the future of AI in classrooms.",
+        "summary": "Google AI：Google, the New York Jobs CEO Council and Urban Assembly hosted an AI summit for 150 education and industry leaders.；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "Google AI",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://blog.google/products-and-platforms/products/education/nyc-ai-summit/"
+      }
+    ]
+  },
+  "week": {
+    "range": "2026-06-26/2026-07-02",
+    "title": "本周 AI 变化",
+    "summary": "本次从 Anthropic, Anthropic SDK, Hacker News, OpenAI 捕捉到 7 条高相关 AI 信号。",
+    "items": [
+      {
+        "date": "2026-06-30",
+        "title": "Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale",
+        "summary": "Anthropic：Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "Anthropic",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://www.anthropic.com/news/claude-sonnet-5"
+      },
+      {
+        "date": "2026-07-01",
+        "title": "v0.115.0",
+        "summary": "Anthropic SDK：0.115.0 (2026-06-30) Full Changelog: v0.114.0...v0.115.0 Features api: add support for Managed Agents event delta streaming, agent；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
+        "source": "Anthropic SDK",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.115.0"
+      },
+      {
+        "date": "2026-07-01",
+        "title": "v0.114.0",
+        "summary": "Anthropic SDK：0.114.0 (2026-06-30) Full Changelog: v0.113.0...v0.114.0 Features api: add support for claude-sonnet-5 ( b893033 ) Bug Fixes agent；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
+        "source": "Anthropic SDK",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.114.0"
+      },
+      {
+        "date": "2026-06-27",
+        "title": "Show HN: Smart model routing directly in Claude, Codex and Cursor",
+        "summary": "Hacker News：Show HN: Smart model routing directly in Claude, Codex and Cursor；社区热度信号，适合观察是否值得后续跟进。",
+        "source": "Hacker News",
+        "confidence": "medium",
+        "needsOwnerConfirm": false,
+        "url": "https://github.com/workweave/router"
+      },
+      {
+        "date": "2026-06-26",
+        "title": "Previewing GPT-5.6 Sol: a next-generation model",
+        "summary": "OpenAI：OpenAI previews GPT-5.6 Sol, a next-generation model with stronger capabilities in coding, science, and cybersecurity, paired with；可能影响模型选择、开发工具、agent 能力或使用成本。",
         "source": "OpenAI",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": "https://openai.com/index/diagnose-rare-childhood-diseases"
+        "url": "https://openai.com/index/previewing-gpt-5-6-sol"
+      },
+      {
+        "date": "2026-06-26",
+        "title": "Evaluating performance and efficiency of the GitHub Copilot agentic harness across models and tasks",
+        "summary": "GitHub Blog：Explore how the GitHub Copilot agentic harness delivers strong results across multiple benchmarks and leading token efficiency, wh；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "GitHub Blog",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://github.blog/ai-and-ml/github-copilot/evaluating-performance-and-efficiency-of-the-github-copilot-agentic-harness-across-models-and-tasks/"
+      },
+      {
+        "date": "2026-06-30",
+        "title": "How ChatGPT adoption has expanded",
+        "summary": "OpenAI：New OpenAI Signals data shows how ChatGPT adoption is growing globally, with users increasing usage, exploring more capabilities,；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "source": "OpenAI",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://openai.com/index/how-chatgpt-adoption-has-expanded"
       }
     ]
   },
   "last30": {
-    "range": "2026-05-25/2026-06-23",
+    "range": "2026-06-03/2026-07-02",
     "title": "近 30 天 AI 主线",
     "summary": "用免费公开源追踪模型、agent、开发者工具、成本和开源生态的持续变化。",
     "mainlines": [
       {
         "title": "模型与 API 更新",
-        "summary": "近 30 天捕捉到 11 条相关信号，代表来源包括 Anthropic, Anthropic SDK, OpenAI。",
+        "summary": "近 30 天捕捉到 11 条相关信号，代表来源包括 Anthropic, Anthropic SDK, GitHub Blog。",
         "status": "active",
         "source": "free external sources",
         "confidence": "medium",
@@ -92,7 +120,7 @@
       },
       {
         "title": "Agent 与工具调用",
-        "summary": "近 30 天捕捉到 11 条相关信号，代表来源包括 Anthropic, Anthropic SDK, Hacker News。",
+        "summary": "近 30 天捕捉到 9 条相关信号，代表来源包括 Anthropic, Anthropic SDK, GitHub Blog。",
         "status": "active",
         "source": "free external sources",
         "confidence": "medium",
@@ -100,7 +128,7 @@
       },
       {
         "title": "开发者工具与 SDK",
-        "summary": "近 30 天捕捉到 7 条相关信号，代表来源包括 Anthropic SDK, Hacker News, OpenAI。",
+        "summary": "近 30 天捕捉到 10 条相关信号，代表来源包括 Anthropic, Anthropic SDK, GitHub Blog。",
         "status": "active",
         "source": "free external sources",
         "confidence": "medium",
@@ -108,7 +136,7 @@
       },
       {
         "title": "成本与 Token",
-        "summary": "近 30 天捕捉到 1 条相关信号，代表来源包括 OpenAI。",
+        "summary": "近 30 天捕捉到 1 条相关信号，代表来源包括 GitHub Blog。",
         "status": "active",
         "source": "free external sources",
         "confidence": "medium",
@@ -116,7 +144,7 @@
       },
       {
         "title": "开源与研究",
-        "summary": "近 30 天捕捉到 1 条相关信号，代表来源包括 OpenAI。",
+        "summary": "近 30 天捕捉到 2 条相关信号，代表来源包括 GitHub Blog, OpenAI。",
         "status": "active",
         "source": "free external sources",
         "confidence": "medium",
@@ -125,7 +153,7 @@
     ],
     "decisions": [
       {
-        "date": "2026-06-23",
+        "date": "2026-07-02",
         "title": "Last-30 先采用免费公开源",
         "summary": "初版不接 X/Twitter 付费 API，优先使用官方 RSS、GitHub、HN、GDELT 和 arXiv。",
         "source": "Owner direction",
