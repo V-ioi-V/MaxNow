@@ -990,23 +990,35 @@ a {
 }
 
 .focus-panel {
-  padding-bottom: 16px;
+  display: grid;
+  grid-template-columns: minmax(120px, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
 }
 
-.focus-panel .panel-head,
 .actions-panel .panel-head {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.focus-panel .panel-head {
+  margin-bottom: 0;
 }
 
 .focus-panel .task-list,
 .actions-panel .task-list {
-  gap: 8px;
+  gap: 6px;
 }
 
 .focus-panel .task-item,
 .actions-panel .task-item {
   min-height: 0;
-  padding: 12px;
+  padding: 10px 12px;
+}
+
+.focus-panel .item-copy,
+.actions-panel .item-copy {
+  margin-top: 2px;
 }
 
 .last30-panel {
@@ -2592,9 +2604,18 @@ a {
   .home-top-grid,
   .home-widgets,
   .summary-bar,
+  .focus-panel,
   .token-page-head,
   .cloud-page-head {
     grid-template-columns: 1fr;
+  }
+
+  .focus-panel {
+    align-items: stretch;
+  }
+
+  .focus-panel .panel-head {
+    margin-bottom: 8px;
   }
 
   #dounai-view .token-page-head,
