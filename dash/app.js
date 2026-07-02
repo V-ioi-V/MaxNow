@@ -277,22 +277,37 @@ function createAiNewsItem(item) {
 }
 
 function createLast30Item(item) {
-  const article = document.createElement("article");
+  const article = document.createElement(item.url ? "a" : "article");
   article.className = "last30-item";
   article.dataset.tone = getTone(item.status || item.confidence || item.source || item.title);
+  if (item.url) {
+    article.href = item.url;
+    article.target = "_blank";
+    article.rel = "noreferrer";
+    article.setAttribute("aria-label", `${copy.open} ${item.title || copy.unnamedInfo}`);
+  }
   article.innerHTML = `
     <div class="last30-item-head">
       <p class="item-title"></p>
       <span class="item-tag"></span>
     </div>
     <p class="item-copy"></p>
+    <div class="last30-meta" aria-label="signal metadata">
+      <span data-role="source"></span>
+      <span data-role="confidence"></span>
+    </div>
   `;
   article.querySelector(".item-title").textContent = item.title || copy.unnamedInfo;
   article.querySelector(".item-copy").textContent = item.summary || item.note || "";
   article.querySelector(".item-tag").textContent = item.needsOwnerConfirm
     ? "\u5f85\u786e\u8ba4"
     : item.date || item.status || item.source || copy.item;
-  appendLink(article, item.url);
+  article.querySelector('[data-role="source"]').textContent = item.source || item.status || copy.item;
+  article.querySelector('[data-role="confidence"]').textContent = item.confidence
+    ? `${item.confidence} confidence`
+    : item.needsOwnerConfirm
+      ? "\u9700 Owner \u786e\u8ba4"
+      : "\u5df2\u7eb3\u5165\u89c2\u5bdf";
   return article;
 }
 
@@ -743,9 +758,10 @@ function getLast30Items(key) {
 
 function renderLast30Column(key, titleSelector, summarySelector, listSelector, fallbackTitle) {
   const group = getLast30Group(key);
+  const itemLimit = key === "mainlines" ? 5 : 4;
   setText(titleSelector, group.title || fallbackTitle);
   setText(summarySelector, group.summary || "");
-  clearAndFill(qs(listSelector), createLast30Item, getLast30Items(key).slice(0, 3));
+  clearAndFill(qs(listSelector), createLast30Item, getLast30Items(key).slice(0, itemLimit));
 }
 
 function getOpenWikiTodos() {
