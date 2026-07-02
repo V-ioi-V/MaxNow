@@ -344,6 +344,7 @@ def parse_args():
     parser.add_argument("--source-label", default=os.environ.get("MAXNOW_CODEX_SOURCE_LABEL", "Codex local"))
     parser.add_argument("--since-days", type=int, default=3650)
     parser.add_argument("--output", default=str(ROOT / OUTPUT_REL), help="Output JSON path.")
+    parser.add_argument("--missing-ok", action="store_true", default=os.environ.get("MAXNOW_CODEX_MISSING_OK") == "1")
     return parser.parse_args()
 
 
@@ -353,7 +354,8 @@ def main():
     output_path = Path(args.output)
     if not state_dir.exists():
         data = summarize_runs([], args.source_key, args.source_label, args.since_days)
-        data["warning"] = f"Codex state directory not found: {state_dir}"
+        if not args.missing_ok:
+            data["warning"] = f"Codex state directory not found: {state_dir}"
         write_output(data, output_path)
         return
 

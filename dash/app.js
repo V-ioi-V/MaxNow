@@ -589,6 +589,35 @@ function buildSessionBreakdown(selectedDays) {
   return sessions.length ? sessions : buildTaskBreakdown(selectedDays);
 }
 
+function sourceDisplayName(source) {
+  const key = source.key || source.source || "";
+  if (key === "openclaw") return "OpenClaw";
+  if (key === "codex-local") return "Codex local";
+  if (key === "codex-server") return "Codex server";
+  return source.label || key || "Source";
+}
+
+function sourceTone(source) {
+  const key = String(source.key || source.source || "").toLowerCase();
+  if (key.includes("server")) return "green";
+  if (key.includes("local")) return "purple";
+  if (key.includes("openclaw")) return "orange";
+  return "blue";
+}
+
+function buildSourceBreakdown() {
+  const ledger = getTokenLedgerData();
+  const sources = Array.isArray(ledger.sources) ? ledger.sources : [];
+  return sources.map((source) => ({
+    key: source.key || source.source || source.label || "source",
+    label: sourceDisplayName(source),
+    total: Number(source.totalTokens || source.total || 0),
+    cost: Number(source.estimatedCostUsd || source.cost || 0),
+    runs: Number(source.runs || 0),
+    tone: sourceTone(source),
+  }));
+}
+
 function getTokenLedgerData() {
   return Array.isArray(tokenUsageData.days) && tokenUsageData.days.length ? tokenUsageData : openclawUsageData;
 }
@@ -631,6 +660,7 @@ function getOpenclawTokenUsage() {
     ranges,
     models: buildModelBreakdown(active.selectedDays || []),
     sessions: buildSessionBreakdown(active.selectedDays || []).slice(0, 8),
+    sources: buildSourceBreakdown(),
     daily: chartDays.map((day) => ({
       date: day.date,
       label: formatDateLabel(day.date),
@@ -1144,6 +1174,7 @@ function renderTokens() {
   setText("#token-cost", formatCost(range.cost));
   setText("#token-note", range.note || copy.noNote);
 
+  clearAndFill(qs("#token-sources"), createSourceItem, usage.sources || []);
   clearAndFill(qs("#token-models"), createModelItem, usage.models || []);
   clearAndFill(qs("#token-sessions"), createSessionItem, usage.sessions || []);
 
@@ -1174,6 +1205,23 @@ function createModelItem(model) {
   article.querySelector("strong").textContent = model.name || "Model";
   article.querySelector(".model-row span").textContent = formatToken(model.total);
   article.querySelector(".model-meter span").style.width = `${Math.min(model.share || 0, 100)}%`;
+  return article;
+}
+
+function createSourceItem(source) {
+  const article = document.createElement("article");
+  article.className = "token-source-item";
+  article.dataset.tone = source.tone || "blue";
+  article.innerHTML = `
+    <div>
+      <span></span>
+      <strong></strong>
+    </div>
+    <small></small>
+  `;
+  article.querySelector("span").textContent = source.label || "Source";
+  article.querySelector("strong").textContent = formatToken(source.total);
+  article.querySelector("small").textContent = `${formatCost(source.cost)} / ${source.runs || 0} runs`;
   return article;
 }
 

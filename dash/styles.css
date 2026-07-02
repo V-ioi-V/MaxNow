@@ -540,6 +540,7 @@ a {
 
 .panel,
 .token-summary article,
+.token-source-item,
 .token-note {
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -556,7 +557,8 @@ a {
 .mini-token-grid div,
 .dounai-title-tab,
 .dounai-top-tabs,
-.token-summary article {
+.token-summary article,
+.token-source-item {
   --card-color: var(--accent-strong);
   --card-border: #8fd0ff;
   transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
@@ -574,7 +576,8 @@ a {
   .mini-token-grid div:hover,
   .dounai-title-tab:hover,
   .dounai-top-tabs:hover,
-  .token-summary article:hover {
+  .token-summary article:hover,
+  .token-source-item:hover {
     border-color: var(--card-border);
     background: #ffffff;
     box-shadow: 0 14px 32px color-mix(in srgb, var(--card-color) 18%, transparent), 0 1px 2px rgba(25, 43, 72, 0.08);
@@ -1567,6 +1570,60 @@ a {
   line-height: 1.7;
 }
 
+.token-source-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.token-source-item {
+  --source-color: var(--accent-strong);
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  border: 1px solid #e3ebf4;
+  border-radius: var(--radius);
+  padding: 13px 14px;
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(29, 78, 126, 0.06);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.token-source-item[data-tone="purple"] {
+  --source-color: var(--purple);
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
+}
+
+.token-source-item[data-tone="green"] {
+  --source-color: var(--ok);
+  --card-color: var(--ok);
+  --card-border: #a8e9c2;
+}
+
+.token-source-item[data-tone="orange"] {
+  --source-color: var(--orange);
+  --card-color: var(--orange);
+  --card-border: #ffd29a;
+}
+
+.token-source-item span,
+.token-source-item small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.token-source-item strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--source-color);
+  font-size: 24px;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
 .token-detail-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -2325,6 +2382,10 @@ a {
   }
 
   .token-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .token-source-grid {
     grid-template-columns: 1fr;
   }
 

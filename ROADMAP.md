@@ -37,14 +37,6 @@
 
 ## Next
 
-### 接入 Codex 用量
-
-- 来源 ID：`maxnow-token-usage`
-- 本地 Codex collector 已落地；下一步补服务器 Codex collector，使用 `MAXNOW_CODEX_SOURCE_KEY=codex-server` 和服务器侧 `.codex/sessions`。
-- 给服务器 Codex 用量补 cron 自动刷新，并确认日志、锁、文件权限和部署目录写入方式。
-- 将 Token 页来源列表 / 说明继续优化为更明确的 OpenClaw、Codex local、Codex server 分源展示。
-- Codex 费用已按 OpenAI API 等价价格估算；后续如果要对齐 Codex 订阅真实账单，需要另行确认官方账单口径。
-
 ### 让 Last-30 免费 AI 信号稳定运行
 
 - 当前已新增 `scripts/sync_ai_last30.py`，并已接入服务器 `MAXNOW-AI-LAST30-SYNC` 每天 00:00 自动刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
@@ -122,21 +114,17 @@
 - 旧文章 front matter 规范待定：是否在 personal-wiki 原文里直接补 `visibility` / `status`，还是由 MaxNow 维护一个独立发布清单。
 - 博客是否需要评论、订阅邮件、搜索索引、统计分析等公开站能力待后续确认；第一阶段先不做。
 
-### Token 使用自动化
-
-- 本地 Codex 用量已有可读来源：`C:\Users\a\.codex\sessions` 中的 `token_count` 事件。
-- 待补服务器 cron：刷新服务器 Codex 用量并合入 `dash/data/token-usage.*`。
-- 待确认服务器 Codex 来源是否应和本机 Codex 来源在 Token 页显式分栏展示。
-
 ## Done
 
-### 已完成的 Codex Token 本地统计
+### 已完成的 Codex Token 本地与服务器统计
 
 - 新增 `scripts/sync_codex_usage.py`，只读 `.codex/sessions` 的 `token_count` 事件，生成 `dash/data/codex-usage.*`。
+- 新增 `dash/data/codex-server-usage.*` 和 `python scripts/update_data.py codex-server-usage`，用 `codex-server` 来源 ID 读取服务器 `/root/.codex/sessions` 并生成独立服务器 Codex 账本。
 - 新增 `scripts/sync_token_usage.py` 和 `dash/data/token-usage.*`，将 OpenClaw 与 Codex 源账本合并为统一 Token 总账。
-- Token 页面优先读取统一总账，保留 1d / 7d / 30d / all、模型占比、最近调用和 30 天趋势。
-- `scripts/update_data.py codex-usage` 会刷新 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py token-usage` 可单独合并现有账本。
+- Token 页面优先读取统一总账，保留 1d / 7d / 30d / all、来源列表、模型占比、最近调用和 30 天趋势，并显式区分 OpenClaw、Codex local、Codex server。
+- `scripts/update_data.py codex-usage` 会刷新本机 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py codex-server-usage` 会刷新服务器 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py token-usage` 可单独合并现有账本。
 - 新增 `scripts/report_codex_usage.ps1`、`scripts/report_codex_usage_hidden.vbs` 和 `scripts/install_local_codex_usage_task.ps1`，将本机 Codex 用量接入 Windows Task Scheduler 定期上报；默认每 1 小时通过 `wscript.exe` 无窗口刷新本机账本、提交并推送 usage 数据，再让服务器只合并现有 Token 总账。
+- 服务器 root crontab 接入 `MAXNOW-CODEX-SERVER-USAGE`，每天 00:40 通过 `/tmp/maxnow-codex-server-usage.lock` 刷新服务器 Codex 用量，日志写入 `logs/codex-server-usage.log`。
 
 ### 已完成的同行记入口
 

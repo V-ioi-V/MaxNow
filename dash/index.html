@@ -462,6 +462,8 @@
 
           <p class="token-note panel" id="token-note">&#26242;&#26080;&#35828;&#26126;&#12290;</p>
 
+          <section class="token-source-grid" id="token-sources" aria-label="Token sources"></section>
+
           <section class="token-detail-grid">
             <article class="panel">
               <header class="panel-head">
@@ -605,6 +607,23 @@
                 <div><dt>&#38145;</dt><dd>/tmp/maxnow-openclaw-usage.lock</dd></div>
                 <div><dt>&#26085;&#24535;</dt><dd>logs/openclaw-usage.log</dd></div>
                 <div><dt>&#20889;&#20837;</dt><dd>dash/data/openclaw-usage.*</dd></div>
+              </dl>
+            </article>
+
+            <article class="panel cloud-card" data-tone="green">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Daily 00:40</p>
+                  <h2>Codex Server Token &#29992;&#37327;</h2>
+                </div>
+                <span class="status-pill">&#24050;&#25509;&#20837;</span>
+              </header>
+              <p class="item-copy">root crontab &#36816;&#34892; <code>python3 scripts/update_data.py codex-server-usage</code>&#65292;&#35835;&#21462; <code>/root/.codex/sessions</code>&#65292;&#29983;&#25104;&#26381;&#21153;&#22120; Codex &#36134;&#26412;&#24182;&#21512;&#24182; Token &#24635;&#36134;&#12290;</p>
+              <dl class="cloud-meta">
+                <div><dt>&#26631;&#35760;</dt><dd>MAXNOW-CODEX-SERVER-USAGE</dd></div>
+                <div><dt>&#38145;</dt><dd>/tmp/maxnow-codex-server-usage.lock</dd></div>
+                <div><dt>&#26085;&#24535;</dt><dd>logs/codex-server-usage.log</dd></div>
+                <div><dt>&#20889;&#20837;</dt><dd>dash/data/codex-server-usage.* / token-usage.*</dd></div>
               </dl>
             </article>
 
@@ -763,10 +782,11 @@
     <script src="./data/wiki-todos.js?v=1"></script>
     <script src="./data/openclaw-usage.js?v=1"></script>
     <script src="./data/codex-usage.js?v=1"></script>
+    <script src="./data/codex-server-usage.js?v=1"></script>
     <script src="./data/token-usage.js?v=1"></script>
     <script src="./data/project-meta.js?v=1"></script>
     <script src="./data/ricky.js?v=1"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=58"></script>
+    <script src="./app.js?v=59"></script>
   </body>
 </html>

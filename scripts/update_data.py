@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -15,6 +16,7 @@ DATASETS = {
     "wiki-todos": ("dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
     "openclaw-usage": ("dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
     "codex-usage": ("dash/data/codex-usage.json", "dash/data/codex-usage.js", "MAXNOW_CODEX_USAGE_DATA"),
+    "codex-server-usage": ("dash/data/codex-server-usage.json", "dash/data/codex-server-usage.js", "MAXNOW_CODEX_SERVER_USAGE_DATA"),
     "token-usage": ("dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
     "project-meta": ("dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
     "ricky": ("dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
@@ -42,17 +44,22 @@ def write_wrapper(dataset):
     print(f"[ok] regenerated {js_rel}")
 
 
-def run_python(script, log_name=None):
+def run_python(script, log_name=None, extra_args=None, env=None):
+    command = [sys.executable, script, *(extra_args or [])]
+    process_env = None
+    if env:
+        process_env = {**os.environ, **env}
     if not log_name:
-        subprocess.run([sys.executable, script], cwd=ROOT, check=True)
+        subprocess.run(command, cwd=ROOT, check=True, env=process_env)
         return
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     log_path = LOG_DIR / log_name
     with log_path.open("a", encoding="utf-8") as log:
         process = subprocess.Popen(
-            [sys.executable, script],
+            command,
             cwd=ROOT,
+            env=process_env,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
@@ -70,7 +77,7 @@ def run_python(script, log_name=None):
             log.flush()
         code = process.wait()
     if code:
-        raise subprocess.CalledProcessError(code, [sys.executable, script])
+        raise subprocess.CalledProcessError(code, command)
 
 
 def run_check():
@@ -179,6 +186,7 @@ def parse_args():
     subparsers.add_parser("weather", help="Refresh Beijing Haidian weather and validate data.")
     subparsers.add_parser("openclaw-usage", help="Refresh OpenClaw token usage ledger and validate data.")
     subparsers.add_parser("codex-usage", help="Refresh local Codex token usage ledger and validate data.")
+    subparsers.add_parser("codex-server-usage", help="Refresh server Codex token usage ledger and validate data.")
     subparsers.add_parser("token-usage", help="Merge OpenClaw and Codex token ledgers and validate data.")
     subparsers.add_parser("ai-last30", help="Refresh free external AI signals for ai-news and Last-30.")
     subparsers.add_parser("project-meta", help="Refresh MaxNow version and recent update metadata.")
@@ -216,7 +224,21 @@ def main():
         run_python("scripts/sync_codex_usage.py", "codex-usage.log")
         write_wrapper("codex-usage")
 
-    if args.command in {"openclaw-usage", "codex-usage", "token-usage", "all"}:
+    if args.command in {"codex-server-usage"}:
+        run_python(
+            "scripts/sync_codex_usage.py",
+            "codex-server-usage.log",
+            extra_args=["--output", "dash/data/codex-server-usage.json"],
+            env={
+                "MAXNOW_CODEX_SOURCE_KEY": "codex-server",
+                "MAXNOW_CODEX_SOURCE_LABEL": "Codex server",
+                "CODEX_STATE_DIR": "/root/.codex",
+                "MAXNOW_CODEX_MISSING_OK": "1",
+            },
+        )
+        write_wrapper("codex-server-usage")
+
+    if args.command in {"openclaw-usage", "codex-usage", "codex-server-usage", "token-usage", "all"}:
         run_python("scripts/sync_token_usage.py", "token-usage.log")
         write_wrapper("token-usage")
 
