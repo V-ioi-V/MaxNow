@@ -48,6 +48,8 @@ dash/styles.css
 dash/app.js
 dash/data/ricky.json
 dash/data/ricky.js
+dash/data/codex-server-usage.json
+dash/data/codex-server-usage.js
 blog/preview.html
 blog/preview.css
 SPEC.md
@@ -92,6 +94,8 @@ dash/data/openclaw-usage.json
 dash/data/openclaw-usage.js
 dash/data/codex-usage.json
 dash/data/codex-usage.js
+dash/data/codex-server-usage.json
+dash/data/codex-server-usage.js
 dash/data/token-usage.json
 dash/data/token-usage.js
 dash/data/project-meta.json
@@ -107,7 +111,8 @@ OpenClaw routine jobs must not edit page code or documentation.
 - `dash/data/last-30.json` owns the rolling 30-day external AI signal memory: daily AI signals, weekly AI changes, 30-day AI mainlines, impact notes, and watch items.
 - `dash/data/wiki-todos.json` owns the read-only MaxNow cache generated from personal-wiki `wiki/tasks/todo.json`.
 - `dash/data/openclaw-usage.json` owns OpenClaw token usage aggregates and OpenRouter-equivalent cost estimates generated from server-side OpenClaw trajectory logs.
-- `dash/data/codex-usage.json` owns Codex token usage aggregates and OpenAI API-equivalent cost estimates generated from local or server `.codex/sessions` `token_count` plus `turn_context.model` events; it must not export prompt or response body text.
+- `dash/data/codex-usage.json` owns local Codex token usage aggregates and OpenAI API-equivalent cost estimates generated from local `.codex/sessions` `token_count` plus `turn_context.model` events; it must not export prompt or response body text.
+- `dash/data/codex-server-usage.json` owns server Codex token usage aggregates and OpenAI API-equivalent cost estimates generated from server-side `/root/.codex/sessions`; it must follow the same no prompt / response body export rule.
 - `dash/data/token-usage.json` owns the combined Token page ledger generated from OpenClaw and Codex source ledgers.
 - `dash/data/project-meta.json` owns the displayed MaxNow version, deploy note, and recent update summaries generated from `VERSION`, Git state, and `UPDATE_LOG.md`.
 - `dash/data/ricky.json` owns the read-only "我和 Ricky" map, places, trip records, notes, and optional photo/source links.
@@ -120,9 +125,10 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `dash/data/dashboard.*`; do not let it overwrite owner judgment fields such as today, mainlines, actions, or journal.
 - Use `python scripts/sync_weather.py` or `python scripts/update_data.py weather` to refresh the Home weather card for Beijing Haidian District; `runtime` also runs this refresh.
 - Use `python scripts/sync_openclaw_usage.py` or `python scripts/update_data.py openclaw-usage` on the server to refresh OpenClaw token usage from `/root/.openclaw`; costs are estimates using OpenRouter model prices, not real provider billing.
-- Use `python scripts/sync_codex_usage.py` or `python scripts/update_data.py codex-usage` to refresh Codex token usage from `.codex/sessions`; export only token usage, model name, timestamp, source label, and equivalent cost fields, never prompt or response body text.
+- Use `python scripts/sync_codex_usage.py` or `python scripts/update_data.py codex-usage` to refresh local Codex token usage from `.codex/sessions`; export only token usage, model name, timestamp, source label, and equivalent cost fields, never prompt or response body text.
+- Use `python scripts/update_data.py codex-server-usage` on the server as root to refresh server Codex usage from `/root/.codex/sessions`; it writes `dash/data/codex-server-usage.*` and then merges `dash/data/token-usage.*`.
 - Use `python scripts/sync_token_usage.py` or `python scripts/update_data.py token-usage` to merge OpenClaw and Codex ledgers into the unified Token page ledger.
-- Use `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1` on the owner's Windows machine to install local Codex usage reporting. The scheduled task runs `scripts/report_codex_usage_hidden.vbs` through `wscript.exe`, which launches `scripts/report_codex_usage.ps1` with window style 0; it may only commit `dash/data/codex-usage.*` and `dash/data/token-usage.*`, and must not refresh server-side Codex usage when deploying the merged Token ledger.
+- Use `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1` on the owner's Windows machine to install local Codex usage reporting. The scheduled task runs `scripts/report_codex_usage_hidden.vbs` through `wscript.exe`, which launches `scripts/report_codex_usage.ps1` with window style 0; it may only commit `dash/data/codex-usage.*` and `dash/data/token-usage.*`, and must not refresh server-side Codex usage when deploying the merged Token ledger. Its server merge preserves existing `codex-server-usage.*` before pulling.
 - Use `python scripts/sync_project_meta.py` or `python scripts/update_data.py project-meta` to refresh the MaxNow version and recent update module.
 - Use `python scripts/sync_ricky_travel.py` or `python scripts/update_data.py ricky-travel` to refresh the "我和 Ricky" travel map from personal-wiki `wiki/relationships/ricky-travel.json`.
 - Use `python scripts/sync_ai_last30.py` or `python scripts/update_data.py ai-last30` to refresh free external AI signals into `dash/data/ai-news.*` and `dash/data/last-30.*`.

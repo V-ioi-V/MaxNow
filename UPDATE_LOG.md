@@ -9,6 +9,22 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-07-02
+
+### 接入服务器 Codex Token 用量
+
+- 新增 `dash/data/codex-server-usage.*`，作为服务器 `/root/.codex/sessions` 的独立 Codex 用量账本，避免覆盖本机 `dash/data/codex-usage.*`。
+- `scripts/update_data.py` 新增 `codex-server-usage` 命令，使用 `codex-server` 来源 ID 刷新服务器账本并合并 `dash/data/token-usage.*`。
+- `scripts/sync_token_usage.py` 将 OpenClaw、Codex local、Codex server 三路来源合并进统一 Token 总账。
+- Token 页面新增来源列表，显式展示 OpenClaw、Codex local、Codex server 的总量、估算费用和 runs。
+- 云服务页新增 Codex Server Token 用量卡，记录 cron 标记、锁、日志和写入文件。
+- 本机 Codex 上报脚本的服务器合并步骤会保留 `codex-server-usage.*`，避免本机每小时上报覆盖服务器账本。
+- 更新 `AGENTS.md`、`SPEC.md`、`CONTEXT.md`、`ROADMAP.md` 和 `SERVER_RUNBOOK.md`，记录服务器 Codex collector、root cron、日志、锁、权限和分源展示边界。
+
+原因：
+
+- Owner 希望先完成服务器侧 Codex 用量接入，并让 Token 页清楚区分本机 Codex 和服务器 Codex。
+
 ## 2026-06-27
 
 ### 收敛豆奶日均流量图 y 轴刻度

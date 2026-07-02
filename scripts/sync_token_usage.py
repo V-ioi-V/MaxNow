@@ -10,6 +10,7 @@ OUTPUT_REL = "dash/data/token-usage.json"
 SOURCE_RELS = [
     "dash/data/openclaw-usage.json",
     "dash/data/codex-usage.json",
+    "dash/data/codex-server-usage.json",
 ]
 try:
     TZ = ZoneInfo("Asia/Shanghai")

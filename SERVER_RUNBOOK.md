@@ -310,19 +310,20 @@ python3 scripts/update_data.py weather
 python3 scripts/update_data.py project-status
 python3 scripts/update_data.py openclaw-usage
 python3 scripts/update_data.py codex-usage
+python3 scripts/update_data.py codex-server-usage
 python3 scripts/update_data.py token-usage
 python3 scripts/update_data.py ai-last30
 python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
 
-刷新本机或服务器 Codex Token 用量：
+刷新服务器 Codex Token 用量：
 
 ```bash
 cd /var/www/maxnow-dashboard
-MAXNOW_CODEX_SOURCE_KEY=codex-server MAXNOW_CODEX_SOURCE_LABEL="Codex server" CODEX_STATE_DIR=/root/.codex python3 scripts/update_data.py codex-usage
+sudo python3 scripts/update_data.py codex-server-usage
 python3 scripts/check.py
 ```
 
@@ -339,9 +340,17 @@ python scripts/check.py
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
 ```
 
-默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 1 小时静默运行一次。安装脚本会注册 hidden task，Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow\scripts\report_codex_usage_hidden.vbs"`；VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免自动运行时弹出瞬时命令行窗口。该任务要求本地仓库在 `main` 且无无关脏文件；它只提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main`，并只运行 `python3 scripts/update_data.py token-usage`。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
+默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 1 小时静默运行一次。安装脚本会注册 hidden task，Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow\scripts\report_codex_usage_hidden.vbs"`；VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免自动运行时弹出瞬时命令行窗口。该任务要求本地仓库在 `main` 且无无关脏文件；它只提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main`。服务器合并前会保留现有 `openclaw-usage.*` 和 `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage`。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
 
-Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。服务器 Codex cron 自动化尚未落地，已记录在 `ROADMAP.md`。
+Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。服务器侧使用独立文件 `dash/data/codex-server-usage.*`，避免覆盖本机 `dash/data/codex-usage.*`。
+
+2026-07-02 已用 root crontab 接入服务器 Codex 用量同步，标记块为 `MAXNOW-CODEX-SERVER-USAGE`：
+
+```cron
+# BEGIN MAXNOW-CODEX-SERVER-USAGE
+40 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-codex-server-usage.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow codex server usage sync start"; python3 scripts/update_data.py codex-server-usage; chown ubuntu:www-data dash/data/codex-server-usage.json dash/data/codex-server-usage.js dash/data/token-usage.json dash/data/token-usage.js logs/codex-server-usage.log logs/token-usage.log; echo "[$(date -Is)] maxnow codex server usage sync ok"' >> /var/www/maxnow-dashboard/logs/codex-server-usage.log 2>&1
+# END MAXNOW-CODEX-SERVER-USAGE
+```
 
 刷新 Home 天气卡：
 
