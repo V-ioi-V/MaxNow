@@ -11,6 +11,15 @@
 
 ## 2026-07-02
 
+### 修正 OpenClaw 异常误报
+
+- `scripts/sync_system_status.py` 的部署状态检查补充 `codex-server-usage.*` 和 `ricky.*` 运行态数据白名单，避免服务器自动化生成的数据文件让 deploy check 误判失败。
+- 失败日志检查忽略自身写入的 `[ok] status ... checks failed` 摘要，避免上一轮状态摘要反复触发 `failure-log` 失败。
+
+原因：
+
+- Owner 发现顶栏长期显示 `OpenClaw 异常`；排查后确认是系统状态聚合脚本误报，不是 nginx、证书、cron 或 OpenClaw 本体故障。
+
 ### 收紧 Token 来源费用布局
 
 - Token 页将“来源费用”移动到和“模型占比”“调用消耗”同一行，形成三个并列信息面板。

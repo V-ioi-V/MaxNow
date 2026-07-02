@@ -46,11 +46,15 @@ GENERATED_DATA_PATHS = {
     "dash/data/openclaw-usage.js",
     "dash/data/codex-usage.json",
     "dash/data/codex-usage.js",
+    "dash/data/codex-server-usage.json",
+    "dash/data/codex-server-usage.js",
     "dash/data/token-usage.json",
     "dash/data/token-usage.js",
     "dash/data/dounai_checkin.json",
     "dash/data/project-meta.json",
     "dash/data/project-meta.js",
+    "dash/data/ricky.json",
+    "dash/data/ricky.js",
 }
 
 
@@ -505,10 +509,15 @@ def failure_log_state():
             recent_lines = recent_lines[index:]
             break
     failure_markers = ("[fail]", "error", "traceback", "failed")
-    failure_lines = [
-        line for line in recent_lines
-        if any(marker in line.lower() for marker in failure_markers)
-    ]
+    failure_lines = []
+    for line in recent_lines:
+        lowered = line.lower()
+        # Ignore this script's own summary line; otherwise "2 checks failed"
+        # keeps re-triggering the failure-log check after the original cause is gone.
+        if line.startswith("[ok] status "):
+            continue
+        if any(marker in lowered for marker in failure_markers):
+            failure_lines.append(line)
     if failure_lines:
         return {
             "key": "failure-log",
