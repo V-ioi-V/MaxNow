@@ -1142,8 +1142,6 @@ function renderHome() {
   const automationTitle = automation.summary
     ? `系统自动化：${automation.summary}`
     : "系统自动化状态：nginx、证书、部署、cron、失败日志和资源快照";
-  setText("#operator-status", `系统自动化 ${automationStatus}`);
-  setTitle("#operator-status", automationTitle);
   setText("#feed-source", dashboardData.feedSource || "OpenClaw");
   setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
   setText("#ai-news-source", aiNewsData.sourceSummary || "OpenClaw AI Daily");
