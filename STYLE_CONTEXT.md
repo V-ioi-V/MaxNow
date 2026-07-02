@@ -31,6 +31,7 @@
 
 - 桌面端可 hover 的页卡需要有轻微悬浮感。
 - 当前标准：边框颜色变为语义色或浅蓝、阴影增强、`transform: translateY(-2px)`。
+- Dash 模块 hover 统一使用 `--card-color` / `--card-border`：大模块按自身主题色，内部条目优先按自身 `data-tone`，没有独立语义时继承父模块主题色。
 - 豆奶顶部三个 tab 也要保持 hover 悬浮，不要只让内部小指标悬浮。
 - 新增或移动卡片 / widget 时，先判断它属于哪一组现有组件，再把同组的 hover / focus / transition 规则一起套上；不能只补静态布局。
 - 触摸端不要强行依赖 hover 效果；响应式布局首先保证不挤出、不遮挡。

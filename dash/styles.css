@@ -17,6 +17,13 @@
   --pink: #ff6fae;
   --danger: #ef476f;
   --ok: #20a96b;
+  --blue-border: #8fd0ff;
+  --cyan-border: #9eeaf8;
+  --purple-border: #e1c4ff;
+  --orange-border: #ffd29a;
+  --green-border: #a8e9c2;
+  --pink-border: #ffc1dc;
+  --red-border: #f2c7c7;
   --radius: 14px;
   --shadow: 0 10px 24px rgba(25, 43, 72, 0.08), 0 1px 2px rgba(25, 43, 72, 0.06);
   --shadow-soft: 0 4px 12px rgba(25, 43, 72, 0.06);
@@ -554,12 +561,32 @@ a {
 .token-page-head,
 .status-strip article,
 .mini-token-grid div,
+.checkin-grid div,
+.dounai-title-tab > span,
+.dounai-top-tabs > span,
+.line-chart,
 .dounai-title-tab,
 .dounai-top-tabs,
 .token-summary article,
+.last30-column,
 .token-source-item {
   --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
+  --card-border: var(--blue-border);
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.task-item,
+.wiki-todo-item,
+.ai-news-item,
+.feed-item,
+.project-update-item,
+.last30-item,
+.model-item,
+.session-item,
+.system-item,
+.cloud-meta div,
+.ricky-place-item,
+.ricky-record-item {
   transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
@@ -573,10 +600,27 @@ a {
   .cloud-summary article:hover,
   .ricky-stats article:hover,
   .mini-token-grid div:hover,
+  .checkin-grid div:hover,
+  .dounai-title-tab > span:hover,
+  .dounai-top-tabs > span:hover,
+  .line-chart:hover,
   .dounai-title-tab:hover,
   .dounai-top-tabs:hover,
   .token-summary article:hover,
-  .token-source-item:hover {
+  .token-source-item:hover,
+  .task-item:hover,
+  .wiki-todo-item:hover,
+  .ai-news-item:hover,
+  .feed-item:hover,
+  .project-update-item:hover,
+  .last30-column:hover,
+  .last30-item:hover,
+  .model-item:hover,
+  .session-item:hover,
+  .system-item:hover,
+  .cloud-meta div:hover,
+  .ricky-place-item:hover,
+  .ricky-record-item:hover {
     border-color: var(--card-border);
     background: #ffffff;
     box-shadow: 0 14px 32px color-mix(in srgb, var(--card-color) 18%, transparent), 0 1px 2px rgba(25, 43, 72, 0.08);
@@ -593,7 +637,7 @@ a {
 
 .status-strip article {
   --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
+  --card-border: var(--blue-border);
   min-height: 88px;
   display: grid;
   gap: 8px;
@@ -686,6 +730,51 @@ a {
   padding: 22px;
 }
 
+.summary-bar,
+.focus-panel {
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
+}
+
+.wiki-todo-panel {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
+.actions-panel {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
+}
+
+.last30-panel,
+.ai-news-panel {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
+}
+
+#journal,
+#feeds,
+.rhythm-panel,
+.maxnow-updates-panel {
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
+}
+
+.checkin-panel {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
+.token-mini-panel {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
+}
+
+.system-panel {
+  --card-color: var(--ok);
+  --card-border: var(--green-border);
+}
+
 .panel-head {
   display: flex;
   align-items: center;
@@ -773,6 +862,41 @@ a {
   padding: 14px;
   background: #ffffff;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+[data-tone="blue"] {
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
+}
+
+[data-tone="cyan"] {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
+[data-tone="purple"] {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
+}
+
+[data-tone="orange"] {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
+}
+
+[data-tone="green"] {
+  --card-color: var(--ok);
+  --card-border: var(--green-border);
+}
+
+[data-tone="red"] {
+  --card-color: var(--danger);
+  --card-border: var(--red-border);
+}
+
+[data-tone="gray"] {
+  --card-color: #64748b;
+  --card-border: #d8e1ec;
 }
 
 .task-item {
@@ -901,6 +1025,8 @@ a {
 }
 
 .last30-column {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
   min-width: 0;
   display: grid;
   align-content: start;
@@ -942,6 +1068,8 @@ a {
 }
 
 .last30-item {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
   min-width: 0;
   border: 1px solid #e3ebf4;
   border-radius: var(--radius);
@@ -1158,7 +1286,7 @@ a {
 .mini-token-grid div,
 .token-summary article {
   --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
+  --card-border: var(--blue-border);
   min-width: 0;
   border: 1px solid #e3ebf4;
   border-radius: var(--radius);
@@ -1199,8 +1327,8 @@ a {
 }
 
 .token-summary article:nth-child(5) {
-  --card-color: var(--green);
-  --card-border: #a7f3d0;
+  --card-color: var(--ok);
+  --card-border: var(--green-border);
 }
 
 .token-summary article:nth-child(6) {
@@ -1241,7 +1369,7 @@ a {
 }
 
 .checkin-panel:hover {
-  border-color: #8fd0ff;
+  border-color: var(--cyan-border);
 }
 
 .checkin-panel:focus-visible {
@@ -1267,7 +1395,7 @@ a {
 
 .checkin-grid div {
   --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
+  --card-border: var(--blue-border);
   min-width: 0;
   min-height: 76px;
   display: grid;
@@ -1417,7 +1545,7 @@ a {
 .dounai-balance-tab,
 .dounai-total-tab {
   --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
+  --card-border: var(--blue-border);
 }
 
 .dounai-total-tab {
@@ -1464,6 +1592,7 @@ a {
 .dounai-title-tab > span,
 .dounai-top-tabs > span {
   --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
   min-width: 0;
   min-height: 74px;
   display: grid;
@@ -1504,21 +1633,25 @@ a {
 .dounai-title-tab > span[data-tone="purple"],
 .dounai-top-tabs > span[data-tone="purple"] {
   --card-color: var(--purple);
+  --card-border: var(--purple-border);
 }
 
 .dounai-title-tab > span[data-tone="cyan"],
 .dounai-top-tabs > span[data-tone="cyan"] {
   --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
 }
 
 .dounai-title-tab > span[data-tone="orange"],
 .dounai-top-tabs > span[data-tone="orange"] {
   --card-color: var(--orange);
+  --card-border: var(--orange-border);
 }
 
 .dounai-title-tab > span[data-tone="green"],
 .dounai-top-tabs > span[data-tone="green"] {
   --card-color: var(--ok);
+  --card-border: var(--green-border);
 }
 
 .dounai-title-tab > span > strong,
@@ -1569,6 +1702,8 @@ a {
 
 .token-source-item {
   --source-color: var(--accent-strong);
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
   min-width: 0;
   display: grid;
   gap: 6px;
@@ -1624,6 +1759,22 @@ a {
   min-width: 0;
 }
 
+.token-detail-grid > .panel:nth-child(1) {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
+}
+
+.token-detail-grid > .panel:nth-child(2),
+.token-trend-panel {
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
+}
+
+.token-detail-grid > .panel:nth-child(3) {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
 .token-trend-panel {
   grid-column: 1 / -1;
 }
@@ -1648,6 +1799,8 @@ a {
 }
 
 .session-item {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
   grid-template-columns: minmax(0, 1fr) auto;
   min-width: 0;
   border: 1px solid #e3ebf4;
@@ -1714,7 +1867,7 @@ a {
 
 .cloud-summary article {
   --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
+  --card-border: var(--blue-border);
   min-width: 0;
   min-height: 112px;
   display: grid;
@@ -1764,7 +1917,7 @@ a {
 
 .cloud-card {
   --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
+  --card-border: var(--blue-border);
 }
 
 .cloud-card .panel-head {
@@ -1877,7 +2030,7 @@ a {
 
 .ricky-page-head {
   --card-color: var(--pink);
-  --card-border: #ffc1dc;
+  --card-border: var(--pink-border);
 }
 
 #ricky-view {
@@ -1900,7 +2053,7 @@ a {
 
 .ricky-stats article {
   --card-color: var(--pink);
-  --card-border: #ffc1dc;
+  --card-border: var(--pink-border);
   min-width: 0;
   min-height: 108px;
   display: grid;
@@ -1943,6 +2096,8 @@ a {
 }
 
 .ricky-map-panel {
+  --card-color: var(--pink);
+  --card-border: var(--pink-border);
   min-width: 0;
 }
 

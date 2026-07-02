@@ -1247,6 +1247,7 @@ function renderTokens() {
 function createModelItem(model) {
   const article = document.createElement("article");
   article.className = "model-item";
+  article.dataset.tone = getTone(model.name || "model");
   article.innerHTML = `
     <div class="model-row">
       <strong></strong>
@@ -1295,6 +1296,7 @@ function createDailyBar(day) {
 function createSessionItem(session) {
   const article = document.createElement("article");
   article.className = "session-item";
+  article.dataset.tone = getTone(session.model || session.label || "session");
   const timestamp = String(session.timestamp || "");
   const timeLabel = timestamp.includes("T") ? timestamp.slice(5, 16).replace("T", " ") : timestamp.slice(5, 16);
   const title = session.runs > 1 || !timeLabel ? session.label || "OpenClaw session" : `${session.label || "OpenClaw"} ${timeLabel}`;
