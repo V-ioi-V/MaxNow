@@ -332,7 +332,7 @@ Home 可以显示一个紧凑的 personal-wiki 近期待办入口。
 
 - 入口放在 Home 主内容区，位于“当前主线”和“待推进”之间，不进入一级导航。
 - 只读展示当前未完成待办集合；如果后续数量明显过多，再增加折叠或分页。
-- 每条可跳转到 personal-wiki 源文件或关联页面。
+- 每条只展示标题、模块和截止状态；不提供逐条“打开”入口，也不让待办卡片整体跳转。
 - 不在 MaxNow 中编辑、完成或回写待办。
 - 数据来源是 `dash/data/wiki-todos.json`，该文件由 `scripts/sync_wiki_todos.py` 从 personal-wiki 的 `wiki/tasks/todo.json` 生成。
 

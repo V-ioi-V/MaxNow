@@ -1004,14 +1004,6 @@ a {
   margin-top: 4px;
 }
 
-.wiki-todo-item a {
-  grid-column: 1 / -1;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-}
-
 .focus-panel {
   display: grid;
   grid-template-columns: minmax(120px, auto) minmax(0, 1fr);

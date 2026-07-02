@@ -7,8 +7,6 @@ const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
 const TOKEN_USAGE_URL = "./data/token-usage.json";
 const PROJECT_META_URL = "./data/project-meta.json";
 const RICKY_URL = "./data/ricky.json";
-const WIKI_TODO_SOURCE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json";
-const WIKI_TASK_BASE_URL = "https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
@@ -327,9 +325,6 @@ function createWikiTodoItem(task) {
   article.querySelector(".item-title").textContent = task.title || copy.unnamedTask;
   article.querySelector(".item-copy").textContent = task.module || task.source_file || "";
   article.querySelector(".item-tag").textContent = dueText;
-
-  const link = getWikiTodoLink(task);
-  if (link) appendLink(article, link);
   return article;
 }
 
@@ -406,16 +401,6 @@ function appendLink(container, url) {
   link.rel = "noreferrer";
   link.textContent = copy.open;
   container.appendChild(link);
-}
-
-function getWikiTodoLink(task) {
-  const firstLink = task.links?.[0]?.href;
-  if (!firstLink) return WIKI_TODO_SOURCE_URL;
-  try {
-    return new URL(firstLink, WIKI_TASK_BASE_URL).href;
-  } catch (error) {
-    return WIKI_TODO_SOURCE_URL;
-  }
 }
 
 function createTimelineItem(item) {
