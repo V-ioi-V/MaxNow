@@ -152,7 +152,7 @@ def refresh_project_status():
         {
             "source": "Roadmap",
             "title": "当前可执行任务",
-            "summary": "Home 的当前主线和今日推进由 scripts/update_data.py project-status 从 ROADMAP.md 显式刷新。",
+            "summary": "Home 的当前主线和待推进事项由 scripts/update_data.py project-status 从 ROADMAP.md 显式刷新。",
             "url": "https://github.com/V-ioi-V/MaxNow/blob/main/ROADMAP.md",
         },
         {
