@@ -540,8 +540,7 @@ a {
 
 .panel,
 .token-summary article,
-.token-source-item,
-.token-note {
+.token-source-item {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -1560,16 +1559,6 @@ a {
 
 .token-summary strong {
   font-size: 30px;
-}
-
-.token-note {
-  margin: 12px 0 0;
-  padding-top: 10px;
-  border-top: 1px solid #edf3f9;
-  color: var(--soft);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.5;
 }
 
 .token-source-grid {
