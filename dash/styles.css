@@ -377,7 +377,7 @@ a {
 .summary-weather,
 .summary-clock {
   --card-color: var(--accent-strong);
-  --card-border: #8fd0ff;
+  --card-border: var(--blue-border);
   width: 100%;
   min-width: 0;
   height: 100%;
@@ -397,6 +397,29 @@ a {
   gap: 8px;
   padding: 18px 16px;
   text-align: center;
+}
+
+.summary-weather[data-weather="sun"] {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
+}
+
+.summary-weather[data-weather="cloud"],
+.summary-weather[data-weather="fog"] {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
+.summary-weather[data-weather="rain"],
+.summary-weather[data-weather="storm"],
+.summary-weather[data-weather="snow"] {
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
+}
+
+.home-widgets .summary-clock {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
 }
 
 .weather-icon {
@@ -664,7 +687,7 @@ a {
   color: var(--accent-strong);
 }
 
-.metric-action {
+.status-strip article.metric-action {
   --card-color: var(--orange);
   --card-border: #ffd29a;
 }
@@ -673,7 +696,7 @@ a {
   color: var(--orange);
 }
 
-.metric-token {
+.status-strip article.metric-token {
   --card-color: var(--purple);
   --card-border: #e1c4ff;
 }
@@ -682,7 +705,7 @@ a {
   color: var(--purple);
 }
 
-.metric-data {
+.status-strip article.metric-data {
   --card-color: var(--ok);
   --card-border: #a8e9c2;
 }
