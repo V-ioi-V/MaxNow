@@ -517,12 +517,7 @@ function getTokenRange(key = activeTokenRange) {
 }
 
 function updateSidebarTokenSummary(key = activeTokenRange) {
-  const range = getTokenRange(key);
-  if (!range || !Number.isFinite(Number(range.total))) {
-    setText("#sidebar-token-total", "--");
-    return;
-  }
-  setText("#sidebar-token-total", `${range.label || key} ${formatToken(range.total)}`);
+  setText("#sidebar-token-total", "\u7528\u91cf\u6982\u89c8");
 }
 
 function normalizeUsageDay(day) {
@@ -1073,7 +1068,7 @@ function renderCheckin() {
   setText("#checkin-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
   setText("#checkin-total-hours", formatDuration(total.hours));
   setText("#checkin-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
-  setText("#sidebar-dounai-flow", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
+  setText("#sidebar-dounai-flow", "\u7b7e\u5230\u72b6\u6001");
 }
 
 function renderDounai() {
