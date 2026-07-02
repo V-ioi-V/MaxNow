@@ -952,6 +952,7 @@ function createLifeWheelLane(item) {
 function setLifeWheelLaneItems(lane, items) {
   const strip = lane.querySelector(".life-wheel-strip") || document.createElement("div");
   strip.className = "life-wheel-strip";
+  strip.style.transform = "translate3d(0, 0, 0)";
   strip.replaceChildren(...items.map((item) => createLifeWheelItem(item)));
   lane.replaceChildren(strip);
   return strip;
@@ -991,6 +992,7 @@ function animateLifeWheelStrip(strip, distance, duration) {
         return;
       }
       strip.style.transform = `translate3d(0, ${-distance}px, 0)`;
+      lifeWheelAnimations = lifeWheelAnimations.filter((item) => item !== handle);
       resolve();
     };
     handle.id = requestAnimationFrame(step);

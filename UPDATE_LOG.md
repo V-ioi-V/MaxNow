@@ -18,7 +18,7 @@
 - 新增 `scripts/sync_life_foods.py`、`dash/data/life-foods.*` 和 `python scripts/update_data.py life-foods`；`runtime`、`wrap all` 与 `scripts/check.py` 已纳入该数据集。
 - 前端默认全选候选、数量默认 1；Owner 可以临时取消勾选部分菜品，点击“吃啥”后从当前勾选项中随机选取一个或多个不重复结果。
 - 吃啥功能区调整为“抽签台”设计：结果舞台前置放大、候选变成可勾选菜品筹码、数量改为步进器，并在点击“吃啥”时使用从快到慢的滚轮动画，最终停在要吃的菜品上；数量为多个时展示上下叠放的独立滚轮，避免长轨道露出，选项和滚轮项使用一致的菜品颜色。
-- 将 Dash 样式缓存版本提升到 `styles.css?v=86`，脚本缓存版本提升到 `app.js?v=75`。
+- 将 Dash 样式缓存版本提升到 `styles.css?v=86`，脚本缓存版本提升到 `app.js?v=76`。
 
 ### Personal Wiki 待办移除逐条打开入口
 
