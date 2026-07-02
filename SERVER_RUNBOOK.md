@@ -379,6 +379,14 @@ runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260702-1
 verification: python3 scripts/update_data.py runtime ok；python3 scripts/check.py ok；线上 dashboard automation.status=正常，summary=nginx Active；cert 73d；deploy v1.0.0.00；CPU 0%；disk 62%；memory 50%
 ```
 
+2026-07-02 已部署全局主题色 hover：
+
+```text
+deployed commit: e41223e Merge global themed hover states
+changes: Dash 大模块和内部模块统一使用主题色 hover；大模块按自身主题色，内部条目优先按 data-tone / 模型来源语义色；Token 来源卡、模型卡、调用卡和 Home / 云服务 / 豆奶 / 同行记模块保持一致；Dash 缓存版本提升到 styles.css?v=79、app.js?v=66
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=79 200；https://dash.maxnow.cn/app.js?v=66 200；本地浏览器验证 Home / Token / 云服务 / 豆奶 / 同行记桌面和移动端无横向溢出，抽样 hover 使用对应主题色
+```
+
 刷新 Home 天气卡：
 
 ```bash
