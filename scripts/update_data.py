@@ -213,9 +213,6 @@ def main():
     if args.command in {"weather", "runtime", "all"}:
         run_python("scripts/sync_weather.py", "weather.log")
 
-    if args.command in {"system-status", "runtime", "all"}:
-        run_python("scripts/sync_system_status.py", "system-status.log")
-
     if args.command in {"openclaw-usage", "all"}:
         run_python("scripts/sync_openclaw_usage.py", "openclaw-usage.log")
         write_wrapper("openclaw-usage")
@@ -253,6 +250,9 @@ def main():
 
     if args.command in {"project-status", "all"}:
         refresh_project_status()
+
+    if args.command in {"system-status", "runtime", "all"}:
+        run_python("scripts/sync_system_status.py", "system-status.log")
 
     if args.command == "all":
         for dataset in DATASETS:
