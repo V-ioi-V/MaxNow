@@ -26,7 +26,7 @@
 - 内容源使用 private personal-wiki 的 `raw/blog-vioiv`：当前已归档旧 Hexo Markdown 211 篇，图片缓存 167 个。
 - MaxNow 仓库负责发布层：构建脚本、公开文章数据、静态页面、归档、标签、RSS、部署说明和 dashboard 发布状态入口。
 - `dash.maxnow.cn` 继续作为私人状态工作站；最多显示博客发布进度、待筛选数量和跳转入口，不承载完整博客阅读体验。
-- `dash.maxnow.cn` 顶部右侧已预留 `Blog` 弱外链，指向 `https://blog.maxnow.cn`；左侧导航只保留 Dash 内部页面：首页、豆奶、Token、云服务、同行记。
+- `dash.maxnow.cn` 顶部右侧已预留 `Blog` 弱外链，指向 `https://blog.maxnow.cn`；左侧导航只保留 Dash 内部页面：首页、豆奶、Token、云服务、生活、同行记。
 - 第一阶段先做只读静态博客：筛选 public/published 文章，转换 front matter，复制必要图片，生成 `blog.maxnow.cn` 页面。
 - 首页预览页：`blog/index.html`，用于确认文章流首页的信息架构和视觉风格，首页按文章预览卡片持续向下浏览。
 - 文章 cell 交互：整张文章卡片都可点击进入文章详情，桌面端文章流按一行两篇展示。
@@ -133,6 +133,13 @@
 - personal-wiki 新增 `wiki/relationships/ricky-travel.json`，从 `wiki/relationships/ricky.md` 抽取旅行、出游、地点和待确认日期。
 - 新增 `scripts/sync_ricky_travel.py` 和 `python scripts/update_data.py ricky-travel`，把 personal-wiki 的结构化旅行数据同步成 `dash/data/ricky.json` / `dash/data/ricky.js`。
 - `scripts/update_data.py wrap all` 和 `scripts/check.py` 已纳入 `ricky` wrapper 校验；当前同步得到 12 个地点和 4 条记录。
+
+### 已完成的生活入口和吃啥工具
+
+- 左侧导航新增“生活”tab，副标题为“吃啥”，放在云服务和同行记之间。
+- personal-wiki 新增 `wiki/life/food-picker.md`，当前候选为粉面菜蛋、红烧牛肉面、满小饱肥汁土豆粉、糟粕醋米粉。
+- 新增 `scripts/sync_life_foods.py` 和 `python scripts/update_data.py life-foods`，把 personal-wiki 菜品清单同步成 `dash/data/life-foods.json` / `dash/data/life-foods.js`。
+- 生活页“吃啥”默认全选候选、数量默认 1，可临时取消勾选并随机选取一个或多个不重复结果；`runtime` 和 `scripts/check.py` 已纳入 `life-foods` 校验。
 
 ### 已完成的近期界面微调
 

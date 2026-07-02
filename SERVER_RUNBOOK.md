@@ -317,7 +317,7 @@ python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
 
 刷新服务器 Codex Token 用量：
 
@@ -517,7 +517,7 @@ curl http://metadata.tencentyun.com/latest/meta-data/payment/create-time
 */10 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-dashboard-sync.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow dashboard sync start"; python3 scripts/update_data.py runtime; echo "[$(date -Is)] maxnow dashboard sync ok"' >> /var/www/maxnow-dashboard/logs/maxnow-sync.log 2>&1
 ```
 
-该任务会通过 `runtime` 一并刷新 wiki-todos、北京市海淀区天气、系统状态和项目元信息。
+该任务会通过 `runtime` 一并刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、北京市海淀区天气、系统状态和项目元信息。
 
 查看当前 crontab：
 

@@ -54,6 +54,8 @@ MaxNow 由四类文件组成：
    - `dash/data/dounai_checkin.json`
    - `dash/data/ricky.json`
    - `dash/data/ricky.js`
+   - `dash/data/life-foods.json`
+   - `dash/data/life-foods.js`
    - 这是页面和自动化之间的数据契约。
 
 3. OpenClaw skill
@@ -77,6 +79,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_project_meta.py`
    - `scripts/sync_weather.py`
    - `scripts/sync_ricky_travel.py`
+   - `scripts/sync_life_foods.py`
    - 由 Codex 或 Owner 维护。
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
    - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `dash/data/dashboard.*` 中的 `automation` 和 `system` 字段。
@@ -89,6 +92,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
    - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
    - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
+   - `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 刷新生活页吃啥候选，只生成 `dash/data/life-foods.*`。
 
 6. 产品记忆文档
    - `CONTEXT.md`
@@ -101,7 +105,7 @@ MaxNow 由四类文件组成：
 
 ## 导航
 
-v1 保留五个一级入口：
+v1 保留六个一级入口：
 
 1. Home
    - 私人状态工作站。
@@ -112,7 +116,9 @@ v1 保留五个一级入口：
    - Token 使用详情页。
 4. 云服务
    - 服务器自动化详情页，只读列出云服务器上的定时任务、数据同步、站点托管、系统状态和运行边界。
-5. 同行记
+5. 生活
+   - 轻量生活工具页；当前先承载“吃啥”随机选择器。
+6. 同行记
    - “我和 Ricky”的只读共同记录页，当前先承载地图和轻量统计。
 
 不要随便新增页面。只有当某个问题无法放进 Home，且会明显伤害日常扫读体验时，才考虑新增页面。
@@ -212,6 +218,15 @@ Token 真实数据按来源接入，并由统一总账合并展示：
 - 地图 marker 显示 `mapLabel`，由 personal-wiki 源数据显式维护，避免用地点名前两个字自动截断出“乌兰”等不完整标签。
 - 记录字段优先保持轻量：地点、日期、国家 / 地区、简短备注、可选照片或来源链接；列表展示后续需要时再恢复。
 
+## 生活页面
+
+生活页面承载低负担的个人生活小工具，不和 Home 的状态扫读混在一起。
+
+- 左侧导航显示为“生活”，副标题当前为“吃啥”。
+- 当前功能区为“吃啥”：默认勾选所有候选菜品，数量默认 1；Owner 可以临时取消勾选某些菜品，也可以把数量调大，然后点击“吃啥”从当前勾选项中随机选取不重复结果。
+- 候选菜品来源是 personal-wiki `wiki/life/food-picker.md`；MaxNow 通过 `scripts/sync_life_foods.py` 生成 `dash/data/life-foods.json` / `dash/data/life-foods.js` 后只读展示。
+- 前端只做本次页面会话内的勾选和随机，不编辑、不回写 personal-wiki，也不保存每次随机结果。
+
 ## 数据契约
 
 OpenClaw 日常维护只能更新这些文件：
@@ -299,6 +314,8 @@ UPDATE_LOG.md
 
 `dash/data/ricky.json` 负责“我和 Ricky”页面的只读地图数据、地点、旅行记录、摘要和可选照片 / 来源链接。它由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 生成；本地优先读取相邻 personal-wiki checkout，服务器侧可通过 `gh api` 读取 private personal-wiki。
 
+`dash/data/life-foods.json` 负责生活页“吃啥”候选数据。它由 `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 生成；本地优先读取相邻 personal-wiki checkout，服务器侧可通过 `gh api` 读取 private personal-wiki。
+
 当前带 `.js` wrapper 的数据集必须从对应 JSON 文件生成，并把同一个对象暴露给浏览器：
 
 ```text
@@ -312,6 +329,7 @@ window.MAXNOW_CODEX_SERVER_USAGE_DATA
 window.MAXNOW_TOKEN_USAGE_DATA
 window.MAXNOW_PROJECT_META_DATA
 window.MAXNOW_RICKY_DATA
+window.MAXNOW_LIFE_FOODS_DATA
 ```
 
 ## 数据来源策略
@@ -446,7 +464,7 @@ maxnow.cn       -> 未来公开主页 / 个人入口
 
 ## 实现边界
 
-- v1 保留 Home、豆奶、Token、云服务和同行记。
+- v1 保留 Home、豆奶、Token、云服务、生活和同行记。
 - v1 保持静态站点：不加登录、数据库或后端 API。
 - 任何新的日常维护数据字段，都必须同时写进这里和 OpenClaw skill。
 - 页面代码变化需要 Codex 或 Owner 明确意图；OpenClaw 永远不能改变页面结构。

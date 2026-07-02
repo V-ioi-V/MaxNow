@@ -7,6 +7,7 @@ const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
 const TOKEN_USAGE_URL = "./data/token-usage.json";
 const PROJECT_META_URL = "./data/project-meta.json";
 const RICKY_URL = "./data/ricky.json";
+const LIFE_FOODS_URL = "./data/life-foods.json";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
@@ -18,6 +19,7 @@ const fallbackOpenclawUsage = window.MAXNOW_OPENCLAW_USAGE_DATA || { days: [] };
 const fallbackTokenUsage = window.MAXNOW_TOKEN_USAGE_DATA || { days: [] };
 const fallbackProjectMeta = window.MAXNOW_PROJECT_META_DATA || { recentUpdates: [] };
 const fallbackRicky = window.MAXNOW_RICKY_DATA || { stats: [], places: [], records: [] };
+const fallbackLifeFoods = window.MAXNOW_LIFE_FOODS_DATA || { sections: [] };
 
 let dashboardData = fallbackData;
 let aiNewsData = fallbackAiNews;
@@ -28,11 +30,16 @@ let openclawUsageData = fallbackOpenclawUsage;
 let tokenUsageData = fallbackTokenUsage;
 let projectMetaData = fallbackProjectMeta;
 let rickyData = fallbackRicky;
+let lifeFoodsData = fallbackLifeFoods;
 let wikiTodoError = "";
 let activeTokenRange = "1d";
 let weatherMetaFitFrame = 0;
 let rickyMap = null;
 let rickyMarkerLayer = null;
+let lifePickTimer = 0;
+let lifeWheelAnimations = [];
+
+const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
 
 const qs = (selector) => document.querySelector(selector);
 const qsa = (selector) => [...document.querySelectorAll(selector)];
@@ -72,6 +79,7 @@ const copy = {
   dounaiTitle: "\u8c46\u5976",
   cloudTitle: "\u4e91\u670d\u52a1",
   rickyTitle: "\u6211\u548c Ricky",
+  lifeTitle: "\u751f\u6d3b",
   today: "\u4eca\u5929",
   energy: "\u80fd\u91cf",
   focus: "\u4e3b\u7ebf",
@@ -86,6 +94,9 @@ const copy = {
   dueAt: "\u622a\u6b62",
   rickyEmptyPlaces: "\u8fd8\u6ca1\u6709\u5199\u5165\u5730\u70b9\u3002",
   rickyEmptyRecords: "\u8fd8\u6ca1\u6709\u5199\u5165\u65c5\u884c\u8bb0\u5f55\u3002",
+  lifeNoFoods: "\u8fd8\u6ca1\u6709\u5199\u5165\u5019\u9009\u83dc\u54c1\u3002",
+  lifePickFirst: "\u5148\u9009\u4e00\u70b9\u5403\u7684",
+  lifePickEmpty: "\u5148\u52fe\u9009\u81f3\u5c11\u4e00\u4e2a\u5019\u9009",
 };
 
 function formatToken(value) {
@@ -815,6 +826,261 @@ function renderRicky() {
   });
 }
 
+function getLifeFoodSection() {
+  const sections = Array.isArray(lifeFoodsData.sections) ? lifeFoodsData.sections : [];
+  return sections.find((section) => section.id === "food-picker") || sections[0] || { items: [] };
+}
+
+function createLifeFoodOption(item, index) {
+  const label = document.createElement("label");
+  label.className = "life-food-option";
+  const tone = lifeFoodTones[index % lifeFoodTones.length];
+  label.dataset.tone = tone;
+  label.innerHTML = `
+    <input type="checkbox" data-life-food checked />
+    <span></span>
+  `;
+  const input = label.querySelector("input");
+  input.value = item.id || item.name || `food-${index + 1}`;
+  input.dataset.name = item.name || copy.item;
+  input.dataset.tone = tone;
+  label.querySelector("span").textContent = item.name || copy.item;
+  return label;
+}
+
+function getSelectedLifeFoods() {
+  return qsa("[data-life-food]")
+    .filter((input) => input.checked)
+    .map((input) => ({ id: input.value, name: input.dataset.name || input.value, tone: input.dataset.tone || "cyan" }));
+}
+
+function shuffleItems(items) {
+  const next = [...items];
+  for (let index = next.length - 1; index > 0; index -= 1) {
+    const randomIndex = randomIndexBelow(index + 1);
+    [next[index], next[randomIndex]] = [next[randomIndex], next[index]];
+  }
+  return next;
+}
+
+function randomIndexBelow(max) {
+  if (window.crypto?.getRandomValues && max > 0) {
+    const values = new Uint32Array(1);
+    window.crypto.getRandomValues(values);
+    return values[0] % max;
+  }
+  return Math.floor(Math.random() * max);
+}
+
+function setLifeResult(resultText, noteText = "") {
+  const result = qs("#life-food-result");
+  if (!result) return;
+  result.querySelector(".life-result-text").textContent = resultText;
+  result.querySelector(".life-result-label").textContent = noteText || "\u4eca\u665a\u5403";
+}
+
+function setLifeWheelPlaceholder(text) {
+  const track = qs("#life-food-wheel-track");
+  if (!track) return;
+  track.style.setProperty("--life-wheel-count", "1");
+  track.replaceChildren(createLifeWheelLane({ name: text, tone: "gray" }));
+  track.style.transform = "translateY(0)";
+}
+
+function clearLifeWheelAnimations() {
+  lifeWheelAnimations.forEach((handle) => {
+    if (handle?.type === "raf") {
+      cancelAnimationFrame(handle.id);
+      return;
+    }
+    if (typeof handle === "number") {
+      clearInterval(handle);
+      return;
+    }
+    handle?.cancel?.();
+  });
+  lifeWheelAnimations = [];
+}
+
+function setLifePickingState(isPicking) {
+  const result = qs("#life-food-result");
+  const button = qs("#life-food-pick");
+  result?.classList.toggle("is-picking", isPicking);
+  result?.classList.remove("is-settled");
+  if (button) {
+    button.disabled = isPicking;
+    button.dataset.state = isPicking ? "rolling" : "";
+  }
+}
+
+function clampLifeFoodCount() {
+  const selected = getSelectedLifeFoods();
+  const countInput = qs("#life-food-count-input");
+  if (!countInput) return Math.max(1, Math.min(1, selected.length || 1));
+  const max = Math.max(selected.length, 1);
+  const value = Math.min(Math.max(Number.parseInt(countInput.value || "1", 10) || 1, 1), max);
+  countInput.max = String(max);
+  countInput.value = String(value);
+  return value;
+}
+
+function changeLifeFoodCount(delta) {
+  const countInput = qs("#life-food-count-input");
+  if (!countInput) return;
+  countInput.value = String((Number.parseInt(countInput.value || "1", 10) || 1) + delta);
+  clampLifeFoodCount();
+}
+
+function createLifeWheelItem(item) {
+  const node = document.createElement("span");
+  node.className = "life-wheel-item";
+  node.dataset.tone = item.tone || "cyan";
+  node.textContent = item.name;
+  return node;
+}
+
+function createLifeWheelLane(item) {
+  const lane = document.createElement("div");
+  lane.className = "life-wheel-lane";
+  const strip = document.createElement("div");
+  strip.className = "life-wheel-strip";
+  strip.appendChild(createLifeWheelItem(item));
+  lane.appendChild(strip);
+  return lane;
+}
+
+function setLifeWheelLaneItems(lane, items) {
+  const strip = lane.querySelector(".life-wheel-strip") || document.createElement("div");
+  strip.className = "life-wheel-strip";
+  strip.replaceChildren(...items.map((item) => createLifeWheelItem(item)));
+  lane.replaceChildren(strip);
+  return strip;
+}
+
+function randomLifeFood(items, avoidItem) {
+  const pool = items.length > 1 && avoidItem ? items.filter((item) => item.id !== avoidItem.id) : items;
+  return pool[randomIndexBelow(pool.length)] || items[0];
+}
+
+function createLifeWheelSequence(items, finalItem, length) {
+  const sequence = [];
+  let previousItem = finalItem;
+  while (sequence.length < length - 1) {
+    previousItem = randomLifeFood(items, previousItem);
+    sequence.push(previousItem);
+  }
+  sequence.push(finalItem);
+  return sequence;
+}
+
+function easeLifeWheel(progress) {
+  const clamped = Math.min(Math.max(progress, 0), 1);
+  return 1 - ((1 - clamped) ** 4);
+}
+
+function animateLifeWheelStrip(strip, distance, duration) {
+  return new Promise((resolve) => {
+    const startedAt = performance.now();
+    const handle = { type: "raf", id: 0 };
+    const step = (now) => {
+      const progress = (now - startedAt) / duration;
+      const eased = easeLifeWheel(progress);
+      strip.style.transform = `translate3d(0, ${-distance * eased}px, 0)`;
+      if (progress < 1) {
+        handle.id = requestAnimationFrame(step);
+        return;
+      }
+      strip.style.transform = `translate3d(0, ${-distance}px, 0)`;
+      resolve();
+    };
+    handle.id = requestAnimationFrame(step);
+    lifeWheelAnimations.push(handle);
+  });
+}
+
+function animateLifeWheel(items, finalItems) {
+  const wheel = qs("#life-food-wheel");
+  const track = qs("#life-food-wheel-track");
+  if (!wheel || !track || !items.length || !finalItems.length) return Promise.resolve();
+
+  clearLifeWheelAnimations();
+  track.replaceChildren();
+  track.style.transform = "translateY(0)";
+  track.style.setProperty("--life-wheel-count", String(finalItems.length));
+  const lanes = finalItems.map((item) => {
+    const lane = createLifeWheelLane(randomLifeFood(items, item));
+    track.appendChild(lane);
+    return lane;
+  });
+  wheel.classList.add("is-rolling");
+
+  const lanePromises = lanes.map((lane, laneIndex) => new Promise((resolve) => {
+    const sequence = createLifeWheelSequence(items, finalItems[laneIndex], 14 + laneIndex * 3);
+    const strip = setLifeWheelLaneItems(lane, sequence);
+    const laneHeight = lane.getBoundingClientRect().height || 340;
+    lane.style.setProperty("--life-wheel-lane-height", `${laneHeight}px`);
+    strip.style.transform = "translate3d(0, 0, 0)";
+    const distance = (sequence.length - 1) * laneHeight;
+    animateLifeWheelStrip(strip, distance, 2400 + laneIndex * 360).then(() => {
+      setLifeWheelLaneItems(lane, [finalItems[laneIndex]]);
+      lane.classList.add("is-final");
+      resolve();
+    });
+  }));
+
+  return Promise.all(lanePromises).then(() => {
+    wheel.classList.remove("is-rolling");
+    lifeWheelAnimations = [];
+  });
+}
+
+async function pickLifeFoods() {
+  const selected = getSelectedLifeFoods();
+  if (!selected.length) {
+    setLifeResult(copy.lifePickEmpty, "\u7ed3\u679c");
+    return;
+  }
+  const count = clampLifeFoodCount();
+  const pickedItems = shuffleItems(selected).slice(0, count);
+  const picked = pickedItems.map((item) => item.name);
+  clearInterval(lifePickTimer);
+  setLifePickingState(true);
+  setLifeResult("\u8f6c\u8f6e\u542f\u52a8", "\u6b63\u5728\u6311");
+  await animateLifeWheel(selected, pickedItems);
+  setLifePickingState(false);
+  setLifeResult(picked.join(" / "), `${count} / ${selected.length}`);
+  qs("#life-food-result")?.classList.add("is-settled");
+}
+
+function renderLife() {
+  const section = getLifeFoodSection();
+  const items = Array.isArray(section.items) ? section.items : [];
+  const options = qs("#life-food-options");
+  const countInput = qs("#life-food-count-input");
+
+  setText("#life-summary", section.summary || "\u4ece\u5019\u9009\u6e05\u5355\u91cc\u968f\u673a\u51b3\u5b9a\u4eca\u5929\u5403\u4ec0\u4e48\u3002");
+  setText("#life-updated", lifeFoodsData.synced_at ? `\u540c\u6b65 ${lifeFoodsData.synced_at}` : copy.syncWaiting);
+  setText("#life-food-count", `${items.length} \u4e2a\u5019\u9009`);
+  if (countInput) {
+    countInput.max = String(Math.max(items.length, 1));
+    countInput.value = String(Math.min(Math.max(Number(section.defaultCount || 1), 1), Math.max(items.length, 1)));
+  }
+  if (!options) return;
+  options.replaceChildren();
+  if (!items.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state";
+    empty.textContent = copy.lifeNoFoods;
+    options.appendChild(empty);
+    setLifeResult(copy.lifeNoFoods);
+    setLifeWheelPlaceholder(copy.lifeNoFoods);
+    return;
+  }
+  items.forEach((item, index) => options.appendChild(createLifeFoodOption(item, index)));
+  setLifeResult(copy.lifePickFirst);
+  setLifeWheelPlaceholder(copy.lifePickFirst);
+}
+
 function getMappableRickyPlaces(places) {
   return places
     .map((place) => ({
@@ -1328,6 +1594,7 @@ function renderAll() {
   renderTokens();
   renderDounai();
   renderRicky();
+  renderLife();
 }
 
 async function readJson(url, fallback) {
@@ -1357,7 +1624,7 @@ async function readWikiTodo() {
 }
 
 async function loadData() {
-  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage, tokenUsage, projectMeta, ricky] = await Promise.all([
+  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage, tokenUsage, projectMeta, ricky, lifeFoods] = await Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
     readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
@@ -1367,6 +1634,7 @@ async function loadData() {
     readJson(TOKEN_USAGE_URL, window.MAXNOW_TOKEN_USAGE_DATA || fallbackTokenUsage),
     readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta),
     readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky),
+    readJson(LIFE_FOODS_URL, window.MAXNOW_LIFE_FOODS_DATA || fallbackLifeFoods),
   ]);
 
   dashboardData = dashboard;
@@ -1378,11 +1646,12 @@ async function loadData() {
   tokenUsageData = tokenUsage;
   projectMetaData = projectMeta;
   rickyData = ricky;
+  lifeFoodsData = lifeFoods;
   renderAll();
 }
 
 function setView(view) {
-  const nextView = ["home", "ricky", "tokens", "cloud", "dounai"].includes(view) ? view : "home";
+  const nextView = ["home", "ricky", "life", "tokens", "cloud", "dounai"].includes(view) ? view : "home";
   qsa("[data-view-panel]").forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.viewPanel === nextView);
   });
@@ -1395,14 +1664,17 @@ function setView(view) {
         ? copy.tokenTitle
         : nextView === "ricky"
           ? copy.rickyTitle
-          : nextView === "cloud"
-            ? copy.cloudTitle
-            : nextView === "dounai"
-              ? copy.dounaiTitle
-              : copy.today;
+          : nextView === "life"
+            ? copy.lifeTitle
+            : nextView === "cloud"
+              ? copy.cloudTitle
+              : nextView === "dounai"
+                ? copy.dounaiTitle
+                : copy.today;
   }
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
   if (nextView === "ricky") requestAnimationFrame(renderRicky);
+  if (nextView === "life") requestAnimationFrame(renderLife);
   if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));
   if (nextView !== "tokens") updateSidebarTokenSummary("7d");
   if (location.hash !== `#${nextView}`) location.hash = nextView;
@@ -1670,6 +1942,37 @@ qs("#system-panel")?.addEventListener("keydown", (event) => {
     event.preventDefault();
     setView("cloud");
   }
+});
+
+qs("#life-food-pick")?.addEventListener("click", pickLifeFoods);
+
+qs("#life-food-count-minus")?.addEventListener("click", () => changeLifeFoodCount(-1));
+qs("#life-food-count-plus")?.addEventListener("click", () => changeLifeFoodCount(1));
+qs("#life-food-count-input")?.addEventListener("change", clampLifeFoodCount);
+
+qs("#life-food-select-all")?.addEventListener("click", () => {
+  qsa("[data-life-food]").forEach((input) => {
+    input.checked = true;
+  });
+  clampLifeFoodCount();
+  setLifeResult(copy.lifePickFirst);
+  setLifeWheelPlaceholder(copy.lifePickFirst);
+});
+
+qs("#life-food-clear")?.addEventListener("click", () => {
+  qsa("[data-life-food]").forEach((input) => {
+    input.checked = false;
+  });
+  clampLifeFoodCount();
+  setLifeResult(copy.lifePickEmpty);
+  setLifeWheelPlaceholder(copy.lifePickEmpty);
+});
+
+qs("#life-food-options")?.addEventListener("change", () => {
+  const selected = getSelectedLifeFoods();
+  clampLifeFoodCount();
+  setLifeResult(selected.length ? copy.lifePickFirst : copy.lifePickEmpty);
+  setLifeWheelPlaceholder(selected.length ? copy.lifePickFirst : copy.lifePickEmpty);
 });
 
 refreshButton?.addEventListener("click", async () => {

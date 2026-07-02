@@ -48,6 +48,8 @@ dash/styles.css
 dash/app.js
 dash/data/ricky.json
 dash/data/ricky.js
+dash/data/life-foods.json
+dash/data/life-foods.js
 dash/data/codex-server-usage.json
 dash/data/codex-server-usage.js
 blog/preview.html
@@ -70,6 +72,7 @@ scripts/install_local_codex_usage_task.ps1
 scripts/sync_project_meta.py
 scripts/sync_weather.py
 scripts/sync_ricky_travel.py
+scripts/sync_life_foods.py
 VERSION
 CONTEXT.md
 ROADMAP.md
@@ -100,6 +103,8 @@ dash/data/token-usage.json
 dash/data/token-usage.js
 dash/data/project-meta.json
 dash/data/project-meta.js
+dash/data/life-foods.json
+dash/data/life-foods.js
 ```
 
 OpenClaw routine jobs must not edit page code or documentation.
@@ -116,6 +121,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - `dash/data/token-usage.json` owns the combined Token page ledger generated from OpenClaw and Codex source ledgers.
 - `dash/data/project-meta.json` owns the displayed MaxNow version, deploy note, and recent update summaries generated from `VERSION`, Git state, and `UPDATE_LOG.md`.
 - `dash/data/ricky.json` owns the read-only "我和 Ricky" map, places, trip records, notes, and optional photo/source links.
+- `dash/data/life-foods.json` owns the read-only Life page food picker candidates generated from personal-wiki `wiki/life/food-picker.md`; the frontend can temporarily select/unselect candidates and randomize locally, but must not write back to personal-wiki.
 - Do not update `dash/data/*.json` or `dash/data/*.js` when the owner asks for MaxNow project todos, feature planning, roadmap updates, or "what should MaxNow build next"; update `ROADMAP.md`, `IDEAS.md`, `CONTEXT.md`, or `UPDATE_LOG.md` instead.
 - For Last-30 AI external signals, prefer free public sources first: official blogs/RSS, GitHub releases, Hacker News, Reddit/public community sources, arXiv, GDELT or similar free indexes. Do not make X/Twitter a hard dependency unless the owner explicitly approves paid API usage.
 - Only change data files when the owner explicitly asks to update the displayed dashboard/status data, or when running an approved data maintenance task.
@@ -131,8 +137,9 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Use `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1` on the owner's Windows machine to install local Codex usage reporting. The scheduled task runs `scripts/report_codex_usage_hidden.vbs` through `wscript.exe`, which launches `scripts/report_codex_usage.ps1` with window style 0; it may only commit `dash/data/codex-usage.*` and `dash/data/token-usage.*`, and must not refresh server-side Codex usage when deploying the merged Token ledger. Its server merge preserves existing `codex-server-usage.*` before pulling.
 - Use `python scripts/sync_project_meta.py` or `python scripts/update_data.py project-meta` to refresh the MaxNow version and recent update module.
 - Use `python scripts/sync_ricky_travel.py` or `python scripts/update_data.py ricky-travel` to refresh the "我和 Ricky" travel map from personal-wiki `wiki/relationships/ricky-travel.json`.
+- Use `python scripts/sync_life_foods.py` or `python scripts/update_data.py life-foods` to refresh the Life page food picker candidates from personal-wiki `wiki/life/food-picker.md`.
 - Use `python scripts/sync_ai_last30.py` or `python scripts/update_data.py ai-last30` to refresh free external AI signals into `dash/data/ai-news.*` and `dash/data/last-30.*`.
-- Prefer `python scripts/update_data.py runtime` for server runtime refreshes, including wiki todos, Ricky travel records, weather, system status, and project metadata; use `python scripts/update_data.py wrap all` for wrapper regeneration, and `python scripts/update_data.py project-status` only when the owner wants Home project status refreshed from `ROADMAP.md`.
+- Prefer `python scripts/update_data.py runtime` for server runtime refreshes, including wiki todos, Ricky travel records, Life food candidates, weather, system status, and project metadata; use `python scripts/update_data.py wrap all` for wrapper regeneration, and `python scripts/update_data.py project-status` only when the owner wants Home project status refreshed from `ROADMAP.md`.
 - Use `python scripts/check.py` for local consistency checks when data wrappers or docs change.
 
 ## Product Direction

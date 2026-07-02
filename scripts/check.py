@@ -20,6 +20,7 @@ DATASETS = [
     ("token-usage", "dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
     ("project-meta", "dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
     ("ricky", "dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
+    ("life-foods", "dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
 ]
 
 
@@ -56,6 +57,8 @@ def check_required_files():
         "dash/data/dounai_checkin.json",
         "dash/data/ricky.json",
         "dash/data/ricky.js",
+        "dash/data/life-foods.json",
+        "dash/data/life-foods.js",
         "blog/index.html",
         "blog/overview.html",
         "blog/topics.html",
@@ -84,6 +87,7 @@ def check_required_files():
         "scripts/sync_project_meta.py",
         "scripts/sync_weather.py",
         "scripts/sync_ricky_travel.py",
+        "scripts/sync_life_foods.py",
         "scripts/update_data.py",
         "scripts/report_codex_usage.ps1",
         "scripts/report_codex_usage_hidden.vbs",

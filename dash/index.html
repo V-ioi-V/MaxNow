@@ -7,7 +7,7 @@
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="./styles.css?v=83" />
+    <link rel="stylesheet" href="./styles.css?v=86" />
   </head>
   <body>
     <div class="app-shell">
@@ -54,6 +54,15 @@
             <span class="nav-copy">
               <strong>&#20113;&#26381;&#21153;</strong>
               <small>&#26381;&#21153;&#22120;&#33258;&#21160;&#21270;</small>
+            </span>
+          </button>
+          <button class="side-nav-item nav-life" type="button" data-view="life">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 3a1 1 0 0 1 1 1v7.2a3.2 3.2 0 0 1-2 3v5.8a1 1 0 1 1-2 0v-5.8a3.2 3.2 0 0 1-2-3V4a1 1 0 1 1 2 0v7h1V4a1 1 0 1 1 2 0v7h1V4a1 1 0 0 1 1-1Zm8 0a5 5 0 0 1 5 5v4a3 3 0 0 1-2 2.8V20a1 1 0 1 1-2 0v-5h-1a3 3 0 0 1-3-3V8a5 5 0 0 1 3-4.6V20a1 1 0 1 1-2 0V4a1 1 0 0 1 2-1Z"/></svg>
+            </span>
+            <span class="nav-copy">
+              <strong>生活</strong>
+              <small>吃啥</small>
             </span>
           </button>
           <button class="side-nav-item nav-ricky" type="button" data-view="ricky">
@@ -419,6 +428,51 @@
               </svg>
               <div class="ricky-map-pins" id="ricky-map-pins"></div>
             </div>
+          </article>
+        </section>
+
+        <section class="view" id="life-view" data-view-panel="life">
+          <header class="token-page-head life-page-head">
+            <div>
+              <p class="eyebrow">Life</p>
+              <h1>生活</h1>
+              <p id="life-summary">从候选清单里随机决定今天吃什么。</p>
+            </div>
+            <span class="status-pill" id="life-updated">等待同步</span>
+          </header>
+
+          <article class="panel life-food-panel">
+            <header class="panel-head">
+              <div>
+                <p class="eyebrow">Food Picker</p>
+                <h2>吃啥</h2>
+              </div>
+              <span class="status-pill" id="life-food-count">0 个候选</span>
+            </header>
+
+            <div class="life-result-card" id="life-food-result" aria-live="polite">
+              <div class="life-food-wheel" id="life-food-wheel" aria-hidden="true">
+                <div class="life-food-wheel-track" id="life-food-wheel-track"></div>
+              </div>
+              <span class="life-result-label">今晚吃</span>
+              <strong class="life-result-text">先选一点吃的</strong>
+            </div>
+
+            <div class="life-food-toolbar">
+              <label class="life-count-control" for="life-food-count-input">
+                <span>数量</span>
+                <button class="life-step-button" type="button" id="life-food-count-minus" aria-label="减少数量">-</button>
+                <input id="life-food-count-input" type="number" min="1" value="1" inputmode="numeric" />
+                <button class="life-step-button" type="button" id="life-food-count-plus" aria-label="增加数量">+</button>
+              </label>
+              <div class="life-food-actions" aria-label="吃啥操作">
+                <button class="text-button life-eat-button" type="button" id="life-food-pick">吃啥</button>
+                <button class="text-button" type="button" id="life-food-select-all">全选</button>
+                <button class="text-button" type="button" id="life-food-clear">清空</button>
+              </div>
+            </div>
+
+            <div class="life-food-options" id="life-food-options" aria-label="吃啥候选"></div>
           </article>
         </section>
 
@@ -791,7 +845,8 @@
     <script src="./data/token-usage.js?v=1"></script>
     <script src="./data/project-meta.js?v=1"></script>
     <script src="./data/ricky.js?v=1"></script>
+    <script src="./data/life-foods.js?v=1"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=71"></script>
+    <script src="./app.js?v=75"></script>
   </body>
 </html>
