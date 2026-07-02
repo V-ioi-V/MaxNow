@@ -395,6 +395,14 @@ changes: 删除 Dash 顶栏右侧 `系统自动化 正常` badge；保留 Home �
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/app.js?v=67 200；线上 dash/index.html 和 dash/app.js 确认无 operator-status 残留
 ```
 
+2026-07-02 已压缩 Home 当前主线模块：
+
+```text
+deployed commit: 9e015ee Merge compact home mainline panel
+changes: Home “当前主线”模块在桌面端改为标题和内容同一行的紧凑状态条；减少只有一条主线时的大面积空白；同步收紧待推进条目的垂直留白；Dash 缓存版本提升到 styles.css?v=80
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=80 200；本地浏览器测量桌面 #focus 高度约 101px，页面无横向溢出
+```
+
 刷新 Home 天气卡：
 
 ```bash
