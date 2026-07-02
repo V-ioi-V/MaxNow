@@ -116,6 +116,18 @@ def write_outputs(cache):
     JS_PATH.write_text(f"window.{GLOBAL_NAME} = " + text + ";\n", encoding="utf-8")
 
 
+def keep_existing_outputs(reason):
+    if not JSON_PATH.exists():
+        return False
+    cache = json.loads(JSON_PATH.read_text(encoding="utf-8-sig"))
+    write_outputs(cache)
+    item_count = len(cache.get("sections", [{}])[0].get("items", []))
+    print(f"[warn] kept existing life food candidates: {reason}")
+    print(f"[ok] synced {item_count} life food candidates")
+    print(f"[ok] wrote {JS_PATH.relative_to(ROOT)}")
+    return True
+
+
 def main():
     markdown, source_loaded_from = load_source()
     cache = build_cache(markdown, source_loaded_from)
@@ -130,10 +142,14 @@ if __name__ == "__main__":
     try:
         main()
     except FileNotFoundError:
+        if keep_existing_outputs("gh CLI is unavailable and local personal-wiki is unavailable"):
+            sys.exit(0)
         print("[fail] gh CLI is required if local personal-wiki is unavailable", file=sys.stderr)
         sys.exit(1)
     except subprocess.CalledProcessError as error:
         detail = error.stderr.strip() or error.stdout.strip() or str(error)
+        if keep_existing_outputs(f"gh api failed: {detail}"):
+            sys.exit(0)
         print(f"[fail] gh api failed: {detail}", file=sys.stderr)
         sys.exit(error.returncode or 1)
     except Exception as error:
