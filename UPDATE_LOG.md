@@ -11,12 +11,23 @@
 
 ## 2026-07-02
 
+### 修正 Token 来源卡展示和范围口径
+
+- 将 Dash 缓存版本提升到 `styles.css?v=73` / `app.js?v=60`，避免线上继续使用旧 CSS 导致来源列表以裸文本显示。
+- Token 来源列表改为按当前 `1d` / `7d` / `30d` / `all` 范围聚合，来源 token、费用和 runs 不再固定显示全量。
+- `scripts/sync_token_usage.py` 在统一总账的每日数据中写入 `bySource`，供前端准确计算分来源范围小计。
+- 本机 Codex collector 默认按采集机器平台命名来源：当前 Windows 本机显示为 `Codex Windows`，后续 macOS 采集端可显示为 `Codex macOS`。
+
+原因：
+
+- Owner 反馈 Token 页来源列表居中裸排不好看，并且来源量级也应跟随顶部范围切换。
+
 ### 接入服务器 Codex Token 用量
 
 - 新增 `dash/data/codex-server-usage.*`，作为服务器 `/root/.codex/sessions` 的独立 Codex 用量账本，避免覆盖本机 `dash/data/codex-usage.*`。
 - `scripts/update_data.py` 新增 `codex-server-usage` 命令，使用 `codex-server` 来源 ID 刷新服务器账本并合并 `dash/data/token-usage.*`。
 - `scripts/sync_token_usage.py` 将 OpenClaw、Codex local、Codex server 三路来源合并进统一 Token 总账。
-- Token 页面新增来源列表，显式展示 OpenClaw、Codex local、Codex server 的总量、估算费用和 runs。
+- Token 页面新增来源列表，显式展示 OpenClaw、Codex local、Codex server 的总量、估算费用和 runs；后续已修正为按当前范围展示并用平台名区分本机 Codex。
 - 云服务页新增 Codex Server Token 用量卡，记录 cron 标记、锁、日志和写入文件。
 - 本机 Codex 上报脚本的服务器合并步骤会保留 `codex-server-usage.*`，避免本机每小时上报覆盖服务器账本。
 - 更新 `AGENTS.md`、`SPEC.md`、`CONTEXT.md`、`ROADMAP.md` 和 `SERVER_RUNBOOK.md`，记录服务器 Codex collector、root cron、日志、锁、权限和分源展示边界。

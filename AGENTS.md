@@ -111,7 +111,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - `dash/data/last-30.json` owns the rolling 30-day external AI signal memory: daily AI signals, weekly AI changes, 30-day AI mainlines, impact notes, and watch items.
 - `dash/data/wiki-todos.json` owns the read-only MaxNow cache generated from personal-wiki `wiki/tasks/todo.json`.
 - `dash/data/openclaw-usage.json` owns OpenClaw token usage aggregates and OpenRouter-equivalent cost estimates generated from server-side OpenClaw trajectory logs.
-- `dash/data/codex-usage.json` owns local Codex token usage aggregates and OpenAI API-equivalent cost estimates generated from local `.codex/sessions` `token_count` plus `turn_context.model` events; it must not export prompt or response body text.
+- `dash/data/codex-usage.json` owns local Codex token usage aggregates and OpenAI API-equivalent cost estimates generated from local `.codex/sessions` `token_count` plus `turn_context.model` events; it should label the local source by collector platform such as `Codex Windows` or `Codex macOS`, and it must not export prompt or response body text.
 - `dash/data/codex-server-usage.json` owns server Codex token usage aggregates and OpenAI API-equivalent cost estimates generated from server-side `/root/.codex/sessions`; it must follow the same no prompt / response body export rule.
 - `dash/data/token-usage.json` owns the combined Token page ledger generated from OpenClaw and Codex source ledgers.
 - `dash/data/project-meta.json` owns the displayed MaxNow version, deploy note, and recent update summaries generated from `VERSION`, Git state, and `UPDATE_LOG.md`.

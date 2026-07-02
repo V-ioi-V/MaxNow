@@ -79,11 +79,19 @@ def source_label(item):
     label = item.get("label") or key
     if key == "openclaw":
         return "OpenClaw"
-    if key == "codex-local":
-        return "Codex local"
+    if key in {"codex-local", "codex-windows", "codex-win"}:
+        return "Codex Windows"
+    if key in {"codex-macos", "codex-mac"}:
+        return "Codex macOS"
+    if key == "codex-linux":
+        return "Codex Linux"
     if key == "codex-server":
         return "Codex server"
     return label
+
+
+def source_key(item):
+    return item.get("key") or item.get("source") or item.get("label") or "unknown"
 
 
 def merge_ledgers(ledgers):
@@ -100,8 +108,10 @@ def merge_ledgers(ledgers):
         if ledger.get("warning"):
             warnings.append(ledger["warning"])
 
+        ledger_sources = {source_key(source): source_label(source) for source in ledger.get("sources", [])}
+
         for source in ledger.get("sources", []):
-            key = source.get("key") or "unknown"
+            key = source_key(source)
             current = sources.setdefault(
                 key,
                 {
@@ -122,6 +132,7 @@ def merge_ledgers(ledgers):
                     "date": date,
                     "sources": [],
                     **empty_usage(),
+                    "bySource": {},
                     "byModel": {},
                     "byTask": {},
                     "pricingEstimated": True,
@@ -131,6 +142,24 @@ def merge_ledgers(ledgers):
             for source in day.get("sources", []):
                 if source not in current["sources"]:
                     current["sources"].append(source)
+            incoming_sources = day.get("bySource")
+            if isinstance(incoming_sources, list) and incoming_sources:
+                for source in incoming_sources:
+                    key = source_key(source)
+                    source_usage = current["bySource"].setdefault(
+                        key,
+                        {"key": key, "label": source_label(source), **empty_usage()},
+                    )
+                    add_usage(source_usage, source)
+            else:
+                day_sources = [source for source in day.get("sources", []) if source] or list(ledger_sources)
+                if len(day_sources) == 1:
+                    key = day_sources[0]
+                    source_usage = current["bySource"].setdefault(
+                        key,
+                        {"key": key, "label": ledger_sources.get(key, source_label({"key": key})), **empty_usage()},
+                    )
+                    add_usage(source_usage, day)
             merge_usage_groups(current["byModel"], day.get("byModel"), "model")
             merge_usage_groups(current["byTask"], day.get("byTask"), "label")
 
@@ -149,9 +178,10 @@ def merge_ledgers(ledgers):
     day_list = []
     for day in sorted(days.values(), key=lambda item: item["date"], reverse=True):
         day["estimatedCostUsd"] = rounded_cost(day["estimatedCostUsd"])
+        day["bySource"] = sorted(day["bySource"].values(), key=lambda item: item["totalTokens"], reverse=True)
         day["byModel"] = sorted(day["byModel"].values(), key=lambda item: item["totalTokens"], reverse=True)
         day["byTask"] = sorted(day["byTask"].values(), key=lambda item: item["totalTokens"], reverse=True)
-        for group in [*day["byModel"], *day["byTask"]]:
+        for group in [*day["bySource"], *day["byModel"], *day["byTask"]]:
             group["estimatedCostUsd"] = rounded_cost(group["estimatedCostUsd"])
         day_list.append(day)
 

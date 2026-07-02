@@ -590,32 +590,80 @@ function buildSessionBreakdown(selectedDays) {
 }
 
 function sourceDisplayName(source) {
-  const key = source.key || source.source || "";
+  const key = String(source.key || source.source || "").toLowerCase();
   if (key === "openclaw") return "OpenClaw";
-  if (key === "codex-local") return "Codex local";
+  if (key === "codex-local" || key === "codex-windows" || key === "codex-win") return "Codex Windows";
+  if (key === "codex-macos" || key === "codex-mac") return "Codex macOS";
+  if (key === "codex-linux") return "Codex Linux";
   if (key === "codex-server") return "Codex server";
-  return source.label || key || "Source";
+  return source.label || source.key || key || "Source";
 }
 
 function sourceTone(source) {
   const key = String(source.key || source.source || "").toLowerCase();
   if (key.includes("server")) return "green";
-  if (key.includes("local")) return "purple";
+  if (key.includes("local") || key.includes("windows") || key.includes("mac")) return "purple";
   if (key.includes("openclaw")) return "orange";
   return "blue";
 }
 
-function buildSourceBreakdown() {
-  const ledger = getTokenLedgerData();
-  const sources = Array.isArray(ledger.sources) ? ledger.sources : [];
-  return sources.map((source) => ({
-    key: source.key || source.source || source.label || "source",
-    label: sourceDisplayName(source),
+function usageFromSource(source) {
+  return {
     total: Number(source.totalTokens || source.total || 0),
     cost: Number(source.estimatedCostUsd || source.cost || 0),
     runs: Number(source.runs || 0),
-    tone: sourceTone(source),
-  }));
+  };
+}
+
+function addSourceUsage(map, source, usage) {
+  const key = source.key || source.source || source.label || "source";
+  const current = map.get(key) || {
+    key,
+    label: sourceDisplayName({ ...source, key }),
+    total: 0,
+    cost: 0,
+    runs: 0,
+    tone: sourceTone({ ...source, key }),
+  };
+  current.total += Number(usage.total || 0);
+  current.cost += Number(usage.cost || 0);
+  current.runs += Number(usage.runs || 0);
+  map.set(key, current);
+}
+
+function buildSourceBreakdown(selectedDays = []) {
+  const bySource = new Map();
+
+  selectedDays.forEach((day) => {
+    const detailedSources = Array.isArray(day.bySource) ? day.bySource : [];
+    if (detailedSources.length) {
+      detailedSources.forEach((source) => addSourceUsage(bySource, source, usageFromSource(source)));
+      return;
+    }
+
+    const sourceKeys = Array.isArray(day.sources) ? day.sources.filter(Boolean) : [];
+    if (sourceKeys.length === 1) {
+      addSourceUsage(bySource, { key: sourceKeys[0] }, day);
+    }
+  });
+
+  if (bySource.size) {
+    return [...bySource.values()]
+      .filter((source) => source.total > 0 || source.runs > 0 || source.cost > 0)
+      .sort((a, b) => b.total - a.total);
+  }
+
+  const ledger = getTokenLedgerData();
+  const sources = Array.isArray(ledger.sources) ? ledger.sources : [];
+  return sources
+    .map((source) => ({
+      key: source.key || source.source || source.label || "source",
+      label: sourceDisplayName(source),
+      ...usageFromSource(source),
+      tone: sourceTone(source),
+    }))
+    .filter((source) => source.total > 0 || source.runs > 0 || source.cost > 0)
+    .sort((a, b) => b.total - a.total);
 }
 
 function getTokenLedgerData() {
@@ -660,7 +708,7 @@ function getOpenclawTokenUsage() {
     ranges,
     models: buildModelBreakdown(active.selectedDays || []),
     sessions: buildSessionBreakdown(active.selectedDays || []).slice(0, 8),
-    sources: buildSourceBreakdown(),
+    sources: buildSourceBreakdown(active.selectedDays || []),
     daily: chartDays.map((day) => ({
       date: day.date,
       label: formatDateLabel(day.date),

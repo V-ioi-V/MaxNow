@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import platform
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -37,6 +38,28 @@ except ZoneInfoNotFoundError:
 
 def now_text():
     return datetime.now(TZ).strftime("%Y-%m-%d %H:%M")
+
+
+def default_source_key():
+    system = platform.system().lower()
+    if system == "windows":
+        return "codex-windows"
+    if system == "darwin":
+        return "codex-macos"
+    if system == "linux":
+        return "codex-linux"
+    return "codex-local"
+
+
+def default_source_label():
+    key = default_source_key()
+    if key == "codex-windows":
+        return "Codex Windows"
+    if key == "codex-macos":
+        return "Codex macOS"
+    if key == "codex-linux":
+        return "Codex Linux"
+    return "Codex local"
 
 
 def parse_ts(value):
@@ -340,8 +363,8 @@ def write_output(data, output_path=None):
 def parse_args():
     parser = argparse.ArgumentParser(description="Sync Codex usage into MaxNow token ledger data.")
     parser.add_argument("--state-dir", default=os.environ.get("CODEX_STATE_DIR", str(DEFAULT_STATE_DIR)))
-    parser.add_argument("--source-key", default=os.environ.get("MAXNOW_CODEX_SOURCE_KEY", "codex-local"))
-    parser.add_argument("--source-label", default=os.environ.get("MAXNOW_CODEX_SOURCE_LABEL", "Codex local"))
+    parser.add_argument("--source-key", default=os.environ.get("MAXNOW_CODEX_SOURCE_KEY", default_source_key()))
+    parser.add_argument("--source-label", default=os.environ.get("MAXNOW_CODEX_SOURCE_LABEL", default_source_label()))
     parser.add_argument("--since-days", type=int, default=3650)
     parser.add_argument("--output", default=str(ROOT / OUTPUT_REL), help="Output JSON path.")
     parser.add_argument("--missing-ok", action="store_true", default=os.environ.get("MAXNOW_CODEX_MISSING_OK") == "1")
