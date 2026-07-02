@@ -405,7 +405,7 @@ python3 scripts/check.py
 0 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-ai-last30.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow ai-last30 sync start"; python3 scripts/update_data.py ai-last30; echo "[$(date -Is)] maxnow ai-last30 sync ok"' >> /var/www/maxnow-dashboard/logs/ai-last30.log 2>&1
 ```
 
-该任务每天服务器本地时间 00:00 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。脚本只使用免费公开源，本身不调用模型、不消耗 token。
+该任务每天服务器本地时间 00:00 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。脚本只使用免费公开源，本身不调用模型、不消耗 token。Last-30 左列采用“当天优先、最新回退”：当天有高相关信号时显示“今日 AI 信号”；当天暂无条目时显示“最新 AI 信号”，从最近 7 天内选择最新高相关信号，避免 00:00 刷新后空白。
 
 刷新 MaxNow 版本号和最近更新模块：
 

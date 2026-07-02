@@ -413,9 +413,29 @@ def group_summary(items, label):
     return f"本次从 {', '.join(sources[:4])} 捕捉到 {len(items)} 条高相关 AI 信号。"
 
 
+def latest_signal_group(signals, today):
+    exact_today = [item for item in signals if item.published_at == today.isoformat()]
+    if exact_today:
+        return {
+            "date": today.isoformat(),
+            "title": "今日 AI 信号",
+            "summary": group_summary(select_diverse(exact_today, 5), "今日 AI 信号"),
+            "items": select_diverse(exact_today, 5),
+        }
+
+    recent = select_diverse([item for item in signals if within_days(item, 7)], 5)
+    latest_date = recent[0].published_at if recent else today.isoformat()
+    return {
+        "date": latest_date,
+        "title": "最新 AI 信号",
+        "summary": group_summary(recent, "最新 AI 信号"),
+        "items": recent,
+    }
+
+
 def update_last30(signals, failures):
     today = now_local().date()
-    today_items = select_diverse([item for item in signals if item.published_at == today.isoformat()], 5)
+    latest_group = latest_signal_group(signals, today)
     week_items = select_diverse([item for item in signals if within_days(item, 7)], 7)
     month_items = [item for item in signals if within_days(item, 30)][:12]
     mainlines = build_mainlines(month_items)
@@ -433,10 +453,10 @@ def update_last30(signals, failures):
         "updatedAt": now_local().strftime("%Y-%m-%d %H:%M"),
         "sourceSummary": "免费 AI 外部信号滚动记忆",
         "today": {
-            "date": today.isoformat(),
-            "title": "今日 AI 信号",
-            "summary": group_summary(today_items, "今日 AI 信号"),
-            "items": [last30_item(item) for item in today_items],
+            "date": latest_group["date"],
+            "title": latest_group["title"],
+            "summary": latest_group["summary"],
+            "items": [last30_item(item) for item in latest_group["items"]],
         },
         "week": {
             "range": f"{(today - timedelta(days=6)).isoformat()}/{today.isoformat()}",
