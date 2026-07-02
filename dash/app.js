@@ -200,6 +200,11 @@ function setText(selector, value) {
   if (element) element.textContent = value ?? "";
 }
 
+function setTitle(selector, value) {
+  const element = qs(selector);
+  if (element) element.title = value ?? "";
+}
+
 function clearAndFill(container, builder, items) {
   if (!container) return;
   container.replaceChildren();
@@ -1132,7 +1137,13 @@ function renderHome() {
   setText("#today-energy", `${copy.energy} ${today.energy || "--"}`);
   setText("#today-focus", `${copy.focus} ${today.focus || "--"}`);
   setText("#today-updated", today.updatedAt ? `${copy.updatedAtShort} ${today.updatedAt}` : "\u5f85\u786e\u8ba4");
-  setText("#operator-status", `OpenClaw ${dashboardData.automation?.status || copy.waiting}`);
+  const automation = dashboardData.automation || {};
+  const automationStatus = automation.status || copy.waiting;
+  const automationTitle = automation.summary
+    ? `系统自动化：${automation.summary}`
+    : "系统自动化状态：nginx、证书、部署、cron、失败日志和资源快照";
+  setText("#operator-status", `系统自动化 ${automationStatus}`);
+  setTitle("#operator-status", automationTitle);
   setText("#feed-source", dashboardData.feedSource || "OpenClaw");
   setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
   setText("#ai-news-source", aiNewsData.sourceSummary || "OpenClaw AI Daily");
@@ -1145,8 +1156,9 @@ function renderHome() {
   setText("#metric-actions-note", `${actions.length} ${copy.taskCount}`);
   setText("#metric-token-total", formatToken(token7d.total));
   setText("#metric-token-note", `${copy.day1} ${formatToken(token1d.total)}`);
-  setText("#metric-automation", dashboardData.automation?.status || "--");
-  setText("#metric-automation-note", dashboardData.automation?.lastRun || copy.sync);
+  setText("#metric-automation", automationStatus || "--");
+  setText("#metric-automation-note", automation.lastRun || copy.sync);
+  setTitle(".metric-data", automationTitle);
   setText("#mini-token-1d", formatToken(token1d.total));
   setText("#mini-token-7d", formatToken(token7d.total));
   setText("#mini-token-all", formatToken(tokenAll.total));
