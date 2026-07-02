@@ -403,6 +403,14 @@ changes: Home “当前主线”模块在桌面端改为标题和内容同一行
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=80 200；本地浏览器测量桌面 #focus 高度约 101px，页面无横向溢出
 ```
 
+2026-07-02 已修正 Home hover 主题色优先级：
+
+```text
+deployed commit: a72cc8b Merge home hover theme fix
+changes: Home 指标卡 hover 不再被 status-strip 通用规则覆盖；待推进 / Token / 系统自动化分别使用橙色 / 紫色 / 绿色；天气卡按天气语义色 hover，时间卡使用橙色；Dash 缓存版本提升到 styles.css?v=81
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=81 200；本地浏览器抽样确认天气、时间、待推进、Token、系统自动化、wiki、豆奶、近期 Token 均使用对应主题色 hover
+```
+
 刷新 Home 天气卡：
 
 ```bash
