@@ -504,25 +504,27 @@ def failure_log_state():
             "note": f"expected logs under {LOG_DIR}",
         }, True
 
-    latest = max(existing, key=lambda path: path.stat().st_mtime)
-    lines = latest.read_text(encoding="utf-8", errors="replace").splitlines()
-    recent_lines = lines[-160:]
-    for index in range(len(recent_lines) - 1, -1, -1):
-        if "maxnow dashboard sync start" in recent_lines[index]:
-            recent_lines = recent_lines[index:]
-            break
     failure_markers = ("[fail]", "error", "traceback", "failed")
     failure_lines = []
-    for line in recent_lines:
-        lowered = line.lower()
-        if line.startswith("[ok]"):
-            continue
-        # Ignore this script's own summary line; otherwise "2 checks failed"
-        # keeps re-triggering the failure-log check after the original cause is gone.
-        if "[ok] status " in line or ("status " in lowered and "checks failed" in lowered) or ("status " in lowered and "checks unknown" in lowered):
-            continue
-        if any(marker in lowered for marker in failure_markers):
-            failure_lines.append(line)
+    latest = max(existing, key=lambda path: path.stat().st_mtime)
+    for path in existing:
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        recent_lines = lines[-160:]
+        for index in range(len(recent_lines) - 1, -1, -1):
+            if "maxnow dashboard sync start" in recent_lines[index]:
+                recent_lines = recent_lines[index:]
+                break
+        for line in reversed(recent_lines):
+            lowered = line.lower()
+            # Ignore this script's own summary line; otherwise "2 checks failed"
+            # keeps re-triggering the failure-log check after the original cause is gone.
+            if "[ok] status " in line or ("status " in lowered and "checks failed" in lowered) or ("status " in lowered and "checks unknown" in lowered):
+                continue
+            if line.startswith("[ok]"):
+                break
+            if any(marker in lowered for marker in failure_markers):
+                failure_lines.append(f"{path.name}: {line}")
+                break
     if failure_lines:
         return {
             "key": "failure-log",

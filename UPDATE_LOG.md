@@ -18,6 +18,7 @@
 - 部署状态检查忽略 Python 运行时生成的 `__pycache__` / `.pyc` 文件，避免只读诊断命令留下缓存后触发异常。
 - `scripts/update_data.py runtime` 将 system-status 调整到运行态同步最后执行，避免先检查、后改写 project-meta / ricky 等数据造成短暂误报。
 - system-status 摘要现在会输出失败项名称，例如 `checks failed: deploy`，避免只有失败数量但不可定位。
+- 失败日志检查改为按每个日志的最新 ok / fail 结果判断；如果天气等同步曾经失败但后续已经成功，不再持续显示 `OpenClaw 异常`。
 
 原因：
 
