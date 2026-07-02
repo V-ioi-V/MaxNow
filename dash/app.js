@@ -686,20 +686,12 @@ function getOpenclawTokenUsage() {
   const ranges = rangeDefs.map((range) => {
     const selected = Number.isFinite(range.count) ? days.slice(0, range.count) : days;
     const summary = sumUsage(selected);
-    const sourceLabel = openclawUsageData.pricingBasis === "openrouter-equivalent" ? "OpenRouter 等价估算" : "估算";
     return {
       key: range.key,
       label: range.label,
       ...summary,
-      note: `费用为 ${sourceLabel}，不是实际账单。`,
       selectedDays: selected,
     };
-  });
-  ranges.forEach((range) => {
-    const hasCodex = (range.selectedDays || []).some((day) => (day.sources || []).some((source) => String(source).startsWith("codex")));
-    range.note = hasCodex
-      ? `费用为估算值；缓存命中率按可缓存输入计算。`
-      : range.note;
   });
 
   const active = ranges.find((range) => range.key === activeTokenRange) || ranges[1] || ranges[0];
@@ -1221,7 +1213,6 @@ function renderTokens() {
   setText("#token-cache", formatToken(range.cacheRead));
   setText("#token-cache-hit", formatPercent(range.cacheHitRate));
   setText("#token-cost", formatCost(range.cost));
-  setText("#token-note", range.note || copy.noNote);
 
   clearAndFill(qs("#token-sources"), createSourceItem, usage.sources || []);
   clearAndFill(qs("#token-models"), createModelItem, usage.models || []);
