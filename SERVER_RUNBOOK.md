@@ -429,6 +429,19 @@ dash app version: app.js?v=71
 verification: git pull --ff-only origin main ok；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=83 200；https://dash.maxnow.cn/app.js?v=71 200；https://blog.maxnow.cn 200
 ```
 
+2026-07-02 已部署生活 tab 和吃啥随机选择器：
+
+```text
+deployed commit: 7a8a26f Keep existing life foods when wiki source is unavailable
+feature commits: ff52586 Add life food picker；7a8a26f Keep existing life foods when wiki source is unavailable
+changes: Dash 左侧导航新增“生活”tab；新增“吃啥”随机选择器、personal-wiki 菜品同步脚本和 dash/data/life-foods.*；吃啥结果区使用真实纵向滚动动画，数量为多个时上下叠放独立滚轮；脚本在服务器读不到 personal-wiki 源文件时保留现有 life-foods 缓存，避免 runtime 失败。
+dash styles version: styles.css?v=86
+dash app version: app.js?v=75
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260702-231615-before-life-food-picker
+runtime data stash before deploy: before-life-food-picker-runtime-data
+verification: git pull --ff-only origin main ok；python3 scripts/update_data.py runtime ok（life-foods 使用现有缓存，gh api 404 已降级为 warn）；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=86 200；https://dash.maxnow.cn/app.js?v=75 200；https://dash.maxnow.cn/data/life-foods.json 200；https://blog.maxnow.cn 200
+```
+
 刷新 Home 天气卡：
 
 ```bash
