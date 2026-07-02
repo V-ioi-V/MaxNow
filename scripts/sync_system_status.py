@@ -517,7 +517,7 @@ def failure_log_state():
         lowered = line.lower()
         # Ignore this script's own summary line; otherwise "2 checks failed"
         # keeps re-triggering the failure-log check after the original cause is gone.
-        if line.startswith("[ok] status "):
+        if "[ok] status " in line or ("status " in lowered and "checks failed" in lowered) or ("status " in lowered and "checks unknown" in lowered):
             continue
         if any(marker in lowered for marker in failure_markers):
             failure_lines.append(line)
