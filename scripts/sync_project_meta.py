@@ -14,12 +14,18 @@ GLOBAL_NAME = "MAXNOW_PROJECT_META_DATA"
 GENERATED_DATA_PATHS = {
     "dash/data/dashboard.json",
     "dash/data/dashboard.js",
+    "dash/data/ai-news.json",
+    "dash/data/ai-news.js",
+    "dash/data/last-30.json",
+    "dash/data/last-30.js",
     "dash/data/wiki-todos.json",
     "dash/data/wiki-todos.js",
     "dash/data/openclaw-usage.json",
     "dash/data/openclaw-usage.js",
     "dash/data/codex-usage.json",
     "dash/data/codex-usage.js",
+    "dash/data/codex-server-usage.json",
+    "dash/data/codex-server-usage.js",
     "dash/data/token-usage.json",
     "dash/data/token-usage.js",
     "dash/data/dounai_checkin.json",
@@ -27,6 +33,8 @@ GENERATED_DATA_PATHS = {
     "dash/data/project-meta.js",
     "dash/data/ricky.json",
     "dash/data/ricky.js",
+    "dash/data/life-foods.json",
+    "dash/data/life-foods.js",
 }
 
 

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-05 23:07",
-  "version": "1.0.0.06",
-  "versionLabel": "v1.0.0.06",
-  "branch": "main",
-  "commit": "72209dc",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 72209dc · 干净",
+  "updatedAt": "2026-07-05 23:17",
+  "version": "1.0.0.07",
+  "versionLabel": "v1.0.0.07",
+  "branch": "bugfix/project-meta-runtime-data-dirty",
+  "commit": "e088bef",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/project-meta-runtime-data-dirty · commit e088bef · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-05",
+      "title": "修正版本卡运行数据误报",
+      "summary": "`scripts/sync_project_meta.py` 将 AI 信号、Last-30、服务器 Codex 用量和 Life foods 等自动生成数据纳入运行数据白名单。"
+    },
     {
       "date": "2026-07-05",
       "title": "优化 Token 数值单位进位",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-05",
       "title": "将本机 Codex 上报迁到专用 main clone",
       "summary": "新增本机专用上报目录 `D:\\Personal\\MaxNow-token-report`，该目录保持在 `main`，只供 `MaxNow-Local-Codex-Usage-Report` 计划任务运行。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "建立 MaxNow 版本提升规则",
-      "summary": "将 `VERSION` 从 `1.0.0.00` 提升到 `1.0.0.01`，覆盖最近的云服务页重构和豆奶真实流量日结。"
     }
   ]
 };
