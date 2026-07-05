@@ -524,6 +524,19 @@ curl http://metadata.tencentyun.com/latest/meta-data/payment/create-time
 
 证书到期由脚本直接检查 `https://dash.maxnow.cn` 的 TLS 证书。最近拉取时间来自 `.git/FETCH_HEAD` 的修改时间。
 
+## 服务器资源清理记录
+
+2026-07-05 已处理一次磁盘和内存占用排查：
+
+- 根盘清理前约 `25G / 40G`，使用率约 66%；清理后约 `21G / 40G`，使用率约 56%。
+- `lighthouse-chromium.service` 曾以 `Restart=always` 每 3 秒失败重启，24 小时内产生大量 journal。失败原因是该服务使用 `/root/.openclaw/browser-existing-session` 作为 Chromium profile，但已有 OpenClaw Chromium 会话持有 `SingletonLock`。
+- 已执行 `sudo systemctl stop lighthouse-chromium.service` 和 `sudo systemctl disable lighthouse-chromium.service`，复查状态为 `disabled` / `inactive`。
+- 已用 `sudo journalctl --vacuum-size=300M` 将 systemd journal 从约 2.8G 降到约 264M。
+- 已清理 apt cache、npm cache、pnpm metadata cache，并删除 Playwright 中未被当前进程使用的 `ffmpeg-1011` 和 `chromium_headless_shell-1208`。
+- 已保留 `/root/.cache/ms-playwright/chromium-1208`，因为当前 OpenClaw Chromium 进程仍从该目录运行；不要在未安排 OpenClaw 浏览器维护窗口时删除它。
+
+后续如果确实需要恢复 `lighthouse-chromium.service`，应先确认 9222 端口和 Chromium profile 归属，只保留一个浏览器 owner，或给该 service 配置独立 `--user-data-dir`，避免再次与 OpenClaw 浏览器会话争用同一个 profile。
+
 2026-06-18 已用 `ubuntu` 用户 crontab 接入 dashboard 数据同步，标记块为 `MAXNOW-DASHBOARD-SYNC`：
 
 ```cron
