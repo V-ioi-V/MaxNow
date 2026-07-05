@@ -17,6 +17,13 @@
 - 清理不再使用的 `.cloud-section-head` 样式。
 - 将 Dash 样式缓存版本提升到 `styles.css?v=89`，脚本缓存版本提升到 `app.js?v=81`。
 
+### 清理服务器资源和 Chromium 重启风暴
+
+- 停止并禁用失败循环的 `lighthouse-chromium.service`，该服务每 3 秒尝试启动 Chromium 但因 `/root/.openclaw/browser-existing-session/SingletonLock` 已被现有 OpenClaw 浏览器会话占用而退出。
+- 将 systemd journal 从约 2.8G vacuum 到约 264M，根盘使用率从约 66% 降到约 56%。
+- 清理 apt、npm、pnpm 和部分 Playwright 缓存；保留正在运行的 `/root/.cache/ms-playwright/chromium-1208`，避免打断现有 OpenClaw Chromium 会话。
+- 复查后 `lighthouse-chromium.service` 状态为 `disabled / inactive`，最近日志不再继续刷失败重启。
+
 ### 精简云服务系统与托管细节
 
 - 云服务“系统与托管”模块移除根目录、nginx 配置和托管检查三条低频实现细节。

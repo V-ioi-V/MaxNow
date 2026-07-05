@@ -209,6 +209,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Home 页面已接入“今日 / 本周 / 近 30 天大事”的展示模块，但还需要 Owner 视觉确认和必要微调。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天实际使用流量、日均可用、签到流量和签到时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本由 9:00 cron 管理，真实流量日结由 00:05 traffic-only cron 管理。
 - 2026-07-05 已接入豆奶真实流量使用抓取和 00:05 日结：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；`--traffic-only --exclude-today` 模式会把当天从 direct daily 和 `traffic_usage_history` 中剔除，避免 00:05 的当天碎片污染近 30 天实际使用口径。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。
+- 2026-07-05 已处理服务器资源占用：`lighthouse-chromium.service` 因和现有 OpenClaw Chromium 会话争用同一个 profile 而失败重启，现已停用并禁用；systemd journal 已限制到约 300M，低风险缓存已清理。后续不要直接删除 `/root/.cache/ms-playwright/chromium-1208`，除非安排 OpenClaw 浏览器维护窗口。
 - 2026-06-19 已修复豆奶签到数据路径分叉：当天签到成功写入 `/root/MaxNow`，但线上部署目录仍停在 2026-06-18；现在 root 数据生成脚本会双写旧工作区和 `/var/www/maxnow-dashboard`。
 - wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，通过 `python3 scripts/update_data.py runtime` 刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
 - Last-30 AI 外部信号服务器自动同步已落地：`ubuntu` 用户 crontab 每天 00:00 运行一次 `MAXNOW-AI-LAST30-SYNC`，通过 `python3 scripts/update_data.py ai-last30` 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
