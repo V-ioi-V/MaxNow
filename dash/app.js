@@ -457,6 +457,14 @@ function createSystemItem(item) {
   return article;
 }
 
+function createCloudSystemItem(item) {
+  const displayItem = { ...item };
+  if (String(displayItem.key || displayItem.name || "").toLowerCase() === "nginx") {
+    displayItem.note = "";
+  }
+  return createSystemItem(displayItem);
+}
+
 function getSystemPercent(item) {
   const text = String(item.value || "").trim();
   if (!text.endsWith("%")) return null;
@@ -1492,28 +1500,10 @@ function renderHome() {
       value: "dash / blog",
       note: "dash.maxnow.cn / blog.maxnow.cn",
     },
-    {
-      key: "root",
-      name: "根目录",
-      value: "/var/www/maxnow-dashboard",
-      note: "nginx static root",
-    },
-    {
-      key: "nginx-config",
-      name: "nginx 配置",
-      value: "maxnow-dashboard",
-      note: "/etc/nginx/sites-available/maxnow-dashboard",
-    },
-    {
-      key: "hosting-check",
-      name: "托管检查",
-      value: "nginx / HTTPS / certificate",
-      note: "system status collector",
-    },
     ...systemItems,
   ];
   clearAndFill(qs("#system-list"), createSystemItem, systemItems);
-  clearAndFill(qs("#cloud-system-list"), createSystemItem, cloudSystemItems);
+  clearAndFill(qs("#cloud-system-list"), createCloudSystemItem, cloudSystemItems);
   setText("#project-version", projectMetaData.versionLabel || "v--");
   setText("#project-version-note", projectMetaData.deployNote || projectMetaData.updatedAt || copy.sync);
   clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
