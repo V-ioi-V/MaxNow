@@ -585,8 +585,8 @@
             </article>
             <article>
               <span>Dounai</span>
-              <strong>09:00</strong>
-              <small>root / OpenClaw check-in</small>
+              <strong>09:00 / 00:05</strong>
+              <small>check-in + traffic close</small>
             </article>
           </section>
 
@@ -640,14 +640,15 @@
             <article class="panel cloud-card" data-tone="cyan">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 09:00</p>
+                  <p class="eyebrow">Daily 09:00 / 00:05</p>
                   <h2>&#35910;&#22902;&#31614;&#21040;</h2>
                 </div>
                 <span class="status-pill">root</span>
               </header>
-              <p class="item-copy">root / OpenClaw &#20391;&#33050;&#26412;&#32500;&#25252;&#35910;&#22902;&#31614;&#21040;&#21644;&#36134;&#21495;&#20313;&#37327;&#24555;&#29031;&#65292;&#32467;&#26524;&#21452;&#20889;&#21040; OpenClaw &#24037;&#20316;&#21306;&#21644;&#32447;&#19978;&#37096;&#32626;&#30446;&#24405;&#12290;</p>
+              <p class="item-copy">root / OpenClaw &#20391;&#33050;&#26412;&#32500;&#25252;&#35910;&#22902;&#31614;&#21040;&#12289;&#36134;&#21495;&#20313;&#37327;&#24555;&#29031;&#21644;&#26152;&#26085;&#30495;&#23454;&#27969;&#37327;&#26085;&#32467;&#65292;&#32467;&#26524;&#21452;&#20889;&#21040; OpenClaw &#24037;&#20316;&#21306;&#21644;&#32447;&#19978;&#37096;&#32626;&#30446;&#24405;&#12290;</p>
               <dl class="cloud-meta">
-                <div><dt>&#33050;&#26412;</dt><dd>/root/.openclaw/daily_checkin.sh</dd></div>
+                <div><dt>&#31614;&#21040;</dt><dd>09:00 /root/.openclaw/dounai_cron.sh</dd></div>
+                <div><dt>&#26085;&#32467;</dt><dd>00:05 gen_checkin_data.py --traffic-only --exclude-today</dd></div>
                 <div><dt>&#29983;&#25104;</dt><dd>/root/.openclaw/gen_checkin_data.py</dd></div>
                 <div><dt>&#20889;&#20837;</dt><dd>/var/www/maxnow-dashboard/dash/data/dounai_checkin.json</dd></div>
               </dl>
@@ -796,6 +797,17 @@
             <article class="panel dounai-chart-card">
               <header class="panel-head">
                 <div>
+                  <p class="eyebrow">Usage</p>
+                  <h2>近 30 天实际使用流量</h2>
+                </div>
+                <span class="status-pill">GB/d</span>
+              </header>
+              <div class="line-chart" id="dounai-usage-chart"></div>
+            </article>
+
+            <article class="panel dounai-chart-card">
+              <header class="panel-head">
+                <div>
                   <p class="eyebrow">Budget</p>
                   <h2>近 30 天日均可用流量</h2>
                 </div>
@@ -847,6 +859,6 @@
     <script src="./data/ricky.js?v=1"></script>
     <script src="./data/life-foods.js?v=1"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=76"></script>
+    <script src="./app.js?v=77"></script>
   </body>
 </html>

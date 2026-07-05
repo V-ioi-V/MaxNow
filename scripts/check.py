@@ -139,12 +139,16 @@ def check_dounai_checkin():
             raise ValueError("dounai-checkin: account_history.daily_available_mb cannot be negative")
 
     traffic_usage = data.get("traffic_usage")
+    traffic_excludes_today = bool(traffic_usage.get("excluded_today")) if traffic_usage else False
+    today_key = datetime.now().astimezone().strftime("%Y-%m-%d")
     if traffic_usage:
         daily_items = traffic_usage.get("daily", [])
         if not isinstance(daily_items, list):
             raise ValueError("dounai-checkin: traffic_usage.daily must be a list")
         for item in daily_items:
             datetime.strptime(item["date"], "%Y-%m-%d")
+            if traffic_excludes_today and item["date"] == today_key:
+                raise ValueError("dounai-checkin: traffic_usage.daily must exclude today when excluded_today is true")
             used = float(item["used_mb"])
             if used < 0:
                 raise ValueError("dounai-checkin: traffic_usage.daily.used_mb cannot be negative")
@@ -164,6 +168,8 @@ def check_dounai_checkin():
         raise ValueError("dounai-checkin: traffic_usage_history must be a list")
     for item in traffic_history:
         datetime.strptime(item["date"], "%Y-%m-%d")
+        if traffic_excludes_today and item["date"] == today_key:
+            raise ValueError("dounai-checkin: traffic_usage_history must exclude today when traffic_usage.excluded_today is true")
         used = float(item["used_mb"])
         if used < 0:
             raise ValueError("dounai-checkin: traffic_usage_history.used_mb cannot be negative")

@@ -28,6 +28,7 @@ Read this file before making code changes in this repository.
 - Add an `UPDATE_LOG.md` entry for meaningful changes to page behavior, data flow, server state, deployment, automation, or repository rules.
 - Update `CONTEXT.md` when the change affects agent handoff context, current gaps, file responsibilities, automation boundaries, server state, or recommended next steps.
 - Update `SERVER_RUNBOOK.md` when the change affects SSH, nginx, GitHub CLI, deployment, cron/systemd timers, server paths, auth state, or operational commands.
+- When adding, removing, or changing server cron/systemd timers that are part of MaxNow operations, update the Cloud service tab copy in `dash/index.html` in the same branch so the displayed automation inventory does not drift from the server.
 - Do not leave completed work only in chat. If the owner asks to "记个待办", "优化待办", "做完了", "服务器搞好了", or similar, reflect that in the relevant repository documents.
 
 ## Project Shape
@@ -122,6 +123,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - `dash/data/token-usage.json` owns the combined Token page ledger generated from OpenClaw and Codex source ledgers.
 - `dash/data/project-meta.json` owns the displayed MaxNow version, deploy note, and recent update summaries generated from `VERSION`, Git state, and `UPDATE_LOG.md`.
 - `dash/data/dounai_checkin.json` owns Dounai check-in rewards, account balance snapshots, direct traffic usage pulled from `dounai.pro/user/trafficlog`, and accumulated traffic usage history. Direct traffic usage is read-only and should be collected by the server-side OpenClaw/root Dounai automation; do not expose Dounai credentials or subscription links in frontend code.
+- The Dounai traffic closeout cron should run traffic-only at 00:05 and exclude the current date from history, so actual-usage charts use completed days rather than a partial day.
 - `dash/data/ricky.json` owns the read-only "我和 Ricky" map, places, trip records, notes, and optional photo/source links.
 - `dash/data/life-foods.json` owns the read-only Life page food picker candidates generated from personal-wiki `wiki/life/food-picker.md`; the frontend can temporarily select/unselect candidates and randomize locally, but must not write back to personal-wiki.
 - Do not update `dash/data/*.json` or `dash/data/*.js` when the owner asks for MaxNow project todos, feature planning, roadmap updates, or "what should MaxNow build next"; update `ROADMAP.md`, `IDEAS.md`, `CONTEXT.md`, or `UPDATE_LOG.md` instead.

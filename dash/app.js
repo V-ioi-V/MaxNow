@@ -1196,6 +1196,27 @@ function getAccountHistoryRecords(limit = 30) {
   ];
 }
 
+function getLocalDateKey() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getTrafficUsageRecords(limit = 30) {
+  const today = getLocalDateKey();
+  const history = Array.isArray(checkinData.traffic_usage_history) ? checkinData.traffic_usage_history : [];
+  return history
+    .filter((record) => record?.date && record.date !== today && Number.isFinite(Number(record.used_mb)))
+    .slice(0, limit)
+    .reverse()
+    .map((record) => ({
+      ...record,
+      used_gb: Number(record.used_mb) / 1024,
+    }));
+}
+
 function getNiceStep(value) {
   const safeValue = Math.max(Number(value) || 0, Number.EPSILON);
   const magnitude = 10 ** Math.floor(Math.log10(safeValue));
@@ -1330,6 +1351,7 @@ function renderDounai() {
   const account = checkinData.account || {};
   const records = getCheckinRecords(30);
   const accountHistory = getAccountHistoryRecords(30);
+  const trafficUsageRecords = getTrafficUsageRecords(30);
   const remainingFlow = Number.isFinite(Number(account.remaining_flow_mb))
     ? Number(account.remaining_flow_mb)
     : parseTrafficLabel(account.remaining_flow_label || account.remaining_flow);
@@ -1353,6 +1375,20 @@ function renderDounai() {
   setText("#dounai-remaining-flow", Number.isFinite(remainingFlow) ? formatTraffic(remainingFlow) : account.remaining_flow_label || "--");
   setText("#dounai-expiry", formatDateOnly(expiry));
   setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatDailyTraffic(dailyAvailable)}/d` : "--");
+
+  const usageChart = qs("#dounai-usage-chart");
+  if (usageChart) {
+    usageChart.innerHTML = createLineChart(trafficUsageRecords, {
+      key: "used_gb",
+      title: "近 30 天实际使用流量",
+      unit: "GB",
+      stroke: "#00a6c8",
+      width: getChartRenderWidth(usageChart),
+      formatter: (value) => `${value.toFixed(2)} GB`,
+      yFormatter: (value) => `${Math.round(value)}GB`,
+      integerYScale: true,
+    });
+  }
 
   const dailyBudgetChart = qs("#dounai-daily-budget-chart");
   if (dailyBudgetChart) {

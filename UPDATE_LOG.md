@@ -11,12 +11,20 @@
 
 ## 2026-07-05
 
+### 增加豆奶真实流量 00:05 日结和前端图表
+
+- 服务器 `/root/.openclaw/gen_checkin_data.py` 已备份到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-closeout`，并新增 `--traffic-only --exclude-today` 模式。
+- root crontab 已备份到 `/root/.openclaw/root-crontab-20260705-traffic-closeout.bak`，并新增 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT`：每天 00:05 只更新昨天及更早的真实流量使用量。
+- 00:05 日结会从 `traffic_usage.daily` 和 `traffic_usage_history` 中剔除当天，避免当天 00:05 的不完整值污染历史。
+- 豆奶详情页新增“近 30 天实际使用流量”图，放在“近 30 天日均可用流量”前面，并在前端排除当天。
+- 云服务 tab 已补充豆奶 09:00 签到和 00:05 traffic closeout 两个 root 定时任务；`AGENTS.md` 新增规则：以后调整服务器 cron/systemd 时必须同步更新云服务 tab。
+
 ### 接入豆奶真实流量使用抓取
 
 - 重新登录豆奶用户区后确认：`/user/trafficlog` 页面直接展示最近 7 天真实使用量，`/user/trafficlog?ajax=1` 返回近 12 小时节点活跃和节点流量占比数据。
 - 已在服务器备份 `/root/.openclaw/gen_checkin_data.py` 到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-usage`，并扩展该脚本读取流量日志。
 - 线上 `dash/data/dounai_checkin.json` 已写入 `traffic_usage` 和 `traffic_usage_history`；当前有 2026-06-29 到 2026-07-05 的 7 条 direct daily usage。
-- 后续每日豆奶自动化会把最近 7 天 direct usage 按日期合并进 `traffic_usage_history`，最多保留 60 天；等累积满 30 天后可在豆奶页展示近 30 天实际使用量。
+- 后续每日豆奶自动化会把最近 7 天 direct usage 按日期合并进 `traffic_usage_history`，最多保留 60 天；00:05 traffic-only 日结负责把口径稳定在昨天及更早的完整日期。
 - 这次没有新增前端入口，也没有增加账号写入、订阅重置、购买或手动录入；只是复用服务器登录态做只读抓取。
 
 ### 完成豆奶近 30 天真实流量使用调研

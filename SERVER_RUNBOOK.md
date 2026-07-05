@@ -567,7 +567,9 @@ git checkout -- dash/data/wiki-todos.json dash/data/wiki-todos.js dash/data/dash
 ```bash
 sudo crontab -l
 sudo tail -120 /root/.openclaw/checkin.log
+sudo tail -120 /root/.openclaw/traffic_closeout.log
 sudo python3 /root/.openclaw/gen_checkin_data.py
+sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 ```
 
 日常预期：
@@ -576,6 +578,7 @@ sudo python3 /root/.openclaw/gen_checkin_data.py
 - `gen_checkin_data.py` 从 weekly 数据生成最近 60 天的 `dounai_checkin.json`。
 - 同一份结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 - `gen_checkin_data.py` 还会抓取豆奶用户面板上的剩余流量和有效期，写入 `account` 字段，并维护最近 60 天 `account_history`；如果抓取失败，会尽量保留上一份 `account` 和 `account_history`，并标记 `stale` / `last_error`。
+- root crontab 里有两个豆奶任务：09:00 的 `MAXNOW-DOUNAL-CHECKIN` 负责签到、账号快照和完整生成；00:05 的 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT` 只运行 `gen_checkin_data.py --traffic-only --exclude-today`，专门更新昨天及更早的真实流量使用量。
 - 线上 `dash.maxnow.cn` 读取 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 
 2026-07-05 已做只读调研并接入直接流量使用抓取，确认当前数据边界：
@@ -585,7 +588,16 @@ sudo python3 /root/.openclaw/gen_checkin_data.py
 - 重新登录后确认豆奶用户区有 `流量日志`：`https://dounai.pro/user/trafficlog` 直接展示最近 7 天真实使用量。
 - `https://dounai.pro/user/trafficlog?ajax=1` 返回近 12 小时节点活跃和节点流量占比；这个窗口不是 7 天或 30 天总量。
 - 已备份 `/root/.openclaw/gen_checkin_data.py` 到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-usage`，并扩展脚本写入 `traffic_usage` 和 `traffic_usage_history`。
-- 当前线上 `traffic_usage_history` 已有 2026-06-29 到 2026-07-05 的 7 条 direct daily usage；每日 9 点豆奶自动化会继续合并近 7 天数据，最多保留 60 天。
+- 2026-07-05 已再次备份 `/root/.openclaw/gen_checkin_data.py` 到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-closeout`，新增 `--traffic-only --exclude-today` 模式。
+- 2026-07-05 已备份 root crontab 到 `/root/.openclaw/root-crontab-20260705-traffic-closeout.bak`，并新增 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT`：
+
+```cron
+# BEGIN MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT
+5 0 * * * cd /root/.openclaw && /usr/bin/flock -n /tmp/maxnow-dounai-traffic-closeout.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] dounai traffic closeout start"; python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today; chown ubuntu:www-data /var/www/maxnow-dashboard/dash/data/dounai_checkin.json; echo "[$(date -Is)] dounai traffic closeout ok"' >> /root/.openclaw/traffic_closeout.log 2>&1
+# END MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT
+```
+
+- 00:05 traffic closeout 会从 `traffic_usage.daily` 和 `traffic_usage_history` 中剔除当天，只保留昨天及更早日期；每日 9 点豆奶自动化仍可用于签到和账号快照。前端实际使用量图也会排除当天。
 - 账号余量差分口径只作为缺数据时的兜底估算说明；真实使用量展示优先使用 `traffic_usage_history`。
 
 验证今天是否进入线上页面：
