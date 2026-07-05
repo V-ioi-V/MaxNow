@@ -340,7 +340,7 @@ python scripts/check.py
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
 ```
 
-默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 1 小时静默运行一次。安装脚本会注册 hidden task，Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow\scripts\report_codex_usage_hidden.vbs"`；VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免自动运行时弹出瞬时命令行窗口。该任务要求本地仓库在 `main` 且无无关脏文件；它只提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main`。服务器合并前会保留现有 `openclaw-usage.*` 和 `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage`。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
+默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 1 小时静默运行一次。安装脚本会注册 hidden task。Owner Windows 机器上当前使用专用 clone `D:\Personal\MaxNow-token-report` 运行该任务，Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow-token-report\scripts\report_codex_usage_hidden.vbs"`；VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免自动运行时弹出瞬时命令行窗口。该任务要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main`。服务器合并前会保留现有 `openclaw-usage.*` 和 `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage`。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
 
 Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。服务器侧使用独立文件 `dash/data/codex-server-usage.*`，避免覆盖本机 `dash/data/codex-usage.*`。
 

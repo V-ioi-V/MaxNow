@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-05 20:22",
-  "version": "1.0.0.01",
-  "versionLabel": "v1.0.0.01",
-  "branch": "feature/version-bump-rules",
-  "commit": "9333204",
+  "updatedAt": "2026-07-05 20:57",
+  "version": "1.0.0.02",
+  "versionLabel": "v1.0.0.02",
+  "branch": "feature/local-token-dedicated-main",
+  "commit": "7e22bbd",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/version-bump-rules · commit 9333204 · 有未提交代码改动",
+  "deployNote": "feature/local-token-dedicated-main · commit 7e22bbd · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-05",
+      "title": "将本机 Codex 上报迁到专用 main clone",
+      "summary": "新增本机专用上报目录 `D:\\Personal\\MaxNow-token-report`，该目录保持在 `main`，只供 `MaxNow-Local-Codex-Usage-Report` 计划任务运行。"
+    },
     {
       "date": "2026-07-05",
       "title": "建立 MaxNow 版本提升规则",
@@ -28,11 +33,6 @@
       "date": "2026-07-05",
       "title": "清理服务器资源和 Chromium 重启风暴",
       "summary": "停止并禁用失败循环的 `lighthouse-chromium.service`，该服务每 3 秒尝试启动 Chromium 但因 `/root/.openclaw/browser-existing-session/SingletonLock` 已被现有 OpenClaw 浏览器会话占用而退出。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "精简云服务系统与托管细节",
-      "summary": "云服务“系统与托管”模块移除根目录、nginx 配置和托管检查三条低频实现细节。"
     }
   ]
 }
