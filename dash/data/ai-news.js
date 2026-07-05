@@ -1,5 +1,5 @@
 window.MAXNOW_AI_NEWS_DATA = {
-  "updatedAt": "2026-07-02 12:33",
+  "updatedAt": "2026-07-05 21:53",
   "sourceSummary": "免费 AI 外部信号",
   "items": [
     {
@@ -29,7 +29,7 @@ window.MAXNOW_AI_NEWS_DATA = {
   ],
   "notes": {
     "partialFailures": [
-      "fetch_gdelt: <urlopen error _ssl.c:990: The handshake operation timed out>",
+      "fetch_gdelt: HTTP Error 429: Too Many Requests",
       "fetch_arxiv: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1007)>"
     ],
     "policy": "失败源不会清空已有页面；下一次同步会继续尝试。"

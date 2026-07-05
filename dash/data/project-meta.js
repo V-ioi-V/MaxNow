@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-05 21:00",
-  "version": "1.0.0.03",
-  "versionLabel": "v1.0.0.03",
-  "branch": "bugfix/local-token-server-meta-stash",
-  "commit": "cab496c",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/local-token-server-meta-stash · commit cab496c · 有未提交代码改动",
+  "updatedAt": "2026-07-05 22:03",
+  "version": "1.0.0.04",
+  "versionLabel": "v1.0.0.04",
+  "branch": "main",
+  "commit": "49082d1",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 49082d1 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-07-05",
+      "title": "收紧 Last-30 外露信息口径",
+      "summary": "将 Last-30 左栏静态标签从 `Today` 改为 `Latest`，默认标题改为“最新信号”，避免最近 7 天回退数据被误读为当天信号。"
+    },
     {
       "date": "2026-07-05",
       "title": "将本机 Codex 上报迁到专用 main clone",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-05",
       "title": "移除云服务页定时任务分组标题",
       "summary": "移除云服务页“Cron Jobs / 定时任务”中段标题，让任务卡自然接在“系统与托管”卡后面，减少页面断层感。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "清理服务器资源和 Chromium 重启风暴",
-      "summary": "停止并禁用失败循环的 `lighthouse-chromium.service`，该服务每 3 秒尝试启动 Chromium 但因 `/root/.openclaw/browser-existing-session/SingletonLock` 已被现有 OpenClaw 浏览器会话占用而退出。"
     }
   ]
 };

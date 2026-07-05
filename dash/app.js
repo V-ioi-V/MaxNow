@@ -85,8 +85,8 @@ const copy = {
   focus: "\u4e3b\u7ebf",
   updatedAtShort: "\u66f4\u65b0",
   statusSnapshot: "\u72b6\u6001\u5feb\u7167",
-  todayEvents: "\u4eca\u65e5\u5927\u4e8b",
-  weekEvents: "\u672c\u5468\u5927\u4e8b",
+  todayEvents: "\u6700\u65b0\u4fe1\u53f7",
+  weekEvents: "\u672c\u5468\u89c2\u5bdf",
   last30Mainlines: "\u8fd1 30 \u5929\u4e3b\u7ebf",
   wikiTodoReady: "\u5df2\u8bfb\u53d6",
   wikiTodoFailed: "\u8bfb\u53d6\u5931\u8d25",
@@ -311,13 +311,18 @@ function createLast30Item(item) {
   article.querySelector(".item-tag").textContent = item.needsOwnerConfirm
     ? "\u5f85\u786e\u8ba4"
     : item.date || item.status || item.source || copy.item;
-  article.querySelector('[data-role="source"]').textContent = item.source || item.status || copy.item;
-  article.querySelector('[data-role="confidence"]').textContent = item.confidence
-    ? `${item.confidence} confidence`
-    : item.needsOwnerConfirm
-      ? "\u9700 Owner \u786e\u8ba4"
-      : "\u5df2\u7eb3\u5165\u89c2\u5bdf";
+  article.querySelector('[data-role="source"]').textContent = item.sourceType || item.source || item.status || copy.item;
+  article.querySelector('[data-role="confidence"]').textContent = formatSignalConfidence(item);
   return article;
+}
+
+function formatSignalConfidence(item) {
+  if (item.needsOwnerConfirm) return "\u9700 Owner \u786e\u8ba4";
+  const value = String(item.confidence || "").toLowerCase();
+  if (value === "high") return "\u6765\u6e90\u8f83\u7a33";
+  if (value === "medium") return "\u81ea\u52a8\u89c2\u5bdf";
+  if (value === "low") return "\u5f85\u6838\u5b9e";
+  return item.confidence || "\u5df2\u7eb3\u5165\u89c2\u5bdf";
 }
 
 function createWikiTodoItem(task) {

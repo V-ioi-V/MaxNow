@@ -410,20 +410,21 @@ def group_summary(items, label):
     for item in items:
         if item.source not in sources:
             sources.append(item.source)
-    return f"本次从 {', '.join(sources[:4])} 捕捉到 {len(items)} 条高相关 AI 信号。"
+    return f"当前候选从 {', '.join(sources[:4])} 收录 {len(items)} 条相关信号；这是自动抓取摘要，不代表完整统计。"
 
 
 def latest_signal_group(signals, today):
     exact_today = [item for item in signals if item.published_at == today.isoformat()]
     if exact_today:
+        items = select_diverse(exact_today, 3)
         return {
             "date": today.isoformat(),
-            "title": "今日 AI 信号",
-            "summary": group_summary(select_diverse(exact_today, 5), "今日 AI 信号"),
-            "items": select_diverse(exact_today, 5),
+            "title": "最新 AI 信号",
+            "summary": group_summary(items, "最新 AI 信号"),
+            "items": items,
         }
 
-    recent = select_diverse([item for item in signals if within_days(item, 7)], 5)
+    recent = select_diverse([item for item in signals if within_days(item, 7)], 3)
     latest_date = recent[0].published_at if recent else today.isoformat()
     return {
         "date": latest_date,
@@ -495,10 +496,22 @@ def last30_item(item):
         "title": item.title,
         "summary": item.summary,
         "source": item.source,
+        "sourceType": signal_source_type(item.signal),
         "confidence": "medium" if item.signal in {"community", "news", "research"} else "high",
         "needsOwnerConfirm": False,
         "url": item.url,
     }
+
+
+def signal_source_type(signal):
+    labels = {
+        "official": "官方来源",
+        "github": "开发者发布",
+        "community": "社区来源",
+        "research": "研究来源",
+        "news": "新闻索引",
+    }
+    return labels.get(signal, "公开来源")
 
 
 def build_mainlines(items):
@@ -519,9 +532,10 @@ def build_mainlines(items):
         if matched:
             results.append({
                 "title": title,
-                "summary": f"近 30 天捕捉到 {len(matched)} 条相关信号，代表来源包括 {', '.join(sorted({item.source for item in matched})[:3])}。",
+                "summary": f"当前候选中约 {len(matched)} 条相关信号；代表来源包括 {', '.join(sorted({item.source for item in matched})[:3])}。这是关键词自动归类，不等同于完整趋势统计。",
                 "status": "active",
-                "source": "free external sources",
+                "source": "候选归类",
+                "sourceType": "自动归类",
                 "confidence": "medium",
                 "needsOwnerConfirm": False,
             })
