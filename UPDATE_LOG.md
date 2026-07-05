@@ -11,6 +11,13 @@
 
 ## 2026-07-05
 
+### 确认 OpenClaw Token 用量定时任务已接入
+
+- 复查 root crontab 的 `MAXNOW-OPENCLAW-USAGE`，确认每天 00:20 运行 `python3 scripts/update_data.py openclaw-usage`。
+- 服务器日志显示 2026-07-03、2026-07-04、2026-07-05 均以 `maxnow openclaw usage sync ok` 完成，线上 `openclaw-usage.json` 已更新到 2026-07-05 00:20。
+- 云服务页 OpenClaw Token 用量状态从“待验证”改为“已接入”，文案改为 root crontab 已运行的事实口径。
+- 将 Dash 脚本缓存版本提升到 `app.js?v=82`。
+
 ### 移除云服务页定时任务分组标题
 
 - 移除云服务页“Cron Jobs / 定时任务”中段标题，让任务卡自然接在“系统与托管”卡后面，减少页面断层感。

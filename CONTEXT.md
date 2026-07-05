@@ -120,7 +120,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；服务器上已验证 `python3 scripts/sync_wiki_todos.py` 能成功生成待办缓存。
 - 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、待推进事项或日常记录。
 - 天气可以由 `python scripts/update_data.py weather` 或服务器 `runtime` 定时刷新，数据源是 Open-Meteo 免费 forecast API。
-- OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。
+- OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。服务器 root crontab 的 `MAXNOW-OPENCLAW-USAGE` 已接入每天 00:20 自动刷新，日志写入 `logs/openclaw-usage.log`；2026-07-05 复查确认 2026-07-03 至 2026-07-05 连续成功。
 - MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与最近更新模块。
 - 本机 Codex 用量可以由 `python scripts/update_data.py codex-usage` 刷新，默认按当前采集机器平台标记为 `Codex Windows` / `Codex macOS` / `Codex Linux`；服务器 Codex 用量由 root 运行 `python3 scripts/update_data.py codex-server-usage` 刷新。两者都只读取 `.codex/sessions` 中的 `token_count` 与 `turn_context.model`，只导出 token 统计、模型名、时间戳、来源和 OpenAI API 等价费用估算，不导出对话正文。
 - 本机 Codex 用量自动化由 Windows Task Scheduler 调用 `wscript.exe scripts/report_codex_usage_hidden.vbs`。任务默认每 1 小时静默运行一次，注册为 hidden task；VBS launcher 再用 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 PowerShell console 瞬时闪窗。任务要求本地仓库在 `main` 且无无关脏文件。成功后提交并推送 `codex-usage.*` / `token-usage.*`，再通过 SSH 让服务器拉取最新 `main`；服务器合并前会保留现有 `codex-server-usage.*`，避免本机账本覆盖服务器账本。
