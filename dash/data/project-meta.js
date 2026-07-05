@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-05 22:31",
-  "version": "1.0.0.05",
-  "versionLabel": "v1.0.0.05",
-  "branch": "main",
-  "commit": "f86b2e7",
+  "updatedAt": "2026-07-05 23:06",
+  "version": "1.0.0.06",
+  "versionLabel": "v1.0.0.06",
+  "branch": "feature/token-unit-b-format",
+  "commit": "8457ed9",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "main · commit f86b2e7 · 干净",
+  "deployNote": "feature/token-unit-b-format · commit 8457ed9 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-07-05",
+      "title": "优化 Token 数值单位进位",
+      "summary": "Token 页总量、来源、模型、会话和趋势图统一使用同一个数值格式化规则。"
+    },
     {
       "date": "2026-07-05",
       "title": "将 Last-30 摘要改回 AI 大事口径",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-05",
       "title": "建立 MaxNow 版本提升规则",
       "summary": "将 `VERSION` 从 `1.0.0.00` 提升到 `1.0.0.01`，覆盖最近的云服务页重构和豆奶真实流量日结。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "确认 OpenClaw Token 用量定时任务已接入",
-      "summary": "复查 root crontab 的 `MAXNOW-OPENCLAW-USAGE`，确认每天 00:20 运行 `python3 scripts/update_data.py openclaw-usage`。"
     }
   ]
 };
