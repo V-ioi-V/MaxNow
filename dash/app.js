@@ -101,6 +101,7 @@ const copy = {
 
 function formatToken(value) {
   if (!Number.isFinite(value)) return "--";
+  if (value >= 1000000000) return `${(value / 1000000000).toFixed(value >= 10000000000 ? 1 : 2)}B`;
   if (value >= 1000000) return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1)}M`;
   if (value >= 1000) return `${Math.round(value / 1000)}K`;
   return String(value);
