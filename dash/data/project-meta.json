@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-05 20:57",
-  "version": "1.0.0.02",
-  "versionLabel": "v1.0.0.02",
-  "branch": "feature/local-token-dedicated-main",
-  "commit": "7e22bbd",
+  "updatedAt": "2026-07-05 21:00",
+  "version": "1.0.0.03",
+  "versionLabel": "v1.0.0.03",
+  "branch": "bugfix/local-token-server-meta-stash",
+  "commit": "cab496c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/local-token-dedicated-main · commit 7e22bbd · 有未提交代码改动",
+  "deployNote": "bugfix/local-token-server-meta-stash · commit cab496c · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-05",

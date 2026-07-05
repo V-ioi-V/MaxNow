@@ -16,7 +16,8 @@
 - 新增本机专用上报目录 `D:\Personal\MaxNow-token-report`，该目录保持在 `main`，只供 `MaxNow-Local-Codex-Usage-Report` 计划任务运行。
 - 将 Windows Task Scheduler 的上报入口改为专用目录下的 `scripts/report_codex_usage_hidden.vbs`，避免日常开发分支影响本机 Codex Token 自动上报。
 - 保留上报脚本的 `main` 与干净工作区保护：每次上报前仍会 `git pull --ff-only origin main`，只提交 `codex-usage.*` / `token-usage.*`，再推送到 `origin/main`。
-- 将 `VERSION` 从 `1.0.0.01` 提升到 `1.0.0.02`，覆盖本次本机自动化运行目录调整。
+- 加固服务器合并步骤：拉取 `origin/main` 前也暂存服务器本地生成的 `project-meta.*`，避免运行时元数据改动阻断本机 Token 上报。
+- 将 `VERSION` 从 `1.0.0.01` 提升到 `1.0.0.03`，覆盖本次本机自动化运行目录调整和服务器合并加固。
 
 ### 建立 MaxNow 版本提升规则
 
