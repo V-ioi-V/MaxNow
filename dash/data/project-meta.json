@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-05 23:06",
+  "updatedAt": "2026-07-05 23:07",
   "version": "1.0.0.06",
   "versionLabel": "v1.0.0.06",
-  "branch": "feature/token-unit-b-format",
-  "commit": "8457ed9",
+  "branch": "main",
+  "commit": "72209dc",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/token-unit-b-format · commit 8457ed9 · 干净",
+  "deployNote": "main · commit 72209dc · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-05",
