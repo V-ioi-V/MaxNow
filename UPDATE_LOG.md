@@ -11,6 +11,13 @@
 
 ## 2026-07-05
 
+### 建立 MaxNow 版本提升规则
+
+- 将 `VERSION` 从 `1.0.0.00` 提升到 `1.0.0.01`，覆盖最近的云服务页重构和豆奶真实流量日结。
+- 明确任何 Owner 可见或运维相关改动都要升 MaxNow 版本，并刷新 `dash/data/project-meta.*`。
+- 小 UI / 文案 / 布局调整、新页面能力、新数据源和新自动化默认升最后两位；重要功能模块稳定落地升 patch；大版本阶段切换升 minor / major。
+- 更新 `AGENTS.md`、`SPEC.md`、`CONTEXT.md` 和 `SERVER_RUNBOOK.md`，让后续 Codex 执行时有固定规则。
+
 ### 确认 OpenClaw Token 用量定时任务已接入
 
 - 复查 root crontab 的 `MAXNOW-OPENCLAW-USAGE`，确认每天 00:20 运行 `python3 scripts/update_data.py openclaw-usage`。

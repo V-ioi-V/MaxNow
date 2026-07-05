@@ -480,6 +480,14 @@ python3 scripts/check.py
 
 版本号由仓库根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`，例如 `1.0.0.00`。`scripts/sync_project_meta.py` 会读取 `VERSION`、Git 状态和 `UPDATE_LOG.md`，生成 `dash/data/project-meta.json` / `dash/data/project-meta.js`。
 
+版本提升规则：
+
+- 小 UI / 文案 / 布局调整：升最后两位，例如 `1.0.0.00` -> `1.0.0.01`。
+- 新增页面能力 / 新数据源 / 新自动化：升最后两位。
+- 重要功能模块稳定落地：升 patch，并把最后两位归零，例如 `1.0.0.12` -> `1.0.1.00`。
+- 大版本阶段切换：升 minor 或 major，并重置后续位。
+- 每次完成 Owner 可见或运维相关改动后，都要同步更新 `VERSION` 并运行 `python scripts/update_data.py project-meta`。
+
 刷新 OpenClaw Token 用量账本：
 
 ```bash

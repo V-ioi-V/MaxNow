@@ -29,6 +29,8 @@ Read this file before making code changes in this repository.
 - Update `CONTEXT.md` when the change affects agent handoff context, current gaps, file responsibilities, automation boundaries, server state, or recommended next steps.
 - Update `SERVER_RUNBOOK.md` when the change affects SSH, nginx, GitHub CLI, deployment, cron/systemd timers, server paths, auth state, or operational commands.
 - When adding, removing, or changing server cron/systemd timers that are part of MaxNow operations, update the Cloud service tab copy in `dash/index.html` in the same branch so the displayed automation inventory does not drift from the server.
+- Every completed owner-visible or operational change must bump `VERSION` and refresh `dash/data/project-meta.*` with `python scripts/update_data.py project-meta` before finishing. This includes small UI, copy, and layout adjustments; page capability changes; new data sources; new automation; and repository rule changes.
+- Version bump policy: small UI / copy / layout adjustments, new page capabilities, new data sources, and new automation normally bump the final two-digit build segment, for example `1.0.0.00` -> `1.0.0.01`; a stable important feature module bumps patch and resets build, for example `1.0.0.99` -> `1.0.1.00`; large product phase changes bump minor or major.
 - Do not leave completed work only in chat. If the owner asks to "记个待办", "优化待办", "做完了", "服务器搞好了", or similar, reflect that in the relevant repository documents.
 
 ## Project Shape
