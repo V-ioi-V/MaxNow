@@ -781,8 +781,7 @@ a {
   --card-border: var(--orange-border);
 }
 
-.last30-panel,
-.ai-news-panel {
+.last30-panel {
   --card-color: var(--purple);
   --card-border: var(--purple-border);
 }
