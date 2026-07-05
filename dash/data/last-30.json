@@ -1,32 +1,15 @@
 {
-  "updatedAt": "2026-07-05 21:53",
+  "updatedAt": "2026-07-05 22:28",
   "sourceSummary": "免费 AI 外部信号滚动记忆",
   "today": {
-    "date": "2026-07-05",
+    "date": "2026-06-30",
     "title": "最新 AI 信号",
-    "summary": "当前候选从 MCP 收录 1 条相关信号；这是自动抓取摘要，不代表完整统计。",
-    "items": [
-      {
-        "date": "2026-07-05",
-        "title": "Release 2026.7.4",
-        "summary": "MCP：Release : v2026.7.4 Updated packages @modelcontextprotocol/server-everything@2026.7.4 @modelcontextprotocol/server-filesystem@2026；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
-        "source": "MCP",
-        "sourceType": "开发者发布",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": "https://github.com/modelcontextprotocol/servers/releases/tag/2026.7.4"
-      }
-    ]
-  },
-  "week": {
-    "range": "2026-06-29/2026-07-05",
-    "title": "本周 AI 变化",
-    "summary": "当前候选从 Anthropic, Anthropic SDK, OpenAI, GitHub Blog 收录 7 条相关信号；这是自动抓取摘要，不代表完整统计。",
+    "summary": "本栏从 Anthropic, OpenAI 收录 3 条 AI 大事；优先展示模型、agent、研究和开发者生态的实质变化。",
     "items": [
       {
         "date": "2026-06-30",
         "title": "Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale",
-        "summary": "Anthropic：Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "summary": "Anthropic：Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
         "source": "Anthropic",
         "sourceType": "官方来源",
         "confidence": "high",
@@ -34,29 +17,9 @@
         "url": "https://www.anthropic.com/news/claude-sonnet-5"
       },
       {
-        "date": "2026-07-01",
-        "title": "v0.115.0",
-        "summary": "Anthropic SDK：0.115.0 (2026-06-30) Full Changelog: v0.114.0...v0.115.0 Features api: add support for Managed Agents event delta streaming, agent；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
-        "source": "Anthropic SDK",
-        "sourceType": "开发者发布",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.115.0"
-      },
-      {
-        "date": "2026-07-01",
-        "title": "v0.114.0",
-        "summary": "Anthropic SDK：0.114.0 (2026-06-30) Full Changelog: v0.113.0...v0.114.0 Features api: add support for claude-sonnet-5 ( b893033 ) Bug Fixes agent；开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。",
-        "source": "Anthropic SDK",
-        "sourceType": "开发者发布",
-        "confidence": "high",
-        "needsOwnerConfirm": false,
-        "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.114.0"
-      },
-      {
         "date": "2026-06-30",
         "title": "Claude Science, an AI workbench for scientists, is now available Claude Science is a customizable app that integrates th",
-        "summary": "Anthropic：Claude Science, an AI workbench for scientists, is now available Claude Science is a customizable app that integrates th；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "summary": "Anthropic：Claude Science, an AI workbench for scientists, is now available Claude Science is a customizable app that integrates th；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
         "source": "Anthropic",
         "sourceType": "官方来源",
         "confidence": "high",
@@ -66,7 +29,44 @@
       {
         "date": "2026-06-30",
         "title": "How ChatGPT adoption has expanded",
-        "summary": "OpenAI：New OpenAI Signals data shows how ChatGPT adoption is growing globally, with users increasing usage, exploring more capabilities,；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "summary": "OpenAI：New OpenAI Signals data shows how ChatGPT adoption is growing globally, with users increasing usage, exploring more capabilities,；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
+        "source": "OpenAI",
+        "sourceType": "官方来源",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://openai.com/index/how-chatgpt-adoption-has-expanded"
+      }
+    ]
+  },
+  "week": {
+    "range": "2026-06-29/2026-07-05",
+    "title": "本周 AI 变化",
+    "summary": "本栏从 Anthropic, OpenAI, Mistral AI, Google AI 收录 7 条 AI 大事；优先展示模型、agent、研究和开发者生态的实质变化。",
+    "items": [
+      {
+        "date": "2026-06-30",
+        "title": "Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale",
+        "summary": "Anthropic：Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
+        "source": "Anthropic",
+        "sourceType": "官方来源",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://www.anthropic.com/news/claude-sonnet-5"
+      },
+      {
+        "date": "2026-06-30",
+        "title": "Claude Science, an AI workbench for scientists, is now available Claude Science is a customizable app that integrates th",
+        "summary": "Anthropic：Claude Science, an AI workbench for scientists, is now available Claude Science is a customizable app that integrates th；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
+        "source": "Anthropic",
+        "sourceType": "官方来源",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://www.anthropic.com/news/claude-science-ai-workbench"
+      },
+      {
+        "date": "2026-06-30",
+        "title": "How ChatGPT adoption has expanded",
+        "summary": "OpenAI：New OpenAI Signals data shows how ChatGPT adoption is growing globally, with users increasing usage, exploring more capabilities,；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
         "source": "OpenAI",
         "sourceType": "官方来源",
         "confidence": "high",
@@ -74,24 +74,44 @@
         "url": "https://openai.com/index/how-chatgpt-adoption-has-expanded"
       },
       {
-        "date": "2026-06-30",
-        "title": "Core dump epidemiology: fixing an 18-year-old bug",
-        "summary": "OpenAI：OpenAI engineers used large-scale core dump analysis to debug rare infrastructure crashes, uncovering both a hardware fault and a；可能影响模型选择、开发工具、agent 能力或使用成本。",
+        "date": "2026-06-29",
+        "title": "Mapping Europe’s AI Workforce Opportunity",
+        "summary": "OpenAI：A new OpenAI report maps how AI could reshape jobs across the EU, highlighting which occupations may face automation, growth, or w；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
         "source": "OpenAI",
         "sourceType": "官方来源",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": "https://openai.com/index/core-dump-epidemiology-data-infrastructure-bug"
+        "url": "https://openai.com/index/mapping-ai-jobs-transition-eu"
       },
       {
-        "date": "2026-06-30",
-        "title": "Highlights from Git 2.55",
-        "summary": "GitHub Blog：The open source Git project just released Git 2.55. Here is GitHub’s look at some of the most interesting features and changes int；可能影响模型选择、开发工具、agent 能力或使用成本。",
-        "source": "GitHub Blog",
+        "date": "",
+        "title": "Mistral OCR 4",
+        "summary": "Mistral AI：Mistral OCR 4；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
+        "source": "Mistral AI",
         "sourceType": "官方来源",
         "confidence": "high",
         "needsOwnerConfirm": false,
-        "url": "https://github.blog/open-source/git/highlights-from-git-2-55/"
+        "url": "https://mistral.ai/news/ocr-4/"
+      },
+      {
+        "date": "",
+        "title": "Mistral Medium 3.5",
+        "summary": "Mistral AI：Mistral Medium 3.5；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
+        "source": "Mistral AI",
+        "sourceType": "官方来源",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://mistral.ai/news/vibe-remote-agents-mistral-medium-3-5/"
+      },
+      {
+        "date": "2026-07-02",
+        "title": "The latest AI news we announced in June 2026",
+        "summary": "Google AI：Here are Google’s latest AI updates from June 2026.；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
+        "source": "Google AI",
+        "sourceType": "官方来源",
+        "confidence": "high",
+        "needsOwnerConfirm": false,
+        "url": "https://blog.google/innovation-and-ai/technology/ai/google-ai-updates-june-2026/"
       }
     ]
   },
@@ -102,7 +122,7 @@
     "mainlines": [
       {
         "title": "模型与 API 更新",
-        "summary": "当前候选中约 11 条相关信号；代表来源包括 Anthropic, Anthropic SDK, Hacker News。这是关键词自动归类，不等同于完整趋势统计。",
+        "summary": "当前候选中约 15 条相关信号；代表来源包括 Anthropic, Anthropic SDK, GitHub Blog。这是关键词自动归类，不等同于完整趋势统计。",
         "status": "active",
         "source": "候选归类",
         "sourceType": "自动归类",
@@ -111,7 +131,7 @@
       },
       {
         "title": "Agent 与工具调用",
-        "summary": "当前候选中约 9 条相关信号；代表来源包括 Anthropic, Anthropic SDK, Hacker News。这是关键词自动归类，不等同于完整趋势统计。",
+        "summary": "当前候选中约 15 条相关信号；代表来源包括 Anthropic, Anthropic SDK, GitHub Blog。这是关键词自动归类，不等同于完整趋势统计。",
         "status": "active",
         "source": "候选归类",
         "sourceType": "自动归类",
@@ -120,7 +140,16 @@
       },
       {
         "title": "开发者工具与 SDK",
-        "summary": "当前候选中约 9 条相关信号；代表来源包括 Anthropic, Anthropic SDK, Hacker News。这是关键词自动归类，不等同于完整趋势统计。",
+        "summary": "当前候选中约 7 条相关信号；代表来源包括 Anthropic, Anthropic SDK, GitHub Blog。这是关键词自动归类，不等同于完整趋势统计。",
+        "status": "active",
+        "source": "候选归类",
+        "sourceType": "自动归类",
+        "confidence": "medium",
+        "needsOwnerConfirm": false
+      },
+      {
+        "title": "成本与 Token",
+        "summary": "当前候选中约 1 条相关信号；代表来源包括 GitHub Blog。这是关键词自动归类，不等同于完整趋势统计。",
         "status": "active",
         "source": "候选归类",
         "sourceType": "自动归类",
@@ -129,7 +158,7 @@
       },
       {
         "title": "开源与研究",
-        "summary": "当前候选中约 1 条相关信号；代表来源包括 OpenAI。这是关键词自动归类，不等同于完整趋势统计。",
+        "summary": "当前候选中约 2 条相关信号；代表来源包括 GitHub Blog, OpenAI。这是关键词自动归类，不等同于完整趋势统计。",
         "status": "active",
         "source": "候选归类",
         "sourceType": "自动归类",

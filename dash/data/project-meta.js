@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-05 22:03",
-  "version": "1.0.0.04",
-  "versionLabel": "v1.0.0.04",
+  "updatedAt": "2026-07-05 22:31",
+  "version": "1.0.0.05",
+  "versionLabel": "v1.0.0.05",
   "branch": "main",
-  "commit": "49082d1",
+  "commit": "f86b2e7",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "main · commit 49082d1 · 干净",
+  "deployNote": "main · commit f86b2e7 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-07-05",
+      "title": "将 Last-30 摘要改回 AI 大事口径",
+      "summary": "`scripts/sync_ai_last30.py` 不再外露“适合进入近 30 天观察池”这类采集器内部筛选话术。"
+    },
     {
       "date": "2026-07-05",
       "title": "收紧 Last-30 外露信息口径",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-05",
       "title": "确认 OpenClaw Token 用量定时任务已接入",
       "summary": "复查 root crontab 的 `MAXNOW-OPENCLAW-USAGE`，确认每天 00:20 运行 `python3 scripts/update_data.py openclaw-usage`。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "移除云服务页定时任务分组标题",
-      "summary": "移除云服务页“Cron Jobs / 定时任务”中段标题，让任务卡自然接在“系统与托管”卡后面，减少页面断层感。"
     }
   ]
 };

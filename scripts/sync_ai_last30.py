@@ -52,6 +52,77 @@ KEYWORDS = {
     "multimodal": 5,
 }
 
+CORE_AI_TERMS = (
+    "ai",
+    "llm",
+    "agent",
+    "agents",
+    "openai",
+    "anthropic",
+    "claude",
+    "gemini",
+    "deepmind",
+    "mistral",
+    "llama",
+    "reasoning",
+    "mcp",
+    "model context protocol",
+    "model",
+    "models",
+    "token",
+    "tokens",
+)
+
+LOW_LEVEL_RELEASE_TERMS = (
+    "chore",
+    "chores",
+    "bug fix",
+    "bug fixes",
+    "fixes",
+    "patch",
+    "dependencies",
+    "updated packages",
+)
+
+SUBSTANTIVE_AI_TERMS = (
+    "ai",
+    "llm",
+    "agent",
+    "agents",
+    "chatgpt",
+    "claude",
+    "gemini",
+    "mistral",
+    "llama",
+    "model",
+    "models",
+    "reasoning",
+    "mcp",
+    "model context protocol",
+    "api",
+    "token",
+    "tokens",
+    "ocr",
+    "multimodal",
+    "benchmark",
+)
+
+
+def has_term(text, term):
+    escaped = re.escape(term)
+    if " " in term:
+        return re.search(rf"(?<!\w){escaped}(?!\w)", text) is not None
+    return re.search(rf"\b{escaped}\b", text) is not None
+
+
+def has_any_term(text, terms):
+    return any(has_term(text, term) for term in terms)
+
+
+def signal_subject_text(item):
+    summary = re.split(r"[；;]", item.summary or "", maxsplit=1)[0]
+    return f"{item.title} {summary}".lower()
+
 OFFICIAL_SOURCES = [
     ("OpenAI", "https://openai.com/news/rss.xml", "official"),
     ("Google AI", "https://blog.google/technology/ai/rss/", "official"),
@@ -155,9 +226,35 @@ def score_signal(title, summary, source):
             score += weight
     if source in {"OpenAI", "Anthropic", "Google AI", "DeepMind", "Mistral AI"}:
         score += 6
+    if source in {"GitHub Blog"} and not has_any_term(text, CORE_AI_TERMS):
+        score -= 8
+    if re.match(r"^v?\d+\.\d+\.\d+$", title.strip(), re.I):
+        score -= 4
     if "pricing" in text or "cost" in text or "token" in text:
         score += 4
     return score
+
+
+def is_ai_relevant(item):
+    body = signal_subject_text(item)
+    text = f"{body} {item.source}".lower()
+    if item.source in {"OpenAI", "Anthropic", "Google AI", "DeepMind", "Mistral AI", "arXiv"}:
+        return has_any_term(body, SUBSTANTIVE_AI_TERMS)
+    return has_any_term(text, CORE_AI_TERMS)
+
+
+def is_major_ai_event(item):
+    body = signal_subject_text(item)
+    text = f"{body} {item.source}".lower()
+    if item.signal == "github":
+        has_major_feature = has_any_term(text, ("agent", "model", "claude", "openai", "mcp", "api"))
+        is_patch_noise = has_any_term(text, LOW_LEVEL_RELEASE_TERMS)
+        return has_major_feature and not is_patch_noise
+    if item.source in {"OpenAI", "Anthropic", "Google AI", "DeepMind", "Mistral AI"}:
+        return has_any_term(body, SUBSTANTIVE_AI_TERMS)
+    if item.source == "GitHub Blog" and not has_any_term(text, CORE_AI_TERMS):
+        return False
+    return is_ai_relevant(item)
 
 
 def make_summary(source, title, text, signal):
@@ -166,13 +263,13 @@ def make_summary(source, title, text, signal):
         base = cleaned[:130].rstrip()
     else:
         base = title
-    reason = "可能影响模型选择、开发工具、agent 能力或使用成本。"
+    reason = "关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。"
     if signal == "github":
-        reason = "开发者工具或 SDK 更新，可能影响 MaxNow / OpenClaw 的实现选择。"
+        reason = "这是开发者生态更新；只有涉及模型、agent、MCP 或 API 能力变化时，才适合作为 AI 大事跟踪。"
     if signal == "community":
-        reason = "社区热度信号，适合观察是否值得后续跟进。"
+        reason = "这是社区热度信号，适合用来判断新工具或新方向是否正在扩散。"
     if signal == "research":
-        reason = "研究信号，适合进入近 30 天观察池。"
+        reason = "这是 AI 研究进展，重点看它是否影响 agent 安全、协作方式或能力边界。"
     return f"{source}：{base}；{reason}"
 
 
@@ -410,21 +507,31 @@ def group_summary(items, label):
     for item in items:
         if item.source not in sources:
             sources.append(item.source)
-    return f"当前候选从 {', '.join(sources[:4])} 收录 {len(items)} 条相关信号；这是自动抓取摘要，不代表完整统计。"
+    return f"本栏从 {', '.join(sources[:4])} 收录 {len(items)} 条 AI 大事；优先展示模型、agent、研究和开发者生态的实质变化。"
+
+
+def select_ai_events(signals, limit):
+    major = [item for item in signals if is_major_ai_event(item) and item.signal != "github"]
+    selected = select_diverse(major, limit)
+    if len(selected) < limit:
+        fallback = [item for item in signals if is_major_ai_event(item) and item not in selected]
+        selected.extend(select_diverse(fallback, limit - len(selected)))
+    return selected[:limit]
 
 
 def latest_signal_group(signals, today):
     exact_today = [item for item in signals if item.published_at == today.isoformat()]
     if exact_today:
-        items = select_diverse(exact_today, 3)
-        return {
-            "date": today.isoformat(),
-            "title": "最新 AI 信号",
-            "summary": group_summary(items, "最新 AI 信号"),
-            "items": items,
-        }
+        items = select_ai_events(exact_today, 3)
+        if items:
+            return {
+                "date": today.isoformat(),
+                "title": "最新 AI 信号",
+                "summary": group_summary(items, "最新 AI 信号"),
+                "items": items,
+            }
 
-    recent = select_diverse([item for item in signals if within_days(item, 7)], 3)
+    recent = select_ai_events([item for item in signals if within_days(item, 7)], 3)
     latest_date = recent[0].published_at if recent else today.isoformat()
     return {
         "date": latest_date,
@@ -437,8 +544,8 @@ def latest_signal_group(signals, today):
 def update_last30(signals, failures):
     today = now_local().date()
     latest_group = latest_signal_group(signals, today)
-    week_items = select_diverse([item for item in signals if within_days(item, 7)], 7)
-    month_items = [item for item in signals if within_days(item, 30)][:12]
+    week_items = select_ai_events([item for item in signals if within_days(item, 7)], 7)
+    month_items = [item for item in signals if within_days(item, 30) and is_major_ai_event(item)][:16]
     mainlines = build_mainlines(month_items)
     waiting = []
     if failures:
@@ -544,7 +651,7 @@ def build_mainlines(items):
 
 def main():
     signals, failures = collect_signals()
-    signals = [item for item in dedupe(signals) if item.score > 0]
+    signals = [item for item in dedupe(signals) if item.score > 0 and is_ai_relevant(item)]
     signals.sort(key=lambda item: (item.score + recency_bonus(item), item.published_at), reverse=True)
     signals = signals[:40]
 
