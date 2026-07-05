@@ -578,6 +578,14 @@ sudo python3 /root/.openclaw/gen_checkin_data.py
 - `gen_checkin_data.py` 还会抓取豆奶用户面板上的剩余流量和有效期，写入 `account` 字段，并维护最近 60 天 `account_history`；如果抓取失败，会尽量保留上一份 `account` 和 `account_history`，并标记 `stale` / `last_error`。
 - 线上 `dash.maxnow.cn` 读取 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 
+2026-07-05 已做一次只读调研，确认当前数据边界：
+
+- `records` 保存签到奖励记录，当前线上有 61 天。
+- `account_history` 从 2026-06-21 开始保存账号余量快照，截至 2026-07-05 只有 15 天，不足完整 30 天。
+- `gen_checkin_data.py` 只访问 `https://dounai.pro/user/panel`，抓取剩余流量、账号有效期和 VIP 有效期；未接入账单、明细、历史使用量或每日消耗量接口。
+- 当前实时用登录态打开用户面板会跳到 `https://dounai.pro/chaoshi.html`，但 2026-07-05 09:00 cron 已成功写入账号快照；如果要继续检查页面菜单或接口，先刷新 / 确认豆奶登录态。
+- 如果只能用余量快照推算消耗，口径为 `估算消耗 = 前一天剩余 + 当天签到获得 - 当天剩余`。该口径会受剩余流量显示精度、签到奖励、充值 / 赠送、套餐调整、有效期变化和快照时间影响，不能当作账单级真实数据。
+
 验证今天是否进入线上页面：
 
 ```bash
