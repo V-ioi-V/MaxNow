@@ -11,6 +11,12 @@
 
 ## 2026-07-05
 
+### 收敛云服务页顶部摘要
+
+- 移除云服务页顶部 Host / Runtime / Daily AI / Dounai 四个摘要卡，避免和下方任务详情卡重复。
+- Host 信息改为云服务“系统状态”模块里的第一条，和 nginx、证书、CPU、磁盘、内存、运行时间等状态放在同一层级。
+- 将 Dash 样式缓存版本提升到 `styles.css?v=87`，脚本缓存版本提升到 `app.js?v=78`。
+
 ### 增加豆奶真实流量 00:05 日结和前端图表
 
 - 服务器 `/root/.openclaw/gen_checkin_data.py` 已备份到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-closeout`，并新增 `--traffic-only --exclude-today` 模式。

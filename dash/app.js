@@ -1479,8 +1479,17 @@ function renderHome() {
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   const systemItems = dashboardData.system || [];
+  const cloudSystemItems = [
+    {
+      key: "host",
+      name: "Host",
+      value: "43.160.240.244",
+      note: "ubuntu / Tencent Cloud Singapore",
+    },
+    ...systemItems,
+  ];
   clearAndFill(qs("#system-list"), createSystemItem, systemItems);
-  clearAndFill(qs("#cloud-system-list"), createSystemItem, systemItems);
+  clearAndFill(qs("#cloud-system-list"), createSystemItem, cloudSystemItems);
   setText("#project-version", projectMetaData.versionLabel || "v--");
   setText("#project-version-note", projectMetaData.deployNote || projectMetaData.updatedAt || copy.sync);
   clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));

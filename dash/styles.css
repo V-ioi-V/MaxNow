@@ -631,7 +631,6 @@ a {
   .summary-clock:hover,
   .token-page-head:hover,
   .status-strip article:hover,
-  .cloud-summary article:hover,
   .ricky-stats article:hover,
   .mini-token-grid div:hover,
   .checkin-grid div:hover,
@@ -1934,57 +1933,6 @@ a.last30-item {
   align-self: start;
 }
 
-.cloud-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
-.cloud-summary article {
-  --card-color: var(--accent-strong);
-  --card-border: var(--blue-border);
-  min-width: 0;
-  min-height: 112px;
-  display: grid;
-  align-content: center;
-  gap: 8px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 18px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
-  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-}
-
-.cloud-summary article:nth-child(2) {
-  --card-color: var(--cyan);
-  --card-border: #9eeaf8;
-}
-
-.cloud-summary article:nth-child(3) {
-  --card-color: var(--purple);
-  --card-border: #e1c4ff;
-}
-
-.cloud-summary article:nth-child(4) {
-  --card-color: var(--orange);
-  --card-border: #ffd29a;
-}
-
-.cloud-summary span,
-.cloud-summary small {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.cloud-summary strong {
-  color: var(--card-color);
-  font-size: 24px;
-  line-height: 1.1;
-  overflow-wrap: anywhere;
-}
-
 .cloud-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2940,7 +2888,6 @@ a.last30-item {
     grid-template-columns: 1fr;
   }
 
-  .cloud-summary,
   .cloud-grid,
   .ricky-stats {
     grid-template-columns: 1fr;
@@ -3047,7 +2994,6 @@ a.last30-item {
   .ai-news-list,
   .feed-list,
   .token-summary,
-  .cloud-summary,
   .cloud-grid,
   .ricky-stats,
   .range-tabs {

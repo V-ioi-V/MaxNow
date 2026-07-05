@@ -116,6 +116,7 @@
 - 线上 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json` 已新增 `traffic_usage` 和 `traffic_usage_history`；每天 9 点签到任务仍可刷新账号快照，00:05 日结任务负责真实使用量口径。
 - 豆奶详情页已新增“近 30 天实际使用流量”图，放在“近 30 天日均可用流量”前面，前端默认排除当天。
 - 云服务 tab 已补充豆奶 09:00 签到和 00:05 traffic closeout 两个 root 定时任务。
+- 云服务 tab 已移除顶部重复摘要卡；Host 信息合并进“系统状态”模块，任务频率保留在各自详情卡中。
 
 ### 已完成的 Codex Token 本地与服务器统计
 
