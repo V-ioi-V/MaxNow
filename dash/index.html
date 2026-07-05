@@ -7,7 +7,7 @@
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="./styles.css?v=87" />
+    <link rel="stylesheet" href="./styles.css?v=88" />
   </head>
   <body>
     <div class="app-shell">
@@ -571,14 +571,19 @@
             <article class="panel cloud-card cloud-system-card" data-tone="green">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">System</p>
-                  <h2>&#31995;&#32479;&#29366;&#24577;</h2>
+                  <p class="eyebrow">System / Hosting</p>
+                  <h2>&#31995;&#32479;&#19982;&#25176;&#31649;</h2>
                 </div>
                 <span class="status-pill">runtime</span>
               </header>
-              <p class="item-copy">nginx&#12289;HTTPS &#35777;&#20070;&#12289;&#37096;&#32626;&#29256;&#26412;&#12289;CPU&#12289;&#30913;&#30424;&#12289;&#20869;&#23384;&#21644;&#36816;&#34892;&#26102;&#38388;&#30340;&#26368;&#26032;&#24555;&#29031;&#12290;</p>
+              <p class="item-copy">Host&#12289;nginx&#12289;HTTPS &#35777;&#20070;&#12289;&#31449;&#28857;&#25176;&#31649;&#12289;&#37096;&#32626;&#29256;&#26412;&#12289;CPU&#12289;&#30913;&#30424;&#12289;&#20869;&#23384;&#21644;&#36816;&#34892;&#26102;&#38388;&#30340;&#26368;&#26032;&#24555;&#29031;&#12290;</p>
               <div class="system-list cloud-system-list" id="cloud-system-list"></div>
             </article>
+
+            <header class="cloud-section-head">
+              <p class="eyebrow">Cron Jobs</p>
+              <h2>&#23450;&#26102;&#20219;&#21153;</h2>
+            </header>
 
             <article class="panel cloud-card" data-tone="blue">
               <header class="panel-head">
@@ -617,15 +622,15 @@
             <article class="panel cloud-card" data-tone="cyan">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 09:00 / 00:05</p>
-                  <h2>&#35910;&#22902;&#31614;&#21040;</h2>
+                  <p class="eyebrow">Daily 00:05 / 09:00</p>
+                  <h2>&#35910;&#22902;&#33258;&#21160;&#21270;</h2>
                 </div>
                 <span class="status-pill">root</span>
               </header>
-              <p class="item-copy">root / OpenClaw &#20391;&#33050;&#26412;&#32500;&#25252;&#35910;&#22902;&#31614;&#21040;&#12289;&#36134;&#21495;&#20313;&#37327;&#24555;&#29031;&#21644;&#26152;&#26085;&#30495;&#23454;&#27969;&#37327;&#26085;&#32467;&#65292;&#32467;&#26524;&#21452;&#20889;&#21040; OpenClaw &#24037;&#20316;&#21306;&#21644;&#32447;&#19978;&#37096;&#32626;&#30446;&#24405;&#12290;</p>
+              <p class="item-copy">root / OpenClaw &#20391;&#32500;&#25252;&#26152;&#26085;&#30495;&#23454;&#27969;&#37327;&#26085;&#32467;&#21644;&#27599;&#26085;&#31614;&#21040;&#24555;&#29031;&#65292;&#32467;&#26524;&#21452;&#20889;&#21040; OpenClaw &#24037;&#20316;&#21306;&#21644;&#32447;&#19978;&#37096;&#32626;&#30446;&#24405;&#12290;</p>
               <dl class="cloud-meta">
-                <div><dt>&#31614;&#21040;</dt><dd>09:00 /root/.openclaw/dounai_cron.sh</dd></div>
-                <div><dt>&#26085;&#32467;</dt><dd>00:05 gen_checkin_data.py --traffic-only --exclude-today</dd></div>
+                <div><dt>&#27969;&#37327;&#26085;&#32467;</dt><dd>00:05 gen_checkin_data.py --traffic-only --exclude-today</dd></div>
+                <div><dt>&#31614;&#21040;&#24555;&#29031;</dt><dd>09:00 /root/.openclaw/dounai_cron.sh</dd></div>
                 <div><dt>&#29983;&#25104;</dt><dd>/root/.openclaw/gen_checkin_data.py</dd></div>
                 <div><dt>&#20889;&#20837;</dt><dd>/var/www/maxnow-dashboard/dash/data/dounai_checkin.json</dd></div>
               </dl>
@@ -637,7 +642,7 @@
                   <p class="eyebrow">Daily 00:20</p>
                   <h2>OpenClaw Token &#29992;&#37327;</h2>
                 </div>
-                <span class="status-pill">&#24453;&#30830;&#35748;</span>
+                <span class="status-pill">&#24453;&#39564;&#35777;</span>
               </header>
               <p class="item-copy"><code>python3 scripts/update_data.py openclaw-usage</code> &#35835;&#21462; <code>/root/.openclaw</code> trajectory&#65292;&#29983;&#25104; Token &#29992;&#37327;&#36134;&#26412;&#12290;&#22240;&#26435;&#38480;&#22312; root &#20391;&#65292;runbook &#24050;&#35760;&#24405;&#21333;&#29420; cron &#26041;&#26696;&#12290;</p>
               <dl class="cloud-meta">
@@ -664,21 +669,6 @@
               </dl>
             </article>
 
-            <article class="panel cloud-card" data-tone="green">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">TLS / nginx</p>
-                  <h2>&#31449;&#28857;&#25176;&#31649;</h2>
-                </div>
-                <span class="status-pill">HTTPS</span>
-              </header>
-              <p class="item-copy">nginx &#25176;&#31649; <code>dash.maxnow.cn</code> &#21644; <code>blog.maxnow.cn</code>&#12290;certbot &#32500;&#25252; HTTPS &#35777;&#20070;&#33258;&#21160;&#32493;&#26399;&#65292;&#31995;&#32479;&#29366;&#24577;&#33050;&#26412;&#20250;&#26816;&#26597;&#35777;&#20070;&#21040;&#26399;&#21644; nginx &#29366;&#24577;&#12290;</p>
-              <dl class="cloud-meta">
-                <div><dt>&#26681;&#30446;&#24405;</dt><dd>/var/www/maxnow-dashboard</dd></div>
-                <div><dt>&#37197;&#32622;</dt><dd>/etc/nginx/sites-available/maxnow-dashboard</dd></div>
-                <div><dt>&#26816;&#26597;</dt><dd>nginx / HTTPS / certificate</dd></div>
-              </dl>
-            </article>
           </section>
         </section>
 
@@ -836,6 +826,6 @@
     <script src="./data/ricky.js?v=1"></script>
     <script src="./data/life-foods.js?v=1"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=78"></script>
+    <script src="./app.js?v=79"></script>
   </body>
 </html>

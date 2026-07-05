@@ -1486,6 +1486,30 @@ function renderHome() {
       value: "43.160.240.244",
       note: "ubuntu / Tencent Cloud Singapore",
     },
+    {
+      key: "site",
+      name: "站点",
+      value: "dash / blog",
+      note: "dash.maxnow.cn / blog.maxnow.cn",
+    },
+    {
+      key: "root",
+      name: "根目录",
+      value: "/var/www/maxnow-dashboard",
+      note: "nginx static root",
+    },
+    {
+      key: "nginx-config",
+      name: "nginx 配置",
+      value: "maxnow-dashboard",
+      note: "/etc/nginx/sites-available/maxnow-dashboard",
+    },
+    {
+      key: "hosting-check",
+      name: "托管检查",
+      value: "nginx / HTTPS / certificate",
+      note: "system status collector",
+    },
     ...systemItems,
   ];
   clearAndFill(qs("#system-list"), createSystemItem, systemItems);
