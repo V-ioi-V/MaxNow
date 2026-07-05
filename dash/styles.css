@@ -1990,17 +1990,6 @@ a.last30-item {
   --card-border: #a8e9c2;
 }
 
-.cloud-section-head {
-  grid-column: 1 / -1;
-  margin-top: 4px;
-}
-
-.cloud-section-head h2 {
-  margin-top: 4px;
-  font-size: 20px;
-  line-height: 1.2;
-}
-
 .cloud-system-card {
   grid-column: 1 / -1;
 }
