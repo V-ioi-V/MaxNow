@@ -103,6 +103,7 @@ dash/data/token-usage.json
 dash/data/token-usage.js
 dash/data/project-meta.json
 dash/data/project-meta.js
+dash/data/dounai_checkin.json
 dash/data/life-foods.json
 dash/data/life-foods.js
 ```
@@ -120,6 +121,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - `dash/data/codex-server-usage.json` owns server Codex token usage aggregates and OpenAI API-equivalent cost estimates generated from server-side `/root/.codex/sessions`; it must follow the same no prompt / response body export rule.
 - `dash/data/token-usage.json` owns the combined Token page ledger generated from OpenClaw and Codex source ledgers.
 - `dash/data/project-meta.json` owns the displayed MaxNow version, deploy note, and recent update summaries generated from `VERSION`, Git state, and `UPDATE_LOG.md`.
+- `dash/data/dounai_checkin.json` owns Dounai check-in rewards, account balance snapshots, direct traffic usage pulled from `dounai.pro/user/trafficlog`, and accumulated traffic usage history. Direct traffic usage is read-only and should be collected by the server-side OpenClaw/root Dounai automation; do not expose Dounai credentials or subscription links in frontend code.
 - `dash/data/ricky.json` owns the read-only "我和 Ricky" map, places, trip records, notes, and optional photo/source links.
 - `dash/data/life-foods.json` owns the read-only Life page food picker candidates generated from personal-wiki `wiki/life/food-picker.md`; the frontend can temporarily select/unselect candidates and randomize locally, but must not write back to personal-wiki.
 - Do not update `dash/data/*.json` or `dash/data/*.js` when the owner asks for MaxNow project todos, feature planning, roadmap updates, or "what should MaxNow build next"; update `ROADMAP.md`, `IDEAS.md`, `CONTEXT.md`, or `UPDATE_LOG.md` instead.

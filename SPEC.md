@@ -200,6 +200,7 @@ Token 真实数据按来源接入，并由统一总账合并展示：
 - 顶部今日签到区展示今日流量、今日豆丁、今日延长，和 Home 豆奶摘要使用同一组今日数据。
 - 累计签到天数、累计获得流量和累计延长时长。
 - 当前账号剩余可用流量、有效期和按剩余天数折算的每日可用流量。
+- 从豆奶 `流量日志` 直接抓取的近 7 天真实使用量，并随每日同步累积成最多 60 天的 `traffic_usage_history`，用于后续展示近 30 天真实使用量。
 - 近 30 天账号日均可用流量折线图，数据来自服务器侧每日账号余量快照。
 - 近 30 天签到流量折线图，必须有 x / y 轴、日期刻度和每日具体数值。
 - 近 30 天账号有效期延长时长折线图，必须有 x / y 轴、日期刻度和每日具体数值。
@@ -310,7 +311,29 @@ UPDATE_LOG.md
 
 `dash/data/project-meta.json` 负责 MaxNow 自身版本和最近更新展示，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成；页面只读展示，不在前端修改版本号。`VERSION` 采用 `x.x.x.xx` 格式，例如 `1.0.0.00`。
 
-`dash/data/dounai_checkin.json` 负责豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化更新；前端只读取流量、豆丁、账号有效期延长时长、累计签到天数、近 30 天记录、剩余可用流量、有效期、每日可用预算和 `account_history`，不编辑、不回写，也不修改签到脚本或 cron。
+`dash/data/dounai_checkin.json` 负责豆奶每日签到记录、账号余量快照、账号日均可用历史和真实流量使用记录，由 OpenClaw / root 侧豆奶自动化更新；前端只读取流量、豆丁、账号有效期延长时长、累计签到天数、近 30 天 records、剩余可用流量、有效期、每日可用预算、`account_history`、`traffic_usage` 和 `traffic_usage_history`，不编辑、不回写，也不修改签到脚本或 cron。
+
+`traffic_usage` 来自豆奶登录态只读访问 `https://dounai.pro/user/trafficlog` 和 `https://dounai.pro/user/trafficlog?ajax=1`：
+
+```json
+{
+  "source": "dounai.pro/user/trafficlog",
+  "synced_at": "2026-07-05 19:07",
+  "window_days": 7,
+  "daily": [
+    { "date": "2026-07-05", "relative_label": "今天", "used_mb": 1341.44, "used_label": "1.31GB" }
+  ],
+  "recent_window_label": "12h node activity",
+  "recent_log_count": 609,
+  "recent_traffic_mb": 938.87,
+  "recent_traffic_label": "938.87MB",
+  "top_nodes_12h": [
+    { "node": "节点名", "traffic_mb": 415.29, "traffic_label": "415.29MB" }
+  ]
+}
+```
+
+`traffic_usage.daily` 是豆奶页面直接展示的近 7 天真实使用量；`traffic_usage_history` 将每日同步得到的 direct daily entries 按日期合并并保留最近 60 天。`traffic_usage?ajax=1` 返回的是近 12 小时节点活跃 / 占比窗口，不等同于完整 7 天或 30 天总用量。
 
 `dash/data/ricky.json` 负责“我和 Ricky”页面的只读地图数据、地点、旅行记录、摘要和可选照片 / 来源链接。它由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 生成；本地优先读取相邻 personal-wiki checkout，服务器侧可通过 `gh api` 读取 private personal-wiki。
 

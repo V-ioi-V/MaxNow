@@ -138,7 +138,37 @@ def check_dounai_checkin():
         if daily < 0:
             raise ValueError("dounai-checkin: account_history.daily_available_mb cannot be negative")
 
-    return "dounai-checkin: json, account snapshot, and account history are valid"
+    traffic_usage = data.get("traffic_usage")
+    if traffic_usage:
+        daily_items = traffic_usage.get("daily", [])
+        if not isinstance(daily_items, list):
+            raise ValueError("dounai-checkin: traffic_usage.daily must be a list")
+        for item in daily_items:
+            datetime.strptime(item["date"], "%Y-%m-%d")
+            used = float(item["used_mb"])
+            if used < 0:
+                raise ValueError("dounai-checkin: traffic_usage.daily.used_mb cannot be negative")
+        recent = float(traffic_usage.get("recent_traffic_mb", 0))
+        if recent < 0:
+            raise ValueError("dounai-checkin: traffic_usage.recent_traffic_mb cannot be negative")
+        top_nodes = traffic_usage.get("top_nodes_12h", [])
+        if top_nodes and not isinstance(top_nodes, list):
+            raise ValueError("dounai-checkin: traffic_usage.top_nodes_12h must be a list")
+        for item in top_nodes:
+            traffic = float(item.get("traffic_mb", 0))
+            if traffic < 0:
+                raise ValueError("dounai-checkin: traffic_usage.top_nodes_12h.traffic_mb cannot be negative")
+
+    traffic_history = data.get("traffic_usage_history", [])
+    if not isinstance(traffic_history, list):
+        raise ValueError("dounai-checkin: traffic_usage_history must be a list")
+    for item in traffic_history:
+        datetime.strptime(item["date"], "%Y-%m-%d")
+        used = float(item["used_mb"])
+        if used < 0:
+            raise ValueError("dounai-checkin: traffic_usage_history.used_mb cannot be negative")
+
+    return "dounai-checkin: json, account snapshot, account history, and traffic usage are valid"
 
 
 def check_openclaw_usage():

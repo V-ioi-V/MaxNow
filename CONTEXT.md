@@ -99,7 +99,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/*-usage.js`：从对应 usage JSON 生成的浏览器 wrapper。
 - `dash/data/project-meta.json`：MaxNow 当前版本、部署说明和最近更新摘要，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成。
 - `dash/data/project-meta.js`：从 `project-meta.json` 生成的浏览器 wrapper。
-- `dash/data/dounai_checkin.json`：豆奶每日签到记录、账号余量快照和账号日均可用历史，由 OpenClaw 签到自动化每天更新；Home 只读展示今日流量、今日豆丁、今日账号有效期延长时长、累计签到天数、累计流量和累计账号有效期延长时长，并作为豆奶详情页入口。豆奶详情页展示近 30 天流量/时长折线图，以及剩余流量、有效期、每日可用预算和近 30 天账号日均可用趋势。2026-07-05 已调研近 30 天真实流量使用：当前只有 2026-06-21 起的账号余量快照，不足 30 天；未确认有账单 / 明细 / 每日消耗接口，短期只能用相邻余量快照做估算。
+- `dash/data/dounai_checkin.json`：豆奶每日签到记录、账号余量快照、账号日均可用历史和直接流量使用记录，由 OpenClaw / root 侧豆奶自动化每天更新；Home 只读展示今日流量、今日豆丁、今日账号有效期延长时长、累计签到天数、累计流量和累计账号有效期延长时长，并作为豆奶详情页入口。豆奶详情页展示近 30 天流量/时长折线图，以及剩余流量、有效期、每日可用预算和近 30 天账号日均可用趋势。2026-07-05 已接入 `dounai.pro/user/trafficlog` 只读抓取：`traffic_usage.daily` 保存豆奶页面直接展示的近 7 天真实使用量，`traffic_usage_history` 会随每日同步累积最多 60 天，用于后续展示近 30 天真实用量。
 - `dash/data/ricky.json`：同行记页面的只读数据源，由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 生成，维护“我和 Ricky”的世界地图点位、地点、旅行记录、统计和可选照片 / 来源链接。
 - `dash/data/ricky.js`：从 `ricky.json` 生成的浏览器 wrapper。
 - `dash/data/life-foods.json`：生活页“吃啥”随机选择器的只读候选数据，由 `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 生成。
@@ -126,10 +126,10 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 本机 Codex 用量自动化由 Windows Task Scheduler 调用 `wscript.exe scripts/report_codex_usage_hidden.vbs`。任务默认每 1 小时静默运行一次，注册为 hidden task；VBS launcher 再用 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 PowerShell console 瞬时闪窗。任务要求本地仓库在 `main` 且无无关脏文件。成功后提交并推送 `codex-usage.*` / `token-usage.*`，再通过 SSH 让服务器拉取最新 `main`；服务器合并前会保留现有 `codex-server-usage.*`，避免本机账本覆盖服务器账本。
 - 服务器 Codex 用量自动化由 root crontab 的 `MAXNOW-CODEX-SERVER-USAGE` 每天刷新，日志写入 `logs/codex-server-usage.log`，锁为 `/tmp/maxnow-codex-server-usage.lock`。
 - `dash/data/token-usage.json` 是 Token 页统一入口；OpenClaw、Codex Windows / macOS、Codex server 和后续其他来源都应合入这个总账。Token 页来源费用面板和模型占比、调用消耗同层并列展示，并且来源 token、费用和 runs 跟随当前选择的 `1d` / `7d` / `30d` / `all` 范围更新。
-- 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。若后续展示真实流量消耗，优先寻找豆奶站点可读的真实用量 / 明细接口；若只能使用快照差分，口径应标注为估算，并说明会受剩余流量显示精度、签到奖励、充值 / 赠送、套餐调整、有效期变化和快照时间影响。
+- 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史、直接流量使用记录和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。真实流量消耗优先使用 `traffic_usage_history`，不要再用账号余量快照差分作为主口径；余量差分只可作为缺数据时的估算说明。
 - 同行记页面只读取 `dash/data/ricky.json`，不在前端编辑、不回写 personal-wiki、不依赖外部在线地图服务；事实来源归 personal-wiki 的 `wiki/relationships/ricky-travel.json`。
 - 生活页“吃啥”只读取 `dash/data/life-foods.json`；前端允许本次会话内临时勾选 / 取消勾选和随机，但不回写 personal-wiki，候选长期来源归 `wiki/life/food-picker.md`。
-- 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段，并按日期维护 `account_history`。
+- 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段，并按日期维护 `account_history`。2026-07-05 已继续扩展脚本，读取 `/user/trafficlog` 的近 7 天真实使用量并合并到 `traffic_usage_history`，同时读取 `?ajax=1` 的近 12 小时节点活跃分布。
 
 ### 4. AI 外部信号滚动记忆
 
@@ -208,7 +208,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 - Home 页面已接入“今日 / 本周 / 近 30 天大事”的展示模块，但还需要 Owner 视觉确认和必要微调。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天流量/时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本和 9:00 cron 由 OpenClaw 管理。
-- 2026-07-05 已调研豆奶近 30 天真实流量使用情况：线上签到记录有 61 天，但账号余量快照只有 15 天；2026-06-21 到 2026-07-05 净减少约 30.0GB，同期签到奖励约 6.7GB，按快照差分估算消耗约 37.4GB。该值不是 30 天真实账单，暂不建议直接作为正式“近 30 天用量”上线。
+- 2026-07-05 已接入豆奶真实流量使用抓取：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；服务器生成脚本已将 2026-06-29 到 2026-07-05 的 7 条 direct daily usage 写入线上 `traffic_usage_history`。当天样例：2026-07-05 为 1.31GB，2026-07-04 为 1.20GB，2026-07-02 为 7.37GB。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。
 - 2026-06-19 已修复豆奶签到数据路径分叉：当天签到成功写入 `/root/MaxNow`，但线上部署目录仍停在 2026-06-18；现在 root 数据生成脚本会双写旧工作区和 `/var/www/maxnow-dashboard`。
 - wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，通过 `python3 scripts/update_data.py runtime` 刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
 - Last-30 AI 外部信号服务器自动同步已落地：`ubuntu` 用户 crontab 每天 00:00 运行一次 `MAXNOW-AI-LAST30-SYNC`，通过 `python3 scripts/update_data.py ai-last30` 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
@@ -233,4 +233,4 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 1. 为 `blog.maxnow.cn` 补静态博客构建链路：发布 manifest、Markdown 转换、图片复制、文章列表、标签归档和 nginx 配置。
 2. 观察 Last-30 免费 AI 外部信号的来源稳定性，并在必要时替换长期失败的免费源。
-3. 等豆奶 `account_history` 累积满 30 天，或先刷新登录态继续查找豆奶真实用量 / 明细接口，再决定是否展示“近 30 天消耗估算”。
+3. 等豆奶 `traffic_usage_history` 累积满 30 天后，把豆奶详情页的“近 30 天获取流量”旁边补一张“近 30 天实际使用量”图，口径来自 `traffic_usage_history`。
