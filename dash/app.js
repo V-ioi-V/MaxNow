@@ -1444,12 +1444,20 @@ function renderDounai() {
 
 }
 
+function normalizeTaskTitle(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+}
+
 function renderHome() {
   const mainlines = dashboardData.mainlines || dashboardData.projects || dashboardData.tasks || [];
-  const actions = dashboardData.actions || dashboardData.tasks || [];
+  const rawActions = dashboardData.actions || dashboardData.tasks || [];
+  const mainlineTitles = new Set(mainlines.map((item) => normalizeTaskTitle(item.title)).filter(Boolean));
+  const actions = rawActions.filter((item) => !mainlineTitles.has(normalizeTaskTitle(item.title)));
   const journal = dashboardData.journal || [];
   const feeds = dashboardData.feeds || [];
-  const aiItems = (aiNewsData.items || []).slice(0, 3);
   const token7d = getTokenRange("7d");
   const token1d = getTokenRange("1d");
   const tokenAll = getTokenRange("all");
@@ -1467,7 +1475,6 @@ function renderHome() {
     : "系统自动化状态：nginx、证书、部署、cron、失败日志和资源快照";
   setText("#feed-source", dashboardData.feedSource || "OpenClaw");
   setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
-  setText("#ai-news-source", aiNewsData.sourceSummary || "OpenClaw AI Daily");
   setText("#last30-source", last30Data.sourceSummary || last30Data.updatedAt || copy.syncWaiting);
   renderWeather();
 
@@ -1489,7 +1496,6 @@ function renderHome() {
   clearAndFill(qs("#mainline-list"), createTask, mainlines);
   clearAndFill(qs("#action-list"), createTask, actions);
   clearAndFill(qs("#journal-list"), createFeed, journal);
-  clearAndFill(qs("#ai-news-list"), createAiNewsItem, aiItems);
   clearAndFill(qs("#feed-list"), createFeed, feeds);
   clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   const systemItems = dashboardData.system || [];
