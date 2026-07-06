@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 21:48",
+  "updatedAt": "2026-07-06 21:53",
   "version": "1.0.0.13",
   "versionLabel": "v1.0.0.13",
-  "branch": "bugfix/token-source-update-head",
-  "commit": "77e1706",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/token-source-update-head · commit 77e1706 · 有未提交代码改动",
+  "branch": "main",
+  "commit": "540c445",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 540c445 · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-06",
