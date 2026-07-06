@@ -343,6 +343,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_
 
 默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 1 小时静默运行一次。安装脚本会注册 hidden task。Owner Windows 机器上当前使用专用 clone `D:\Personal\MaxNow-token-report` 运行该任务，Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow-token-report\scripts\report_codex_usage_hidden.vbs"`；VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免自动运行时弹出瞬时命令行窗口。该任务要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main`。服务器合并前会暂存本地生成的 `openclaw-usage.*`、`codex-server-usage.*` 和 `project-meta.*`，再保留 OpenClaw / server Codex 源账本并运行 `python3 scripts/update_data.py token-usage`。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
 
+2026-07-06 修复过一次 Windows 专用 clone 上报卡住：主工作区 `D:\Personal\MaxNow` 配有 repo-local GitHub 代理，但 `D:\Personal\MaxNow-token-report` 缺少同样配置，导致计划任务在 `git pull --ff-only origin main` 处卡住或报 `Recv failure: Connection was reset`。当前该 clone 已设置：
+
+```powershell
+git -C D:\Personal\MaxNow-token-report config http.proxy http://127.0.0.1:7897
+git -C D:\Personal\MaxNow-token-report config https.proxy http://127.0.0.1:7897
+```
+
+如果任务显示长时间 `Running` 且日志停在 `pull latest origin/main`，先检查 `git-remote-https` 是否卡住，再确认上述 proxy 仍存在。若专用 clone 因未推送生成物提交出现 `[origin/main: ahead ..., behind ...]`，先给当前 HEAD 建本地备份分支，再让 `main` 回到 `origin/main`，最后重新运行计划任务，由当前 `.codex/sessions` 重新生成 `codex-usage.*` 和 `token-usage.*`。2026-07-06 22:18 手动验证成功，`LastTaskResult=0`，线上 `Codex Windows` 来源更新时间为 `2026-07-06 22:18`。
+
 本机 macOS 可直接在仓库目录运行：
 
 ```bash

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 22:10",
-  "version": "1.0.0.14",
-  "versionLabel": "v1.0.0.14",
-  "branch": "main",
-  "commit": "8a91643",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 8a91643 · 干净",
+  "updatedAt": "2026-07-06 22:20",
+  "version": "1.0.0.15",
+  "versionLabel": "v1.0.0.15",
+  "branch": "bugfix/codex-win-report-proxy",
+  "commit": "7fdf664",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/codex-win-report-proxy · commit 7fdf664 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-06",
+      "title": "修复 Windows Codex 用量自动上报",
+      "summary": "修复 `D:\\Personal\\MaxNow-token-report` 专用 clone 直连 GitHub 时 `git pull` 卡住或连接重置的问题：为该 clone 补齐 repo-local `http.proxy` / `https.proxy` 到 `http://127.0.0.1:7897`。"
+    },
     {
       "date": "2026-07-06",
       "title": "调整 Token 页头和范围切换位置",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-06",
       "title": "拆分 macOS Codex 独立账本",
       "summary": "新增 `dash/data/codex-macos-usage.*`，macOS 本机 Codex 用量不再写入 Windows 兼容账本 `dash/data/codex-usage.*`。"
-    },
-    {
-      "date": "2026-07-06",
-      "title": "修正 Token 自然日范围和来源更新时间",
-      "summary": "Token 页 `1d` 改为以当前浏览器本地日期 00:00 为边界，只统计今天自然日；`7d` / `30d` 改为包括今天在内的最近 7 / 30 个自然日。"
     }
   ]
 };

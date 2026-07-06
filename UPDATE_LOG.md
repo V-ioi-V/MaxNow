@@ -11,6 +11,13 @@
 
 ## 2026-07-06
 
+### 修复 Windows Codex 用量自动上报
+
+- 修复 `D:\Personal\MaxNow-token-report` 专用 clone 直连 GitHub 时 `git pull` 卡住或连接重置的问题：为该 clone 补齐 repo-local `http.proxy` / `https.proxy` 到 `http://127.0.0.1:7897`。
+- 清理 22:03 卡住的计划任务进程，并处理该 clone 中未推送生成物提交造成的 `main` 分叉；旧提交已保留到本地备份分支，随后用当前 `.codex/sessions` 重新生成账本。
+- 手动启动 `MaxNow-Local-Codex-Usage-Report` 验证通过：2026-07-06 22:18 完成上报，`LastTaskResult=0`，线上 `Codex Windows` 来源更新时间更新到 `2026-07-06 22:18`。
+- 将 `VERSION` 从 `1.0.0.14` 提升到 `1.0.0.15`。
+
 ### 调整 Token 页头和范围切换位置
 
 - 将 Token 页 `1d / 7d / 30d / all` 范围切换移动到顶部栏右侧，只在 Token 页显示，和 Blog / 刷新入口同层。
