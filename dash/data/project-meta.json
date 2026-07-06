@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 22:06",
+  "updatedAt": "2026-07-06 22:10",
   "version": "1.0.0.14",
   "versionLabel": "v1.0.0.14",
-  "branch": "feature/token-header-tabs-and-win-report",
-  "commit": "2f99449",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/token-header-tabs-and-win-report · commit 2f99449 · 有未提交代码改动",
+  "branch": "main",
+  "commit": "8a91643",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 8a91643 · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-06",
