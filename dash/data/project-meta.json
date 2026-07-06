@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 21:30",
+  "updatedAt": "2026-07-06 21:32",
   "version": "1.0.0.12",
   "versionLabel": "v1.0.0.12",
-  "branch": "bugfix/dounai-playwright-runtime",
-  "commit": "9306bb6",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/dounai-playwright-runtime · commit 9306bb6 · 有未提交代码改动",
+  "branch": "main",
+  "commit": "53fd52e",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 53fd52e · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-06",
