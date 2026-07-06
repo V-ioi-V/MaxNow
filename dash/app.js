@@ -1817,6 +1817,7 @@ async function loadData() {
 
 function setView(view) {
   const nextView = ["home", "ricky", "life", "tokens", "cloud", "dounai"].includes(view) ? view : "home";
+  document.body.dataset.view = nextView;
   qsa("[data-view-panel]").forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.viewPanel === nextView);
   });

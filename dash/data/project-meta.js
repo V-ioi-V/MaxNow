@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 21:53",
-  "version": "1.0.0.13",
-  "versionLabel": "v1.0.0.13",
-  "branch": "main",
-  "commit": "540c445",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 540c445 · 干净",
+  "updatedAt": "2026-07-06 22:06",
+  "version": "1.0.0.14",
+  "versionLabel": "v1.0.0.14",
+  "branch": "feature/token-header-tabs-and-win-report",
+  "commit": "2f99449",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/token-header-tabs-and-win-report · commit 2f99449 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-06",
+      "title": "调整 Token 页头和范围切换位置",
+      "summary": "将 Token 页 `1d / 7d / 30d / all` 范围切换移动到顶部栏右侧，只在 Token 页显示，和 Blog / 刷新入口同层。"
+    },
     {
       "date": "2026-07-06",
       "title": "优化 Token 页头来源同步布局",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-06",
       "title": "修正 Token 自然日范围和来源更新时间",
       "summary": "Token 页 `1d` 改为以当前浏览器本地日期 00:00 为边界，只统计今天自然日；`7d` / `30d` 改为包括今天在内的最近 7 / 30 个自然日。"
-    },
-    {
-      "date": "2026-07-06",
-      "title": "新增 macOS 本机 Codex Token 上报",
-      "summary": "新增 `scripts/report_codex_usage.sh`，在 macOS 本机刷新 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`，只允许提交这四个 usage 数据文件。"
     }
   ]
 };

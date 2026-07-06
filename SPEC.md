@@ -193,7 +193,7 @@ Token 真实数据按来源接入，并由统一总账合并展示：
 - 本机 Codex 用量可由 Windows Task Scheduler 或 macOS launchd 定期上报；默认每 1 小时运行一次。Windows Task Scheduler action 使用 `wscript.exe scripts/report_codex_usage_hidden.vbs`，由 VBS 以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 `powershell.exe` console 瞬时闪窗；macOS launchd 运行 `scripts/report_codex_usage.sh`。Windows 上报脚本只允许提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`；macOS 上报脚本只允许提交 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`。遇到无关工作区改动会停止，服务器端部署时只运行 `token-usage` 合并，避免用服务器空数据覆盖本机或服务器 Codex 账本。
 - 服务器 Codex 用量由 root crontab 每天刷新 `codex-server-usage.*`，再合并 `token-usage.*`；本机上报脚本在服务器 pull 前会保留服务器侧账本，避免本机推送覆盖服务器统计。
 - Token 页在总量摘要下方显示来源费用面板，和模型占比、调用消耗并列为同一层信息区；至少区分 OpenClaw、Codex Windows / macOS 和 Codex server。来源列表的 token、费用和 runs 必须跟随当前选中的 `1d` / `7d` / `30d` / `all` 范围更新。
-- Token 页头的 `1d` 以当前浏览器本地日期的 00:00 为边界，只展示今天自然日；`7d` / `30d` 为包括今天在内的最近 7 / 30 个自然日。页头需要展示每个 Token 来源账本的最后更新时间。
+- Token 页头的 `1d` 以当前浏览器本地日期的 00:00 为边界，只展示今天自然日；`7d` / `30d` 为包括今天在内的最近 7 / 30 个自然日。范围切换放在顶部栏右侧，只在 Token 页显示，和 Blog / 刷新入口同层。Token 页面页头只保留两个信息 tab：左侧展示 Token 用量和总账合并时间，右侧展示每个 Token 来源账本的最后更新时间。
 - 后续其他来源应复用同类日账本结构，再由汇总层合并 OpenClaw / Codex / 其他来源。
 
 不要把完整 Token 页面复制到 Home。Home 只需要显示紧凑的使用状态。
