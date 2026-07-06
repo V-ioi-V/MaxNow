@@ -331,7 +331,8 @@ a {
 }
 
 .token-usage-head {
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.85fr) auto;
+  grid-template-columns: minmax(260px, 1fr) minmax(320px, 0.86fr) auto;
+  align-items: center;
 }
 
 .home-widgets {
@@ -1768,10 +1769,31 @@ a.last30-item {
   min-width: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+}
+
+.token-source-sync {
+  min-width: 0;
   justify-self: center;
+  width: min(100%, 520px);
+  display: grid;
+  gap: 8px;
+  align-content: center;
+  padding: 12px 14px;
+  border: 1px solid #e6eef7;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.token-source-sync > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .token-source-update-item {
@@ -1779,12 +1801,12 @@ a.last30-item {
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   border: 1px solid #e3ebf4;
   border-radius: 999px;
-  padding: 7px 10px;
+  padding: 5px 8px;
   background: #ffffff;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+  box-shadow: none;
 }
 
 .token-source-update-item[data-tone="purple"] {
@@ -1804,10 +1826,10 @@ a.last30-item {
 
 .token-source-update-item span {
   min-width: 0;
-  max-width: 120px;
+  max-width: 112px;
   overflow: hidden;
   color: var(--source-update-color);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1815,7 +1837,7 @@ a.last30-item {
 
 .token-source-update-item strong {
   color: var(--soft);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   line-height: 1;
   white-space: nowrap;
@@ -2955,6 +2977,19 @@ a.last30-item {
     grid-template-columns: 1fr;
   }
 
+  .token-usage-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .token-usage-head > div:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .token-source-sync {
+    justify-self: stretch;
+    width: 100%;
+  }
+
   .cloud-grid,
   .ricky-stats {
     grid-template-columns: 1fr;
@@ -3068,8 +3103,17 @@ a.last30-item {
     grid-template-columns: 1fr;
   }
 
+  #token-ranges {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .token-source-updates {
     justify-content: flex-start;
+  }
+
+  .token-source-sync {
+    justify-self: stretch;
+    width: 100%;
   }
 
   .ricky-map {

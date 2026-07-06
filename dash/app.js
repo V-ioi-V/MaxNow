@@ -74,6 +74,7 @@ const copy = {
   day1: "1d",
   noHoliday: "\u4eca\u65e5\u65e0\u8282\u65e5",
   updatedAt: "\u66f4\u65b0\u4e8e",
+  ledgerMergedAt: "\u603b\u8d26\u5408\u5e76\u4e8e",
   noNote: "\u6682\u65e0\u8bf4\u660e\u3002",
   tokenTitle: "Token \u7528\u91cf",
   dounaiTitle: "\u8c46\u5976",
@@ -1620,7 +1621,7 @@ function renderTokens() {
     updateSidebarTokenSummary(range.key);
   }
 
-  setText("#token-updated", usage.updatedAt ? `${copy.updatedAt} ${usage.updatedAt}` : copy.sync);
+  setText("#token-updated", usage.updatedAt ? `${copy.ledgerMergedAt} ${usage.updatedAt}` : copy.sync);
   renderSourceUpdates(usage.sourceUpdates || []);
   setText("#token-total", formatToken(range.total));
   setText("#token-input", formatToken(range.input));

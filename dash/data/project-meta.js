@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 21:32",
-  "version": "1.0.0.12",
-  "versionLabel": "v1.0.0.12",
-  "branch": "main",
-  "commit": "53fd52e",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 53fd52e · 干净",
+  "updatedAt": "2026-07-06 21:48",
+  "version": "1.0.0.13",
+  "versionLabel": "v1.0.0.13",
+  "branch": "bugfix/token-source-update-head",
+  "commit": "77e1706",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/token-source-update-head · commit 77e1706 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-06",
+      "title": "优化 Token 页头来源同步布局",
+      "summary": "Token 页头左侧更新时间文案从“更新于”改为“总账合并于”，明确它表示 `token-usage.*` 总账合并时间。"
+    },
     {
       "date": "2026-07-06",
       "title": "修复豆奶 Playwright 运行时缺失",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-06",
       "title": "新增 macOS 本机 Codex Token 上报",
       "summary": "新增 `scripts/report_codex_usage.sh`，在 macOS 本机刷新 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`，只允许提交这四个 usage 数据文件。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "收敛 Home 外部输入和待推进重复项",
-      "summary": "Home 不再单独展示“AI 外部输入”卡，外部 AI 信号统一进入 Last-30 的“最新信号 / 本周观察 / 近 30 天主线”三列模块。"
     }
   ]
 };

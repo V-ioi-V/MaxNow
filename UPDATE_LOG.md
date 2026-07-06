@@ -11,6 +11,13 @@
 
 ## 2026-07-06
 
+### 优化 Token 页头来源同步布局
+
+- Token 页头左侧更新时间文案从“更新于”改为“总账合并于”，明确它表示 `token-usage.*` 总账合并时间。
+- 将各来源最后同步时间收进页头中间的“各来源最后同步”信息组，避免一排来源 pill 悬浮在页头空白区域。
+- 保留右侧 `1d / 7d / 30d / all` 范围切换为紧凑控件，并将 Dash 缓存版本提升到 `styles.css?v=92` 和 `app.js?v=87`。
+- 将 `VERSION` 从 `1.0.0.12` 提升到 `1.0.0.13`。
+
 ### 修复豆奶 Playwright 运行时缺失
 
 - 复查确认 root crontab 仍保留豆奶 09:00 签到和 00:05 traffic closeout，但 2026-07-06 两个任务都因 Playwright 缺少 `/root/.cache/ms-playwright/chromium_headless_shell-1208` 失败。
