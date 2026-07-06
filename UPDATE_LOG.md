@@ -11,6 +11,12 @@
 
 ## 2026-07-06
 
+### 拆开 Token 页头信息 tab
+
+- 将 Token 页头外层从白底大卡改为透明 grid 容器，让“Token 用量”和“各来源最后同步”成为两张真正独立的同级 tab 卡片。
+- 两张页头 tab 继承同组卡片边框、阴影和 hover 反馈，视觉上对齐 Home 顶部独立卡片模式。
+- 将 Dash 样式缓存版本提升到 `styles.css?v=94`，并将 `VERSION` 从 `1.0.0.15` 提升到 `1.0.0.16`。
+
 ### 修复 Windows Codex 用量自动上报
 
 - 修复 `D:\Personal\MaxNow-token-report` 专用 clone 直连 GitHub 时 `git pull` 卡住或连接重置的问题：为该 clone 补齐 repo-local `http.proxy` / `https.proxy` 到 `http://127.0.0.1:7897`。

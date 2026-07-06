@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 22:20",
-  "version": "1.0.0.15",
-  "versionLabel": "v1.0.0.15",
-  "branch": "bugfix/codex-win-report-proxy",
-  "commit": "7fdf664",
+  "updatedAt": "2026-07-06 22:24",
+  "version": "1.0.0.16",
+  "versionLabel": "v1.0.0.16",
+  "branch": "bugfix/token-header-separated-tabs",
+  "commit": "d8db03b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/codex-win-report-proxy · commit 7fdf664 · 有未提交代码改动",
+  "deployNote": "bugfix/token-header-separated-tabs · commit d8db03b · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-06",
+      "title": "拆开 Token 页头信息 tab",
+      "summary": "将 Token 页头外层从白底大卡改为透明 grid 容器，让“Token 用量”和“各来源最后同步”成为两张真正独立的同级 tab 卡片。"
+    },
     {
       "date": "2026-07-06",
       "title": "修复 Windows Codex 用量自动上报",
@@ -28,11 +33,6 @@
       "date": "2026-07-06",
       "title": "修复豆奶 Playwright 运行时缺失",
       "summary": "复查确认 root crontab 仍保留豆奶 09:00 签到和 00:05 traffic closeout，但 2026-07-06 两个任务都因 Playwright 缺少 `/root/.cache/ms-playwright/chromium_headless_shell-1208` 失败。"
-    },
-    {
-      "date": "2026-07-06",
-      "title": "拆分 macOS Codex 独立账本",
-      "summary": "新增 `dash/data/codex-macos-usage.*`，macOS 本机 Codex 用量不再写入 Windows 兼容账本 `dash/data/codex-usage.*`。"
     }
   ]
 }
