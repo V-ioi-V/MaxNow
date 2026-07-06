@@ -127,6 +127,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_
 
 该计划任务默认每 1 小时静默刷新本机 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，注册为 hidden task，并通过 `wscript.exe scripts/report_codex_usage_hidden.vbs` 无窗口启动 PowerShell 上报脚本，避免自动运行时弹出瞬时命令行窗口。它只提交这四个数据文件并推送到 `origin/main`。服务器部署侧只做 `token-usage` 合并，不在服务器上刷新本机 Codex collector。
 
+需要在 Owner macOS 本机定期上报 Codex Token 用量时：
+
+```bash
+bash scripts/install_local_codex_usage_launchd.sh
+```
+
+该 launchd 任务默认每 1 小时运行一次 `scripts/report_codex_usage.sh`，刷新本机 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，只提交这四个数据文件并推送到 `origin/main`。建议在专用 main clone 中安装，避免日常开发分支或未提交改动阻断自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
+
 ## OpenClaw 写权限
 
 建议把 OpenClaw 的写权限限制到数据文件。

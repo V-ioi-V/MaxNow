@@ -1,14 +1,24 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-05 23:36",
-  "version": "1.0.0.08",
-  "versionLabel": "v1.0.0.08",
-  "branch": "feature/home-input-dedupe",
-  "commit": "07c02b7",
+  "updatedAt": "2026-07-06 20:25",
+  "version": "1.0.0.10",
+  "versionLabel": "v1.0.0.10",
+  "branch": "feature/local-token-reporting",
+  "commit": "575065b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/home-input-dedupe · commit 07c02b7 · 有未提交代码改动",
+  "deployNote": "feature/local-token-reporting · commit 575065b · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-06",
+      "title": "修正 Token 自然日范围和来源更新时间",
+      "summary": "Token 页 `1d` 改为以当前浏览器本地日期 00:00 为边界，只统计今天自然日；`7d` / `30d` 改为包括今天在内的最近 7 / 30 个自然日。"
+    },
+    {
+      "date": "2026-07-06",
+      "title": "新增 macOS 本机 Codex Token 上报",
+      "summary": "新增 `scripts/report_codex_usage.sh`，在 macOS 本机刷新 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，只允许提交这四个 usage 数据文件。"
+    },
     {
       "date": "2026-07-05",
       "title": "收敛 Home 外部输入和待推进重复项",
@@ -23,16 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-05",
       "title": "优化 Token 数值单位进位",
       "summary": "Token 页总量、来源、模型、会话和趋势图统一使用同一个数值格式化规则。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "将 Last-30 摘要改回 AI 大事口径",
-      "summary": "`scripts/sync_ai_last30.py` 不再外露“适合进入近 30 天观察池”这类采集器内部筛选话术。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "收紧 Last-30 外露信息口径",
-      "summary": "将 Last-30 左栏静态标签从 `Today` 改为 `Latest`，默认标题改为“最新信号”，避免最近 7 天回退数据被误读为当天信号。"
     }
   ]
 };

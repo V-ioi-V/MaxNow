@@ -9,6 +9,24 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-07-06
+
+### 修正 Token 自然日范围和来源更新时间
+
+- Token 页 `1d` 改为以当前浏览器本地日期 00:00 为边界，只统计今天自然日；`7d` / `30d` 改为包括今天在内的最近 7 / 30 个自然日。
+- 当今天暂无 token 数据时，`1d` 显示 0，不再回退到最近一个有数据的日期。
+- Token 页头新增分来源更新时间列表，展示 Codex Windows / macOS、OpenClaw、Codex server 等来源账本的最后同步时间。
+- `scripts/sync_token_usage.py` 在统一总账的 `sources` 中保留来源 `updatedAt`，并为暂无 runs 的已知来源保留更新时间。
+- 将 Dash 缓存版本提升到 `styles.css?v=91` 和 `app.js?v=86`，并将 `VERSION` 从 `1.0.0.09` 提升到 `1.0.0.10`。
+
+### 新增 macOS 本机 Codex Token 上报
+
+- 新增 `scripts/report_codex_usage.sh`，在 macOS 本机刷新 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，只允许提交这四个 usage 数据文件。
+- 新增 `scripts/install_local_codex_usage_launchd.sh`，注册 `cn.maxnow.local-codex-usage-report` launchd 任务，默认每 1 小时运行一次本机上报。
+- macOS 上报复用现有 Codex session `token_count` 采集和 Token 总账合并口径，来源默认显示为 `Codex macOS`，不导出 prompt / response 正文。
+- 更新 `AGENTS.md`、`SPEC.md`、`CONTEXT.md`、`DEPLOY.md`、`SERVER_RUNBOOK.md`、`ROADMAP.md` 和 `scripts/check.py`，让后续代理和部署说明都能识别 macOS 上报入口。
+- 将 `VERSION` 从 `1.0.0.08` 提升到 `1.0.0.09`。
+
 ## 2026-07-05
 
 ### 收敛 Home 外部输入和待推进重复项

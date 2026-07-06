@@ -330,6 +330,10 @@ a {
   gap: 24px;
 }
 
+.token-usage-head {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.85fr) auto;
+}
+
 .home-widgets {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -355,6 +359,7 @@ a {
 }
 
 .summary-copy #daily-brief,
+.token-updated,
 .token-page-head p:last-child {
   max-width: 760px;
   margin: 0;
@@ -1759,6 +1764,69 @@ a.last30-item {
   color: var(--accent-strong);
 }
 
+.token-source-updates {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+}
+
+.token-source-update-item {
+  --source-update-color: var(--accent-strong);
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #e3ebf4;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+}
+
+.token-source-update-item[data-tone="purple"] {
+  --source-update-color: var(--purple);
+  border-color: #ead8ff;
+}
+
+.token-source-update-item[data-tone="green"] {
+  --source-update-color: var(--ok);
+  border-color: var(--green-border);
+}
+
+.token-source-update-item[data-tone="orange"] {
+  --source-update-color: var(--orange);
+  border-color: #ffd29a;
+}
+
+.token-source-update-item span {
+  min-width: 0;
+  max-width: 120px;
+  overflow: hidden;
+  color: var(--source-update-color);
+  font-size: 12px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.token-source-update-item strong {
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.token-source-update-item.is-empty {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .token-summary {
   grid-template-columns: repeat(6, minmax(0, 1fr));
   margin-bottom: 14px;
@@ -2950,6 +3018,7 @@ a.last30-item {
   .summary-bar,
   .focus-panel,
   .token-page-head,
+  .token-usage-head,
   .cloud-page-head,
   .life-food-toolbar {
     grid-template-columns: 1fr;
@@ -2997,6 +3066,10 @@ a.last30-item {
   .ricky-stats,
   .range-tabs {
     grid-template-columns: 1fr;
+  }
+
+  .token-source-updates {
+    justify-content: flex-start;
   }
 
   .ricky-map {

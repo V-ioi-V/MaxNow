@@ -12,6 +12,11 @@ SOURCE_RELS = [
     "dash/data/codex-usage.json",
     "dash/data/codex-server-usage.json",
 ]
+SOURCE_FALLBACKS = {
+    "dash/data/openclaw-usage.json": {"key": "openclaw", "label": "OpenClaw"},
+    "dash/data/codex-usage.json": {"key": "codex-local", "label": "Codex local"},
+    "dash/data/codex-server-usage.json": {"key": "codex-server", "label": "Codex server"},
+}
 try:
     TZ = ZoneInfo("Asia/Shanghai")
 except ZoneInfoNotFoundError:
@@ -102,12 +107,13 @@ def merge_ledgers(ledgers):
     pricing_snapshot = []
     warnings = []
 
-    for ledger in ledgers:
+    for rel_path, ledger in ledgers:
         if not ledger:
             continue
         if ledger.get("warning"):
             warnings.append(ledger["warning"])
 
+        ledger_updated_at = ledger.get("updatedAt")
         ledger_sources = {source_key(source): source_label(source) for source in ledger.get("sources", [])}
 
         for source in ledger.get("sources", []):
@@ -121,6 +127,22 @@ def merge_ledgers(ledgers):
                 },
             )
             add_usage(current, source)
+            source_updated_at = source.get("updatedAt") or ledger_updated_at
+            if source_updated_at and source_updated_at > current.get("updatedAt", ""):
+                current["updatedAt"] = source_updated_at
+
+        if not ledger.get("sources") and ledger_updated_at and rel_path in SOURCE_FALLBACKS:
+            fallback = SOURCE_FALLBACKS[rel_path]
+            current = sources.setdefault(
+                fallback["key"],
+                {
+                    "key": fallback["key"],
+                    "label": fallback["label"],
+                    **empty_usage(),
+                },
+            )
+            if ledger_updated_at > current.get("updatedAt", ""):
+                current["updatedAt"] = ledger_updated_at
 
         for day in ledger.get("days", []):
             date = day.get("date")
@@ -193,7 +215,7 @@ def merge_ledgers(ledgers):
         "currency": "USD",
         "pricingBasis": "mixed",
         "pricingSource": "openclaw-openrouter-equivalent-and-codex-openai-api-equivalent",
-        "pricingStale": any(ledger.get("pricingStale") for ledger in ledgers if ledger),
+        "pricingStale": any(ledger.get("pricingStale") for _, ledger in ledgers if ledger),
         "summary": total,
         "sources": sorted(sources.values(), key=lambda item: item["totalTokens"], reverse=True),
         "days": day_list,
@@ -215,7 +237,7 @@ def write_output(data):
 
 
 def main():
-    ledgers = [read_json(rel_path) for rel_path in SOURCE_RELS]
+    ledgers = [(rel_path, read_json(rel_path)) for rel_path in SOURCE_RELS]
     write_output(merge_ledgers(ledgers))
 
 

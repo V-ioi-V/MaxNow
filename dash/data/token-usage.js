@@ -1,5 +1,5 @@
 window.MAXNOW_TOKEN_USAGE_DATA = {
-  "updatedAt": "2026-07-05 22:03",
+  "updatedAt": "2026-07-06 20:24",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "mixed",
@@ -24,7 +24,8 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "cacheBaseTokens": 903877349,
       "totalTokens": 906688892,
       "estimatedCostUsd": 781.756459,
-      "runs": 98
+      "runs": 98,
+      "updatedAt": "2026-07-05 22:03"
     },
     {
       "key": "openclaw",
@@ -35,7 +36,20 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "cacheBaseTokens": 0,
       "totalTokens": 0,
       "estimatedCostUsd": 0.0,
-      "runs": 0
+      "runs": 0,
+      "updatedAt": "2026-06-21 22:58"
+    },
+    {
+      "key": "codex-server",
+      "label": "Codex server",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheReadTokens": 0,
+      "cacheBaseTokens": 0,
+      "totalTokens": 0,
+      "estimatedCostUsd": 0.0,
+      "runs": 0,
+      "updatedAt": "2026-07-02 10:58"
     }
   ],
   "days": [

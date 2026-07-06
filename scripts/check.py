@@ -92,6 +92,8 @@ def check_required_files():
         "scripts/report_codex_usage.ps1",
         "scripts/report_codex_usage_hidden.vbs",
         "scripts/install_local_codex_usage_task.ps1",
+        "scripts/report_codex_usage.sh",
+        "scripts/install_local_codex_usage_launchd.sh",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
     ]

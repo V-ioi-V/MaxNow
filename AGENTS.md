@@ -72,6 +72,8 @@ scripts/sync_token_usage.py
 scripts/report_codex_usage.ps1
 scripts/report_codex_usage_hidden.vbs
 scripts/install_local_codex_usage_task.ps1
+scripts/report_codex_usage.sh
+scripts/install_local_codex_usage_launchd.sh
 scripts/sync_project_meta.py
 scripts/sync_weather.py
 scripts/sync_ricky_travel.py
@@ -141,6 +143,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Use `python scripts/update_data.py codex-server-usage` on the server as root to refresh server Codex usage from `/root/.codex/sessions`; it writes `dash/data/codex-server-usage.*` and then merges `dash/data/token-usage.*`.
 - Use `python scripts/sync_token_usage.py` or `python scripts/update_data.py token-usage` to merge OpenClaw and Codex ledgers into the unified Token page ledger.
 - Use `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1` on the owner's Windows machine to install local Codex usage reporting. The scheduled task runs `scripts/report_codex_usage_hidden.vbs` through `wscript.exe`, which launches `scripts/report_codex_usage.ps1` with window style 0; it may only commit `dash/data/codex-usage.*` and `dash/data/token-usage.*`, and must not refresh server-side Codex usage when deploying the merged Token ledger. Its server merge preserves existing `codex-server-usage.*` before pulling.
+- Use `bash scripts/install_local_codex_usage_launchd.sh` on the owner's macOS machine to install local Codex usage reporting through launchd. The launchd job runs `scripts/report_codex_usage.sh`; it may only commit `dash/data/codex-usage.*` and `dash/data/token-usage.*`, labels the source as `Codex macOS`, and must preserve server-side Codex usage when deploying the merged Token ledger.
 - Use `python scripts/sync_project_meta.py` or `python scripts/update_data.py project-meta` to refresh the MaxNow version and recent update module.
 - Use `python scripts/sync_ricky_travel.py` or `python scripts/update_data.py ricky-travel` to refresh the "我和 Ricky" travel map from personal-wiki `wiki/relationships/ricky-travel.json`.
 - Use `python scripts/sync_life_foods.py` or `python scripts/update_data.py life-foods` to refresh the Life page food picker candidates from personal-wiki `wiki/life/food-picker.md`.

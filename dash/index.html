@@ -7,7 +7,7 @@
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="./styles.css?v=90" />
+    <link rel="stylesheet" href="./styles.css?v=91" />
   </head>
   <body>
     <div class="app-shell">
@@ -466,12 +466,13 @@
         </section>
 
         <section class="view" id="tokens-view" data-view-panel="tokens">
-          <header class="token-page-head">
+          <header class="token-page-head token-usage-head">
             <div>
               <p class="eyebrow">Token Usage</p>
               <h1>Token &#29992;&#37327;</h1>
-              <p id="token-updated">&#31561;&#24453;&#21516;&#27493;</p>
+              <p class="token-updated" id="token-updated">&#31561;&#24453;&#21516;&#27493;</p>
             </div>
+            <div class="token-source-updates" id="token-source-updates" aria-label="Token source update times"></div>
             <div class="range-tabs" id="token-ranges" role="tablist" aria-label="Token ranges"></div>
           </header>
 
@@ -810,6 +811,6 @@
     <script src="./data/ricky.js?v=1"></script>
     <script src="./data/life-foods.js?v=1"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=85"></script>
+    <script src="./app.js?v=86"></script>
   </body>
 </html>

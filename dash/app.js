@@ -122,6 +122,23 @@ function formatPercent(value) {
   return `${value.toFixed(2)}%`;
 }
 
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function recentLocalDateKeys(count) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Array.from({ length: count }, (_, index) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() - index);
+    return localDateKey(date);
+  });
+}
+
 function formatFlow(value, unit = "auto") {
   const amount = Number(value);
   if (!Number.isFinite(amount)) return "--";
@@ -564,6 +581,23 @@ function formatDateLabel(dateText) {
   return parts.length === 3 ? `${Number(parts[1])}/${Number(parts[2])}` : dateText || "";
 }
 
+function emptyUsageDay(date) {
+  return normalizeUsageDay({
+    date,
+    sources: [],
+    bySource: [],
+    byModel: [],
+    byTask: [],
+    inputTokens: 0,
+    outputTokens: 0,
+    cacheReadTokens: 0,
+    cacheBaseTokens: 0,
+    totalTokens: 0,
+    estimatedCostUsd: 0,
+    runs: 0,
+  });
+}
+
 function buildModelBreakdown(days) {
   const byModel = new Map();
   days.forEach((day) => {
@@ -688,6 +722,8 @@ function buildSourceBreakdown(selectedDays = []) {
       .sort((a, b) => b.total - a.total);
   }
 
+  if (selectedDays.length) return [];
+
   const ledger = getTokenLedgerData();
   const sources = Array.isArray(ledger.sources) ? ledger.sources : [];
   return sources
@@ -705,12 +741,30 @@ function getTokenLedgerData() {
   return Array.isArray(tokenUsageData.days) && tokenUsageData.days.length ? tokenUsageData : openclawUsageData;
 }
 
+function sourceUpdatedAt(source, ledger) {
+  return source.updatedAt || source.lastUpdatedAt || source.syncedAt || ledger.updatedAt || "";
+}
+
+function buildSourceUpdateItems(ledger) {
+  const sources = Array.isArray(ledger.sources) ? ledger.sources : [];
+  return sources
+    .map((source) => ({
+      key: source.key || source.source || source.label || "source",
+      label: sourceDisplayName(source),
+      updatedAt: sourceUpdatedAt(source, ledger),
+      tone: sourceTone(source),
+    }))
+    .filter((source) => source.updatedAt)
+    .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+}
+
 function getOpenclawTokenUsage() {
   const ledger = getTokenLedgerData();
   const rawDays = Array.isArray(ledger.days) ? ledger.days : [];
   if (!rawDays.length) return null;
 
   const days = rawDays.map(normalizeUsageDay).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const dayByDate = new Map(days.map((day) => [day.date, day]));
   const rangeDefs = [
     { key: "1d", label: "1d", count: 1 },
     { key: "7d", label: "7d", count: 7 },
@@ -718,7 +772,9 @@ function getOpenclawTokenUsage() {
     { key: "all", label: "all", count: Infinity },
   ];
   const ranges = rangeDefs.map((range) => {
-    const selected = Number.isFinite(range.count) ? days.slice(0, range.count) : days;
+    const selected = Number.isFinite(range.count)
+      ? recentLocalDateKeys(range.count).map((date) => dayByDate.get(date) || emptyUsageDay(date))
+      : days;
     const summary = sumUsage(selected);
     return {
       key: range.key,
@@ -729,13 +785,14 @@ function getOpenclawTokenUsage() {
   });
 
   const active = ranges.find((range) => range.key === activeTokenRange) || ranges[1] || ranges[0];
-  const chartDays = [...days].reverse().slice(-30);
+  const chartDays = recentLocalDateKeys(30).reverse().map((date) => dayByDate.get(date) || emptyUsageDay(date));
   return {
     updatedAt: ledger.updatedAt,
     ranges,
     models: buildModelBreakdown(active.selectedDays || []),
     sessions: buildSessionBreakdown(active.selectedDays || []).slice(0, 8),
     sources: buildSourceBreakdown(active.selectedDays || []),
+    sourceUpdates: buildSourceUpdateItems(ledger),
     daily: chartDays.map((day) => ({
       date: day.date,
       label: formatDateLabel(day.date),
@@ -1564,6 +1621,7 @@ function renderTokens() {
   }
 
   setText("#token-updated", usage.updatedAt ? `${copy.updatedAt} ${usage.updatedAt}` : copy.sync);
+  renderSourceUpdates(usage.sourceUpdates || []);
   setText("#token-total", formatToken(range.total));
   setText("#token-input", formatToken(range.input));
   setText("#token-output", formatToken(range.output));
@@ -1587,6 +1645,39 @@ function renderTokens() {
       yFormatter: formatToken,
     });
   }
+}
+
+function formatSourceUpdatedAt(value) {
+  const text = String(value || "").replace("T", " ").replace(/\+\d{2}:\d{2}$/, "").trim();
+  return text ? text.slice(0, 16) : copy.syncWaiting;
+}
+
+function createSourceUpdateItem(source) {
+  const item = document.createElement("div");
+  item.className = "token-source-update-item";
+  item.dataset.tone = source.tone || "blue";
+
+  const label = document.createElement("span");
+  label.textContent = source.label || "Source";
+  const time = document.createElement("strong");
+  time.textContent = formatSourceUpdatedAt(source.updatedAt);
+
+  item.append(label, time);
+  return item;
+}
+
+function renderSourceUpdates(items) {
+  const container = qs("#token-source-updates");
+  if (!container) return;
+  container.replaceChildren();
+  if (!items.length) {
+    const empty = document.createElement("div");
+    empty.className = "token-source-update-item is-empty";
+    empty.textContent = copy.syncWaiting;
+    container.appendChild(empty);
+    return;
+  }
+  items.forEach((item) => container.appendChild(createSourceUpdateItem(item)));
 }
 
 function createModelItem(model) {
