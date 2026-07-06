@@ -27,6 +27,10 @@
   --radius: 14px;
   --shadow: 0 10px 24px rgba(25, 43, 72, 0.08), 0 1px 2px rgba(25, 43, 72, 0.06);
   --shadow-soft: 0 4px 12px rgba(25, 43, 72, 0.06);
+  --page-pad-x: clamp(24px, 3vw, 64px);
+  --page-pad-y: 34px;
+  --page-section-gap: 16px;
+  --page-grid-gap: 16px;
 }
 
 * {
@@ -247,7 +251,7 @@ a {
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 18px;
-  padding: 14px clamp(24px, 3vw, 62px);
+  padding: 14px var(--page-pad-x);
   border-bottom: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 2px 12px rgba(33, 50, 74, 0.055);
@@ -304,7 +308,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: 34px clamp(24px, 3vw, 64px) 64px;
+  padding: var(--page-pad-y) var(--page-pad-x) 64px;
 }
 
 .view.is-active {
@@ -314,7 +318,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 .home-top-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(360px, 0.32fr);
-  gap: 20px;
+  gap: var(--page-grid-gap);
   align-items: stretch;
 }
 
@@ -336,7 +340,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .token-page-head {
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 24px;
+  gap: var(--page-grid-gap);
 }
 
 .token-usage-head {
@@ -352,7 +356,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 .home-widgets {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: var(--page-grid-gap);
   align-items: stretch;
   height: 100%;
 }
@@ -589,8 +593,8 @@ body[data-view="tokens"] .topbar-token-ranges {
 .status-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(150px, 1fr));
-  gap: 14px;
-  margin: 16px 0;
+  gap: var(--page-grid-gap);
+  margin: var(--page-section-gap) 0 0;
   overflow: visible;
   border: 0;
   border-radius: 0;
@@ -779,14 +783,14 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .home-workspace {
   grid-template-columns: minmax(0, 1fr) minmax(360px, 0.32fr);
-  margin-top: 18px;
+  margin-top: var(--page-section-gap);
   align-items: start;
-  gap: 20px;
+  gap: var(--page-grid-gap);
 }
 
 .home-main,
 .home-aside {
-  gap: 20px;
+  gap: var(--page-grid-gap);
 }
 
 .panel {
@@ -1383,7 +1387,7 @@ a.last30-item {
 .token-summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: var(--page-grid-gap);
 }
 
 .mini-token-grid div,
@@ -1552,8 +1556,8 @@ a.last30-item {
   min-width: 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
-  margin-top: 16px;
+  gap: var(--page-grid-gap);
+  margin-top: var(--page-section-gap);
 }
 
 .dounai-chart-card {
@@ -1619,12 +1623,12 @@ a.last30-item {
 }
 
 .token-page-head {
-  margin-bottom: 14px;
+  margin-bottom: var(--page-section-gap);
 }
 
 #dounai-view .token-page-head {
   grid-template-columns: minmax(360px, 1fr) minmax(0, 1.15fr) minmax(0, 1.15fr);
-  gap: 24px;
+  gap: var(--page-grid-gap);
 }
 
 .dounai-page-head {
@@ -1882,7 +1886,7 @@ a.last30-item {
 
 .token-summary {
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  margin-bottom: 14px;
+  margin: 0 0 var(--page-section-gap);
 }
 
 .token-summary strong {
@@ -1947,7 +1951,7 @@ a.last30-item {
 .token-detail-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr) minmax(0, 1.35fr);
-  gap: 16px;
+  gap: var(--page-grid-gap);
 }
 
 .token-detail-grid > .panel {
@@ -2056,7 +2060,7 @@ a.last30-item {
 .cloud-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: var(--page-grid-gap);
 }
 
 .cloud-card {
@@ -2177,11 +2181,6 @@ a.last30-item {
   --card-border: var(--pink-border);
 }
 
-#ricky-view {
-  padding-right: clamp(16px, 1.8vw, 36px);
-  padding-left: clamp(16px, 1.8vw, 36px);
-}
-
 .ricky-page-head .status-pill {
   border-color: #ffd3e5;
   background: #fff3f8;
@@ -2191,8 +2190,8 @@ a.last30-item {
 .ricky-stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: var(--page-grid-gap);
+  margin: 0 0 var(--page-section-gap);
 }
 
 .ricky-stats article {
@@ -2509,7 +2508,7 @@ a.last30-item {
 .life-food-panel {
   --card-color: var(--ok);
   --card-border: var(--green-border);
-  margin-top: 16px;
+  margin-top: var(--page-section-gap);
   overflow: hidden;
 }
 
