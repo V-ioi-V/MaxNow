@@ -10,11 +10,13 @@ OUTPUT_REL = "dash/data/token-usage.json"
 SOURCE_RELS = [
     "dash/data/openclaw-usage.json",
     "dash/data/codex-usage.json",
+    "dash/data/codex-macos-usage.json",
     "dash/data/codex-server-usage.json",
 ]
 SOURCE_FALLBACKS = {
     "dash/data/openclaw-usage.json": {"key": "openclaw", "label": "OpenClaw"},
     "dash/data/codex-usage.json": {"key": "codex-local", "label": "Codex local"},
+    "dash/data/codex-macos-usage.json": {"key": "codex-macos", "label": "Codex macOS"},
     "dash/data/codex-server-usage.json": {"key": "codex-server", "label": "Codex server"},
 }
 try:

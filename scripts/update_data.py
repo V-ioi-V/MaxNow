@@ -16,6 +16,7 @@ DATASETS = {
     "wiki-todos": ("dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
     "openclaw-usage": ("dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
     "codex-usage": ("dash/data/codex-usage.json", "dash/data/codex-usage.js", "MAXNOW_CODEX_USAGE_DATA"),
+    "codex-macos-usage": ("dash/data/codex-macos-usage.json", "dash/data/codex-macos-usage.js", "MAXNOW_CODEX_MACOS_USAGE_DATA"),
     "codex-server-usage": ("dash/data/codex-server-usage.json", "dash/data/codex-server-usage.js", "MAXNOW_CODEX_SERVER_USAGE_DATA"),
     "token-usage": ("dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
     "project-meta": ("dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
@@ -186,7 +187,8 @@ def parse_args():
     subparsers.add_parser("system-status", help="Refresh machine-collected system status and validate data.")
     subparsers.add_parser("weather", help="Refresh Beijing Haidian weather and validate data.")
     subparsers.add_parser("openclaw-usage", help="Refresh OpenClaw token usage ledger and validate data.")
-    subparsers.add_parser("codex-usage", help="Refresh local Codex token usage ledger and validate data.")
+    subparsers.add_parser("codex-usage", help="Refresh Windows/local Codex token usage ledger and validate data.")
+    subparsers.add_parser("codex-macos-usage", help="Refresh macOS Codex token usage ledger and validate data.")
     subparsers.add_parser("codex-server-usage", help="Refresh server Codex token usage ledger and validate data.")
     subparsers.add_parser("token-usage", help="Merge OpenClaw and Codex token ledgers and validate data.")
     subparsers.add_parser("ai-last30", help="Refresh free external AI signals for ai-news and Last-30.")
@@ -223,6 +225,18 @@ def main():
         run_python("scripts/sync_codex_usage.py", "codex-usage.log")
         write_wrapper("codex-usage")
 
+    if args.command in {"codex-macos-usage"}:
+        run_python(
+            "scripts/sync_codex_usage.py",
+            "codex-macos-usage.log",
+            extra_args=["--output", "dash/data/codex-macos-usage.json"],
+            env={
+                "MAXNOW_CODEX_SOURCE_KEY": "codex-macos",
+                "MAXNOW_CODEX_SOURCE_LABEL": "Codex macOS",
+            },
+        )
+        write_wrapper("codex-macos-usage")
+
     if args.command in {"codex-server-usage"}:
         run_python(
             "scripts/sync_codex_usage.py",
@@ -237,7 +251,7 @@ def main():
         )
         write_wrapper("codex-server-usage")
 
-    if args.command in {"openclaw-usage", "codex-usage", "codex-server-usage", "token-usage", "all"}:
+    if args.command in {"openclaw-usage", "codex-usage", "codex-macos-usage", "codex-server-usage", "token-usage", "all"}:
         run_python("scripts/sync_token_usage.py", "token-usage.log")
         write_wrapper("token-usage")
 

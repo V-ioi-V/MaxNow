@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 20:25",
-  "version": "1.0.0.10",
-  "versionLabel": "v1.0.0.10",
-  "branch": "feature/local-token-reporting",
-  "commit": "575065b",
+  "updatedAt": "2026-07-06 20:42",
+  "version": "1.0.0.11",
+  "versionLabel": "v1.0.0.11",
+  "branch": "feature/codex-platform-ledgers",
+  "commit": "68039c2",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/local-token-reporting · commit 575065b · 有未提交代码改动",
+  "deployNote": "feature/codex-platform-ledgers · commit 68039c2 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-06",
+      "title": "拆分 macOS Codex 独立账本",
+      "summary": "新增 `dash/data/codex-macos-usage.*`，macOS 本机 Codex 用量不再写入 Windows 兼容账本 `dash/data/codex-usage.*`。"
+    },
     {
       "date": "2026-07-06",
       "title": "修正 Token 自然日范围和来源更新时间",
@@ -17,7 +22,7 @@
     {
       "date": "2026-07-06",
       "title": "新增 macOS 本机 Codex Token 上报",
-      "summary": "新增 `scripts/report_codex_usage.sh`，在 macOS 本机刷新 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，只允许提交这四个 usage 数据文件。"
+      "summary": "新增 `scripts/report_codex_usage.sh`，在 macOS 本机刷新 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`，只允许提交这四个 usage 数据文件。"
     },
     {
       "date": "2026-07-05",
@@ -28,11 +33,6 @@
       "date": "2026-07-05",
       "title": "修正版本卡运行数据误报",
       "summary": "`scripts/sync_project_meta.py` 将 AI 信号、Last-30、服务器 Codex 用量和 Life foods 等自动生成数据纳入运行数据白名单。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "优化 Token 数值单位进位",
-      "summary": "Token 页总量、来源、模型、会话和趋势图统一使用同一个数值格式化规则。"
     }
   ]
 }

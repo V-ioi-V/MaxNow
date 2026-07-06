@@ -133,7 +133,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_
 bash scripts/install_local_codex_usage_launchd.sh
 ```
 
-该 launchd 任务默认每 1 小时运行一次 `scripts/report_codex_usage.sh`，刷新本机 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，只提交这四个数据文件并推送到 `origin/main`。建议在专用 main clone 中安装，避免日常开发分支或未提交改动阻断自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
+该 launchd 任务默认每 1 小时运行一次 `scripts/report_codex_usage.sh`，刷新本机 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`，只提交这四个数据文件并推送到 `origin/main`。建议在专用 main clone 中安装，避免日常开发分支或未提交改动阻断自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
 
 ## OpenClaw 写权限
 

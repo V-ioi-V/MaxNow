@@ -103,7 +103,7 @@ function Invoke-ServerTokenMerge {
         "cp -a dash/data/openclaw-usage.js /tmp/maxnow-local-codex-usage-report/openclaw-usage.js 2>/dev/null || true",
         "cp -a dash/data/codex-server-usage.json /tmp/maxnow-local-codex-usage-report/codex-server-usage.json 2>/dev/null || true",
         "cp -a dash/data/codex-server-usage.js /tmp/maxnow-local-codex-usage-report/codex-server-usage.js 2>/dev/null || true",
-        "git stash push -m before-local-codex-usage-report -- dash/data/openclaw-usage.json dash/data/openclaw-usage.js dash/data/codex-usage.json dash/data/codex-usage.js dash/data/codex-server-usage.json dash/data/codex-server-usage.js dash/data/token-usage.json dash/data/token-usage.js dash/data/project-meta.json dash/data/project-meta.js >/dev/null 2>&1 || true",
+        "git stash push -m before-local-codex-usage-report -- dash/data/openclaw-usage.json dash/data/openclaw-usage.js dash/data/codex-usage.json dash/data/codex-usage.js dash/data/codex-macos-usage.json dash/data/codex-macos-usage.js dash/data/codex-server-usage.json dash/data/codex-server-usage.js dash/data/token-usage.json dash/data/token-usage.js dash/data/project-meta.json dash/data/project-meta.js >/dev/null 2>&1 || true",
         "git pull --ff-only origin main",
         "if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.json ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.json dash/data/openclaw-usage.json; fi",
         "if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.js ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.js dash/data/openclaw-usage.js; fi",

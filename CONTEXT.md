@@ -73,7 +73,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/report_codex_usage.ps1`：Owner Windows 本机的 Codex 用量上报脚本；刷新本机 `codex-usage.*` / `token-usage.*`，只提交这四个生成文件，并在推送后让服务器保留 `openclaw-usage.*` / `codex-server-usage.*` 再合并现有 Token 总账。
 - `scripts/report_codex_usage_hidden.vbs`：Task Scheduler 使用的无窗口 launcher，通过 `wscript.exe` 以 window style 0 启动 PowerShell 上报脚本，避免瞬时命令行窗口。
 - `scripts/install_local_codex_usage_task.ps1`：注册 Windows Task Scheduler 任务 `MaxNow-Local-Codex-Usage-Report`，默认每 1 小时静默运行一次本机 Codex 用量上报。
-- `scripts/report_codex_usage.sh`：Owner macOS 本机的 Codex 用量上报脚本；刷新本机 `codex-usage.*` / `token-usage.*`，只提交这四个生成文件，并在推送后让服务器保留 `openclaw-usage.*` / `codex-server-usage.*` 再合并现有 Token 总账。
+- `scripts/report_codex_usage.sh`：Owner macOS 本机的 Codex 用量上报脚本；刷新本机 `codex-macos-usage.*` / `token-usage.*`，只提交这四个生成文件，并在推送后让服务器保留 `openclaw-usage.*` / `codex-server-usage.*` 再合并现有 Token 总账。
 - `scripts/install_local_codex_usage_launchd.sh`：注册 macOS launchd 任务 `cn.maxnow.local-codex-usage-report`，默认每 1 小时运行一次本机 Codex 用量上报。
 - `scripts/sync_weather.py`：从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，写入 `dash/data/dashboard.*` 的 `weather` 字段。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
@@ -95,7 +95,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/wiki-todos.json`：从 private personal-wiki `wiki/tasks/todo.json` 同步而来的近期待办只读缓存。
 - `dash/data/wiki-todos.js`：从 `wiki-todos.json` 生成的浏览器 wrapper。
 - `dash/data/openclaw-usage.json`：OpenClaw 每日 token 用量、按模型 / 任务拆分和 OpenRouter 等价费用估算。
-- `dash/data/codex-usage.json`：本机 Codex 每日 token 用量、按模型 / 任务拆分；来源为本机 `.codex/sessions` 的 `token_count` 事件。
+- `dash/data/codex-usage.json`：Windows 兼容本机 Codex 每日 token 用量、按模型 / 任务拆分；来源为本机 `.codex/sessions` 的 `token_count` 事件。
+- `dash/data/codex-macos-usage.json`：macOS 本机 Codex 每日 token 用量、按模型 / 任务拆分；来源为 macOS 本机 `.codex/sessions` 的 `token_count` 事件。
 - `dash/data/codex-server-usage.json`：服务器 Codex 每日 token 用量、按模型 / 任务拆分；来源为服务器 `/root/.codex/sessions` 的 `token_count` 事件。
 - `dash/data/token-usage.json`：OpenClaw / Codex 合并后的统一 Token 总账，Token 页面优先读取它。
 - `dash/data/*-usage.js`：从对应 usage JSON 生成的浏览器 wrapper。
@@ -124,8 +125,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 天气可以由 `python scripts/update_data.py weather` 或服务器 `runtime` 定时刷新，数据源是 Open-Meteo 免费 forecast API。
 - OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。服务器 root crontab 的 `MAXNOW-OPENCLAW-USAGE` 已接入每天 00:20 自动刷新，日志写入 `logs/openclaw-usage.log`；2026-07-05 复查确认 2026-07-03 至 2026-07-05 连续成功。
 - MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与最近更新模块。任何已完成的 Owner 可见或运维相关改动都要升版本：小 UI / 文案 / 布局调整、新页面能力、新数据源和新自动化默认升最后两位；重要功能模块稳定落地升 patch；大版本阶段切换升 minor / major。
-- 本机 Codex 用量可以由 `python scripts/update_data.py codex-usage` 刷新，默认按当前采集机器平台标记为 `Codex Windows` / `Codex macOS` / `Codex Linux`；服务器 Codex 用量由 root 运行 `python3 scripts/update_data.py codex-server-usage` 刷新。两者都只读取 `.codex/sessions` 中的 `token_count` 与 `turn_context.model`，只导出 token 统计、模型名、时间戳、来源和 OpenAI API 等价费用估算，不导出对话正文。
-- 本机 Codex 用量自动化支持 Windows Task Scheduler 和 macOS launchd。Windows 任务调用 `wscript.exe scripts/report_codex_usage_hidden.vbs`，再用 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 PowerShell console 瞬时闪窗；macOS 任务调用 `scripts/report_codex_usage.sh`。任务默认每 1 小时运行一次，要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`。成功后提交并推送 `codex-usage.*` / `token-usage.*`，再通过 SSH 让服务器拉取最新 `main`；服务器合并前会保留现有 `codex-server-usage.*`，避免本机账本覆盖服务器账本。Owner Windows 机器上的计划任务应指向专用 clone `D:\Personal\MaxNow-token-report`；macOS 也建议使用专用 main clone，避免日常开发分支影响自动上报。
+- Windows 本机 Codex 用量可以由 `python scripts/update_data.py codex-usage` 刷新；macOS 本机 Codex 用量可以由 `python scripts/update_data.py codex-macos-usage` 刷新；服务器 Codex 用量由 root 运行 `python3 scripts/update_data.py codex-server-usage` 刷新。它们都只读取 `.codex/sessions` 中的 `token_count` 与 `turn_context.model`，只导出 token 统计、模型名、时间戳、来源和 OpenAI API 等价费用估算，不导出对话正文。
+- 本机 Codex 用量自动化支持 Windows Task Scheduler 和 macOS launchd。Windows 任务调用 `wscript.exe scripts/report_codex_usage_hidden.vbs`，再用 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 PowerShell console 瞬时闪窗；macOS 任务调用 `scripts/report_codex_usage.sh`。任务默认每 1 小时运行一次，要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`。Windows 成功后提交并推送 `codex-usage.*` / `token-usage.*`；macOS 成功后提交并推送 `codex-macos-usage.*` / `token-usage.*`；再通过 SSH 让服务器拉取最新 `main` 并只做统一总账合并。Owner Windows 机器上的计划任务应指向专用 clone `D:\Personal\MaxNow-token-report`；macOS 也建议使用专用 main clone，避免日常开发分支影响自动上报。
 - 服务器 Codex 用量自动化由 root crontab 的 `MAXNOW-CODEX-SERVER-USAGE` 每天刷新，日志写入 `logs/codex-server-usage.log`，锁为 `/tmp/maxnow-codex-server-usage.lock`。
 - `dash/data/token-usage.json` 是 Token 页统一入口；OpenClaw、Codex Windows / macOS、Codex server 和后续其他来源都应合入这个总账。Token 页 `1d` 按当前浏览器本地日期 00:00 起算，`7d` / `30d` 包括今天在内的最近 7 / 30 个自然日；来源费用面板和模型占比、调用消耗同层并列展示，并且来源 token、费用和 runs 跟随当前范围更新。页头展示各来源账本的最后更新时间。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史、直接流量使用记录和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。真实流量消耗优先使用 `traffic_usage_history`，不要再用账号余量快照差分作为主口径；余量差分只可作为缺数据时的估算说明。
@@ -218,7 +219,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，通过 `python3 scripts/update_data.py runtime` 刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
 - Last-30 AI 外部信号服务器自动同步已落地：`ubuntu` 用户 crontab 每天 00:00 运行一次 `MAXNOW-AI-LAST30-SYNC`，通过 `python3 scripts/update_data.py ai-last30` 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
 - 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
-- Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；`scripts/sync_codex_usage.py` 可读取本机或服务器 `.codex/sessions` 的 `token_count` 事件，分别生成 `dash/data/codex-usage.*` 和 `dash/data/codex-server-usage.*`；`scripts/sync_token_usage.py` 合并为 `dash/data/token-usage.*`。本机 Codex 用量已补 Windows Task Scheduler 和 macOS launchd 上报入口，服务器 Codex 用量已补 root crontab 自动刷新。页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 缓存命中率 / 费用、按范围更新的来源费用面板、模型占比、会话消耗和最近 30 天折线趋势。OpenClaw 费用为 OpenRouter 等价估算，Codex 费用为 OpenAI API 等价估算。
+- Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；`scripts/sync_codex_usage.py` 可读取本机或服务器 `.codex/sessions` 的 `token_count` 事件，分别生成 Windows 兼容 `dash/data/codex-usage.*`、macOS `dash/data/codex-macos-usage.*` 和服务器 `dash/data/codex-server-usage.*`；`scripts/sync_token_usage.py` 合并为 `dash/data/token-usage.*`。本机 Codex 用量已补 Windows Task Scheduler 和 macOS launchd 上报入口，服务器 Codex 用量已补 root crontab 自动刷新。页面支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 缓存命中率 / 费用、按范围更新的来源费用面板、模型占比、会话消耗和最近 30 天折线趋势。OpenClaw 费用为 OpenRouter 等价估算，Codex 费用为 OpenAI API 等价估算。
 - Dash 左侧导航已新增“云服务”tab，位于 Token 下方。该页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作；页面不再保留顶部重复摘要卡，Host 与站点域名归入“系统与托管”模块，后续任务卡自然排列，不再插入独立“定时任务”分组标题。系统与托管模块不展示部署根目录、nginx 配置路径、采集器说明等低频实现细节。
 - Dash 左侧导航已新增“同行记”tab，副标题为“我和 Ricky”。该页用 Leaflet + OpenStreetMap 真实地图和轻量统计承载两人的共同足迹，地点和旅行记录暂时只进入 marker / popup 数据，不单独铺列表；内置 SVG 地图只作为 fallback。
 - Dash 左侧导航已新增“生活”tab，副标题为“吃啥”。该页当前提供“吃啥”随机选择器：默认全选、数量默认 1，可临时取消候选并从勾选项中随机选取一个或多个结果；候选从 personal-wiki `wiki/life/food-picker.md` 同步。

@@ -14,8 +14,8 @@ LOG_PATH="${MAXNOW_CODEX_REPORT_LOG:-$HOME/Library/Logs/MaxNow/local-codex-usage
 LOCK_DIR="${TMPDIR:-/tmp}/maxnow-local-codex-usage-report.lock"
 
 ALLOWED_FILES=(
-  "dash/data/codex-usage.json"
-  "dash/data/codex-usage.js"
+  "dash/data/codex-macos-usage.json"
+  "dash/data/codex-macos-usage.js"
   "dash/data/token-usage.json"
   "dash/data/token-usage.js"
 )
@@ -193,11 +193,7 @@ find_python() {
 }
 
 refresh_local_usage() {
-  "$PYTHON_BIN" scripts/sync_codex_usage.py
-  "$PYTHON_BIN" scripts/update_data.py wrap codex-usage
-  "$PYTHON_BIN" scripts/sync_token_usage.py
-  "$PYTHON_BIN" scripts/update_data.py wrap token-usage
-  "$PYTHON_BIN" scripts/check.py
+  "$PYTHON_BIN" scripts/update_data.py codex-macos-usage
 }
 
 invoke_server_token_merge() {
@@ -222,7 +218,7 @@ cp -a dash/data/openclaw-usage.json /tmp/maxnow-local-codex-usage-report/opencla
 cp -a dash/data/openclaw-usage.js /tmp/maxnow-local-codex-usage-report/openclaw-usage.js 2>/dev/null || true
 cp -a dash/data/codex-server-usage.json /tmp/maxnow-local-codex-usage-report/codex-server-usage.json 2>/dev/null || true
 cp -a dash/data/codex-server-usage.js /tmp/maxnow-local-codex-usage-report/codex-server-usage.js 2>/dev/null || true
-git stash push -m before-local-codex-usage-report -- dash/data/openclaw-usage.json dash/data/openclaw-usage.js dash/data/codex-usage.json dash/data/codex-usage.js dash/data/codex-server-usage.json dash/data/codex-server-usage.js dash/data/token-usage.json dash/data/token-usage.js dash/data/project-meta.json dash/data/project-meta.js >/dev/null 2>&1 || true
+git stash push -m before-local-codex-usage-report -- dash/data/openclaw-usage.json dash/data/openclaw-usage.js dash/data/codex-usage.json dash/data/codex-usage.js dash/data/codex-macos-usage.json dash/data/codex-macos-usage.js dash/data/codex-server-usage.json dash/data/codex-server-usage.js dash/data/token-usage.json dash/data/token-usage.js dash/data/project-meta.json dash/data/project-meta.js >/dev/null 2>&1 || true
 git pull --ff-only origin main
 if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.json ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.json dash/data/openclaw-usage.json; fi
 if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.js ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.js dash/data/openclaw-usage.js; fi
@@ -307,7 +303,7 @@ fi
 
 run_step "stage generated usage ledgers" git add -- "${ALLOWED_FILES[@]}"
 log "staged: $(git diff --cached --name-only | paste -sd ', ' -)"
-run_step "commit generated usage ledgers" git commit -m "Update local Codex token usage"
+run_step "commit generated usage ledgers" git commit -m "Update macOS Codex token usage"
 
 if [[ "$NO_PUSH" -eq 1 ]]; then
   log "skip push because --no-push was set"

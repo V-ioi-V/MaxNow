@@ -11,6 +11,15 @@
 
 ## 2026-07-06
 
+### 拆分 macOS Codex 独立账本
+
+- 新增 `dash/data/codex-macos-usage.*`，macOS 本机 Codex 用量不再写入 Windows 兼容账本 `dash/data/codex-usage.*`。
+- 新增 `python scripts/update_data.py codex-macos-usage`，采集 macOS 本机 `.codex/sessions` 后合并统一 `token-usage.*`。
+- `scripts/sync_token_usage.py` 合并 OpenClaw、Codex Windows、Codex macOS 和 Codex server 多个来源，Token 页来源更新时间会显示各自账本更新时间。
+- macOS launchd 上报脚本只允许提交 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`，避免每小时上报覆盖 Windows 用量。
+- 当前本机验证采集到 284 个 macOS Codex sessions，统一总账新增 `Codex macOS` 来源。
+- 将 `VERSION` 从 `1.0.0.10` 提升到 `1.0.0.11`。
+
 ### 修正 Token 自然日范围和来源更新时间
 
 - Token 页 `1d` 改为以当前浏览器本地日期 00:00 为边界，只统计今天自然日；`7d` / `30d` 改为包括今天在内的最近 7 / 30 个自然日。
@@ -21,7 +30,7 @@
 
 ### 新增 macOS 本机 Codex Token 上报
 
-- 新增 `scripts/report_codex_usage.sh`，在 macOS 本机刷新 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，只允许提交这四个 usage 数据文件。
+- 新增 `scripts/report_codex_usage.sh`，在 macOS 本机刷新 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`，只允许提交这四个 usage 数据文件。
 - 新增 `scripts/install_local_codex_usage_launchd.sh`，注册 `cn.maxnow.local-codex-usage-report` launchd 任务，默认每 1 小时运行一次本机上报。
 - macOS 上报复用现有 Codex session `token_count` 采集和 Token 总账合并口径，来源默认显示为 `Codex macOS`，不导出 prompt / response 正文。
 - 更新 `AGENTS.md`、`SPEC.md`、`CONTEXT.md`、`DEPLOY.md`、`SERVER_RUNBOOK.md`、`ROADMAP.md` 和 `scripts/check.py`，让后续代理和部署说明都能识别 macOS 上报入口。

@@ -310,6 +310,7 @@ python3 scripts/update_data.py weather
 python3 scripts/update_data.py project-status
 python3 scripts/update_data.py openclaw-usage
 python3 scripts/update_data.py codex-usage
+python3 scripts/update_data.py codex-macos-usage
 python3 scripts/update_data.py codex-server-usage
 python3 scripts/update_data.py token-usage
 python3 scripts/update_data.py ai-last30
@@ -317,7 +318,7 @@ python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Windows 兼容本机 Codex 源账本并合并统一 Token 总账；`codex-macos-usage` 刷新 macOS 本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
 
 刷新服务器 Codex Token 用量：
 
@@ -345,10 +346,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_
 本机 macOS 可直接在仓库目录运行：
 
 ```bash
-python3 scripts/sync_codex_usage.py
-python3 scripts/update_data.py wrap codex-usage
-python3 scripts/sync_token_usage.py
-python3 scripts/update_data.py wrap token-usage
+python3 scripts/update_data.py codex-macos-usage
 python3 scripts/check.py
 ```
 
@@ -358,9 +356,9 @@ python3 scripts/check.py
 bash scripts/install_local_codex_usage_launchd.sh
 ```
 
-默认 label 为 `cn.maxnow.local-codex-usage-report`，每 1 小时运行一次。launchd 调用 `scripts/report_codex_usage.sh`，该脚本要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main` 并只运行 `token-usage` 合并。macOS 也建议使用专用 main clone，避免日常开发分支影响自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
+默认 label 为 `cn.maxnow.local-codex-usage-report`，每 1 小时运行一次。launchd 调用 `scripts/report_codex_usage.sh`，该脚本要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main` 并只运行 `token-usage` 合并。macOS 也建议使用专用 main clone，避免日常开发分支影响自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
 
-Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。服务器侧使用独立文件 `dash/data/codex-server-usage.*`，避免覆盖本机 `dash/data/codex-usage.*`。
+Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。Windows 兼容账本使用 `dash/data/codex-usage.*`，macOS 本机账本使用 `dash/data/codex-macos-usage.*`，服务器侧使用独立文件 `dash/data/codex-server-usage.*`，避免不同机器互相覆盖。
 
 2026-07-02 已用 root crontab 接入服务器 Codex 用量同步，标记块为 `MAXNOW-CODEX-SERVER-USAGE`：
 

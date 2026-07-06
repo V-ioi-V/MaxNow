@@ -16,6 +16,7 @@ DATASETS = [
     ("wiki-todos", "dash/data/wiki-todos.json", "dash/data/wiki-todos.js", "MAXNOW_WIKI_TODO_DATA"),
     ("openclaw-usage", "dash/data/openclaw-usage.json", "dash/data/openclaw-usage.js", "MAXNOW_OPENCLAW_USAGE_DATA"),
     ("codex-usage", "dash/data/codex-usage.json", "dash/data/codex-usage.js", "MAXNOW_CODEX_USAGE_DATA"),
+    ("codex-macos-usage", "dash/data/codex-macos-usage.json", "dash/data/codex-macos-usage.js", "MAXNOW_CODEX_MACOS_USAGE_DATA"),
     ("codex-server-usage", "dash/data/codex-server-usage.json", "dash/data/codex-server-usage.js", "MAXNOW_CODEX_SERVER_USAGE_DATA"),
     ("token-usage", "dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
     ("project-meta", "dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
@@ -221,6 +222,10 @@ def check_codex_usage():
     return check_usage_ledger("codex-usage", "dash/data/codex-usage.json", {"openai-api-equivalent"})
 
 
+def check_codex_macos_usage():
+    return check_usage_ledger("codex-macos-usage", "dash/data/codex-macos-usage.json", {"openai-api-equivalent"})
+
+
 def check_codex_server_usage():
     return check_usage_ledger("codex-server-usage", "dash/data/codex-server-usage.json", {"openai-api-equivalent"})
 
@@ -262,6 +267,7 @@ def main():
     checks.append(check_dounai_checkin())
     checks.append(check_openclaw_usage())
     checks.append(check_codex_usage())
+    checks.append(check_codex_macos_usage())
     checks.append(check_codex_server_usage())
     checks.append(check_token_usage())
     checks.append(check_project_meta())
