@@ -1,18 +1,18 @@
 window.MAXNOW_TOKEN_USAGE_DATA = {
-  "updatedAt": "2026-07-07 00:03",
+  "updatedAt": "2026-07-07 00:19",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "mixed",
   "pricingSource": "openclaw-openrouter-equivalent-and-codex-openai-api-equivalent",
   "pricingStale": false,
   "summary": {
-    "inputTokens": 1808613521,
-    "outputTokens": 6616831,
-    "cacheReadTokens": 1676698240,
-    "cacheBaseTokens": 1808613521,
-    "totalTokens": 1815230352,
-    "estimatedCostUsd": 1696.221768,
-    "runs": 386
+    "inputTokens": 1815636360,
+    "outputTokens": 7131464,
+    "cacheReadTokens": 1767252861,
+    "cacheBaseTokens": 1906190981,
+    "totalTokens": 1913402626,
+    "estimatedCostUsd": 1698.389804,
+    "runs": 732
   },
   "sources": [
     {
@@ -42,14 +42,14 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "key": "openclaw",
       "label": "OpenClaw",
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "cacheReadTokens": 0,
-      "cacheBaseTokens": 0,
-      "totalTokens": 0,
-      "estimatedCostUsd": 0.0,
-      "runs": 0,
-      "updatedAt": "2026-06-21 22:58"
+      "inputTokens": 7022839,
+      "outputTokens": 514633,
+      "cacheReadTokens": 90554621,
+      "cacheBaseTokens": 97577460,
+      "totalTokens": 98172274,
+      "estimatedCostUsd": 2.168036,
+      "runs": 346,
+      "updatedAt": "2026-07-07 00:19"
     },
     {
       "key": "codex-server",
@@ -127,16 +127,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-07-06",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 52794605,
-      "outputTokens": 232600,
-      "cacheReadTokens": 48727424,
-      "cacheBaseTokens": 52794605,
-      "totalTokens": 53027205,
-      "estimatedCostUsd": 51.677617,
-      "runs": 13,
+      "inputTokens": 52898509,
+      "outputTokens": 248851,
+      "cacheReadTokens": 49593344,
+      "cacheBaseTokens": 53764429,
+      "totalTokens": 54013280,
+      "estimatedCostUsd": 51.70548,
+      "runs": 21,
       "bySource": [
         {
           "key": "codex-macos",
@@ -159,6 +160,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 23581409,
           "estimatedCostUsd": 20.606618,
           "runs": 2
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 103904,
+          "outputTokens": 16251,
+          "cacheReadTokens": 865920,
+          "cacheBaseTokens": 969824,
+          "totalTokens": 986075,
+          "estimatedCostUsd": 0.027863,
+          "runs": 8
         }
       ],
       "byModel": [
@@ -175,6 +187,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 13,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 103904,
+          "outputTokens": 16251,
+          "cacheReadTokens": 865920,
+          "cacheBaseTokens": 969824,
+          "totalTokens": 986075,
+          "estimatedCostUsd": 0.027863,
+          "runs": 8,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -205,6 +230,71 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 9,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 30049,
+          "outputTokens": 4378,
+          "cacheReadTokens": 407552,
+          "cacheBaseTokens": 437601,
+          "totalTokens": 441979,
+          "estimatedCostUsd": 0.010828,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "agent",
+          "label": "OpenClaw session",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 40064,
+          "outputTokens": 9480,
+          "cacheReadTokens": 201984,
+          "cacheBaseTokens": 242048,
+          "totalTokens": 251528,
+          "estimatedCostUsd": 0.008948,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 2218,
+          "outputTokens": 1267,
+          "cacheReadTokens": 188928,
+          "cacheBaseTokens": 191146,
+          "totalTokens": 192413,
+          "estimatedCostUsd": 0.003828,
+          "runs": 4,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 31470,
+          "outputTokens": 1034,
+          "cacheReadTokens": 62336,
+          "cacheBaseTokens": 93806,
+          "totalTokens": 94840,
+          "estimatedCostUsd": 0.00414,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日8点拉取仓库更新",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 103,
+          "outputTokens": 92,
+          "cacheReadTokens": 5120,
+          "cacheBaseTokens": 5223,
+          "totalTokens": 5315,
+          "estimatedCostUsd": 0.000118,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -212,15 +302,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-07-05",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 66911228,
-      "outputTokens": 225693,
-      "cacheReadTokens": 63699328,
-      "cacheBaseTokens": 66911228,
-      "totalTokens": 67136921,
-      "estimatedCostUsd": 54.679954,
-      "runs": 6,
+      "inputTokens": 66955669,
+      "outputTokens": 232861,
+      "cacheReadTokens": 64152832,
+      "cacheBaseTokens": 67409173,
+      "totalTokens": 67642034,
+      "estimatedCostUsd": 54.693407,
+      "runs": 9,
       "bySource": [
         {
           "key": "codex-windows",
@@ -232,6 +323,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 67136921,
           "estimatedCostUsd": 54.679954,
           "runs": 6
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 44441,
+          "outputTokens": 7168,
+          "cacheReadTokens": 453504,
+          "cacheBaseTokens": 497945,
+          "totalTokens": 505113,
+          "estimatedCostUsd": 0.013453,
+          "runs": 3
         }
       ],
       "byModel": [
@@ -248,6 +350,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 6,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 44441,
+          "outputTokens": 7168,
+          "cacheReadTokens": 453504,
+          "cacheBaseTokens": 497945,
+          "totalTokens": 505113,
+          "estimatedCostUsd": 0.013453,
+          "runs": 3,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -278,6 +393,141 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 10833,
+          "outputTokens": 4099,
+          "cacheReadTokens": 252544,
+          "cacheBaseTokens": 263377,
+          "totalTokens": 267476,
+          "estimatedCostUsd": 0.006259,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 33505,
+          "outputTokens": 2952,
+          "cacheReadTokens": 195840,
+          "cacheBaseTokens": 229345,
+          "totalTokens": 232297,
+          "estimatedCostUsd": 0.007072,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日8点拉取仓库更新",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 103,
+          "outputTokens": 117,
+          "cacheReadTokens": 5120,
+          "cacheBaseTokens": 5223,
+          "totalTokens": 5340,
+          "estimatedCostUsd": 0.000122,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-07-04",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 46202,
+      "outputTokens": 9643,
+      "cacheReadTokens": 622336,
+      "cacheBaseTokens": 668538,
+      "totalTokens": 678181,
+      "estimatedCostUsd": 0.017096,
+      "runs": 5,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 46202,
+          "outputTokens": 9643,
+          "cacheReadTokens": 622336,
+          "cacheBaseTokens": 668538,
+          "totalTokens": 678181,
+          "estimatedCostUsd": 0.017096,
+          "runs": 5
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 46202,
+          "outputTokens": 9643,
+          "cacheReadTokens": 622336,
+          "cacheBaseTokens": 668538,
+          "totalTokens": 678181,
+          "estimatedCostUsd": 0.017096,
+          "runs": 5,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "cron",
+          "label": "wiki收录-每周六同步到personal-wiki",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 21550,
+          "outputTokens": 5745,
+          "cacheReadTokens": 313216,
+          "cacheBaseTokens": 334766,
+          "totalTokens": 340511,
+          "estimatedCostUsd": 0.008611,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 8579,
+          "outputTokens": 2069,
+          "cacheReadTokens": 171776,
+          "cacheBaseTokens": 180355,
+          "totalTokens": 182424,
+          "estimatedCostUsd": 0.004236,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 15970,
+          "outputTokens": 1732,
+          "cacheReadTokens": 132224,
+          "cacheBaseTokens": 148194,
+          "totalTokens": 149926,
+          "estimatedCostUsd": 0.004129,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日8点拉取仓库更新",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 103,
+          "outputTokens": 97,
+          "cacheReadTokens": 5120,
+          "cacheBaseTokens": 5223,
+          "totalTokens": 5320,
+          "estimatedCostUsd": 0.000119,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -285,15 +535,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-07-03",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 6156039,
-      "outputTokens": 39817,
-      "cacheReadTokens": 5314048,
-      "cacheBaseTokens": 6156039,
-      "totalTokens": 6195856,
-      "estimatedCostUsd": 8.061489,
-      "runs": 1,
+      "inputTokens": 6224508,
+      "outputTokens": 47754,
+      "cacheReadTokens": 6009472,
+      "cacheBaseTokens": 6919932,
+      "totalTokens": 6967686,
+      "estimatedCostUsd": 8.081598,
+      "runs": 4,
       "bySource": [
         {
           "key": "codex-windows",
@@ -305,6 +556,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 6195856,
           "estimatedCostUsd": 8.061489,
           "runs": 1
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 68469,
+          "outputTokens": 7937,
+          "cacheReadTokens": 695424,
+          "cacheBaseTokens": 763893,
+          "totalTokens": 771830,
+          "estimatedCostUsd": 0.020109,
+          "runs": 3
         }
       ],
       "byModel": [
@@ -321,6 +583,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 68469,
+          "outputTokens": 7937,
+          "cacheReadTokens": 695424,
+          "cacheBaseTokens": 763893,
+          "totalTokens": 771830,
+          "estimatedCostUsd": 0.020109,
+          "runs": 3,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -337,6 +612,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 67485,
+          "outputTokens": 7297,
+          "cacheReadTokens": 615040,
+          "cacheBaseTokens": 682525,
+          "totalTokens": 689822,
+          "estimatedCostUsd": 0.018458,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 984,
+          "outputTokens": 640,
+          "cacheReadTokens": 80384,
+          "cacheBaseTokens": 81368,
+          "totalTokens": 82008,
+          "estimatedCostUsd": 0.001651,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -344,15 +645,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-07-02",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 160479570,
-      "outputTokens": 406819,
-      "cacheReadTokens": 151370368,
-      "cacheBaseTokens": 160479570,
-      "totalTokens": 160886389,
-      "estimatedCostUsd": 133.435764,
-      "runs": 6,
+      "inputTokens": 160738516,
+      "outputTokens": 427658,
+      "cacheReadTokens": 155247872,
+      "cacheBaseTokens": 164616020,
+      "totalTokens": 165043678,
+      "estimatedCostUsd": 133.532615,
+      "runs": 17,
       "bySource": [
         {
           "key": "codex-windows",
@@ -364,6 +666,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 160886389,
           "estimatedCostUsd": 133.435764,
           "runs": 6
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 258946,
+          "outputTokens": 20839,
+          "cacheReadTokens": 3877504,
+          "cacheBaseTokens": 4136450,
+          "totalTokens": 4157289,
+          "estimatedCostUsd": 0.096851,
+          "runs": 11
         }
       ],
       "byModel": [
@@ -380,6 +693,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 6,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 258946,
+          "outputTokens": 20839,
+          "cacheReadTokens": 3877504,
+          "cacheBaseTokens": 4136450,
+          "totalTokens": 4157289,
+          "estimatedCostUsd": 0.096851,
+          "runs": 11,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -398,6 +724,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 205489,
+          "outputTokens": 16283,
+          "cacheReadTokens": 3490304,
+          "cacheBaseTokens": 3695793,
+          "totalTokens": 3712076,
+          "estimatedCostUsd": 0.08425,
+          "runs": 7,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "personal-wiki",
           "model": "gpt-5.5",
@@ -410,6 +749,45 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 17215,
+          "outputTokens": 2565,
+          "cacheReadTokens": 245632,
+          "cacheBaseTokens": 262847,
+          "totalTokens": 265412,
+          "estimatedCostUsd": 0.006432,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 4952,
+          "outputTokens": 1848,
+          "cacheReadTokens": 141568,
+          "cacheBaseTokens": 146520,
+          "totalTokens": 148368,
+          "estimatedCostUsd": 0.003327,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "agent",
+          "label": "OpenClaw session",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 31290,
+          "outputTokens": 143,
+          "cacheReadTokens": 0,
+          "cacheBaseTokens": 31290,
+          "totalTokens": 31433,
+          "estimatedCostUsd": 0.002842,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -417,15 +795,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-07-01",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 496772,
-      "outputTokens": 3646,
-      "cacheReadTokens": 379776,
-      "cacheBaseTokens": 496772,
-      "totalTokens": 500418,
-      "estimatedCostUsd": 0.884248,
-      "runs": 1,
+      "inputTokens": 516699,
+      "outputTokens": 6035,
+      "cacheReadTokens": 729856,
+      "cacheBaseTokens": 866779,
+      "totalTokens": 872814,
+      "estimatedCostUsd": 0.892773,
+      "runs": 5,
       "bySource": [
         {
           "key": "codex-windows",
@@ -437,6 +816,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 500418,
           "estimatedCostUsd": 0.884248,
           "runs": 1
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 19927,
+          "outputTokens": 2389,
+          "cacheReadTokens": 350080,
+          "cacheBaseTokens": 370007,
+          "totalTokens": 372396,
+          "estimatedCostUsd": 0.008525,
+          "runs": 4
         }
       ],
       "byModel": [
@@ -453,6 +843,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 19927,
+          "outputTokens": 2389,
+          "cacheReadTokens": 350080,
+          "cacheBaseTokens": 370007,
+          "totalTokens": 372396,
+          "estimatedCostUsd": 0.008525,
+          "runs": 4,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -469,6 +872,281 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 17089,
+          "outputTokens": 1619,
+          "cacheReadTokens": 214016,
+          "cacheBaseTokens": 231105,
+          "totalTokens": 232724,
+          "estimatedCostUsd": 0.005682,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 2838,
+          "outputTokens": 770,
+          "cacheReadTokens": 136064,
+          "cacheBaseTokens": 138902,
+          "totalTokens": 139672,
+          "estimatedCostUsd": 0.002843,
+          "runs": 2,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-06-30",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 123771,
+      "outputTokens": 18350,
+      "cacheReadTokens": 1497728,
+      "cacheBaseTokens": 1621499,
+      "totalTokens": 1639849,
+      "estimatedCostUsd": 0.041401,
+      "runs": 6,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 123771,
+          "outputTokens": 18350,
+          "cacheReadTokens": 1497728,
+          "cacheBaseTokens": 1621499,
+          "totalTokens": 1639849,
+          "estimatedCostUsd": 0.041401,
+          "runs": 6
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 123771,
+          "outputTokens": 18350,
+          "cacheReadTokens": 1497728,
+          "cacheBaseTokens": 1621499,
+          "totalTokens": 1639849,
+          "estimatedCostUsd": 0.041401,
+          "runs": 6,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 91920,
+          "outputTokens": 15538,
+          "cacheReadTokens": 1101440,
+          "cacheBaseTokens": 1193360,
+          "totalTokens": 1208898,
+          "estimatedCostUsd": 0.030896,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 21512,
+          "outputTokens": 1851,
+          "cacheReadTokens": 280448,
+          "cacheBaseTokens": 301960,
+          "totalTokens": 303811,
+          "estimatedCostUsd": 0.007317,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 10339,
+          "outputTokens": 961,
+          "cacheReadTokens": 115840,
+          "cacheBaseTokens": 126179,
+          "totalTokens": 127140,
+          "estimatedCostUsd": 0.003189,
+          "runs": 2,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-06-29",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 48113,
+      "outputTokens": 6931,
+      "cacheReadTokens": 846080,
+      "cacheBaseTokens": 894193,
+      "totalTokens": 901124,
+      "estimatedCostUsd": 0.020807,
+      "runs": 6,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 48113,
+          "outputTokens": 6931,
+          "cacheReadTokens": 846080,
+          "cacheBaseTokens": 894193,
+          "totalTokens": 901124,
+          "estimatedCostUsd": 0.020807,
+          "runs": 6
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 48113,
+          "outputTokens": 6931,
+          "cacheReadTokens": 846080,
+          "cacheBaseTokens": 894193,
+          "totalTokens": 901124,
+          "estimatedCostUsd": 0.020807,
+          "runs": 6,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 24946,
+          "outputTokens": 3695,
+          "cacheReadTokens": 441856,
+          "cacheBaseTokens": 466802,
+          "totalTokens": 470497,
+          "estimatedCostUsd": 0.010864,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 17516,
+          "outputTokens": 2295,
+          "cacheReadTokens": 265088,
+          "cacheBaseTokens": 282604,
+          "totalTokens": 284899,
+          "estimatedCostUsd": 0.006761,
+          "runs": 3,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 5651,
+          "outputTokens": 941,
+          "cacheReadTokens": 139136,
+          "cacheBaseTokens": 144787,
+          "totalTokens": 145728,
+          "estimatedCostUsd": 0.003182,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-06-28",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 97384,
+      "outputTokens": 18345,
+      "cacheReadTokens": 1315328,
+      "cacheBaseTokens": 1412712,
+      "totalTokens": 1431057,
+      "estimatedCostUsd": 0.035743,
+      "runs": 9,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 97384,
+          "outputTokens": 18345,
+          "cacheReadTokens": 1315328,
+          "cacheBaseTokens": 1412712,
+          "totalTokens": 1431057,
+          "estimatedCostUsd": 0.035743,
+          "runs": 9
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 97384,
+          "outputTokens": 18345,
+          "cacheReadTokens": 1315328,
+          "cacheBaseTokens": 1412712,
+          "totalTokens": 1431057,
+          "estimatedCostUsd": 0.035743,
+          "runs": 9,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 77773,
+          "outputTokens": 11576,
+          "cacheReadTokens": 817408,
+          "cacheBaseTokens": 895181,
+          "totalTokens": 906757,
+          "estimatedCostUsd": 0.023797,
+          "runs": 4,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 14088,
+          "outputTokens": 5434,
+          "cacheReadTokens": 332160,
+          "cacheBaseTokens": 346248,
+          "totalTokens": 351682,
+          "estimatedCostUsd": 0.008225,
+          "runs": 3,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 5523,
+          "outputTokens": 1335,
+          "cacheReadTokens": 165760,
+          "cacheBaseTokens": 171283,
+          "totalTokens": 172618,
+          "estimatedCostUsd": 0.003721,
+          "runs": 2,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -476,15 +1154,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-27",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 36177307,
-      "outputTokens": 109351,
-      "cacheReadTokens": 34399616,
-      "cacheBaseTokens": 36177307,
-      "totalTokens": 36286658,
-      "estimatedCostUsd": 29.368793,
-      "runs": 3,
+      "inputTokens": 36301164,
+      "outputTokens": 143478,
+      "cacheReadTokens": 36870912,
+      "cacheBaseTokens": 38772460,
+      "totalTokens": 38915938,
+      "estimatedCostUsd": 29.430566,
+      "runs": 12,
       "bySource": [
         {
           "key": "codex-windows",
@@ -496,6 +1175,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 36286658,
           "estimatedCostUsd": 29.368793,
           "runs": 3
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 123857,
+          "outputTokens": 34127,
+          "cacheReadTokens": 2471296,
+          "cacheBaseTokens": 2595153,
+          "totalTokens": 2629280,
+          "estimatedCostUsd": 0.061773,
+          "runs": 9
         }
       ],
       "byModel": [
@@ -512,6 +1202,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 3,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 123857,
+          "outputTokens": 34127,
+          "cacheReadTokens": 2471296,
+          "cacheBaseTokens": 2595153,
+          "totalTokens": 2629280,
+          "estimatedCostUsd": 0.061773,
+          "runs": 9,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -542,6 +1245,71 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "wiki收录-每周六同步到personal-wiki",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 43361,
+          "outputTokens": 23214,
+          "cacheReadTokens": 1542656,
+          "cacheBaseTokens": 1586017,
+          "totalTokens": 1609231,
+          "estimatedCostUsd": 0.035849,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 15412,
+          "outputTokens": 4257,
+          "cacheReadTokens": 396160,
+          "cacheBaseTokens": 411572,
+          "totalTokens": 415829,
+          "estimatedCostUsd": 0.009284,
+          "runs": 3,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 29631,
+          "outputTokens": 5268,
+          "cacheReadTokens": 335360,
+          "cacheBaseTokens": 364991,
+          "totalTokens": 370259,
+          "estimatedCostUsd": 0.009652,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 11868,
+          "outputTokens": 1269,
+          "cacheReadTokens": 190336,
+          "cacheBaseTokens": 202204,
+          "totalTokens": 203473,
+          "estimatedCostUsd": 0.004723,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 23585,
+          "outputTokens": 119,
+          "cacheReadTokens": 6784,
+          "cacheBaseTokens": 30369,
+          "totalTokens": 30488,
+          "estimatedCostUsd": 0.002266,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -549,16 +1317,28 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-26",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 656628,
-      "outputTokens": 3532,
-      "cacheReadTokens": 557184,
-      "cacheBaseTokens": 656628,
-      "totalTokens": 660160,
-      "estimatedCostUsd": 0.881772,
-      "runs": 1,
+      "inputTokens": 706688,
+      "outputTokens": 11432,
+      "cacheReadTokens": 1483648,
+      "cacheBaseTokens": 1633152,
+      "totalTokens": 1644584,
+      "estimatedCostUsd": 0.904376,
+      "runs": 9,
       "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 50060,
+          "outputTokens": 7900,
+          "cacheReadTokens": 926464,
+          "cacheBaseTokens": 976524,
+          "totalTokens": 984424,
+          "estimatedCostUsd": 0.022604,
+          "runs": 8
+        },
         {
           "key": "codex-windows",
           "label": "Codex Windows",
@@ -572,6 +1352,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 50060,
+          "outputTokens": 7900,
+          "cacheReadTokens": 926464,
+          "cacheBaseTokens": 976524,
+          "totalTokens": 984424,
+          "estimatedCostUsd": 0.022604,
+          "runs": 8,
+          "pricingEstimated": true
+        },
         {
           "model": "gpt-5.5",
           "provider": "openai",
@@ -601,6 +1394,154 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 13438,
+          "outputTokens": 2796,
+          "cacheReadTokens": 310528,
+          "cacheBaseTokens": 323966,
+          "totalTokens": 326762,
+          "estimatedCostUsd": 0.007302,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 27836,
+          "outputTokens": 2795,
+          "cacheReadTokens": 255616,
+          "cacheBaseTokens": 283452,
+          "totalTokens": 286247,
+          "estimatedCostUsd": 0.007609,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 7854,
+          "outputTokens": 1675,
+          "cacheReadTokens": 226432,
+          "cacheBaseTokens": 234286,
+          "totalTokens": 235961,
+          "estimatedCostUsd": 0.005084,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 932,
+          "outputTokens": 634,
+          "cacheReadTokens": 133888,
+          "cacheBaseTokens": 134820,
+          "totalTokens": 135454,
+          "estimatedCostUsd": 0.002608,
+          "runs": 2,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-06-25",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 129703,
+      "outputTokens": 12575,
+      "cacheReadTokens": 791296,
+      "cacheBaseTokens": 920999,
+      "totalTokens": 933574,
+      "estimatedCostUsd": 0.02818,
+      "runs": 8,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 129703,
+          "outputTokens": 12575,
+          "cacheReadTokens": 791296,
+          "cacheBaseTokens": 920999,
+          "totalTokens": 933574,
+          "estimatedCostUsd": 0.02818,
+          "runs": 8
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 129703,
+          "outputTokens": 12575,
+          "cacheReadTokens": 791296,
+          "cacheBaseTokens": 920999,
+          "totalTokens": 933574,
+          "estimatedCostUsd": 0.02818,
+          "runs": 8,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 22949,
+          "outputTokens": 2609,
+          "cacheReadTokens": 285824,
+          "cacheBaseTokens": 308773,
+          "totalTokens": 311382,
+          "estimatedCostUsd": 0.00768,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 10770,
+          "outputTokens": 2152,
+          "cacheReadTokens": 248704,
+          "cacheBaseTokens": 259474,
+          "totalTokens": 261626,
+          "estimatedCostUsd": 0.005833,
+          "runs": 3,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 95126,
+          "outputTokens": 7296,
+          "cacheReadTokens": 149504,
+          "cacheBaseTokens": 244630,
+          "totalTokens": 251926,
+          "estimatedCostUsd": 0.012566,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 858,
+          "outputTokens": 518,
+          "cacheReadTokens": 107264,
+          "cacheBaseTokens": 108122,
+          "totalTokens": 108640,
+          "estimatedCostUsd": 0.002101,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -608,16 +1549,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-24",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 140338692,
-      "outputTokens": 426165,
-      "cacheReadTokens": 132011648,
-      "cacheBaseTokens": 140338692,
-      "totalTokens": 140764857,
-      "estimatedCostUsd": 120.425994,
-      "runs": 12,
+      "inputTokens": 140387260,
+      "outputTokens": 435659,
+      "cacheReadTokens": 132826496,
+      "cacheBaseTokens": 141202108,
+      "totalTokens": 141637767,
+      "estimatedCostUsd": 120.446741,
+      "runs": 16,
       "bySource": [
         {
           "key": "codex-windows",
@@ -640,6 +1582,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 13161084,
           "estimatedCostUsd": 16.465065,
           "runs": 5
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 48568,
+          "outputTokens": 9494,
+          "cacheReadTokens": 814848,
+          "cacheBaseTokens": 863416,
+          "totalTokens": 872910,
+          "estimatedCostUsd": 0.020747,
+          "runs": 4
         }
       ],
       "byModel": [
@@ -656,6 +1609,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 12,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 48568,
+          "outputTokens": 9494,
+          "cacheReadTokens": 814848,
+          "cacheBaseTokens": 863416,
+          "totalTokens": 872910,
+          "estimatedCostUsd": 0.020747,
+          "runs": 4,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -716,6 +1682,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 31494,
+          "outputTokens": 7776,
+          "cacheReadTokens": 539648,
+          "cacheBaseTokens": 571142,
+          "totalTokens": 578918,
+          "estimatedCostUsd": 0.013948,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "https-bytedance-larkoffice-com-wiki-rgfgwthjliiijikvlr0cqiejneh",
           "model": "gpt-5.5",
@@ -728,6 +1707,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 2,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 16204,
+          "outputTokens": 1226,
+          "cacheReadTokens": 167936,
+          "cacheBaseTokens": 184140,
+          "totalTokens": 185366,
+          "estimatedCostUsd": 0.004702,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 870,
+          "outputTokens": 492,
+          "cacheReadTokens": 107264,
+          "cacheBaseTokens": 108134,
+          "totalTokens": 108626,
+          "estimatedCostUsd": 0.002098,
+          "runs": 1,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -749,16 +1754,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-23",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 143360464,
-      "outputTokens": 495216,
-      "cacheReadTokens": 132386688,
-      "cacheBaseTokens": 143360464,
-      "totalTokens": 143855680,
-      "estimatedCostUsd": 135.918704,
-      "runs": 17,
+      "inputTokens": 143395679,
+      "outputTokens": 501048,
+      "cacheReadTokens": 133119232,
+      "cacheBaseTokens": 144128223,
+      "totalTokens": 144629271,
+      "estimatedCostUsd": 135.936109,
+      "runs": 22,
       "bySource": [
         {
           "key": "codex-windows",
@@ -781,6 +1787,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 59655551,
           "estimatedCostUsd": 64.894594,
           "runs": 12
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 35215,
+          "outputTokens": 5832,
+          "cacheReadTokens": 732544,
+          "cacheBaseTokens": 767759,
+          "totalTokens": 773591,
+          "estimatedCostUsd": 0.017405,
+          "runs": 5
         }
       ],
       "byModel": [
@@ -797,6 +1814,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 17,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 35215,
+          "outputTokens": 5832,
+          "cacheReadTokens": 732544,
+          "cacheBaseTokens": 767759,
+          "totalTokens": 773591,
+          "estimatedCostUsd": 0.017405,
+          "runs": 5,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -841,6 +1871,45 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 6,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 13009,
+          "outputTokens": 2342,
+          "cacheReadTokens": 361856,
+          "cacheBaseTokens": 374865,
+          "totalTokens": 377207,
+          "estimatedCostUsd": 0.008106,
+          "runs": 3,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 21359,
+          "outputTokens": 2875,
+          "cacheReadTokens": 263424,
+          "cacheBaseTokens": 284783,
+          "totalTokens": 287658,
+          "estimatedCostUsd": 0.007181,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 847,
+          "outputTokens": 615,
+          "cacheReadTokens": 107264,
+          "cacheBaseTokens": 108111,
+          "totalTokens": 108726,
+          "estimatedCostUsd": 0.002118,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -848,16 +1917,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-22",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 10771561,
-      "outputTokens": 64497,
-      "cacheReadTokens": 9199232,
-      "cacheBaseTokens": 10771561,
-      "totalTokens": 10836058,
-      "estimatedCostUsd": 14.187484,
-      "runs": 15,
+      "inputTokens": 10825561,
+      "outputTokens": 68867,
+      "cacheReadTokens": 9862144,
+      "cacheBaseTokens": 11488473,
+      "totalTokens": 11557340,
+      "estimatedCostUsd": 14.205063,
+      "runs": 22,
       "bySource": [
         {
           "key": "codex-macos",
@@ -880,6 +1950,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 3523876,
           "estimatedCostUsd": 3.732673,
           "runs": 2
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 54000,
+          "outputTokens": 4370,
+          "cacheReadTokens": 662912,
+          "cacheBaseTokens": 716912,
+          "totalTokens": 721282,
+          "estimatedCostUsd": 0.017579,
+          "runs": 7
         }
       ],
       "byModel": [
@@ -896,6 +1977,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 14,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 54000,
+          "outputTokens": 4370,
+          "cacheReadTokens": 662912,
+          "cacheBaseTokens": 716912,
+          "totalTokens": 721282,
+          "estimatedCostUsd": 0.017579,
+          "runs": 7,
+          "pricingEstimated": true
         },
         {
           "model": "gpt-5.4",
@@ -954,6 +2048,58 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 5,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 31283,
+          "outputTokens": 2602,
+          "cacheReadTokens": 371840,
+          "cacheBaseTokens": 403123,
+          "totalTokens": 405725,
+          "estimatedCostUsd": 0.009977,
+          "runs": 4,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 3615,
+          "outputTokens": 676,
+          "cacheReadTokens": 110208,
+          "cacheBaseTokens": 113823,
+          "totalTokens": 114499,
+          "estimatedCostUsd": 0.002431,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 863,
+          "outputTokens": 508,
+          "cacheReadTokens": 107264,
+          "cacheBaseTokens": 108127,
+          "totalTokens": 108635,
+          "estimatedCostUsd": 0.0021,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 18239,
+          "outputTokens": 584,
+          "cacheReadTokens": 73600,
+          "cacheBaseTokens": 91839,
+          "totalTokens": 92423,
+          "estimatedCostUsd": 0.003071,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -961,15 +2107,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-21",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 80919466,
-      "outputTokens": 207112,
-      "cacheReadTokens": 76247168,
-      "cacheBaseTokens": 80919466,
-      "totalTokens": 81126578,
-      "estimatedCostUsd": 67.698434,
-      "runs": 4,
+      "inputTokens": 80943108,
+      "outputTokens": 212153,
+      "cacheReadTokens": 76636160,
+      "cacheBaseTokens": 81332100,
+      "totalTokens": 81544253,
+      "estimatedCostUsd": 67.708471,
+      "runs": 8,
       "bySource": [
         {
           "key": "codex-windows",
@@ -980,6 +2127,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "cacheBaseTokens": 80919466,
           "totalTokens": 81126578,
           "estimatedCostUsd": 67.698434,
+          "runs": 4
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 23642,
+          "outputTokens": 5041,
+          "cacheReadTokens": 388992,
+          "cacheBaseTokens": 412634,
+          "totalTokens": 417675,
+          "estimatedCostUsd": 0.010037,
           "runs": 4
         }
       ],
@@ -997,6 +2155,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 4,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 23642,
+          "outputTokens": 5041,
+          "cacheReadTokens": 388992,
+          "cacheBaseTokens": 412634,
+          "totalTokens": 417675,
+          "estimatedCostUsd": 0.010037,
+          "runs": 4,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -1027,6 +2198,58 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 17263,
+          "outputTokens": 4156,
+          "cacheReadTokens": 249984,
+          "cacheBaseTokens": 267247,
+          "totalTokens": 271403,
+          "estimatedCostUsd": 0.006801,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 836,
+          "outputTokens": 489,
+          "cacheReadTokens": 107264,
+          "cacheBaseTokens": 108100,
+          "totalTokens": 108589,
+          "estimatedCostUsd": 0.002094,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 62,
+          "outputTokens": 158,
+          "cacheReadTokens": 26624,
+          "cacheBaseTokens": 26686,
+          "totalTokens": 26844,
+          "estimatedCostUsd": 0.000513,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日8点拉取仓库更新",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 5481,
+          "outputTokens": 238,
+          "cacheReadTokens": 5120,
+          "cacheBaseTokens": 10601,
+          "totalTokens": 10839,
+          "estimatedCostUsd": 0.000628,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -1034,16 +2257,28 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-20",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 21056,
-      "outputTokens": 559,
-      "cacheReadTokens": 4992,
-      "cacheBaseTokens": 21056,
-      "totalTokens": 21615,
-      "estimatedCostUsd": 0.099586,
-      "runs": 1,
+      "inputTokens": 109823,
+      "outputTokens": 11551,
+      "cacheReadTokens": 919040,
+      "cacheBaseTokens": 1023871,
+      "totalTokens": 1035422,
+      "estimatedCostUsd": 0.126006,
+      "runs": 11,
       "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 88767,
+          "outputTokens": 10992,
+          "cacheReadTokens": 914048,
+          "cacheBaseTokens": 1002815,
+          "totalTokens": 1013807,
+          "estimatedCostUsd": 0.02642,
+          "runs": 10
+        },
         {
           "key": "codex-windows",
           "label": "Codex Windows",
@@ -1057,6 +2292,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 88767,
+          "outputTokens": 10992,
+          "cacheReadTokens": 914048,
+          "cacheBaseTokens": 1002815,
+          "totalTokens": 1013807,
+          "estimatedCostUsd": 0.02642,
+          "runs": 10,
+          "pricingEstimated": true
+        },
         {
           "model": "gpt-5.5",
           "provider": "openai",
@@ -1073,6 +2321,84 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byTask": [
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 23343,
+          "outputTokens": 3841,
+          "cacheReadTokens": 263040,
+          "cacheBaseTokens": 286383,
+          "totalTokens": 290224,
+          "estimatedCostUsd": 0.007527,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 47638,
+          "outputTokens": 2078,
+          "cacheReadTokens": 236800,
+          "cacheBaseTokens": 284438,
+          "totalTokens": 286516,
+          "estimatedCostUsd": 0.008924,
+          "runs": 4,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每周周报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 5220,
+          "outputTokens": 2272,
+          "cacheReadTokens": 173440,
+          "cacheBaseTokens": 178660,
+          "totalTokens": 180932,
+          "estimatedCostUsd": 0.004001,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "wiki收录-每周六同步到personal-wiki",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 11590,
+          "outputTokens": 2326,
+          "cacheReadTokens": 134144,
+          "cacheBaseTokens": 145734,
+          "totalTokens": 148060,
+          "estimatedCostUsd": 0.003876,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 914,
+          "outputTokens": 369,
+          "cacheReadTokens": 80000,
+          "cacheBaseTokens": 80914,
+          "totalTokens": 81283,
+          "estimatedCostUsd": 0.001589,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 62,
+          "outputTokens": 106,
+          "cacheReadTokens": 26624,
+          "cacheBaseTokens": 26686,
+          "totalTokens": 26792,
+          "estimatedCostUsd": 0.000504,
+          "runs": 1,
+          "pricingEstimated": true
+        },
         {
           "kind": "codex-session",
           "label": "new-chat",
@@ -1093,15 +2419,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-19",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 33440936,
-      "outputTokens": 97173,
-      "cacheReadTokens": 30489728,
-      "cacheBaseTokens": 33440936,
-      "totalTokens": 33538109,
-      "estimatedCostUsd": 32.916094,
-      "runs": 2,
+      "inputTokens": 33496523,
+      "outputTokens": 102027,
+      "cacheReadTokens": 30998144,
+      "cacheBaseTokens": 34004939,
+      "totalTokens": 34106966,
+      "estimatedCostUsd": 32.931122,
+      "runs": 7,
       "bySource": [
         {
           "key": "codex-windows",
@@ -1113,6 +2440,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 33538109,
           "estimatedCostUsd": 32.916094,
           "runs": 2
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 55587,
+          "outputTokens": 4854,
+          "cacheReadTokens": 508416,
+          "cacheBaseTokens": 564003,
+          "totalTokens": 568857,
+          "estimatedCostUsd": 0.015028,
+          "runs": 5
         }
       ],
       "byModel": [
@@ -1129,6 +2467,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 2,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 55587,
+          "outputTokens": 4854,
+          "cacheReadTokens": 508416,
+          "cacheBaseTokens": 564003,
+          "totalTokens": 568857,
+          "estimatedCostUsd": 0.015028,
+          "runs": 5,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -1145,6 +2496,58 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 2,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 26980,
+          "outputTokens": 2232,
+          "cacheReadTokens": 260992,
+          "cacheBaseTokens": 287972,
+          "totalTokens": 290204,
+          "estimatedCostUsd": 0.007528,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 27365,
+          "outputTokens": 1914,
+          "cacheReadTokens": 113792,
+          "cacheBaseTokens": 141157,
+          "totalTokens": 143071,
+          "estimatedCostUsd": 0.004856,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "豆奶每日签到",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 1180,
+          "outputTokens": 565,
+          "cacheReadTokens": 107008,
+          "cacheBaseTokens": 108188,
+          "totalTokens": 108753,
+          "estimatedCostUsd": 0.002134,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 62,
+          "outputTokens": 143,
+          "cacheReadTokens": 26624,
+          "cacheBaseTokens": 26686,
+          "totalTokens": 26829,
+          "estimatedCostUsd": 0.000511,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -1152,16 +2555,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-18",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 49436884,
-      "outputTokens": 139484,
-      "cacheReadTokens": 46313856,
-      "cacheBaseTokens": 49436884,
-      "totalTokens": 49576368,
-      "estimatedCostUsd": 42.956588,
-      "runs": 8,
+      "inputTokens": 50370451,
+      "outputTokens": 173898,
+      "cacheReadTokens": 55074816,
+      "cacheBaseTokens": 59131411,
+      "totalTokens": 59305309,
+      "estimatedCostUsd": 43.204501,
+      "runs": 26,
       "bySource": [
         {
           "key": "codex-windows",
@@ -1184,6 +2588,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 21673731,
           "estimatedCostUsd": 20.298823,
           "runs": 7
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 933567,
+          "outputTokens": 34414,
+          "cacheReadTokens": 8760960,
+          "cacheBaseTokens": 9694527,
+          "totalTokens": 9728941,
+          "estimatedCostUsd": 0.247913,
+          "runs": 18
         }
       ],
       "byModel": [
@@ -1200,6 +2615,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 8,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 933567,
+          "outputTokens": 34414,
+          "cacheReadTokens": 8760960,
+          "cacheBaseTokens": 9694527,
+          "totalTokens": 9728941,
+          "estimatedCostUsd": 0.247913,
+          "runs": 18,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -1232,6 +2660,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 852856,
+          "outputTokens": 31007,
+          "cacheReadTokens": 8299904,
+          "cacheBaseTokens": 9152760,
+          "totalTokens": 9183767,
+          "estimatedCostUsd": 0.231737,
+          "runs": 13,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "personal-wiki",
           "model": "gpt-5.5",
@@ -1246,6 +2687,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 38464,
+          "outputTokens": 2494,
+          "cacheReadTokens": 326400,
+          "cacheBaseTokens": 364864,
+          "totalTokens": 367358,
+          "estimatedCostUsd": 0.009786,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "subagent",
+          "label": "Subagent",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 20628,
+          "outputTokens": 728,
+          "cacheReadTokens": 98304,
+          "cacheBaseTokens": 118932,
+          "totalTokens": 119660,
+          "estimatedCostUsd": 0.003757,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "trae-cli-traecli-fork-openai-codex",
           "model": "gpt-5.5",
@@ -1258,6 +2725,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "agent",
+          "label": "OpenClaw session",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 21301,
+          "outputTokens": 46,
+          "cacheReadTokens": 9984,
+          "cacheBaseTokens": 31285,
+          "totalTokens": 31331,
+          "estimatedCostUsd": 0.002105,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 318,
+          "outputTokens": 139,
+          "cacheReadTokens": 26368,
+          "cacheBaseTokens": 26686,
+          "totalTokens": 26825,
+          "estimatedCostUsd": 0.000528,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -1265,15 +2758,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-17",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 115072366,
-      "outputTokens": 282681,
-      "cacheReadTokens": 110078592,
-      "cacheBaseTokens": 115072366,
-      "totalTokens": 115355047,
-      "estimatedCostUsd": 88.488596,
-      "runs": 2,
+      "inputTokens": 115118056,
+      "outputTokens": 288026,
+      "cacheReadTokens": 110418432,
+      "cacheBaseTokens": 115457896,
+      "totalTokens": 115745922,
+      "estimatedCostUsd": 88.499787,
+      "runs": 5,
       "bySource": [
         {
           "key": "codex-windows",
@@ -1285,6 +2779,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 115355047,
           "estimatedCostUsd": 88.488596,
           "runs": 2
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 45690,
+          "outputTokens": 5345,
+          "cacheReadTokens": 339840,
+          "cacheBaseTokens": 385530,
+          "totalTokens": 390875,
+          "estimatedCostUsd": 0.011191,
+          "runs": 3
         }
       ],
       "byModel": [
@@ -1301,6 +2806,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 2,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 45690,
+          "outputTokens": 5345,
+          "cacheReadTokens": 339840,
+          "cacheBaseTokens": 385530,
+          "totalTokens": 390875,
+          "estimatedCostUsd": 0.011191,
+          "runs": 3,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -1317,6 +2835,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 2,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 40467,
+          "outputTokens": 5254,
+          "cacheReadTokens": 339840,
+          "cacheBaseTokens": 380307,
+          "totalTokens": 385561,
+          "estimatedCostUsd": 0.010705,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日8点拉取仓库更新",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 5223,
+          "outputTokens": 91,
+          "cacheReadTokens": 0,
+          "cacheBaseTokens": 5223,
+          "totalTokens": 5314,
+          "estimatedCostUsd": 0.000486,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -1324,16 +2868,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-16",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 62475901,
-      "outputTokens": 268163,
-      "cacheReadTokens": 56831488,
-      "cacheBaseTokens": 62475901,
-      "totalTokens": 62744064,
-      "estimatedCostUsd": 64.682699,
-      "runs": 32,
+      "inputTokens": 63158975,
+      "outputTokens": 304113,
+      "cacheReadTokens": 66047872,
+      "cacheBaseTokens": 72375359,
+      "totalTokens": 72679472,
+      "estimatedCostUsd": 64.916542,
+      "runs": 58,
       "bySource": [
         {
           "key": "codex-macos",
@@ -1356,6 +2901,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 28539430,
           "estimatedCostUsd": 25.651423,
           "runs": 5
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 683074,
+          "outputTokens": 35950,
+          "cacheReadTokens": 9216384,
+          "cacheBaseTokens": 9899458,
+          "totalTokens": 9935408,
+          "estimatedCostUsd": 0.233843,
+          "runs": 26
         }
       ],
       "byModel": [
@@ -1372,6 +2928,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 32,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 683074,
+          "outputTokens": 35950,
+          "cacheReadTokens": 9216384,
+          "cacheBaseTokens": 9899458,
+          "totalTokens": 9935408,
+          "estimatedCostUsd": 0.233843,
+          "runs": 26,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -1418,6 +2987,45 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 583681,
+          "outputTokens": 31865,
+          "cacheReadTokens": 8774272,
+          "cacheBaseTokens": 9357953,
+          "totalTokens": 9389818,
+          "estimatedCostUsd": 0.216204,
+          "runs": 24,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 68131,
+          "outputTokens": 2179,
+          "cacheReadTokens": 272384,
+          "cacheBaseTokens": 340515,
+          "totalTokens": 342694,
+          "estimatedCostUsd": 0.011427,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 31262,
+          "outputTokens": 1906,
+          "cacheReadTokens": 169728,
+          "cacheBaseTokens": 200990,
+          "totalTokens": 202896,
+          "estimatedCostUsd": 0.006212,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "openclaw-codex",
           "model": "gpt-5.5",
@@ -1437,16 +3045,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-15",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 55858192,
-      "outputTokens": 227072,
-      "cacheReadTokens": 51793536,
-      "cacheBaseTokens": 55858192,
-      "totalTokens": 56085264,
-      "estimatedCostUsd": 53.032208,
-      "runs": 22,
+      "inputTokens": 56002467,
+      "outputTokens": 232709,
+      "cacheReadTokens": 53281280,
+      "cacheBaseTokens": 57490211,
+      "totalTokens": 57722920,
+      "estimatedCostUsd": 53.072987,
+      "runs": 29,
       "bySource": [
         {
           "key": "codex-macos",
@@ -1469,6 +3078,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 2875676,
           "estimatedCostUsd": 4.692331,
           "runs": 3
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 144275,
+          "outputTokens": 5637,
+          "cacheReadTokens": 1487744,
+          "cacheBaseTokens": 1632019,
+          "totalTokens": 1637656,
+          "estimatedCostUsd": 0.040779,
+          "runs": 7
         }
       ],
       "byModel": [
@@ -1485,6 +3105,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 22,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 144275,
+          "outputTokens": 5637,
+          "cacheReadTokens": 1487744,
+          "cacheBaseTokens": 1632019,
+          "totalTokens": 1637656,
+          "estimatedCostUsd": 0.040779,
+          "runs": 7,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -1545,6 +3178,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 101950,
+          "outputTokens": 2348,
+          "cacheReadTokens": 875008,
+          "cacheBaseTokens": 976958,
+          "totalTokens": 979306,
+          "estimatedCostUsd": 0.025348,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 41080,
+          "outputTokens": 2669,
+          "cacheReadTokens": 450304,
+          "cacheBaseTokens": 491384,
+          "totalTokens": 494053,
+          "estimatedCostUsd": 0.012283,
+          "runs": 3,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "gitlab-github",
           "model": "gpt-5.5",
@@ -1587,6 +3246,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 1245,
+          "outputTokens": 620,
+          "cacheReadTokens": 162432,
+          "cacheBaseTokens": 163677,
+          "totalTokens": 164297,
+          "estimatedCostUsd": 0.003147,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "files-mentioned-by-the-user-1ff0346f0a0c5c49b75fb70a7c96a2fe",
           "model": "gpt-5.5",
@@ -1620,15 +3292,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-14",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 31312772,
-      "outputTokens": 118021,
-      "cacheReadTokens": 29692672,
-      "cacheBaseTokens": 31312772,
-      "totalTokens": 31430793,
-      "estimatedCostUsd": 26.487466,
-      "runs": 5,
+      "inputTokens": 31358404,
+      "outputTokens": 126019,
+      "cacheReadTokens": 30832128,
+      "cacheBaseTokens": 32497860,
+      "totalTokens": 32623879,
+      "estimatedCostUsd": 26.513523,
+      "runs": 9,
       "bySource": [
         {
           "key": "codex-windows",
@@ -1640,6 +3313,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 31430793,
           "estimatedCostUsd": 26.487466,
           "runs": 5
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 45632,
+          "outputTokens": 7998,
+          "cacheReadTokens": 1139456,
+          "cacheBaseTokens": 1185088,
+          "totalTokens": 1193086,
+          "estimatedCostUsd": 0.026057,
+          "runs": 4
         }
       ],
       "byModel": [
@@ -1656,6 +3340,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 5,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 45632,
+          "outputTokens": 7998,
+          "cacheReadTokens": 1139456,
+          "cacheBaseTokens": 1185088,
+          "totalTokens": 1193086,
+          "estimatedCostUsd": 0.026057,
+          "runs": 4,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -1672,6 +3369,45 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 5,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 16307,
+          "outputTokens": 3778,
+          "cacheReadTokens": 572032,
+          "cacheBaseTokens": 588339,
+          "totalTokens": 592117,
+          "estimatedCostUsd": 0.012444,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 22757,
+          "outputTokens": 2240,
+          "cacheReadTokens": 312576,
+          "cacheBaseTokens": 335333,
+          "totalTokens": 337573,
+          "estimatedCostUsd": 0.008078,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 6568,
+          "outputTokens": 1980,
+          "cacheReadTokens": 254848,
+          "cacheBaseTokens": 261416,
+          "totalTokens": 263396,
+          "estimatedCostUsd": 0.005535,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -1679,16 +3415,28 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-13",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 71483,
-      "outputTokens": 1784,
-      "cacheReadTokens": 33920,
-      "cacheBaseTokens": 71483,
-      "totalTokens": 73267,
-      "estimatedCostUsd": 0.258295,
-      "runs": 1,
+      "inputTokens": 114651,
+      "outputTokens": 9325,
+      "cacheReadTokens": 928000,
+      "cacheBaseTokens": 1008731,
+      "totalTokens": 1018056,
+      "estimatedCostUsd": 0.279631,
+      "runs": 5,
       "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 43168,
+          "outputTokens": 7541,
+          "cacheReadTokens": 894080,
+          "cacheBaseTokens": 937248,
+          "totalTokens": 944789,
+          "estimatedCostUsd": 0.021336,
+          "runs": 4
+        },
         {
           "key": "codex-windows",
           "label": "Codex Windows",
@@ -1702,6 +3450,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 43168,
+          "outputTokens": 7541,
+          "cacheReadTokens": 894080,
+          "cacheBaseTokens": 937248,
+          "totalTokens": 944789,
+          "estimatedCostUsd": 0.021336,
+          "runs": 4,
+          "pricingEstimated": true
+        },
         {
           "model": "gpt-5.5",
           "provider": "openai",
@@ -1718,6 +3479,45 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byTask": [
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 38934,
+          "outputTokens": 5332,
+          "cacheReadTokens": 648192,
+          "cacheBaseTokens": 687126,
+          "totalTokens": 692458,
+          "estimatedCostUsd": 0.016131,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每周周报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 3273,
+          "outputTokens": 1662,
+          "cacheReadTokens": 123904,
+          "cacheBaseTokens": 127177,
+          "totalTokens": 128839,
+          "estimatedCostUsd": 0.002824,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 961,
+          "outputTokens": 547,
+          "cacheReadTokens": 121984,
+          "cacheBaseTokens": 122945,
+          "totalTokens": 123492,
+          "estimatedCostUsd": 0.002381,
+          "runs": 1,
+          "pricingEstimated": true
+        },
         {
           "kind": "codex-session",
           "label": "1-2-rdi-hr-rdi-hr",
@@ -1738,15 +3538,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-12",
       "sources": [
+        "openclaw",
         "codex-macos"
       ],
-      "inputTokens": 32921623,
-      "outputTokens": 136045,
-      "cacheReadTokens": 29176576,
-      "cacheBaseTokens": 32921623,
-      "totalTokens": 33057668,
-      "estimatedCostUsd": 37.394873,
-      "runs": 18,
+      "inputTokens": 33147285,
+      "outputTokens": 149143,
+      "cacheReadTokens": 31011328,
+      "cacheBaseTokens": 34982037,
+      "totalTokens": 35131180,
+      "estimatedCostUsd": 37.450566,
+      "runs": 29,
       "bySource": [
         {
           "key": "codex-macos",
@@ -1758,6 +3559,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 33057668,
           "estimatedCostUsd": 37.394873,
           "runs": 18
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 225662,
+          "outputTokens": 13098,
+          "cacheReadTokens": 1834752,
+          "cacheBaseTokens": 2060414,
+          "totalTokens": 2073512,
+          "estimatedCostUsd": 0.055693,
+          "runs": 11
         }
       ],
       "byModel": [
@@ -1774,6 +3586,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 18,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 225662,
+          "outputTokens": 13098,
+          "cacheReadTokens": 1834752,
+          "cacheBaseTokens": 2060414,
+          "totalTokens": 2073512,
+          "estimatedCostUsd": 0.055693,
+          "runs": 11,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -1792,6 +3617,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 163517,
+          "outputTokens": 6197,
+          "cacheReadTokens": 1078400,
+          "cacheBaseTokens": 1241917,
+          "totalTokens": 1248114,
+          "estimatedCostUsd": 0.035243,
+          "runs": 7,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "addyosmani-agent-skills-https-github-com",
           "model": "gpt-5.5",
@@ -1804,6 +3642,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 33524,
+          "outputTokens": 5516,
+          "cacheReadTokens": 596096,
+          "cacheBaseTokens": 629620,
+          "totalTokens": 635136,
+          "estimatedCostUsd": 0.01474,
+          "runs": 2,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -1832,6 +3683,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金早报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 28621,
+          "outputTokens": 1385,
+          "cacheReadTokens": 160256,
+          "cacheBaseTokens": 188877,
+          "totalTokens": 190262,
+          "estimatedCostUsd": 0.00571,
+          "runs": 2,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -1951,15 +3815,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-11",
       "sources": [
+        "openclaw",
         "codex-macos"
       ],
-      "inputTokens": 25851905,
-      "outputTokens": 95788,
-      "cacheReadTokens": 23061376,
-      "cacheBaseTokens": 25851905,
-      "totalTokens": 25947693,
-      "estimatedCostUsd": 28.356973,
-      "runs": 13,
+      "inputTokens": 26204079,
+      "outputTokens": 120608,
+      "cacheReadTokens": 29565056,
+      "cacheBaseTokens": 32707759,
+      "totalTokens": 32828367,
+      "estimatedCostUsd": 28.510202,
+      "runs": 33,
       "bySource": [
         {
           "key": "codex-macos",
@@ -1971,6 +3836,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 25947693,
           "estimatedCostUsd": 28.356973,
           "runs": 13
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 352174,
+          "outputTokens": 24820,
+          "cacheReadTokens": 6503680,
+          "cacheBaseTokens": 6855854,
+          "totalTokens": 6880674,
+          "estimatedCostUsd": 0.153229,
+          "runs": 20
         }
       ],
       "byModel": [
@@ -1987,6 +3863,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 13,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 352174,
+          "outputTokens": 24820,
+          "cacheReadTokens": 6503680,
+          "cacheBaseTokens": 6855854,
+          "totalTokens": 6880674,
+          "estimatedCostUsd": 0.153229,
+          "runs": 20,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -2003,6 +3892,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 9,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 283141,
+          "outputTokens": 21823,
+          "cacheReadTokens": 6276352,
+          "cacheBaseTokens": 6559493,
+          "totalTokens": 6581316,
+          "estimatedCostUsd": 0.142385,
+          "runs": 19,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -2031,6 +3933,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "黄金晚报",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 69033,
+          "outputTokens": 2997,
+          "cacheReadTokens": 227328,
+          "cacheBaseTokens": 296361,
+          "totalTokens": 299358,
+          "estimatedCostUsd": 0.010844,
+          "runs": 1,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -2125,16 +4040,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-09",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 41121559,
-      "outputTokens": 211308,
-      "cacheReadTokens": 35004416,
-      "cacheBaseTokens": 41121559,
-      "totalTokens": 41332867,
-      "estimatedCostUsd": 54.427163,
-      "runs": 22,
+      "inputTokens": 41216552,
+      "outputTokens": 214128,
+      "cacheReadTokens": 35523328,
+      "cacheBaseTokens": 41735464,
+      "totalTokens": 41949592,
+      "estimatedCostUsd": 54.44556,
+      "runs": 25,
       "bySource": [
         {
           "key": "codex-macos",
@@ -2157,6 +4073,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 5448991,
           "estimatedCostUsd": 6.873686,
           "runs": 6
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 94993,
+          "outputTokens": 2820,
+          "cacheReadTokens": 518912,
+          "cacheBaseTokens": 613905,
+          "totalTokens": 616725,
+          "estimatedCostUsd": 0.018397,
+          "runs": 3
         }
       ],
       "byModel": [
@@ -2173,6 +4100,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 22,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 94993,
+          "outputTokens": 2820,
+          "cacheReadTokens": 518912,
+          "cacheBaseTokens": 613905,
+          "totalTokens": 616725,
+          "estimatedCostUsd": 0.018397,
+          "runs": 3,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -2219,6 +4159,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 94993,
+          "outputTokens": 2820,
+          "cacheReadTokens": 518912,
+          "cacheBaseTokens": 613905,
+          "totalTokens": 616725,
+          "estimatedCostUsd": 0.018397,
+          "runs": 3,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "clash-verge",
           "model": "gpt-5.5",
@@ -2252,16 +4205,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-08",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 25393719,
-      "outputTokens": 106464,
-      "cacheReadTokens": 23153024,
-      "cacheBaseTokens": 25393719,
-      "totalTokens": 25500183,
-      "estimatedCostUsd": 25.973907,
-      "runs": 20,
+      "inputTokens": 25600975,
+      "outputTokens": 121034,
+      "cacheReadTokens": 28419840,
+      "cacheBaseTokens": 30867791,
+      "totalTokens": 30988825,
+      "estimatedCostUsd": 26.089985,
+      "runs": 27,
       "bySource": [
         {
           "key": "codex-macos",
@@ -2273,6 +4227,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 25363424,
           "estimatedCostUsd": 25.526161,
           "runs": 15
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 207256,
+          "outputTokens": 14570,
+          "cacheReadTokens": 5266816,
+          "cacheBaseTokens": 5474072,
+          "totalTokens": 5488642,
+          "estimatedCostUsd": 0.116078,
+          "runs": 7
         },
         {
           "key": "codex-windows",
@@ -2300,6 +4265,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 20,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 207256,
+          "outputTokens": 14570,
+          "cacheReadTokens": 5266816,
+          "cacheBaseTokens": 5474072,
+          "totalTokens": 5488642,
+          "estimatedCostUsd": 0.116078,
+          "runs": 7,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -2316,6 +4294,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 14,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 207256,
+          "outputTokens": 14570,
+          "cacheReadTokens": 5266816,
+          "cacheBaseTokens": 5474072,
+          "totalTokens": 5488642,
+          "estimatedCostUsd": 0.116078,
+          "runs": 7,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -2365,15 +4356,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-07",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 42525796,
-      "outputTokens": 152895,
-      "cacheReadTokens": 38620928,
-      "cacheBaseTokens": 42525796,
-      "totalTokens": 42678691,
-      "estimatedCostUsd": 43.421654,
-      "runs": 11,
+      "inputTokens": 42571840,
+      "outputTokens": 154250,
+      "cacheReadTokens": 39107200,
+      "cacheBaseTokens": 43058112,
+      "totalTokens": 43212362,
+      "estimatedCostUsd": 43.434795,
+      "runs": 15,
       "bySource": [
         {
           "key": "codex-windows",
@@ -2385,6 +4377,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 42678691,
           "estimatedCostUsd": 43.421654,
           "runs": 11
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 46044,
+          "outputTokens": 1355,
+          "cacheReadTokens": 486272,
+          "cacheBaseTokens": 532316,
+          "totalTokens": 533671,
+          "estimatedCostUsd": 0.013141,
+          "runs": 4
         }
       ],
       "byModel": [
@@ -2401,6 +4404,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 11,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 46044,
+          "outputTokens": 1355,
+          "cacheReadTokens": 486272,
+          "cacheBaseTokens": 532316,
+          "totalTokens": 533671,
+          "estimatedCostUsd": 0.013141,
+          "runs": 4,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -2431,6 +4447,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 3,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 45838,
+          "outputTokens": 1209,
+          "cacheReadTokens": 453504,
+          "cacheBaseTokens": 499342,
+          "totalTokens": 500551,
+          "estimatedCostUsd": 0.012506,
+          "runs": 3,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -2475,6 +4504,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "cron",
+          "label": "每日节日提醒",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 206,
+          "outputTokens": 146,
+          "cacheReadTokens": 32768,
+          "cacheBaseTokens": 32974,
+          "totalTokens": 33120,
+          "estimatedCostUsd": 0.000635,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "4k",
           "model": "gpt-5.5",
@@ -2506,17 +4548,88 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "pricingEstimated": true
     },
     {
+      "date": "2026-06-06",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 16081,
+      "outputTokens": 2868,
+      "cacheReadTokens": 361856,
+      "cacheBaseTokens": 377937,
+      "totalTokens": 380805,
+      "estimatedCostUsd": 0.008477,
+      "runs": 2,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 16081,
+          "outputTokens": 2868,
+          "cacheReadTokens": 361856,
+          "cacheBaseTokens": 377937,
+          "totalTokens": 380805,
+          "estimatedCostUsd": 0.008477,
+          "runs": 2
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 16081,
+          "outputTokens": 2868,
+          "cacheReadTokens": 361856,
+          "cacheBaseTokens": 377937,
+          "totalTokens": 380805,
+          "estimatedCostUsd": 0.008477,
+          "runs": 2,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 10911,
+          "outputTokens": 669,
+          "cacheReadTokens": 187008,
+          "cacheBaseTokens": 197919,
+          "totalTokens": 198588,
+          "estimatedCostUsd": 0.004469,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 197b1734",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 5170,
+          "outputTokens": 2199,
+          "cacheReadTokens": 174848,
+          "cacheBaseTokens": 180018,
+          "totalTokens": 182217,
+          "estimatedCostUsd": 0.004008,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
       "date": "2026-06-05",
       "sources": [
+        "openclaw",
         "codex-macos"
       ],
-      "inputTokens": 4944378,
-      "outputTokens": 29543,
-      "cacheReadTokens": 4126592,
-      "cacheBaseTokens": 4944378,
-      "totalTokens": 4973921,
-      "estimatedCostUsd": 7.038516,
-      "runs": 7,
+      "inputTokens": 4999094,
+      "outputTokens": 37410,
+      "cacheReadTokens": 6370304,
+      "cacheBaseTokens": 7242806,
+      "totalTokens": 7280216,
+      "estimatedCostUsd": 7.085243,
+      "runs": 12,
       "bySource": [
         {
           "key": "codex-macos",
@@ -2528,6 +4641,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 4973921,
           "estimatedCostUsd": 7.038516,
           "runs": 7
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 54716,
+          "outputTokens": 7867,
+          "cacheReadTokens": 2243712,
+          "cacheBaseTokens": 2298428,
+          "totalTokens": 2306295,
+          "estimatedCostUsd": 0.046727,
+          "runs": 5
         }
       ],
       "byModel": [
@@ -2544,6 +4668,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 7,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 54716,
+          "outputTokens": 7867,
+          "cacheReadTokens": 2243712,
+          "cacheBaseTokens": 2298428,
+          "totalTokens": 2306295,
+          "estimatedCostUsd": 0.046727,
+          "runs": 5,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -2562,6 +4699,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 50228,
+          "outputTokens": 7663,
+          "cacheReadTokens": 2177792,
+          "cacheBaseTokens": 2228020,
+          "totalTokens": 2235683,
+          "estimatedCostUsd": 0.0451,
+          "runs": 4,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "coco-1w-ai",
           "model": "gpt-5.5",
@@ -2574,6 +4724,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 4488,
+          "outputTokens": 204,
+          "cacheReadTokens": 65920,
+          "cacheBaseTokens": 70408,
+          "totalTokens": 70612,
+          "estimatedCostUsd": 0.001627,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -2581,15 +4744,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-04",
       "sources": [
+        "openclaw",
         "codex-macos"
       ],
-      "inputTokens": 125989950,
-      "outputTokens": 343584,
-      "cacheReadTokens": 117434880,
-      "cacheBaseTokens": 125989950,
-      "totalTokens": 126333534,
-      "estimatedCostUsd": 111.80031,
-      "runs": 14,
+      "inputTokens": 126003072,
+      "outputTokens": 344033,
+      "cacheReadTokens": 117575424,
+      "cacheBaseTokens": 126143616,
+      "totalTokens": 126487649,
+      "estimatedCostUsd": 111.804102,
+      "runs": 15,
       "bySource": [
         {
           "key": "codex-macos",
@@ -2601,6 +4765,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 126333534,
           "estimatedCostUsd": 111.80031,
           "runs": 14
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 13122,
+          "outputTokens": 449,
+          "cacheReadTokens": 140544,
+          "cacheBaseTokens": 153666,
+          "totalTokens": 154115,
+          "estimatedCostUsd": 0.003792,
+          "runs": 1
         }
       ],
       "byModel": [
@@ -2617,6 +4792,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 14,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 13122,
+          "outputTokens": 449,
+          "cacheReadTokens": 140544,
+          "cacheBaseTokens": 153666,
+          "totalTokens": 154115,
+          "estimatedCostUsd": 0.003792,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -2663,6 +4851,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "cron",
+          "label": "每日节日提醒",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 13122,
+          "outputTokens": 449,
+          "cacheReadTokens": 140544,
+          "cacheBaseTokens": 153666,
+          "totalTokens": 154115,
+          "estimatedCostUsd": 0.003792,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "multica",
           "model": "gpt-5.5",
@@ -2682,15 +4883,16 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-03",
       "sources": [
+        "openclaw",
         "codex-macos"
       ],
-      "inputTokens": 2872916,
-      "outputTokens": 32133,
-      "cacheReadTokens": 2592512,
-      "cacheBaseTokens": 2872916,
-      "totalTokens": 2905049,
-      "estimatedCostUsd": 3.662266,
-      "runs": 4,
+      "inputTokens": 2884782,
+      "outputTokens": 32847,
+      "cacheReadTokens": 2783104,
+      "cacheBaseTokens": 3075374,
+      "totalTokens": 3108221,
+      "estimatedCostUsd": 3.666893,
+      "runs": 5,
       "bySource": [
         {
           "key": "codex-macos",
@@ -2702,6 +4904,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 2905049,
           "estimatedCostUsd": 3.662266,
           "runs": 4
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 11866,
+          "outputTokens": 714,
+          "cacheReadTokens": 190592,
+          "cacheBaseTokens": 202458,
+          "totalTokens": 203172,
+          "estimatedCostUsd": 0.004627,
+          "runs": 1
         }
       ],
       "byModel": [
@@ -2718,6 +4931,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 4,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 11866,
+          "outputTokens": 714,
+          "cacheReadTokens": 190592,
+          "cacheBaseTokens": 202458,
+          "totalTokens": 203172,
+          "estimatedCostUsd": 0.004627,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -2734,6 +4960,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 11866,
+          "outputTokens": 714,
+          "cacheReadTokens": 190592,
+          "cacheBaseTokens": 202458,
+          "totalTokens": 203172,
+          "estimatedCostUsd": 0.004627,
+          "runs": 1,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -2783,16 +5022,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-02",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 21731746,
-      "outputTokens": 159872,
-      "cacheReadTokens": 19350656,
-      "cacheBaseTokens": 21731746,
-      "totalTokens": 21891618,
-      "estimatedCostUsd": 26.376938,
-      "runs": 17,
+      "inputTokens": 21746747,
+      "outputTokens": 161979,
+      "cacheReadTokens": 19863680,
+      "cacheBaseTokens": 22259771,
+      "totalTokens": 22421750,
+      "estimatedCostUsd": 26.387902,
+      "runs": 20,
       "bySource": [
         {
           "key": "codex-windows",
@@ -2815,6 +5055,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 10738860,
           "estimatedCostUsd": 13.581346,
           "runs": 13
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 15001,
+          "outputTokens": 2107,
+          "cacheReadTokens": 513024,
+          "cacheBaseTokens": 528025,
+          "totalTokens": 530132,
+          "estimatedCostUsd": 0.010964,
+          "runs": 3
         }
       ],
       "byModel": [
@@ -2831,6 +5082,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 17,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 15001,
+          "outputTokens": 2107,
+          "cacheReadTokens": 513024,
+          "cacheBaseTokens": 528025,
+          "totalTokens": 530132,
+          "estimatedCostUsd": 0.010964,
+          "runs": 3,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -2905,6 +5169,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 14870,
+          "outputTokens": 2022,
+          "cacheReadTokens": 480128,
+          "cacheBaseTokens": 494998,
+          "totalTokens": 497020,
+          "estimatedCostUsd": 0.010345,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "312-79-290-18",
           "model": "gpt-5.5",
@@ -2931,6 +5208,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 131,
+          "outputTokens": 85,
+          "cacheReadTokens": 32896,
+          "cacheBaseTokens": 33027,
+          "totalTokens": 33112,
+          "estimatedCostUsd": 0.000619,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -2938,16 +5228,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-06-01",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 84818675,
-      "outputTokens": 204118,
-      "cacheReadTokens": 80231936,
-      "cacheBaseTokens": 84818675,
-      "totalTokens": 85022793,
-      "estimatedCostUsd": 69.173203,
-      "runs": 8,
+      "inputTokens": 84818806,
+      "outputTokens": 204293,
+      "cacheReadTokens": 80264832,
+      "cacheBaseTokens": 84851702,
+      "totalTokens": 85055995,
+      "estimatedCostUsd": 69.173838,
+      "runs": 9,
       "bySource": [
         {
           "key": "codex-macos",
@@ -2970,6 +5261,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 1375096,
           "estimatedCostUsd": 2.87523,
           "runs": 4
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 131,
+          "outputTokens": 175,
+          "cacheReadTokens": 32896,
+          "cacheBaseTokens": 33027,
+          "totalTokens": 33202,
+          "estimatedCostUsd": 0.000635,
+          "runs": 1
         }
       ],
       "byModel": [
@@ -2986,6 +5288,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 8,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 131,
+          "outputTokens": 175,
+          "cacheReadTokens": 32896,
+          "cacheBaseTokens": 33027,
+          "totalTokens": 33202,
+          "estimatedCostUsd": 0.000635,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -3046,6 +5361,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 131,
+          "outputTokens": 175,
+          "cacheReadTokens": 32896,
+          "cacheBaseTokens": 33027,
+          "totalTokens": 33202,
+          "estimatedCostUsd": 0.000635,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "hello",
           "model": "gpt-5.5",
@@ -3065,16 +5393,28 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-05-31",
       "sources": [
+        "openclaw",
         "codex-macos"
       ],
-      "inputTokens": 20410,
-      "outputTokens": 402,
-      "cacheReadTokens": 4480,
-      "cacheBaseTokens": 20410,
-      "totalTokens": 20812,
-      "estimatedCostUsd": 0.09395,
-      "runs": 1,
+      "inputTokens": 108978,
+      "outputTokens": 2623,
+      "cacheReadTokens": 886400,
+      "cacheBaseTokens": 990898,
+      "totalTokens": 993521,
+      "estimatedCostUsd": 0.118195,
+      "runs": 4,
       "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 88568,
+          "outputTokens": 2221,
+          "cacheReadTokens": 881920,
+          "cacheBaseTokens": 970488,
+          "totalTokens": 972709,
+          "estimatedCostUsd": 0.024245,
+          "runs": 3
+        },
         {
           "key": "codex-macos",
           "label": "Codex macOS",
@@ -3088,6 +5428,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 88568,
+          "outputTokens": 2221,
+          "cacheReadTokens": 881920,
+          "cacheBaseTokens": 970488,
+          "totalTokens": 972709,
+          "estimatedCostUsd": 0.024245,
+          "runs": 3,
+          "pricingEstimated": true
+        },
         {
           "model": "gpt-5.5",
           "provider": "openai",
@@ -3104,6 +5457,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 82065,
+          "outputTokens": 1725,
+          "cacheReadTokens": 738560,
+          "cacheBaseTokens": 820625,
+          "totalTokens": 822350,
+          "estimatedCostUsd": 0.02099,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 6503,
+          "outputTokens": 496,
+          "cacheReadTokens": 143360,
+          "cacheBaseTokens": 149863,
+          "totalTokens": 150359,
+          "estimatedCostUsd": 0.003255,
+          "runs": 1,
+          "pricingEstimated": true
+        },
         {
           "kind": "codex-session",
           "label": "agent-agent",
@@ -3122,17 +5501,88 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "pricingEstimated": true
     },
     {
+      "date": "2026-05-30",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 23108,
+      "outputTokens": 3270,
+      "cacheReadTokens": 445312,
+      "cacheBaseTokens": 468420,
+      "totalTokens": 471690,
+      "estimatedCostUsd": 0.010684,
+      "runs": 2,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 23108,
+          "outputTokens": 3270,
+          "cacheReadTokens": 445312,
+          "cacheBaseTokens": 468420,
+          "totalTokens": 471690,
+          "estimatedCostUsd": 0.010684,
+          "runs": 2
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 23108,
+          "outputTokens": 3270,
+          "cacheReadTokens": 445312,
+          "cacheBaseTokens": 468420,
+          "totalTokens": 471690,
+          "estimatedCostUsd": 0.010684,
+          "runs": 2,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 11498,
+          "outputTokens": 882,
+          "cacheReadTokens": 233856,
+          "cacheBaseTokens": 245354,
+          "totalTokens": 246236,
+          "estimatedCostUsd": 0.005403,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 197b1734",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 11610,
+          "outputTokens": 2388,
+          "cacheReadTokens": 211456,
+          "cacheBaseTokens": 223066,
+          "totalTokens": 225454,
+          "estimatedCostUsd": 0.005281,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
       "date": "2026-05-29",
       "sources": [
+        "openclaw",
         "codex-macos"
       ],
-      "inputTokens": 41009859,
-      "outputTokens": 147599,
-      "cacheReadTokens": 37653248,
-      "cacheBaseTokens": 41009859,
-      "totalTokens": 41157458,
-      "estimatedCostUsd": 40.037649,
-      "runs": 14,
+      "inputTokens": 41112302,
+      "outputTokens": 164814,
+      "cacheReadTokens": 42743936,
+      "cacheBaseTokens": 46202990,
+      "totalTokens": 46367804,
+      "estimatedCostUsd": 40.1416,
+      "runs": 22,
       "bySource": [
         {
           "key": "codex-macos",
@@ -3144,6 +5594,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 41157458,
           "estimatedCostUsd": 40.037649,
           "runs": 14
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 102443,
+          "outputTokens": 17215,
+          "cacheReadTokens": 5090688,
+          "cacheBaseTokens": 5193131,
+          "totalTokens": 5210346,
+          "estimatedCostUsd": 0.103951,
+          "runs": 8
         }
       ],
       "byModel": [
@@ -3160,6 +5621,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 14,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 102443,
+          "outputTokens": 17215,
+          "cacheReadTokens": 5090688,
+          "cacheBaseTokens": 5193131,
+          "totalTokens": 5210346,
+          "estimatedCostUsd": 0.103951,
+          "runs": 8,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -3206,6 +5680,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 82978,
+          "outputTokens": 16311,
+          "cacheReadTokens": 4878208,
+          "cacheBaseTokens": 4961186,
+          "totalTokens": 4977497,
+          "estimatedCostUsd": 0.098212,
+          "runs": 6,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 19316,
+          "outputTokens": 733,
+          "cacheReadTokens": 206208,
+          "cacheBaseTokens": 225524,
+          "totalTokens": 226257,
+          "estimatedCostUsd": 0.005582,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "cli",
           "model": "gpt-5.5",
@@ -3218,6 +5718,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "Cron d8b3f5c3",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 149,
+          "outputTokens": 171,
+          "cacheReadTokens": 6272,
+          "cacheBaseTokens": 6421,
+          "totalTokens": 6592,
+          "estimatedCostUsd": 0.000157,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -3225,16 +5738,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-05-28",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 74837907,
-      "outputTokens": 223837,
-      "cacheReadTokens": 69697024,
-      "cacheBaseTokens": 74837907,
-      "totalTokens": 75061744,
-      "estimatedCostUsd": 67.268037,
-      "runs": 30,
+      "inputTokens": 74920019,
+      "outputTokens": 226272,
+      "cacheReadTokens": 70298240,
+      "cacheBaseTokens": 75521235,
+      "totalTokens": 75747507,
+      "estimatedCostUsd": 67.286687,
+      "runs": 34,
       "bySource": [
         {
           "key": "codex-macos",
@@ -3257,6 +5771,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 2891022,
           "estimatedCostUsd": 3.045187,
           "runs": 1
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 82112,
+          "outputTokens": 2435,
+          "cacheReadTokens": 601216,
+          "cacheBaseTokens": 683328,
+          "totalTokens": 685763,
+          "estimatedCostUsd": 0.01865,
+          "runs": 4
         }
       ],
       "byModel": [
@@ -3273,6 +5798,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 30,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 82112,
+          "outputTokens": 2435,
+          "cacheReadTokens": 601216,
+          "cacheBaseTokens": 683328,
+          "totalTokens": 685763,
+          "estimatedCostUsd": 0.01865,
+          "runs": 4,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -3347,6 +5885,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 67763,
+          "outputTokens": 1406,
+          "cacheReadTokens": 460160,
+          "cacheBaseTokens": 527923,
+          "totalTokens": 529329,
+          "estimatedCostUsd": 0.014635,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "skill-claude-code-insight-skill",
           "model": "gpt-5.5",
@@ -3403,6 +5954,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 6394,
+          "outputTokens": 451,
+          "cacheReadTokens": 103424,
+          "cacheBaseTokens": 109818,
+          "totalTokens": 110269,
+          "estimatedCostUsd": 0.002518,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "alpha",
           "model": "gpt-5.5",
@@ -3415,6 +5979,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "Cron d8b3f5c3",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 7955,
+          "outputTokens": 578,
+          "cacheReadTokens": 37632,
+          "cacheBaseTokens": 45587,
+          "totalTokens": 46165,
+          "estimatedCostUsd": 0.001497,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -3422,16 +5999,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-05-27",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 66251564,
-      "outputTokens": 363439,
-      "cacheReadTokens": 59902848,
-      "cacheBaseTokens": 66251564,
-      "totalTokens": 66615003,
-      "estimatedCostUsd": 72.598174,
-      "runs": 26,
+      "inputTokens": 66340293,
+      "outputTokens": 366646,
+      "cacheReadTokens": 60702464,
+      "cacheBaseTokens": 67139909,
+      "totalTokens": 67506555,
+      "estimatedCostUsd": 72.62113,
+      "runs": 31,
       "bySource": [
         {
           "key": "codex-macos",
@@ -3454,6 +6032,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 10210022,
           "estimatedCostUsd": 12.607872,
           "runs": 7
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 88729,
+          "outputTokens": 3207,
+          "cacheReadTokens": 799616,
+          "cacheBaseTokens": 888345,
+          "totalTokens": 891552,
+          "estimatedCostUsd": 0.022956,
+          "runs": 5
         }
       ],
       "byModel": [
@@ -3470,6 +6059,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 26,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 88729,
+          "outputTokens": 3207,
+          "cacheReadTokens": 799616,
+          "cacheBaseTokens": 888345,
+          "totalTokens": 891552,
+          "estimatedCostUsd": 0.022956,
+          "runs": 5,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -3572,6 +6174,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 55588,
+          "outputTokens": 1845,
+          "cacheReadTokens": 638720,
+          "cacheBaseTokens": 694308,
+          "totalTokens": 696153,
+          "estimatedCostUsd": 0.016832,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "https-bytedance-larkoffice-com-docx-sag3d8hqooikkwxja0xcgwnqnkf",
           "model": "gpt-5.5",
@@ -3654,6 +6269,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 1,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 6379,
+          "outputTokens": 394,
+          "cacheReadTokens": 105088,
+          "cacheBaseTokens": 111467,
+          "totalTokens": 111861,
+          "estimatedCostUsd": 0.002537,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron d8b3f5c3",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 26762,
+          "outputTokens": 968,
+          "cacheReadTokens": 55808,
+          "cacheBaseTokens": 82570,
+          "totalTokens": 83538,
+          "estimatedCostUsd": 0.003587,
+          "runs": 2,
+          "pricingEstimated": true
         },
         {
           "kind": "codex-session",
@@ -3759,16 +6400,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-05-26",
       "sources": [
+        "openclaw",
         "codex-windows",
         "codex-macos"
       ],
-      "inputTokens": 114648772,
-      "outputTokens": 897742,
-      "cacheReadTokens": 104642432,
-      "cacheBaseTokens": 114648772,
-      "totalTokens": 115546514,
-      "estimatedCostUsd": 129.285176,
-      "runs": 15,
+      "inputTokens": 114715410,
+      "outputTokens": 899185,
+      "cacheReadTokens": 104827008,
+      "cacheBaseTokens": 114899986,
+      "totalTokens": 115799171,
+      "estimatedCostUsd": 129.294756,
+      "runs": 17,
       "bySource": [
         {
           "key": "codex-macos",
@@ -3791,6 +6433,17 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "totalTokens": 43398359,
           "estimatedCostUsd": 39.272214,
           "runs": 4
+        },
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 66638,
+          "outputTokens": 1443,
+          "cacheReadTokens": 184576,
+          "cacheBaseTokens": 251214,
+          "totalTokens": 252657,
+          "estimatedCostUsd": 0.00958,
+          "runs": 2
         }
       ],
       "byModel": [
@@ -3807,6 +6460,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 15,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 66638,
+          "outputTokens": 1443,
+          "cacheReadTokens": 184576,
+          "cacheBaseTokens": 251214,
+          "totalTokens": 252657,
+          "estimatedCostUsd": 0.00958,
+          "runs": 2,
+          "pricingEstimated": true
         }
       ],
       "byTask": [
@@ -3867,6 +6533,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "pricingModel": "gpt-5.5"
         },
         {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 42778,
+          "outputTokens": 645,
+          "cacheReadTokens": 116096,
+          "cacheBaseTokens": 158874,
+          "totalTokens": 159519,
+          "estimatedCostUsd": 0.006056,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron d8b3f5c3",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 23860,
+          "outputTokens": 798,
+          "cacheReadTokens": 68480,
+          "cacheBaseTokens": 92340,
+          "totalTokens": 93138,
+          "estimatedCostUsd": 0.003524,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "2-codex-2-1-codex-cli",
           "model": "gpt-5.5",
@@ -3886,16 +6578,28 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     {
       "date": "2026-05-25",
       "sources": [
+        "openclaw",
         "codex-windows"
       ],
-      "inputTokens": 117822,
-      "outputTokens": 1545,
-      "cacheReadTokens": 92672,
-      "cacheBaseTokens": 117822,
-      "totalTokens": 119367,
-      "estimatedCostUsd": 0.218436,
-      "runs": 1,
+      "inputTokens": 172093,
+      "outputTokens": 5265,
+      "cacheReadTokens": 1022592,
+      "cacheBaseTokens": 1102013,
+      "totalTokens": 1107278,
+      "estimatedCostUsd": 0.240729,
+      "runs": 6,
       "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 54271,
+          "outputTokens": 3720,
+          "cacheReadTokens": 929920,
+          "cacheBaseTokens": 984191,
+          "totalTokens": 987911,
+          "estimatedCostUsd": 0.022293,
+          "runs": 5
+        },
         {
           "key": "codex-windows",
           "label": "Codex Windows",
@@ -3909,6 +6613,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 54271,
+          "outputTokens": 3720,
+          "cacheReadTokens": 929920,
+          "cacheBaseTokens": 984191,
+          "totalTokens": 987911,
+          "estimatedCostUsd": 0.022293,
+          "runs": 5,
+          "pricingEstimated": true
+        },
         {
           "model": "gpt-5.5",
           "provider": "openai",
@@ -3925,6 +6642,32 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 47402,
+          "outputTokens": 3210,
+          "cacheReadTokens": 785024,
+          "cacheBaseTokens": 832426,
+          "totalTokens": 835636,
+          "estimatedCostUsd": 0.018974,
+          "runs": 4,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 6869,
+          "outputTokens": 510,
+          "cacheReadTokens": 144896,
+          "cacheBaseTokens": 151765,
+          "totalTokens": 152275,
+          "estimatedCostUsd": 0.003318,
+          "runs": 1,
+          "pricingEstimated": true
+        },
         {
           "kind": "codex-session",
           "label": "MaxNow",
@@ -3943,18 +6686,222 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "pricingEstimated": true
     },
     {
-      "date": "2026-05-22",
+      "date": "2026-05-24",
       "sources": [
-        "codex-macos"
+        "openclaw"
       ],
-      "inputTokens": 7592763,
-      "outputTokens": 14488,
-      "cacheReadTokens": 7003648,
-      "cacheBaseTokens": 7592763,
-      "totalTokens": 7607251,
-      "estimatedCostUsd": 6.882039,
+      "inputTokens": 38325,
+      "outputTokens": 1768,
+      "cacheReadTokens": 400256,
+      "cacheBaseTokens": 438581,
+      "totalTokens": 440349,
+      "estimatedCostUsd": 0.010972,
       "runs": 3,
       "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 38325,
+          "outputTokens": 1768,
+          "cacheReadTokens": 400256,
+          "cacheBaseTokens": 438581,
+          "totalTokens": 440349,
+          "estimatedCostUsd": 0.010972,
+          "runs": 3
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 38325,
+          "outputTokens": 1768,
+          "cacheReadTokens": 400256,
+          "cacheBaseTokens": 438581,
+          "totalTokens": 440349,
+          "estimatedCostUsd": 0.010972,
+          "runs": 3,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 12572,
+          "outputTokens": 804,
+          "cacheReadTokens": 190464,
+          "cacheBaseTokens": 203036,
+          "totalTokens": 203840,
+          "estimatedCostUsd": 0.004705,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 5b7f2357",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 8896,
+          "outputTokens": 455,
+          "cacheReadTokens": 173952,
+          "cacheBaseTokens": 182848,
+          "totalTokens": 183303,
+          "estimatedCostUsd": 0.004014,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 24661acf",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 16857,
+          "outputTokens": 509,
+          "cacheReadTokens": 35840,
+          "cacheBaseTokens": 52697,
+          "totalTokens": 53206,
+          "estimatedCostUsd": 0.002254,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-05-23",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 154698,
+      "outputTokens": 17388,
+      "cacheReadTokens": 3865984,
+      "cacheBaseTokens": 4020682,
+      "totalTokens": 4038070,
+      "estimatedCostUsd": 0.08664,
+      "runs": 8,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 154698,
+          "outputTokens": 17388,
+          "cacheReadTokens": 3865984,
+          "cacheBaseTokens": 4020682,
+          "totalTokens": 4038070,
+          "estimatedCostUsd": 0.08664,
+          "runs": 8
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 154698,
+          "outputTokens": 17388,
+          "cacheReadTokens": 3865984,
+          "cacheBaseTokens": 4020682,
+          "totalTokens": 4038070,
+          "estimatedCostUsd": 0.08664,
+          "runs": 8,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 102347,
+          "outputTokens": 6991,
+          "cacheReadTokens": 2351616,
+          "cacheBaseTokens": 2453963,
+          "totalTokens": 2460954,
+          "estimatedCostUsd": 0.052799,
+          "runs": 3,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 197b1734",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 12928,
+          "outputTokens": 6183,
+          "cacheReadTokens": 777600,
+          "cacheBaseTokens": 790528,
+          "totalTokens": 796711,
+          "estimatedCostUsd": 0.016273,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 5b7f2357",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 12066,
+          "outputTokens": 2719,
+          "cacheReadTokens": 510720,
+          "cacheBaseTokens": 522786,
+          "totalTokens": 525505,
+          "estimatedCostUsd": 0.010768,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 12400,
+          "outputTokens": 820,
+          "cacheReadTokens": 193920,
+          "cacheBaseTokens": 206320,
+          "totalTokens": 207140,
+          "estimatedCostUsd": 0.004754,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 24661acf",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 14957,
+          "outputTokens": 675,
+          "cacheReadTokens": 32128,
+          "cacheBaseTokens": 47085,
+          "totalTokens": 47760,
+          "estimatedCostUsd": 0.002046,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-05-22",
+      "sources": [
+        "openclaw",
+        "codex-macos"
+      ],
+      "inputTokens": 8778720,
+      "outputTokens": 49483,
+      "cacheReadTokens": 17733248,
+      "cacheBaseTokens": 19508320,
+      "totalTokens": 19557803,
+      "estimatedCostUsd": 7.188207,
+      "runs": 38,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 1185957,
+          "outputTokens": 34995,
+          "cacheReadTokens": 10729600,
+          "cacheBaseTokens": 11915557,
+          "totalTokens": 11950552,
+          "estimatedCostUsd": 0.306168,
+          "runs": 35
+        },
         {
           "key": "codex-macos",
           "label": "Codex macOS",
@@ -3968,6 +6915,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
         }
       ],
       "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 1185957,
+          "outputTokens": 34995,
+          "cacheReadTokens": 10729600,
+          "cacheBaseTokens": 11915557,
+          "totalTokens": 11950552,
+          "estimatedCostUsd": 0.306168,
+          "runs": 35,
+          "pricingEstimated": true
+        },
         {
           "model": "gpt-5.5",
           "provider": "openai",
@@ -3985,6 +6945,19 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       ],
       "byTask": [
         {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 1120337,
+          "outputTokens": 32183,
+          "cacheReadTokens": 10470400,
+          "cacheBaseTokens": 11590737,
+          "totalTokens": 11622920,
+          "estimatedCostUsd": 0.29509,
+          "runs": 31,
+          "pricingEstimated": true
+        },
+        {
           "kind": "codex-session",
           "label": "xs_fm_android",
           "model": "gpt-5.5",
@@ -3997,6 +6970,473 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
           "runs": 3,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 37790,
+          "outputTokens": 591,
+          "cacheReadTokens": 108800,
+          "cacheBaseTokens": 146590,
+          "totalTokens": 147181,
+          "estimatedCostUsd": 0.005466,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 5b7f2357",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 21038,
+          "outputTokens": 475,
+          "cacheReadTokens": 82048,
+          "cacheBaseTokens": 103086,
+          "totalTokens": 103561,
+          "estimatedCostUsd": 0.003456,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 24661acf",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 6792,
+          "outputTokens": 1746,
+          "cacheReadTokens": 68352,
+          "cacheBaseTokens": 75144,
+          "totalTokens": 76890,
+          "estimatedCostUsd": 0.002156,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-05-21",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 126058,
+      "outputTokens": 10994,
+      "cacheReadTokens": 1337344,
+      "cacheBaseTokens": 1463402,
+      "totalTokens": 1474396,
+      "estimatedCostUsd": 0.037396,
+      "runs": 3,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 126058,
+          "outputTokens": 10994,
+          "cacheReadTokens": 1337344,
+          "cacheBaseTokens": 1463402,
+          "totalTokens": 1474396,
+          "estimatedCostUsd": 0.037396,
+          "runs": 3
+        }
+      ],
+      "byModel": [
+        {
+          "model": "deepseek-v4-flash",
+          "provider": "deepseek",
+          "openrouterModel": "deepseek/deepseek-v4-flash",
+          "inputTokens": 126058,
+          "outputTokens": 10994,
+          "cacheReadTokens": 1337344,
+          "cacheBaseTokens": 1463402,
+          "totalTokens": 1474396,
+          "estimatedCostUsd": 0.037396,
+          "runs": 3,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 91053,
+          "outputTokens": 6518,
+          "cacheReadTokens": 737408,
+          "cacheBaseTokens": 828461,
+          "totalTokens": 834979,
+          "estimatedCostUsd": 0.022641,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "deepseek-v4-flash",
+          "inputTokens": 35005,
+          "outputTokens": 4476,
+          "cacheReadTokens": 599936,
+          "cacheBaseTokens": 634941,
+          "totalTokens": 639417,
+          "estimatedCostUsd": 0.014755,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-05-20",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 234574,
+      "outputTokens": 24559,
+      "cacheReadTokens": 4550008,
+      "cacheBaseTokens": 4784582,
+      "totalTokens": 4828538,
+      "estimatedCostUsd": 0.0,
+      "runs": 13,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 234574,
+          "outputTokens": 24559,
+          "cacheReadTokens": 4550008,
+          "cacheBaseTokens": 4784582,
+          "totalTokens": 4828538,
+          "estimatedCostUsd": 0.0,
+          "runs": 13
+        }
+      ],
+      "byModel": [
+        {
+          "model": "MiniMax-M2.7",
+          "provider": "minimax",
+          "openrouterModel": null,
+          "inputTokens": 234574,
+          "outputTokens": 24559,
+          "cacheReadTokens": 4550008,
+          "cacheBaseTokens": 4784582,
+          "totalTokens": 4828538,
+          "estimatedCostUsd": 0.0,
+          "runs": 13,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 211237,
+          "outputTokens": 23876,
+          "cacheReadTokens": 4452421,
+          "cacheBaseTokens": 4663658,
+          "totalTokens": 4687534,
+          "estimatedCostUsd": 0.0,
+          "runs": 10,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 22026,
+          "outputTokens": 418,
+          "cacheReadTokens": 40128,
+          "cacheBaseTokens": 62154,
+          "totalTokens": 62572,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 5b7f2357",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 745,
+          "outputTokens": 106,
+          "cacheReadTokens": 38306,
+          "cacheBaseTokens": 39051,
+          "totalTokens": 39280,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 24661acf",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 566,
+          "outputTokens": 159,
+          "cacheReadTokens": 19153,
+          "cacheBaseTokens": 19719,
+          "totalTokens": 39152,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-05-19",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 262960,
+      "outputTokens": 13903,
+      "cacheReadTokens": 1379051,
+      "cacheBaseTokens": 1642011,
+      "totalTokens": 1716698,
+      "estimatedCostUsd": 0.0,
+      "runs": 13,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 262960,
+          "outputTokens": 13903,
+          "cacheReadTokens": 1379051,
+          "cacheBaseTokens": 1642011,
+          "totalTokens": 1716698,
+          "estimatedCostUsd": 0.0,
+          "runs": 13
+        }
+      ],
+      "byModel": [
+        {
+          "model": "MiniMax-M2.7",
+          "provider": "minimax",
+          "openrouterModel": null,
+          "inputTokens": 262960,
+          "outputTokens": 13903,
+          "cacheReadTokens": 1379051,
+          "cacheBaseTokens": 1642011,
+          "totalTokens": 1716698,
+          "estimatedCostUsd": 0.0,
+          "runs": 13,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 221738,
+          "outputTokens": 13228,
+          "cacheReadTokens": 1301257,
+          "cacheBaseTokens": 1522995,
+          "totalTokens": 1558449,
+          "estimatedCostUsd": 0.0,
+          "runs": 9,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 5b7f2357",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 19550,
+          "outputTokens": 163,
+          "cacheReadTokens": 39168,
+          "cacheBaseTokens": 58718,
+          "totalTokens": 58881,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 24661acf",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 19579,
+          "outputTokens": 235,
+          "cacheReadTokens": 19473,
+          "cacheBaseTokens": 39052,
+          "totalTokens": 58561,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 2093,
+          "outputTokens": 277,
+          "cacheReadTokens": 19153,
+          "cacheBaseTokens": 21246,
+          "totalTokens": 40807,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-05-18",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 69162,
+      "outputTokens": 5163,
+      "cacheReadTokens": 494426,
+      "cacheBaseTokens": 563588,
+      "totalTokens": 568751,
+      "estimatedCostUsd": 0.0,
+      "runs": 3,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 69162,
+          "outputTokens": 5163,
+          "cacheReadTokens": 494426,
+          "cacheBaseTokens": 563588,
+          "totalTokens": 568751,
+          "estimatedCostUsd": 0.0,
+          "runs": 3
+        }
+      ],
+      "byModel": [
+        {
+          "model": "MiniMax-M2.7",
+          "provider": "minimax",
+          "openrouterModel": null,
+          "inputTokens": 69162,
+          "outputTokens": 5163,
+          "cacheReadTokens": 494426,
+          "cacheBaseTokens": 563588,
+          "totalTokens": 568751,
+          "estimatedCostUsd": 0.0,
+          "runs": 3,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 27330,
+          "outputTokens": 3063,
+          "cacheReadTokens": 435776,
+          "cacheBaseTokens": 463106,
+          "totalTokens": 466169,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 5b7f2357",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 19484,
+          "outputTokens": 198,
+          "cacheReadTokens": 38976,
+          "cacheBaseTokens": 58460,
+          "totalTokens": 58658,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 22348,
+          "outputTokens": 1902,
+          "cacheReadTokens": 19674,
+          "cacheBaseTokens": 42022,
+          "totalTokens": 43924,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        }
+      ],
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-05-17",
+      "sources": [
+        "openclaw"
+      ],
+      "inputTokens": 92228,
+      "outputTokens": 1586,
+      "cacheReadTokens": 198464,
+      "cacheBaseTokens": 290692,
+      "totalTokens": 292278,
+      "estimatedCostUsd": 0.0,
+      "runs": 4,
+      "bySource": [
+        {
+          "key": "openclaw",
+          "label": "OpenClaw",
+          "inputTokens": 92228,
+          "outputTokens": 1586,
+          "cacheReadTokens": 198464,
+          "cacheBaseTokens": 290692,
+          "totalTokens": 292278,
+          "estimatedCostUsd": 0.0,
+          "runs": 4
+        }
+      ],
+      "byModel": [
+        {
+          "model": "MiniMax-M2.7",
+          "provider": "minimax",
+          "openrouterModel": null,
+          "inputTokens": 92228,
+          "outputTokens": 1586,
+          "cacheReadTokens": 198464,
+          "cacheBaseTokens": 290692,
+          "totalTokens": 292278,
+          "estimatedCostUsd": 0.0,
+          "runs": 4,
+          "pricingEstimated": true
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "weixin",
+          "label": "WeChat direct",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 53066,
+          "outputTokens": 1195,
+          "cacheReadTokens": 178496,
+          "cacheBaseTokens": 231562,
+          "totalTokens": 232757,
+          "estimatedCostUsd": 0.0,
+          "runs": 2,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "每日黄金分析",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 20157,
+          "outputTokens": 327,
+          "cacheReadTokens": 19648,
+          "cacheBaseTokens": 39805,
+          "totalTokens": 40132,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
+        },
+        {
+          "kind": "cron",
+          "label": "Cron 5b7f2357",
+          "model": "MiniMax-M2.7",
+          "inputTokens": 19005,
+          "outputTokens": 64,
+          "cacheReadTokens": 320,
+          "cacheBaseTokens": 19325,
+          "totalTokens": 19389,
+          "estimatedCostUsd": 0.0,
+          "runs": 1,
+          "pricingEstimated": true
         }
       ],
       "pricingEstimated": true
@@ -4071,6 +7511,101 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "contextWindow": 258400,
       "tokenCountEvents": 170,
       "estimatedCostUsd": 20.461065
+    },
+    {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T22:13:31+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "623d3293-a33c-47d6-842d-9c0c4bd166b8",
+      "runId": "623d3293-a33c-47d6-842d-9c0c4bd166b8",
+      "kind": "cron",
+      "label": "黄金晚报",
+      "inputTokens": 2032,
+      "outputTokens": 864,
+      "cacheReadTokens": 109056,
+      "totalTokens": 111952,
+      "cacheBaseTokens": 111088,
+      "estimatedCostUsd": 0.00230141,
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T22:07:31+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "d8c6c0ab-1a12-4b1f-bbed-c6bcb46b5903",
+      "runId": "d8c6c0ab-1a12-4b1f-bbed-c6bcb46b5903",
+      "kind": "cron",
+      "label": "黄金晚报",
+      "inputTokens": 62,
+      "outputTokens": 164,
+      "cacheReadTokens": 26624,
+      "totalTokens": 26850,
+      "cacheBaseTokens": 26686,
+      "estimatedCostUsd": 0.00051433,
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T22:04:31+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "44bf519f-eb5e-4a51-a8e1-a509834f50ba",
+      "runId": "44bf519f-eb5e-4a51-a8e1-a509834f50ba",
+      "kind": "cron",
+      "label": "黄金晚报",
+      "inputTokens": 62,
+      "outputTokens": 105,
+      "cacheReadTokens": 26624,
+      "totalTokens": 26791,
+      "cacheBaseTokens": 26686,
+      "estimatedCostUsd": 0.00050371,
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T22:02:01+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "55345161-9f89-4f04-b58e-42ff8e328184",
+      "runId": "55345161-9f89-4f04-b58e-42ff8e328184",
+      "kind": "cron",
+      "label": "黄金晚报",
+      "inputTokens": 62,
+      "outputTokens": 134,
+      "cacheReadTokens": 26624,
+      "totalTokens": 26820,
+      "cacheBaseTokens": 26686,
+      "estimatedCostUsd": 0.00050893,
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T21:20:50+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "0de080db-7739-4c98-9817-4848e236be9d",
+      "runId": "c0f44cb3-e267-4c2a-a190-c14f9bf13ca3",
+      "kind": "agent",
+      "label": "OpenClaw session",
+      "inputTokens": 40064,
+      "outputTokens": 9480,
+      "cacheReadTokens": 201984,
+      "totalTokens": 251528,
+      "cacheBaseTokens": 242048,
+      "estimatedCostUsd": 0.00894787,
+      "pricingEstimated": true
     },
     {
       "date": "2026-07-06",
@@ -4326,6 +7861,63 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "estimatedCostUsd": 1.962187
     },
     {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T13:29:27+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "ba1b50b0-d768-4b8c-9bd9-b0074606b74d",
+      "runId": "66e610ab-ea5b-4e0a-8598-3840f8a508cf",
+      "kind": "weixin",
+      "label": "WeChat direct",
+      "inputTokens": 31470,
+      "outputTokens": 1034,
+      "cacheReadTokens": 62336,
+      "totalTokens": 94840,
+      "cacheBaseTokens": 93806,
+      "estimatedCostUsd": 0.00414047,
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T09:34:06+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "47e40326-eedf-43ec-84a9-7b6b5eef435b",
+      "runId": "47e40326-eedf-43ec-84a9-7b6b5eef435b",
+      "kind": "cron",
+      "label": "黄金早报",
+      "inputTokens": 30049,
+      "outputTokens": 4378,
+      "cacheReadTokens": 407552,
+      "totalTokens": 441979,
+      "cacheBaseTokens": 437601,
+      "estimatedCostUsd": 0.01082839,
+      "pricingEstimated": true
+    },
+    {
+      "date": "2026-07-06",
+      "timestamp": "2026-07-06T08:06:21+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "8ae30f5f-c3b0-4e85-9065-600382725b03",
+      "runId": "8ae30f5f-c3b0-4e85-9065-600382725b03",
+      "kind": "cron",
+      "label": "每日8点拉取仓库更新",
+      "inputTokens": 103,
+      "outputTokens": 92,
+      "cacheReadTokens": 5120,
+      "totalTokens": 5315,
+      "cacheBaseTokens": 5223,
+      "estimatedCostUsd": 0.00011799,
+      "pricingEstimated": true
+    },
+    {
       "date": "2026-07-05",
       "timestamp": "2026-07-05T23:45:08+08:00",
       "source": "codex-windows",
@@ -4393,6 +7985,25 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "contextWindow": 258400,
       "tokenCountEvents": 83,
       "estimatedCostUsd": 4.753774
+    },
+    {
+      "date": "2026-07-05",
+      "timestamp": "2026-07-05T22:01:58+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "5d8540d5-6a15-4a0d-86f4-b855d15fe2bc",
+      "runId": "5d8540d5-6a15-4a0d-86f4-b855d15fe2bc",
+      "kind": "cron",
+      "label": "黄金晚报",
+      "inputTokens": 10833,
+      "outputTokens": 4099,
+      "cacheReadTokens": 252544,
+      "totalTokens": 267476,
+      "cacheBaseTokens": 263377,
+      "estimatedCostUsd": 0.00625858,
+      "pricingEstimated": true
     },
     {
       "date": "2026-07-05",
@@ -4464,237 +8075,34 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
       "estimatedCostUsd": 2.213876
     },
     {
-      "date": "2026-07-03",
-      "timestamp": "2026-07-03T10:26:03+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019ea277-f183-72a3-ac35-98bae978aa86",
-      "runId": "019ea277-f183-72a3-ac35-98bae978aa86",
-      "kind": "codex-session",
-      "label": "files-mentioned-by-the-user-brand",
-      "inputTokens": 6156039,
-      "outputTokens": 39817,
-      "cacheReadTokens": 5314048,
-      "cacheBaseTokens": 6156039,
-      "reasoningOutputTokens": 8282,
-      "totalTokens": 6195856,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 60,
-      "estimatedCostUsd": 8.061489
-    },
-    {
-      "date": "2026-07-02",
-      "timestamp": "2026-07-02T23:31:31+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f22ab-3adb-7212-b8ad-fb7bf3a98859",
-      "runId": "019f22ab-3adb-7212-b8ad-fb7bf3a98859",
-      "kind": "codex-session",
-      "label": "MaxNow",
-      "inputTokens": 38152049,
-      "outputTokens": 90354,
-      "cacheReadTokens": 36412800,
-      "cacheBaseTokens": 38152049,
-      "reasoningOutputTokens": 15859,
-      "totalTokens": 38242403,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 246,
-      "estimatedCostUsd": 29.613265
-    },
-    {
-      "date": "2026-07-02",
-      "timestamp": "2026-07-02T15:40:06+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f21af-a5a4-77b1-9ef6-febc0ae3231f",
-      "runId": "019f21af-a5a4-77b1-9ef6-febc0ae3231f",
-      "kind": "codex-session",
-      "label": "MaxNow",
-      "inputTokens": 9522314,
-      "outputTokens": 25145,
-      "cacheReadTokens": 8967680,
-      "cacheBaseTokens": 9522314,
-      "reasoningOutputTokens": 5848,
-      "totalTokens": 9547459,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 88,
-      "estimatedCostUsd": 8.01136
-    },
-    {
-      "date": "2026-07-02",
-      "timestamp": "2026-07-02T15:18:08+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f21ab-bcfd-7ca3-9fcc-57bdcf049a35",
-      "runId": "019f21ab-bcfd-7ca3-9fcc-57bdcf049a35",
-      "kind": "codex-session",
-      "label": "personal-wiki",
-      "inputTokens": 969346,
-      "outputTokens": 6005,
-      "cacheReadTokens": 846848,
-      "cacheBaseTokens": 969346,
-      "reasoningOutputTokens": 678,
-      "totalTokens": 975351,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 16,
-      "estimatedCostUsd": 1.216064
-    },
-    {
-      "date": "2026-07-02",
-      "timestamp": "2026-07-02T13:32:25+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f20b4-8a89-74a3-9645-a7565762c3bf",
-      "runId": "019f20b4-8a89-74a3-9645-a7565762c3bf",
-      "kind": "codex-session",
-      "label": "MaxNow",
-      "inputTokens": 71410776,
-      "outputTokens": 146906,
-      "cacheReadTokens": 67524736,
-      "cacheBaseTokens": 71410776,
-      "reasoningOutputTokens": 31524,
-      "totalTokens": 71557682,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 476,
-      "estimatedCostUsd": 57.599748
-    },
-    {
-      "date": "2026-07-02",
-      "timestamp": "2026-07-02T10:41:15+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019ef9ff-a1b0-7d02-a27a-4f0235773290",
-      "runId": "019ef9ff-a1b0-7d02-a27a-4f0235773290",
-      "kind": "codex-session",
-      "label": "MaxNow",
-      "inputTokens": 36340610,
-      "outputTokens": 114224,
-      "cacheReadTokens": 33983232,
-      "cacheBaseTokens": 36340610,
-      "reasoningOutputTokens": 22803,
-      "totalTokens": 36454834,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 255,
-      "estimatedCostUsd": 32.205226
-    },
-    {
-      "date": "2026-07-02",
-      "timestamp": "2026-07-02T10:38:59+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f209b-c3ce-7c93-84f2-3c94b8c0aefb",
-      "runId": "019f209b-c3ce-7c93-84f2-3c94b8c0aefb",
-      "kind": "codex-session",
-      "label": "MaxNow",
-      "inputTokens": 4084475,
-      "outputTokens": 24185,
-      "cacheReadTokens": 3635072,
-      "cacheBaseTokens": 4084475,
-      "reasoningOutputTokens": 4457,
-      "totalTokens": 4108660,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 53,
-      "estimatedCostUsd": 4.790101
-    },
-    {
-      "date": "2026-07-01",
-      "timestamp": "2026-07-01T21:09:34+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f1da1-241c-71b1-8d03-b8ae50d3720f",
-      "runId": "019f1da1-241c-71b1-8d03-b8ae50d3720f",
-      "kind": "codex-session",
-      "label": "daily-ai-news",
-      "inputTokens": 496772,
-      "outputTokens": 3646,
-      "cacheReadTokens": 379776,
-      "cacheBaseTokens": 496772,
-      "reasoningOutputTokens": 619,
-      "totalTokens": 500418,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 13,
-      "estimatedCostUsd": 0.884248
-    },
-    {
-      "date": "2026-06-27",
-      "timestamp": "2026-06-27T17:51:24+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f07ca-75dc-7b12-a3c5-fe5e46ced9c4",
-      "runId": "019f07ca-75dc-7b12-a3c5-fe5e46ced9c4",
-      "kind": "codex-session",
-      "label": "MaxNow",
-      "inputTokens": 6600512,
-      "outputTokens": 23256,
-      "cacheReadTokens": 6151808,
-      "cacheBaseTokens": 6600512,
-      "reasoningOutputTokens": 6522,
-      "totalTokens": 6623768,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 59,
-      "estimatedCostUsd": 6.017104
-    },
-    {
-      "date": "2026-06-27",
-      "timestamp": "2026-06-27T10:56:23+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f06ee-4604-79e0-aa0b-0e943f8e9e82",
-      "runId": "019f06ee-4604-79e0-aa0b-0e943f8e9e82",
-      "kind": "codex-session",
-      "label": "daily-ai-news",
-      "inputTokens": 1847771,
-      "outputTokens": 12619,
-      "cacheReadTokens": 1638016,
-      "cacheBaseTokens": 1847771,
-      "reasoningOutputTokens": 2948,
-      "totalTokens": 1860390,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 35,
-      "estimatedCostUsd": 2.246353
+      "date": "2026-07-05",
+      "timestamp": "2026-07-05T09:30:41+08:00",
+      "source": "openclaw",
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "sessionId": "173fed1f-251e-4977-8580-1c19b9c0d43c",
+      "runId": "173fed1f-251e-4977-8580-1c19b9c0d43c",
+      "kind": "cron",
+      "label": "黄金早报",
+      "inputTokens": 33505,
+      "outputTokens": 2952,
+      "cacheReadTokens": 195840,
+      "totalTokens": 232297,
+      "cacheBaseTokens": 229345,
+      "estimatedCostUsd": 0.00707193,
+      "pricingEstimated": true
     }
   ],
   "pricingSnapshot": [
+    {
+      "openrouterModel": "deepseek/deepseek-v4-flash",
+      "pricing": {
+        "prompt": "0.00000009",
+        "completion": "0.00000018",
+        "input_cache_read": "0.000000018"
+      }
+    },
     {
       "model": "gpt-5.4",
       "pricing": {
@@ -4724,7 +8132,5 @@ window.MAXNOW_TOKEN_USAGE_DATA = {
     "OpenClaw cost is OpenRouter-equivalent estimation.",
     "Codex cost is OpenAI API-equivalent estimation from session token_count events."
   ],
-  "warnings": [
-    "OpenClaw state directory not found: \\root\\.openclaw"
-  ]
+  "warnings": []
 };

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 22:39",
-  "version": "1.0.0.17",
-  "versionLabel": "v1.0.0.17",
-  "branch": "bugfix/unify-page-spacing",
-  "commit": "8ab6784",
+  "updatedAt": "2026-07-07 00:24",
+  "version": "1.0.0.18",
+  "versionLabel": "v1.0.0.18",
+  "branch": "feature/openclaw-token-preserve",
+  "commit": "f7854c4",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/unify-page-spacing · commit 8ab6784 · 有未提交代码改动",
+  "deployNote": "feature/openclaw-token-preserve · commit f7854c4 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-07",
+      "title": "修复 OpenClaw Token 来源回退为空",
+      "summary": "复查发现线上 `openclaw-usage.*` 被仓库中的空基线覆盖，导致统一 `token-usage.*` 只剩 Codex 来源，Token 页来源费用面板过滤掉 0 用量的 OpenClaw。"
+    },
     {
       "date": "2026-07-06",
       "title": "统一 Dash 页面主间距",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-06",
       "title": "调整 Token 页头和范围切换位置",
       "summary": "将 Token 页 `1d / 7d / 30d / all` 范围切换移动到顶部栏右侧，只在 Token 页显示，和 Blog / 刷新入口同层。"
-    },
-    {
-      "date": "2026-07-06",
-      "title": "优化 Token 页头来源同步布局",
-      "summary": "Token 页头左侧更新时间文案从“更新于”改为“总账合并于”，明确它表示 `token-usage.*` 总账合并时间。"
     }
   ]
 };

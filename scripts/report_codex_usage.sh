@@ -213,17 +213,79 @@ invoke_server_token_merge() {
   remote_script="$(cat <<'REMOTE'
 set -e
 cd /var/www/maxnow-dashboard
-mkdir -p /tmp/maxnow-local-codex-usage-report
-cp -a dash/data/openclaw-usage.json /tmp/maxnow-local-codex-usage-report/openclaw-usage.json 2>/dev/null || true
-cp -a dash/data/openclaw-usage.js /tmp/maxnow-local-codex-usage-report/openclaw-usage.js 2>/dev/null || true
-cp -a dash/data/codex-server-usage.json /tmp/maxnow-local-codex-usage-report/codex-server-usage.json 2>/dev/null || true
-cp -a dash/data/codex-server-usage.js /tmp/maxnow-local-codex-usage-report/codex-server-usage.js 2>/dev/null || true
+
+usage_units() {
+  python3 - "$1" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+try:
+    data = json.loads(path.read_text(encoding="utf-8"))
+except Exception:
+    print(0)
+    raise SystemExit
+summary = data.get("summary") if isinstance(data, dict) else {}
+if not isinstance(summary, dict):
+    summary = {}
+total = int(summary.get("totalTokens") or data.get("totalTokens") or 0)
+runs = int(summary.get("runs") or data.get("runs") or 0)
+print(total + runs)
+PY
+}
+
+restore_runtime_pair() {
+  name="$1"
+  backup_json="$backup_dir/$name.json"
+  backup_js="$backup_dir/$name.js"
+  target_json="dash/data/$name.json"
+  target_js="dash/data/$name.js"
+
+  if [ ! -f "$backup_json" ]; then
+    return
+  fi
+
+  backup_units="$(usage_units "$backup_json")"
+  target_units="$(usage_units "$target_json")"
+  if [ "$backup_units" -gt 0 ] || [ "$target_units" -eq 0 ]; then
+    cp -a "$backup_json" "$target_json"
+    if [ -f "$backup_js" ]; then cp -a "$backup_js" "$target_js"; fi
+    echo "[ok] restored $name from server runtime backup"
+  else
+    echo "[warn] skipped empty $name backup because current ledger has usage"
+  fi
+}
+
+refresh_openclaw_if_empty() {
+  openclaw_units="$(usage_units dash/data/openclaw-usage.json)"
+  if [ "$openclaw_units" -gt 0 ]; then
+    return
+  fi
+  if ! sudo -n test -d /root/.openclaw 2>/dev/null; then
+    echo "[warn] OpenClaw ledger is empty and /root/.openclaw is not readable via sudo"
+    return
+  fi
+
+  echo "[warn] OpenClaw ledger is empty; refreshing it with root OpenClaw state"
+  sudo -n python3 scripts/update_data.py openclaw-usage
+  sudo -n chown ubuntu:www-data dash/data/openclaw-usage.json dash/data/openclaw-usage.js dash/data/token-usage.json dash/data/token-usage.js logs/openclaw-usage.log logs/token-usage.log 2>/dev/null || true
+}
+
+backup_root="/tmp/maxnow-local-codex-usage-report"
+backup_dir="$backup_root/$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$backup_dir"
+cp -a dash/data/openclaw-usage.json "$backup_dir/openclaw-usage.json" 2>/dev/null || true
+cp -a dash/data/openclaw-usage.js "$backup_dir/openclaw-usage.js" 2>/dev/null || true
+cp -a dash/data/codex-server-usage.json "$backup_dir/codex-server-usage.json" 2>/dev/null || true
+cp -a dash/data/codex-server-usage.js "$backup_dir/codex-server-usage.js" 2>/dev/null || true
+ln -sfn "$backup_dir" "$backup_root/latest" 2>/dev/null || true
+
 git stash push -m before-local-codex-usage-report -- dash/data/openclaw-usage.json dash/data/openclaw-usage.js dash/data/codex-usage.json dash/data/codex-usage.js dash/data/codex-macos-usage.json dash/data/codex-macos-usage.js dash/data/codex-server-usage.json dash/data/codex-server-usage.js dash/data/token-usage.json dash/data/token-usage.js dash/data/project-meta.json dash/data/project-meta.js >/dev/null 2>&1 || true
 git pull --ff-only origin main
-if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.json ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.json dash/data/openclaw-usage.json; fi
-if [ -f /tmp/maxnow-local-codex-usage-report/openclaw-usage.js ]; then cp -a /tmp/maxnow-local-codex-usage-report/openclaw-usage.js dash/data/openclaw-usage.js; fi
-if [ -f /tmp/maxnow-local-codex-usage-report/codex-server-usage.json ]; then cp -a /tmp/maxnow-local-codex-usage-report/codex-server-usage.json dash/data/codex-server-usage.json; fi
-if [ -f /tmp/maxnow-local-codex-usage-report/codex-server-usage.js ]; then cp -a /tmp/maxnow-local-codex-usage-report/codex-server-usage.js dash/data/codex-server-usage.js; fi
+restore_runtime_pair openclaw-usage
+restore_runtime_pair codex-server-usage
+refresh_openclaw_if_empty
 python3 scripts/update_data.py token-usage
 python3 scripts/check.py
 REMOTE

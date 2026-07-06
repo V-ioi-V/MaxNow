@@ -9,6 +9,17 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-07-07
+
+### 修复 OpenClaw Token 来源回退为空
+
+- 复查发现线上 `openclaw-usage.*` 被仓库中的空基线覆盖，导致统一 `token-usage.*` 只剩 Codex 来源，Token 页来源费用面板过滤掉 0 用量的 OpenClaw。
+- 在服务器用 root 重新运行 `python3 scripts/update_data.py openclaw-usage`，恢复 OpenClaw 用量账本；当前采集到 346 个 OpenClaw runs，并重新合并统一 Token 总账。
+- 加固 Windows / macOS 本机 Codex 上报脚本的服务器合并段：运行时账本改用带时间戳的备份目录；空备份不会覆盖已有非空账本；若服务器 OpenClaw 账本为空且 `/root/.openclaw` 可读，会用 sudo 刷新 OpenClaw 源账本后再合并 Token。
+- 新增 `.gitattributes` 强制 `*.sh` 使用 LF 行尾，避免 Windows 工作区把 macOS 上报脚本转换成 CRLF 后在 bash 中失败。
+- 将恢复后的 `openclaw-usage.*` / `token-usage.*` 同步回仓库，避免 `origin/main` 继续保存空 OpenClaw 基线。
+- 将 `VERSION` 从 `1.0.0.17` 提升到 `1.0.0.18`。
+
 ## 2026-07-06
 
 ### 统一 Dash 页面主间距
