@@ -11,6 +11,15 @@
 
 ## 2026-07-06
 
+### 修复豆奶 Playwright 运行时缺失
+
+- 复查确认 root crontab 仍保留豆奶 09:00 签到和 00:05 traffic closeout，但 2026-07-06 两个任务都因 Playwright 缺少 `/root/.cache/ms-playwright/chromium_headless_shell-1208` 失败。
+- 在服务器 root 环境运行 `python3 -m playwright install chromium`，补齐 `chromium_headless_shell-1208` 和 `ffmpeg-1011`，并用 Playwright headless launch smoke test 确认 Chromium 可启动。
+- 使用不发微信通知的 `/root/.openclaw/daily_checkin.sh` 手动补跑 2026-07-06 豆奶签到和数据同步；今日记录为 768 MB、1 豆丁、有效期延长 2.96 小时。
+- 手动运行 `gen_checkin_data.py --traffic-only --exclude-today` 补跑真实流量日结，线上 `dounai_checkin.json` 的 `account` / `traffic_usage` 已清除 `stale` 和 `last_error`。
+- 更新 `SERVER_RUNBOOK.md` 和 `CONTEXT.md`，记录 Playwright 浏览器缓存与豆奶自动化之间的依赖。
+- 将 `VERSION` 从 `1.0.0.11` 提升到 `1.0.0.12`。
+
 ### 拆分 macOS Codex 独立账本
 
 - 新增 `dash/data/codex-macos-usage.*`，macOS 本机 Codex 用量不再写入 Windows 兼容账本 `dash/data/codex-usage.*`。

@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-06 20:42",
-  "version": "1.0.0.11",
-  "versionLabel": "v1.0.0.11",
-  "branch": "feature/codex-platform-ledgers",
-  "commit": "68039c2",
+  "updatedAt": "2026-07-06 21:30",
+  "version": "1.0.0.12",
+  "versionLabel": "v1.0.0.12",
+  "branch": "bugfix/dounai-playwright-runtime",
+  "commit": "9306bb6",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/codex-platform-ledgers · commit 68039c2 · 有未提交代码改动",
+  "deployNote": "bugfix/dounai-playwright-runtime · commit 9306bb6 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-06",
+      "title": "修复豆奶 Playwright 运行时缺失",
+      "summary": "复查确认 root crontab 仍保留豆奶 09:00 签到和 00:05 traffic closeout，但 2026-07-06 两个任务都因 Playwright 缺少 `/root/.cache/ms-playwright/chromium_headless_shell-1208` 失败。"
+    },
     {
       "date": "2026-07-06",
       "title": "拆分 macOS Codex 独立账本",
@@ -28,11 +33,6 @@
       "date": "2026-07-05",
       "title": "收敛 Home 外部输入和待推进重复项",
       "summary": "Home 不再单独展示“AI 外部输入”卡，外部 AI 信号统一进入 Last-30 的“最新信号 / 本周观察 / 近 30 天主线”三列模块。"
-    },
-    {
-      "date": "2026-07-05",
-      "title": "修正版本卡运行数据误报",
-      "summary": "`scripts/sync_project_meta.py` 将 AI 信号、Last-30、服务器 Codex 用量和 Life foods 等自动生成数据纳入运行数据白名单。"
     }
   ]
 }

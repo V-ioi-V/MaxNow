@@ -563,6 +563,15 @@ curl http://metadata.tencentyun.com/latest/meta-data/payment/create-time
 
 后续如果确实需要恢复 `lighthouse-chromium.service`，应先确认 9222 端口和 Chromium profile 归属，只保留一个浏览器 owner，或给该 service 配置独立 `--user-data-dir`，避免再次与 OpenClaw 浏览器会话争用同一个 profile。
 
+2026-07-06 已修复一次豆奶自动化 Playwright 浏览器缺失：
+
+- 现象：09:00 豆奶签到和 00:05 traffic closeout 均报 `BrowserType.launch: Executable doesn't exist`，路径指向 `/root/.cache/ms-playwright/chromium_headless_shell-1208/...`；`dash/data/dounai_checkin.json` 的 `updatedAt` 会变化，但 `today`、账号快照和真实流量仍停在旧日期，并可能出现 `stale` / `last_error`。
+- 原因：清理服务器缓存后只保留了 `/root/.cache/ms-playwright/chromium-1208`，但当前 Python Playwright 1.58.0 的脚本启动 headless Chromium 时需要 `chromium_headless_shell-1208`。
+- 修复：以 root 执行 `python3 -m playwright install chromium`，补齐 `/root/.cache/ms-playwright/chromium_headless_shell-1208` 和 `/root/.cache/ms-playwright/ffmpeg-1011`，再用 `sync_playwright().chromium.launch(headless=True)` 做 smoke test。
+- 补数：使用 `/root/.openclaw/daily_checkin.sh` 手动补跑签到和 MaxNow 数据同步；该脚本不发微信通知。不要为了补数直接运行 `/root/.openclaw/dounai_cron.sh`，因为它会向 WeChat 发送签到通知。
+- 日结：补签后可运行 `python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today`，让真实流量历史继续排除当天不完整数据。
+- 清理规则：以后清理 Playwright 缓存前，先用 `python3 -m playwright --version` 和一次 headless launch smoke test 确认当前脚本需要的浏览器目录；不要只凭目录名判断 `chromium_headless_shell-*` 可删除。
+
 2026-06-18 已用 `ubuntu` 用户 crontab 接入 dashboard 数据同步，标记块为 `MAXNOW-DASHBOARD-SYNC`：
 
 ```cron
@@ -629,6 +638,7 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 - 已备份 `/root/.openclaw/gen_checkin_data.py` 到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-usage`，并扩展脚本写入 `traffic_usage` 和 `traffic_usage_history`。
 - 2026-07-05 已再次备份 `/root/.openclaw/gen_checkin_data.py` 到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-closeout`，新增 `--traffic-only --exclude-today` 模式。
 - 2026-07-05 已备份 root crontab 到 `/root/.openclaw/root-crontab-20260705-traffic-closeout.bak`，并新增 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT`：
+- 2026-07-06 手动恢复后线上 `today` 为 `2026-07-06`，`account.synced_at` 为 `2026-07-06 21:28`，`traffic_usage.synced_at` 为 `2026-07-06 21:29`，并确认 `account` / `traffic_usage` 不再带 `stale` 或 `last_error`。
 
 ```cron
 # BEGIN MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT

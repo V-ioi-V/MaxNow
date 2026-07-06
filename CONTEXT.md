@@ -132,7 +132,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史、直接流量使用记录和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。真实流量消耗优先使用 `traffic_usage_history`，不要再用账号余量快照差分作为主口径；余量差分只可作为缺数据时的估算说明。
 - 同行记页面只读取 `dash/data/ricky.json`，不在前端编辑、不回写 personal-wiki、不依赖外部在线地图服务；事实来源归 personal-wiki 的 `wiki/relationships/ricky-travel.json`。
 - 生活页“吃啥”只读取 `dash/data/life-foods.json`；前端允许本次会话内临时勾选 / 取消勾选和随机，但不回写 personal-wiki，候选长期来源归 `wiki/life/food-picker.md`。
-- 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段，并按日期维护 `account_history`。2026-07-05 已继续扩展脚本，读取 `/user/trafficlog` 的近 7 天真实使用量并合并到 `traffic_usage_history`，同时读取 `?ajax=1` 的近 12 小时节点活跃分布；同日新增 root cron `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT`，每天 00:05 执行 `gen_checkin_data.py --traffic-only --exclude-today`，专门更新昨天及更早的真实使用量。
+- 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段，并按日期维护 `account_history`。2026-07-05 已继续扩展脚本，读取 `/user/trafficlog` 的近 7 天真实使用量并合并到 `traffic_usage_history`，同时读取 `?ajax=1` 的近 12 小时节点活跃分布；同日新增 root cron `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT`，每天 00:05 执行 `gen_checkin_data.py --traffic-only --exclude-today`，专门更新昨天及更早的真实使用量。2026-07-06 已确认豆奶脚本依赖 root 的 Playwright `chromium_headless_shell-1208`；清理服务器浏览器缓存后需要运行 `python3 -m playwright install chromium` 并做 headless launch smoke test，补签应优先用不发通知的 `/root/.openclaw/daily_checkin.sh`。
 
 ### 4. AI 外部信号滚动记忆
 
@@ -214,7 +214,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Home 页面已将外部输入收敛为单一 Last-30 展示模块：左栏最新信号、中栏本周观察、右栏近 30 天主线；不再额外铺一张重复的 AI 外部输入卡。2026-07-05 已收紧外露口径，把左栏从 Today 改成最新信号，并把 `confidence` 和右侧数量解释为来源/候选归类而非权威判断。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天实际使用流量、日均可用、签到流量和签到时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本由 9:00 cron 管理，真实流量日结由 00:05 traffic-only cron 管理。
 - 2026-07-05 已接入豆奶真实流量使用抓取和 00:05 日结：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；`--traffic-only --exclude-today` 模式会把当天从 direct daily 和 `traffic_usage_history` 中剔除，避免 00:05 的当天碎片污染近 30 天实际使用口径。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。
-- 2026-07-05 已处理服务器资源占用：`lighthouse-chromium.service` 因和现有 OpenClaw Chromium 会话争用同一个 profile 而失败重启，现已停用并禁用；systemd journal 已限制到约 300M，低风险缓存已清理。后续不要直接删除 `/root/.cache/ms-playwright/chromium-1208`，除非安排 OpenClaw 浏览器维护窗口。
+- 2026-07-06 已修复豆奶 Playwright 运行时缺失：补齐 `/root/.cache/ms-playwright/chromium_headless_shell-1208` 后，手动跑 `/root/.openclaw/daily_checkin.sh` 补入当天签到，今日数据为 768 MB、1 豆丁、延长 2.96 小时；随后运行 `gen_checkin_data.py --traffic-only --exclude-today`，线上 `account` 和 `traffic_usage` 不再带 `stale` / `last_error`。
+- 2026-07-05 已处理服务器资源占用：`lighthouse-chromium.service` 因和现有 OpenClaw Chromium 会话争用同一个 profile 而失败重启，现已停用并禁用；systemd journal 已限制到约 300M，低风险缓存已清理。后续不要直接删除 `/root/.cache/ms-playwright/chromium-1208` 或当前 Playwright 需要的 `chromium_headless_shell-*`，除非安排 OpenClaw 浏览器维护窗口并做 launch smoke test。
 - 2026-06-19 已修复豆奶签到数据路径分叉：当天签到成功写入 `/root/MaxNow`，但线上部署目录仍停在 2026-06-18；现在 root 数据生成脚本会双写旧工作区和 `/var/www/maxnow-dashboard`。
 - wiki-todos 服务器自动同步已落地：`ubuntu` 用户 crontab 每 10 分钟运行一次 `MAXNOW-DASHBOARD-SYNC`，通过 `python3 scripts/update_data.py runtime` 刷新 `dash/data/wiki-todos.*`、系统状态缓存并执行 `scripts/check.py`。
 - Last-30 AI 外部信号服务器自动同步已落地：`ubuntu` 用户 crontab 每天 00:00 运行一次 `MAXNOW-AI-LAST30-SYNC`，通过 `python3 scripts/update_data.py ai-last30` 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
