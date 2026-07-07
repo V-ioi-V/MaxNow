@@ -1,14 +1,29 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-07 17:46",
-  "version": "1.0.0.24",
-  "versionLabel": "v1.0.0.24",
-  "branch": "main",
-  "commit": "ec5a587",
+  "updatedAt": "2026-07-07 20:06",
+  "version": "1.0.0.27",
+  "versionLabel": "v1.0.0.27",
+  "branch": "feature/today-status-dynamic",
+  "commit": "13dbd41",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "main · commit ec5a587 · 有未提交代码改动",
+  "deployNote": "feature/today-status-dynamic · commit 13dbd41 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-07",
+      "title": "收窄今日 Todo 日期口径",
+      "summary": "今日 Todo 只展示 `due_at` 等于浏览器当天日期的未完成待办，不再混入过期未完成项。"
+    },
+    {
+      "date": "2026-07-07",
+      "title": "将 Home 时间点替换为今日 Todo",
+      "summary": "移除 Home 右侧静态 `Schedule / 时间点` 模块，不再展示旧的固定节奏说明。"
+    },
+    {
+      "date": "2026-07-07",
+      "title": "让 Home 今日状态卡更灵动",
+      "summary": "Today Status 卡仍读取 `dashboard.json.today`，但前端新增当前时段、判断新鲜度、待推进、Token 和自动化状态信号。"
+    },
     {
       "date": "2026-07-07",
       "title": "修复 macOS Codex 定时上报运行目录",
@@ -18,21 +33,6 @@
       "date": "2026-07-07",
       "title": "调整 Home Token 热力格为 180 天",
       "summary": "Home Token 活动热力格从近 90 天调整为近 180 天，保持 3 行展示，让格子更小、更适合宽卡片。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "将 Token 热力格移到 Home 主线位",
-      "summary": "Home 原“当前主线”卡片替换为近 90 天每日 Token 活动热力格，格子横向铺满卡片，悬浮可查看日期和 token 数。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "加固服务器 Token 总账刷新 pull 超时",
-      "summary": "`scripts/refresh_token_usage_on_server.sh` 的 `git pull --ff-only origin main` 增加默认 120 秒超时，避免 GitHub 网络偶发挂起时长期占住刷新锁。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "拆开本机 Codex 上报与服务器 Token 总账刷新",
-      "summary": "Windows / macOS 本机 Codex 上报脚本改为只提交各自源账本：`codex-usage.*` / `codex-macos-usage.*`，推送后不再 SSH 触发服务器合并。"
     }
   ]
 }

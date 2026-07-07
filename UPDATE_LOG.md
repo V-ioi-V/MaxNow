@@ -11,6 +11,24 @@
 
 ## 2026-07-07
 
+### 收窄今日 Todo 日期口径
+
+- 今日 Todo 只展示 `due_at` 等于浏览器当天日期的未完成待办，不再混入过期未完成项。
+- 无日期和过期未完成待办继续留在“近期待办”卡片，避免今日入口变成补债清单。
+- 将 Dash 脚本缓存版本提升到 `app.js?v=94`，并将 `VERSION` 从 `1.0.0.26` 提升到 `1.0.0.27`。
+
+### 将 Home 时间点替换为今日 Todo
+
+- 移除 Home 右侧静态 `Schedule / 时间点` 模块，不再展示旧的固定节奏说明。
+- 新增“今日 Todo”卡片，从 `wiki-todos` 里筛选当天明确执行日期待办，只读展示。
+- 将 Dash 缓存版本提升到 `styles.css?v=100` 和 `app.js?v=93`，并将 `VERSION` 从 `1.0.0.25` 提升到 `1.0.0.26`。
+
+### 让 Home 今日状态卡更灵动
+
+- Today Status 卡仍读取 `dashboard.json.today`，但前端新增当前时段、判断新鲜度、待推进、Token 和自动化状态信号。
+- 当 `today.updatedAt` 不是近期数据时，卡片会直接显示“待刷新 N 天”，避免旧判断看起来像今日实时状态。
+- 将 Dash 缓存版本提升到 `styles.css?v=99` 和 `app.js?v=92`，并将 `VERSION` 从 `1.0.0.24` 提升到 `1.0.0.25`。
+
 ### 修复 macOS Codex 定时上报运行目录
 
 - 将 Owner macOS 的 launchd 任务改为指向专用 clone `/Users/bytedance/.maxnow-token-report`，避免 Desktop 路径被 macOS 隐私权限拦截。

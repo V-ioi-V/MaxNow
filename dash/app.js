@@ -60,7 +60,6 @@ const weatherIcons = {
 const copy = {
   unnamedTask: "\u672a\u547d\u540d\u4e8b\u9879",
   unnamedInfo: "\u672a\u547d\u540d\u4fe1\u606f",
-  unnamedTime: "\u672a\u547d\u540d\u65f6\u95f4\u70b9",
   item: "\u4e8b\u9879",
   open: "\u6253\u5f00",
   waitBrief: "\u7b49\u5f85 OpenClaw \u5199\u5165\u4eca\u5929\u7684\u6458\u8981\u3002",
@@ -92,6 +91,7 @@ const copy = {
   wikiTodoReady: "\u5df2\u8bfb\u53d6",
   wikiTodoFailed: "\u8bfb\u53d6\u5931\u8d25",
   wikiTodoEmpty: "\u6682\u65e0\u672a\u5b8c\u6210\u5f85\u529e",
+  todayTodoEmpty: "\u4eca\u5929\u6682\u65e0\u660e\u786e\u6267\u884c\u65e5\u671f\u7684\u5f85\u529e",
   dueAt: "\u622a\u6b62",
   rickyEmptyPlaces: "\u8fd8\u6ca1\u6709\u5199\u5165\u5730\u70b9\u3002",
   rickyEmptyRecords: "\u8fd8\u6ca1\u6709\u5199\u5165\u65c5\u884c\u8bb0\u5f55\u3002",
@@ -235,6 +235,87 @@ function formatTimeShort(value = "") {
   return match ? match[1] : "";
 }
 
+function parseLocalDateTime(value = "") {
+  const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{1,2}):(\d{2}))?/);
+  if (!match) return null;
+  const [, year, month, day, hour = "0", minute = "0"] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function calendarDayDiff(left, right) {
+  return Math.floor((cloneLocalDate(left).getTime() - cloneLocalDate(right).getTime()) / 86400000);
+}
+
+function getTodayFreshness(updatedAt, now = new Date()) {
+  const updatedDate = parseLocalDateTime(updatedAt);
+  if (!updatedDate) {
+    return {
+      state: "missing",
+      label: "\u5f85\u786e\u8ba4",
+      detail: "\u4eca\u65e5\u5224\u65ad\u8fd8\u6ca1\u6709\u5199\u5165",
+    };
+  }
+
+  const days = Math.max(0, calendarDayDiff(now, updatedDate));
+  if (days === 0) {
+    return {
+      state: "fresh",
+      label: "\u4eca\u65e5\u5df2\u786e\u8ba4",
+      detail: `${copy.updatedAtShort} ${updatedAt}`,
+    };
+  }
+  if (days <= 3) {
+    return {
+      state: "recent",
+      label: days === 1 ? "\u6628\u5929\u786e\u8ba4" : `${days}\u5929\u524d\u786e\u8ba4`,
+      detail: `${copy.updatedAtShort} ${updatedAt}`,
+    };
+  }
+
+  return {
+    state: "stale",
+    label: `\u5f85\u5237\u65b0 ${days}\u5929`,
+    detail: `\u5224\u65ad\u6765\u81ea ${formatDateOnly(updatedAt)}`,
+  };
+}
+
+function getDayPhase(now = new Date()) {
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  const phases = [
+    { until: 360, label: "\u6df1\u591c\u6536\u675f", note: "\u8f7b\u91cf\u8bb0\u5f55\uff0c\u522b\u786c\u625b" },
+    { until: 540, label: "\u65e9\u95f4\u542f\u52a8", note: "\u786e\u8ba4\u4eca\u65e5\u5224\u65ad" },
+    { until: 720, label: "\u4e0a\u5348\u63a8\u8fdb", note: "\u9002\u5408\u5904\u7406\u4e3b\u7ebf" },
+    { until: 840, label: "\u5348\u95f4\u7f13\u51b2", note: "\u964d\u4f4e\u5207\u6362\u6210\u672c" },
+    { until: 1080, label: "\u4e0b\u5348\u63a8\u8fdb", note: "\u7ee7\u7eed\u843d\u5730\u4e8b\u9879" },
+    { until: 1320, label: "\u665a\u95f4\u590d\u76d8", note: "\u6536\u675f\u8bb0\u5f55\u548c\u660e\u65e5\u5165\u53e3" },
+    { until: 1440, label: "\u591c\u95f4\u6536\u5c3e", note: "\u4fdd\u7559\u4e0a\u4e0b\u6587" },
+  ];
+  const phase = phases.find((item) => minutes < item.until) || phases[phases.length - 1];
+  return {
+    ...phase,
+    progress: Math.max(4, Math.min(100, Math.round((minutes / 1440) * 100))),
+  };
+}
+
+function updateTodayFreshness(today = dashboardData.today || {}) {
+  const freshness = getTodayFreshness(today.updatedAt);
+  const card = qs("#overview");
+  if (card) card.dataset.freshness = freshness.state;
+  setText("#today-freshness", freshness.label);
+  setText("#today-updated", freshness.detail);
+  return freshness;
+}
+
+function updateTodayPhase() {
+  const phase = getDayPhase();
+  const progress = qs("#today-pulse-progress");
+  setText("#today-phase", phase.label);
+  setText("#today-phase-note", phase.note);
+  if (progress) progress.style.height = `${phase.progress}%`;
+  return phase;
+}
+
 function setText(selector, value) {
   const element = qs(selector);
   if (element) element.textContent = value ?? "";
@@ -375,6 +456,20 @@ function createWikiTodoItem(task) {
   return article;
 }
 
+function formatTodayTodoDue(task) {
+  const dueDate = String(task.due_at || "").slice(0, 10);
+  if (!dueDate) return task.status || copy.item;
+  return dueDate === localDateKey() ? "\u4eca\u5929" : `${copy.dueAt} ${dueDate}`;
+}
+
+function createTodayTodoItem(task) {
+  const article = createWikiTodoItem(task);
+  article.classList.add("today-todo-item");
+  article.dataset.tone = getTone(task.module || task.status || task.title);
+  article.querySelector(".item-tag").textContent = formatTodayTodoDue(task);
+  return article;
+}
+
 function createProjectUpdateItem(item) {
   const article = document.createElement("article");
   article.className = "project-update-item";
@@ -448,21 +543,6 @@ function appendLink(container, url) {
   link.rel = "noreferrer";
   link.textContent = copy.open;
   container.appendChild(link);
-}
-
-function createTimelineItem(item) {
-  const li = document.createElement("li");
-  li.innerHTML = `
-    <time></time>
-    <div>
-      <p class="item-title"></p>
-      <p class="item-copy"></p>
-    </div>
-  `;
-  li.querySelector("time").textContent = item.time || "--:--";
-  li.querySelector(".item-title").textContent = item.title || copy.unnamedTime;
-  li.querySelector(".item-copy").textContent = item.note || "";
-  return li;
 }
 
 function createSystemItem(item) {
@@ -922,6 +1002,31 @@ function getOpenWikiTodos() {
     });
 }
 
+function getTodayWikiTodos(openTodos = getOpenWikiTodos()) {
+  const todayKey = localDateKey();
+  return openTodos.filter((task) => {
+    const dueDate = String(task.due_at || "").slice(0, 10);
+    return dueDate === todayKey;
+  });
+}
+
+function renderTodayTodos(openTodos) {
+  const todayTodos = getTodayWikiTodos(openTodos).slice(0, 5);
+  const updatedAt = wikiTodoData.synced_at
+    ? `\u540c\u6b65 ${wikiTodoData.synced_at}`
+    : wikiTodoData.updated_at
+      ? `\u66f4\u65b0 ${wikiTodoData.updated_at}`
+      : wikiTodoData.source_file || "todo.json";
+
+  setText("#today-todo-status", wikiTodoError ? copy.wikiTodoFailed : `${todayTodos.length} \u4e2a`);
+  setText("#today-todo-updated", wikiTodoError || updatedAt);
+  clearAndFill(qs("#today-todo-list"), createTodayTodoItem, todayTodos);
+
+  if (!todayTodos.length && !wikiTodoError) {
+    setText("#today-todo-list .empty-state", copy.todayTodoEmpty);
+  }
+}
+
 function renderWikiTodos() {
   const openTodos = getOpenWikiTodos();
   const status = wikiTodoError ? copy.wikiTodoFailed : `${copy.wikiTodoReady} ${openTodos.length}`;
@@ -938,6 +1043,8 @@ function renderWikiTodos() {
   if (!openTodos.length && !wikiTodoError) {
     setText("#wiki-todo-list .empty-state", copy.wikiTodoEmpty);
   }
+
+  renderTodayTodos(openTodos);
 }
 
 function renderRicky() {
@@ -1593,24 +1700,68 @@ function normalizeTaskTitle(value) {
     .toLowerCase();
 }
 
-function renderHome() {
+function getHomeWorkItems() {
   const mainlines = dashboardData.mainlines || dashboardData.projects || dashboardData.tasks || [];
   const rawActions = dashboardData.actions || dashboardData.tasks || [];
   const mainlineTitles = new Set(mainlines.map((item) => normalizeTaskTitle(item.title)).filter(Boolean));
   const actions = rawActions.filter((item) => !mainlineTitles.has(normalizeTaskTitle(item.title)));
+  return { mainlines, actions };
+}
+
+function setSummaryLiveTone(selector, tone) {
+  const element = qs(selector);
+  if (element) element.dataset.tone = tone;
+}
+
+function renderTodayStatus(mainlines, actions, token1d, token7d, automation) {
+  const today = dashboardData.today || {};
+  const mode = today.modeLabel || "\u4eca\u65e5\u72b6\u6001";
+  const focus = today.focus || mainlines[0]?.title || actions[0]?.title || "--";
+  const tokenToday = Number(token1d.total || 0);
+  const tokenWeek = Number(token7d.total || 0);
+  const automationStatus = automation.status || copy.waiting;
+  const topMainline = mainlines[0]?.title || focus;
+
+  setText("#today-mode", mode);
+  setText("#daily-brief", today.summary || dashboardData.brief || copy.waitBrief);
+  setText("#today-energy", `${copy.energy} ${today.energy || "--"}`);
+  setText("#today-focus", `${copy.focus} ${focus}`);
+  updateTodayFreshness(today);
+  updateTodayPhase();
+
+  setText(
+    "#today-action-signal",
+    actions.length ? `${actions.length} \u4e2a\u5f85\u63a8\u8fdb` : mainlines.length ? "\u4e3b\u7ebf\u5df2\u5c31\u4f4d" : "\u7b49\u5f85\u8def\u7ebf\u56fe",
+  );
+  setText("#today-action-note", topMainline && topMainline !== "--" ? `\u4e3b\u7ebf ${topMainline}` : "\u7b49\u5f85 ROADMAP \u5199\u5165");
+  setSummaryLiveTone("#today-action-row", actions.length ? "orange" : "blue");
+
+  if (tokenToday > 0) {
+    setText("#today-token-signal", `\u4eca\u65e5 ${formatToken(tokenToday)}`);
+    setText("#today-token-note", tokenWeek > 0 ? `7\u5929 ${formatToken(tokenWeek)}` : "\u7b49\u5f85\u603b\u8d26");
+  } else if (tokenWeek > 0) {
+    setText("#today-token-signal", `7\u5929 ${formatToken(tokenWeek)}`);
+    setText("#today-token-note", "\u4eca\u65e5\u6682\u65e0\u65b0\u589e");
+  } else {
+    setText("#today-token-signal", "\u7b49\u5f85\u603b\u8d26");
+    setText("#today-token-note", "Token \u6570\u636e\u540c\u6b65\u540e\u66f4\u65b0");
+  }
+
+  setText("#today-automation-signal", automationStatus);
+  setText("#today-automation-note", automation.lastRun || automation.summary || copy.sync);
+  setSummaryLiveTone("#today-automation-row", getTone(automationStatus));
+}
+
+function renderHome() {
+  const { mainlines, actions } = getHomeWorkItems();
   const journal = dashboardData.journal || [];
   const feeds = dashboardData.feeds || [];
   const token7d = getTokenRange("7d");
   const token1d = getTokenRange("1d");
   const tokenAll = getTokenRange("all");
-  const today = dashboardData.today || {};
-
-  setText("#today-mode", today.modeLabel || "\u4eca\u65e5\u72b6\u6001");
-  setText("#daily-brief", today.summary || dashboardData.brief || copy.waitBrief);
-  setText("#today-energy", `${copy.energy} ${today.energy || "--"}`);
-  setText("#today-focus", `${copy.focus} ${today.focus || "--"}`);
-  setText("#today-updated", today.updatedAt ? `${copy.updatedAtShort} ${today.updatedAt}` : "\u5f85\u786e\u8ba4");
   const automation = dashboardData.automation || {};
+
+  renderTodayStatus(mainlines, actions, token1d, token7d, automation);
   const automationStatus = automation.status || copy.waiting;
   const automationTitle = automation.summary
     ? `系统自动化：${automation.summary}`
@@ -1646,7 +1797,6 @@ function renderHome() {
   clearAndFill(qs("#action-list"), createTask, actions);
   clearAndFill(qs("#journal-list"), createFeed, journal);
   clearAndFill(qs("#feed-list"), createFeed, feeds);
-  clearAndFill(qs("#timeline"), createTimelineItem, dashboardData.timeline || []);
   const systemItems = dashboardData.system || [];
   const cloudSystemItems = [
     {
@@ -2232,6 +2382,8 @@ function updateClock() {
   setText("#lunar-label", formatLunarDate(now));
   const labels = [...getHolidayLabels(now), ...getSpecialDateLabels(now)];
   setText("#holiday-label", labels.length ? [...new Set(labels)].join(" \u00b7 ") : copy.noHoliday);
+  updateTodayFreshness();
+  updateTodayPhase();
 }
 
 qsa("[data-view]").forEach((button) => {

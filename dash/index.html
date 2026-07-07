@@ -7,7 +7,7 @@
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="./styles.css?v=98" />
+    <link rel="stylesheet" href="./styles.css?v=100" />
   </head>
   <body>
     <div class="app-shell">
@@ -103,13 +103,45 @@
           <div class="home-top-grid">
             <header class="summary-bar" id="overview">
               <div class="summary-copy">
-                <p class="eyebrow">Today Status</p>
-                <h1 id="today-mode">&#20170;&#26085;&#29366;&#24577;</h1>
+                <div class="summary-headline">
+                  <div>
+                    <p class="eyebrow">Today Status</p>
+                    <h1 id="today-mode">&#20170;&#26085;&#29366;&#24577;</h1>
+                  </div>
+                  <span class="today-freshness" id="today-freshness">&#24453;&#30830;&#35748;</span>
+                </div>
                 <p id="daily-brief">&#31561;&#24453; OpenClaw &#20889;&#20837;&#20170;&#22825;&#30340;&#25688;&#35201;&#12290;</p>
                 <div class="summary-meta" aria-label="Today personal state">
                   <span id="today-energy">&#33021;&#37327; --</span>
                   <span id="today-focus">&#20027;&#32447; --</span>
                   <span id="today-updated">&#24453;&#30830;&#35748;</span>
+                </div>
+              </div>
+              <div class="summary-live" aria-label="Today generated signals">
+                <div class="summary-live-meter" aria-hidden="true">
+                  <span id="today-pulse-progress"></span>
+                </div>
+                <div class="summary-live-list">
+                  <div class="summary-live-item" id="today-phase-row" data-tone="orange">
+                    <span>&#26102;&#27573;</span>
+                    <strong id="today-phase">--</strong>
+                    <small id="today-phase-note">--</small>
+                  </div>
+                  <div class="summary-live-item" id="today-action-row" data-tone="blue">
+                    <span>&#25512;&#36827;</span>
+                    <strong id="today-action-signal">--</strong>
+                    <small id="today-action-note">--</small>
+                  </div>
+                  <div class="summary-live-item" id="today-token-row" data-tone="purple">
+                    <span>Token</span>
+                    <strong id="today-token-signal">--</strong>
+                    <small id="today-token-note">--</small>
+                  </div>
+                  <div class="summary-live-item" id="today-automation-row" data-tone="green">
+                    <span>&#33258;&#21160;</span>
+                    <strong id="today-automation-signal">--</strong>
+                    <small id="today-automation-note">--</small>
+                  </div>
                 </div>
               </div>
             </header>
@@ -262,14 +294,16 @@
             </div>
 
             <aside class="home-aside" aria-label="Secondary information">
-              <article class="panel rhythm-panel">
+              <article class="panel today-todo-panel">
                 <header class="panel-head">
                   <div>
-                    <p class="eyebrow">Schedule</p>
-                    <h2>&#26102;&#38388;&#28857;</h2>
+                    <p class="eyebrow">Todo</p>
+                    <h2>&#20170;&#26085; Todo</h2>
                   </div>
+                  <span class="status-pill" id="today-todo-status">&#31561;&#24453;&#21516;&#27493;</span>
                 </header>
-                <ol class="timeline" id="timeline"></ol>
+                <small class="today-todo-updated" id="today-todo-updated">todo.json</small>
+                <div class="today-todo-list" id="today-todo-list"></div>
               </article>
 
               <article class="panel checkin-panel" id="dounai-checkin" role="button" tabindex="0" aria-label="打开豆奶详情">
@@ -833,6 +867,6 @@
     <script src="./data/ricky.js?v=1"></script>
     <script src="./data/life-foods.js?v=1"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=91"></script>
+    <script src="./app.js?v=94"></script>
   </body>
 </html>
