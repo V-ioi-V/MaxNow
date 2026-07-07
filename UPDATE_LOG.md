@@ -11,6 +11,13 @@
 
 ## 2026-07-07
 
+### 将 Token 热力格移到 Home 主线位
+
+- Home 原“当前主线”卡片替换为近 90 天每日 Token 活动热力格，格子横向铺满卡片，悬浮可查看日期和 token 数。
+- Home 顶部 `Token 7天` 状态卡和右侧“近期用量”卡保留原有 1d / 7d / all 摘要。
+- Token 页底部恢复为最近 30 天折线图，用于观察日级峰值和连续变化。
+- 将 Dash 缓存版本提升到 `styles.css?v=97` 和 `app.js?v=90`，并将 `VERSION` 从 `1.0.0.21` 提升到 `1.0.0.22`。
+
 ### 加固服务器 Token 总账刷新 pull 超时
 
 - `scripts/refresh_token_usage_on_server.sh` 的 `git pull --ff-only origin main` 增加默认 120 秒超时，避免 GitHub 网络偶发挂起时长期占住刷新锁。

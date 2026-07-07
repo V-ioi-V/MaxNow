@@ -7,7 +7,7 @@
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="./styles.css?v=96" />
+    <link rel="stylesheet" href="./styles.css?v=97" />
   </head>
   <body>
     <div class="app-shell">
@@ -160,14 +160,15 @@
 
           <section class="home-workspace">
             <div class="home-main">
-              <article class="panel focus-panel" id="focus">
+              <article class="panel focus-panel token-home-activity-panel" id="focus">
                 <header class="panel-head">
                   <div>
-                    <p class="eyebrow">Mainlines</p>
-                    <h2>&#24403;&#21069;&#20027;&#32447;</h2>
+                    <p class="eyebrow">Tokens</p>
+                    <h2>近 90 天 Token 活动</h2>
                   </div>
+                  <small class="panel-updated" id="home-token-activity-updated">等待同步</small>
                 </header>
-                <div class="task-list" id="mainline-list"></div>
+                <div class="token-home-activity-chart" id="home-token-activity-chart"></div>
               </article>
 
               <article class="panel wiki-todo-panel" id="wiki-todos">
@@ -537,19 +538,15 @@
               <div class="session-list" id="token-sessions"></div>
             </article>
 
-            <article class="panel token-activity-panel">
+            <article class="panel token-trend-panel">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Activity</p>
-                  <h2>Token &#27963;&#21160;</h2>
+                  <p class="eyebrow">Daily</p>
+                  <h2>最近 30 天</h2>
                 </div>
-                <div class="token-activity-tabs" aria-label="Token activity mode">
-                  <button class="token-activity-tab is-active" type="button" data-token-activity-mode="daily">每日</button>
-                  <button class="token-activity-tab" type="button" data-token-activity-mode="weekly">每周</button>
-                  <button class="token-activity-tab" type="button" data-token-activity-mode="cumulative">累计</button>
-                </div>
+                <span class="status-pill">token/d</span>
               </header>
-              <div class="token-activity-chart" id="token-activity-chart"></div>
+              <div class="token-line-chart" id="token-trend-chart"></div>
             </article>
           </section>
         </section>
@@ -836,6 +833,6 @@
     <script src="./data/ricky.js?v=1"></script>
     <script src="./data/life-foods.js?v=1"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=89"></script>
+    <script src="./app.js?v=90"></script>
   </body>
 </html>

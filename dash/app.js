@@ -33,7 +33,6 @@ let rickyData = fallbackRicky;
 let lifeFoodsData = fallbackLifeFoods;
 let wikiTodoError = "";
 let activeTokenRange = "1d";
-let activeTokenActivityMode = "daily";
 let weatherMetaFitFrame = 0;
 let rickyMap = null;
 let rickyMarkerLayer = null;
@@ -151,12 +150,6 @@ function addLocalDays(date, days) {
   const next = cloneLocalDate(date);
   next.setDate(next.getDate() + days);
   return next;
-}
-
-function localDayDiff(first, second) {
-  const firstUtc = Date.UTC(first.getFullYear(), first.getMonth(), first.getDate());
-  const secondUtc = Date.UTC(second.getFullYear(), second.getMonth(), second.getDate());
-  return Math.round((secondUtc - firstUtc) / 86400000);
 }
 
 function formatFlow(value, unit = "auto") {
@@ -622,23 +615,6 @@ function emptyUsageDay(date) {
   });
 }
 
-function getTokenActivityBounds() {
-  const today = cloneLocalDate(new Date());
-  const monthStart = new Date(today.getFullYear(), today.getMonth() - 11, 1);
-  const start = cloneLocalDate(monthStart);
-  start.setDate(start.getDate() - start.getDay());
-
-  const currentMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const end = cloneLocalDate(currentMonthEnd);
-  end.setDate(end.getDate() + (6 - end.getDay()));
-
-  return { today, monthStart, start, end };
-}
-
-function getTokenActivityWeekIndex(start, date) {
-  return Math.floor(localDayDiff(start, date) / 7);
-}
-
 function buildTokenActivityThresholds(values) {
   const sorted = values.filter((value) => value > 0).sort((a, b) => a - b);
   if (!sorted.length) return [];
@@ -654,62 +630,51 @@ function getTokenActivityLevel(value, thresholds) {
   return Math.min(level, 5);
 }
 
-function getTokenActivityValue(cell, mode) {
-  if (mode === "weekly") return cell.weekTotal;
-  if (mode === "cumulative") return cell.cumulativeTotal;
-  return cell.total;
-}
-
-function buildTokenActivity(dayByDate) {
-  const mode = ["daily", "weekly", "cumulative"].includes(activeTokenActivityMode) ? activeTokenActivityMode : "daily";
-  const { today, monthStart, start, end } = getTokenActivityBounds();
+function buildTokenActivity(dayByDate, options = {}) {
+  const dayCount = Math.max(1, Number(options.dayCount || 60));
+  const rowCount = Math.max(1, Number(options.rows || 7));
+  const today = cloneLocalDate(new Date());
+  const firstDay = addLocalDays(today, -(dayCount - 1));
   const todayKey = localDateKey(today);
-  const cells = [];
-  const weeklyTotals = new Map();
-  let cumulativeTotal = 0;
-
-  for (let date = cloneLocalDate(start); date <= end; date = addLocalDays(date, 1)) {
+  const cells = Array.from({ length: dayCount }, (_, index) => {
+    const date = addLocalDays(firstDay, index);
     const dateKey = localDateKey(date);
-    const week = getTokenActivityWeekIndex(start, date);
-    const isPadding = date < monthStart;
-    const isFuture = date > today;
-    const day = dayByDate.get(dateKey) || emptyUsageDay(dateKey);
-    const total = isPadding || isFuture ? 0 : Number(day.total || 0);
-    cumulativeTotal += total;
-    weeklyTotals.set(week, (weeklyTotals.get(week) || 0) + total);
-    cells.push({
+    const existing = dayByDate.get(dateKey);
+    const day = existing || emptyUsageDay(dateKey);
+    const total = Number(day.total || 0);
+    return {
       date: dateKey,
-      week,
-      day: date.getDay(),
-      isEmpty: isPadding || isFuture,
+      column: Math.floor(index / rowCount),
+      row: index % rowCount,
+      isEmpty: !existing,
       isToday: dateKey === todayKey,
       total,
-      cumulativeTotal,
-    });
-  }
-
-  cells.forEach((cell) => {
-    cell.weekTotal = weeklyTotals.get(cell.week) || 0;
-    cell.value = cell.isEmpty ? 0 : getTokenActivityValue(cell, mode);
-  });
-
-  const thresholds = buildTokenActivityThresholds(cells.filter((cell) => !cell.isEmpty).map((cell) => cell.value));
-  const monthStarts = Array.from({ length: 12 }, (_, index) => {
-    const date = new Date(monthStart.getFullYear(), monthStart.getMonth() + index, 1);
-    const nextMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + index + 1, 1);
-    const startWeek = getTokenActivityWeekIndex(start, date);
-    const nextStartWeek = index < 11 ? getTokenActivityWeekIndex(start, nextMonth) : getTokenActivityWeekIndex(start, end) + 1;
-    return {
-      label: formatMonthLabel(date),
-      start: startWeek + 1,
-      span: Math.max(1, nextStartWeek - startWeek),
+      runs: Number(day.runs || 0),
+      value: total,
     };
   });
 
+  const thresholds = buildTokenActivityThresholds(cells.filter((cell) => !cell.isEmpty).map((cell) => cell.value));
+  const monthsByLabel = new Map();
+  cells.forEach((cell) => {
+    const [year, month, day] = cell.date.split("-").map(Number);
+    const label = formatMonthLabel(new Date(year, month - 1, day));
+    const column = cell.column + 1;
+    const current = monthsByLabel.get(label) || { label, start: column, end: column };
+    current.start = Math.min(current.start, column);
+    current.end = Math.max(current.end, column);
+    monthsByLabel.set(label, current);
+  });
+
   return {
-    mode,
-    weekCount: getTokenActivityWeekIndex(start, end) + 1,
-    months: monthStarts,
+    columnCount: Math.ceil(dayCount / rowCount),
+    rowCount,
+    dayCount,
+    months: Array.from(monthsByLabel.values()).map((month) => ({
+      label: month.label,
+      start: month.start,
+      span: Math.max(1, month.end - month.start + 1),
+    })),
     cells: cells.map((cell) => ({
       ...cell,
       level: getTokenActivityLevel(cell.value, thresholds),
@@ -912,7 +877,7 @@ function getOpenclawTokenUsage() {
     sessions: buildSessionBreakdown(active.selectedDays || []).slice(0, 8),
     sources: buildSourceBreakdown(active.selectedDays || []),
     sourceUpdates: buildSourceUpdateItems(ledger),
-    activity: buildTokenActivity(dayByDate),
+    activity: buildTokenActivity(dayByDate, { dayCount: 90, rows: 3 }),
     daily: chartDays.map((day) => ({
       date: day.date,
       label: formatDateLabel(day.date),
@@ -1668,9 +1633,16 @@ function renderHome() {
   setText("#mini-token-7d", formatToken(token7d.total));
   setText("#mini-token-all", formatToken(tokenAll.total));
   setText("#mini-token-updated", getTokenUsage().updatedAt ? `${copy.updatedAtShort} ${getTokenUsage().updatedAt}` : copy.syncWaiting);
+  setText(
+    "#home-token-activity-updated",
+    getTokenUsage().updatedAt ? `${copy.updatedAtShort} ${getTokenUsage().updatedAt}` : copy.syncWaiting,
+  );
+  const homeActivityChart = qs("#home-token-activity-chart");
+  if (homeActivityChart) {
+    homeActivityChart.replaceChildren(createTokenActivityChart(getTokenUsage().activity));
+  }
   updateSidebarTokenSummary("7d");
 
-  clearAndFill(qs("#mainline-list"), createTask, mainlines);
   clearAndFill(qs("#action-list"), createTask, actions);
   clearAndFill(qs("#journal-list"), createFeed, journal);
   clearAndFill(qs("#feed-list"), createFeed, feeds);
@@ -1723,14 +1695,6 @@ function createRangeButton(range) {
   return button;
 }
 
-function syncTokenActivityTabs() {
-  qsa("[data-token-activity-mode]").forEach((button) => {
-    const isActive = button.dataset.tokenActivityMode === activeTokenActivityMode;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
-  });
-}
-
 function renderTokens() {
   const usage = getTokenUsage();
   const ranges = usage.ranges || [];
@@ -1761,22 +1725,28 @@ function renderTokens() {
   clearAndFill(qs("#token-models"), createModelItem, usage.models || []);
   clearAndFill(qs("#token-sessions"), createSessionItem, usage.sessions || []);
 
-  syncTokenActivityTabs();
-  const activityChart = qs("#token-activity-chart");
-  if (activityChart) {
-    activityChart.replaceChildren(createTokenActivityChart(usage.activity));
+  const trendChart = qs("#token-trend-chart");
+  if (trendChart) {
+    trendChart.innerHTML = createLineChart(usage.daily || [], {
+      key: "total",
+      title: "最近 30 天 Token 用量",
+      unit: "",
+      stroke: "#2688e8",
+      width: getChartRenderWidth(trendChart),
+      formatter: formatToken,
+      yFormatter: formatToken,
+    });
   }
 }
 
-function tokenActivityCellTitle(cell, mode) {
+function tokenActivityCellTitle(cell) {
   const dateLabel = formatDateLabel(cell.date);
   if (cell.isEmpty) return `${dateLabel} ${copy.noData}`;
-  if (mode === "weekly") return `${dateLabel} ${formatToken(cell.total)} / \u672c\u5468 ${formatToken(cell.weekTotal)}`;
-  if (mode === "cumulative") return `${dateLabel} ${formatToken(cell.total)} / \u7d2f\u8ba1 ${formatToken(cell.cumulativeTotal)}`;
-  return `${dateLabel} ${formatToken(cell.total)}`;
+  const runs = cell.runs ? ` / ${cell.runs} runs` : "";
+  return `${dateLabel} ${formatToken(cell.total)}${runs}`;
 }
 
-function createTokenActivityChart(activity = {}) {
+function createTokenActivityChart(activity = {}, options = {}) {
   if (!activity.cells?.length) {
     const empty = document.createElement("p");
     empty.className = "empty-state";
@@ -1786,7 +1756,9 @@ function createTokenActivityChart(activity = {}) {
 
   const chart = document.createElement("div");
   chart.className = "token-activity-scroll";
-  chart.style.setProperty("--activity-week-count", String(activity.weekCount || 1));
+  if (options.compact) chart.classList.add("is-compact");
+  chart.style.setProperty("--activity-column-count", String(activity.columnCount || 1));
+  chart.style.setProperty("--activity-row-count", String(activity.rowCount || 7));
 
   const months = document.createElement("div");
   months.className = "token-activity-months";
@@ -1804,11 +1776,11 @@ function createTokenActivityChart(activity = {}) {
   grid.setAttribute("aria-label", "Token activity by day");
   activity.cells.forEach((cell) => {
     const block = document.createElement("span");
-    const title = tokenActivityCellTitle(cell, activity.mode);
+    const title = tokenActivityCellTitle(cell);
     block.className = "token-activity-cell";
     block.dataset.level = String(cell.level || 0);
-    block.style.gridColumn = String(cell.week + 1);
-    block.style.gridRow = String(cell.day + 1);
+    block.style.gridColumn = String((cell.column || 0) + 1);
+    block.style.gridRow = String((cell.row || 0) + 1);
     block.title = title;
     block.setAttribute("aria-label", title);
     if (cell.isEmpty) block.dataset.empty = "true";
@@ -2264,13 +2236,6 @@ function updateClock() {
 
 qsa("[data-view]").forEach((button) => {
   button.addEventListener("click", () => setView(button.dataset.view));
-});
-
-qsa("[data-token-activity-mode]").forEach((button) => {
-  button.addEventListener("click", () => {
-    activeTokenActivityMode = button.dataset.tokenActivityMode || "daily";
-    renderTokens();
-  });
 });
 
 qs("#dounai-checkin")?.addEventListener("click", () => setView("dounai"));

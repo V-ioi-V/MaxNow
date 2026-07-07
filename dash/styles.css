@@ -1056,12 +1056,23 @@ body[data-view="tokens"] .topbar-token-ranges {
   padding: 18px;
 }
 
+.focus-panel.token-home-activity-panel {
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 0;
+  padding: 18px 20px 20px;
+}
+
 .actions-panel .panel-head {
   margin-bottom: 8px;
 }
 
 .focus-panel .panel-head {
   margin-bottom: 0;
+}
+
+.focus-panel.token-home-activity-panel .panel-head {
+  margin-bottom: 14px;
 }
 
 .focus-panel .task-list,
@@ -1964,7 +1975,7 @@ a.last30-item {
 }
 
 .token-detail-grid > .panel:nth-child(2),
-.token-activity-panel {
+.token-trend-panel {
   --card-color: var(--accent-strong);
   --card-border: var(--blue-border);
 }
@@ -1974,68 +1985,38 @@ a.last30-item {
   --card-border: var(--cyan-border);
 }
 
-.token-activity-panel {
+.token-trend-panel {
   grid-column: 1 / -1;
 }
 
-.token-activity-panel .panel-head {
-  flex-wrap: wrap;
-}
-
-.token-activity-tabs {
-  display: inline-flex;
-  flex: 0 0 auto;
-  gap: 6px;
-  border: 1px solid #dce6f1;
-  border-radius: 999px;
-  padding: 4px;
-  background: #f7fbff;
-}
-
-.token-activity-tab {
-  min-width: 56px;
-  border: 0;
-  border-radius: 999px;
-  padding: 7px 12px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 900;
-  line-height: 1;
-  transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
-}
-
-.token-activity-tab.is-active {
-  background: #ffffff;
-  color: var(--text);
-  box-shadow: 0 5px 14px rgba(38, 136, 232, 0.14);
-}
-
-.token-activity-chart {
-  --activity-cell-size: 13px;
-  --activity-cell-gap: 4px;
+.token-activity-chart,
+.token-home-activity-chart {
+  --activity-cell-gap: 5px;
   width: 100%;
-  min-height: 150px;
   overflow: hidden;
+}
+
+.token-home-activity-chart {
+  min-height: 126px;
 }
 
 .token-activity-scroll {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 4px 0 6px;
+  padding: 2px 0 4px;
 }
 
 .token-activity-months,
 .token-activity-grid {
-  width: max-content;
+  width: 100%;
 }
 
 .token-activity-months {
   display: grid;
-  grid-template-columns: repeat(var(--activity-week-count), var(--activity-cell-size));
+  grid-template-columns: repeat(var(--activity-column-count), minmax(10px, 1fr));
   column-gap: var(--activity-cell-gap);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .token-activity-months span {
@@ -2049,15 +2030,16 @@ a.last30-item {
 
 .token-activity-grid {
   display: grid;
-  grid-template-columns: repeat(var(--activity-week-count), var(--activity-cell-size));
-  grid-template-rows: repeat(7, var(--activity-cell-size));
+  grid-template-columns: repeat(var(--activity-column-count), minmax(10px, 1fr));
+  grid-template-rows: repeat(var(--activity-row-count), minmax(0, 1fr));
   grid-auto-flow: column;
   gap: var(--activity-cell-gap);
 }
 
 .token-activity-cell {
-  width: var(--activity-cell-size);
-  height: var(--activity-cell-size);
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1;
   border: 1px solid rgba(74, 98, 124, 0.04);
   border-radius: 5px;
   background: #f0f2f4;
@@ -3259,16 +3241,7 @@ a.last30-item {
     justify-content: flex-start;
   }
 
-  .token-activity-tabs {
-    width: 100%;
-  }
-
-  .token-activity-tab {
-    flex: 1 1 0;
-  }
-
   .token-activity-chart {
-    --activity-cell-size: 12px;
     --activity-cell-gap: 4px;
   }
 

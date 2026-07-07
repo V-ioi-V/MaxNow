@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-07 16:28",
-  "version": "1.0.0.21",
-  "versionLabel": "v1.0.0.21",
-  "branch": "bugfix/token-refresh-pull-timeout",
-  "commit": "1f545e8",
+  "updatedAt": "2026-07-07 16:51",
+  "version": "1.0.0.22",
+  "versionLabel": "v1.0.0.22",
+  "branch": "feature/home-token-heatmap",
+  "commit": "6218575",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/token-refresh-pull-timeout · commit 1f545e8 · 有未提交代码改动",
+  "deployNote": "feature/home-token-heatmap · commit 6218575 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-07",
+      "title": "将 Token 热力格移到 Home 主线位",
+      "summary": "Home 原“当前主线”卡片替换为近 90 天每日 Token 活动热力格，格子横向铺满卡片，悬浮可查看日期和 token 数。"
+    },
     {
       "date": "2026-07-07",
       "title": "加固服务器 Token 总账刷新 pull 超时",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-07",
       "title": "修复 OpenClaw Token 来源回退为空",
       "summary": "复查发现线上 `openclaw-usage.*` 被仓库中的空基线覆盖，导致统一 `token-usage.*` 只剩 Codex 来源，Token 页来源费用面板过滤掉 0 用量的 OpenClaw。"
-    },
-    {
-      "date": "2026-07-06",
-      "title": "统一 Dash 页面主间距",
-      "summary": "新增 Dash 页面级 spacing 变量，统一主内容页边距、模块间距和同层卡片 grid gap。"
     }
   ]
 };
