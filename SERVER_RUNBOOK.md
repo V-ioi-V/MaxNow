@@ -385,7 +385,7 @@ Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 
 # END MAXNOW-TOKEN-USAGE-REFRESH
 ```
 
-该任务每 10 分钟拉取 `origin/main` 上 Windows / macOS 推送的本机源账本，保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage` 合并线上总账。服务器侧备份目录为 `/tmp/maxnow-token-usage-refresh/<timestamp>`。
+该任务每 10 分钟拉取 `origin/main` 上 Windows / macOS 推送的本机源账本，保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage` 合并线上总账。服务器侧备份目录为 `/tmp/maxnow-token-usage-refresh/<timestamp>`；`git pull` 默认 120 秒超时，避免 GitHub 网络偶发挂起时长期占住刷新锁。
 
 2026-07-02 已部署 Token 来源卡范围口径修正：
 
