@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-07 16:51",
-  "version": "1.0.0.22",
-  "versionLabel": "v1.0.0.22",
-  "branch": "feature/home-token-heatmap",
-  "commit": "6218575",
+  "updatedAt": "2026-07-07 17:37",
+  "version": "1.0.0.23",
+  "versionLabel": "v1.0.0.23",
+  "branch": "feature/home-token-activity-180d",
+  "commit": "e445b5f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/home-token-heatmap · commit 6218575 · 有未提交代码改动",
+  "deployNote": "feature/home-token-activity-180d · commit e445b5f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-07",
+      "title": "调整 Home Token 热力格为 180 天",
+      "summary": "Home Token 活动热力格从近 90 天调整为近 180 天，保持 3 行展示，让格子更小、更适合宽卡片。"
+    },
     {
       "date": "2026-07-07",
       "title": "将 Token 热力格移到 Home 主线位",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-07",
       "title": "将 Token 趋势改为活动热力格",
       "summary": "将 Token 页底部“最近 30 天”折线图替换为近 12 个自然月的 Token 活动热力格，按月份铺开每日格子。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "修复 OpenClaw Token 来源回退为空",
-      "summary": "复查发现线上 `openclaw-usage.*` 被仓库中的空基线覆盖，导致统一 `token-usage.*` 只剩 Codex 来源，Token 页来源费用面板过滤掉 0 用量的 OpenClaw。"
     }
   ]
 };

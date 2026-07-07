@@ -125,7 +125,7 @@
 - 新增 `dash/data/codex-macos-usage.*` 和 `python scripts/update_data.py codex-macos-usage`，将 macOS 本机 Codex 账本拆成独立文件，避免覆盖 Windows 兼容账本。
 - 新增 `dash/data/codex-server-usage.*` 和 `python scripts/update_data.py codex-server-usage`，用 `codex-server` 来源 ID 读取服务器 `/root/.codex/sessions` 并生成独立服务器 Codex 账本。
 - 新增 `scripts/sync_token_usage.py` 和 `dash/data/token-usage.*`，将 OpenClaw 与 Codex 源账本合并为统一 Token 总账。
-- Token 页面优先读取统一总账，保留 1d / 7d / 30d / all、来源费用面板、模型占比、最近调用和最近 30 天折线图，并显式区分 OpenClaw、Codex Windows / macOS、Codex server；来源费用跟随当前范围更新。Home 原“当前主线”位置展示近 90 天每日 Token 活动热力格。
+- Token 页面优先读取统一总账，保留 1d / 7d / 30d / all、来源费用面板、模型占比、最近调用和最近 30 天折线图，并显式区分 OpenClaw、Codex Windows / macOS、Codex server；来源费用跟随当前范围更新。Home 原“当前主线”位置展示近 180 天每日 Token 活动热力格。
 - `scripts/update_data.py codex-usage` 会刷新 Windows 兼容本机 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py codex-macos-usage` 会刷新 macOS 本机 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py codex-server-usage` 会刷新服务器 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py token-usage` 可单独合并现有账本。
 - 新增 `scripts/report_codex_usage.ps1`、`scripts/report_codex_usage_hidden.vbs` 和 `scripts/install_local_codex_usage_task.ps1`，将本机 Codex 用量接入 Windows Task Scheduler 定期上报；默认每 1 小时通过 `wscript.exe` 无窗口刷新、提交并推送 `codex-usage.*` 源账本。
 - 新增 `scripts/report_codex_usage.sh` 和 `scripts/install_local_codex_usage_launchd.sh`，将本机 Codex 用量接入 macOS launchd 定期上报；默认每 1 小时刷新、提交并推送 `codex-macos-usage.*` 源账本。
@@ -165,7 +165,7 @@
 - 新增 `scripts/sync_ai_last30.py` 和 `python scripts/update_data.py ai-last30`，用免费公开源刷新 AI 外部输入和 Last-30 AI 外部信号滚动记忆；采集脚本本身不调用模型，不消耗 token。
 - 服务器已通过 `ubuntu` 用户 crontab 接入 `MAXNOW-AI-LAST30-SYNC`：每天 00:00 自动运行 `python3 scripts/update_data.py ai-last30`，日志写入 `logs/ai-last30.log`。
 - 新增 `scripts/sync_openclaw_usage.py` 和 `dash/data/openclaw-usage.*`，可从 OpenClaw trajectory 解析 input / output / cacheRead / total token，按北京时间日桶、模型和任务聚合，并按 OpenRouter 价格生成等价费用估算；数据结构预留 Codex 来源接入。
-- Token 页面已接入 OpenClaw 用量账本，支持 1d / 7d / 30d / all 范围切换、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线图；Home 同步展示近 90 天每日 Token 活动热力格。
+- Token 页面已接入 OpenClaw 用量账本，支持 1d / 7d / 30d / all 范围切换、总量 / 输入 / 输出 / 缓存读 / 费用、模型占比、会话消耗和最近 30 天折线图；Home 同步展示近 180 天每日 Token 活动热力格。
 - 服务器 root crontab 已接入 `MAXNOW-OPENCLAW-USAGE`：每天 00:20 刷新 OpenClaw 用量并合并 Token 总账，2026-07-05 复查确认最近三次自动运行均成功。
 - 新增 `VERSION`、`scripts/sync_project_meta.py` 和 `dash/data/project-meta.*`，Home 可展示 MaxNow 当前版本和最近更新摘要；版本号采用 `x.x.x.xx` 格式。
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；已验证服务器能读取 `wiki/tasks/todo.json` 并运行 `scripts/sync_wiki_todos.py`。

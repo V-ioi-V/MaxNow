@@ -877,7 +877,7 @@ function getOpenclawTokenUsage() {
     sessions: buildSessionBreakdown(active.selectedDays || []).slice(0, 8),
     sources: buildSourceBreakdown(active.selectedDays || []),
     sourceUpdates: buildSourceUpdateItems(ledger),
-    activity: buildTokenActivity(dayByDate, { dayCount: 90, rows: 3 }),
+    activity: buildTokenActivity(dayByDate, { dayCount: 180, rows: 3 }),
     daily: chartDays.map((day) => ({
       date: day.date,
       label: formatDateLabel(day.date),
