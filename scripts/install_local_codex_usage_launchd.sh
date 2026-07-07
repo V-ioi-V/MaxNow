@@ -16,7 +16,7 @@ Options:
   --repo-root PATH      MaxNow repository root. Defaults to this script's parent.
   --label LABEL         launchd label. Defaults to cn.maxnow.local-codex-usage-report.
   --every-minutes N     Run interval in minutes. Defaults to 60.
-  --no-deploy           Install the task with report script --no-deploy.
+  --no-deploy           Deprecated no-op; server token merge runs on its own schedule.
   --run-now             Kick the launchd job once after installation.
   -h, --help            Show this help.
 USAGE
