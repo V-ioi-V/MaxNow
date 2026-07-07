@@ -89,7 +89,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 这些文件驱动当前网页。
 
-- `dash/data/dashboard.json`：个人状态、主线、待推进事项、日常记录、时间点、系统状态、Token 使用、Home 天气卡和 Home 时间卡片的手动特殊日期列表。
+- `dash/data/dashboard.json`：个人状态、主线、待推进事项、日常记录、系统状态、Token 使用、Home 天气卡和 Home 时间卡片的手动特殊日期列表。
 - `dash/data/dashboard.js`：从 `dashboard.json` 生成的浏览器 wrapper。
 - `dash/data/ai-news.json`：首页展示用的外部 AI 输入，取免费 AI 外部信号中的 0-3 条高相关内容。
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
@@ -226,6 +226,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Dash 左侧导航已新增“同行记”tab，副标题为“我和 Ricky”。该页用 Leaflet + OpenStreetMap 真实地图和轻量统计承载两人的共同足迹，地点和旅行记录暂时只进入 marker / popup 数据，不单独铺列表；内置 SVG 地图只作为 fallback。
 - Dash 左侧导航已新增“生活”tab，副标题为“吃啥”。该页当前提供“吃啥”随机选择器：默认全选、数量默认 1，可临时取消候选并从勾选项中随机选取一个或多个结果；候选从 personal-wiki `wiki/life/food-picker.md` 同步。
 - `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
+- Home 顶部 Today Status 卡仍读取 `dashboard.json.today` 的 Owner 判断字段；前端会派生显示当前时段、判断新鲜度、待推进数量、Token 摘要和自动化状态，用来提示“这条判断是否还新鲜”，但不会自动改写 `today`。
+- Home 右侧原“时间点”静态模块已替换为“今日 Todo”：从 `dash/data/wiki-todos.json` 里只筛选 `due_at` 等于浏览器当天日期的未完成待办；过期未完成和无日期待办仍留在近期待办卡，不进入今日 Todo。
 - Home 时间卡片已支持 `dashboard.json.specialDates`：用手动维护的公历日期或一次性日期在当天显示生日、纪念日等轻量提醒；没有命中时继续显示“今日无节日”。
 - Home 顶部已新增北京市海淀区天气卡：地点、天气、当前温度、今日高低温和图标来自 `dashboard.json.weather`，并由 `runtime` 定时刷新。
 - Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留原有三个入口，不做折叠侧栏。
