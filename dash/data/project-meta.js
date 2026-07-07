@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-07 11:35",
+  "updatedAt": "2026-07-07 11:41",
   "version": "1.0.0.19",
   "versionLabel": "v1.0.0.19",
-  "branch": "feature/token-activity-heatmap",
-  "commit": "6887d07",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/token-activity-heatmap · commit 6887d07 · 有未提交代码改动",
+  "branch": "main",
+  "commit": "fd53256",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit fd53256 · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-07",
