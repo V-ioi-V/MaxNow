@@ -367,6 +367,15 @@ bash scripts/install_local_codex_usage_launchd.sh
 
 默认 label 为 `cn.maxnow.local-codex-usage-report`，每 1 小时运行一次。launchd 调用 `scripts/report_codex_usage.sh`，该脚本要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-macos-usage.*` 源账本并推送到 `origin/main`，不再通过 SSH 触发服务器合并。macOS 也建议使用专用 main clone，避免日常开发分支影响自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
 
+2026-07-07 已将 Owner macOS 的 launchd 任务改为使用专用 clone `/Users/bytedance/.maxnow-token-report`，plist 位于 `~/Library/LaunchAgents/cn.maxnow.local-codex-usage-report.plist`。原先指向 `/Users/bytedance/Desktop/Personal/MaxNow` 时，launchd 被 macOS Desktop 隐私权限拦截，日志出现 `Operation not permitted`，`launchctl print gui/501/cn.maxnow.local-codex-usage-report` 显示 `last exit code = 126`。修复命令为：
+
+```bash
+git clone git@github.com:V-ioi-V/MaxNow.git /Users/bytedance/.maxnow-token-report
+bash scripts/install_local_codex_usage_launchd.sh --repo-root /Users/bytedance/.maxnow-token-report --run-now
+```
+
+修复后手动触发验证成功：`launchctl` 上次退出码为 `0`，`~/Library/Logs/MaxNow/local-codex-usage-report.log` 记录 `2026-07-07 17:32` 成功提交 `Update macOS Codex token usage`，线上 `token-usage.json` 的 `Codex macOS` 来源更新时间为 `2026-07-07 17:32`。
+
 Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。Windows 兼容账本使用 `dash/data/codex-usage.*`，macOS 本机账本使用 `dash/data/codex-macos-usage.*`，服务器侧使用独立文件 `dash/data/codex-server-usage.*`，避免不同机器互相覆盖。
 
 2026-07-02 已用 root crontab 接入服务器 Codex 用量同步，标记块为 `MAXNOW-CODEX-SERVER-USAGE`：

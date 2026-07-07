@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-07 17:37",
-  "version": "1.0.0.23",
-  "versionLabel": "v1.0.0.23",
-  "branch": "feature/home-token-activity-180d",
-  "commit": "e445b5f",
+  "updatedAt": "2026-07-07 17:46",
+  "version": "1.0.0.24",
+  "versionLabel": "v1.0.0.24",
+  "branch": "main",
+  "commit": "ec5a587",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/home-token-activity-180d · commit e445b5f · 有未提交代码改动",
+  "deployNote": "main · commit ec5a587 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-07",
+      "title": "修复 macOS Codex 定时上报运行目录",
+      "summary": "将 Owner macOS 的 launchd 任务改为指向专用 clone `/Users/bytedance/.maxnow-token-report`，避免 Desktop 路径被 macOS 隐私权限拦截。"
+    },
     {
       "date": "2026-07-07",
       "title": "调整 Home Token 热力格为 180 天",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-07",
       "title": "拆开本机 Codex 上报与服务器 Token 总账刷新",
       "summary": "Windows / macOS 本机 Codex 上报脚本改为只提交各自源账本：`codex-usage.*` / `codex-macos-usage.*`，推送后不再 SSH 触发服务器合并。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "将 Token 趋势改为活动热力格",
-      "summary": "将 Token 页底部“最近 30 天”折线图替换为近 12 个自然月的 Token 活动热力格，按月份铺开每日格子。"
     }
   ]
 };

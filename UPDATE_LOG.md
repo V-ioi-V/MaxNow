@@ -11,6 +11,12 @@
 
 ## 2026-07-07
 
+### 修复 macOS Codex 定时上报运行目录
+
+- 将 Owner macOS 的 launchd 任务改为指向专用 clone `/Users/bytedance/.maxnow-token-report`，避免 Desktop 路径被 macOS 隐私权限拦截。
+- 手动触发验证成功，`Codex macOS` 来源已更新到 `2026-07-07 17:32`，服务器 Token 总账已刷新到 `2026-07-07 17:42`。
+- 将 `VERSION` 从 `1.0.0.23` 提升到 `1.0.0.24`。
+
 ### 调整 Home Token 热力格为 180 天
 
 - Home Token 活动热力格从近 90 天调整为近 180 天，保持 3 行展示，让格子更小、更适合宽卡片。
