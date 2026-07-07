@@ -76,6 +76,7 @@ scripts/report_codex_usage_hidden.vbs
 scripts/install_local_codex_usage_task.ps1
 scripts/report_codex_usage.sh
 scripts/install_local_codex_usage_launchd.sh
+scripts/refresh_token_usage_on_server.sh
 scripts/sync_project_meta.py
 scripts/sync_weather.py
 scripts/sync_ricky_travel.py
@@ -145,11 +146,12 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Use `python scripts/sync_weather.py` or `python scripts/update_data.py weather` to refresh the Home weather card for Beijing Haidian District; `runtime` also runs this refresh.
 - Use `python scripts/sync_openclaw_usage.py` or `python scripts/update_data.py openclaw-usage` on the server to refresh OpenClaw token usage from `/root/.openclaw`; costs are estimates using OpenRouter model prices, not real provider billing.
 - Use `python scripts/sync_codex_usage.py` or `python scripts/update_data.py codex-usage` to refresh the Windows/local-compatible Codex token ledger from `.codex/sessions`; export only token usage, model name, timestamp, source label, and equivalent cost fields, never prompt or response body text.
-- Use `python scripts/update_data.py codex-macos-usage` on the owner's macOS machine to refresh `dash/data/codex-macos-usage.*` and then merge `dash/data/token-usage.*`.
+- Use `python scripts/update_data.py codex-macos-usage --source-only` on the owner's macOS machine to refresh only `dash/data/codex-macos-usage.*`; the server-side timer merges `dash/data/token-usage.*`.
 - Use `python scripts/update_data.py codex-server-usage` on the server as root to refresh server Codex usage from `/root/.codex/sessions`; it writes `dash/data/codex-server-usage.*` and then merges `dash/data/token-usage.*`.
 - Use `python scripts/sync_token_usage.py` or `python scripts/update_data.py token-usage` to merge OpenClaw and Codex ledgers into the unified Token page ledger.
-- Use `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1` on the owner's Windows machine to install local Codex usage reporting. The scheduled task runs `scripts/report_codex_usage_hidden.vbs` through `wscript.exe`, which launches `scripts/report_codex_usage.ps1` with window style 0; it may only commit `dash/data/codex-usage.*` and `dash/data/token-usage.*`, and must not refresh server-side Codex usage when deploying the merged Token ledger. Its server merge preserves existing `codex-server-usage.*` before pulling.
-- Use `bash scripts/install_local_codex_usage_launchd.sh` on the owner's macOS machine to install local Codex usage reporting through launchd. The launchd job runs `scripts/report_codex_usage.sh`; it may only commit `dash/data/codex-macos-usage.*` and `dash/data/token-usage.*`, labels the source as `Codex macOS`, and must preserve server-side Codex usage when deploying the merged Token ledger.
+- Use `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1` on the owner's Windows machine to install local Codex usage reporting. The scheduled task runs `scripts/report_codex_usage_hidden.vbs` through `wscript.exe`, which launches `scripts/report_codex_usage.ps1` with window style 0; it may only commit and push `dash/data/codex-usage.*`.
+- Use `bash scripts/install_local_codex_usage_launchd.sh` on the owner's macOS machine to install local Codex usage reporting through launchd. The launchd job runs `scripts/report_codex_usage.sh`; it may only commit and push `dash/data/codex-macos-usage.*`, labels the source as `Codex macOS`, and must not SSH-trigger server token merging.
+- Use `scripts/refresh_token_usage_on_server.sh` from the server `ubuntu` crontab to pull latest source ledgers and merge `dash/data/token-usage.*`. The timer should preserve server runtime `openclaw-usage.*` and `codex-server-usage.*` before pulling, and it should run under `MAXNOW-TOKEN-USAGE-REFRESH` every 10 minutes unless the owner changes the interval.
 - Use `python scripts/sync_project_meta.py` or `python scripts/update_data.py project-meta` to refresh the MaxNow version and recent update module.
 - Use `python scripts/sync_ricky_travel.py` or `python scripts/update_data.py ricky-travel` to refresh the "我和 Ricky" travel map from personal-wiki `wiki/relationships/ricky-travel.json`.
 - Use `python scripts/sync_life_foods.py` or `python scripts/update_data.py life-foods` to refresh the Life page food picker candidates from personal-wiki `wiki/life/food-picker.md`.

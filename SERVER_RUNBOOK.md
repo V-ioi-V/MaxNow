@@ -341,7 +341,7 @@ python scripts/check.py
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
 ```
 
-默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 1 小时静默运行一次。安装脚本会注册 hidden task。Owner Windows 机器上当前使用专用 clone `D:\Personal\MaxNow-token-report` 运行该任务，Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow-token-report\scripts\report_codex_usage_hidden.vbs"`；VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免自动运行时弹出瞬时命令行窗口。该任务要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main`。服务器合并前会把 `openclaw-usage.*` 和 `codex-server-usage.*` 备份到 `/tmp/maxnow-local-codex-usage-report/<timestamp>`，再保留 OpenClaw / server Codex 源账本并运行 `python3 scripts/update_data.py token-usage`。空备份不会覆盖已有非空账本；如果 OpenClaw 账本为空且 `/root/.openclaw` 可通过 sudo 读取，脚本会先用 root 状态刷新 OpenClaw 源账本。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
+默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 1 小时静默运行一次。安装脚本会注册 hidden task。Owner Windows 机器上当前使用专用 clone `D:\Personal\MaxNow-token-report` 运行该任务，Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow-token-report\scripts\report_codex_usage_hidden.vbs"`；VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免自动运行时弹出瞬时命令行窗口。该任务要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-usage.*` 源账本并推送到 `origin/main`，不再通过 SSH 触发服务器合并。统一 `token-usage.*` 由服务器 `MAXNOW-TOKEN-USAGE-REFRESH` 每 10 分钟拉取并合并。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
 
 2026-07-06 修复过一次 Windows 专用 clone 上报卡住：主工作区 `D:\Personal\MaxNow` 配有 repo-local GitHub 代理，但 `D:\Personal\MaxNow-token-report` 缺少同样配置，导致计划任务在 `git pull --ff-only origin main` 处卡住或报 `Recv failure: Connection was reset`。当前该 clone 已设置：
 
@@ -365,7 +365,7 @@ python3 scripts/check.py
 bash scripts/install_local_codex_usage_launchd.sh
 ```
 
-默认 label 为 `cn.maxnow.local-codex-usage-report`，每 1 小时运行一次。launchd 调用 `scripts/report_codex_usage.sh`，该脚本要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-macos-usage.*` 和 `dash/data/token-usage.*`，推送到 `origin/main` 后通过 SSH 让服务器拉取最新 `main` 并只运行 `token-usage` 合并。macOS 远端合并和 Windows 脚本一样，会保护 OpenClaw / server Codex 运行时账本，避免空备份覆盖非空用量。macOS 也建议使用专用 main clone，避免日常开发分支影响自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
+默认 label 为 `cn.maxnow.local-codex-usage-report`，每 1 小时运行一次。launchd 调用 `scripts/report_codex_usage.sh`，该脚本要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-macos-usage.*` 源账本并推送到 `origin/main`，不再通过 SSH 触发服务器合并。macOS 也建议使用专用 main clone，避免日常开发分支影响自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
 
 Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。Windows 兼容账本使用 `dash/data/codex-usage.*`，macOS 本机账本使用 `dash/data/codex-macos-usage.*`，服务器侧使用独立文件 `dash/data/codex-server-usage.*`，避免不同机器互相覆盖。
 
@@ -376,6 +376,16 @@ Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 
 40 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-codex-server-usage.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow codex server usage sync start"; python3 scripts/update_data.py codex-server-usage; chown ubuntu:www-data dash/data/codex-server-usage.json dash/data/codex-server-usage.js dash/data/token-usage.json dash/data/token-usage.js logs/codex-server-usage.log logs/token-usage.log; echo "[$(date -Is)] maxnow codex server usage sync ok"' >> /var/www/maxnow-dashboard/logs/codex-server-usage.log 2>&1
 # END MAXNOW-CODEX-SERVER-USAGE
 ```
+
+2026-07-07 已用 ubuntu crontab 接入统一 Token 总账刷新，标记块为 `MAXNOW-TOKEN-USAGE-REFRESH`：
+
+```cron
+# BEGIN MAXNOW-TOKEN-USAGE-REFRESH
+*/10 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-token-usage-refresh.lock /bin/bash scripts/refresh_token_usage_on_server.sh >> /var/www/maxnow-dashboard/logs/token-usage-refresh.log 2>&1
+# END MAXNOW-TOKEN-USAGE-REFRESH
+```
+
+该任务每 10 分钟拉取 `origin/main` 上 Windows / macOS 推送的本机源账本，保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage` 合并线上总账。服务器侧备份目录为 `/tmp/maxnow-token-usage-refresh/<timestamp>`。
 
 2026-07-02 已部署 Token 来源卡范围口径修正：
 

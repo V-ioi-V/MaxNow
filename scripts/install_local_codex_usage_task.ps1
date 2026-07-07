@@ -15,14 +15,14 @@ if (-not (Test-Path $HiddenLauncher)) {
 
 $argument = "`"$HiddenLauncher`""
 if ($NoDeploy) {
-    throw "-NoDeploy is not supported by the hidden scheduled task launcher; run scripts\report_codex_usage.ps1 manually with -NoDeploy when needed."
+    Write-Host "[warn] -NoDeploy is deprecated; server token merge runs on its own schedule."
 }
 
 $action = New-ScheduledTaskAction -Execute "wscript.exe" -Argument $argument -WorkingDirectory $RepoRoot
 $startAt = (Get-Date).AddMinutes(5)
 $trigger = New-ScheduledTaskTrigger -Once -At $startAt -RepetitionInterval (New-TimeSpan -Minutes $EveryMinutes) -RepetitionDuration (New-TimeSpan -Days 3650)
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -Hidden
-$description = "Refresh local Codex token usage, commit generated MaxNow usage ledgers, push to origin/main, and merge token data on the MaxNow server."
+$description = "Refresh local Codex token usage, commit generated MaxNow usage ledger, and push to origin/main."
 
 Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings -Description $description -Force | Out-Null
 

@@ -11,6 +11,14 @@
 
 ## 2026-07-07
 
+### 拆开本机 Codex 上报与服务器 Token 总账刷新
+
+- Windows / macOS 本机 Codex 上报脚本改为只提交各自源账本：`codex-usage.*` / `codex-macos-usage.*`，推送后不再 SSH 触发服务器合并。
+- 新增 `scripts/refresh_token_usage_on_server.sh`，由服务器每 10 分钟拉取最新源账本、保护 OpenClaw / Codex server 运行态账本，并重新合并 `token-usage.*`。
+- 云服务页新增“Token 总账刷新”卡片，展示 `MAXNOW-TOKEN-USAGE-REFRESH`、锁和日志路径。
+- 更新 `SPEC.md`、`CONTEXT.md`、`ROADMAP.md` 和 `SERVER_RUNBOOK.md` 中的自动化边界。
+- 将 `VERSION` 从 `1.0.0.19` 提升到 `1.0.0.20`。
+
 ### 将 Token 趋势改为活动热力格
 
 - 将 Token 页底部“最近 30 天”折线图替换为近 12 个自然月的 Token 活动热力格，按月份铺开每日格子。

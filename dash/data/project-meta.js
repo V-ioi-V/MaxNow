@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-07 11:41",
-  "version": "1.0.0.19",
-  "versionLabel": "v1.0.0.19",
-  "branch": "main",
-  "commit": "fd53256",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit fd53256 · 干净",
+  "updatedAt": "2026-07-07 16:19",
+  "version": "1.0.0.20",
+  "versionLabel": "v1.0.0.20",
+  "branch": "feature/server-token-refresh-timer",
+  "commit": "956659c",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/server-token-refresh-timer · commit 956659c · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-07",
+      "title": "拆开本机 Codex 上报与服务器 Token 总账刷新",
+      "summary": "Windows / macOS 本机 Codex 上报脚本改为只提交各自源账本：`codex-usage.*` / `codex-macos-usage.*`，推送后不再 SSH 触发服务器合并。"
+    },
     {
       "date": "2026-07-07",
       "title": "将 Token 趋势改为活动热力格",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-06",
       "title": "拆开 Token 页头信息 tab",
       "summary": "将 Token 页头外层从白底大卡改为透明 grid 容器，让“Token 用量”和“各来源最后同步”成为两张真正独立的同级 tab 卡片。"
-    },
-    {
-      "date": "2026-07-06",
-      "title": "修复 Windows Codex 用量自动上报",
-      "summary": "修复 `D:\\Personal\\MaxNow-token-report` 专用 clone 直连 GitHub 时 `git pull` 卡住或连接重置的问题：为该 clone 补齐 repo-local `http.proxy` / `https.proxy` 到 `http://127.0.0.1:7897`。"
     }
   ]
 };

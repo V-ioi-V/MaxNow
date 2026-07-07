@@ -187,8 +187,10 @@ def parse_args():
     subparsers.add_parser("system-status", help="Refresh machine-collected system status and validate data.")
     subparsers.add_parser("weather", help="Refresh Beijing Haidian weather and validate data.")
     subparsers.add_parser("openclaw-usage", help="Refresh OpenClaw token usage ledger and validate data.")
-    subparsers.add_parser("codex-usage", help="Refresh Windows/local Codex token usage ledger and validate data.")
-    subparsers.add_parser("codex-macos-usage", help="Refresh macOS Codex token usage ledger and validate data.")
+    codex_usage = subparsers.add_parser("codex-usage", help="Refresh Windows/local Codex token usage ledger and validate data.")
+    codex_usage.add_argument("--source-only", action="store_true", help="Refresh only the source ledger; skip merged token-usage output.")
+    codex_macos_usage = subparsers.add_parser("codex-macos-usage", help="Refresh macOS Codex token usage ledger and validate data.")
+    codex_macos_usage.add_argument("--source-only", action="store_true", help="Refresh only the source ledger; skip merged token-usage output.")
     subparsers.add_parser("codex-server-usage", help="Refresh server Codex token usage ledger and validate data.")
     subparsers.add_parser("token-usage", help="Merge OpenClaw and Codex token ledgers and validate data.")
     subparsers.add_parser("ai-last30", help="Refresh free external AI signals for ai-news and Last-30.")
@@ -251,7 +253,8 @@ def main():
         )
         write_wrapper("codex-server-usage")
 
-    if args.command in {"openclaw-usage", "codex-usage", "codex-macos-usage", "codex-server-usage", "token-usage", "all"}:
+    source_only = bool(getattr(args, "source_only", False))
+    if (not source_only) and args.command in {"openclaw-usage", "codex-usage", "codex-macos-usage", "codex-server-usage", "token-usage", "all"}:
         run_python("scripts/sync_token_usage.py", "token-usage.log")
         write_wrapper("token-usage")
 

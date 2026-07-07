@@ -661,6 +661,23 @@
               </dl>
             </article>
 
+            <article class="panel cloud-card" data-tone="blue">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Every 10 min</p>
+                  <h2>Token 总账刷新</h2>
+                </div>
+                <span class="status-pill">ubuntu</span>
+              </header>
+              <p class="item-copy">ubuntu crontab 运行 <code>scripts/refresh_token_usage_on_server.sh</code>，拉取 Windows / macOS 上推的本机源账本，保留 OpenClaw / Codex server 运行态账本，并重新合并 <code>token-usage.*</code>。</p>
+              <dl class="cloud-meta">
+                <div><dt>标记</dt><dd>MAXNOW-TOKEN-USAGE-REFRESH</dd></div>
+                <div><dt>锁</dt><dd>/tmp/maxnow-token-usage-refresh.lock</dd></div>
+                <div><dt>日志</dt><dd>logs/token-usage-refresh.log</dd></div>
+                <div><dt>写入</dt><dd>dash/data/token-usage.*</dd></div>
+              </dl>
+            </article>
+
           </section>
         </section>
 
