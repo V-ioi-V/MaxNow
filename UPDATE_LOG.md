@@ -11,6 +11,13 @@
 
 ## 2026-07-07
 
+### 将 Token 趋势改为活动热力格
+
+- 将 Token 页底部“最近 30 天”折线图替换为近 12 个自然月的 Token 活动热力格，按月份铺开每日格子。
+- 新增“每日 / 每周 / 累计”强度切换，继续复用统一 `token-usage.*` 总账，不改变数据采集和合并脚本。
+- 更新 `SPEC.md`、`STYLE_CONTEXT.md`、`CONTEXT.md` 和 `ROADMAP.md` 中的 Token 展示口径。
+- 将 Dash 缓存版本提升到 `styles.css?v=96` 和 `app.js?v=89`，并将 `VERSION` 从 `1.0.0.18` 提升到 `1.0.0.19`。
+
 ### 修复 OpenClaw Token 来源回退为空
 
 - 复查发现线上 `openclaw-usage.*` 被仓库中的空基线覆盖，导致统一 `token-usage.*` 只剩 Codex 来源，Token 页来源费用面板过滤掉 0 用量的 OpenClaw。
