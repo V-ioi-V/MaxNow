@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-07 16:19",
-  "version": "1.0.0.20",
-  "versionLabel": "v1.0.0.20",
-  "branch": "feature/server-token-refresh-timer",
-  "commit": "956659c",
+  "updatedAt": "2026-07-07 16:28",
+  "version": "1.0.0.21",
+  "versionLabel": "v1.0.0.21",
+  "branch": "bugfix/token-refresh-pull-timeout",
+  "commit": "1f545e8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/server-token-refresh-timer · commit 956659c · 有未提交代码改动",
+  "deployNote": "bugfix/token-refresh-pull-timeout · commit 1f545e8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-07",
+      "title": "加固服务器 Token 总账刷新 pull 超时",
+      "summary": "`scripts/refresh_token_usage_on_server.sh` 的 `git pull --ff-only origin main` 增加默认 120 秒超时，避免 GitHub 网络偶发挂起时长期占住刷新锁。"
+    },
     {
       "date": "2026-07-07",
       "title": "拆开本机 Codex 上报与服务器 Token 总账刷新",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-06",
       "title": "统一 Dash 页面主间距",
       "summary": "新增 Dash 页面级 spacing 变量，统一主内容页边距、模块间距和同层卡片 grid gap。"
-    },
-    {
-      "date": "2026-07-06",
-      "title": "拆开 Token 页头信息 tab",
-      "summary": "将 Token 页头外层从白底大卡改为透明 grid 容器，让“Token 用量”和“各来源最后同步”成为两张真正独立的同级 tab 卡片。"
     }
   ]
 };

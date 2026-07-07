@@ -11,6 +11,12 @@
 
 ## 2026-07-07
 
+### 加固服务器 Token 总账刷新 pull 超时
+
+- `scripts/refresh_token_usage_on_server.sh` 的 `git pull --ff-only origin main` 增加默认 120 秒超时，避免 GitHub 网络偶发挂起时长期占住刷新锁。
+- 支持通过 `--pull-timeout` 或 `GIT_PULL_TIMEOUT_SECONDS` 调整服务器拉取超时时间。
+- 将 `VERSION` 从 `1.0.0.20` 提升到 `1.0.0.21`。
+
 ### 拆开本机 Codex 上报与服务器 Token 总账刷新
 
 - Windows / macOS 本机 Codex 上报脚本改为只提交各自源账本：`codex-usage.*` / `codex-macos-usage.*`，推送后不再 SSH 触发服务器合并。

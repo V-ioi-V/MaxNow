@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 LOG_PATH=""
 SKIP_PULL=0
+GIT_PULL_TIMEOUT_SECONDS="${GIT_PULL_TIMEOUT_SECONDS:-120}"
 
 usage() {
   cat <<'USAGE'
@@ -14,6 +15,7 @@ Options:
   --repo-root PATH  MaxNow server repository root. Defaults to this script's parent.
   --log PATH        Optional log path. Cron usually redirects stdout/stderr instead.
   --skip-pull       Merge current local ledgers without pulling origin/main first.
+  --pull-timeout N   Seconds before aborting git pull. Defaults to 120.
   -h, --help        Show this help.
 USAGE
 }
@@ -31,6 +33,10 @@ while [[ $# -gt 0 ]]; do
     --skip-pull)
       SKIP_PULL=1
       shift
+      ;;
+    --pull-timeout)
+      GIT_PULL_TIMEOUT_SECONDS="$2"
+      shift 2
       ;;
     -h|--help)
       usage
@@ -52,6 +58,15 @@ log() {
     printf '[%s] %s\n' "$stamp" "$*" | tee -a "$LOG_PATH"
   else
     printf '[%s] %s\n' "$stamp" "$*"
+  fi
+}
+
+pull_origin_main() {
+  log "pull latest origin/main"
+  if command -v timeout >/dev/null 2>&1; then
+    timeout "${GIT_PULL_TIMEOUT_SECONDS}s" git pull --ff-only origin main
+  else
+    git pull --ff-only origin main
   fi
 }
 
@@ -151,7 +166,7 @@ if [[ "$SKIP_PULL" -eq 0 ]]; then
     dash/data/token-usage.js \
     dash/data/project-meta.json \
     dash/data/project-meta.js >/dev/null 2>&1 || true
-  git pull --ff-only origin main
+  pull_origin_main
 fi
 
 restore_runtime_pair openclaw-usage
