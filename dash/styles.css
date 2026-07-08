@@ -983,6 +983,13 @@ body[data-view="tokens"] .topbar-token-ranges {
   gap: var(--page-grid-gap);
 }
 
+.home-signal-stack {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: var(--page-grid-gap);
+}
+
 .panel {
   min-height: 0;
   padding: 22px;

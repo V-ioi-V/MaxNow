@@ -236,7 +236,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Home 右侧原“时间点”静态模块已替换为“今日 Todo”：从 `dash/data/wiki-todos.json` 里只筛选 `due_at` 等于浏览器当天日期的未完成待办；过期未完成和无日期待办仍留在近期待办卡，不进入今日 Todo。
 - Home 时间卡片已支持 `dashboard.json.specialDates`：用手动维护的公历日期或一次性日期在当天显示生日、纪念日等轻量提醒；没有命中时继续显示“今日无节日”。
 - Home 顶部已新增北京市海淀区天气卡：地点、天气、当前温度、今日高低温和图标来自 `dashboard.json.weather`，并由 `runtime` 定时刷新。
-- Home 主内容区顶部已拆成 Token 热力格 + 市场涨幅双列：左侧展示近 90 天 Token 活动，右侧展示纳指100、标普500、上证指数、深证成指和创业板指，数据来自 `dash/data/market-indices.json` 并由 `runtime` 每 10 分钟刷新。
+- Home 主内容区顶部已拆成左侧 Token 热力格 + Personal Wiki 近期待办竖向栈、右侧市场涨幅卡：左侧上方展示近 90 天 Token 活动，左侧下方展示 personal-wiki 近期待办，右侧展示纳指100、标普500、上证指数、深证成指和创业板指；行情数据来自 `dash/data/market-indices.json` 并由 `runtime` 每 10 分钟刷新。
 - Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留原有三个入口，不做折叠侧栏。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
 - 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，失败日志会进入 Home 系统状态。

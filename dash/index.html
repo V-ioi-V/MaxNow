@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=104" />
+    <link rel="stylesheet" href="./styles.css?v=105" />
   </head>
   <body>
     <div class="app-shell">
@@ -192,16 +192,39 @@
           <section class="home-workspace">
             <div class="home-main">
               <div class="home-signal-row">
-                <article class="panel focus-panel token-home-activity-panel" id="focus">
-                  <header class="panel-head">
-                    <div>
-                      <p class="eyebrow">Tokens</p>
-                      <h2>近 90 天 Token 活动</h2>
+                <div class="home-signal-stack">
+                  <article class="panel focus-panel token-home-activity-panel" id="focus">
+                    <header class="panel-head">
+                      <div>
+                        <p class="eyebrow">Tokens</p>
+                        <h2>近 90 天 Token 活动</h2>
+                      </div>
+                      <small class="panel-updated" id="home-token-activity-updated">等待同步</small>
+                    </header>
+                    <div class="token-home-activity-chart" id="home-token-activity-chart"></div>
+                  </article>
+
+                  <article class="panel wiki-todo-panel" id="wiki-todos">
+                    <header class="panel-head">
+                      <div>
+                        <p class="eyebrow">Personal Wiki</p>
+                        <h2>近期待办</h2>
+                      </div>
+                      <a
+                        class="text-button"
+                        id="wiki-todo-source"
+                        href="https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json"
+                        target="_blank"
+                        rel="noreferrer"
+                      >更多</a>
+                    </header>
+                    <div class="wiki-todo-summary">
+                      <span class="status-pill" id="wiki-todo-status">等待读取</span>
+                      <small id="wiki-todo-updated">todo.json</small>
                     </div>
-                    <small class="panel-updated" id="home-token-activity-updated">等待同步</small>
-                  </header>
-                  <div class="token-home-activity-chart" id="home-token-activity-chart"></div>
-                </article>
+                    <div class="wiki-todo-list" id="wiki-todo-list"></div>
+                  </article>
+                </div>
 
                 <article class="panel market-panel" id="market-indices">
                   <header class="panel-head">
@@ -214,27 +237,6 @@
                   <div class="market-list" id="market-list"></div>
                 </article>
               </div>
-
-              <article class="panel wiki-todo-panel" id="wiki-todos">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Personal Wiki</p>
-                    <h2>近期待办</h2>
-                  </div>
-                  <a
-                    class="text-button"
-                    id="wiki-todo-source"
-                    href="https://github.com/V-ioi-V/personal-wiki/blob/main/wiki/tasks/todo.json"
-                    target="_blank"
-                    rel="noreferrer"
-                  >更多</a>
-                </header>
-                <div class="wiki-todo-summary">
-                  <span class="status-pill" id="wiki-todo-status">等待读取</span>
-                  <small id="wiki-todo-updated">todo.json</small>
-                </div>
-                <div class="wiki-todo-list" id="wiki-todo-list"></div>
-              </article>
 
               <article class="panel actions-panel" id="actions">
                 <header class="panel-head">

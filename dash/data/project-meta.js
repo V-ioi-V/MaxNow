@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 16:54",
-  "version": "1.0.0.33",
-  "versionLabel": "v1.0.0.33",
-  "branch": "bugfix/home-token-heatmap-90d",
-  "commit": "1c44054",
+  "updatedAt": "2026-07-08 17:11",
+  "version": "1.0.0.34",
+  "versionLabel": "v1.0.0.34",
+  "branch": "bugfix/home-fill-token-column-gap",
+  "commit": "dd81718",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/home-token-heatmap-90d · commit 1c44054 · 有未提交代码改动",
+  "deployNote": "bugfix/home-fill-token-column-gap · commit dd81718 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "填补 Home Token 热力格下方空白",
+      "summary": "Home 顶部主内容改为左侧 Token 热力格 + Personal Wiki 近期待办竖向栈、右侧市场涨幅卡，避免市场卡撑高整行后左侧出现大面积空白。"
+    },
     {
       "date": "2026-07-08",
       "title": "调整 Home Token 热力格为 90 天",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "新增 Home 市场涨幅卡",
       "summary": "Home 主内容区顶部改为 Token 热力格 + 市场涨幅双列，右侧展示纳指100、标普500、上证指数、深证成指和创业板指。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "优化 Dash 首屏加载链路",
-      "summary": "Dash 首屏不再同步加载 `dash/data/*.js` wrapper，也不再等待 Token、同行记、生活页等隐藏视图数据后才渲染 Home。"
     }
   ]
 };
