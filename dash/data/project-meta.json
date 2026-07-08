@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 19:49",
-  "version": "1.0.0.37",
-  "versionLabel": "v1.0.0.37",
-  "branch": "bugfix/home-top-widget-width",
-  "commit": "b91a7df",
+  "updatedAt": "2026-07-08 20:19",
+  "version": "1.0.0.38",
+  "versionLabel": "v1.0.0.38",
+  "branch": "bugfix/home-two-column-layout",
+  "commit": "fc84d76",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/home-top-widget-width · commit b91a7df · 有未提交代码改动",
+  "deployNote": "bugfix/home-two-column-layout · commit fc84d76 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "改为 Home 两列主版式",
+      "summary": "Home 主内容从三列视觉布局调整为两列外壳：左列承载个人主任务，右列用 `home-side-stack` 纵向承载市场 / 用量 / 更新和 Todo / 豆奶 / 系统状态。"
+    },
     {
       "date": "2026-07-08",
       "title": "调整 Home 顶部左右比例",
@@ -28,11 +33,6 @@
       "date": "2026-07-08",
       "title": "填补 Home Token 热力格下方空白",
       "summary": "Home 顶部主内容改为左侧 Token 热力格 + Personal Wiki 近期待办竖向栈、右侧市场涨幅卡，避免市场卡撑高整行后左侧出现大面积空白。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "调整 Home Token 热力格为 90 天",
-      "summary": "Home Token 活动热力格从近 180 天改回近 90 天，保持 3 行展示，避免左侧卡片内格子过小。"
     }
   ]
 }

@@ -11,6 +11,13 @@
 
 ## 2026-07-08
 
+### 改为 Home 两列主版式
+
+- Home 主内容从三列视觉布局调整为两列外壳：左列承载个人主任务，右列用 `home-side-stack` 纵向承载市场 / 用量 / 更新和 Todo / 豆奶 / 系统状态。
+- Home 顶部 Today Status 与天气 / 小日历沿用同一套两列比例，避免时间卡右侧出现未对齐空白。
+- 更新 `STYLE_CONTEXT.md`、`SPEC.md` 和 `CONTEXT.md`，明确后续 Home 模块先选语义 lane，不再为了三列对齐硬挤出右侧窄栏。
+- 将 Dash 样式缓存版本提升到 `styles.css?v=111`，并将 `VERSION` 从 `1.0.0.37` 提升到 `1.0.0.38`。
+
 ### 调整 Home 顶部左右比例
 
 - 收窄 Home 顶部 Today Status 卡片的横向占比，提高右侧天气卡和小日历 widget 组的桌面最小宽度。

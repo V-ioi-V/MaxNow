@@ -317,7 +317,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .home-top-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.32fr);
+  grid-template-columns: minmax(0, 1.18fr) minmax(520px, 0.82fr);
   gap: var(--page-grid-gap);
   align-items: stretch;
 }
@@ -952,6 +952,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .home-board,
 .home-lane,
+.home-side-stack,
 .task-list,
 .today-todo-list,
 .ai-news-list,
@@ -964,10 +965,52 @@ body[data-view="tokens"] .topbar-token-ranges {
 }
 
 .home-board {
-  grid-template-columns: minmax(0, 1.18fr) minmax(420px, 0.8fr) minmax(340px, 0.55fr);
+  grid-template-columns: minmax(0, 1.18fr) minmax(520px, 0.82fr);
   margin-top: var(--page-section-gap);
   align-items: start;
   gap: var(--page-grid-gap);
+}
+
+.home-side-stack {
+  min-width: 0;
+  align-content: start;
+  gap: var(--page-grid-gap);
+}
+
+.home-side-stack > .home-lane {
+  display: contents;
+}
+
+.home-side-stack .home-card-market {
+  order: 10;
+}
+
+.home-side-stack .home-card-today-todo {
+  order: 20;
+}
+
+.home-side-stack .home-card-checkin {
+  order: 30;
+}
+
+.home-side-stack .home-card-system {
+  order: 40;
+}
+
+.home-side-stack .home-card-token-mini {
+  order: 50;
+}
+
+.home-side-stack .home-card-updates {
+  order: 60;
+}
+
+.home-side-stack .home-card-last30 {
+  order: 70;
+}
+
+.home-side-stack .home-card-feeds {
+  order: 80;
 }
 
 .home-lane {
@@ -1026,17 +1069,17 @@ body[data-view="tokens"] .topbar-token-ranges {
 }
 
 @media (max-width: 1500px) {
+  .home-top-grid,
   .home-board {
-    grid-template-columns: minmax(0, 1fr) minmax(430px, 0.82fr);
+    grid-template-columns: minmax(0, 1.08fr) minmax(460px, 0.92fr);
   }
 
-  .home-lane-rail {
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .summary-headline {
+    display: grid;
   }
 
-  .home-lane-rail .home-card-system {
-    grid-column: 1 / -1;
+  .today-freshness {
+    width: max-content;
   }
 }
 
@@ -3506,16 +3549,7 @@ a.last30-item {
   }
 
   .home-board {
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr);
-  }
-
-  .home-lane-rail {
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-lane-rail .home-card-system {
-    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 0.72fr);
   }
 
   .last30-grid {
@@ -3552,8 +3586,9 @@ a.last30-item {
 }
 
 @media (min-width: 1500px) {
-  .home-top-grid {
-    grid-template-columns: minmax(0, 0.88fr) minmax(560px, 0.46fr);
+  .home-top-grid,
+  .home-board {
+    grid-template-columns: minmax(0, 1.16fr) minmax(620px, 0.84fr);
   }
 }
 
@@ -3608,6 +3643,7 @@ a.last30-item {
   }
 
   .home-lane,
+  .home-side-stack,
   .home-lane-rail {
     grid-template-columns: 1fr;
   }
