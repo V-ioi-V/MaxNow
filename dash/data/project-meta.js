@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 19:35",
-  "version": "1.0.0.36",
-  "versionLabel": "v1.0.0.36",
-  "branch": "bugfix/home-board-lane-layout",
-  "commit": "4b28b1d",
+  "updatedAt": "2026-07-08 19:49",
+  "version": "1.0.0.37",
+  "versionLabel": "v1.0.0.37",
+  "branch": "bugfix/home-top-widget-width",
+  "commit": "b91a7df",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/home-board-lane-layout · commit 4b28b1d · 有未提交代码改动",
+  "deployNote": "bugfix/home-top-widget-width · commit b91a7df · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "调整 Home 顶部左右比例",
+      "summary": "收窄 Home 顶部 Today Status 卡片的横向占比，提高右侧天气卡和小日历 widget 组的桌面最小宽度。"
+    },
     {
       "date": "2026-07-08",
       "title": "修正 Home Board 三 lane 版式",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "调整 Home Token 热力格为 90 天",
       "summary": "Home Token 活动热力格从近 180 天改回近 90 天，保持 3 行展示，避免左侧卡片内格子过小。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "修正 Token 范围切换 fallback",
-      "summary": "Token 页不再回退到 `dashboard.json.tokenUsage` 里的旧模拟范围，避免真实总账加载前显示过期的中文小时范围。"
     }
   ]
 };

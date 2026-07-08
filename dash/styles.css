@@ -3553,7 +3553,7 @@ a.last30-item {
 
 @media (min-width: 1500px) {
   .home-top-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(390px, 0.3fr);
+    grid-template-columns: minmax(0, 0.88fr) minmax(560px, 0.46fr);
   }
 }
 

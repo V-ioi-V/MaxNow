@@ -11,6 +11,12 @@
 
 ## 2026-07-08
 
+### 调整 Home 顶部左右比例
+
+- 收窄 Home 顶部 Today Status 卡片的横向占比，提高右侧天气卡和小日历 widget 组的桌面最小宽度。
+- 保持 1320px 以下堆叠规则不变，避免中小屏产生横向溢出。
+- 将 Dash 样式缓存版本提升到 `styles.css?v=110`，并将 `VERSION` 从 `1.0.0.36` 提升到 `1.0.0.37`。
+
 ### 修正 Home Board 三 lane 版式
 
 - Home 状态条下方从单张跨行 `grid-template-areas` 网格改为 `home-lane-primary` / `home-lane-signal` / `home-lane-rail` 三条独立纵向 lane，避免高卡把同一行短卡撑出大块空白。
