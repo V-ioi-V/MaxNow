@@ -11,6 +11,13 @@
 
 ## 2026-07-08
 
+### 回填 Home 左侧内容流
+
+- 将最近更新、外部输入和稍后留意从右侧 widget 栈移回左侧 `home-lane-primary`，避免右侧一路下排时左列出现大面积空白。
+- 右侧 `home-side-stack` 固定只承载市场、今日 Todo、近期用量、豆奶和系统状态等短扫读状态入口；内容型长模块优先进入左列。
+- 更新 `STYLE_CONTEXT.md`、`SPEC.md` 和 `CONTEXT.md`，明确 Home 新增模块必须先区分“内容流”与“短状态 widget”。
+- 将 Dash 样式缓存版本提升到 `styles.css?v=113`，并将 `VERSION` 从 `1.0.0.39` 提升到 `1.0.0.40`。
+
 ### 标准化 Home Widget 尺寸
 
 - Home 右侧 `home-side-stack` 从单列大卡改为 widget 网格：`widget-compact` 占半宽，`widget-wide` / `wide-*` / `mid-*` 占满右列。

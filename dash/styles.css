@@ -1045,16 +1045,32 @@ body[data-view="tokens"] .topbar-token-ranges {
   order: 50;
 }
 
-.home-side-stack .home-card-updates {
+.home-lane-primary .home-card-token {
+  order: 10;
+}
+
+.home-lane-primary .home-card-wiki {
+  order: 20;
+}
+
+.home-lane-primary .home-card-actions {
+  order: 30;
+}
+
+.home-lane-primary .home-card-journal {
+  order: 40;
+}
+
+.home-lane-primary .home-card-updates {
+  order: 50;
+}
+
+.home-lane-primary .home-card-last30 {
   order: 60;
 }
 
-.home-side-stack .home-card-last30 {
+.home-lane-primary .home-card-feeds {
   order: 70;
-}
-
-.home-side-stack .home-card-feeds {
-  order: 80;
 }
 
 .home-side-stack .home-card-system .system-list {

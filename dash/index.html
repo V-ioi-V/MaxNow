@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=112" />
+    <link rel="stylesheet" href="./styles.css?v=113" />
   </head>
   <body>
     <div class="app-shell">
@@ -243,6 +243,65 @@
                 </header>
                 <div class="feed-list journal-list" id="journal-list"></div>
               </article>
+
+              <article class="panel maxnow-updates-panel home-board-card home-card-updates" data-card-size="wide-short">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">MaxNow</p>
+                    <h2>最近更新</h2>
+                  </div>
+                  <span class="status-pill" id="project-version">v--</span>
+                </header>
+                <p class="project-version-note" id="project-version-note">等待同步</p>
+                <div class="project-update-list" id="project-update-list"></div>
+              </article>
+
+              <article class="panel last30-panel home-board-card home-card-last30" id="last-30" data-card-size="wide-short" aria-label="外部输入">
+                <header class="panel-head last30-head">
+                  <div>
+                    <p class="eyebrow">External Input</p>
+                    <h2>外部输入</h2>
+                  </div>
+                  <span class="status-pill" id="last30-source">等待同步</span>
+                </header>
+                <div class="last30-grid">
+                  <section class="last30-column" aria-label="最新 AI 信号">
+                    <div class="last30-column-head">
+                      <span>Latest</span>
+                      <strong id="last30-today-title">最新信号</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-today-summary"></p>
+                    <div class="last30-list" id="last30-today-list"></div>
+                  </section>
+                  <section class="last30-column" aria-label="本周观察">
+                    <div class="last30-column-head">
+                      <span>Week</span>
+                      <strong id="last30-week-title">本周观察</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-week-summary"></p>
+                    <div class="last30-list" id="last30-week-list"></div>
+                  </section>
+                  <section class="last30-column" aria-label="近 30 天主线">
+                    <div class="last30-column-head">
+                      <span>30 Days</span>
+                      <strong id="last30-mainline-title">近 30 天主线</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-mainline-summary"></p>
+                    <div class="last30-list" id="last30-mainline-list"></div>
+                  </section>
+                </div>
+              </article>
+
+              <article class="panel home-board-card home-card-feeds" id="feeds" data-card-size="mid-short">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Links</p>
+                    <h2>&#31245;&#21518;&#30041;&#24847;</h2>
+                  </div>
+                  <span class="status-pill" id="feed-source">OpenClaw</span>
+                </header>
+                <div class="feed-list" id="feed-list"></div>
+              </article>
             </div>
 
             <div class="home-side-stack" aria-label="Secondary Home modules">
@@ -291,64 +350,6 @@
                 </div>
                 </article>
 
-                <article class="panel maxnow-updates-panel home-board-card home-card-updates" data-card-size="widget-wide">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">MaxNow</p>
-                    <h2>最近更新</h2>
-                  </div>
-                  <span class="status-pill" id="project-version">v--</span>
-                </header>
-                <p class="project-version-note" id="project-version-note">等待同步</p>
-                <div class="project-update-list" id="project-update-list"></div>
-                </article>
-
-                <article class="panel last30-panel home-board-card home-card-last30" id="last-30" data-card-size="wide-short" aria-label="外部输入">
-                <header class="panel-head last30-head">
-                  <div>
-                    <p class="eyebrow">External Input</p>
-                    <h2>外部输入</h2>
-                  </div>
-                  <span class="status-pill" id="last30-source">等待同步</span>
-                </header>
-                <div class="last30-grid">
-                  <section class="last30-column" aria-label="最新 AI 信号">
-                    <div class="last30-column-head">
-                      <span>Latest</span>
-                      <strong id="last30-today-title">最新信号</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-today-summary"></p>
-                    <div class="last30-list" id="last30-today-list"></div>
-                  </section>
-                  <section class="last30-column" aria-label="本周观察">
-                    <div class="last30-column-head">
-                      <span>Week</span>
-                      <strong id="last30-week-title">本周观察</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-week-summary"></p>
-                    <div class="last30-list" id="last30-week-list"></div>
-                  </section>
-                  <section class="last30-column" aria-label="近 30 天主线">
-                    <div class="last30-column-head">
-                      <span>30 Days</span>
-                      <strong id="last30-mainline-title">近 30 天主线</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-mainline-summary"></p>
-                    <div class="last30-list" id="last30-mainline-list"></div>
-                  </section>
-                </div>
-                </article>
-
-                <article class="panel home-board-card home-card-feeds" id="feeds" data-card-size="mid-short">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Links</p>
-                    <h2>&#31245;&#21518;&#30041;&#24847;</h2>
-                  </div>
-                  <span class="status-pill" id="feed-source">OpenClaw</span>
-                </header>
-                <div class="feed-list" id="feed-list"></div>
-                </article>
               </div>
 
               <div class="home-lane home-lane-rail" aria-label="Status Home modules">

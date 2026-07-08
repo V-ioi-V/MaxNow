@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 20:55",
-  "version": "1.0.0.39",
-  "versionLabel": "v1.0.0.39",
-  "branch": "main",
-  "commit": "8763e91",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 8763e91 · 干净",
+  "updatedAt": "2026-07-08 21:06",
+  "version": "1.0.0.40",
+  "versionLabel": "v1.0.0.40",
+  "branch": "bugfix/home-fill-primary-lane",
+  "commit": "fc85e25",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/home-fill-primary-lane · commit fc85e25 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "回填 Home 左侧内容流",
+      "summary": "将最近更新、外部输入和稍后留意从右侧 widget 栈移回左侧 `home-lane-primary`，避免右侧一路下排时左列出现大面积空白。"
+    },
     {
       "date": "2026-07-08",
       "title": "标准化 Home Widget 尺寸",
@@ -28,11 +33,6 @@
       "date": "2026-07-08",
       "title": "修正 Home Board 三 lane 版式",
       "summary": "Home 状态条下方从单张跨行 `grid-template-areas` 网格改为 `home-lane-primary` / `home-lane-signal` / `home-lane-rail` 三条独立纵向 lane，避免高卡把同一行短卡撑出大块空白。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "统一 Home Board 版式规则",
-      "summary": "Home 状态条下方改为统一 `home-board`：Token、市场、今日 Todo、Personal Wiki、豆奶、待推进、近期用量、外部输入、最近更新、今日记录、稍后留意和系统状态都在同一个响应式网格里声明位置。"
     }
   ]
 }

@@ -14,13 +14,13 @@
 - Dash / Blog 新页面、新模块和大幅调整必须先选用既有页面骨架，再写局部组件样式；不要在某个模块里临时发明一套孤立布局。
 - 页面主内容优先使用统一 board / lane / grid，而不是多层自由嵌套列。模块之间的组合关系应由外层 board 决定，单个模块只负责自己的内容排版。
 - 同一页面里的卡片必须先声明卡型，再进入网格。Home 当前卡型为：
-  - `wide-short`：横向短卡，适合 Token 热力格、外部输入摘要。
+  - `wide-short`：横向短卡，适合 Token 热力格、最近更新、外部输入摘要。
   - `wide-tall`：横向高卡，适合近期待办这类需要 2 行以上内容的列表。
   - `mid-short`：中等短卡，适合待推进、今日记录、稍后留意。
   - `mid-tall`：中等高卡，适合市场涨幅这种固定条目列表。
   - `widget-compact`：右侧半宽小组件，适合今日 Todo、近期用量这类短扫读入口。
-  - `widget-wide`：右侧满宽组件，适合豆奶摘要、最近更新、系统状态这类内部还有指标网格或列表的模块。
-- Home 主内容采用 `home-board` 两列外壳：左列是 `home-lane-primary`，右列是无视觉样式的 `home-side-stack`。右列里的 `home-lane-signal` 和 `home-lane-rail` 只作为语义分组，视觉上展平成同一条 widget 网格：默认两列，`widget-compact` 占 1 格，`widget-wide` / `wide-*` / `mid-*` 占 2 格，1320px 以下退回单列。新增 Home 模块必须先选择语义 lane、保留 `home-card-*` 语义类，并设置 `data-card-size`；不要再用固定 `grid-area` 把不同高度的卡片绑进同一张跨行网格，也不要为了二列或三列对齐硬拉大所有卡片。
+  - `widget-wide`：右侧满宽组件，适合豆奶摘要、系统状态这类内部还有指标网格或列表的短扫读状态模块。
+- Home 主内容采用 `home-board` 两列外壳：左列是 `home-lane-primary`，右列是无视觉样式的 `home-side-stack`。左列必须承载个人任务和内容型长模块，包括 Token 热力格、Personal Wiki、待推进、今日记录、最近更新、外部输入和稍后留意；右列只承载短扫读状态和入口，包括市场、今日 Todo、近期用量、豆奶和系统状态。右列里的 `home-lane-signal` 和 `home-lane-rail` 只作为语义分组，视觉上展平成同一条 widget 网格：默认两列，`widget-compact` 占 1 格，`widget-wide` / `mid-*` 占 2 格，1320px 以下退回单列。新增 Home 模块必须先选择语义 lane、保留 `home-card-*` 语义类，并设置 `data-card-size`；不要再用固定 `grid-area` 把不同高度的卡片绑进同一张跨行网格，也不要为了二列或三列对齐硬拉大所有卡片。内容型长模块不能放进右侧一路下排造成左列空白。
 - 卡片内容必须服从卡型：Home 列表卡只展示少量高信号条目，长标题用 line clamp，更多内容进入详情页或外链；不能让内容数量自由撑高首页。
 - 每个页面只能有一个主版式系统。需要跨列、右侧 rail 或底部宽卡时，都在这个主系统里声明；短卡和高卡不要共享同一行高，不允许通过局部 margin、空 div、固定高度或嵌套卡片补白。
 - 任何新增或移动的页面卡片，都要同步覆盖 hover / focus、语义色、响应式断点、缓存版本和文档规则；如果不能说明它继承哪一类卡型，就不要合入。
@@ -170,7 +170,7 @@
 ## UI 质检清单
 
 - 新增或移动 UI 卡片 / widget 时，必须先列出它要继承的组件族规则：圆角、边框、阴影、hover / focus、transition、语义色、响应式约束和缓存版本。
-- 新增或移动 Home 卡片时，必须先写清楚它属于 `home-lane-primary` / `home-lane-signal` / `home-lane-rail` 哪一条语义 lane，以及它的 `data-card-size`；视觉列只允许由 `home-board` 和 `home-side-stack` 决定，右列宽度用 `widget-compact` / `widget-wide` 等卡型维护，顺序用卡片级 `order` 维护，并确认没有引入新的局部嵌套列、固定高度补白或跨行 row-height 牵连。
+- 新增或移动 Home 卡片时，必须先写清楚它属于 `home-lane-primary` / `home-lane-signal` / `home-lane-rail` 哪一条语义 lane，以及它的 `data-card-size`；内容型长模块优先进入 `home-lane-primary` 填充左列，短扫读状态入口才进入右侧 `home-side-stack`。视觉列只允许由 `home-board` 和 `home-side-stack` 决定，右列宽度用 `widget-compact` / `widget-wide` 等卡型维护，顺序用卡片级 `order` 维护，并确认没有引入新的局部嵌套列、固定高度补白或跨行 row-height 牵连。
 - 给新 class 命名后，用 `rg` 查一次它是否进入对应规则组，例如 `rg -n "summary-weather|summary-clock|hover|transition|translateY|height|grid-template" dash/styles.css STYLE_CONTEXT.md`。
 - 同一行并列卡片不能只看宽度对齐；需要验证 `top`、`bottom`、`height` 都一致，尤其是 Home 顶部主卡 + 右侧 widget 这种跨 grid 区域。
 - 间距和图标优先按 4px 网格检查；图标容器、文字 baseline、卡片内边距要上下左右对齐，不用肉眼凑位置。
