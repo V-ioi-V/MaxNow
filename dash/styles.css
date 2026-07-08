@@ -1006,17 +1006,35 @@ body[data-view="tokens"] .topbar-token-ranges {
   color: var(--accent-strong);
 }
 
-.metric-mainline strong {
+.metric-today-execution strong {
   color: var(--accent-strong);
 }
 
-.status-strip article.metric-action {
+.status-strip article.metric-sync {
+  --card-color: var(--ok);
+  --card-border: #a8e9c2;
+}
+
+.metric-sync strong {
+  color: var(--ok);
+}
+
+.metric-sync[data-health="unknown"] {
   --card-color: var(--orange);
   --card-border: #ffd29a;
 }
 
-.metric-action strong {
+.metric-sync[data-health="unknown"] strong {
   color: var(--orange);
+}
+
+.metric-sync[data-health="bad"] {
+  --card-color: var(--danger);
+  --card-border: #ffc5c5;
+}
+
+.metric-sync[data-health="bad"] strong {
+  color: var(--danger);
 }
 
 .status-strip article.metric-token {

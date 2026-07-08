@@ -99,6 +99,7 @@ const copy = {
   wikiTodoFailed: "\u8bfb\u53d6\u5931\u8d25",
   wikiTodoEmpty: "\u6682\u65e0\u672a\u5b8c\u6210\u5f85\u529e",
   todayTodoEmpty: "\u4eca\u5929\u6682\u65e0\u660e\u786e\u6267\u884c\u65e5\u671f\u7684\u5f85\u529e",
+  noTodayExecution: "\u6682\u65e0\u660e\u786e\u6267\u884c\u65e5\u671f",
   dueAt: "\u622a\u6b62",
   rickyEmptyPlaces: "\u8fd8\u6ca1\u6709\u5199\u5165\u5730\u70b9\u3002",
   rickyEmptyRecords: "\u8fd8\u6ca1\u6709\u5199\u5165\u65c5\u884c\u8bb0\u5f55\u3002",
@@ -693,6 +694,32 @@ function getAutomationHealth(status = "") {
   if (text.includes("异常") || text.includes("fail") || text.includes("error")) return "bad";
   if (text.includes("注意") || text.includes("unknown") || text.includes("pending")) return "unknown";
   return "ok";
+}
+
+function getDataSyncStatus() {
+  const sources = [
+    { label: "Wiki", updatedAt: wikiTodoData.synced_at || wikiTodoData.updated_at, staleAfterHours: 72 },
+    { label: "Token", updatedAt: getTokenUsage().updatedAt, staleAfterHours: 72 },
+    { label: "\u5929\u6c14", updatedAt: dashboardData.weather?.updatedAt, staleAfterHours: 72 },
+    { label: "\u5e02\u573a", updatedAt: marketIndicesData.updatedAt, staleAfterHours: 72 },
+    { label: "Last-30", updatedAt: last30Data.updatedAt, staleAfterHours: 168 },
+    { label: "\u7248\u672c", updatedAt: projectMetaData.updatedAt, staleAfterHours: 72 },
+  ];
+  const now = new Date();
+  const items = sources.map((source) => {
+    const date = parseLocalDateTime(normalizeSourceUpdatedAt(source.updatedAt));
+    const ageHours = date ? (now.getTime() - date.getTime()) / (60 * 60 * 1000) : Infinity;
+    const fresh = Number.isFinite(ageHours) && ageHours <= source.staleAfterHours;
+    return { ...source, ageHours, fresh };
+  });
+  const stale = items.filter((item) => !item.fresh);
+  const okCount = items.length - stale.length;
+  const oldestStale = stale[0];
+  const label = stale.length ? `${stale.length} \u4e2a\u8fc7\u671f` : `${okCount}/${items.length} \u6b63\u5e38`;
+  const note = stale.length
+    ? `${oldestStale.label} ${oldestStale.updatedAt ? formatSourceUpdatedAt(oldestStale.updatedAt) : copy.syncWaiting}`
+    : "\u5173\u952e\u6765\u6e90\u5df2\u5237\u65b0";
+  return { label, note, health: stale.length ? "unknown" : "ok", items };
 }
 
 function getTone(value = "") {
@@ -1976,10 +2003,12 @@ function renderHome() {
   setText("#last30-source", last30Data.sourceSummary || last30Data.updatedAt || copy.syncWaiting);
   renderWeather();
 
-  setText("#metric-mainlines", String(mainlines.length));
-  setText("#metric-mainlines-note", `${mainlines.length} ${copy.taskCount}`);
-  setText("#metric-actions", String(actions.length));
-  setText("#metric-actions-note", `${actions.length} ${copy.taskCount}`);
+  const syncStatus = getDataSyncStatus();
+  setText("#metric-today-execution", `${todayTodos.length} \u4e2a`);
+  setText("#metric-today-execution-note", todayTodos[0]?.title || copy.noTodayExecution);
+  setText("#metric-sync", syncStatus.label);
+  setText("#metric-sync-note", syncStatus.note);
+  qs(".metric-sync")?.setAttribute("data-health", syncStatus.health);
   setText("#metric-token-total", formatToken(token7d.total));
   setText("#metric-token-note", `${copy.day1} ${formatToken(token1d.total)}`);
   setText("#metric-automation", automationStatus || "--");

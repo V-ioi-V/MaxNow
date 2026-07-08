@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 23:59",
-  "version": "1.0.0.46",
-  "versionLabel": "v1.0.0.46",
-  "branch": "feature/today-progress-timeline",
-  "commit": "d4ed359",
+  "updatedAt": "2026-07-09 00:13",
+  "version": "1.0.0.47",
+  "versionLabel": "v1.0.0.47",
+  "branch": "feature/home-status-metrics",
+  "commit": "eac9f3a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/today-progress-timeline · commit d4ed359 · 有未提交代码改动",
+  "deployNote": "feature/home-status-metrics · commit eac9f3a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-09",
+      "title": "替换 Home 顶部状态小卡",
+      "summary": "Home 顶部状态条前两张小卡从“当前主线 / 待推进”改为“今日执行 / 数据同步”。"
+    },
     {
       "date": "2026-07-08",
       "title": "将 Today Status 竖线改为今日时间轴",
@@ -28,11 +33,6 @@
       "date": "2026-07-08",
       "title": "移除 Home 稍后留意模块",
       "summary": "从 Home 左侧内容流移除“稍后留意 / Links”模块，避免 Roadmap 任务、服务器链路和文档入口重复占用首页空间。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "优化 Token 来源同步时间",
-      "summary": "Token 页“各来源最后同步”从完整日期改为自然时间表达：刚同步显示“刚刚 / X 分钟前”，当天显示“今天 HH:mm”，昨天显示“昨天 HH:mm”，更早显示“M月D日 HH:mm”。"
     }
   ]
 }
