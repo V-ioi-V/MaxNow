@@ -1952,7 +1952,6 @@ function renderHome() {
   const openTodos = getOpenWikiTodos();
   const todayTodos = getTodayWikiTodos(openTodos);
   const journal = dashboardData.journal || [];
-  const feeds = dashboardData.feeds || [];
   const token7d = getTokenRange("7d");
   const token1d = getTokenRange("1d");
   const tokenAll = getTokenRange("all");
@@ -1963,7 +1962,6 @@ function renderHome() {
   const automationTitle = automation.summary
     ? `系统自动化：${automation.summary}`
     : "系统自动化状态：nginx、证书、部署、cron、失败日志和资源快照";
-  setText("#feed-source", dashboardData.feedSource || "OpenClaw");
   setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
   setText("#last30-source", last30Data.sourceSummary || last30Data.updatedAt || copy.syncWaiting);
   renderWeather();
@@ -1997,7 +1995,6 @@ function renderHome() {
 
   clearAndFill(qs("#action-list"), createTask, actions);
   clearAndFill(qs("#journal-list"), createFeed, journal);
-  clearAndFill(qs("#feed-list"), createFeed, feeds);
   const systemItems = dashboardData.system || [];
   const cloudSystemItems = [
     {
@@ -2142,20 +2139,55 @@ function createTokenActivityChart(activity = {}, options = {}) {
   return chart;
 }
 
-function formatSourceUpdatedAt(value) {
+function normalizeSourceUpdatedAt(value) {
   const text = String(value || "").replace("T", " ").replace(/\+\d{2}:\d{2}$/, "").trim();
-  return text ? text.slice(0, 16) : copy.syncWaiting;
+  return text ? text.slice(0, 16) : "";
+}
+
+function formatSourceUpdatedAt(value, now = new Date()) {
+  const text = normalizeSourceUpdatedAt(value);
+  if (!text) return copy.syncWaiting;
+  const date = parseLocalDateTime(text);
+  if (!date) return text;
+  const diffMs = now.getTime() - date.getTime();
+  const minuteMs = 60 * 1000;
+  const hourMs = 60 * minuteMs;
+  const dayMs = 24 * hourMs;
+  if (diffMs >= 0 && diffMs < minuteMs) return "\u521a\u521a";
+  if (diffMs >= 0 && diffMs < hourMs) return `${Math.floor(diffMs / minuteMs)} \u5206\u949f\u524d`;
+  const timeText = `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dateStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const dayDiff = Math.round((todayStart.getTime() - dateStart.getTime()) / dayMs);
+  if (dayDiff === 0) return `\u4eca\u5929 ${timeText}`;
+  if (dayDiff === 1) return `\u6628\u5929 ${timeText}`;
+  const dateText = `${date.getMonth() + 1}\u6708${date.getDate()}\u65e5 ${timeText}`;
+  return date.getFullYear() === now.getFullYear() ? dateText : `${date.getFullYear()}\u5e74${dateText}`;
+}
+
+function sourceUpdatedAtFreshness(value, now = new Date()) {
+  const date = parseLocalDateTime(normalizeSourceUpdatedAt(value));
+  if (!date) return "unknown";
+  const diffHours = (now.getTime() - date.getTime()) / (60 * 60 * 1000);
+  if (diffHours < 0 || diffHours <= 2) return "fresh";
+  if (diffHours <= 24) return "today";
+  if (diffHours <= 72) return "stale";
+  return "old";
 }
 
 function createSourceUpdateItem(source) {
   const item = document.createElement("div");
   item.className = "token-source-update-item";
   item.dataset.tone = source.tone || "blue";
+  item.dataset.freshness = sourceUpdatedAtFreshness(source.updatedAt);
+  const fullTime = normalizeSourceUpdatedAt(source.updatedAt);
+  if (fullTime) item.title = `${source.label || "Source"} \u6700\u540e\u540c\u6b65 ${fullTime}`;
 
   const label = document.createElement("span");
   label.textContent = source.label || "Source";
   const time = document.createElement("strong");
   time.textContent = formatSourceUpdatedAt(source.updatedAt);
+  if (fullTime) time.setAttribute("aria-label", `\u6700\u540e\u540c\u6b65 ${fullTime}`);
 
   item.append(label, time);
   return item;
