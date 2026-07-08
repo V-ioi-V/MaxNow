@@ -46,15 +46,21 @@ GENERATED_DATA_PATHS = {
     "dash/data/openclaw-usage.js",
     "dash/data/codex-usage.json",
     "dash/data/codex-usage.js",
+    "dash/data/codex-macos-usage.json",
+    "dash/data/codex-macos-usage.js",
     "dash/data/codex-server-usage.json",
     "dash/data/codex-server-usage.js",
     "dash/data/token-usage.json",
     "dash/data/token-usage.js",
     "dash/data/dounai_checkin.json",
+    "dash/data/market-indices.json",
+    "dash/data/market-indices.js",
     "dash/data/project-meta.json",
     "dash/data/project-meta.js",
     "dash/data/ricky.json",
     "dash/data/ricky.js",
+    "dash/data/life-foods.json",
+    "dash/data/life-foods.js",
 }
 
 

@@ -24,6 +24,8 @@ GENERATED_DATA_PATHS = {
     "dash/data/openclaw-usage.js",
     "dash/data/codex-usage.json",
     "dash/data/codex-usage.js",
+    "dash/data/codex-macos-usage.json",
+    "dash/data/codex-macos-usage.js",
     "dash/data/codex-server-usage.json",
     "dash/data/codex-server-usage.js",
     "dash/data/token-usage.json",

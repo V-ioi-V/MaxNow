@@ -676,6 +676,13 @@ function getSystemHealth(item) {
   return "ok";
 }
 
+function getAutomationHealth(status = "") {
+  const text = String(status).toLowerCase();
+  if (text.includes("异常") || text.includes("fail") || text.includes("error")) return "bad";
+  if (text.includes("注意") || text.includes("unknown") || text.includes("pending")) return "unknown";
+  return "ok";
+}
+
 function getTone(value = "") {
   const text = String(value).toLowerCase();
   if (text.includes("failure") || text.includes("fail") || text.includes("check")) return "red";
@@ -1970,6 +1977,9 @@ function renderHome() {
   setText("#metric-automation", automationStatus || "--");
   setText("#metric-automation-note", automation.lastRun || copy.sync);
   setTitle(".metric-data", automationTitle);
+  const automationHealth = getAutomationHealth(automationStatus);
+  qs(".metric-data")?.setAttribute("data-health", automationHealth);
+  qs("#system-panel")?.setAttribute("data-health", automationHealth);
   renderMarketIndices();
   setText("#mini-token-1d", formatToken(token1d.total));
   setText("#mini-token-7d", formatToken(token7d.total));

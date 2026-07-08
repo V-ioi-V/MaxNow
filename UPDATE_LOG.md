@@ -11,6 +11,18 @@
 
 ## 2026-07-08
 
+### 调整 Home Todo 和 Token 长条布局
+
+- 将 Home 右侧 `Today Todo` 和 `Tokens` 从半宽 `widget-compact` 改为整行 `widget-wide`，让它们在右侧栈里上下显示为两个长条。
+- 系统自动化聚合状态现在按 `正常 / 注意 / 异常` 切换绿色、橙色、红色；异常时不再继续显示绿色强调。
+- 修正顶部 Token 范围切换被通用 `.range-tabs` 样式覆盖的问题，确保 `1d / 7d / 30d / all` 只在 Token 页显示。
+- 补齐系统状态和项目元信息的运行数据白名单，避免 macOS Codex、Life foods、market indices 等自动生成数据把 `deploy` 误报为异常。
+- 将 Dash 缓存版本提升到 `styles.css?v=114` 和 `app.js?v=101`，并将 `VERSION` 从 `1.0.0.40` 提升到 `1.0.0.41`。
+
+原因：
+
+- Owner 指出 Home 中部的 Todo / Tokens 区域应改成上下两个长条，并询问系统自动化为什么显示异常；线上当前异常来源为系统状态聚合里的 `deploy` 检查误报。
+
 ### 回填 Home 左侧内容流
 
 - 将最近更新、外部输入和稍后留意从右侧 widget 栈移回左侧 `home-lane-primary`，避免右侧一路下排时左列出现大面积空白。
