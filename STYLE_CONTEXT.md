@@ -12,16 +12,16 @@
 ## 页面版式协议
 
 - Dash / Blog 新页面、新模块和大幅调整必须先选用既有页面骨架，再写局部组件样式；不要在某个模块里临时发明一套孤立布局。
-- 页面主内容优先使用统一 board / grid，而不是多层自由嵌套列。模块之间的组合关系应由外层 board 决定，单个模块只负责自己的内容排版。
+- 页面主内容优先使用统一 board / lane / grid，而不是多层自由嵌套列。模块之间的组合关系应由外层 board 决定，单个模块只负责自己的内容排版。
 - 同一页面里的卡片必须先声明卡型，再进入网格。Home 当前卡型为：
   - `wide-short`：横向短卡，适合 Token 热力格、外部输入摘要。
   - `wide-tall`：横向高卡，适合近期待办这类需要 2 行以上内容的列表。
   - `mid-short`：中等短卡，适合待推进、今日记录、稍后留意。
   - `mid-tall`：中等高卡，适合市场涨幅这种固定条目列表。
   - `rail`：右侧状态栏卡，适合今日 Todo、豆奶、近期用量、最近更新、系统状态。
-- 新增 Home 模块必须挂到 `home-board`，用 `home-card-*` 指明固定 grid-area，并设置 `data-card-size`；不要再新增 `home-main` / `home-aside` / 局部左右列 / 局部栈来凑位置。
+- Home 主内容采用 `home-board` + 三条独立纵向 lane：`home-lane-primary` 放日常主任务，`home-lane-signal` 放行情 / 用量 / 更新 / 外部输入，`home-lane-rail` 放右侧状态入口。新增 Home 模块必须先选择 lane、保留 `home-card-*` 语义类，并设置 `data-card-size`；不要再用固定 `grid-area` 把不同高度的卡片绑进同一张跨行网格。
 - 卡片内容必须服从卡型：Home 列表卡只展示少量高信号条目，长标题用 line clamp，更多内容进入详情页或外链；不能让内容数量自由撑高首页。
-- 每个页面只能有一个主版式系统。需要跨行、跨列、右侧 rail 或底部宽卡时，都在这个主系统里声明，不允许通过局部 margin、空 div、固定高度或嵌套卡片补白。
+- 每个页面只能有一个主版式系统。需要跨列、右侧 rail 或底部宽卡时，都在这个主系统里声明；短卡和高卡不要共享同一行高，不允许通过局部 margin、空 div、固定高度或嵌套卡片补白。
 - 任何新增或移动的页面卡片，都要同步覆盖 hover / focus、语义色、响应式断点、缓存版本和文档规则；如果不能说明它继承哪一类卡型，就不要合入。
 
 ## 品牌区
@@ -152,8 +152,8 @@
 
 ## Home 市场涨幅
 
-- Home 主内容区使用统一 `home-board` 版式，不再使用左侧栈 + 右侧卡的局部嵌套布局。
-- 市场涨幅卡是 `mid-tall` 卡型，和 Token 热力格、Personal Wiki、今日 Todo、豆奶、待推进等模块共同落在 `home-board` 的固定 grid-area 中；不要用局部容器把它和某一张卡强行绑成一行。
+- Home 主内容区使用统一 `home-board` + 三 lane 版式，不再使用单张跨行 grid-area 网格，也不回到随手新增局部左右列的拼法。
+- 市场涨幅卡是 `mid-tall` 卡型，固定放在 `home-lane-signal`；不要用局部容器把它和某一张卡强行绑成一行，也不要让它和右侧 rail 共享窄列。
 - 市场涨幅卡沿用 `panel` 卡片族，内部行情条目沿用轻量白底小项、淡边框、hover 上浮，不做深色交易终端风格。
 - 行情条目固定为左侧名称 / 代码、中间迷你走势、右侧涨跌幅 / 点位；红色表示上涨，绿色表示下跌，灰色表示持平或缺数据。
 - 迷你走势由本地缓存的走势点渲染成 SVG，前端不直接请求第三方行情接口，也不嵌入外部网页或截图。
@@ -169,7 +169,7 @@
 ## UI 质检清单
 
 - 新增或移动 UI 卡片 / widget 时，必须先列出它要继承的组件族规则：圆角、边框、阴影、hover / focus、transition、语义色、响应式约束和缓存版本。
-- 新增或移动 Home 卡片时，必须先写清楚它在 `home-board` 的 `grid-area` 和 `data-card-size`，并确认没有引入新的局部嵌套列或自由堆栈。
+- 新增或移动 Home 卡片时，必须先写清楚它属于 `home-lane-primary` / `home-lane-signal` / `home-lane-rail` 哪一条 lane，以及它的 `data-card-size`，并确认没有引入新的局部嵌套列、固定高度补白或跨行 row-height 牵连。
 - 给新 class 命名后，用 `rg` 查一次它是否进入对应规则组，例如 `rg -n "summary-weather|summary-clock|hover|transition|translateY|height|grid-template" dash/styles.css STYLE_CONTEXT.md`。
 - 同一行并列卡片不能只看宽度对齐；需要验证 `top`、`bottom`、`height` 都一致，尤其是 Home 顶部主卡 + 右侧 widget 这种跨 grid 区域。
 - 间距和图标优先按 4px 网格检查；图标容器、文字 baseline、卡片内边距要上下左右对齐，不用肉眼凑位置。

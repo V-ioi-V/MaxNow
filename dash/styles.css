@@ -951,6 +951,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 }
 
 .home-board,
+.home-lane,
 .task-list,
 .today-todo-list,
 .ai-news-list,
@@ -963,73 +964,30 @@ body[data-view="tokens"] .topbar-token-ranges {
 }
 
 .home-board {
-  --home-board-row: clamp(120px, 8vw, 156px);
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-auto-rows: minmax(var(--home-board-row), auto);
-  grid-template-areas:
-    "token token token token token token market market market market todo todo"
-    "wiki wiki wiki wiki wiki wiki market market market market checkin checkin"
-    "actions actions actions actions actions actions tokenmini tokenmini updates updates updates updates"
-    "last30 last30 last30 last30 last30 last30 last30 last30 updates updates updates updates"
-    "journal journal journal journal journal journal feeds feeds feeds feeds system system";
+  grid-template-columns: minmax(0, 1.18fr) minmax(420px, 0.8fr) minmax(340px, 0.55fr);
   margin-top: var(--page-section-gap);
-  align-items: stretch;
+  align-items: start;
+  gap: var(--page-grid-gap);
+}
+
+.home-lane {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
   gap: var(--page-grid-gap);
 }
 
 .home-board-card {
   min-width: 0;
-  height: 100%;
+  height: auto;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
 }
 
-.home-card-token {
-  grid-area: token;
-}
-
-.home-card-market {
-  grid-area: market;
-}
-
-.home-card-today-todo {
-  grid-area: todo;
-}
-
-.home-card-wiki {
-  grid-area: wiki;
-}
-
-.home-card-checkin {
-  grid-area: checkin;
-}
-
-.home-card-actions {
-  grid-area: actions;
-}
-
-.home-card-token-mini {
-  grid-area: tokenmini;
-}
-
-.home-card-last30 {
-  grid-area: last30;
-}
-
-.home-card-updates {
-  grid-area: updates;
-}
-
-.home-card-journal {
-  grid-area: journal;
-}
-
-.home-card-feeds {
-  grid-area: feeds;
-}
-
-.home-card-system {
-  grid-area: system;
+.home-board-card > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .panel {
@@ -1065,6 +1023,21 @@ body[data-view="tokens"] .topbar-token-ranges {
 .home-card-updates,
 .home-card-today-todo {
   gap: 0;
+}
+
+@media (max-width: 1500px) {
+  .home-board {
+    grid-template-columns: minmax(0, 1fr) minmax(430px, 0.82fr);
+  }
+
+  .home-lane-rail {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-lane-rail .home-card-system {
+    grid-column: 1 / -1;
+  }
 }
 
 .summary-bar,
@@ -3533,16 +3506,16 @@ a.last30-item {
   }
 
   .home-board {
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    grid-auto-rows: auto;
-    grid-template-areas:
-      "token token token token market market market market"
-      "wiki wiki wiki wiki market market market market"
-      "todo todo todo todo checkin checkin checkin checkin"
-      "actions actions actions actions tokenmini tokenmini tokenmini tokenmini"
-      "last30 last30 last30 last30 last30 last30 last30 last30"
-      "updates updates updates updates system system system system"
-      "journal journal journal journal feeds feeds feeds feeds";
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr);
+  }
+
+  .home-lane-rail {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-lane-rail .home-card-system {
+    grid-column: 1 / -1;
   }
 
   .last30-grid {
@@ -3632,19 +3605,15 @@ a.last30-item {
 
   .home-board {
     grid-template-columns: 1fr;
-    grid-template-areas:
-      "token"
-      "market"
-      "today"
-      "wiki"
-      "checkin"
-      "actions"
-      "tokenmini"
-      "last30"
-      "updates"
-      "journal"
-      "feeds"
-      "system";
+  }
+
+  .home-lane,
+  .home-lane-rail {
+    grid-template-columns: 1fr;
+  }
+
+  .home-lane-rail .home-card-system {
+    grid-column: auto;
   }
 
   .summary-headline {

@@ -150,7 +150,7 @@ Home 按顺序回答这些问题：
 - 今日状态：由前端根据今日 Todo、当前时段、ROADMAP 待推进 / 主线、Token 活跃和自动化状态自动推导“执行 / 推进 / 复盘 / 探索 / 巡检”等模式；`dashboard.json.today` 只作为当天人工 override，旧日期判断不再占据主状态。
 - 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
 - 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
-- Home 主内容版式：状态条下方使用统一 `home-board`，所有 Home 模块都以固定 `home-card-*` grid-area 和 `data-card-size` 落位；不要再用局部左右列、局部栈、固定高度或空白补丁拼模块。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认卡型。
+- Home 主内容版式：状态条下方使用统一 `home-board` + 三条独立 lane，`home-lane-primary` 承载主任务，`home-lane-signal` 承载行情 / 用量 / 更新 / 外部输入，`home-lane-rail` 承载右侧状态入口；所有 Home 模块都保留 `home-card-*` 和 `data-card-size`。不要再用固定 `grid-area`、局部左右列、固定高度或空白补丁拼模块。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认 lane 和卡型。
 - Token 近期活动：Home `wide-short` 卡展示近 90 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
 - 市场涨幅：Home `mid-tall` 卡展示纳指100、标普500、上证指数、深证成指和创业板指的当前点位、涨跌幅和日内迷你走势；数据来自 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 或服务器 `runtime` 每 10 分钟刷新，前端不直接请求行情接口。
 - 待推进：1-3 个近期应该移动的 Now / Next 动作；这里不是完整 todo app，也不是已完成记录。

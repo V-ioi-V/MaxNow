@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 17:47",
-  "version": "1.0.0.35",
-  "versionLabel": "v1.0.0.35",
-  "branch": "feature/home-board-layout-rules",
-  "commit": "d814dee",
+  "updatedAt": "2026-07-08 19:35",
+  "version": "1.0.0.36",
+  "versionLabel": "v1.0.0.36",
+  "branch": "bugfix/home-board-lane-layout",
+  "commit": "4b28b1d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/home-board-layout-rules · commit d814dee · 有未提交代码改动",
+  "deployNote": "bugfix/home-board-lane-layout · commit 4b28b1d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "修正 Home Board 三 lane 版式",
+      "summary": "Home 状态条下方从单张跨行 `grid-template-areas` 网格改为 `home-lane-primary` / `home-lane-signal` / `home-lane-rail` 三条独立纵向 lane，避免高卡把同一行短卡撑出大块空白。"
+    },
     {
       "date": "2026-07-08",
       "title": "统一 Home Board 版式规则",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "修正 Token 范围切换 fallback",
       "summary": "Token 页不再回退到 `dashboard.json.tokenUsage` 里的旧模拟范围，避免真实总账加载前显示过期的中文小时范围。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "修正 Home 市场涨幅数据源",
-      "summary": "将市场涨幅同步切到腾讯公开行情接口，服务器可同时刷新国内和美股指数 quote 与分钟线。"
     }
   ]
 };

@@ -11,6 +11,13 @@
 
 ## 2026-07-08
 
+### 修正 Home Board 三 lane 版式
+
+- Home 状态条下方从单张跨行 `grid-template-areas` 网格改为 `home-lane-primary` / `home-lane-signal` / `home-lane-rail` 三条独立纵向 lane，避免高卡把同一行短卡撑出大块空白。
+- 右侧状态 rail 保留最小宽度，豆奶和近期用量的小指标卡不再被压成窄条；1320px 以下切换为两列 / 单列响应式。
+- 更新 `STYLE_CONTEXT.md`、`SPEC.md` 和 `CONTEXT.md`，把 Home 新增模块规则改为先选 lane 再选卡型，禁止再用固定 `grid-area` 拼不同高度模块。
+- 将 Dash 缓存版本提升到 `styles.css?v=109`，并将 `VERSION` 从 `1.0.0.35` 提升到 `1.0.0.36`。
+
 ### 统一 Home Board 版式规则
 
 - Home 状态条下方改为统一 `home-board`：Token、市场、今日 Todo、Personal Wiki、豆奶、待推进、近期用量、外部输入、最近更新、今日记录、稍后留意和系统状态都在同一个响应式网格里声明位置。

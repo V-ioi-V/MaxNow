@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=106" />
+    <link rel="stylesheet" href="./styles.css?v=109" />
   </head>
   <body>
     <div class="app-shell">
@@ -190,6 +190,7 @@
           </section>
 
           <section class="home-board" aria-label="Home dashboard modules">
+            <div class="home-lane home-lane-primary" aria-label="Primary Home modules">
               <article class="panel focus-panel token-home-activity-panel home-board-card home-card-token" id="focus" data-card-size="wide-short">
                 <header class="panel-head">
                   <div>
@@ -199,29 +200,6 @@
                   <small class="panel-updated" id="home-token-activity-updated">等待同步</small>
                 </header>
                 <div class="token-home-activity-chart" id="home-token-activity-chart"></div>
-              </article>
-
-              <article class="panel market-panel home-board-card home-card-market" id="market-indices" data-card-size="mid-tall">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Market</p>
-                    <h2>市场涨幅</h2>
-                  </div>
-                  <small class="panel-updated" id="market-updated">等待同步</small>
-                </header>
-                <div class="market-list" id="market-list"></div>
-              </article>
-
-              <article class="panel today-todo-panel home-board-card home-card-today-todo" data-card-size="rail">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Todo</p>
-                    <h2>&#20170;&#26085; Todo</h2>
-                  </div>
-                  <span class="status-pill" id="today-todo-status">&#31561;&#24453;&#21516;&#27493;</span>
-                </header>
-                <small class="today-todo-updated" id="today-todo-updated">todo.json</small>
-                <div class="today-todo-list" id="today-todo-list"></div>
               </article>
 
               <article class="panel wiki-todo-panel home-board-card home-card-wiki" id="wiki-todos" data-card-size="wide-tall">
@@ -243,6 +221,146 @@
                   <small id="wiki-todo-updated">todo.json</small>
                 </div>
                 <div class="wiki-todo-list" id="wiki-todo-list"></div>
+              </article>
+
+              <article class="panel actions-panel home-board-card home-card-actions" id="actions" data-card-size="mid-short">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Next Actions</p>
+                    <h2>&#24453;&#25512;&#36827;</h2>
+                  </div>
+                </header>
+                <div class="task-list" id="action-list"></div>
+              </article>
+
+              <article class="panel home-board-card home-card-journal" id="journal" data-card-size="mid-short">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Daily Log</p>
+                    <h2>&#20170;&#26085;&#35760;&#24405;</h2>
+                  </div>
+                  <span class="status-pill" id="journal-source">&#29366;&#24577;&#24555;&#29031;</span>
+                </header>
+                <div class="feed-list journal-list" id="journal-list"></div>
+              </article>
+            </div>
+
+            <div class="home-lane home-lane-signal" aria-label="Signal Home modules">
+              <article class="panel market-panel home-board-card home-card-market" id="market-indices" data-card-size="mid-tall">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Market</p>
+                    <h2>市场涨幅</h2>
+                  </div>
+                  <small class="panel-updated" id="market-updated">等待同步</small>
+                </header>
+                <div class="market-list" id="market-list"></div>
+              </article>
+
+              <article class="panel token-mini-panel home-board-card home-card-token-mini" data-card-size="rail">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Tokens</p>
+                    <h2>&#36817;&#26399;&#29992;&#37327;</h2>
+                  </div>
+                  <small class="panel-updated" id="mini-token-updated">等待同步</small>
+                </header>
+                <div class="mini-token-grid">
+                  <div>
+                    <span class="metric-label">
+                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 1-9 9 9 9 0 0 1 9-9Zm0 2a7 7 0 1 0 7 7 7 7 0 0 0-7-7Zm1 3v3.6l2.4 2.4a1 1 0 0 1-1.4 1.4l-2.7-2.7A1 1 0 0 1 11 12V8a1 1 0 1 1 2 0Z"/></svg>
+                      1d
+                    </span>
+                    <strong id="mini-token-1d">--</strong>
+                  </div>
+                  <div>
+                    <span class="metric-label">
+                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 5v9h14V9Zm3-4v2h2V5Zm6 0v2h2V5Z"/></svg>
+                      7d
+                    </span>
+                    <strong id="mini-token-7d">--</strong>
+                  </div>
+                  <div>
+                    <span class="metric-label">
+                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13ZM7 7a1 1 0 0 0 0 2h10a1 1 0 1 0 0-2H7Zm0 4a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H7Zm0 4a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H7Z"/></svg>
+                      all day
+                    </span>
+                    <strong id="mini-token-all">--</strong>
+                  </div>
+                </div>
+              </article>
+
+              <article class="panel maxnow-updates-panel home-board-card home-card-updates" data-card-size="rail">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">MaxNow</p>
+                    <h2>最近更新</h2>
+                  </div>
+                  <span class="status-pill" id="project-version">v--</span>
+                </header>
+                <p class="project-version-note" id="project-version-note">等待同步</p>
+                <div class="project-update-list" id="project-update-list"></div>
+              </article>
+
+              <article class="panel last30-panel home-board-card home-card-last30" id="last-30" data-card-size="wide-short" aria-label="外部输入">
+                <header class="panel-head last30-head">
+                  <div>
+                    <p class="eyebrow">External Input</p>
+                    <h2>外部输入</h2>
+                  </div>
+                  <span class="status-pill" id="last30-source">等待同步</span>
+                </header>
+                <div class="last30-grid">
+                  <section class="last30-column" aria-label="最新 AI 信号">
+                    <div class="last30-column-head">
+                      <span>Latest</span>
+                      <strong id="last30-today-title">最新信号</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-today-summary"></p>
+                    <div class="last30-list" id="last30-today-list"></div>
+                  </section>
+                  <section class="last30-column" aria-label="本周观察">
+                    <div class="last30-column-head">
+                      <span>Week</span>
+                      <strong id="last30-week-title">本周观察</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-week-summary"></p>
+                    <div class="last30-list" id="last30-week-list"></div>
+                  </section>
+                  <section class="last30-column" aria-label="近 30 天主线">
+                    <div class="last30-column-head">
+                      <span>30 Days</span>
+                      <strong id="last30-mainline-title">近 30 天主线</strong>
+                    </div>
+                    <p class="last30-summary" id="last30-mainline-summary"></p>
+                    <div class="last30-list" id="last30-mainline-list"></div>
+                  </section>
+                </div>
+              </article>
+
+              <article class="panel home-board-card home-card-feeds" id="feeds" data-card-size="mid-short">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Links</p>
+                    <h2>&#31245;&#21518;&#30041;&#24847;</h2>
+                  </div>
+                  <span class="status-pill" id="feed-source">OpenClaw</span>
+                </header>
+                <div class="feed-list" id="feed-list"></div>
+              </article>
+            </div>
+
+            <div class="home-lane home-lane-rail" aria-label="Status Home modules">
+              <article class="panel today-todo-panel home-board-card home-card-today-todo" data-card-size="rail">
+                <header class="panel-head">
+                  <div>
+                    <p class="eyebrow">Todo</p>
+                    <h2>&#20170;&#26085; Todo</h2>
+                  </div>
+                  <span class="status-pill" id="today-todo-status">&#31561;&#24453;&#21516;&#27493;</span>
+                </header>
+                <small class="today-todo-updated" id="today-todo-updated">todo.json</small>
+                <div class="today-todo-list" id="today-todo-list"></div>
               </article>
 
               <article class="panel checkin-panel home-board-card home-card-checkin" id="dounai-checkin" data-card-size="rail" role="button" tabindex="0" aria-label="打开豆奶详情">
@@ -299,119 +417,6 @@
                 </div>
               </article>
 
-              <article class="panel actions-panel home-board-card home-card-actions" id="actions" data-card-size="mid-short">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Next Actions</p>
-                    <h2>&#24453;&#25512;&#36827;</h2>
-                  </div>
-                </header>
-                <div class="task-list" id="action-list"></div>
-              </article>
-
-              <article class="panel token-mini-panel home-board-card home-card-token-mini" data-card-size="rail">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Tokens</p>
-                    <h2>&#36817;&#26399;&#29992;&#37327;</h2>
-                  </div>
-                  <small class="panel-updated" id="mini-token-updated">等待同步</small>
-                </header>
-                <div class="mini-token-grid">
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 1-9 9 9 9 0 0 1 9-9Zm0 2a7 7 0 1 0 7 7 7 7 0 0 0-7-7Zm1 3v3.6l2.4 2.4a1 1 0 0 1-1.4 1.4l-2.7-2.7A1 1 0 0 1 11 12V8a1 1 0 1 1 2 0Z"/></svg>
-                      1d
-                    </span>
-                    <strong id="mini-token-1d">--</strong>
-                  </div>
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 5v9h14V9Zm3-4v2h2V5Zm6 0v2h2V5Z"/></svg>
-                      7d
-                    </span>
-                    <strong id="mini-token-7d">--</strong>
-                  </div>
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13ZM7 7a1 1 0 0 0 0 2h10a1 1 0 1 0 0-2H7Zm0 4a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H7Zm0 4a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H7Z"/></svg>
-                      all day
-                    </span>
-                    <strong id="mini-token-all">--</strong>
-                  </div>
-                </div>
-              </article>
-
-              <article class="panel last30-panel home-board-card home-card-last30" id="last-30" data-card-size="wide-short" aria-label="外部输入">
-                <header class="panel-head last30-head">
-                  <div>
-                    <p class="eyebrow">External Input</p>
-                    <h2>外部输入</h2>
-                  </div>
-                  <span class="status-pill" id="last30-source">等待同步</span>
-                </header>
-                <div class="last30-grid">
-                  <section class="last30-column" aria-label="最新 AI 信号">
-                    <div class="last30-column-head">
-                      <span>Latest</span>
-                      <strong id="last30-today-title">最新信号</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-today-summary"></p>
-                    <div class="last30-list" id="last30-today-list"></div>
-                  </section>
-                  <section class="last30-column" aria-label="本周观察">
-                    <div class="last30-column-head">
-                      <span>Week</span>
-                      <strong id="last30-week-title">本周观察</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-week-summary"></p>
-                    <div class="last30-list" id="last30-week-list"></div>
-                  </section>
-                  <section class="last30-column" aria-label="近 30 天主线">
-                    <div class="last30-column-head">
-                      <span>30 Days</span>
-                      <strong id="last30-mainline-title">近 30 天主线</strong>
-                    </div>
-                    <p class="last30-summary" id="last30-mainline-summary"></p>
-                    <div class="last30-list" id="last30-mainline-list"></div>
-                  </section>
-                </div>
-              </article>
-
-              <article class="panel maxnow-updates-panel home-board-card home-card-updates" data-card-size="rail">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">MaxNow</p>
-                    <h2>最近更新</h2>
-                  </div>
-                  <span class="status-pill" id="project-version">v--</span>
-                </header>
-                <p class="project-version-note" id="project-version-note">等待同步</p>
-                <div class="project-update-list" id="project-update-list"></div>
-              </article>
-
-              <article class="panel home-board-card home-card-journal" id="journal" data-card-size="mid-short">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Daily Log</p>
-                    <h2>&#20170;&#26085;&#35760;&#24405;</h2>
-                  </div>
-                  <span class="status-pill" id="journal-source">&#29366;&#24577;&#24555;&#29031;</span>
-                </header>
-                <div class="feed-list journal-list" id="journal-list"></div>
-              </article>
-
-              <article class="panel home-board-card home-card-feeds" id="feeds" data-card-size="mid-short">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Links</p>
-                    <h2>&#31245;&#21518;&#30041;&#24847;</h2>
-                  </div>
-                  <span class="status-pill" id="feed-source">OpenClaw</span>
-                </header>
-                <div class="feed-list" id="feed-list"></div>
-              </article>
-
               <article class="panel system-panel home-board-card home-card-system" id="system-panel" data-card-size="rail" role="button" tabindex="0" aria-label="打开云服务系统状态">
                 <header class="panel-head">
                   <div>
@@ -422,6 +427,7 @@
                 </header>
                 <div class="system-list" id="system-list"></div>
               </article>
+            </div>
           </section>
         </section>
 
