@@ -486,6 +486,18 @@ runtime data stash before deploy: before-life-food-picker-runtime-data
 verification: git pull --ff-only origin main ok；python3 scripts/update_data.py runtime ok（life-foods 使用现有缓存，gh api 404 已降级为 warn）；python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/styles.css?v=86 200；https://dash.maxnow.cn/app.js?v=76 200；https://dash.maxnow.cn/data/life-foods.json 200；https://blog.maxnow.cn 200
 ```
 
+2026-07-08 已部署 Dash 首屏加载优化：
+
+```text
+deployed commit: b0592ef Refresh project meta
+feature commit: 03fda7c Optimize dash initial load
+changes: Dash 首屏移除 data/*.js wrapper 同步加载，只保留 app.js?v=96；Home 先渲染核心小数据，Token / Ricky / Life / Leaflet 按视图加载；JSON fetch 改为正常 URL + cache:no-cache。
+nginx changes: dash server block 启用 gzip；静态 css/js/png 设置 private, max-age=3600；/data/ 设置 private, max-age=60, must-revalidate。
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260708-124622-before-fast-load
+nginx config backup before reload: /etc/nginx/sites-available/maxnow-dashboard.bak-20260708-fast-load
+verification: python3 scripts/check.py ok；本地 Chrome headless 可执行并渲染 Token 热力格；服务器 nginx -t ok；reload ok；https://dash.maxnow.cn 200；线上 index 只引用 app.js?v=96；app.js?v=96 gzip 约 30KB；token-usage.json gzip 约 33KB；响应头确认 Cache-Control 和 Content-Encoding 生效。
+```
+
 刷新 Home 天气卡：
 
 ```bash
