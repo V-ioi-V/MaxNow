@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 15:21",
-  "version": "1.0.0.31",
-  "versionLabel": "v1.0.0.31",
-  "branch": "bugfix/market-indices-tencent",
-  "commit": "0de955e",
+  "updatedAt": "2026-07-08 15:34",
+  "version": "1.0.0.32",
+  "versionLabel": "v1.0.0.32",
+  "branch": "bugfix/token-range-fallback",
+  "commit": "d39cb5e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/market-indices-tencent · commit 0de955e · 有未提交代码改动",
+  "deployNote": "bugfix/token-range-fallback · commit d39cb5e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "修正 Token 范围切换 fallback",
+      "summary": "Token 页不再回退到 `dashboard.json.tokenUsage` 里的旧模拟范围，避免真实总账加载前显示过期的中文小时范围。"
+    },
     {
       "date": "2026-07-08",
       "title": "修正 Home 市场涨幅数据源",
@@ -28,11 +33,6 @@
       "date": "2026-07-08",
       "title": "将 Today Status 改为自动态势",
       "summary": "Home 顶部 Today Status 不再依赖过期 `dashboard.json.today` 手填字段作为主状态，改为基于今日 Todo、自动化状态、当前时段、ROADMAP 和 Token 活跃自动生成模式、节奏、焦点和摘要。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "收窄今日 Todo 日期口径",
-      "summary": "今日 Todo 只展示 `due_at` 等于浏览器当天日期的未完成待办，不再混入过期未完成项。"
     }
   ]
 }

@@ -1032,7 +1032,16 @@ function getOpenclawTokenUsage() {
 }
 
 function getTokenUsage() {
-  return getOpenclawTokenUsage() || dashboardData.tokenUsage || {};
+  return getOpenclawTokenUsage() || {};
+}
+
+function shouldRenderRangeTabs(container, ranges) {
+  const buttons = Array.from(container.querySelectorAll(".range-tab"));
+  if (buttons.length !== ranges.length) return true;
+  return buttons.some((button, index) => {
+    const range = ranges[index] || {};
+    return button.dataset.range !== String(range.key || "") || button.textContent !== String(range.label || "");
+  });
 }
 
 function getLast30Group(key) {
@@ -2032,7 +2041,7 @@ function renderTokens() {
   const range = getTokenRange();
 
   const rangeTabs = qs("#token-ranges");
-  if (rangeTabs && rangeTabs.childElementCount !== ranges.length) {
+  if (rangeTabs && shouldRenderRangeTabs(rangeTabs, ranges)) {
     rangeTabs.replaceChildren(...ranges.map(createRangeButton));
   }
 

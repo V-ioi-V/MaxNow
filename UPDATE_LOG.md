@@ -11,6 +11,13 @@
 
 ## 2026-07-08
 
+### 修正 Token 范围切换 fallback
+
+- Token 页不再回退到 `dashboard.json.tokenUsage` 里的旧模拟范围，避免真实总账加载前显示过期的中文小时范围。
+- 删除 `dash/data/dashboard.*` 中过期的 `tokenUsage` mock，真实 Token 页只读取 `dash/data/token-usage.*`。
+- 范围按钮按 key 和 label 校验后重建，确保始终显示 `1d / 7d / 30d / all`。
+- 将 Dash 脚本缓存版本提升到 `app.js?v=98`，并将 `VERSION` 从 `1.0.0.31` 提升到 `1.0.0.32`。
+
 ### 修正 Home 市场涨幅数据源
 
 - 将市场涨幅同步切到腾讯公开行情接口，服务器可同时刷新国内和美股指数 quote 与分钟线。
