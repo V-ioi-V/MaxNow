@@ -77,7 +77,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/install_local_codex_usage_launchd.sh`：注册 macOS launchd 任务 `cn.maxnow.local-codex-usage-report`，默认每 1 小时运行一次本机 Codex 用量上报。
 - `scripts/refresh_token_usage_on_server.sh`：服务器侧 Token 总账刷新脚本；拉取最新本机源账本，保护 `openclaw-usage.*` / `codex-server-usage.*` 运行态账本，并合并 `token-usage.*`。
 - `scripts/sync_weather.py`：从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，写入 `dash/data/dashboard.*` 的 `weather` 字段。
-- `scripts/sync_market_indices.py`：从东方财富公开行情接口刷新纳指100、标普500、上证指数、深证成指和创业板指，生成 Home 市场涨幅卡读取的 `dash/data/market-indices.*`。
+- `scripts/sync_market_indices.py`：从腾讯公开行情接口刷新纳指100、标普500、上证指数、深证成指和创业板指，生成 Home 市场涨幅卡读取的 `dash/data/market-indices.*`。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
 
 维护方式：
@@ -102,7 +102,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/codex-server-usage.json`：服务器 Codex 每日 token 用量、按模型 / 任务拆分；来源为服务器 `/root/.codex/sessions` 的 `token_count` 事件。
 - `dash/data/token-usage.json`：OpenClaw / Codex 合并后的统一 Token 总账，Token 页面优先读取它。
 - `dash/data/*-usage.js`：从对应 usage JSON 生成的浏览器 wrapper。
-- `dash/data/market-indices.json`：Home 市场涨幅卡片的只读指数缓存，由 `scripts/sync_market_indices.py` 从东方财富公开行情接口生成，只保存点位、涨跌、涨幅、更新时间和压缩后的日内走势点。
+- `dash/data/market-indices.json`：Home 市场涨幅卡片的只读指数缓存，由 `scripts/sync_market_indices.py` 从腾讯公开行情接口生成，只保存点位、涨跌、涨幅、更新时间和压缩后的日内走势点。
 - `dash/data/market-indices.js`：从 `market-indices.json` 生成的浏览器 wrapper。
 - `dash/data/project-meta.json`：MaxNow 当前版本、部署说明和最近更新摘要，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成。
 - `dash/data/project-meta.js`：从 `project-meta.json` 生成的浏览器 wrapper。
@@ -128,7 +128,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 服务器已安装并授权 GitHub CLI，账号 `V-ioi-V` 可读取 private personal-wiki；服务器上已验证 `python3 scripts/sync_wiki_todos.py` 能成功生成待办缓存。
 - 系统状态可以由 `python scripts/sync_system_status.py` 自动采集，但它只能更新 `automation` 和 `system`，不能覆盖今日判断、当前主线、待推进事项或日常记录。
 - 天气可以由 `python scripts/update_data.py weather` 或服务器 `runtime` 定时刷新，数据源是 Open-Meteo 免费 forecast API。
-- 市场涨幅可以由 `python scripts/update_data.py market-indices` 或服务器 `runtime` 定时刷新，数据源是东方财富公开行情接口；前端只读 `dash/data/market-indices.json`，不直接请求第三方行情接口。
+- 市场涨幅可以由 `python scripts/update_data.py market-indices` 或服务器 `runtime` 定时刷新，数据源是腾讯公开行情接口；前端只读 `dash/data/market-indices.json`，不直接请求第三方行情接口。
 - OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。服务器 root crontab 的 `MAXNOW-OPENCLAW-USAGE` 已接入每天 00:20 自动刷新，日志写入 `logs/openclaw-usage.log`；2026-07-05 复查确认 2026-07-03 至 2026-07-05 连续成功。
 - MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与最近更新模块。任何已完成的 Owner 可见或运维相关改动都要升版本：小 UI / 文案 / 布局调整、新页面能力、新数据源和新自动化默认升最后两位；重要功能模块稳定落地升 patch；大版本阶段切换升 minor / major。
 - Windows 本机 Codex 用量可以由 `python scripts/update_data.py codex-usage` 刷新；macOS 本机 Codex 用量可以由 `python scripts/update_data.py codex-macos-usage` 刷新；服务器 Codex 用量由 root 运行 `python3 scripts/update_data.py codex-server-usage` 刷新。它们都只读取 `.codex/sessions` 中的 `token_count` 与 `turn_context.model`，只导出 token 统计、模型名、时间戳、来源和 OpenAI API 等价费用估算，不导出对话正文。

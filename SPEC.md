@@ -99,7 +99,7 @@ MaxNow 由四类文件组成：
    - `scripts/refresh_token_usage_on_server.sh` 在服务器拉取最新源账本后保护 OpenClaw / Codex server 运行态账本，并合并 `token-usage.*`。
    - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
    - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
-   - `scripts/sync_market_indices.py` 从东方财富公开行情接口刷新纳指100、标普500和 A 股主指数，只生成 `dash/data/market-indices.*`。
+   - `scripts/sync_market_indices.py` 从腾讯公开行情接口刷新纳指100、标普500和 A 股主指数，只生成 `dash/data/market-indices.*`。
    - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
    - `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 刷新生活页吃啥候选，只生成 `dash/data/life-foods.*`。
 
@@ -324,7 +324,7 @@ UPDATE_LOG.md
 
 `dash/data/openclaw-usage.json` 负责 OpenClaw 用量账本，由 `scripts/sync_openclaw_usage.py` 从服务器 `/root/.openclaw/agents/main/sessions/*.trajectory.jsonl` 等只读轨迹生成。它记录北京时间日桶、模型、任务、input / output / cacheRead / total token，并按 OpenRouter 模型价格生成等价费用估算。该费用不是实际供应商账单。
 
-`dash/data/market-indices.json` 负责 Home 市场涨幅卡片，由 `scripts/sync_market_indices.py` 从东方财富公开行情接口生成。它只保存指数名称、符号、区域、当前点位、昨收、涨跌额、涨跌幅、更新时间、来源 URL 和压缩后的日内走势点；前端只读展示，不直接请求第三方行情接口。服务器 `runtime` 每 10 分钟会一并刷新该数据，接口失败时脚本优先保留旧缓存并标记 `stale`。
+`dash/data/market-indices.json` 负责 Home 市场涨幅卡片，由 `scripts/sync_market_indices.py` 从腾讯公开行情接口生成。它只保存指数名称、符号、区域、当前点位、昨收、涨跌额、涨跌幅、更新时间、来源 URL 和压缩后的日内走势点；前端只读展示，不直接请求第三方行情接口。服务器 `runtime` 每 10 分钟会一并刷新该数据，接口失败时脚本优先保留旧缓存并标记 `stale`。
 
 `dash/data/project-meta.json` 负责 MaxNow 自身版本和最近更新展示，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成；页面只读展示，不在前端修改版本号。`VERSION` 采用 `x.x.x.xx` 格式，例如 `1.0.0.00`。
 

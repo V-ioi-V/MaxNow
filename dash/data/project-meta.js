@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 14:59",
-  "version": "1.0.0.30",
-  "versionLabel": "v1.0.0.30",
-  "branch": "bugfix/market-indices-eastmoney",
-  "commit": "f65765b",
+  "updatedAt": "2026-07-08 15:21",
+  "version": "1.0.0.31",
+  "versionLabel": "v1.0.0.31",
+  "branch": "bugfix/market-indices-tencent",
+  "commit": "0de955e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/market-indices-eastmoney · commit f65765b · 有未提交代码改动",
+  "deployNote": "bugfix/market-indices-tencent · commit 0de955e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "修正 Home 市场涨幅数据源",
+      "summary": "将市场涨幅同步切到腾讯公开行情接口，服务器可同时刷新国内和美股指数 quote 与分钟线。"
+    },
     {
       "date": "2026-07-08",
       "title": "新增 Home 市场涨幅卡",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-07",
       "title": "收窄今日 Todo 日期口径",
       "summary": "今日 Todo 只展示 `due_at` 等于浏览器当天日期的未完成待办，不再混入过期未完成项。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "将 Home 时间点替换为今日 Todo",
-      "summary": "移除 Home 右侧静态 `Schedule / 时间点` 模块，不再展示旧的固定节奏说明。"
     }
   ]
 };

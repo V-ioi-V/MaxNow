@@ -1,8 +1,8 @@
 import json
 import http.client
+import re
 import sys
 import urllib.error
-import urllib.parse
 import urllib.request
 from datetime import datetime
 from pathlib import Path
@@ -20,7 +20,7 @@ INDEXES = [
         "symbol": "NDX",
         "displaySymbol": "NDX",
         "region": "US",
-        "secid": "100.NDX",
+        "quoteCode": "usNDX",
         "currency": "USD",
     },
     {
@@ -29,7 +29,7 @@ INDEXES = [
         "symbol": "SPX",
         "displaySymbol": "SPX",
         "region": "US",
-        "secid": "100.SPX",
+        "quoteCode": "usINX",
         "currency": "USD",
     },
     {
@@ -38,7 +38,7 @@ INDEXES = [
         "symbol": "000001",
         "displaySymbol": "SH000001",
         "region": "CN",
-        "secid": "1.000001",
+        "quoteCode": "sh000001",
         "currency": "CNY",
     },
     {
@@ -47,7 +47,7 @@ INDEXES = [
         "symbol": "399001",
         "displaySymbol": "SZ399001",
         "region": "CN",
-        "secid": "0.399001",
+        "quoteCode": "sz399001",
         "currency": "CNY",
     },
     {
@@ -56,10 +56,13 @@ INDEXES = [
         "symbol": "399006",
         "displaySymbol": "SZ399006",
         "region": "CN",
-        "secid": "0.399006",
+        "quoteCode": "sz399006",
         "currency": "CNY",
     },
 ]
+
+QUOTE_PATTERN = re.compile(r'v_([^=]+)="([^"]*)";')
+SOURCE_NAME = "Tencent Finance"
 
 
 def now_text():
@@ -78,25 +81,40 @@ def write_outputs(data):
     JS_PATH.write_text(f"window.{GLOBAL_NAME} = " + text + ";\n", encoding="utf-8")
 
 
-def request_json(url):
+def request_bytes(url):
     request = urllib.request.Request(
         url,
         headers={
             "User-Agent": "Mozilla/5.0 MaxNow market sync",
-            "Accept": "application/json",
-            "Referer": "https://quote.eastmoney.com/",
+            "Accept": "*/*",
+            "Referer": "https://gu.qq.com/",
         },
     )
     with urllib.request.urlopen(request, timeout=12) as response:
-        return json.loads(response.read().decode("utf-8"))
+        return response.read()
+
+
+def request_text(url, encoding="utf-8"):
+    return request_bytes(url).decode(encoding, errors="replace")
+
+
+def request_json(url):
+    return json.loads(request_text(url))
 
 
 def to_number(value):
     if isinstance(value, (int, float)):
         return float(value)
     if isinstance(value, str) and value.strip() not in {"", "-", "--"}:
-        return float(value)
+        return float(value.strip().replace(",", ""))
     return None
+
+
+def format_time_token(value):
+    text = str(value or "").strip()
+    if len(text) == 4 and text.isdigit():
+        return f"{text[:2]}:{text[2:]}"
+    return text[-5:]
 
 
 def compact_trend(points, max_points=36):
@@ -111,7 +129,7 @@ def compact_trend(points, max_points=36):
 
     return [
         {
-            "time": time_text[-5:],
+            "time": format_time_token(time_text),
             "value": round(float(value), 4),
         }
         for time_text, value in selected
@@ -119,49 +137,31 @@ def compact_trend(points, max_points=36):
 
 
 def quote_url():
-    secids = ",".join(item["secid"] for item in INDEXES)
-    params = urllib.parse.urlencode(
-        {
-            "fltt": 2,
-            "secids": secids,
-            "fields": "f12,f14,f2,f3,f4,f18,f13,f15,f16,f17",
-        }
-    )
-    return f"https://push2.eastmoney.com/api/qt/ulist.np/get?{params}"
+    codes = ",".join(item["quoteCode"] for item in INDEXES)
+    return f"https://qt.gtimg.cn/q={codes}"
 
 
-def trend_url(secid):
-    params = urllib.parse.urlencode(
-        {
-            "secid": secid,
-            "fields1": "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11",
-            "fields2": "f51,f53",
-            "iscr": 0,
-            "iscca": 0,
-            "ndays": 1,
-        }
-    )
-    return f"https://push2his.eastmoney.com/api/qt/stock/trends2/get?{params}"
+def trend_url(quote_code):
+    return f"https://web.ifzq.gtimg.cn/appstock/app/minute/query?code={quote_code}"
 
 
 def fetch_quotes():
     url = quote_url()
-    payload = request_json(url)
-    diff = ((payload.get("data") or {}).get("diff") or [])
+    text = request_text(url, encoding="gb18030")
     quotes = {}
-    for item in diff:
-        secid = f"{item.get('f13')}.{item.get('f12')}"
-        quotes[secid] = item
+    for code, raw in QUOTE_PATTERN.findall(text):
+        quotes[code] = raw.split("~")
     return quotes, url
 
 
-def fetch_trend(secid):
-    url = trend_url(secid)
+def fetch_trend(quote_code):
+    url = trend_url(quote_code)
     payload = request_json(url)
-    trends = ((payload.get("data") or {}).get("trends") or [])
+    quote_data = ((payload.get("data") or {}).get(quote_code) or {})
+    trends = (((quote_data.get("data") or {}).get("data")) or [])
     points = []
     for line in trends:
-        parts = str(line).split(",")
+        parts = str(line).split()
         if len(parts) < 2:
             continue
         value = to_number(parts[1])
@@ -171,18 +171,30 @@ def fetch_trend(secid):
     return compact_trend(points), url
 
 
+def quote_field(fields, index):
+    if index >= len(fields):
+        return ""
+    return fields[index]
+
+
 def build_index(config, quote, source_url):
-    price = to_number(quote.get("f2"))
-    previous_close = to_number(quote.get("f18"))
-    change = to_number(quote.get("f4"))
-    change_percent = to_number(quote.get("f3"))
+    price = to_number(quote_field(quote, 3))
+    previous_close = to_number(quote_field(quote, 4))
+    change = to_number(quote_field(quote, 31))
+    change_percent = to_number(quote_field(quote, 32))
 
     if price is None or previous_close is None or change is None or change_percent is None:
-        raise ValueError(f"{config['secid']}: missing quote fields")
+        raise ValueError(f"{config['quoteCode']}: missing quote fields")
 
-    trend, trend_source_url = fetch_trend(config["secid"])
+    trend = []
+    trend_source_url = trend_url(config["quoteCode"])
+    trend_error = ""
+    try:
+        trend, trend_source_url = fetch_trend(config["quoteCode"])
+    except (urllib.error.URLError, http.client.RemoteDisconnected, TimeoutError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
+        trend_error = str(error)
 
-    return {
+    item = {
         **config,
         "currency": config["currency"],
         "price": round(price, 4),
@@ -191,11 +203,14 @@ def build_index(config, quote, source_url):
         "changePercent": round(change_percent, 4),
         "updatedAt": now_text(),
         "marketState": "",
-        "source": "Eastmoney",
+        "source": SOURCE_NAME,
         "sourceUrl": source_url,
         "trendSourceUrl": trend_source_url,
         "trend": trend,
     }
+    if trend_error:
+        item["trendError"] = trend_error
+    return item
 
 
 def fallback_item(config, existing_by_key, reason):
@@ -211,7 +226,7 @@ def fallback_item(config, existing_by_key, reason):
         "changePercent": None,
         "updatedAt": "",
         "marketState": "unknown",
-        "source": "Eastmoney",
+        "source": SOURCE_NAME,
         "sourceUrl": "",
         "trend": [],
         "stale": True,
@@ -238,9 +253,9 @@ def main():
 
     for config in INDEXES:
         try:
-            quote = quotes.get(config["secid"])
+            quote = quotes.get(config["quoteCode"])
             if not quote:
-                raise ValueError(f"{config['secid']}: missing quote")
+                raise ValueError(f"{config['quoteCode']}: missing quote")
             item = build_index(config, quote, source_url)
             indices.append(item)
             print(f"[ok] fetched {config['symbol']} {item['changePercent']:.2f}%")
@@ -257,7 +272,7 @@ def main():
     data = {
         "schemaVersion": 1,
         "updatedAt": now_text(),
-        "source": "Eastmoney",
+        "source": SOURCE_NAME,
         "refreshIntervalMinutes": 10,
         "indices": indices,
     }
