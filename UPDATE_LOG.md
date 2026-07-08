@@ -9,6 +9,14 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-07-08
+
+### 将 Today Status 改为自动态势
+
+- Home 顶部 Today Status 不再依赖过期 `dashboard.json.today` 手填字段作为主状态，改为基于今日 Todo、自动化状态、当前时段、ROADMAP 和 Token 活跃自动生成模式、节奏、焦点和摘要。
+- `dashboard.json.today` 仅作为当天人工 override；旧日期判断会被忽略，不再显示“待刷新 N 天”占据首页主状态。
+- 将 Dash 缓存版本提升到 `styles.css?v=101` 和 `app.js?v=95`，并将 `VERSION` 从 `1.0.0.27` 提升到 `1.0.0.28`。
+
 ## 2026-07-07
 
 ### 收窄今日 Todo 日期口径

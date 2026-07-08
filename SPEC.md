@@ -143,7 +143,7 @@ Home 按顺序回答这些问题：
 
 必备模块：
 
-- 今日状态：模式、精力、焦点、一句话判断、更新时间，以及由前端根据当前时段、`today.updatedAt`、待推进、Token 和自动化状态派生的轻量状态信号；前端只展示新鲜度和辅助判断，不自动覆盖 Owner 写入的今日判断。
+- 今日状态：由前端根据今日 Todo、当前时段、ROADMAP 待推进 / 主线、Token 活跃和自动化状态自动推导“执行 / 推进 / 复盘 / 探索 / 巡检”等模式；`dashboard.json.today` 只作为当天人工 override，旧日期判断不再占据主状态。
 - 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
 - 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
 - Token 近期活动：Home 主内容区展示近 180 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
@@ -275,7 +275,7 @@ UPDATE_LOG.md
 
 `dash/data/dashboard.json` 负责个人状态、主线、行动、日常记录、时间线、系统状态、Token 使用、Home 天气卡和时间卡片的手动特殊日期列表。
 
-其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`today`、`mainlines`、`actions` 和 `journal` 仍保留 Owner 判断或受控草稿，不由系统状态脚本覆盖。
+其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`mainlines`、`actions` 和 `journal` 仍保留 Owner 判断或受控草稿，不由系统状态脚本覆盖。`today` 可以保留当天人工 override，但 Home 主状态默认由前端从今日 Todo、ROADMAP、Token 和自动化信号推导，过期 `today` 不再作为主判断。
 
 `specialDates` 是可选数组，用于 Home 时间卡片当天匹配。支持固定公历日期：
 
