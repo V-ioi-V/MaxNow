@@ -154,7 +154,7 @@ Home 按顺序回答这些问题：
 - Token 近期活动：Home `wide-short` 卡展示近 90 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
 - 市场涨幅：Home `mid-tall` 卡展示纳指100、标普500、上证指数、深证成指和创业板指的当前点位、涨跌幅和日内迷你走势；数据来自 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 或服务器 `runtime` 每 10 分钟刷新，前端不直接请求行情接口。
 - 待推进：1-3 个近期应该移动的 Now / Next 动作；这里不是完整 todo app，也不是已完成记录。
-- 日常记录：保存个人上下文和关键决定的短记录。
+- Home 不再单独展示“今日记录”卡片；静态项目原则和边界说明进入规格、上下文或最近更新，真正的当天个人判断由顶部今日状态承载。
 - 今日 Todo：Home 右侧只展示 personal-wiki 同步来的当天明确执行日期待办；以浏览器当天日期匹配 `due_at`，不混入过期未完成或无日期待办。v1 只读展示，不支持在 MaxNow 内编辑或标记完成。
 - 系统状态：作为云服务页入口，用来快速判断机器是否健康；点击卡片进入“云服务”页查看“系统与托管”模块，其中包含 Host、站点域名、nginx、证书、部署版本、CPU、磁盘、内存和运行时间等完整服务器状态快照。`TLS / nginx` 不再作为单独任务卡展示，也不展示部署根目录、nginx 配置路径或采集器说明这类低频实现细节。
 - 豆奶签到：Home 只展示每日签到摘要入口，第一排展示今日流量、今日豆丁和今日账号有效期延长时长，第二排展示累计签到天数、累计流量和累计账号有效期延长时长；不在 Home 放趋势图。点击卡片进入“豆奶”详情页。数据来自 `dash/data/dounai_checkin.json`。
@@ -281,9 +281,9 @@ IDEAS.md
 UPDATE_LOG.md
 ```
 
-`dash/data/dashboard.json` 负责个人状态、主线、行动、日常记录、时间线、系统状态、Token 使用、Home 天气卡和时间卡片的手动特殊日期列表。
+`dash/data/dashboard.json` 负责个人状态、主线、行动、时间线、系统状态、Token 使用、Home 天气卡和时间卡片的手动特殊日期列表。历史 `journal` 字段可保留为数据兼容，但 Home 不再读取它生成独立卡片。
 
-其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`mainlines`、`actions` 和 `journal` 仍保留 Owner 判断或受控草稿，不由系统状态脚本覆盖。`today` 可以保留当天人工 override，但 Home 主状态默认由前端从今日 Todo、ROADMAP、Token 和自动化信号推导，过期 `today` 不再作为主判断。
+其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`mainlines` 和 `actions` 仍保留 Owner 判断或受控草稿，不由系统状态脚本覆盖。`today` 可以保留当天人工 override，但 Home 主状态默认由前端从今日 Todo、ROADMAP、Token 和自动化信号推导，过期 `today` 不再作为主判断。
 
 `specialDates` 是可选数组，用于 Home 时间卡片当天匹配。支持固定公历日期：
 
