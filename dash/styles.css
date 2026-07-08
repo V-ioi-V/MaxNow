@@ -1275,7 +1275,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   grid-template-columns: 1fr;
   align-items: stretch;
   gap: 0;
-  padding: 18px 20px 20px;
+  padding: 18px 20px;
 }
 
 .actions-panel .panel-head {
@@ -1287,7 +1287,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 }
 
 .focus-panel.token-home-activity-panel .panel-head {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .market-panel .panel-head {
@@ -2307,7 +2307,8 @@ a.last30-item {
 }
 
 .token-home-activity-chart {
-  min-height: 92px;
+  --activity-cell-gap: clamp(4px, 0.36vw, 7px);
+  min-height: 0;
 }
 
 .token-activity-scroll {

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 15:34",
-  "version": "1.0.0.32",
-  "versionLabel": "v1.0.0.32",
-  "branch": "bugfix/token-range-fallback",
-  "commit": "d39cb5e",
+  "updatedAt": "2026-07-08 16:54",
+  "version": "1.0.0.33",
+  "versionLabel": "v1.0.0.33",
+  "branch": "bugfix/home-token-heatmap-90d",
+  "commit": "1c44054",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/token-range-fallback · commit d39cb5e · 有未提交代码改动",
+  "deployNote": "bugfix/home-token-heatmap-90d · commit 1c44054 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "调整 Home Token 热力格为 90 天",
+      "summary": "Home Token 活动热力格从近 180 天改回近 90 天，保持 3 行展示，避免左侧卡片内格子过小。"
+    },
     {
       "date": "2026-07-08",
       "title": "修正 Token 范围切换 fallback",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "优化 Dash 首屏加载链路",
       "summary": "Dash 首屏不再同步加载 `dash/data/*.js` wrapper，也不再等待 Token、同行记、生活页等隐藏视图数据后才渲染 Home。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "将 Today Status 改为自动态势",
-      "summary": "Home 顶部 Today Status 不再依赖过期 `dashboard.json.today` 手填字段作为主状态，改为基于今日 Todo、自动化状态、当前时段、ROADMAP 和 Token 活跃自动生成模式、节奏、焦点和摘要。"
     }
   ]
 };
