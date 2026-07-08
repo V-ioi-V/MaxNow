@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 14:50",
+  "updatedAt": "2026-07-08 14:59",
   "version": "1.0.0.30",
   "versionLabel": "v1.0.0.30",
-  "branch": "feature/home-market-indices",
-  "commit": "bfbc72e",
+  "branch": "bugfix/market-indices-eastmoney",
+  "commit": "f65765b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/home-market-indices · commit bfbc72e · 有未提交代码改动",
+  "deployNote": "bugfix/market-indices-eastmoney · commit f65765b · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-08",

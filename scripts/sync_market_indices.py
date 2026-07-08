@@ -1,4 +1,5 @@
 import json
+import http.client
 import sys
 import urllib.error
 import urllib.parse
@@ -16,37 +17,47 @@ INDEXES = [
     {
         "key": "nasdaq100",
         "name": "纳指100",
-        "symbol": "^NDX",
+        "symbol": "NDX",
         "displaySymbol": "NDX",
         "region": "US",
+        "secid": "100.NDX",
+        "currency": "USD",
     },
     {
         "key": "sp500",
         "name": "标普500",
-        "symbol": "^GSPC",
+        "symbol": "SPX",
         "displaySymbol": "SPX",
         "region": "US",
+        "secid": "100.SPX",
+        "currency": "USD",
     },
     {
         "key": "shanghai",
         "name": "上证指数",
-        "symbol": "000001.SS",
+        "symbol": "000001",
         "displaySymbol": "SH000001",
         "region": "CN",
+        "secid": "1.000001",
+        "currency": "CNY",
     },
     {
         "key": "shenzhen",
         "name": "深证成指",
-        "symbol": "399001.SZ",
+        "symbol": "399001",
         "displaySymbol": "SZ399001",
         "region": "CN",
+        "secid": "0.399001",
+        "currency": "CNY",
     },
     {
         "key": "chinext",
         "name": "创业板指",
-        "symbol": "399006.SZ",
+        "symbol": "399006",
         "displaySymbol": "SZ399006",
         "region": "CN",
+        "secid": "0.399006",
+        "currency": "CNY",
     },
 ]
 
@@ -71,20 +82,25 @@ def request_json(url):
     request = urllib.request.Request(
         url,
         headers={
-            "User-Agent": "MaxNow market sync",
+            "User-Agent": "Mozilla/5.0 MaxNow market sync",
             "Accept": "application/json",
+            "Referer": "https://quote.eastmoney.com/",
         },
     )
     with urllib.request.urlopen(request, timeout=12) as response:
         return json.loads(response.read().decode("utf-8"))
 
 
-def compact_trend(timestamps, values, max_points=36):
-    pairs = [
-        (timestamp, value)
-        for timestamp, value in zip(timestamps, values)
-        if timestamp and isinstance(value, (int, float))
-    ]
+def to_number(value):
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str) and value.strip() not in {"", "-", "--"}:
+        return float(value)
+    return None
+
+
+def compact_trend(points, max_points=36):
+    pairs = [(time_text, value) for time_text, value in points if time_text and isinstance(value, (int, float))]
     if len(pairs) <= max_points:
         selected = pairs
     else:
@@ -95,67 +111,90 @@ def compact_trend(timestamps, values, max_points=36):
 
     return [
         {
-            "time": datetime.fromtimestamp(timestamp).astimezone().strftime("%H:%M"),
+            "time": time_text[-5:],
             "value": round(float(value), 4),
         }
-        for timestamp, value in selected
+        for time_text, value in selected
     ]
 
 
-def first_number(*values):
-    for value in values:
-        if isinstance(value, (int, float)):
-            return float(value)
-    return None
-
-
-def fetch_index(config):
+def quote_url():
+    secids = ",".join(item["secid"] for item in INDEXES)
     params = urllib.parse.urlencode(
         {
-            "range": "1d",
-            "interval": "5m",
-            "includePrePost": "false",
+            "fltt": 2,
+            "secids": secids,
+            "fields": "f12,f14,f2,f3,f4,f18,f13,f15,f16,f17",
         }
     )
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(config['symbol'])}?{params}"
-    payload = request_json(url)
-    result = (payload.get("chart", {}).get("result") or [None])[0]
-    if not result:
-        error = payload.get("chart", {}).get("error") or "empty chart result"
-        raise ValueError(f"{config['symbol']}: {error}")
+    return f"https://push2.eastmoney.com/api/qt/ulist.np/get?{params}"
 
-    meta = result.get("meta") or {}
-    quote = ((result.get("indicators") or {}).get("quote") or [{}])[0]
-    timestamps = result.get("timestamp") or []
-    closes = quote.get("close") or []
-    clean_closes = [float(value) for value in closes if isinstance(value, (int, float))]
-    price = first_number(meta.get("regularMarketPrice"), clean_closes[-1] if clean_closes else None)
-    previous_close = first_number(meta.get("chartPreviousClose"), meta.get("previousClose"))
 
-    if price is None or previous_close is None:
-        raise ValueError(f"{config['symbol']}: missing price or previous close")
-
-    change = price - previous_close
-    change_percent = (change / previous_close * 100) if previous_close else 0
-    market_time = meta.get("regularMarketTime")
-    updated_at = (
-        datetime.fromtimestamp(market_time).astimezone().strftime("%Y-%m-%d %H:%M")
-        if isinstance(market_time, (int, float))
-        else now_text()
+def trend_url(secid):
+    params = urllib.parse.urlencode(
+        {
+            "secid": secid,
+            "fields1": "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11",
+            "fields2": "f51,f53",
+            "iscr": 0,
+            "iscca": 0,
+            "ndays": 1,
+        }
     )
+    return f"https://push2his.eastmoney.com/api/qt/stock/trends2/get?{params}"
+
+
+def fetch_quotes():
+    url = quote_url()
+    payload = request_json(url)
+    diff = ((payload.get("data") or {}).get("diff") or [])
+    quotes = {}
+    for item in diff:
+        secid = f"{item.get('f13')}.{item.get('f12')}"
+        quotes[secid] = item
+    return quotes, url
+
+
+def fetch_trend(secid):
+    url = trend_url(secid)
+    payload = request_json(url)
+    trends = ((payload.get("data") or {}).get("trends") or [])
+    points = []
+    for line in trends:
+        parts = str(line).split(",")
+        if len(parts) < 2:
+            continue
+        value = to_number(parts[1])
+        if value is None:
+            continue
+        points.append((parts[0], value))
+    return compact_trend(points), url
+
+
+def build_index(config, quote, source_url):
+    price = to_number(quote.get("f2"))
+    previous_close = to_number(quote.get("f18"))
+    change = to_number(quote.get("f4"))
+    change_percent = to_number(quote.get("f3"))
+
+    if price is None or previous_close is None or change is None or change_percent is None:
+        raise ValueError(f"{config['secid']}: missing quote fields")
+
+    trend, trend_source_url = fetch_trend(config["secid"])
 
     return {
         **config,
-        "currency": meta.get("currency", ""),
+        "currency": config["currency"],
         "price": round(price, 4),
         "previousClose": round(previous_close, 4),
         "change": round(change, 4),
         "changePercent": round(change_percent, 4),
-        "updatedAt": updated_at,
-        "marketState": meta.get("marketState", ""),
-        "source": "Yahoo Finance",
-        "sourceUrl": url,
-        "trend": compact_trend(timestamps, closes),
+        "updatedAt": now_text(),
+        "marketState": "",
+        "source": "Eastmoney",
+        "sourceUrl": source_url,
+        "trendSourceUrl": trend_source_url,
+        "trend": trend,
     }
 
 
@@ -172,7 +211,7 @@ def fallback_item(config, existing_by_key, reason):
         "changePercent": None,
         "updatedAt": "",
         "marketState": "unknown",
-        "source": "Yahoo Finance",
+        "source": "Eastmoney",
         "sourceUrl": "",
         "trend": [],
         "stale": True,
@@ -190,12 +229,22 @@ def main():
     indices = []
     errors = []
 
+    try:
+        quotes, source_url = fetch_quotes()
+    except (urllib.error.URLError, http.client.RemoteDisconnected, TimeoutError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
+        quotes = {}
+        source_url = quote_url()
+        errors.append(f"quotes: {error}")
+
     for config in INDEXES:
         try:
-            item = fetch_index(config)
+            quote = quotes.get(config["secid"])
+            if not quote:
+                raise ValueError(f"{config['secid']}: missing quote")
+            item = build_index(config, quote, source_url)
             indices.append(item)
             print(f"[ok] fetched {config['symbol']} {item['changePercent']:.2f}%")
-        except (urllib.error.URLError, TimeoutError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
+        except (urllib.error.URLError, http.client.RemoteDisconnected, TimeoutError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
             reason = str(error)
             errors.append(f"{config['symbol']}: {reason}")
             indices.append(fallback_item(config, existing_by_key, reason))
@@ -208,7 +257,7 @@ def main():
     data = {
         "schemaVersion": 1,
         "updatedAt": now_text(),
-        "source": "Yahoo Finance",
+        "source": "Eastmoney",
         "refreshIntervalMinutes": 10,
         "indices": indices,
     }

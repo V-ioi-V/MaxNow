@@ -14,7 +14,7 @@
 ### 新增 Home 市场涨幅卡
 
 - Home 主内容区顶部改为 Token 热力格 + 市场涨幅双列，右侧展示纳指100、标普500、上证指数、深证成指和创业板指。
-- 新增 `dash/data/market-indices.*` 和 `scripts/sync_market_indices.py`，通过 Yahoo Finance chart API 生成点位、涨跌幅和压缩后的日内走势；`runtime` 每 10 分钟一并刷新。
+- 新增 `dash/data/market-indices.*` 和 `scripts/sync_market_indices.py`，通过东方财富公开行情接口生成点位、涨跌幅和压缩后的日内走势；`runtime` 每 10 分钟一并刷新。
 - 云服务页基础运行同步卡补充行情日志和写入范围，`scripts/check.py` 校验行情数据形状和 wrapper 一致性。
 - 将 Dash 缓存版本提升到 `styles.css?v=103` 和 `app.js?v=97`，并将 `VERSION` 从 `1.0.0.29` 提升到 `1.0.0.30`。
 
