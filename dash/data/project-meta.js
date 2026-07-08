@@ -1,14 +1,24 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 21:47",
-  "version": "1.0.0.41",
-  "versionLabel": "v1.0.0.41",
-  "branch": "feature/home-status-long-bars",
-  "commit": "0ee6189",
+  "updatedAt": "2026-07-08 22:43",
+  "version": "1.0.0.43",
+  "versionLabel": "v1.0.0.43",
+  "branch": "feature/friendly-token-sync-times",
+  "commit": "8a71e7b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/home-status-long-bars · commit 0ee6189 · 有未提交代码改动",
+  "deployNote": "feature/friendly-token-sync-times · commit 8a71e7b · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "移除 Home 稍后留意模块",
+      "summary": "从 Home 左侧内容流移除“稍后留意 / Links”模块，避免 Roadmap 任务、服务器链路和文档入口重复占用首页空间。"
+    },
+    {
+      "date": "2026-07-08",
+      "title": "优化 Token 来源同步时间",
+      "summary": "Token 页“各来源最后同步”从完整日期改为自然时间表达：刚同步显示“刚刚 / X 分钟前”，当天显示“今天 HH:mm”，昨天显示“昨天 HH:mm”，更早显示“M月D日 HH:mm”。"
+    },
     {
       "date": "2026-07-08",
       "title": "调整 Home Todo 和 Token 长条布局",
@@ -23,16 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "标准化 Home Widget 尺寸",
       "summary": "Home 右侧 `home-side-stack` 从单列大卡改为 widget 网格：`widget-compact` 占半宽，`widget-wide` / `wide-*` / `mid-*` 占满右列。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "改为 Home 两列主版式",
-      "summary": "Home 主内容从三列视觉布局调整为两列外壳：左列承载个人主任务，右列用 `home-side-stack` 纵向承载市场 / 用量 / 更新和 Todo / 豆奶 / 系统状态。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "调整 Home 顶部左右比例",
-      "summary": "收窄 Home 顶部 Today Status 卡片的横向占比，提高右侧天气卡和小日历 widget 组的桌面最小宽度。"
     }
   ]
 };

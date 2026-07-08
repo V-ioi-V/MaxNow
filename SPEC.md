@@ -150,7 +150,7 @@ Home 按顺序回答这些问题：
 - 今日状态：由前端根据今日 Todo、当前时段、ROADMAP 待推进 / 主线、Token 活跃和自动化状态自动推导“执行 / 推进 / 复盘 / 探索 / 巡检”等模式；`dashboard.json.today` 只作为当天人工 override，旧日期判断不再占据主状态。
 - 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
 - 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
-- Home 主内容版式：状态条下方使用统一 `home-board` 两列外壳，`home-lane-primary` 承载左侧主任务和内容型长模块，右侧 `home-side-stack` 只承载短扫读次级信号和状态入口；`home-lane-signal` / `home-lane-rail` 只作为语义分组，视觉上展平成右侧 widget 网格。所有 Home 模块都保留 `home-card-*` 和 `data-card-size`，右侧小组件用 `widget-compact` 占半宽，需要内部指标网格或列表宽度的短状态模块用 `widget-wide` 或 `mid-*` 占满右列。最近更新、外部输入和稍后留意属于左侧内容流，用来补齐左列纵向空间，不放进右侧一路下排。不要再用固定 `grid-area`、局部左右列、固定高度或空白补丁拼模块，也不要为了二列或三列对齐硬拉大所有卡片。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认语义 lane 和卡型。
+- Home 主内容版式：状态条下方使用统一 `home-board` 两列外壳，`home-lane-primary` 承载左侧主任务和内容型长模块，右侧 `home-side-stack` 只承载短扫读次级信号和状态入口；`home-lane-signal` / `home-lane-rail` 只作为语义分组，视觉上展平成右侧 widget 网格。所有 Home 模块都保留 `home-card-*` 和 `data-card-size`，右侧小组件用 `widget-compact` 占半宽，需要内部指标网格或列表宽度的短状态模块用 `widget-wide` 或 `mid-*` 占满右列。最近更新和外部输入属于左侧内容流；不要再保留单独“稍后留意”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，文档入口进入最近更新或项目状态。不要再用固定 `grid-area`、局部左右列、固定高度或空白补丁拼模块，也不要为了二列或三列对齐硬拉大所有卡片。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认语义 lane 和卡型。
 - Token 近期活动：Home `wide-short` 卡展示近 90 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
 - 市场涨幅：Home `mid-tall` 卡展示纳指100、标普500、上证指数、深证成指和创业板指的当前点位、涨跌幅和日内迷你走势；数据来自 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 或服务器 `runtime` 每 10 分钟刷新，前端不直接请求行情接口。
 - 待推进：1-3 个近期应该移动的 Now / Next 动作；这里不是完整 todo app，也不是已完成记录。
@@ -158,7 +158,7 @@ Home 按顺序回答这些问题：
 - 今日 Todo：Home 右侧只展示 personal-wiki 同步来的当天明确执行日期待办；以浏览器当天日期匹配 `due_at`，不混入过期未完成或无日期待办。v1 只读展示，不支持在 MaxNow 内编辑或标记完成。
 - 系统状态：作为云服务页入口，用来快速判断机器是否健康；点击卡片进入“云服务”页查看“系统与托管”模块，其中包含 Host、站点域名、nginx、证书、部署版本、CPU、磁盘、内存和运行时间等完整服务器状态快照。`TLS / nginx` 不再作为单独任务卡展示，也不展示部署根目录、nginx 配置路径或采集器说明这类低频实现细节。
 - 豆奶签到：Home 只展示每日签到摘要入口，第一排展示今日流量、今日豆丁和今日账号有效期延长时长，第二排展示累计签到天数、累计流量和累计账号有效期延长时长；不在 Home 放趋势图。点击卡片进入“豆奶”详情页。数据来自 `dash/data/dounai_checkin.json`。
-- 外部输入：Home 只保留一个外部输入模块，由 Last-30 展示最新信号、本周观察和近 30 天主线；不要再单独铺一张重复的 AI 外部输入卡。链接和补充提醒可以继续放在“稍后留意”，但必须保持次要。
+- 外部输入：Home 只保留一个外部输入模块，由 Last-30 展示最新信号、本周观察和近 30 天主线；不要再单独铺一张重复的 AI 外部输入卡，也不再用“稍后留意”承接杂项链接。
 - personal-wiki 近期待办入口：Home `wide-tall` 卡只读展示近期未完成待办的前 4 条，并跳转到 personal-wiki；v1 不支持编辑或标记完成。完整数量只进入状态 pill，不允许用全部待办撑高首页。
 - MaxNow 最近更新：Home 左侧内容流展示当前可读版本号、部署说明和最近几条 `UPDATE_LOG.md` 更新摘要；版本号由根目录 `VERSION` 维护，格式为 `x.x.x.xx`。任何已完成的 Owner 可见或运维相关改动都必须升版本并刷新 `project-meta`：小 UI / 文案 / 布局调整、新增页面能力、新数据源和新自动化默认升最后两位；重要功能模块稳定落地升 patch；大版本阶段切换升 minor / major。
 
