@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 10:42",
+  "updatedAt": "2026-07-08 11:31",
   "version": "1.0.0.28",
   "versionLabel": "v1.0.0.28",
-  "branch": "feature/auto-today-status",
-  "commit": "46850d5",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/auto-today-status · commit 46850d5 · 有未提交代码改动",
+  "branch": "main",
+  "commit": "5c86013",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 5c86013 · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-08",
