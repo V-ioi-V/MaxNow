@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-07 20:09",
-  "version": "1.0.0.27",
-  "versionLabel": "v1.0.0.27",
-  "branch": "main",
-  "commit": "64247fb",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 64247fb · 干净",
+  "updatedAt": "2026-07-08 10:42",
+  "version": "1.0.0.28",
+  "versionLabel": "v1.0.0.28",
+  "branch": "feature/auto-today-status",
+  "commit": "46850d5",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/auto-today-status · commit 46850d5 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "将 Today Status 改为自动态势",
+      "summary": "Home 顶部 Today Status 不再依赖过期 `dashboard.json.today` 手填字段作为主状态，改为基于今日 Todo、自动化状态、当前时段、ROADMAP 和 Token 活跃自动生成模式、节奏、焦点和摘要。"
+    },
     {
       "date": "2026-07-07",
       "title": "收窄今日 Todo 日期口径",
@@ -28,11 +33,6 @@
       "date": "2026-07-07",
       "title": "修复 macOS Codex 定时上报运行目录",
       "summary": "将 Owner macOS 的 launchd 任务改为指向专用 clone `/Users/bytedance/.maxnow-token-report`，避免 Desktop 路径被 macOS 隐私权限拦截。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "调整 Home Token 热力格为 180 天",
-      "summary": "Home Token 活动热力格从近 90 天调整为近 180 天，保持 3 行展示，让格子更小、更适合宽卡片。"
     }
   ]
 }

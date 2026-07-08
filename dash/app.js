@@ -81,8 +81,8 @@ const copy = {
   rickyTitle: "\u6211\u548c Ricky",
   lifeTitle: "\u751f\u6d3b",
   today: "\u4eca\u5929",
-  energy: "\u80fd\u91cf",
-  focus: "\u4e3b\u7ebf",
+  energy: "\u8282\u594f",
+  focus: "\u7126\u70b9",
   updatedAtShort: "\u66f4\u65b0",
   statusSnapshot: "\u72b6\u6001\u5feb\u7167",
   todayEvents: "\u6700\u65b0\u4fe1\u53f7",
@@ -243,41 +243,9 @@ function parseLocalDateTime(value = "") {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function calendarDayDiff(left, right) {
-  return Math.floor((cloneLocalDate(left).getTime() - cloneLocalDate(right).getTime()) / 86400000);
-}
-
-function getTodayFreshness(updatedAt, now = new Date()) {
-  const updatedDate = parseLocalDateTime(updatedAt);
-  if (!updatedDate) {
-    return {
-      state: "missing",
-      label: "\u5f85\u786e\u8ba4",
-      detail: "\u4eca\u65e5\u5224\u65ad\u8fd8\u6ca1\u6709\u5199\u5165",
-    };
-  }
-
-  const days = Math.max(0, calendarDayDiff(now, updatedDate));
-  if (days === 0) {
-    return {
-      state: "fresh",
-      label: "\u4eca\u65e5\u5df2\u786e\u8ba4",
-      detail: `${copy.updatedAtShort} ${updatedAt}`,
-    };
-  }
-  if (days <= 3) {
-    return {
-      state: "recent",
-      label: days === 1 ? "\u6628\u5929\u786e\u8ba4" : `${days}\u5929\u524d\u786e\u8ba4`,
-      detail: `${copy.updatedAtShort} ${updatedAt}`,
-    };
-  }
-
-  return {
-    state: "stale",
-    label: `\u5f85\u5237\u65b0 ${days}\u5929`,
-    detail: `\u5224\u65ad\u6765\u81ea ${formatDateOnly(updatedAt)}`,
-  };
+function isTodayDateTime(value, now = new Date()) {
+  const date = parseLocalDateTime(value);
+  return Boolean(date && localDateKey(date) === localDateKey(now));
 }
 
 function getDayPhase(now = new Date()) {
@@ -298,13 +266,12 @@ function getDayPhase(now = new Date()) {
   };
 }
 
-function updateTodayFreshness(today = dashboardData.today || {}) {
-  const freshness = getTodayFreshness(today.updatedAt);
+function updateTodaySource(source) {
   const card = qs("#overview");
-  if (card) card.dataset.freshness = freshness.state;
-  setText("#today-freshness", freshness.label);
-  setText("#today-updated", freshness.detail);
-  return freshness;
+  if (card) card.dataset.freshness = source.state;
+  setText("#today-freshness", source.label);
+  setText("#today-updated", source.detail);
+  return source;
 }
 
 function updateTodayPhase() {
@@ -1027,8 +994,7 @@ function renderTodayTodos(openTodos) {
   }
 }
 
-function renderWikiTodos() {
-  const openTodos = getOpenWikiTodos();
+function renderWikiTodos(openTodos = getOpenWikiTodos()) {
   const status = wikiTodoError ? copy.wikiTodoFailed : `${copy.wikiTodoReady} ${openTodos.length}`;
   const updatedAt = wikiTodoData.synced_at
     ? `同步 ${wikiTodoData.synced_at}`
@@ -1713,28 +1679,145 @@ function setSummaryLiveTone(selector, tone) {
   if (element) element.dataset.tone = tone;
 }
 
-function renderTodayStatus(mainlines, actions, token1d, token7d, automation) {
+function getTodayOverride(today = dashboardData.today || {}) {
+  if (!isTodayDateTime(today.updatedAt)) return null;
+  if (!today.modeLabel && !today.summary && !today.focus && !today.energy) return null;
+  return today;
+}
+
+function isAutomationConcern(status = "") {
+  const text = String(status).toLowerCase();
+  return ["failure", "failed", "fail", "error", "check"].some((key) => text.includes(key))
+    || ["异常", "失败", "错误", "不可用", "待检查"].some((key) => text.includes(key));
+}
+
+function makeTodaySource(state, label, detail) {
+  return { state, label, detail };
+}
+
+function deriveTodayStatus({ mainlines, actions, todayTodos, token1d, token7d, automation, phase }) {
   const today = dashboardData.today || {};
-  const mode = today.modeLabel || "\u4eca\u65e5\u72b6\u6001";
-  const focus = today.focus || mainlines[0]?.title || actions[0]?.title || "--";
+  const override = getTodayOverride(today);
   const tokenToday = Number(token1d.total || 0);
   const tokenWeek = Number(token7d.total || 0);
   const automationStatus = automation.status || copy.waiting;
-  const topMainline = mainlines[0]?.title || focus;
+  const topTodo = todayTodos[0];
+  const topAction = actions[0];
+  const topMainline = mainlines[0];
+  const primaryWork = topAction || topMainline;
+  const phaseLabel = phase?.label || "\u4eca\u65e5";
+  const isEvening = ["\u6df1\u591c", "\u665a\u95f4", "\u591c\u95f4"].some((key) => phaseLabel.includes(key));
 
-  setText("#today-mode", mode);
-  setText("#daily-brief", today.summary || dashboardData.brief || copy.waitBrief);
-  setText("#today-energy", `${copy.energy} ${today.energy || "--"}`);
-  setText("#today-focus", `${copy.focus} ${focus}`);
-  updateTodayFreshness(today);
-  updateTodayPhase();
+  if (override) {
+    const focus = override.focus || primaryWork?.title || topTodo?.title || "--";
+    return {
+      mode: override.modeLabel || "\u4eca\u65e5\u786e\u8ba4",
+      summary: override.summary || (focus !== "--" ? `\u4eca\u5929\u4f18\u5148\u63a8\u8fdb\uff1a${focus}\u3002` : "\u4eca\u5929\u72b6\u6001\u5df2\u624b\u52a8\u786e\u8ba4\u3002"),
+      rhythm: override.energy ? `\u4eba\u5de5 ${override.energy}` : "\u4eba\u5de5\u786e\u8ba4",
+      focus,
+      source: makeTodaySource("fresh", "\u4eca\u65e5\u786e\u8ba4", `${copy.updatedAtShort} ${override.updatedAt}`),
+    };
+  }
+
+  if (isAutomationConcern(automationStatus)) {
+    return {
+      mode: "\u5de1\u68c0\u6a21\u5f0f",
+      summary: `\u7cfb\u7edf\u81ea\u52a8\u5316\u663e\u793a\u201c${automationStatus}\u201d\uff0c\u5148\u770b\u4e91\u670d\u52a1\u548c\u540c\u6b65\u65e5\u5fd7\u3002`,
+      rhythm: "\u9700\u8981\u68c0\u67e5",
+      focus: "\u68c0\u67e5\u81ea\u52a8\u5316",
+      source: makeTodaySource("danger", "\u81ea\u52a8\u5de1\u68c0", automation.lastRun || automation.summary || copy.sync),
+    };
+  }
+
+  if (todayTodos.length) {
+    return {
+      mode: "\u6267\u884c\u6a21\u5f0f",
+      summary: `\u4eca\u5929\u6709 ${todayTodos.length} \u4e2a\u660e\u786e\u5f85\u529e\uff0c\u4f18\u5148\u5904\u7406\uff1a${topTodo.title}\u3002`,
+      rhythm: todayTodos.length > 1 ? "\u5f85\u529e\u96c6\u4e2d" : "\u5f85\u529e\u660e\u786e",
+      focus: topTodo.title,
+      source: makeTodaySource("attention", "\u81ea\u52a8\u751f\u6210", "\u57fa\u4e8e\u4eca\u65e5 TODO"),
+    };
+  }
+
+  if (isEvening) {
+    const focus = primaryWork?.title || (tokenToday > 0 ? "\u6c89\u6dc0 AI \u534f\u4f5c" : "\u7ed9\u660e\u5929\u7559\u5165\u53e3");
+    return {
+      mode: "\u590d\u76d8\u6a21\u5f0f",
+      summary: primaryWork
+        ? `\u665a\u4e0a\u9002\u5408\u6536\u675f\uff1a\u8bb0\u5f55\u201c${focus}\u201d\u7684\u8fdb\u5c55\uff0c\u5e76\u7ed9\u660e\u5929\u7559\u5165\u53e3\u3002`
+        : "\u665a\u4e0a\u9002\u5408\u8f7b\u91cf\u590d\u76d8\uff0c\u628a\u4eca\u5929\u7684\u5224\u65ad\u6536\u675f\u6210\u8bb0\u5f55\u3002",
+      rhythm: "\u665a\u95f4\u6536\u675f",
+      focus,
+      source: makeTodaySource("auto", "\u81ea\u52a8\u751f\u6210", "\u57fa\u4e8e\u5f53\u524d\u65f6\u6bb5"),
+    };
+  }
+
+  if (actions.length) {
+    return {
+      mode: "\u63a8\u8fdb\u6a21\u5f0f",
+      summary: `\u4eca\u5929\u6ca1\u6709\u660e\u786e\u65e5\u671f TODO\uff0c\u5efa\u8bae\u63a8\u8fdb ROADMAP\uff1a${topAction.title}\u3002`,
+      rhythm: "\u8def\u7ebf\u63a8\u8fdb",
+      focus: topAction.title,
+      source: makeTodaySource("attention", "\u81ea\u52a8\u751f\u6210", "\u57fa\u4e8e ROADMAP"),
+    };
+  }
+
+  if (mainlines.length) {
+    return {
+      mode: "\u4e3b\u7ebf\u6a21\u5f0f",
+      summary: `\u5f53\u524d\u4e3b\u7ebf\u662f\u201c${topMainline.title}\u201d\uff0c\u4eca\u5929\u53ef\u4ee5\u5148\u4fdd\u6301\u4e00\u4e2a\u63a8\u8fdb\u53e3\u3002`,
+      rhythm: "\u4e3b\u7ebf\u5c31\u4f4d",
+      focus: topMainline.title,
+      source: makeTodaySource("auto", "\u81ea\u52a8\u751f\u6210", "\u57fa\u4e8e ROADMAP"),
+    };
+  }
+
+  if (tokenToday > 0 || tokenWeek > 0) {
+    return {
+      mode: "\u63a2\u7d22\u6a21\u5f0f",
+      summary: tokenToday > 0
+        ? `\u4eca\u5929\u5df2\u6709 ${formatToken(tokenToday)} Token \u6d3b\u8dc3\uff0c\u9002\u5408\u628a\u63a2\u7d22\u7ed3\u679c\u6c89\u6dc0\u6210\u5f85\u529e\u6216\u8bb0\u5f55\u3002`
+        : `\u8fd1 7 \u5929\u6709 ${formatToken(tokenWeek)} Token \u6d3b\u8dc3\uff0c\u4eca\u5929\u53ef\u4ee5\u4ece\u5df2\u6709\u63a2\u7d22\u91cc\u63d0\u4e00\u4e2a\u5165\u53e3\u3002`,
+      rhythm: tokenToday > 0 ? "AI \u534f\u4f5c\u6d3b\u8dc3" : "\u8f7b\u91cf\u63a2\u7d22",
+      focus: "\u6c89\u6dc0\u63a2\u7d22\u7ed3\u8bba",
+      source: makeTodaySource("auto", "\u81ea\u52a8\u751f\u6210", "\u57fa\u4e8e Token \u6d3b\u8dc3"),
+    };
+  }
+
+  return {
+    mode: "\u5f85\u786e\u8ba4",
+    summary: "\u4eca\u5929\u8fd8\u6ca1\u6709\u660e\u786e\u5f85\u529e\u6216\u4e3b\u7ebf\u4fe1\u53f7\uff0c\u53ef\u4ee5\u5148\u7ed9 personal-wiki \u6216 ROADMAP \u7559\u4e00\u4e2a\u5165\u53e3\u3002",
+    rhythm: phaseLabel,
+    focus: "\u7b49\u5f85\u4eca\u65e5\u5165\u53e3",
+    source: makeTodaySource("missing", "\u7b49\u5f85\u4fe1\u53f7", "\u6682\u65e0\u4eca\u65e5 TODO / ROADMAP / Token"),
+  };
+}
+
+function renderTodayStatus(mainlines, actions, todayTodos, token1d, token7d, automation) {
+  const tokenToday = Number(token1d.total || 0);
+  const tokenWeek = Number(token7d.total || 0);
+  const automationStatus = automation.status || copy.waiting;
+  const topMainline = mainlines[0]?.title || actions[0]?.title || "--";
+  const phase = updateTodayPhase();
+  const status = deriveTodayStatus({ mainlines, actions, todayTodos, token1d, token7d, automation, phase });
+
+  setText("#today-mode", status.mode);
+  setText("#daily-brief", status.summary || dashboardData.brief || copy.waitBrief);
+  setText("#today-energy", `${copy.energy} ${status.rhythm || "--"}`);
+  setText("#today-focus", `${copy.focus} ${status.focus || "--"}`);
+  updateTodaySource(status.source);
 
   setText(
     "#today-action-signal",
-    actions.length ? `${actions.length} \u4e2a\u5f85\u63a8\u8fdb` : mainlines.length ? "\u4e3b\u7ebf\u5df2\u5c31\u4f4d" : "\u7b49\u5f85\u8def\u7ebf\u56fe",
+    todayTodos.length
+      ? `${todayTodos.length} \u4e2a\u4eca\u65e5\u5f85\u529e`
+      : actions.length ? `${actions.length} \u4e2a\u5f85\u63a8\u8fdb` : mainlines.length ? "\u4e3b\u7ebf\u5df2\u5c31\u4f4d" : "\u7b49\u5f85\u8def\u7ebf\u56fe",
   );
-  setText("#today-action-note", topMainline && topMainline !== "--" ? `\u4e3b\u7ebf ${topMainline}` : "\u7b49\u5f85 ROADMAP \u5199\u5165");
-  setSummaryLiveTone("#today-action-row", actions.length ? "orange" : "blue");
+  setText(
+    "#today-action-note",
+    todayTodos[0]?.title || (topMainline && topMainline !== "--" ? `\u4e3b\u7ebf ${topMainline}` : "\u7b49\u5f85 ROADMAP \u5199\u5165"),
+  );
+  setSummaryLiveTone("#today-action-row", todayTodos.length || actions.length ? "orange" : "blue");
 
   if (tokenToday > 0) {
     setText("#today-token-signal", `\u4eca\u65e5 ${formatToken(tokenToday)}`);
@@ -1754,6 +1837,8 @@ function renderTodayStatus(mainlines, actions, token1d, token7d, automation) {
 
 function renderHome() {
   const { mainlines, actions } = getHomeWorkItems();
+  const openTodos = getOpenWikiTodos();
+  const todayTodos = getTodayWikiTodos(openTodos);
   const journal = dashboardData.journal || [];
   const feeds = dashboardData.feeds || [];
   const token7d = getTokenRange("7d");
@@ -1761,7 +1846,7 @@ function renderHome() {
   const tokenAll = getTokenRange("all");
   const automation = dashboardData.automation || {};
 
-  renderTodayStatus(mainlines, actions, token1d, token7d, automation);
+  renderTodayStatus(mainlines, actions, todayTodos, token1d, token7d, automation);
   const automationStatus = automation.status || copy.waiting;
   const automationTitle = automation.summary
     ? `系统自动化：${automation.summary}`
@@ -1820,7 +1905,7 @@ function renderHome() {
   clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
   renderCheckin();
   renderDounai();
-  renderWikiTodos();
+  renderWikiTodos(openTodos);
   renderLast30Column("today", "#last30-today-title", "#last30-today-summary", "#last30-today-list", copy.todayEvents);
   renderLast30Column("week", "#last30-week-title", "#last30-week-summary", "#last30-week-list", copy.weekEvents);
   renderLast30Column(
@@ -2382,7 +2467,6 @@ function updateClock() {
   setText("#lunar-label", formatLunarDate(now));
   const labels = [...getHolidayLabels(now), ...getSpecialDateLabels(now)];
   setText("#holiday-label", labels.length ? [...new Set(labels)].join(" \u00b7 ") : copy.noHoliday);
-  updateTodayFreshness();
   updateTodayPhase();
 }
 

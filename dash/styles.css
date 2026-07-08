@@ -363,12 +363,27 @@ body[data-view="tokens"] .topbar-token-ranges {
   --card-border: var(--cyan-border);
 }
 
+.summary-bar[data-freshness="auto"] {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
 .summary-bar[data-freshness="stale"] {
   --card-color: var(--orange);
   --card-border: var(--orange-border);
 }
 
+.summary-bar[data-freshness="attention"] {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
+}
+
 .summary-bar[data-freshness="missing"] {
+  --card-color: var(--danger);
+  --card-border: var(--red-border);
+}
+
+.summary-bar[data-freshness="danger"] {
   --card-color: var(--danger);
   --card-border: var(--red-border);
 }
