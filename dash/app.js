@@ -1109,7 +1109,7 @@ function renderWikiTodos(openTodos = getOpenWikiTodos()) {
 
   setText("#wiki-todo-status", status);
   setText("#wiki-todo-updated", wikiTodoError || updatedAt);
-  clearAndFill(qs("#wiki-todo-list"), createWikiTodoItem, openTodos);
+  clearAndFill(qs("#wiki-todo-list"), createWikiTodoItem, openTodos.slice(0, 4));
 
   if (!openTodos.length && !wikiTodoError) {
     setText("#wiki-todo-list .empty-state", copy.wikiTodoEmpty);

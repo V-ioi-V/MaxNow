@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 17:11",
-  "version": "1.0.0.34",
-  "versionLabel": "v1.0.0.34",
-  "branch": "bugfix/home-fill-token-column-gap",
-  "commit": "dd81718",
+  "updatedAt": "2026-07-08 17:47",
+  "version": "1.0.0.35",
+  "versionLabel": "v1.0.0.35",
+  "branch": "feature/home-board-layout-rules",
+  "commit": "d814dee",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/home-fill-token-column-gap · commit dd81718 · 有未提交代码改动",
+  "deployNote": "feature/home-board-layout-rules · commit d814dee · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "统一 Home Board 版式规则",
+      "summary": "Home 状态条下方改为统一 `home-board`：Token、市场、今日 Todo、Personal Wiki、豆奶、待推进、近期用量、外部输入、最近更新、今日记录、稍后留意和系统状态都在同一个响应式网格里声明位置。"
+    },
     {
       "date": "2026-07-08",
       "title": "填补 Home Token 热力格下方空白",
@@ -28,11 +33,6 @@
       "date": "2026-07-08",
       "title": "修正 Home 市场涨幅数据源",
       "summary": "将市场涨幅同步切到腾讯公开行情接口，服务器可同时刷新国内和美股指数 quote 与分钟线。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "新增 Home 市场涨幅卡",
-      "summary": "Home 主内容区顶部改为 Token 热力格 + 市场涨幅双列，右侧展示纳指100、标普500、上证指数、深证成指和创业板指。"
     }
   ]
 }
