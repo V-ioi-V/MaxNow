@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 21:06",
-  "version": "1.0.0.40",
-  "versionLabel": "v1.0.0.40",
-  "branch": "bugfix/home-fill-primary-lane",
-  "commit": "fc85e25",
+  "updatedAt": "2026-07-08 21:47",
+  "version": "1.0.0.41",
+  "versionLabel": "v1.0.0.41",
+  "branch": "feature/home-status-long-bars",
+  "commit": "0ee6189",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/home-fill-primary-lane · commit fc85e25 · 有未提交代码改动",
+  "deployNote": "feature/home-status-long-bars · commit 0ee6189 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "调整 Home Todo 和 Token 长条布局",
+      "summary": "将 Home 右侧 `Today Todo` 和 `Tokens` 从半宽 `widget-compact` 改为整行 `widget-wide`，让它们在右侧栈里上下显示为两个长条。"
+    },
     {
       "date": "2026-07-08",
       "title": "回填 Home 左侧内容流",
@@ -28,11 +33,6 @@
       "date": "2026-07-08",
       "title": "调整 Home 顶部左右比例",
       "summary": "收窄 Home 顶部 Today Status 卡片的横向占比，提高右侧天气卡和小日历 widget 组的桌面最小宽度。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "修正 Home Board 三 lane 版式",
-      "summary": "Home 状态条下方从单张跨行 `grid-template-areas` 网格改为 `home-lane-primary` / `home-lane-signal` / `home-lane-rail` 三条独立纵向 lane，避免高卡把同一行短卡撑出大块空白。"
     }
   ]
 }

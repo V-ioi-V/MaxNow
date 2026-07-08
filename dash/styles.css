@@ -941,6 +941,26 @@ body[data-view="tokens"] .topbar-token-ranges {
   color: var(--ok);
 }
 
+.status-strip article.metric-data[data-health="bad"],
+.system-panel[data-health="bad"] {
+  --card-color: var(--danger);
+  --card-border: var(--red-border);
+}
+
+.status-strip article.metric-data[data-health="unknown"],
+.system-panel[data-health="unknown"] {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
+}
+
+.metric-data[data-health="bad"] strong {
+  color: var(--danger);
+}
+
+.metric-data[data-health="unknown"] strong {
+  color: var(--orange);
+}
+
 .system-panel {
   cursor: pointer;
 }
@@ -2299,6 +2319,14 @@ a.last30-item {
   gap: 8px;
   justify-self: end;
   width: min(100%, 430px);
+}
+
+.range-tabs.topbar-token-ranges {
+  display: none;
+}
+
+body[data-view="tokens"] .range-tabs.topbar-token-ranges {
+  display: grid;
 }
 
 .range-tab {
