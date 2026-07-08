@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 12:43",
-  "version": "1.0.0.29",
-  "versionLabel": "v1.0.0.29",
-  "branch": "main",
-  "commit": "03fda7c",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 03fda7c · 干净",
+  "updatedAt": "2026-07-08 14:50",
+  "version": "1.0.0.30",
+  "versionLabel": "v1.0.0.30",
+  "branch": "feature/home-market-indices",
+  "commit": "bfbc72e",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/home-market-indices · commit bfbc72e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "新增 Home 市场涨幅卡",
+      "summary": "Home 主内容区顶部改为 Token 热力格 + 市场涨幅双列，右侧展示纳指100、标普500、上证指数、深证成指和创业板指。"
+    },
     {
       "date": "2026-07-08",
       "title": "优化 Dash 首屏加载链路",
@@ -28,11 +33,6 @@
       "date": "2026-07-07",
       "title": "将 Home 时间点替换为今日 Todo",
       "summary": "移除 Home 右侧静态 `Schedule / 时间点` 模块，不再展示旧的固定节奏说明。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "让 Home 今日状态卡更灵动",
-      "summary": "Today Status 卡仍读取 `dashboard.json.today`，但前端新增当前时段、判断新鲜度、待推进、Token 和自动化状态信号。"
     }
   ]
 }

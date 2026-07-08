@@ -108,6 +108,7 @@ Home 页面读取：
 - `dash/data/ai-news.json`
 - `dash/data/last-30.json`
 - `dash/data/wiki-todos.json`
+- `dash/data/market-indices.json`
 
 对应的 `.js` wrapper 是静态兜底，必须和 JSON 保持一致。
 
@@ -118,14 +119,16 @@ Home 页面读取：
 ```powershell
 python scripts/update_data.py wrap all
 python scripts/update_data.py ai-last30
+python scripts/update_data.py market-indices
 python scripts/update_data.py project-status
 python scripts/update_data.py runtime
 ```
 
 - `wrap all`：只从 JSON 重新生成所有 `.js` wrapper，并运行校验。
 - `ai-last30`：从免费公开源刷新首页 AI 输入和 Last-30 AI 外部信号滚动记忆。
+- `market-indices`：刷新 Home 市场涨幅卡的国内外指数点位、涨跌幅和迷你走势。
 - `project-status`：显式从 `ROADMAP.md` 刷新 Home 的当前主线 / 今日推进，不由 cron 自动覆盖。
-- `runtime`：服务器定时任务使用，刷新 wiki-todos 和系统状态，然后运行校验。
+- `runtime`：服务器定时任务使用，刷新 wiki-todos、天气、行情、生活 / 同行记缓存、系统状态和项目元信息，然后运行校验。
 
 ## 本地校验
 

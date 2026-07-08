@@ -4,6 +4,7 @@ const WIKI_TODO_URL = "./data/wiki-todos.json";
 const CHECKIN_URL = "./data/dounai_checkin.json";
 const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
 const TOKEN_USAGE_URL = "./data/token-usage.json";
+const MARKET_INDICES_URL = "./data/market-indices.json";
 const PROJECT_META_URL = "./data/project-meta.json";
 const RICKY_URL = "./data/ricky.json";
 const LIFE_FOODS_URL = "./data/life-foods.json";
@@ -17,6 +18,7 @@ const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
 const fallbackCheckin = {};
 const fallbackOpenclawUsage = window.MAXNOW_OPENCLAW_USAGE_DATA || { days: [] };
 const fallbackTokenUsage = window.MAXNOW_TOKEN_USAGE_DATA || { days: [] };
+const fallbackMarketIndices = window.MAXNOW_MARKET_INDICES_DATA || { indices: [] };
 const fallbackProjectMeta = window.MAXNOW_PROJECT_META_DATA || { recentUpdates: [] };
 const fallbackRicky = window.MAXNOW_RICKY_DATA || { stats: [], places: [], records: [] };
 const fallbackLifeFoods = window.MAXNOW_LIFE_FOODS_DATA || { sections: [] };
@@ -27,6 +29,7 @@ let wikiTodoData = fallbackWikiTodo;
 let checkinData = fallbackCheckin;
 let openclawUsageData = fallbackOpenclawUsage;
 let tokenUsageData = fallbackTokenUsage;
+let marketIndicesData = fallbackMarketIndices;
 let projectMetaData = fallbackProjectMeta;
 let rickyData = fallbackRicky;
 let lifeFoodsData = fallbackLifeFoods;
@@ -455,6 +458,95 @@ function createProjectUpdateItem(item) {
   article.querySelector(".item-copy").textContent = item.summary || "";
   article.querySelector(".item-tag").textContent = item.date || "Update";
   return article;
+}
+
+function formatMarketPrice(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "--";
+  return amount.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatMarketSigned(value, digits = 2) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "--";
+  const sign = amount > 0 ? "+" : "";
+  return `${sign}${amount.toFixed(digits)}`;
+}
+
+function marketDirection(item) {
+  const percent = Number(item.changePercent);
+  if (percent > 0) return "up";
+  if (percent < 0) return "down";
+  return "flat";
+}
+
+function createMarketSparkline(item) {
+  const trend = Array.isArray(item.trend) ? item.trend : [];
+  const values = trend.map((point) => Number(point.value)).filter(Number.isFinite);
+  const previousClose = Number(item.previousClose);
+  if (values.length < 2) {
+    return '<svg class="market-sparkline-svg" viewBox="0 0 150 44" role="img" aria-label="暂无走势"><line class="market-baseline" x1="4" y1="22" x2="146" y2="22" /></svg>';
+  }
+
+  const width = 150;
+  const height = 44;
+  const padding = 4;
+  const min = Math.min(...values, Number.isFinite(previousClose) ? previousClose : values[0]);
+  const max = Math.max(...values, Number.isFinite(previousClose) ? previousClose : values[0]);
+  const range = max - min || 1;
+  const yFor = (value) => padding + (height - padding * 2) - ((value - min) / range) * (height - padding * 2);
+  const points = values.map((value, index) => {
+    const x = padding + (values.length <= 1 ? 0 : (index / (values.length - 1)) * (width - padding * 2));
+    return { x, y: yFor(value) };
+  });
+  const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ");
+  const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${height - padding} L ${points[0].x.toFixed(1)} ${height - padding} Z`;
+  const baselineY = Number.isFinite(previousClose) ? yFor(previousClose) : height / 2;
+  const direction = marketDirection(item);
+
+  return `
+    <svg class="market-sparkline-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="指数走势">
+      <line class="market-baseline" x1="${padding}" y1="${baselineY.toFixed(1)}" x2="${width - padding}" y2="${baselineY.toFixed(1)}" />
+      <path class="market-sparkline-fill" data-direction="${direction}" d="${areaPath}" />
+      <path class="market-sparkline-line" data-direction="${direction}" d="${linePath}" />
+    </svg>
+  `;
+}
+
+function createMarketIndexItem(item) {
+  const article = document.createElement("article");
+  const direction = marketDirection(item);
+  article.className = "market-item";
+  article.dataset.direction = direction;
+  article.title = [item.source || "", item.updatedAt ? `${copy.updatedAtShort} ${item.updatedAt}` : "", item.stale ? item.lastError || "stale" : ""]
+    .filter(Boolean)
+    .join(" · ");
+  article.innerHTML = `
+    <div class="market-name">
+      <strong></strong>
+      <small></small>
+    </div>
+    <div class="market-sparkline"></div>
+    <div class="market-value">
+      <strong></strong>
+      <small></small>
+    </div>
+  `;
+  article.querySelector(".market-name strong").textContent = item.name || copy.item;
+  article.querySelector(".market-name small").textContent = item.displaySymbol || item.symbol || "--";
+  article.querySelector(".market-sparkline").innerHTML = createMarketSparkline(item);
+  article.querySelector(".market-value strong").textContent = `${formatMarketSigned(item.changePercent)}%`;
+  article.querySelector(".market-value small").textContent = formatMarketPrice(item.price);
+  return article;
+}
+
+function renderMarketIndices() {
+  const indices = Array.isArray(marketIndicesData.indices) ? marketIndicesData.indices : [];
+  setText("#market-updated", marketIndicesData.updatedAt ? `${formatTimeShort(marketIndicesData.updatedAt)} 更新` : copy.syncWaiting);
+  clearAndFill(qs("#market-list"), createMarketIndexItem, indices);
 }
 
 function createRickyStatItem(item) {
@@ -1869,6 +1961,7 @@ function renderHome() {
   setText("#metric-automation", automationStatus || "--");
   setText("#metric-automation-note", automation.lastRun || copy.sync);
   setTitle(".metric-data", automationTitle);
+  renderMarketIndices();
   setText("#mini-token-1d", formatToken(token1d.total));
   setText("#mini-token-7d", formatToken(token7d.total));
   setText("#mini-token-all", formatToken(tokenAll.total));
@@ -2183,12 +2276,14 @@ async function loadHomeData({ force = false } = {}) {
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
     readWikiTodo(),
     readJson(CHECKIN_URL, fallbackCheckin),
+    readJson(MARKET_INDICES_URL, window.MAXNOW_MARKET_INDICES_DATA || fallbackMarketIndices),
     readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta),
-  ]).then(([dashboard, last30, wikiTodo, checkin, projectMeta]) => {
+  ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta]) => {
     dashboardData = dashboard;
     last30Data = last30;
     wikiTodoData = wikiTodo;
     checkinData = checkin;
+    marketIndicesData = marketIndices;
     projectMetaData = projectMeta;
     renderHome();
     if (getActiveView() === "dounai") renderDounai();

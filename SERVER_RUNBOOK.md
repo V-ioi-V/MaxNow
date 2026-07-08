@@ -307,6 +307,7 @@ python3 scripts/check.py
 ```bash
 python3 scripts/update_data.py runtime
 python3 scripts/update_data.py weather
+python3 scripts/update_data.py market-indices
 python3 scripts/update_data.py project-status
 python3 scripts/update_data.py openclaw-usage
 python3 scripts/update_data.py codex-usage
@@ -318,7 +319,7 @@ python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Windows 兼容本机 Codex 源账本并合并统一 Token 总账；`codex-macos-usage` 刷新 macOS 本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`market-indices` 会刷新纳指100、标普500、上证指数、深证成指和创业板指，数据源为 Yahoo Finance chart API。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 Home 的当前主线 / 今日推进，需要手动执行。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Windows 兼容本机 Codex 源账本并合并统一 Token 总账；`codex-macos-usage` 刷新 macOS 本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
 
 刷新服务器 Codex Token 用量：
 
@@ -508,6 +509,16 @@ python3 scripts/check.py
 
 天气卡读取 `dash/data/dashboard.json.weather`，由 `scripts/sync_weather.py` 写入并同步生成 `dash/data/dashboard.js`。当前位置固定为北京市海淀区，坐标约 `39.96, 116.30`。前端只读本地数据，不直接请求天气接口。
 
+刷新 Home 市场涨幅卡：
+
+```bash
+cd /var/www/maxnow-dashboard
+python3 scripts/update_data.py market-indices
+python3 scripts/check.py
+```
+
+市场涨幅卡读取 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 写入并同步生成 `dash/data/market-indices.js`。当前指数为纳指100、标普500、上证指数、深证成指和创业板指；脚本保存点位、昨收、涨跌幅和压缩后的 1 日 5 分钟走势点。前端只读本地数据，不直接请求 Yahoo Finance。
+
 刷新免费 AI 外部信号和 Last-30：
 
 ```bash
@@ -634,6 +645,7 @@ crontab -l
 /var/www/maxnow-dashboard/logs/ai-last30.log
 /var/www/maxnow-dashboard/logs/wiki-todos.log
 /var/www/maxnow-dashboard/logs/weather.log
+/var/www/maxnow-dashboard/logs/market-indices.log
 /var/www/maxnow-dashboard/logs/system-status.log
 /var/www/maxnow-dashboard/logs/maxnow-sync.log
 ```

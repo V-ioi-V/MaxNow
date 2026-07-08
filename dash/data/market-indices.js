@@ -1,0 +1,818 @@
+window.MAXNOW_MARKET_INDICES_DATA = {
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-08 14:43",
+  "source": "Yahoo Finance",
+  "refreshIntervalMinutes": 10,
+  "indices": [
+    {
+      "key": "nasdaq100",
+      "name": "纳指100",
+      "symbol": "^NDX",
+      "displaySymbol": "NDX",
+      "region": "US",
+      "currency": "USD",
+      "price": 29173.018,
+      "previousClose": 29697.873,
+      "change": -524.855,
+      "changePercent": -1.7673,
+      "updatedAt": "2026-07-08 05:15",
+      "marketState": "",
+      "source": "Yahoo Finance",
+      "sourceUrl": "https://query1.finance.yahoo.com/v8/finance/chart/%5ENDX?range=1d&interval=5m&includePrePost=false",
+      "trend": [
+        {
+          "time": "21:30",
+          "value": 29287.2344
+        },
+        {
+          "time": "21:40",
+          "value": 29358.7188
+        },
+        {
+          "time": "21:50",
+          "value": 29218.9609
+        },
+        {
+          "time": "22:05",
+          "value": 29205.9531
+        },
+        {
+          "time": "22:15",
+          "value": 29125.4961
+        },
+        {
+          "time": "22:25",
+          "value": 29063.5078
+        },
+        {
+          "time": "22:35",
+          "value": 29017.8145
+        },
+        {
+          "time": "22:50",
+          "value": 29059.7559
+        },
+        {
+          "time": "23:00",
+          "value": 29079.9844
+        },
+        {
+          "time": "23:10",
+          "value": 29086.2344
+        },
+        {
+          "time": "23:20",
+          "value": 29043.2285
+        },
+        {
+          "time": "23:35",
+          "value": 29027.9316
+        },
+        {
+          "time": "23:45",
+          "value": 29099.9434
+        },
+        {
+          "time": "23:55",
+          "value": 29151.5859
+        },
+        {
+          "time": "00:05",
+          "value": 29176.7305
+        },
+        {
+          "time": "00:15",
+          "value": 29235.1934
+        },
+        {
+          "time": "00:30",
+          "value": 29293.8457
+        },
+        {
+          "time": "00:40",
+          "value": 29292.6895
+        },
+        {
+          "time": "00:50",
+          "value": 29298.1055
+        },
+        {
+          "time": "01:00",
+          "value": 29317.9668
+        },
+        {
+          "time": "01:15",
+          "value": 29288.7656
+        },
+        {
+          "time": "01:25",
+          "value": 29299.2676
+        },
+        {
+          "time": "01:35",
+          "value": 29322.1855
+        },
+        {
+          "time": "01:45",
+          "value": 29308.5293
+        },
+        {
+          "time": "01:55",
+          "value": 29334.127
+        },
+        {
+          "time": "02:10",
+          "value": 29315.9785
+        },
+        {
+          "time": "02:20",
+          "value": 29318.3535
+        },
+        {
+          "time": "02:30",
+          "value": 29270.916
+        },
+        {
+          "time": "02:40",
+          "value": 29234.7129
+        },
+        {
+          "time": "02:55",
+          "value": 29156.6113
+        },
+        {
+          "time": "03:05",
+          "value": 29100.1934
+        },
+        {
+          "time": "03:15",
+          "value": 29072.3828
+        },
+        {
+          "time": "03:25",
+          "value": 29086.7637
+        },
+        {
+          "time": "03:40",
+          "value": 29076.5977
+        },
+        {
+          "time": "03:50",
+          "value": 29132.0449
+        },
+        {
+          "time": "04:00",
+          "value": 29173.0176
+        }
+      ]
+    },
+    {
+      "key": "sp500",
+      "name": "标普500",
+      "symbol": "^GSPC",
+      "displaySymbol": "SPX",
+      "region": "US",
+      "currency": "USD",
+      "price": 7503.85,
+      "previousClose": 7537.43,
+      "change": -33.58,
+      "changePercent": -0.4455,
+      "updatedAt": "2026-07-08 04:53",
+      "marketState": "",
+      "source": "Yahoo Finance",
+      "sourceUrl": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1d&interval=5m&includePrePost=false",
+      "trend": [
+        {
+          "time": "21:30",
+          "value": 7520.1499
+        },
+        {
+          "time": "21:40",
+          "value": 7528.2598
+        },
+        {
+          "time": "21:50",
+          "value": 7515.8398
+        },
+        {
+          "time": "22:05",
+          "value": 7508.6699
+        },
+        {
+          "time": "22:15",
+          "value": 7500.7998
+        },
+        {
+          "time": "22:25",
+          "value": 7493.0
+        },
+        {
+          "time": "22:35",
+          "value": 7485.7402
+        },
+        {
+          "time": "22:50",
+          "value": 7492.2202
+        },
+        {
+          "time": "23:00",
+          "value": 7489.3501
+        },
+        {
+          "time": "23:10",
+          "value": 7487.0698
+        },
+        {
+          "time": "23:20",
+          "value": 7485.0
+        },
+        {
+          "time": "23:35",
+          "value": 7482.9399
+        },
+        {
+          "time": "23:45",
+          "value": 7493.6899
+        },
+        {
+          "time": "23:55",
+          "value": 7500.4399
+        },
+        {
+          "time": "00:05",
+          "value": 7502.0898
+        },
+        {
+          "time": "00:15",
+          "value": 7507.7402
+        },
+        {
+          "time": "00:30",
+          "value": 7513.6602
+        },
+        {
+          "time": "00:40",
+          "value": 7515.9702
+        },
+        {
+          "time": "00:50",
+          "value": 7515.29
+        },
+        {
+          "time": "01:00",
+          "value": 7519.0601
+        },
+        {
+          "time": "01:15",
+          "value": 7513.1499
+        },
+        {
+          "time": "01:25",
+          "value": 7516.0098
+        },
+        {
+          "time": "01:35",
+          "value": 7518.6499
+        },
+        {
+          "time": "01:45",
+          "value": 7516.6201
+        },
+        {
+          "time": "01:55",
+          "value": 7518.9399
+        },
+        {
+          "time": "02:10",
+          "value": 7517.04
+        },
+        {
+          "time": "02:20",
+          "value": 7518.4702
+        },
+        {
+          "time": "02:30",
+          "value": 7514.0801
+        },
+        {
+          "time": "02:40",
+          "value": 7513.7998
+        },
+        {
+          "time": "02:55",
+          "value": 7501.7002
+        },
+        {
+          "time": "03:05",
+          "value": 7493.6401
+        },
+        {
+          "time": "03:15",
+          "value": 7492.6201
+        },
+        {
+          "time": "03:25",
+          "value": 7493.2598
+        },
+        {
+          "time": "03:40",
+          "value": 7491.46
+        },
+        {
+          "time": "03:50",
+          "value": 7503.7598
+        },
+        {
+          "time": "04:00",
+          "value": 7503.8501
+        }
+      ]
+    },
+    {
+      "key": "shanghai",
+      "name": "上证指数",
+      "symbol": "000001.SS",
+      "displaySymbol": "SH000001",
+      "region": "CN",
+      "currency": "CNY",
+      "price": 3986.424,
+      "previousClose": 4041.24,
+      "change": -54.816,
+      "changePercent": -1.3564,
+      "updatedAt": "2026-07-08 14:28",
+      "marketState": "",
+      "source": "Yahoo Finance",
+      "sourceUrl": "https://query1.finance.yahoo.com/v8/finance/chart/000001.SS?range=1d&interval=5m&includePrePost=false",
+      "trend": [
+        {
+          "time": "09:30",
+          "value": 3991.5261
+        },
+        {
+          "time": "09:35",
+          "value": 3993.6211
+        },
+        {
+          "time": "09:40",
+          "value": 3981.2014
+        },
+        {
+          "time": "09:50",
+          "value": 3987.4438
+        },
+        {
+          "time": "09:55",
+          "value": 3978.3423
+        },
+        {
+          "time": "10:00",
+          "value": 3969.3655
+        },
+        {
+          "time": "10:05",
+          "value": 3982.5742
+        },
+        {
+          "time": "10:15",
+          "value": 3984.0083
+        },
+        {
+          "time": "10:20",
+          "value": 3982.8625
+        },
+        {
+          "time": "10:25",
+          "value": 3988.6667
+        },
+        {
+          "time": "10:30",
+          "value": 3988.2761
+        },
+        {
+          "time": "10:40",
+          "value": 3991.2686
+        },
+        {
+          "time": "10:45",
+          "value": 3987.991
+        },
+        {
+          "time": "10:50",
+          "value": 3991.7361
+        },
+        {
+          "time": "10:55",
+          "value": 3985.2332
+        },
+        {
+          "time": "11:00",
+          "value": 3986.4534
+        },
+        {
+          "time": "11:10",
+          "value": 4001.5791
+        },
+        {
+          "time": "11:15",
+          "value": 4005.8511
+        },
+        {
+          "time": "11:20",
+          "value": 4010.0154
+        },
+        {
+          "time": "11:25",
+          "value": 4010.8596
+        },
+        {
+          "time": "13:00",
+          "value": 3997.8799
+        },
+        {
+          "time": "13:05",
+          "value": 4000.7085
+        },
+        {
+          "time": "13:10",
+          "value": 4003.0029
+        },
+        {
+          "time": "13:15",
+          "value": 4002.3081
+        },
+        {
+          "time": "13:20",
+          "value": 4000.3049
+        },
+        {
+          "time": "13:30",
+          "value": 3987.2734
+        },
+        {
+          "time": "13:35",
+          "value": 3987.9712
+        },
+        {
+          "time": "13:40",
+          "value": 3983.9426
+        },
+        {
+          "time": "13:45",
+          "value": 3977.3547
+        },
+        {
+          "time": "13:55",
+          "value": 3996.6311
+        },
+        {
+          "time": "14:00",
+          "value": 3995.52
+        },
+        {
+          "time": "14:05",
+          "value": 3990.0393
+        },
+        {
+          "time": "14:10",
+          "value": 3984.1941
+        },
+        {
+          "time": "14:20",
+          "value": 3994.7534
+        },
+        {
+          "time": "14:25",
+          "value": 3986.3213
+        },
+        {
+          "time": "14:28",
+          "value": 3986.4238
+        }
+      ]
+    },
+    {
+      "key": "shenzhen",
+      "name": "深证成指",
+      "symbol": "399001.SZ",
+      "displaySymbol": "SZ399001",
+      "region": "CN",
+      "currency": "CNY",
+      "price": 15023.136,
+      "previousClose": 15416.8,
+      "change": -393.664,
+      "changePercent": -2.5535,
+      "updatedAt": "2026-07-08 14:28",
+      "marketState": "",
+      "source": "Yahoo Finance",
+      "sourceUrl": "https://query1.finance.yahoo.com/v8/finance/chart/399001.SZ?range=1d&interval=5m&includePrePost=false",
+      "trend": [
+        {
+          "time": "09:30",
+          "value": 15170.4902
+        },
+        {
+          "time": "09:40",
+          "value": 15021.0068
+        },
+        {
+          "time": "09:45",
+          "value": 15058.5537
+        },
+        {
+          "time": "09:55",
+          "value": 14991.8086
+        },
+        {
+          "time": "10:05",
+          "value": 15001.6768
+        },
+        {
+          "time": "10:15",
+          "value": 15074.4141
+        },
+        {
+          "time": "10:20",
+          "value": 15036.5479
+        },
+        {
+          "time": "10:30",
+          "value": 15141.1436
+        },
+        {
+          "time": "10:40",
+          "value": 15162.1748
+        },
+        {
+          "time": "10:45",
+          "value": 15104.8408
+        },
+        {
+          "time": "10:55",
+          "value": 15070.9551
+        },
+        {
+          "time": "11:05",
+          "value": 15140.4082
+        },
+        {
+          "time": "11:15",
+          "value": 15198.3652
+        },
+        {
+          "time": "11:20",
+          "value": 15241.2363
+        },
+        {
+          "time": "11:30",
+          "value": 15237.4473
+        },
+        {
+          "time": "11:40",
+          "value": 15237.4473
+        },
+        {
+          "time": "11:45",
+          "value": 15237.4473
+        },
+        {
+          "time": "11:55",
+          "value": 15237.4473
+        },
+        {
+          "time": "12:05",
+          "value": 15237.4473
+        },
+        {
+          "time": "12:15",
+          "value": 15237.4473
+        },
+        {
+          "time": "12:20",
+          "value": 15237.4473
+        },
+        {
+          "time": "12:30",
+          "value": 15237.4473
+        },
+        {
+          "time": "12:40",
+          "value": 15237.4473
+        },
+        {
+          "time": "12:45",
+          "value": 15237.4473
+        },
+        {
+          "time": "12:55",
+          "value": 15237.4473
+        },
+        {
+          "time": "13:05",
+          "value": 15144.1064
+        },
+        {
+          "time": "13:15",
+          "value": 15146.5439
+        },
+        {
+          "time": "13:20",
+          "value": 15121.5703
+        },
+        {
+          "time": "13:30",
+          "value": 15065.3984
+        },
+        {
+          "time": "13:40",
+          "value": 15030.0479
+        },
+        {
+          "time": "13:45",
+          "value": 15004.9404
+        },
+        {
+          "time": "13:55",
+          "value": 15096.2393
+        },
+        {
+          "time": "14:05",
+          "value": 15061.3242
+        },
+        {
+          "time": "14:15",
+          "value": 15067.5635
+        },
+        {
+          "time": "14:20",
+          "value": 15068.2314
+        },
+        {
+          "time": "14:28",
+          "value": 15023.1357
+        }
+      ]
+    },
+    {
+      "key": "chinext",
+      "name": "创业板指",
+      "symbol": "399006.SZ",
+      "displaySymbol": "SZ399006",
+      "region": "CN",
+      "currency": "CNY",
+      "price": 3871.021,
+      "previousClose": 3911.9075,
+      "change": -40.8865,
+      "changePercent": -1.0452,
+      "updatedAt": "2026-07-08 14:28",
+      "marketState": "",
+      "source": "Yahoo Finance",
+      "sourceUrl": "https://query1.finance.yahoo.com/v8/finance/chart/399006.SZ?range=1d&interval=5m&includePrePost=false",
+      "trend": [
+        {
+          "time": "09:30",
+          "value": 3910.8501
+        },
+        {
+          "time": "09:40",
+          "value": 3878.2849
+        },
+        {
+          "time": "09:45",
+          "value": 3886.5471
+        },
+        {
+          "time": "09:55",
+          "value": 3855.7529
+        },
+        {
+          "time": "10:05",
+          "value": 3859.6133
+        },
+        {
+          "time": "10:15",
+          "value": 3888.0928
+        },
+        {
+          "time": "10:20",
+          "value": 3878.0737
+        },
+        {
+          "time": "10:30",
+          "value": 3915.2402
+        },
+        {
+          "time": "10:40",
+          "value": 3924.824
+        },
+        {
+          "time": "10:45",
+          "value": 3907.1082
+        },
+        {
+          "time": "10:55",
+          "value": 3895.3518
+        },
+        {
+          "time": "11:05",
+          "value": 3920.8376
+        },
+        {
+          "time": "11:15",
+          "value": 3938.1667
+        },
+        {
+          "time": "11:20",
+          "value": 3953.7168
+        },
+        {
+          "time": "11:30",
+          "value": 3949.0437
+        },
+        {
+          "time": "11:40",
+          "value": 3949.0437
+        },
+        {
+          "time": "11:45",
+          "value": 3949.0437
+        },
+        {
+          "time": "11:55",
+          "value": 3949.0437
+        },
+        {
+          "time": "12:05",
+          "value": 3949.0437
+        },
+        {
+          "time": "12:15",
+          "value": 3949.0437
+        },
+        {
+          "time": "12:20",
+          "value": 3949.0437
+        },
+        {
+          "time": "12:30",
+          "value": 3949.0437
+        },
+        {
+          "time": "12:40",
+          "value": 3949.0437
+        },
+        {
+          "time": "12:45",
+          "value": 3949.0437
+        },
+        {
+          "time": "12:55",
+          "value": 3949.0437
+        },
+        {
+          "time": "13:05",
+          "value": 3916.6135
+        },
+        {
+          "time": "13:15",
+          "value": 3915.3401
+        },
+        {
+          "time": "13:20",
+          "value": 3907.4043
+        },
+        {
+          "time": "13:30",
+          "value": 3893.4246
+        },
+        {
+          "time": "13:40",
+          "value": 3882.7429
+        },
+        {
+          "time": "13:45",
+          "value": 3874.1926
+        },
+        {
+          "time": "13:55",
+          "value": 3897.4084
+        },
+        {
+          "time": "14:05",
+          "value": 3885.7839
+        },
+        {
+          "time": "14:15",
+          "value": 3883.9482
+        },
+        {
+          "time": "14:20",
+          "value": 3885.2925
+        },
+        {
+          "time": "14:28",
+          "value": 3871.021
+        }
+      ]
+    }
+  ]
+};

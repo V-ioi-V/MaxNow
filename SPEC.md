@@ -51,6 +51,8 @@ MaxNow 由四类文件组成：
    - `dash/data/codex-server-usage.js`
    - `dash/data/token-usage.json`
    - `dash/data/token-usage.js`
+   - `dash/data/market-indices.json`
+   - `dash/data/market-indices.js`
    - `dash/data/project-meta.json`
    - `dash/data/project-meta.js`
    - `dash/data/dounai_checkin.json`
@@ -80,6 +82,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_token_usage.py`
    - `scripts/sync_project_meta.py`
    - `scripts/sync_weather.py`
+   - `scripts/sync_market_indices.py`
    - `scripts/sync_ricky_travel.py`
    - `scripts/sync_life_foods.py`
    - 由 Codex 或 Owner 维护。
@@ -96,6 +99,7 @@ MaxNow 由四类文件组成：
    - `scripts/refresh_token_usage_on_server.sh` 在服务器拉取最新源账本后保护 OpenClaw / Codex server 运行态账本，并合并 `token-usage.*`。
    - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和最近更新模块数据。
    - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
+   - `scripts/sync_market_indices.py` 从 Yahoo Finance chart API 刷新纳指100、标普500和 A 股主指数，只生成 `dash/data/market-indices.*`。
    - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
    - `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 刷新生活页吃啥候选，只生成 `dash/data/life-foods.*`。
 
@@ -146,7 +150,8 @@ Home 按顺序回答这些问题：
 - 今日状态：由前端根据今日 Todo、当前时段、ROADMAP 待推进 / 主线、Token 活跃和自动化状态自动推导“执行 / 推进 / 复盘 / 探索 / 巡检”等模式；`dashboard.json.today` 只作为当天人工 override，旧日期判断不再占据主状态。
 - 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
 - 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
-- Token 近期活动：Home 主内容区展示近 180 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
+- Token 近期活动：Home 主内容区左侧展示近 180 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
+- 市场涨幅：Home 主内容区右侧用紧凑小卡展示纳指100、标普500、上证指数、深证成指和创业板指的当前点位、涨跌幅和日内迷你走势；数据来自 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 或服务器 `runtime` 每 10 分钟刷新，前端不直接请求行情接口。
 - 待推进：1-3 个近期应该移动的 Now / Next 动作；这里不是完整 todo app，也不是已完成记录。
 - 日常记录：保存个人上下文和关键决定的短记录。
 - 今日 Todo：Home 右侧只展示 personal-wiki 同步来的当天明确执行日期待办；以浏览器当天日期匹配 `due_at`，不混入过期未完成或无日期待办。v1 只读展示，不支持在 MaxNow 内编辑或标记完成。
@@ -253,6 +258,8 @@ dash/data/openclaw-usage.json
 dash/data/openclaw-usage.js
 dash/data/project-meta.json
 dash/data/project-meta.js
+dash/data/market-indices.json
+dash/data/market-indices.js
 dash/data/dounai_checkin.json
 ```
 
@@ -317,6 +324,8 @@ UPDATE_LOG.md
 
 `dash/data/openclaw-usage.json` 负责 OpenClaw 用量账本，由 `scripts/sync_openclaw_usage.py` 从服务器 `/root/.openclaw/agents/main/sessions/*.trajectory.jsonl` 等只读轨迹生成。它记录北京时间日桶、模型、任务、input / output / cacheRead / total token，并按 OpenRouter 模型价格生成等价费用估算。该费用不是实际供应商账单。
 
+`dash/data/market-indices.json` 负责 Home 市场涨幅卡片，由 `scripts/sync_market_indices.py` 从 Yahoo Finance chart API 生成。它只保存指数名称、符号、区域、当前点位、昨收、涨跌额、涨跌幅、更新时间、来源 URL 和压缩后的日内走势点；前端只读展示，不直接请求第三方行情接口。服务器 `runtime` 每 10 分钟会一并刷新该数据，接口失败时脚本优先保留旧缓存并标记 `stale`。
+
 `dash/data/project-meta.json` 负责 MaxNow 自身版本和最近更新展示，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成；页面只读展示，不在前端修改版本号。`VERSION` 采用 `x.x.x.xx` 格式，例如 `1.0.0.00`。
 
 版本号执行规则：
@@ -366,6 +375,7 @@ window.MAXNOW_OPENCLAW_USAGE_DATA
 window.MAXNOW_CODEX_USAGE_DATA
 window.MAXNOW_CODEX_SERVER_USAGE_DATA
 window.MAXNOW_TOKEN_USAGE_DATA
+window.MAXNOW_MARKET_INDICES_DATA
 window.MAXNOW_PROJECT_META_DATA
 window.MAXNOW_RICKY_DATA
 window.MAXNOW_LIFE_FOODS_DATA

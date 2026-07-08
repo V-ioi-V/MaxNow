@@ -45,6 +45,8 @@ MaxNow v1 是纯静态站点：
   dash/data/
     dashboard.json
     dashboard.js
+    market-indices.json
+    market-indices.js
     ai-news.json
     ai-news.js
     last-30.json
@@ -93,6 +95,7 @@ SERVER_RUNBOOK.md
 - 频率：每 10 分钟一次
 - 工作目录：`/var/www/maxnow-dashboard`
 - 执行内容：`python3 scripts/update_data.py runtime`
+- 刷新范围：wiki-todos、Ricky 旅行记录、生活页吃啥候选、北京市海淀区天气、市场指数、系统状态和项目元信息
 - 锁：`/tmp/maxnow-dashboard-sync.lock`，避免上一次未结束时重叠执行
 - 日志：`/var/www/maxnow-dashboard/logs/maxnow-sync.log`，并分别追加 `logs/wiki-todos.log`、`logs/system-status.log`
 

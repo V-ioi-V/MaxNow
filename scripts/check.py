@@ -19,6 +19,7 @@ DATASETS = [
     ("codex-macos-usage", "dash/data/codex-macos-usage.json", "dash/data/codex-macos-usage.js", "MAXNOW_CODEX_MACOS_USAGE_DATA"),
     ("codex-server-usage", "dash/data/codex-server-usage.json", "dash/data/codex-server-usage.js", "MAXNOW_CODEX_SERVER_USAGE_DATA"),
     ("token-usage", "dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
+    ("market-indices", "dash/data/market-indices.json", "dash/data/market-indices.js", "MAXNOW_MARKET_INDICES_DATA"),
     ("project-meta", "dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
     ("ricky", "dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
     ("life-foods", "dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
@@ -60,6 +61,8 @@ def check_required_files():
         "dash/data/ricky.js",
         "dash/data/life-foods.json",
         "dash/data/life-foods.js",
+        "dash/data/market-indices.json",
+        "dash/data/market-indices.js",
         "blog/index.html",
         "blog/overview.html",
         "blog/topics.html",
@@ -85,6 +88,7 @@ def check_required_files():
         "scripts/sync_codex_usage.py",
         "scripts/sync_token_usage.py",
         "scripts/sync_ai_last30.py",
+        "scripts/sync_market_indices.py",
         "scripts/sync_project_meta.py",
         "scripts/sync_weather.py",
         "scripts/sync_ricky_travel.py",
@@ -247,6 +251,36 @@ def check_project_meta():
     return "project-meta: version and recent updates are valid"
 
 
+def check_market_indices():
+    data = load_json(ROOT / "dash/data/market-indices.json")
+    if data.get("schemaVersion") != 1:
+        raise ValueError("market-indices: schemaVersion must be 1")
+    if int(data.get("refreshIntervalMinutes", 0)) != 10:
+        raise ValueError("market-indices: refreshIntervalMinutes must be 10")
+    indices = data.get("indices", [])
+    if not isinstance(indices, list):
+        raise ValueError("market-indices: indices must be a list")
+    for item in indices:
+        for key in ["key", "name", "symbol", "region"]:
+            if not item.get(key):
+                raise ValueError(f"market-indices: {key} is required")
+        if item.get("stale") and item.get("price") is None:
+            continue
+        for key in ["price", "previousClose", "change", "changePercent"]:
+            value = float(item[key])
+            if key in {"price", "previousClose"} and value <= 0:
+                raise ValueError(f"market-indices: {key} must be positive")
+        trend = item.get("trend", [])
+        if not isinstance(trend, list):
+            raise ValueError("market-indices: trend must be a list")
+        for point in trend:
+            if "time" not in point:
+                raise ValueError("market-indices: trend.time is required")
+            if float(point["value"]) <= 0:
+                raise ValueError("market-indices: trend.value must be positive")
+    return "market-indices: quote shape is valid"
+
+
 def check_dashboard_weather():
     data = load_json(ROOT / "dash/data/dashboard.json")
     weather = data.get("weather", {})
@@ -271,6 +305,7 @@ def main():
     checks.append(check_codex_macos_usage())
     checks.append(check_codex_server_usage())
     checks.append(check_token_usage())
+    checks.append(check_market_indices())
     checks.append(check_project_meta())
     checks.append(check_dashboard_weather())
     checks.append(check_local_server("http://127.0.0.1:4173/"))

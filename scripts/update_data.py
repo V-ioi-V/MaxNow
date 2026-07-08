@@ -19,6 +19,7 @@ DATASETS = {
     "codex-macos-usage": ("dash/data/codex-macos-usage.json", "dash/data/codex-macos-usage.js", "MAXNOW_CODEX_MACOS_USAGE_DATA"),
     "codex-server-usage": ("dash/data/codex-server-usage.json", "dash/data/codex-server-usage.js", "MAXNOW_CODEX_SERVER_USAGE_DATA"),
     "token-usage": ("dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
+    "market-indices": ("dash/data/market-indices.json", "dash/data/market-indices.js", "MAXNOW_MARKET_INDICES_DATA"),
     "project-meta": ("dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
     "ricky": ("dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
     "life-foods": ("dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
@@ -194,6 +195,7 @@ def parse_args():
     subparsers.add_parser("codex-server-usage", help="Refresh server Codex token usage ledger and validate data.")
     subparsers.add_parser("token-usage", help="Merge OpenClaw and Codex token ledgers and validate data.")
     subparsers.add_parser("ai-last30", help="Refresh free external AI signals for ai-news and Last-30.")
+    subparsers.add_parser("market-indices", help="Refresh market index quotes and validate data.")
     subparsers.add_parser("project-meta", help="Refresh MaxNow version and recent update metadata.")
     subparsers.add_parser("ricky-travel", help="Sync Ricky travel records from personal-wiki.")
     subparsers.add_parser("life-foods", help="Sync Life food picker candidates from personal-wiki.")
@@ -260,6 +262,9 @@ def main():
 
     if args.command in {"ai-last30"}:
         run_python("scripts/sync_ai_last30.py", "ai-last30.log")
+
+    if args.command in {"market-indices", "runtime", "all"}:
+        run_python("scripts/sync_market_indices.py", "market-indices.log")
 
     if args.command in {"project-meta", "runtime", "all"}:
         run_python("scripts/sync_project_meta.py", "project-meta.log")

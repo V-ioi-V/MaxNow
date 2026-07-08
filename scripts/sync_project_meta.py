@@ -28,6 +28,8 @@ GENERATED_DATA_PATHS = {
     "dash/data/codex-server-usage.js",
     "dash/data/token-usage.json",
     "dash/data/token-usage.js",
+    "dash/data/market-indices.json",
+    "dash/data/market-indices.js",
     "dash/data/dounai_checkin.json",
     "dash/data/project-meta.json",
     "dash/data/project-meta.js",
