@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 23:42",
-  "version": "1.0.0.45",
-  "versionLabel": "v1.0.0.45",
-  "branch": "feature/remove-home-journal",
-  "commit": "9986633",
+  "updatedAt": "2026-07-08 23:59",
+  "version": "1.0.0.46",
+  "versionLabel": "v1.0.0.46",
+  "branch": "feature/today-progress-timeline",
+  "commit": "d4ed359",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/remove-home-journal · commit 9986633 · 有未提交代码改动",
+  "deployNote": "feature/today-progress-timeline · commit d4ed359 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "将 Today Status 竖线改为今日时间轴",
+      "summary": "Today Status 右侧竖线改为按 00:00-24:00 推进的今日进度轴，显示 00:00、当前时间和 24:00。"
+    },
     {
       "date": "2026-07-08",
       "title": "移除 Home 今日记录模块",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "优化 Token 来源同步时间",
       "summary": "Token 页“各来源最后同步”从完整日期改为自然时间表达：刚同步显示“刚刚 / X 分钟前”，当天显示“今天 HH:mm”，昨天显示“昨天 HH:mm”，更早显示“M月D日 HH:mm”。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "调整 Home Todo 和 Token 长条布局",
-      "summary": "将 Home 右侧 `Today Todo` 和 `Tokens` 从半宽 `widget-compact` 改为整行 `widget-wide`，让它们在右侧栈里上下显示为两个长条。"
     }
   ]
 };

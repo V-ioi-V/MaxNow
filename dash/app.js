@@ -284,9 +284,21 @@ function updateTodaySource(source) {
 function updateTodayPhase() {
   const phase = getDayPhase();
   const progress = qs("#today-pulse-progress");
+  const now = new Date();
+  const nowText = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  const progressPercent = `${phase.progress}%`;
+  const progressRatio = String(phase.progress / 100);
   setText("#today-phase", phase.label);
   setText("#today-phase-note", phase.note);
-  if (progress) progress.style.height = `${phase.progress}%`;
+  setText("#today-pulse-now", nowText);
+  const meter = qs(".summary-live-meter");
+  if (meter) {
+    meter.style.setProperty("--today-progress", progressPercent);
+    meter.style.setProperty("--today-progress-ratio", progressRatio);
+    meter.title = `今日进度 ${nowText} / ${phase.progress}%`;
+    meter.setAttribute("aria-label", `今日进度 ${nowText}`);
+  }
+  if (progress) progress.style.removeProperty("height");
   return phase;
 }
 
