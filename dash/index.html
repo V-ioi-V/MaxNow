@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=119" />
+    <link rel="stylesheet" href="./styles.css?v=120" />
   </head>
   <body>
     <div class="app-shell">
@@ -170,15 +170,15 @@
           </div>
 
           <section class="status-strip" aria-label="Today status">
-            <article class="metric-mainline">
-              <span>&#24403;&#21069;&#20027;&#32447;</span>
-              <strong id="metric-mainlines">0</strong>
-              <small id="metric-mainlines-note">&#26242;&#26080;&#25968;&#25454;</small>
+            <article class="metric-today-execution" title="来自 personal-wiki 中 due_at 等于今天的未完成待办">
+              <span>&#20170;&#26085;&#25191;&#34892;</span>
+              <strong id="metric-today-execution">0</strong>
+              <small id="metric-today-execution-note">&#26242;&#26080;&#26126;&#30830;&#25191;&#34892;&#26085;&#26399;</small>
             </article>
-            <article class="metric-action" title="来自 ROADMAP.md 的 Now / Next，不是已完成记录">
-              <span>&#24453;&#25512;&#36827;</span>
-              <strong id="metric-actions">0</strong>
-              <small id="metric-actions-note">&#26242;&#26080;&#25968;&#25454;</small>
+            <article class="metric-sync" title="关键 Home 数据源的新鲜度：待办、Token、天气、市场、Last-30 和项目元信息">
+              <span>&#25968;&#25454;&#21516;&#27493;</span>
+              <strong id="metric-sync">--</strong>
+              <small id="metric-sync-note">&#31561;&#24453;&#21516;&#27493;</small>
             </article>
             <article class="metric-token">
               <span>Token 7&#22825;</span>
@@ -852,6 +852,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=106"></script>
+    <script src="./app.js?v=107"></script>
   </body>
 </html>
