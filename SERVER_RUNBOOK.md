@@ -716,12 +716,22 @@ server {
   root /var/www/maxnow-dashboard/dash;
   index index.html;
 
+  gzip on;
+  gzip_vary on;
+  gzip_min_length 1024;
+  gzip_types text/css application/javascript application/json image/svg+xml;
+
   location / {
     try_files $uri $uri/ /index.html;
   }
 
+  location ~* \.(?:css|js|png)$ {
+    add_header Cache-Control "private, max-age=3600";
+    try_files $uri =404;
+  }
+
   location /data/ {
-    add_header Cache-Control "no-store";
+    add_header Cache-Control "private, max-age=60, must-revalidate";
   }
 
   listen 443 ssl;

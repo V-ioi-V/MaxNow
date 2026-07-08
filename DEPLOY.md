@@ -24,7 +24,7 @@ MaxNow v1 是纯静态站点：
 - 不需要数据库。
 - 不需要后端 API。
 - 页面读取 `dash/data/*.json`。
-- `.js` wrapper 作为静态兜底。
+- `.js` wrapper 继续由脚本生成并校验，但 Dash 首屏不再预加载这些 wrapper；前端优先按需读取 JSON。
 
 公开博客第一阶段也保持纯静态站：
 
@@ -209,12 +209,22 @@ server {
   root /var/www/maxnow-dashboard/dash;
   index index.html;
 
+  gzip on;
+  gzip_vary on;
+  gzip_min_length 1024;
+  gzip_types text/css application/javascript application/json image/svg+xml;
+
   location / {
     try_files $uri $uri/ /index.html;
   }
 
+  location ~* \.(?:css|js|png)$ {
+    add_header Cache-Control "private, max-age=3600";
+    try_files $uri =404;
+  }
+
   location /data/ {
-    add_header Cache-Control "no-store";
+    add_header Cache-Control "private, max-age=60, must-revalidate";
   }
 }
 ```

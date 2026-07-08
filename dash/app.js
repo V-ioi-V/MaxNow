@@ -1,5 +1,4 @@
 const DATA_URL = "./data/dashboard.json";
-const AI_NEWS_URL = "./data/ai-news.json";
 const LAST30_URL = "./data/last-30.json";
 const WIKI_TODO_URL = "./data/wiki-todos.json";
 const CHECKIN_URL = "./data/dounai_checkin.json";
@@ -8,10 +7,11 @@ const TOKEN_USAGE_URL = "./data/token-usage.json";
 const PROJECT_META_URL = "./data/project-meta.json";
 const RICKY_URL = "./data/ricky.json";
 const LIFE_FOODS_URL = "./data/life-foods.json";
+const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
-const fallbackAiNews = window.MAXNOW_AI_NEWS_DATA || { items: [] };
 const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
 const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
 const fallbackCheckin = {};
@@ -22,7 +22,6 @@ const fallbackRicky = window.MAXNOW_RICKY_DATA || { stats: [], places: [], recor
 const fallbackLifeFoods = window.MAXNOW_LIFE_FOODS_DATA || { sections: [] };
 
 let dashboardData = fallbackData;
-let aiNewsData = fallbackAiNews;
 let last30Data = fallbackLast30;
 let wikiTodoData = fallbackWikiTodo;
 let checkinData = fallbackCheckin;
@@ -38,6 +37,11 @@ let rickyMap = null;
 let rickyMarkerLayer = null;
 let lifePickTimer = 0;
 let lifeWheelAnimations = [];
+let homeDataPromise = null;
+let tokenDataPromise = null;
+let rickyDataPromise = null;
+let lifeDataPromise = null;
+let leafletPromise = null;
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
 
@@ -1904,7 +1908,6 @@ function renderHome() {
   setText("#project-version-note", projectMetaData.deployNote || projectMetaData.updatedAt || copy.sync);
   clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
   renderCheckin();
-  renderDounai();
   renderWikiTodos(openTodos);
   renderLast30Column("today", "#last30-today-title", "#last30-today-summary", "#last30-today-list", copy.todayEvents);
   renderLast30Column("week", "#last30-week-title", "#last30-week-summary", "#last30-week-list", copy.weekEvents);
@@ -2133,17 +2136,9 @@ function createSessionItem(session) {
   return article;
 }
 
-function renderAll() {
-  renderHome();
-  renderTokens();
-  renderDounai();
-  renderRicky();
-  renderLife();
-}
-
 async function readJson(url, fallback) {
   try {
-    const response = await fetch(`${url}?t=${Date.now()}`, { cache: "no-store" });
+    const response = await fetch(url, { cache: "no-cache" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return await response.json();
   } catch (error) {
@@ -2153,7 +2148,7 @@ async function readJson(url, fallback) {
 
 async function readWikiTodo() {
   try {
-    const response = await fetch(`${WIKI_TODO_URL}?t=${Date.now()}`, { cache: "no-store" });
+    const response = await fetch(WIKI_TODO_URL, { cache: "no-cache" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     wikiTodoError = "";
     return await response.json();
@@ -2167,31 +2162,137 @@ async function readWikiTodo() {
   }
 }
 
-async function loadData() {
-  const [dashboard, aiNews, last30, wikiTodo, checkin, openclawUsage, tokenUsage, projectMeta, ricky, lifeFoods] = await Promise.all([
+function getActiveView() {
+  return document.body.dataset.view || "home";
+}
+
+function renderActiveView() {
+  const view = getActiveView();
+  if (view === "home" || view === "cloud") renderHome();
+  if (view === "dounai") renderDounai();
+  if (view === "tokens") renderTokens();
+  if (view === "ricky") renderRicky();
+  if (view === "life") renderLife();
+}
+
+async function loadHomeData({ force = false } = {}) {
+  if (!force && homeDataPromise) return homeDataPromise;
+
+  homeDataPromise = Promise.all([
     readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
-    readJson(AI_NEWS_URL, window.MAXNOW_AI_NEWS_DATA || fallbackAiNews),
     readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
     readWikiTodo(),
     readJson(CHECKIN_URL, fallbackCheckin),
-    readJson(OPENCLAW_USAGE_URL, window.MAXNOW_OPENCLAW_USAGE_DATA || fallbackOpenclawUsage),
-    readJson(TOKEN_USAGE_URL, window.MAXNOW_TOKEN_USAGE_DATA || fallbackTokenUsage),
     readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta),
-    readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky),
-    readJson(LIFE_FOODS_URL, window.MAXNOW_LIFE_FOODS_DATA || fallbackLifeFoods),
-  ]);
+  ]).then(([dashboard, last30, wikiTodo, checkin, projectMeta]) => {
+    dashboardData = dashboard;
+    last30Data = last30;
+    wikiTodoData = wikiTodo;
+    checkinData = checkin;
+    projectMetaData = projectMeta;
+    renderHome();
+    if (getActiveView() === "dounai") renderDounai();
+  });
 
-  dashboardData = dashboard;
-  aiNewsData = aiNews;
-  last30Data = last30;
-  wikiTodoData = wikiTodo;
-  checkinData = checkin;
-  openclawUsageData = openclawUsage;
-  tokenUsageData = tokenUsage;
-  projectMetaData = projectMeta;
-  rickyData = ricky;
-  lifeFoodsData = lifeFoods;
-  renderAll();
+  return homeDataPromise;
+}
+
+async function loadTokenData({ force = false } = {}) {
+  if (!force && tokenDataPromise) return tokenDataPromise;
+
+  tokenDataPromise = readJson(TOKEN_USAGE_URL, window.MAXNOW_TOKEN_USAGE_DATA || fallbackTokenUsage)
+    .then(async (tokenUsage) => {
+      tokenUsageData = tokenUsage;
+      if (!Array.isArray(tokenUsageData.days) || !tokenUsageData.days.length) {
+        openclawUsageData = await readJson(OPENCLAW_USAGE_URL, window.MAXNOW_OPENCLAW_USAGE_DATA || fallbackOpenclawUsage);
+      }
+      if (getActiveView() === "tokens") renderTokens();
+      if (getActiveView() === "home") renderHome();
+      if (getActiveView() !== "tokens") updateSidebarTokenSummary("7d");
+    });
+
+  return tokenDataPromise;
+}
+
+function loadStylesheetOnce(id, url) {
+  if (document.getElementById(id)) return Promise.resolve();
+  return new Promise((resolve) => {
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = url;
+    link.onload = resolve;
+    link.onerror = resolve;
+    document.head.appendChild(link);
+  });
+}
+
+function loadScriptOnce(id, url) {
+  if (document.getElementById(id)) return Promise.resolve();
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.id = id;
+    script.src = url;
+    script.onload = resolve;
+    script.onerror = resolve;
+    document.body.appendChild(script);
+  });
+}
+
+async function ensureRickyMapAssets() {
+  if (window.L) return window.L;
+  if (!leafletPromise) {
+    leafletPromise = Promise.all([
+      loadStylesheetOnce("leaflet-css", LEAFLET_CSS_URL),
+      loadScriptOnce("leaflet-js", LEAFLET_JS_URL),
+    ]).then(() => window.L || null);
+  }
+  return leafletPromise;
+}
+
+async function loadRickyData({ force = false } = {}) {
+  if (!force && rickyDataPromise) return rickyDataPromise;
+
+  rickyDataPromise = readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky)
+    .then(async (ricky) => {
+      rickyData = ricky;
+      renderRicky();
+      if (getMappableRickyPlaces(rickyData.places || []).length) {
+        await ensureRickyMapAssets();
+        renderRicky();
+      }
+    });
+
+  return rickyDataPromise;
+}
+
+async function loadLifeData({ force = false } = {}) {
+  if (!force && lifeDataPromise) return lifeDataPromise;
+
+  lifeDataPromise = readJson(LIFE_FOODS_URL, window.MAXNOW_LIFE_FOODS_DATA || fallbackLifeFoods)
+    .then((lifeFoods) => {
+      lifeFoodsData = lifeFoods;
+      renderLife();
+    });
+
+  return lifeDataPromise;
+}
+
+async function loadViewData(view = getActiveView(), options = {}) {
+  if (view === "tokens") return loadTokenData(options);
+  if (view === "ricky") return loadRickyData(options);
+  if (view === "life") return loadLifeData(options);
+  return loadHomeData(options);
+}
+
+async function loadData(options = {}) {
+  const view = getActiveView();
+  await loadHomeData(options);
+  if (view === "tokens") await loadTokenData(options);
+  if (view === "ricky") await loadRickyData(options);
+  if (view === "life") await loadLifeData(options);
+  if (view === "home") await loadTokenData(options);
+  renderActiveView();
 }
 
 function setView(view) {
@@ -2217,10 +2318,13 @@ function setView(view) {
                 ? copy.dounaiTitle
                 : copy.today;
   }
+  if (nextView === "home" || nextView === "cloud") requestAnimationFrame(renderHome);
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
   if (nextView === "ricky") requestAnimationFrame(renderRicky);
   if (nextView === "life") requestAnimationFrame(renderLife);
   if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));
+  loadViewData(nextView);
+  if (nextView === "home") loadTokenData();
   if (nextView !== "tokens") updateSidebarTokenSummary("7d");
   if (location.hash !== `#${nextView}`) location.hash = nextView;
   window.scrollTo({ top: 0, behavior: "auto" });
@@ -2524,7 +2628,7 @@ qs("#life-food-options")?.addEventListener("change", () => {
 refreshButton?.addEventListener("click", async () => {
   refreshButton.disabled = true;
   refreshButton.dataset.state = "loading";
-  await loadData();
+  await loadData({ force: true });
   refreshButton.dataset.state = "success";
   refreshButton.disabled = false;
   setTimeout(() => refreshButton.removeAttribute("data-state"), 900);
@@ -2546,5 +2650,5 @@ window.addEventListener("resize", () => {
 
 updateClock();
 setInterval(updateClock, 30000);
-loadData().then(() => setView(location.hash.replace("#", "")));
-setInterval(loadData, DATA_AUTO_REFRESH_INTERVAL_MS);
+loadHomeData().then(() => setView(location.hash.replace("#", "")));
+setInterval(() => loadData({ force: true }), DATA_AUTO_REFRESH_INTERVAL_MS);

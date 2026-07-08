@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 11:31",
-  "version": "1.0.0.28",
-  "versionLabel": "v1.0.0.28",
-  "branch": "main",
-  "commit": "5c86013",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 5c86013 · 干净",
+  "updatedAt": "2026-07-08 12:41",
+  "version": "1.0.0.29",
+  "versionLabel": "v1.0.0.29",
+  "branch": "feature/faster-dash-load",
+  "commit": "edf913d",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/faster-dash-load · commit edf913d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "优化 Dash 首屏加载链路",
+      "summary": "Dash 首屏不再同步加载 `dash/data/*.js` wrapper，也不再等待 Token、同行记、生活页等隐藏视图数据后才渲染 Home。"
+    },
     {
       "date": "2026-07-08",
       "title": "将 Today Status 改为自动态势",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-07",
       "title": "让 Home 今日状态卡更灵动",
       "summary": "Today Status 卡仍读取 `dashboard.json.today`，但前端新增当前时段、判断新鲜度、待推进、Token 和自动化状态信号。"
-    },
-    {
-      "date": "2026-07-07",
-      "title": "修复 macOS Codex 定时上报运行目录",
-      "summary": "将 Owner macOS 的 launchd 任务改为指向专用 clone `/Users/bytedance/.maxnow-token-report`，避免 Desktop 路径被 macOS 隐私权限拦截。"
     }
   ]
 };

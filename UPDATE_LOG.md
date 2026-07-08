@@ -11,6 +11,13 @@
 
 ## 2026-07-08
 
+### 优化 Dash 首屏加载链路
+
+- Dash 首屏不再同步加载 `dash/data/*.js` wrapper，也不再等待 Token、同行记、生活页等隐藏视图数据后才渲染 Home。
+- 将 JSON 读取从时间戳 `no-store` 改为正常 URL + `cache: no-cache`，配合 ETag / Last-Modified 做 revalidate；Token、Ricky、Life 和 Leaflet 改为按视图加载。
+- 更新部署文档中的 nginx 示例，建议启用 gzip，并将 `/data/` 改为短缓存 revalidate。
+- 将 Dash 脚本缓存版本提升到 `app.js?v=96`，并将 `VERSION` 从 `1.0.0.28` 提升到 `1.0.0.29`。
+
 ### 将 Today Status 改为自动态势
 
 - Home 顶部 Today Status 不再依赖过期 `dashboard.json.today` 手填字段作为主状态，改为基于今日 Todo、自动化状态、当前时段、ROADMAP 和 Token 活跃自动生成模式、节奏、焦点和摘要。
