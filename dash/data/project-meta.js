@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 22:43",
-  "version": "1.0.0.43",
-  "versionLabel": "v1.0.0.43",
-  "branch": "feature/friendly-token-sync-times",
-  "commit": "8a71e7b",
+  "updatedAt": "2026-07-08 23:27",
+  "version": "1.0.0.44",
+  "versionLabel": "v1.0.0.44",
+  "branch": "feature/token-sync-update-list",
+  "commit": "f702758",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/friendly-token-sync-times · commit 8a71e7b · 有未提交代码改动",
+  "deployNote": "feature/token-sync-update-list · commit f702758 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "调整 Token 来源同步位置",
+      "summary": "Token 页“各来源最后同步”改回显示具体时间 `YYYY-MM-DD HH:mm`，不再使用“今天 / 昨天 / X 分钟前”这类相对时间。"
+    },
     {
       "date": "2026-07-08",
       "title": "移除 Home 稍后留意模块",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "回填 Home 左侧内容流",
       "summary": "将最近更新、外部输入和稍后留意从右侧 widget 栈移回左侧 `home-lane-primary`，避免右侧一路下排时左列出现大面积空白。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "标准化 Home Widget 尺寸",
-      "summary": "Home 右侧 `home-side-stack` 从单列大卡改为 widget 网格：`widget-compact` 占半宽，`widget-wide` / `wide-*` / `mid-*` 占满右列。"
     }
   ]
 };

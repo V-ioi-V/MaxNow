@@ -2339,10 +2339,11 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .token-source-updates {
   min-width: 0;
-  width: min(100%, 540px);
+  width: min(100%, 360px);
+  justify-self: end;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px 18px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
   align-items: stretch;
 }
 
@@ -2364,9 +2365,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .token-source-sync {
-  gap: 8px;
-  padding: 16px 18px;
-  align-content: start;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.64fr);
+  gap: 20px;
+  align-items: center;
+  padding: 16px 22px;
 }
 
 .token-source-sync > span {
@@ -2383,11 +2385,11 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   border: 0;
   border-bottom: 1px solid #edf3fa;
   border-radius: 0;
-  padding: 5px 0;
+  padding: 4px 0;
   background: transparent;
   box-shadow: none;
 }
@@ -2426,7 +2428,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   max-width: none;
   overflow: hidden;
   color: var(--source-update-color);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2435,7 +2437,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .token-source-update-item strong {
   justify-self: end;
   color: var(--soft);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   white-space: nowrap;
@@ -3833,7 +3835,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   }
 
   .token-source-updates {
-    justify-content: flex-start;
+    width: 100%;
+    justify-self: stretch;
   }
 
   .token-activity-chart {

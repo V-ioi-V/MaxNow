@@ -2144,25 +2144,9 @@ function normalizeSourceUpdatedAt(value) {
   return text ? text.slice(0, 16) : "";
 }
 
-function formatSourceUpdatedAt(value, now = new Date()) {
+function formatSourceUpdatedAt(value) {
   const text = normalizeSourceUpdatedAt(value);
-  if (!text) return copy.syncWaiting;
-  const date = parseLocalDateTime(text);
-  if (!date) return text;
-  const diffMs = now.getTime() - date.getTime();
-  const minuteMs = 60 * 1000;
-  const hourMs = 60 * minuteMs;
-  const dayMs = 24 * hourMs;
-  if (diffMs >= 0 && diffMs < minuteMs) return "\u521a\u521a";
-  if (diffMs >= 0 && diffMs < hourMs) return `${Math.floor(diffMs / minuteMs)} \u5206\u949f\u524d`;
-  const timeText = `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dateStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const dayDiff = Math.round((todayStart.getTime() - dateStart.getTime()) / dayMs);
-  if (dayDiff === 0) return `\u4eca\u5929 ${timeText}`;
-  if (dayDiff === 1) return `\u6628\u5929 ${timeText}`;
-  const dateText = `${date.getMonth() + 1}\u6708${date.getDate()}\u65e5 ${timeText}`;
-  return date.getFullYear() === now.getFullYear() ? dateText : `${date.getFullYear()}\u5e74${dateText}`;
+  return text || copy.syncWaiting;
 }
 
 function sourceUpdatedAtFreshness(value, now = new Date()) {
