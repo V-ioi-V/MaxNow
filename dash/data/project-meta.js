@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 12:41",
+  "updatedAt": "2026-07-08 12:43",
   "version": "1.0.0.29",
   "versionLabel": "v1.0.0.29",
-  "branch": "feature/faster-dash-load",
-  "commit": "edf913d",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/faster-dash-load · commit edf913d · 有未提交代码改动",
+  "branch": "main",
+  "commit": "03fda7c",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 03fda7c · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-08",
