@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 23:27",
-  "version": "1.0.0.44",
-  "versionLabel": "v1.0.0.44",
-  "branch": "feature/token-sync-update-list",
-  "commit": "f702758",
+  "updatedAt": "2026-07-08 23:42",
+  "version": "1.0.0.45",
+  "versionLabel": "v1.0.0.45",
+  "branch": "feature/remove-home-journal",
+  "commit": "9986633",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/token-sync-update-list · commit f702758 · 有未提交代码改动",
+  "deployNote": "feature/remove-home-journal · commit 9986633 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "移除 Home 今日记录模块",
+      "summary": "从 Home 左侧内容流移除“今日记录 / Daily Log”模块，避免静态项目原则被误认为当天真实日志。"
+    },
     {
       "date": "2026-07-08",
       "title": "调整 Token 来源同步位置",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "调整 Home Todo 和 Token 长条布局",
       "summary": "将 Home 右侧 `Today Todo` 和 `Tokens` 从半宽 `widget-compact` 改为整行 `widget-wide`，让它们在右侧栈里上下显示为两个长条。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "回填 Home 左侧内容流",
-      "summary": "将最近更新、外部输入和稍后留意从右侧 widget 栈移回左侧 `home-lane-primary`，避免右侧一路下排时左列出现大面积空白。"
     }
   ]
 };

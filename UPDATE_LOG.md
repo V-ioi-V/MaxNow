@@ -11,6 +11,17 @@
 
 ## 2026-07-08
 
+### 移除 Home 今日记录模块
+
+- 从 Home 左侧内容流移除“今日记录 / Daily Log”模块，避免静态项目原则被误认为当天真实日志。
+- 同步移除 `journal-list` 首页渲染入口和 `home-card-journal` 专属样式；`dashboard.json` 中历史 `journal` 字段暂不删除，保留数据兼容。
+- 更新 `SPEC.md`、`STYLE_CONTEXT.md` 和 `CONTEXT.md`，明确 Home 不再保留独立“今日记录”卡片，真正的当天判断由顶部今日状态承载。
+- 将 Dash 缓存版本提升到 `styles.css?v=118` 和 `app.js?v=105`，并将 `VERSION` 从 `1.0.0.44` 提升到 `1.0.0.45`。
+
+原因：
+
+- Owner 确认“今日记录”当前只是 `dashboard.json.journal` 静态内容，不会自动成为当天日志，没必要继续占用 Home。
+
 ### 调整 Token 来源同步位置
 
 - Token 页“各来源最后同步”改回显示具体时间 `YYYY-MM-DD HH:mm`，不再使用“今天 / 昨天 / X 分钟前”这类相对时间。

@@ -1077,10 +1077,6 @@ body[data-view="tokens"] .topbar-token-ranges {
   order: 30;
 }
 
-.home-lane-primary .home-card-journal {
-  order: 40;
-}
-
 .home-lane-primary .home-card-updates {
   order: 50;
 }
@@ -1140,7 +1136,6 @@ body[data-view="tokens"] .topbar-token-ranges {
 .home-card-checkin,
 .home-card-token-mini,
 .home-card-actions,
-.home-card-journal,
 .home-card-system,
 .home-card-updates,
 .home-card-today-todo {
@@ -1183,7 +1178,6 @@ body[data-view="tokens"] .topbar-token-ranges {
   --card-border: var(--purple-border);
 }
 
-#journal,
 .today-todo-panel,
 .maxnow-updates-panel {
   --card-color: var(--accent-strong);
@@ -1880,10 +1874,6 @@ a.last30-item {
 
 .feed-list {
   grid-template-columns: repeat(3, minmax(160px, 1fr));
-}
-
-.journal-list {
-  grid-template-columns: repeat(2, minmax(180px, 1fr));
 }
 
 .ai-news-list {

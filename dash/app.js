@@ -1951,7 +1951,6 @@ function renderHome() {
   const { mainlines, actions } = getHomeWorkItems();
   const openTodos = getOpenWikiTodos();
   const todayTodos = getTodayWikiTodos(openTodos);
-  const journal = dashboardData.journal || [];
   const token7d = getTokenRange("7d");
   const token1d = getTokenRange("1d");
   const tokenAll = getTokenRange("all");
@@ -1962,7 +1961,6 @@ function renderHome() {
   const automationTitle = automation.summary
     ? `系统自动化：${automation.summary}`
     : "系统自动化状态：nginx、证书、部署、cron、失败日志和资源快照";
-  setText("#journal-source", dashboardData.journalSource || copy.statusSnapshot);
   setText("#last30-source", last30Data.sourceSummary || last30Data.updatedAt || copy.syncWaiting);
   renderWeather();
 
@@ -1994,7 +1992,6 @@ function renderHome() {
   updateSidebarTokenSummary("7d");
 
   clearAndFill(qs("#action-list"), createTask, actions);
-  clearAndFill(qs("#journal-list"), createFeed, journal);
   const systemItems = dashboardData.system || [];
   const cloudSystemItems = [
     {
