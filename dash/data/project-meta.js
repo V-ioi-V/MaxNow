@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-08 20:19",
-  "version": "1.0.0.38",
-  "versionLabel": "v1.0.0.38",
-  "branch": "bugfix/home-two-column-layout",
-  "commit": "fc84d76",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/home-two-column-layout · commit fc84d76 · 有未提交代码改动",
+  "updatedAt": "2026-07-08 20:55",
+  "version": "1.0.0.39",
+  "versionLabel": "v1.0.0.39",
+  "branch": "main",
+  "commit": "8763e91",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 8763e91 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-07-08",
+      "title": "标准化 Home Widget 尺寸",
+      "summary": "Home 右侧 `home-side-stack` 从单列大卡改为 widget 网格：`widget-compact` 占半宽，`widget-wide` / `wide-*` / `mid-*` 占满右列。"
+    },
     {
       "date": "2026-07-08",
       "title": "改为 Home 两列主版式",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "统一 Home Board 版式规则",
       "summary": "Home 状态条下方改为统一 `home-board`：Token、市场、今日 Todo、Personal Wiki、豆奶、待推进、近期用量、外部输入、最近更新、今日记录、稍后留意和系统状态都在同一个响应式网格里声明位置。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "填补 Home Token 热力格下方空白",
-      "summary": "Home 顶部主内容改为左侧 Token 热力格 + Personal Wiki 近期待办竖向栈、右侧市场涨幅卡，避免市场卡撑高整行后左侧出现大面积空白。"
     }
   ]
 };

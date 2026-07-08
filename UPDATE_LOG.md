@@ -11,6 +11,13 @@
 
 ## 2026-07-08
 
+### 标准化 Home Widget 尺寸
+
+- Home 右侧 `home-side-stack` 从单列大卡改为 widget 网格：`widget-compact` 占半宽，`widget-wide` / `wide-*` / `mid-*` 占满右列。
+- 顶部 Today Status 比例调宽，天气和小日历保持紧凑 widget，不再把右侧两个小组件拉成大卡。
+- 更新 `STYLE_CONTEXT.md`、`SPEC.md` 和 `CONTEXT.md`，明确后续 Home 模块必须先声明卡型尺寸，不能随手用二列或三列拉伸。
+- 将 Dash 样式缓存版本提升到 `styles.css?v=112`，并将 `VERSION` 从 `1.0.0.38` 提升到 `1.0.0.39`。
+
 ### 改为 Home 两列主版式
 
 - Home 主内容从三列视觉布局调整为两列外壳：左列承载个人主任务，右列用 `home-side-stack` 纵向承载市场 / 用量 / 更新和 Todo / 豆奶 / 系统状态。
