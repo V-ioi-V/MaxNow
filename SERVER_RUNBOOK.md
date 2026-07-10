@@ -499,6 +499,17 @@ nginx config backup before reload: /etc/nginx/sites-available/maxnow-dashboard.b
 verification: python3 scripts/check.py ok；本地 Chrome headless 可执行并渲染 Token 热力格；服务器 nginx -t ok；reload ok；https://dash.maxnow.cn 200；线上 index 只引用 app.js?v=96；app.js?v=96 gzip 约 30KB；token-usage.json gzip 约 33KB；响应头确认 Cache-Control 和 Content-Encoding 生效。
 ```
 
+2026-07-10 已部署 Today Status 时间轴和 Home 版本更新布局修复：
+
+```text
+deployed commit: 008ed5a Merge version update layout fixes
+changes: 修复 Today Status 当前时间与进度条重叠；将“最近更新”改名为“版本更新”并移到外部输入下方；Dash 样式缓存版本提升到 styles.css?v=122；MaxNow 版本提升到 1.0.0.49。
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260710-093053-before-version-update
+runtime data stash before deploy: before-version-update-deploy-20260710-093053
+runtime preservation: 恢复 ai-news、dashboard、豆奶、Last-30、市场、OpenClaw、Codex Server、Ricky、Token 和 Wiki Todo 运行数据；重新生成 project-meta；Codex Server 账本保持 11 次会话和 4,993,467 Token。
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；nginx active；https://dash.maxnow.cn 200；https://blog.maxnow.cn 200；线上 VERSION 1.0.0.49；styles.css?v=122 已生效。
+```
+
 刷新 Home 天气卡：
 
 ```bash
