@@ -585,6 +585,17 @@ runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后
 verification: python3 scripts/check.py ok；Today axis 回归校验 ok；nginx -t ok；线上源文件确认顶部 24:00、底部 00:00、向上填充和倒序 marker 均已生效。
 ```
 
+2026-07-10 已部署 AI 前沿栏头精简：
+
+```text
+deployed commit: ca6fa87 fix: simplify AI frontier headings
+changes: 三栏只保留蓝色时间范围“最近 3 天 / 本周 / 近 30 天”，删除重复的黑色栏目名和栏目简介；缓存提升到 styles.css?v=130 / app.js?v=112，版本提升到 1.0.3.03。
+runtime data backup before deploy: /tmp/maxnow-pre-ai-headings-20260710-231228
+runtime data stash before deploy: pre-ai-headings-20260710-231228
+runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后恢复全部运行数据，再重新生成 project-meta。
+verification: python3 scripts/check.py ok；nginx -t ok；线上源文件确认三个蓝色时间标签均存在，冗余栏目名和栏目简介均不存在。
+```
+
 刷新 Home 天气卡：
 
 ```bash
