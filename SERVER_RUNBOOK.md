@@ -1077,3 +1077,13 @@ runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260710-before-token-up
 runtime data stash: before-token-update-card-runtime-data
 verification: 本地 1280px 下右卡宽 410px 且与左卡同顶同底；390px 下单列宽 362px、无横向溢出；线上 styles.css?v=126 返回 200；nginx -t 和认证服务均正常
 ```
+
+2026-07-10 已修复海淀降雨被显示为阴天：
+
+```text
+deployed commit: f6714d8 Use CMA weather for Beijing
+changes: 北京天气从 Open-Meteo 默认 Best Match 切换到 CMA / GRAPES；新增 precipitation / rain / showers；有降水但天气码仍为云时按雨或阵雨展示
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260710-before-cma-weather
+runtime data stash: before-cma-weather-runtime-data
+verification: 默认模型 14:45 返回阴、0mm；CMA 15:00 返回阵雨、1.7mm；服务器 weather 刷新后 code=80、icon=rain、temp=28°C、今日摘要雷阵雨
+```
