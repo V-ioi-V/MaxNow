@@ -478,8 +478,14 @@ def check_today_progress_ring():
         raise ValueError("Today progress ring: ring or inner percentage is missing")
     if '<time id="today-pulse-now">' not in dashboard_html:
         raise ValueError("Today progress ring: outside current time is missing")
+    if 'class="summary-kicker"' not in dashboard_html:
+        raise ValueError("Today progress ring: freshness must stay with the title kicker")
     if "conic-gradient(" not in dashboard_css or "--today-progress-angle: 0deg" not in dashboard_css:
         raise ValueError("Today progress ring: circular theme progress style is missing")
+    if "grid-template-columns: 140px minmax(0, 1fr)" not in dashboard_css or "gap: 30px" not in dashboard_css:
+        raise ValueError("Today progress ring: meter and signal columns are not separated")
+    if "grid-template-rows: repeat(4, minmax(0, 1fr))" not in dashboard_css:
+        raise ValueError("Today progress ring: signal rows are not evenly distributed")
     if 'setProperty("--today-progress-angle", progressAngle)' not in dashboard_js:
         raise ValueError("Today progress ring: angle update is missing")
     if 'setText("#today-pulse-percent", progressPercent)' not in dashboard_js:
@@ -487,9 +493,13 @@ def check_today_progress_ring():
     retired_axis_copy = ("summary-live-start", "summary-live-end", "today-marker-ratio")
     if any(value in dashboard_html or value in dashboard_css or value in dashboard_js for value in retired_axis_copy):
         raise ValueError("Today progress ring: retired vertical axis remains")
-    if ".summary-live-item::before" not in dashboard_css or "top: 2px" not in dashboard_css:
+    if (
+        ".summary-live-item::before" not in dashboard_css
+        or "top: 50%" not in dashboard_css
+        or "transform: translateY(-50%)" not in dashboard_css
+    ):
         raise ValueError("Today progress ring: signal node alignment rule is missing")
-    return "Today progress ring: theme ring, inner percentage, outside time, and node alignment are valid"
+    return "Today progress ring: title freshness, separated columns, equal rows, outside time, and centered nodes are valid"
 
 
 def check_secondary_view_style():
@@ -515,7 +525,7 @@ def check_secondary_view_style():
     )
     if any(rule not in dashboard_css for rule in required_css):
         raise ValueError("secondary views: shared theme, accent, or card rules are incomplete")
-    if "styles.css?v=132" not in dashboard_html:
+    if "styles.css?v=133" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     return "secondary views: five tabs share page heads, theme accents, card shells, and responsive rules"
 
