@@ -596,6 +596,17 @@ runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后
 verification: python3 scripts/check.py ok；nginx -t ok；线上源文件确认三个蓝色时间标签均存在，冗余栏目名和栏目简介均不存在。
 ```
 
+2026-07-10 已部署 Today Status 圆形日进度：
+
+```text
+deployed commit: a32a0ed feat: replace Today axis with progress ring
+changes: 用青色 24 小时圆形进度环替换竖向时间轴，环内显示今天已过去的整数百分比，当前时间显示在环外；桌面 / 窄屏圆环分别为 112px / 96px；缓存提升到 styles.css?v=131 / app.js?v=113，版本提升到 1.0.3.04。
+runtime data backup before deploy: /tmp/maxnow-pre-today-ring-20260710-232018
+runtime data stash before deploy: pre-today-ring-20260710-232018
+runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后恢复全部运行数据，再重新生成 project-meta。
+verification: python3 scripts/check.py ok；nginx -t ok；线上源文件确认圆环、环内百分比、环外时间均存在，旧竖轴代码已移除。
+```
+
 刷新 Home 天气卡：
 
 ```bash
