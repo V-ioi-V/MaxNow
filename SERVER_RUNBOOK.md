@@ -342,7 +342,7 @@ python scripts/check.py
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
 ```
 
-默认任务名为 `MaxNow-Local-Codex-Usage-Report`，每 1 小时静默运行一次。安装脚本会注册 hidden task。Owner Windows 机器上当前使用专用 clone `D:\Personal\MaxNow-token-report` 运行该任务，Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow-token-report\scripts\report_codex_usage_hidden.vbs"`；VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免自动运行时弹出瞬时命令行窗口。该任务要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-usage.*` 源账本并推送到 `origin/main`，不再通过 SSH 触发服务器合并。统一 `token-usage.*` 由服务器 `MAXNOW-TOKEN-USAGE-REFRESH` 每 10 分钟拉取并合并。不要在服务器部署本机 Codex 数据时运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器本地 `.codex` 状态覆盖本机账本。
+默认任务名为 `MaxNow-Local-Codex-Usage-Report`，固定每小时 `:02` 静默运行。安装脚本会注册 hidden task，最长运行 10 分钟。Owner Windows 机器上当前使用专用 clone `D:\Personal\MaxNow-token-report`；Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow-token-report\scripts\report_codex_usage_hidden.vbs"`，VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`。该任务要求运行目录在 `main` 且无无关脏文件，只提交 `dash/data/codex-usage.*` 源账本并推送到 `origin/main`。不要在服务器运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器 `.codex` 覆盖 Windows 账本。
 
 2026-07-06 修复过一次 Windows 专用 clone 上报卡住：主工作区 `D:\Personal\MaxNow` 配有 repo-local GitHub 代理，但 `D:\Personal\MaxNow-token-report` 缺少同样配置，导致计划任务在 `git pull --ff-only origin main` 处卡住或报 `Recv failure: Connection was reset`。当前该 clone 已设置：
 
@@ -366,7 +366,7 @@ python3 scripts/check.py
 bash scripts/install_local_codex_usage_launchd.sh
 ```
 
-默认 label 为 `cn.maxnow.local-codex-usage-report`，每 1 小时运行一次。launchd 调用 `scripts/report_codex_usage.sh`，该脚本要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`，只提交 `dash/data/codex-macos-usage.*` 源账本并推送到 `origin/main`，不再通过 SSH 触发服务器合并。macOS 也建议使用专用 main clone，避免日常开发分支影响自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
+默认 label 为 `cn.maxnow.local-codex-usage-report`，通过 `StartCalendarInterval` 固定每小时 `:00` 运行。launchd 调用 `scripts/report_codex_usage.sh`，要求专用工作区位于 `main` 且无无关脏文件，只提交 `dash/data/codex-macos-usage.*` 并推送到 `origin/main`。Git HTTP 低速边界和 SSH keepalive 会让网络卡住后失败退出；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
 
 2026-07-07 已将 Owner macOS 的 launchd 任务改为使用专用 clone `/Users/bytedance/.maxnow-token-report`，plist 位于 `~/Library/LaunchAgents/cn.maxnow.local-codex-usage-report.plist`。原先指向 `/Users/bytedance/Desktop/Personal/MaxNow` 时，launchd 被 macOS Desktop 隐私权限拦截，日志出现 `Operation not permitted`，`launchctl print gui/501/cn.maxnow.local-codex-usage-report` 显示 `last exit code = 126`。修复命令为：
 
@@ -377,25 +377,25 @@ bash scripts/install_local_codex_usage_launchd.sh --repo-root /Users/bytedance/.
 
 修复后手动触发验证成功：`launchctl` 上次退出码为 `0`，`~/Library/Logs/MaxNow/local-codex-usage-report.log` 记录 `2026-07-07 17:32` 成功提交 `Update macOS Codex token usage`，线上 `token-usage.json` 的 `Codex macOS` 来源更新时间为 `2026-07-07 17:32`。
 
-Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count` 和 `turn_context.model`，导出 input / output / cached input / total token、时间、来源、具体模型名和 OpenAI API 等价费用估算；不要导出 prompt / response 正文。Windows 兼容账本使用 `dash/data/codex-usage.*`，macOS 本机账本使用 `dash/data/codex-macos-usage.*`，服务器侧使用独立文件 `dash/data/codex-server-usage.*`，避免不同机器互相覆盖。
+Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count`、`turn_context.model` 和 `task_complete.duration_ms`，导出 token、已完成任务活跃时长、时间、来源、模型和费用估算；活跃时长不包含轮次之间空闲时间，不导出 prompt / response 正文。Windows、macOS、server 继续使用三个独立源账本。
 
-2026-07-02 已用 root crontab 接入服务器 Codex 用量同步，标记块为 `MAXNOW-CODEX-SERVER-USAGE`：
+2026-07-10 将 OpenClaw / Codex server 合并为固定小时源采集，标记块为 `MAXNOW-TOKEN-SOURCE-REFRESH`：
 
 ```cron
-# BEGIN MAXNOW-CODEX-SERVER-USAGE
-40 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-codex-server-usage.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow codex server usage sync start"; python3 scripts/update_data.py codex-server-usage; chown ubuntu:www-data dash/data/codex-server-usage.json dash/data/codex-server-usage.js dash/data/token-usage.json dash/data/token-usage.js logs/codex-server-usage.log logs/token-usage.log; echo "[$(date -Is)] maxnow codex server usage sync ok"' >> /var/www/maxnow-dashboard/logs/codex-server-usage.log 2>&1
-# END MAXNOW-CODEX-SERVER-USAGE
+# BEGIN MAXNOW-TOKEN-SOURCE-REFRESH
+5 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-token-source-refresh.lock /bin/bash scripts/refresh_token_sources_on_server.sh >> /var/www/maxnow-dashboard/logs/token-source-refresh.log 2>&1
+# END MAXNOW-TOKEN-SOURCE-REFRESH
 ```
 
-2026-07-07 已用 ubuntu crontab 接入统一 Token 总账刷新，标记块为 `MAXNOW-TOKEN-USAGE-REFRESH`：
+ubuntu crontab 在每小时 `:10` 拉取本机源账本并发布统一 Token 总账：
 
 ```cron
 # BEGIN MAXNOW-TOKEN-USAGE-REFRESH
-*/10 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-token-usage-refresh.lock /bin/bash scripts/refresh_token_usage_on_server.sh >> /var/www/maxnow-dashboard/logs/token-usage-refresh.log 2>&1
+10 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-token-usage-refresh.lock /bin/bash scripts/refresh_token_usage_on_server.sh >> /var/www/maxnow-dashboard/logs/token-usage-refresh.log 2>&1
 # END MAXNOW-TOKEN-USAGE-REFRESH
 ```
 
-该任务每 10 分钟拉取 `origin/main` 上 Windows / macOS 推送的本机源账本，保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage` 合并线上总账。服务器侧备份目录为 `/tmp/maxnow-token-usage-refresh/<timestamp>`；`git pull` 默认 120 秒超时，避免 GitHub 网络偶发挂起时长期占住刷新锁。
+固定周期为 macOS `:00`、Windows `:02`、服务器源采集 `:05`、总账发布 `:10`。总账任务保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage`；`git pull` 默认 120 秒超时。
 
 2026-07-02 已部署 Token 来源卡范围口径修正：
 
@@ -588,12 +588,12 @@ python3 scripts/check.py
 
 `scripts/sync_openclaw_usage.py` 只读 `/root/.openclaw/agents/main/sessions/*.trajectory.jsonl`、cron runs 和 sessions 元数据，生成 `dash/data/openclaw-usage.json` / `dash/data/openclaw-usage.js`。它按 Asia/Shanghai 日期聚合 input / output / cacheRead / total token，并用 OpenRouter 模型价格生成 `openrouter-equivalent` 费用估算。该费用不是真实供应商账单。默认采集长期窗口，Token 页面再切分 1d / 7d / 30d / all。
 
-已用 root crontab 单独每天刷新一次 OpenClaw 用量，不混进每 10 分钟的 `MAXNOW-DASHBOARD-SYNC`。原因是 OpenClaw trajectory 位于 `/root/.openclaw`，普通 `ubuntu` 用户不能直接读取；任务结束后需要把生成的前端数据文件归属恢复为 `ubuntu:www-data`：
+OpenClaw trajectory 位于 `/root/.openclaw`，普通 `ubuntu` 用户不能读取，因此由 root 的 `MAXNOW-TOKEN-SOURCE-REFRESH` 每小时 `:05` 与 Codex server 一起刷新；任务结束后恢复前端数据文件归属：
 
 ```cron
-# BEGIN MAXNOW-OPENCLAW-USAGE
-20 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-openclaw-usage.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow openclaw usage sync start"; python3 scripts/update_data.py openclaw-usage; chown ubuntu:www-data dash/data/openclaw-usage.json dash/data/openclaw-usage.js logs/openclaw-usage.log; echo "[$(date -Is)] maxnow openclaw usage sync ok"' >> /var/www/maxnow-dashboard/logs/openclaw-usage.log 2>&1
-# END MAXNOW-OPENCLAW-USAGE
+# BEGIN MAXNOW-TOKEN-SOURCE-REFRESH
+5 * * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-token-source-refresh.lock /bin/bash scripts/refresh_token_sources_on_server.sh >> /var/www/maxnow-dashboard/logs/token-source-refresh.log 2>&1
+# END MAXNOW-TOKEN-SOURCE-REFRESH
 ```
 
 2026-07-07 修复：线上 `openclaw-usage.*` 曾被仓库空基线覆盖，导致 Token 页只剩 Codex 来源。已用 root 重新运行 `python3 scripts/update_data.py openclaw-usage`，恢复 346 个 OpenClaw runs，并加固本机 Codex 上报脚本的服务器合并逻辑：空运行时备份不会覆盖非空账本，OpenClaw 为空时会优先用 `/root/.openclaw` 刷新源账本。

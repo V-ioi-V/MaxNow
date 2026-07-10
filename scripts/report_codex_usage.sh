@@ -78,6 +78,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 export PATH="/usr/local/bin:/opt/homebrew/bin:/Users/bytedance/.npm-global/bin:$PATH"
+export GIT_HTTP_LOW_SPEED_LIMIT="${GIT_HTTP_LOW_SPEED_LIMIT:-1}"
+export GIT_HTTP_LOW_SPEED_TIME="${GIT_HTTP_LOW_SPEED_TIME:-120}"
+export GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=4}"
 
 log() {
   local stamp

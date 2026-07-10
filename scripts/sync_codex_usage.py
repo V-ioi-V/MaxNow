@@ -72,6 +72,18 @@ def parse_ts(value):
         return None
 
 
+def parse_event_ts(value):
+    if isinstance(value, (int, float)):
+        seconds = float(value)
+        if seconds > 10_000_000_000:
+            seconds /= 1000
+        try:
+            return datetime.fromtimestamp(seconds, tz=timezone.utc).astimezone(TZ)
+        except (OSError, OverflowError, ValueError):
+            return None
+    return parse_ts(value)
+
+
 def to_int(value):
     try:
         return int(value or 0)
@@ -124,6 +136,8 @@ def empty_usage():
         "totalTokens": 0,
         "estimatedCostUsd": 0.0,
         "runs": 0,
+        "activeSeconds": 0,
+        "completedTurns": 0,
     }
 
 
@@ -134,6 +148,8 @@ def add_usage(target, usage):
     target["cacheBaseTokens"] += to_int(usage.get("cacheBaseTokens"))
     target["totalTokens"] += to_int(usage.get("totalTokens"))
     target["runs"] += 1
+    target["activeSeconds"] += to_int(usage.get("activeSeconds"))
+    target["completedTurns"] += to_int(usage.get("completedTurns"))
 
 
 def rounded_cost(value):
@@ -154,6 +170,9 @@ def load_session_usage(path, source_key, source_label, cutoff):
     last_timestamp = None
     last_model = DEFAULT_PRICING_MODEL
     last_context_window = 0
+    active_seconds = 0
+    completed_turns = 0
+    active_by_date = defaultdict(lambda: {"activeSeconds": 0, "completedTurns": 0})
 
     try:
         handle = path.open(encoding="utf-8", errors="replace")
@@ -187,6 +206,17 @@ def load_session_usage(path, source_key, source_label, cutoff):
             if record_type != "event_msg":
                 continue
             payload = record.get("payload") or {}
+            if payload.get("type") == "task_complete":
+                duration_ms = to_int(payload.get("duration_ms"))
+                completed_at = parse_event_ts(payload.get("completed_at")) or parse_ts(record.get("timestamp"))
+                if duration_ms > 0 and completed_at and completed_at >= cutoff:
+                    duration_seconds = (duration_ms + 999) // 1000
+                    active_seconds += duration_seconds
+                    completed_turns += 1
+                    active_day = active_by_date[completed_at.strftime("%Y-%m-%d")]
+                    active_day["activeSeconds"] += duration_seconds
+                    active_day["completedTurns"] += 1
+                continue
             if payload.get("type") != "token_count":
                 continue
 
@@ -230,6 +260,12 @@ def load_session_usage(path, source_key, source_label, cutoff):
         "pricingModel": last_model,
         "contextWindow": last_context_window,
         "tokenCountEvents": event_count,
+        "activeSeconds": active_seconds,
+        "completedTurns": completed_turns,
+        "activeByDate": [
+            {"date": date, **usage}
+            for date, usage in sorted(active_by_date.items())
+        ],
     }
     item["estimatedCostUsd"] = round(estimate_cost(item, last_model), 8)
     return [item]
@@ -245,11 +281,12 @@ def collect_runs(state_dir, source_key, source_label, since_days):
 
 def summarize_runs(runs, source_key, source_label, since_days):
     days = {}
-    for run in runs:
-        day = days.setdefault(
-            run["date"],
+
+    def day_for(date):
+        return days.setdefault(
+            date,
             {
-                "date": run["date"],
+                "date": date,
                 "sources": [],
                 **empty_usage(),
                 "byModel": {},
@@ -257,7 +294,11 @@ def summarize_runs(runs, source_key, source_label, since_days):
                 "pricingEstimated": True,
             },
         )
-        add_usage(day, run)
+
+    for run in runs:
+        day = day_for(run["date"])
+        usage_run = {**run, "activeSeconds": 0, "completedTurns": 0}
+        add_usage(day, usage_run)
         day["estimatedCostUsd"] += float(run.get("estimatedCostUsd") or 0)
         if run["source"] not in day["sources"]:
             day["sources"].append(run["source"])
@@ -274,7 +315,7 @@ def summarize_runs(runs, source_key, source_label, since_days):
                 "pricingModel": run.get("pricingModel") or run["model"],
             },
         )
-        add_usage(model, run)
+        add_usage(model, usage_run)
         model["estimatedCostUsd"] += float(run.get("estimatedCostUsd") or 0)
 
         task_key = f"{run['kind']}:{run['label']}:{model_key}"
@@ -289,8 +330,43 @@ def summarize_runs(runs, source_key, source_label, since_days):
                 "pricingModel": run.get("pricingModel") or model_key,
             },
         )
-        add_usage(task, run)
+        add_usage(task, usage_run)
         task["estimatedCostUsd"] += float(run.get("estimatedCostUsd") or 0)
+
+        for active in run.get("activeByDate") or []:
+            active_day = day_for(active["date"])
+            if run["source"] not in active_day["sources"]:
+                active_day["sources"].append(run["source"])
+            active_day["activeSeconds"] += to_int(active.get("activeSeconds"))
+            active_day["completedTurns"] += to_int(active.get("completedTurns"))
+
+            active_model = active_day["byModel"].setdefault(
+                model_key,
+                {
+                    "model": model_key,
+                    "provider": run["provider"],
+                    "openrouterModel": run["openrouterModel"],
+                    **empty_usage(),
+                    "pricingEstimated": True,
+                    "pricingModel": run.get("pricingModel") or run["model"],
+                },
+            )
+            active_model["activeSeconds"] += to_int(active.get("activeSeconds"))
+            active_model["completedTurns"] += to_int(active.get("completedTurns"))
+
+            active_task = active_day["byTask"].setdefault(
+                task_key,
+                {
+                    "kind": run["kind"],
+                    "label": run["label"],
+                    "model": model_key,
+                    **empty_usage(),
+                    "pricingEstimated": True,
+                    "pricingModel": run.get("pricingModel") or model_key,
+                },
+            )
+            active_task["activeSeconds"] += to_int(active.get("activeSeconds"))
+            active_task["completedTurns"] += to_int(active.get("completedTurns"))
 
     day_list = []
     for day in sorted(days.values(), key=lambda item: item["date"], reverse=True):
@@ -343,6 +419,7 @@ def summarize_runs(runs, source_key, source_label, since_days):
         ],
         "notes": [
             "Codex usage is collected from local session token_count events.",
+            "Active time is the sum of completed task duration_ms values; idle time between turns is excluded.",
             "No prompt or response body is exported into this ledger.",
             "estimatedCostUsd is an OpenAI API-equivalent estimate, not an actual Codex subscription bill.",
         ],

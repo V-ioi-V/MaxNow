@@ -9,6 +9,9 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$env:GIT_HTTP_LOW_SPEED_LIMIT = "1"
+$env:GIT_HTTP_LOW_SPEED_TIME = "120"
+$env:GIT_SSH_COMMAND = "ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=4"
 
 $AllowedFiles = @(
     "dash/data/codex-usage.json",

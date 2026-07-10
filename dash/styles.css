@@ -2094,6 +2094,11 @@ a.last30-item {
   --card-border: #ffd29a;
 }
 
+.token-summary article:nth-child(7) {
+  --card-color: var(--purple);
+  --card-border: #e1c4ff;
+}
+
 .mini-token-grid > div > span:not(.metric-label),
 .token-summary span {
   display: block;
@@ -2564,7 +2569,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .token-summary {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   margin: 0 0 var(--page-section-gap);
 }
 
@@ -2818,7 +2823,11 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .token-line-chart {
+  width: 100%;
+  min-width: 0;
   min-height: 340px;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .cloud-page-head {

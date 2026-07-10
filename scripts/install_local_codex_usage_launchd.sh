@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 LABEL="cn.maxnow.local-codex-usage-report"
-EVERY_MINUTES=60
+REPORT_MINUTE=0
 RUN_NOW=0
 NO_DEPLOY=0
 
@@ -15,7 +15,7 @@ Usage: scripts/install_local_codex_usage_launchd.sh [options]
 Options:
   --repo-root PATH      MaxNow repository root. Defaults to this script's parent.
   --label LABEL         launchd label. Defaults to cn.maxnow.local-codex-usage-report.
-  --every-minutes N     Run interval in minutes. Defaults to 60.
+  --minute N            Fixed minute of every hour. Defaults to 0.
   --no-deploy           Deprecated no-op; server token merge runs on its own schedule.
   --run-now             Kick the launchd job once after installation.
   -h, --help            Show this help.
@@ -32,8 +32,8 @@ while [[ $# -gt 0 ]]; do
       LABEL="$2"
       shift 2
       ;;
-    --every-minutes)
-      EVERY_MINUTES="$2"
+    --minute)
+      REPORT_MINUTE="$2"
       shift 2
       ;;
     --no-deploy)
@@ -56,8 +56,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if ! [[ "$EVERY_MINUTES" =~ ^[0-9]+$ ]] || [[ "$EVERY_MINUTES" -lt 1 ]]; then
-  echo "--every-minutes must be a positive integer" >&2
+if ! [[ "$REPORT_MINUTE" =~ ^[0-9]+$ ]] || [[ "$REPORT_MINUTE" -gt 59 ]]; then
+  echo "--minute must be an integer from 0 to 59" >&2
   exit 2
 fi
 
@@ -80,8 +80,6 @@ xml_escape() {
 PLIST_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/MaxNow"
 PLIST_PATH="$PLIST_DIR/$LABEL.plist"
-INTERVAL_SECONDS=$((EVERY_MINUTES * 60))
-
 mkdir -p "$PLIST_DIR" "$LOG_DIR"
 
 NO_DEPLOY_ARG=""
@@ -106,8 +104,11 @@ $NO_DEPLOY_ARG
   </array>
   <key>WorkingDirectory</key>
   <string>$(xml_escape "$REPO_ROOT")</string>
-  <key>StartInterval</key>
-  <integer>$INTERVAL_SECONDS</integer>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Minute</key>
+    <integer>$REPORT_MINUTE</integer>
+  </dict>
   <key>RunAtLoad</key>
   <false/>
   <key>StandardOutPath</key>
@@ -134,6 +135,6 @@ if [[ "$RUN_NOW" -eq 1 ]]; then
   launchctl kickstart -k "$DOMAIN/$LABEL" >/dev/null 2>&1 || launchctl start "$LABEL"
 fi
 
-echo "[ok] installed launchd job '$LABEL' every $EVERY_MINUTES minutes"
+printf "[ok] installed launchd job '%s' at minute %02d of every hour\n" "$LABEL" "$REPORT_MINUTE"
 echo "[ok] plist: $PLIST_PATH"
 echo "[ok] log: $LOG_DIR/local-codex-usage-report.log"

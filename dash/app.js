@@ -237,6 +237,17 @@ function formatDuration(value) {
   return `${hours}h`;
 }
 
+function formatActiveDuration(value) {
+  const seconds = Math.max(0, Number(value || 0));
+  if (!Number.isFinite(seconds)) return "--";
+  if (seconds < 60) return `${Math.round(seconds)}s`;
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return remainingMinutes ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+}
+
 function formatDateShort(date = "") {
   return date.slice(5) || "--";
 }
@@ -766,6 +777,8 @@ function normalizeUsageDay(day) {
     cacheBase: Number(day.cacheBaseTokens || day.cacheBase || Math.max(day.inputTokens || day.input || 0, day.cacheReadTokens || day.cacheRead || 0)),
     total: Number(day.totalTokens || day.total || 0),
     cost: Number(day.estimatedCostUsd || day.cost || 0),
+    activeSeconds: Number(day.activeSeconds || 0),
+    completedTurns: Number(day.completedTurns || 0),
   };
 }
 
@@ -779,8 +792,10 @@ function sumUsage(days) {
       total: sum.total + Number(day.total || 0),
       cost: sum.cost + Number(day.cost || 0),
       runs: sum.runs + Number(day.runs || 0),
+      activeSeconds: sum.activeSeconds + Number(day.activeSeconds || 0),
+      completedTurns: sum.completedTurns + Number(day.completedTurns || 0),
     }),
-    { input: 0, output: 0, cacheRead: 0, cacheBase: 0, total: 0, cost: 0, runs: 0 },
+    { input: 0, output: 0, cacheRead: 0, cacheBase: 0, total: 0, cost: 0, runs: 0, activeSeconds: 0, completedTurns: 0 },
   );
   summary.cacheHitRate = summary.cacheBase > 0 ? (summary.cacheRead / summary.cacheBase) * 100 : NaN;
   return summary;
@@ -809,6 +824,8 @@ function emptyUsageDay(date) {
     totalTokens: 0,
     estimatedCostUsd: 0,
     runs: 0,
+    activeSeconds: 0,
+    completedTurns: 0,
   });
 }
 
@@ -905,10 +922,11 @@ function buildTaskBreakdown(days) {
       const label = task.label || task.kind || "OpenClaw session";
       const model = task.model || "";
       const key = `${task.kind || ""}:${label}:${model}`;
-      const current = byTask.get(key) || { label, model, kind: task.kind || "", total: 0, cost: 0, runs: 0 };
+      const current = byTask.get(key) || { label, model, kind: task.kind || "", total: 0, cost: 0, runs: 0, activeSeconds: 0 };
       current.total += Number(task.totalTokens || task.total || 0);
       current.cost += Number(task.estimatedCostUsd || task.cost || 0);
       current.runs += Number(task.runs || 0);
+      current.activeSeconds += Number(task.activeSeconds || 0);
       byTask.set(key, current);
     });
   });
@@ -933,6 +951,7 @@ function buildSessionBreakdown(selectedDays) {
       cost: Number(run.estimatedCostUsd || run.cost || 0),
       timestamp: run.timestamp || run.date || "",
       runs: 1,
+      activeSeconds: Number(run.activeSeconds || 0),
     }))
     .sort((a, b) => b.total - a.total);
 
@@ -962,6 +981,7 @@ function usageFromSource(source) {
     total: Number(source.totalTokens || source.total || 0),
     cost: Number(source.estimatedCostUsd || source.cost || 0),
     runs: Number(source.runs || 0),
+    activeSeconds: Number(source.activeSeconds || 0),
   };
 }
 
@@ -973,11 +993,13 @@ function addSourceUsage(map, source, usage) {
     total: 0,
     cost: 0,
     runs: 0,
+    activeSeconds: 0,
     tone: sourceTone({ ...source, key }),
   };
   current.total += Number(usage.total || 0);
   current.cost += Number(usage.cost || 0);
   current.runs += Number(usage.runs || 0);
+  current.activeSeconds += Number(usage.activeSeconds || 0);
   map.set(key, current);
 }
 
@@ -999,7 +1021,7 @@ function buildSourceBreakdown(selectedDays = []) {
 
   if (bySource.size) {
     return [...bySource.values()]
-      .filter((source) => source.total > 0 || source.runs > 0 || source.cost > 0)
+      .filter((source) => source.total > 0 || source.runs > 0 || source.cost > 0 || source.activeSeconds > 0)
       .sort((a, b) => b.total - a.total);
   }
 
@@ -1014,7 +1036,7 @@ function buildSourceBreakdown(selectedDays = []) {
       ...usageFromSource(source),
       tone: sourceTone(source),
     }))
-    .filter((source) => source.total > 0 || source.runs > 0 || source.cost > 0)
+    .filter((source) => source.total > 0 || source.runs > 0 || source.cost > 0 || source.activeSeconds > 0)
     .sort((a, b) => b.total - a.total);
 }
 
@@ -2141,6 +2163,7 @@ function renderTokens() {
   setText("#token-cache", formatToken(range.cacheRead));
   setText("#token-cache-hit", formatPercent(range.cacheHitRate));
   setText("#token-cost", formatCost(range.cost));
+  setText("#token-active-time", formatActiveDuration(range.activeSeconds));
 
   clearAndFill(qs("#token-sources"), createSourceItem, usage.sources || []);
   clearAndFill(qs("#token-models"), createModelItem, usage.models || []);
@@ -2295,7 +2318,8 @@ function createSourceItem(source) {
   `;
   article.querySelector("span").textContent = source.label || "Source";
   article.querySelector("strong").textContent = formatToken(source.total);
-  article.querySelector("small").textContent = `${formatCost(source.cost)} / ${source.runs || 0} runs`;
+  const sourceDuration = source.activeSeconds ? ` / ${formatActiveDuration(source.activeSeconds)}` : "";
+  article.querySelector("small").textContent = `${formatCost(source.cost)} / ${source.runs || 0} runs${sourceDuration}`;
   return article;
 }
 
@@ -2333,7 +2357,10 @@ function createSessionItem(session) {
   `;
   article.querySelector(".session-main strong").textContent = title;
   article.querySelector(".session-main small").textContent = [session.model, session.runId ? `#${String(session.runId).slice(0, 8)}` : ""].filter(Boolean).join(" · ");
-  article.querySelector(".session-meta span").textContent = session.runs > 1 ? `${session.runs} runs` : formatCost(session.cost || 0);
+  const duration = session.activeSeconds ? formatActiveDuration(session.activeSeconds) : "";
+  article.querySelector(".session-meta span").textContent = session.runs > 1
+    ? [`${session.runs} runs`, duration].filter(Boolean).join(" · ")
+    : [formatCost(session.cost || 0), duration].filter(Boolean).join(" · ");
   article.querySelector(".session-meta strong").textContent = formatToken(session.total);
   return article;
 }

@@ -128,7 +128,7 @@ python3 scripts/update_data.py ai-last30
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
 ```
 
-该计划任务默认每 1 小时静默刷新本机 `dash/data/codex-usage.*`，注册为 hidden task，并通过 `wscript.exe scripts/report_codex_usage_hidden.vbs` 无窗口启动 PowerShell 上报脚本，避免自动运行时弹出瞬时命令行窗口。它只提交这两个源账本文件并推送到 `origin/main`。统一 `token-usage.*` 由服务器 `MAXNOW-TOKEN-USAGE-REFRESH` 每 10 分钟拉取源账本并合并。
+该计划任务固定在每小时 `:02` 静默刷新本机 `dash/data/codex-usage.*`，注册为 hidden task，并通过 `wscript.exe scripts/report_codex_usage_hidden.vbs` 无窗口启动 PowerShell。它只提交这两个源账本文件并推送到 `origin/main`，最长运行 10 分钟。
 
 需要在 Owner macOS 本机定期上报 Codex Token 用量时：
 
@@ -136,7 +136,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_
 bash scripts/install_local_codex_usage_launchd.sh
 ```
 
-该 launchd 任务默认每 1 小时运行一次 `scripts/report_codex_usage.sh`，刷新本机 `dash/data/codex-macos-usage.*`，只提交这两个源账本文件并推送到 `origin/main`。建议在专用 main clone 中安装，避免日常开发分支或未提交改动阻断自动上报；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。
+该 launchd 任务固定在每小时 `:00` 运行 `scripts/report_codex_usage.sh`，刷新本机 `dash/data/codex-macos-usage.*`，只提交这两个源账本文件并推送到 `origin/main`。建议在专用 main clone 中安装；日志写入 `~/Library/Logs/MaxNow/local-codex-usage-report.log`。服务器源采集固定在 `:05`，统一总账固定在 `:10` 发布。
 
 ## OpenClaw 写权限
 

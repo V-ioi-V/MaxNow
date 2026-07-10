@@ -11,6 +11,19 @@
 
 ## 2026-07-10
 
+### 统一 Token 活跃时长与固定小时上报周期
+
+- Codex collector 新增 `task_complete.duration_ms` 统计，Token 页按 1d / 7d / 30d / all 展示已完成任务的活跃时长，并在来源与会话中展示对应时长；轮次间空闲时间不计入。
+- 固定上报周期调整为 macOS `:00`、Windows `:02`、服务器 OpenClaw / Codex server 源采集 `:05`、统一总账发布 `:10`，避免两台本机同时 push。
+- macOS launchd 从相对 `StartInterval` 改为固定 `StartCalendarInterval`；Windows 任务改为整点偏移触发并设置 10 分钟执行上限。
+- 本机 Git 增加 HTTP 低速边界和 SSH keepalive，避免一次 `git pull` / `push` 卡死占住后续小时周期。
+- 修复 Token 最近 30 天图表在 390px 移动端把整页撑宽的问题；宽图改为卡片内部横向滚动。
+- 云服务页同步更新 Token 自动化时间和锁 / 日志说明，Dash 缓存版本提升到 `styles.css?v=124`、`app.js?v=109`。
+
+原因：
+
+- 原本本机按安装时刻每 3600 秒运行、服务器每 10 分钟合并，两套时钟错位；一次本机 Git 卡住还会阻止后续上报，导致来源时间和总账时间互相误导。
+
 ### 修复 Home 项目状态过期和已完成任务误报
 
 - 新增独立 `dash/data/project-status.*`，从 `ROADMAP.md` 生成 Home 主线和待推进事项，不再把自动生成结果写入 `dashboard.*` 或修改 `dashboard.today`。

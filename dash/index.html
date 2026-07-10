@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=123" />
+    <link rel="stylesheet" href="./styles.css?v=124" />
   </head>
   <body>
     <div class="app-shell">
@@ -507,7 +507,7 @@
               <p class="token-updated" id="token-updated">&#31561;&#24453;&#21516;&#27493;</p>
             </div>
             <div class="token-head-card token-source-sync" aria-label="Token source update times">
-              <span>&#21508;&#26469;&#28304;&#26368;&#21518;&#21516;&#27493;</span>
+              <span>&#21508;&#26469;&#28304;&#25968;&#25454;&#25130;&#33267;</span>
               <div class="token-source-updates" id="token-source-updates"></div>
             </div>
           </header>
@@ -536,6 +536,10 @@
             <article>
               <span>&#36153;&#29992;</span>
               <strong id="token-cost">--</strong>
+            </article>
+            <article>
+              <span>Codex &#26102;&#38271;</span>
+              <strong id="token-active-time">--</strong>
             </article>
           </section>
 
@@ -661,15 +665,15 @@
             <article class="panel cloud-card" data-tone="orange">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 00:20</p>
+                  <p class="eyebrow">Hourly :05</p>
                   <h2>OpenClaw Token &#29992;&#37327;</h2>
                 </div>
                 <span class="status-pill">&#24050;&#25509;&#20837;</span>
               </header>
-              <p class="item-copy">root crontab &#36816;&#34892; <code>python3 scripts/update_data.py openclaw-usage</code>&#65292;&#35835;&#21462; <code>/root/.openclaw</code> trajectory&#65292;&#29983;&#25104; OpenClaw Token &#29992;&#37327;&#36134;&#26412;&#24182;&#21512;&#24182; Token &#24635;&#36134;&#12290;</p>
+              <p class="item-copy">root crontab &#27599;&#23567;&#26102; :05 &#36816;&#34892; <code>python3 scripts/update_data.py openclaw-usage</code>&#65292;&#35835;&#21462; <code>/root/.openclaw</code> trajectory &#24182;&#29983;&#25104; OpenClaw Token &#28304;&#36134;&#26412;&#12290;</p>
               <dl class="cloud-meta">
-                <div><dt>&#38145;</dt><dd>/tmp/maxnow-openclaw-usage.lock</dd></div>
-                <div><dt>&#26085;&#24535;</dt><dd>logs/openclaw-usage.log</dd></div>
+                <div><dt>&#38145;</dt><dd>/tmp/maxnow-token-source-refresh.lock</dd></div>
+                <div><dt>&#26085;&#24535;</dt><dd>logs/token-source-refresh.log</dd></div>
                 <div><dt>&#20889;&#20837;</dt><dd>dash/data/openclaw-usage.*</dd></div>
               </dl>
             </article>
@@ -677,16 +681,16 @@
             <article class="panel cloud-card" data-tone="green">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 00:40</p>
+                  <p class="eyebrow">Hourly :05</p>
                   <h2>Codex Server Token &#29992;&#37327;</h2>
                 </div>
                 <span class="status-pill">&#24050;&#25509;&#20837;</span>
               </header>
-              <p class="item-copy">root crontab &#36816;&#34892; <code>python3 scripts/update_data.py codex-server-usage</code>&#65292;&#35835;&#21462; <code>/root/.codex/sessions</code>&#65292;&#29983;&#25104;&#26381;&#21153;&#22120; Codex &#36134;&#26412;&#24182;&#21512;&#24182; Token &#24635;&#36134;&#12290;</p>
+              <p class="item-copy">root crontab &#27599;&#23567;&#26102; :05 &#36816;&#34892; <code>python3 scripts/update_data.py codex-server-usage</code>&#65292;&#35835;&#21462; <code>/root/.codex/sessions</code>&#65292;&#29983;&#25104;&#26381;&#21153;&#22120; Codex &#28304;&#36134;&#26412;&#21644;&#27963;&#36291;&#26102;&#38271;&#12290;</p>
               <dl class="cloud-meta">
-                <div><dt>&#26631;&#35760;</dt><dd>MAXNOW-CODEX-SERVER-USAGE</dd></div>
-                <div><dt>&#38145;</dt><dd>/tmp/maxnow-codex-server-usage.lock</dd></div>
-                <div><dt>&#26085;&#24535;</dt><dd>logs/codex-server-usage.log</dd></div>
+                <div><dt>&#26631;&#35760;</dt><dd>MAXNOW-TOKEN-SOURCE-REFRESH</dd></div>
+                <div><dt>&#38145;</dt><dd>/tmp/maxnow-token-source-refresh.lock</dd></div>
+                <div><dt>&#26085;&#24535;</dt><dd>logs/token-source-refresh.log</dd></div>
                 <div><dt>&#20889;&#20837;</dt><dd>dash/data/codex-server-usage.* / token-usage.*</dd></div>
               </dl>
             </article>
@@ -694,12 +698,12 @@
             <article class="panel cloud-card" data-tone="blue">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Every 10 min</p>
+                  <p class="eyebrow">Hourly :10</p>
                   <h2>Token 总账刷新</h2>
                 </div>
                 <span class="status-pill">ubuntu</span>
               </header>
-              <p class="item-copy">ubuntu crontab 运行 <code>scripts/refresh_token_usage_on_server.sh</code>，拉取 Windows / macOS 上推的本机源账本，保留 OpenClaw / Codex server 运行态账本，并重新合并 <code>token-usage.*</code>。</p>
+              <p class="item-copy">ubuntu crontab 每小时 :10 运行 <code>scripts/refresh_token_usage_on_server.sh</code>，拉取 macOS :00 / Windows :02 上推的源账本，保留服务器运行态账本，并统一发布 <code>token-usage.*</code>。</p>
               <dl class="cloud-meta">
                 <div><dt>标记</dt><dd>MAXNOW-TOKEN-USAGE-REFRESH</dd></div>
                 <div><dt>锁</dt><dd>/tmp/maxnow-token-usage-refresh.lock</dd></div>
@@ -853,6 +857,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=108"></script>
+    <script src="./app.js?v=109"></script>
   </body>
 </html>

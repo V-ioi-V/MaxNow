@@ -91,13 +91,14 @@ MaxNow 由四类文件组成：
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
    - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `dash/data/dashboard.*` 中的 `automation` 和 `system` 字段。
    - `scripts/sync_openclaw_usage.py` 只读 OpenClaw 服务器轨迹，生成 Token 使用账本和 OpenRouter 等价费用估算。
-   - `scripts/sync_codex_usage.py` 只读 Codex session `token_count` 事件，生成 Codex Token 使用账本，不导出对话正文。
+   - `scripts/sync_codex_usage.py` 只读 Codex session `token_count`、`turn_context.model` 和 `task_complete.duration_ms`，生成 Codex Token 使用与活跃时长账本，不导出对话正文。
    - `scripts/sync_token_usage.py` 合并 OpenClaw / Codex 源账本，生成 Token 页面统一总账。
    - `scripts/report_codex_usage.ps1` 在 Owner 的 Windows 本机定时刷新本机 Codex 用量，只提交 `codex-usage.*` 源账本；统一 Token 总账由服务器定时合并。
    - `scripts/report_codex_usage_hidden.vbs` 通过 `wscript.exe` 无窗口启动本机 Codex 用量上报脚本，避免计划任务弹出瞬时命令行窗口。
-   - `scripts/install_local_codex_usage_task.ps1` 注册本机 Windows Task Scheduler 任务，默认每 1 小时静默运行一次本机 Codex 用量上报。
+   - `scripts/install_local_codex_usage_task.ps1` 注册本机 Windows Task Scheduler 任务，默认每小时 `:02` 静默运行一次本机 Codex 用量上报。
    - `scripts/report_codex_usage.sh` 在 Owner 的 macOS 本机刷新 Codex 用量，只提交 `codex-macos-usage.*` 源账本；统一 Token 总账由服务器定时合并。
-   - `scripts/install_local_codex_usage_launchd.sh` 注册 macOS launchd 任务，默认每 1 小时运行一次本机 Codex 用量上报。
+   - `scripts/install_local_codex_usage_launchd.sh` 注册 macOS launchd 任务，默认每小时 `:00` 运行一次本机 Codex 用量上报。
+   - `scripts/refresh_token_sources_on_server.sh` 由 root 每小时 `:05` 刷新 OpenClaw / Codex server 源账本。
    - `scripts/refresh_token_usage_on_server.sh` 在服务器拉取最新源账本后保护 OpenClaw / Codex server 运行态账本，并合并 `token-usage.*`。
    - `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成 MaxNow 版本号和版本更新模块数据。
    - `scripts/sync_weather.py` 从 Open-Meteo 免费 forecast API 刷新北京市海淀区天气，只更新 `dash/data/dashboard.*` 中的 `weather` 字段。
@@ -187,6 +188,7 @@ Token 页面只回答 Token 相关问题：
 - 包括今天的最近 30 天使用量
 - 全部已采集使用量
 - total / input / output / cacheRead / cost
+- Codex 已完成任务的活跃时长；按 `task_complete.duration_ms` 累计，不包含轮次之间的空闲时间
 - 模型占比和会话消耗
 - 最近 30 天每日 Token 折线图
 - 可用时通过色阶呈现异常高消耗日期
@@ -201,8 +203,9 @@ Token 真实数据按来源接入，并由统一总账合并展示：
 - `dash/data/token-usage.json` 保存合并后的统一 Token 总账，Token 页面优先读取这个文件。
 - OpenClaw 源账本的 `pricingBasis` 必须标记为 `openrouter-equivalent`，不要把它当作真实扣费账单；Codex 源账本使用 `openai-api-equivalent`，统一总账使用 `mixed`。
 - OpenClaw 费用使用 OpenRouter 等价估算；Codex 费用使用 OpenAI API 等价估算。两者都是估算口径，不等同于真实供应商账单或订阅账单。
-- 本机 Codex 用量可由 Windows Task Scheduler 或 macOS launchd 定期上报；默认每 1 小时运行一次。Windows Task Scheduler action 使用 `wscript.exe scripts/report_codex_usage_hidden.vbs`，由 VBS 以 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 `powershell.exe` console 瞬时闪窗；macOS launchd 运行 `scripts/report_codex_usage.sh`。Windows 上报脚本只允许提交 `dash/data/codex-usage.*`；macOS 上报脚本只允许提交 `dash/data/codex-macos-usage.*`。遇到无关工作区改动会停止；本机上报成功后只 push 源账本，不再 SSH 触发服务器合并。
-- 服务器 Codex 用量由 root crontab 每天刷新 `codex-server-usage.*`；统一 Token 总账由服务器 `MAXNOW-TOKEN-USAGE-REFRESH` 每 10 分钟拉取最新 `origin/main` 后运行 `scripts/refresh_token_usage_on_server.sh` 合并。该脚本会保护服务器运行时 `openclaw-usage.*` / `codex-server-usage.*`：空备份不能覆盖非空账本，OpenClaw 账本为空且 root 状态可读时应先刷新 OpenClaw 源账本，避免用空数据覆盖真实来源。
+- Token 上报采用固定小时周期：macOS launchd 每小时 `:00`，Windows Task Scheduler 每小时 `:02`，root 在服务器每小时 `:05` 刷新 OpenClaw / Codex server 源账本，ubuntu 在每小时 `:10` 拉取并发布统一总账。Windows 和 macOS 错开两分钟，避免同时向 `origin/main` 推送产生竞争。
+- Windows Task Scheduler action 使用 `wscript.exe scripts/report_codex_usage_hidden.vbs`，由 VBS 以 window style 0 启动 `scripts/report_codex_usage.ps1`；macOS launchd 运行 `scripts/report_codex_usage.sh`。Windows 上报脚本只允许提交 `dash/data/codex-usage.*`，macOS 只允许提交 `dash/data/codex-macos-usage.*`。本机 Git 网络连接设置低速与 SSH keepalive 边界，计划任务最长运行 10 分钟，单次卡住不能占用后续小时周期。
+- 服务器 `MAXNOW-TOKEN-SOURCE-REFRESH` 以 root 运行 `scripts/refresh_token_sources_on_server.sh`，统一总账由 `MAXNOW-TOKEN-USAGE-REFRESH` 运行 `scripts/refresh_token_usage_on_server.sh`。总账合并脚本继续保护服务器运行时 `openclaw-usage.*` / `codex-server-usage.*`，空备份不能覆盖非空账本。
 - Token 页在总量摘要下方显示来源费用面板，和模型占比、调用消耗并列为同一层信息区；至少区分 OpenClaw、Codex Windows / macOS 和 Codex server。来源列表的 token、费用和 runs 必须跟随当前选中的 `1d` / `7d` / `30d` / `all` 范围更新。
 - Token 页头的 `1d` 以当前浏览器本地日期的 00:00 为边界，只展示今天自然日；`7d` / `30d` 为包括今天在内的最近 7 / 30 个自然日。范围切换放在顶部栏右侧，只在 Token 页显示，和 Blog / 刷新入口同层。Token 页面页头只保留两个独立信息 tab，不再使用共同外层卡片包住：左侧展示 Token 用量和总账合并时间，右侧展示每个 Token 来源账本的最后更新时间。
 - 后续其他来源应复用同类日账本结构，再由汇总层合并 OpenClaw / Codex / 其他来源。

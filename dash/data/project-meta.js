@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 10:42",
-  "version": "1.0.0.51",
-  "versionLabel": "v1.0.0.51",
-  "branch": "bugfix/home-project-status",
-  "commit": "eade306",
+  "updatedAt": "2026-07-10 11:54",
+  "version": "1.0.0.52",
+  "versionLabel": "v1.0.0.52",
+  "branch": "feature/token-runtime-schedule",
+  "commit": "2290092",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/home-project-status · commit eade306 · 有未提交代码改动",
+  "deployNote": "feature/token-runtime-schedule · commit 2290092 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "统一 Token 活跃时长与固定小时上报周期",
+      "summary": "Codex collector 新增 `task_complete.duration_ms` 统计，Token 页按 1d / 7d / 30d / all 展示已完成任务的活跃时长，并在来源与会话中展示对应时长；轮次间空闲时间不计入。"
+    },
     {
       "date": "2026-07-10",
       "title": "修复 Home 项目状态过期和已完成任务误报",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-10",
       "title": "修复 Today Status 当前时间与进度轴重叠",
       "summary": "将 00:00、当前时间和 24:00 的右边缘统一锚定在进度轴左侧，并为当前时间与进度圆点保留固定间距。"
-    },
-    {
-      "date": "2026-07-09",
-      "title": "替换 Home 顶部状态小卡",
-      "summary": "Home 顶部状态条前两张小卡从“当前主线 / 待推进”改为“今日执行 / 数据同步”。"
     }
   ]
 };

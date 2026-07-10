@@ -48,6 +48,8 @@ def empty_usage():
         "totalTokens": 0,
         "estimatedCostUsd": 0.0,
         "runs": 0,
+        "activeSeconds": 0,
+        "completedTurns": 0,
     }
 
 
@@ -62,6 +64,8 @@ def add_usage(target, usage):
     target["totalTokens"] += int(usage.get("totalTokens") or usage.get("total") or 0)
     target["estimatedCostUsd"] += float(usage.get("estimatedCostUsd") or usage.get("cost") or 0)
     target["runs"] += int(usage.get("runs") or 0)
+    target["activeSeconds"] += int(usage.get("activeSeconds") or 0)
+    target["completedTurns"] += int(usage.get("completedTurns") or 0)
 
 
 def rounded_cost(value):
@@ -223,9 +227,17 @@ def merge_ledgers(ledgers):
         "days": day_list,
         "recentRuns": recent_runs[:30],
         "pricingSnapshot": pricing_snapshot,
+        "schedule": {
+            "timezone": "Asia/Shanghai",
+            "macosReportMinute": 0,
+            "windowsReportMinute": 2,
+            "serverSourceMinute": 5,
+            "ledgerMergeMinute": 10,
+        },
         "notes": [
             "OpenClaw cost is OpenRouter-equivalent estimation.",
             "Codex cost is OpenAI API-equivalent estimation from session token_count events.",
+            "Active time includes completed Codex task durations and excludes idle time between turns.",
         ],
         "warnings": warnings,
     }
