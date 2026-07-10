@@ -618,6 +618,17 @@ runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后
 verification: 五页桌面并列卡同顶同底；390px 窄屏全部单列且 overflow=0；python3 scripts/check.py ok；nginx -t ok；线上源文件确认五个 secondary view / page head 均存在，Home 未继承该外壳。
 ```
 
+2026-07-10 已部署 Today Status 留白与响应式分区修复：
+
+```text
+deployed commit: 889d065 fix: space Today status signals
+changes: 将“自动生成”移回 Today Status 标识旁；圆环列扩为 140px，与四条等高信号保留 30px；当前时间改为环下独立 pill；1500px 及以下让天气与日历整组换到状态卡下方；缓存提升到 styles.css?v=133，版本提升到 1.0.4.01。
+runtime data backup before deploy: /tmp/maxnow-pre-today-spacing-20260710-235037
+runtime data stash before deploy: pre-today-spacing-20260710-235037
+runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后恢复全部运行数据，再重新生成 project-meta。
+verification: 2048px 下圆环与信号列间距 30px、四行高度一致且无重叠；1366px 下状态文案宽度 626px、天气与日历下移；390px 窄屏 overflow=0；python3 scripts/check.py ok；nginx -t ok；线上源文件确认 v133、summary-kicker、140px 圆环列和四条等分行均存在。
+```
+
 刷新 Home 天气卡：
 
 ```bash
