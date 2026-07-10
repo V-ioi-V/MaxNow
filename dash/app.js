@@ -281,7 +281,7 @@ function getDayPhase(now = new Date()) {
   const phase = phases.find((item) => minutes < item.until) || phases[phases.length - 1];
   return {
     ...phase,
-    progress: Math.max(4, Math.min(100, Math.round((minutes / 1440) * 100))),
+    progress: Math.max(0, Math.min(100, Math.round((minutes / 1440) * 100))),
   };
 }
 
@@ -295,24 +295,20 @@ function updateTodaySource(source) {
 
 function updateTodayPhase() {
   const phase = getDayPhase();
-  const progress = qs("#today-pulse-progress");
   const now = new Date();
   const nowText = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
   const progressPercent = `${phase.progress}%`;
-  const progressRatio = String(phase.progress / 100);
-  const markerRatio = String(1 - phase.progress / 100);
+  const progressAngle = `${phase.progress * 3.6}deg`;
   setText("#today-phase", phase.label);
   setText("#today-phase-note", phase.note);
   setText("#today-pulse-now", nowText);
+  setText("#today-pulse-percent", progressPercent);
   const meter = qs(".summary-live-meter");
   if (meter) {
-    meter.style.setProperty("--today-progress", progressPercent);
-    meter.style.setProperty("--today-progress-ratio", progressRatio);
-    meter.style.setProperty("--today-marker-ratio", markerRatio);
+    meter.style.setProperty("--today-progress-angle", progressAngle);
     meter.title = `今日进度 ${nowText} / ${phase.progress}%`;
-    meter.setAttribute("aria-label", `今日进度 ${nowText}`);
+    meter.setAttribute("aria-label", `当前时间 ${nowText}，今天已过去 ${phase.progress}%`);
   }
-  if (progress) progress.style.removeProperty("height");
   return phase;
 }
 

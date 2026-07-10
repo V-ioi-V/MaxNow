@@ -470,21 +470,26 @@ def check_ai_frontier_brief():
     return "AI frontier: compact time-range headings, Chinese facts, ranking, deduplication, and collector checks are valid"
 
 
-def check_today_axis():
+def check_today_progress_ring():
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
-    if '<small class="summary-live-start">24:00</small>' not in dashboard_html:
-        raise ValueError("Today axis: top label must be 24:00")
-    if '<small class="summary-live-end">00:00</small>' not in dashboard_html:
-        raise ValueError("Today axis: bottom label must be 00:00")
-    if "--today-marker-ratio: 1" not in dashboard_css or "bottom: 16px" not in dashboard_css:
-        raise ValueError("Today axis: elapsed fill must grow upward from the bottom")
-    if 'setProperty("--today-marker-ratio", markerRatio)' not in dashboard_js:
-        raise ValueError("Today axis: marker must use the reversed day ratio")
+    if 'class="summary-live-ring"' not in dashboard_html or 'id="today-pulse-percent"' not in dashboard_html:
+        raise ValueError("Today progress ring: ring or inner percentage is missing")
+    if '<time id="today-pulse-now">' not in dashboard_html:
+        raise ValueError("Today progress ring: outside current time is missing")
+    if "conic-gradient(" not in dashboard_css or "--today-progress-angle: 0deg" not in dashboard_css:
+        raise ValueError("Today progress ring: circular theme progress style is missing")
+    if 'setProperty("--today-progress-angle", progressAngle)' not in dashboard_js:
+        raise ValueError("Today progress ring: angle update is missing")
+    if 'setText("#today-pulse-percent", progressPercent)' not in dashboard_js:
+        raise ValueError("Today progress ring: inner percentage update is missing")
+    retired_axis_copy = ("summary-live-start", "summary-live-end", "today-marker-ratio")
+    if any(value in dashboard_html or value in dashboard_css or value in dashboard_js for value in retired_axis_copy):
+        raise ValueError("Today progress ring: retired vertical axis remains")
     if ".summary-live-item::before" not in dashboard_css or "top: 2px" not in dashboard_css:
-        raise ValueError("Today axis: signal node alignment rule is missing")
-    return "Today axis: 24:00 top, 00:00 bottom, upward progress, and node alignment are valid"
+        raise ValueError("Today progress ring: signal node alignment rule is missing")
+    return "Today progress ring: theme ring, inner percentage, outside time, and node alignment are valid"
 
 
 def main():
@@ -501,7 +506,7 @@ def main():
     checks.append(check_project_status())
     checks.append(check_dashboard_weather())
     checks.append(check_ai_frontier_brief())
-    checks.append(check_today_axis())
+    checks.append(check_today_progress_ring())
     checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))

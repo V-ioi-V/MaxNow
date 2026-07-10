@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=130" />
+    <link rel="stylesheet" href="./styles.css?v=131" />
   </head>
   <body>
     <div class="app-shell">
@@ -123,10 +123,11 @@
               </div>
               <div class="summary-live" aria-label="Today generated signals">
                 <div class="summary-live-meter" aria-label="今日进度">
-                  <small class="summary-live-start">24:00</small>
-                  <span id="today-pulse-progress"></span>
-                  <strong id="today-pulse-now">--:--</strong>
-                  <small class="summary-live-end">00:00</small>
+                  <div class="summary-live-ring" id="today-pulse-progress">
+                    <strong id="today-pulse-percent">--%</strong>
+                    <small>今日已过</small>
+                  </div>
+                  <time id="today-pulse-now">--:--</time>
                 </div>
                 <div class="summary-live-list">
                   <div class="summary-live-item" id="today-phase-row" data-tone="orange">
@@ -856,6 +857,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=112"></script>
+    <script src="./app.js?v=113"></script>
   </body>
 </html>

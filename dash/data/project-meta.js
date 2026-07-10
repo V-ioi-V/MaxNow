@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 23:09",
-  "version": "1.0.3.03",
-  "versionLabel": "v1.0.3.03",
-  "branch": "bugfix/ai-column-headings",
-  "commit": "718627d",
+  "updatedAt": "2026-07-10 23:17",
+  "version": "1.0.3.04",
+  "versionLabel": "v1.0.3.04",
+  "branch": "feature/today-progress-ring",
+  "commit": "44302a0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ai-column-headings · commit 718627d · 有未提交代码改动",
+  "deployNote": "feature/today-progress-ring · commit 44302a0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "将 Today Status 时间轴改为圆形日进度",
+      "summary": "用青色 24 小时圆形进度环替换竖向时间轴，环内显示今天已过去的整数百分比，当前时间单独显示在环外。"
+    },
     {
       "date": "2026-07-10",
       "title": "精简 AI 前沿三栏栏头",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-10",
       "title": "将 Last-30 重构为中文 AI 前沿简报",
       "summary": "Home 原“外部输入”改为“AI 前沿”，三栏固定展示“最新发布 / 本周前沿 / 近 30 天关键进展”，只保留中文事实标题、具体变化、日期和来源。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "修正 Today Status 时间轴方向与当前时间对齐",
-      "summary": "将 00:00-24:00 今日进度轴统一为从上向下推进，当前时间圆点、时间文字和进度填充共用同一坐标方向。"
     }
   ]
 };

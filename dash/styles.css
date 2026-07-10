@@ -768,7 +768,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .summary-bar {
   position: relative;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.4fr);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.55fr);
   gap: 24px;
   overflow: hidden;
   --card-color: var(--accent-strong);
@@ -919,89 +919,81 @@ body[data-view="tokens"] .topbar-token-ranges {
 .summary-live {
   min-width: 0;
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-columns: 124px minmax(0, 1fr);
   gap: 16px;
   align-self: stretch;
 }
 
 .summary-live-meter {
-  position: relative;
-  width: 58px;
+  width: 124px;
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  --today-progress-angle: 0deg;
+}
+
+.summary-live-ring {
+  position: relative;
+  width: 112px;
+  aspect-ratio: 1;
   display: grid;
+  place-content: center;
   justify-items: center;
-  overflow: visible;
+  gap: 4px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from -90deg,
+    var(--cyan) 0deg var(--today-progress-angle, 0deg),
+    #e7f2f6 var(--today-progress-angle, 0deg) 360deg
+  );
+  box-shadow: 0 10px 24px rgba(0, 166, 200, 0.14);
+  transition: background 240ms ease;
+}
+
+.summary-live-ring::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid color-mix(in srgb, var(--cyan) 18%, #ffffff);
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.summary-live-ring strong,
+.summary-live-ring small {
+  position: relative;
+  z-index: 1;
+}
+
+.summary-live-ring strong {
+  color: var(--cyan);
+  font-size: 25px;
+  line-height: 1;
+}
+
+.summary-live-ring small {
   color: var(--muted);
   font-size: 10px;
   font-weight: 800;
   line-height: 1;
-  --today-progress-ratio: 0;
-  --today-marker-ratio: 1;
 }
 
-.summary-live-meter span {
-  position: absolute;
-  left: 26px;
-  bottom: 16px;
-  width: 6px;
-  height: calc((100% - 32px) * var(--today-progress-ratio, 0));
-  z-index: 1;
-  border-radius: 999px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--cyan) 64%, #ffffff), var(--cyan));
-  transition: height 240ms ease, background 160ms ease;
-}
-
-.summary-live-meter::before {
-  content: "";
-  position: absolute;
-  left: 26px;
-  top: 16px;
-  bottom: 16px;
-  width: 6px;
-  z-index: 0;
-  border-radius: 999px;
-  background: #edf3f9;
-}
-
-.summary-live-meter::after {
-  content: "";
-  position: absolute;
-  left: 22px;
-  top: calc(16px + (100% - 32px) * var(--today-marker-ratio, 1));
-  width: 14px;
-  height: 14px;
-  z-index: 2;
-  border: 3px solid #ffffff;
-  border-radius: 999px;
-  background: var(--cyan);
-  box-shadow: 0 6px 16px rgba(0, 166, 200, 0.22);
-  transform: translateY(-50%);
-}
-
-.summary-live-start,
-.summary-live-end,
-.summary-live-meter strong {
-  position: absolute;
-  right: 38px;
-  z-index: 1;
-  text-align: right;
+.summary-live-meter time {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
   white-space: nowrap;
 }
 
-.summary-live-start {
-  top: 1px;
-}
-
-.summary-live-end {
-  bottom: 1px;
-}
-
-.summary-live-meter strong {
-  right: 40px;
-  top: clamp(30px, calc(16px + (100% - 32px) * var(--today-marker-ratio, 1)), calc(100% - 30px));
-  transform: translateY(-50%);
-  color: var(--cyan);
-  font-size: 11px;
+.summary-live-meter time::before {
+  content: "当前";
+  margin-right: 5px;
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .summary-live-list {
@@ -4329,7 +4321,17 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   }
 
   .summary-live {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 12px;
     margin-top: 2px;
+  }
+
+  .summary-live-meter {
+    width: 104px;
+  }
+
+  .summary-live-ring {
+    width: 96px;
   }
 
   .life-result-card {
