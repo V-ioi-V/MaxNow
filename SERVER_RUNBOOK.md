@@ -574,6 +574,17 @@ runtime preservation: 只恢复 dashboard、豆奶、行情、同行记和 Wiki 
 verification: python3 scripts/sync_ai_last30.py ok（1 个免费源部分失败）；python3 scripts/update_data.py project-meta ok；python3 scripts/check.py ok；nginx -t ok；线上目录包含“AI 前沿”，最新发布为 GPT-5.6、ChatGPT Work、GPT-Live，禁用套话检查为 false。
 ```
 
+2026-07-10 已部署 Today Status 倒序时间轴与节点对齐修复：
+
+```text
+deployed commit: 1249e0f fix: reverse Today status timeline
+changes: 时间轴改为上方 24:00、下方 00:00，当前时间点和已过时间填充从下向上推进；右侧信号节点中心与各行首行文字中心对齐；缓存提升到 styles.css?v=129 / app.js?v=111，版本提升到 1.0.3.02。
+runtime data backup before deploy: /tmp/maxnow-pre-today-axis-20260710-225813
+runtime data stash before deploy: pre-today-axis-20260710-225813
+runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后恢复全部运行数据，再重新生成 project-meta。
+verification: python3 scripts/check.py ok；Today axis 回归校验 ok；nginx -t ok；线上源文件确认顶部 24:00、底部 00:00、向上填充和倒序 marker 均已生效。
+```
+
 刷新 Home 天气卡：
 
 ```bash
