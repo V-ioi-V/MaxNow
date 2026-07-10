@@ -548,22 +548,22 @@ body[data-view="tokens"] .topbar-token-ranges {
 .summary-live-end,
 .summary-live-meter strong {
   position: absolute;
+  right: 38px;
   z-index: 1;
+  text-align: right;
   white-space: nowrap;
 }
 
 .summary-live-start {
   top: 1px;
-  left: 0;
 }
 
 .summary-live-end {
   bottom: 1px;
-  left: 0;
 }
 
 .summary-live-meter strong {
-  left: 0;
+  right: 40px;
   bottom: clamp(30px, calc(16px + (100% - 32px) * var(--today-progress-ratio, 0)), calc(100% - 30px));
   transform: translateY(50%);
   color: var(--cyan);
