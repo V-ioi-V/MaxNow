@@ -629,6 +629,17 @@ runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后
 verification: 2048px 下圆环与信号列间距 30px、四行高度一致且无重叠；1366px 下状态文案宽度 626px、天气与日历下移；390px 窄屏 overflow=0；python3 scripts/check.py ok；nginx -t ok；线上源文件确认 v133、summary-kicker、140px 圆环列和四条等分行均存在。
 ```
 
+2026-07-11 已部署 Today Status 圆环居中与信号首行对齐：
+
+```text
+deployed commit: e89cb2a fix: center Today status ring
+changes: 1501px 以上使用左文案 / 140px 圆环 / 右信号三列，左右区域等宽以保证圆环位于状态卡内容区正中央；彩色节点改为第一行网格项，与标签和主值对齐；缓存提升到 styles.css?v=134，版本提升到 1.0.4.02。
+runtime data backup before deploy: /tmp/maxnow-pre-center-ring-20260711-001014
+runtime data stash before deploy: pre-center-ring-20260711-001014
+runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后恢复全部运行数据，再重新生成 project-meta。
+verification: 2048px 下圆环中心与状态卡中心误差小于 0.001px，四行标签与主值基线最大误差约 0.09px；1366px / 390px 无横向溢出；python3 scripts/check.py ok；nginx -t ok；线上源文件确认 v134、等宽三列和第一行节点规则均存在。
+```
+
 刷新 Home 天气卡：
 
 ```bash
