@@ -140,7 +140,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/token-usage.json` 是 Token 页统一入口；OpenClaw、Codex Windows / macOS、Codex server 和后续其他来源都应合入这个总账。Token 页 `1d` 按当前浏览器本地日期 00:00 起算，`7d` / `30d` 包括今天在内的最近 7 / 30 个自然日；来源费用面板和模型占比、调用消耗同层并列展示，并且来源 token、费用和 runs 跟随当前范围更新。页头展示各来源账本的最后更新时间。
 - 2026-07-10 起，Dash Home 首批读取 dashboard / project-status / last-30 / wiki-todos / dounai_checkin / market-indices / project-meta 小数据并渲染；Token 总账、Ricky、生活页数据和 Leaflet 地图资源按当前视图需要再加载。`.js` wrapper 仍由脚本生成并校验，但主要作为数据一致性和静态兜底资产，不要重新放回首屏同步脚本列表。
 - 2026-07-08 起，Home 状态条下方主内容采用统一 `home-board` 两列版式：左列 `home-lane-primary` 放 Token 热力格、Personal Wiki、待推进、外部输入和版本更新，版本更新固定排在外部输入下方；右列 `home-side-stack` 视觉上是 widget 网格，按优先级放市场涨幅、今日 Todo、近期用量、豆奶和系统状态。两列外壳负责大块对齐，左列负责吸收内容型长模块，右列 widget 卡型负责半宽 / 满宽短状态入口，避免左列空着而右列继续下排，也避免所有卡片被二列布局拉成大卡。后续新增 Home 卡片必须先选 lane，再选 `wide-short` / `wide-tall` / `mid-short` / `mid-tall` / `widget-compact` / `widget-wide` 卡型。
-- 2026-07-10 线上已部署提交 `008ed5a`，当前 MaxNow 版本为 `1.0.0.49`、Dash 样式缓存为 `styles.css?v=122`；部署时已保护并恢复服务器运行数据，Codex Server 账本未被仓库基线覆盖。
+- 2026-07-10 线上已部署提交 `eade306`，当前 MaxNow 版本为 `1.0.0.51`、Dash 缓存为 `styles.css?v=123` / `app.js?v=108`；部署时已保护并恢复服务器运行数据，Home 项目状态改读独立 `project-status.*`，旧 `dashboard.mainlines/actions` 已从线上运行态移除。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史、直接流量使用记录和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。真实流量消耗优先使用 `traffic_usage_history`，不要再用账号余量快照差分作为主口径；余量差分只可作为缺数据时的估算说明。
 - 同行记页面只读取 `dash/data/ricky.json`，不在前端编辑、不回写 personal-wiki、不依赖外部在线地图服务；事实来源归 personal-wiki 的 `wiki/relationships/ricky-travel.json`。
 - 生活页“吃啥”只读取 `dash/data/life-foods.json`；前端允许本次会话内临时勾选 / 取消勾选和随机，但不回写 personal-wiki，候选长期来源归 `wiki/life/food-picker.md`。

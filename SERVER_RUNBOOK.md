@@ -510,6 +510,18 @@ runtime preservation: 恢复 ai-news、dashboard、豆奶、Last-30、市场、O
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；nginx active；https://dash.maxnow.cn 200；https://blog.maxnow.cn 200；线上 VERSION 1.0.0.49；styles.css?v=122 已生效。
 ```
 
+2026-07-10 已部署 Home 项目状态可信度修复：
+
+```text
+deployed commit: eade306 Fix Home project status freshness
+changes: ROADMAP 生成状态从 dashboard.* 拆到独立 project-status.*；新增来源时间、生成时间、7 天过期阈值和内容指纹；过期状态不再驱动 Today Status；scripts/check.py 拒绝 Done 或与 ROADMAP 不一致的事项
+dash styles version: styles.css?v=123
+dash app version: app.js?v=108
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260710-104139-before-home-project-status
+runtime preservation: 恢复 ai-news、dashboard、豆奶、Last-30、市场、Ricky 和 Wiki Todo；从 dashboard 运行态移除旧 mainlines/actions 后重生成 wrapper；重新生成 project-meta
+verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/project-status.json 200；线上 VERSION 1.0.0.51；待推进为访问保护、数据健康闭环、前端自动测试
+```
+
 刷新 Home 天气卡：
 
 ```bash

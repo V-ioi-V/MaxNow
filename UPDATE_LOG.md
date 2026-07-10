@@ -19,6 +19,8 @@
 - 移除旧的“Last-30 还是 2026-06-14 草稿”和“补充 Token 使用页真实数据”，当前待推进改为访问保护、数据健康闭环和前端自动测试。
 - 更新 `AGENTS.md` 和 OpenClaw skill，要求 ROADMAP Now / Next / Done 变化后刷新 `project-status.*`，服务器日常 `runtime` 和 OpenClaw 不得覆盖它。
 - 将 Dash 缓存版本提升到 `styles.css?v=123` 和 `app.js?v=108`，并将 `VERSION` 从 `1.0.0.50` 提升到 `1.0.0.51`。
+- 已部署提交 `eade306` 到 `dash.maxnow.cn`；部署前备份服务器运行数据到 `/home/ubuntu/maxnow-deploy-backups/20260710-104139-before-home-project-status`，恢复后移除旧 `dashboard.mainlines/actions`，重新生成 dashboard wrapper 和 project-meta。
+- 线上验证 `project-status.json` 为 200，待推进为访问保护、数据健康闭环和前端自动测试；`python3 scripts/check.py`、`nginx -t`、nginx reload 和站点 HTTP 200 均正常。
 
 原因：
 

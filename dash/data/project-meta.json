@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 10:25",
+  "updatedAt": "2026-07-10 10:42",
   "version": "1.0.0.51",
   "versionLabel": "v1.0.0.51",
   "branch": "bugfix/home-project-status",
-  "commit": "f0cca0a",
+  "commit": "eade306",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/home-project-status · commit f0cca0a · 有未提交代码改动",
+  "deployNote": "bugfix/home-project-status · commit eade306 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-10",
