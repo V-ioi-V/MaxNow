@@ -451,6 +451,23 @@ def check_ai_frontier_brief():
     return "AI frontier: Chinese facts, ranking, deduplication, and collector checks are valid"
 
 
+def check_today_axis():
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    if '<small class="summary-live-start">24:00</small>' not in dashboard_html:
+        raise ValueError("Today axis: top label must be 24:00")
+    if '<small class="summary-live-end">00:00</small>' not in dashboard_html:
+        raise ValueError("Today axis: bottom label must be 00:00")
+    if "--today-marker-ratio: 1" not in dashboard_css or "bottom: 16px" not in dashboard_css:
+        raise ValueError("Today axis: elapsed fill must grow upward from the bottom")
+    if 'setProperty("--today-marker-ratio", markerRatio)' not in dashboard_js:
+        raise ValueError("Today axis: marker must use the reversed day ratio")
+    if ".summary-live-item::before" not in dashboard_css or "top: 2px" not in dashboard_css:
+        raise ValueError("Today axis: signal node alignment rule is missing")
+    return "Today axis: 24:00 top, 00:00 bottom, upward progress, and node alignment are valid"
+
+
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
@@ -465,6 +482,7 @@ def main():
     checks.append(check_project_status())
     checks.append(check_dashboard_weather())
     checks.append(check_ai_frontier_brief())
+    checks.append(check_today_axis())
     checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))

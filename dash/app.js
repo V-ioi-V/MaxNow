@@ -303,6 +303,7 @@ function updateTodayPhase() {
   const nowText = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
   const progressPercent = `${phase.progress}%`;
   const progressRatio = String(phase.progress / 100);
+  const markerRatio = String(1 - phase.progress / 100);
   setText("#today-phase", phase.label);
   setText("#today-phase-note", phase.note);
   setText("#today-pulse-now", nowText);
@@ -310,6 +311,7 @@ function updateTodayPhase() {
   if (meter) {
     meter.style.setProperty("--today-progress", progressPercent);
     meter.style.setProperty("--today-progress-ratio", progressRatio);
+    meter.style.setProperty("--today-marker-ratio", markerRatio);
     meter.title = `今日进度 ${nowText} / ${phase.progress}%`;
     meter.setAttribute("aria-label", `今日进度 ${nowText}`);
   }
