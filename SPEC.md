@@ -55,6 +55,8 @@ MaxNow 由四类文件组成：
    - `dash/data/market-indices.js`
    - `dash/data/project-meta.json`
    - `dash/data/project-meta.js`
+   - `dash/data/project-status.json`
+   - `dash/data/project-status.js`
    - `dash/data/dounai_checkin.json`
    - `dash/data/ricky.json`
    - `dash/data/ricky.js`
@@ -154,7 +156,7 @@ Home 按顺序回答这些问题：
 - Home 主内容版式：状态条下方使用统一 `home-board` 两列外壳，`home-lane-primary` 承载左侧主任务和内容型长模块，右侧 `home-side-stack` 只承载短扫读次级信号和状态入口；`home-lane-signal` / `home-lane-rail` 只作为语义分组，视觉上展平成右侧 widget 网格。所有 Home 模块都保留 `home-card-*` 和 `data-card-size`，右侧小组件用 `widget-compact` 占半宽，需要内部指标网格或列表宽度的短状态模块用 `widget-wide` 或 `mid-*` 占满右列。外部输入和版本更新属于左侧内容流，版本更新固定放在外部输入下方；不要再保留单独“稍后留意”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，文档入口进入版本更新或项目状态。不要再用固定 `grid-area`、局部左右列、固定高度或空白补丁拼模块，也不要为了二列或三列对齐硬拉大所有卡片。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认语义 lane 和卡型。
 - Token 近期活动：Home `wide-short` 卡展示近 90 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
 - 市场涨幅：Home `mid-tall` 卡展示纳指100、标普500、上证指数、深证成指和创业板指的当前点位、涨跌幅和日内迷你走势；数据来自 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 或服务器 `runtime` 每 10 分钟刷新，前端不直接请求行情接口。
-- 待推进：1-3 个近期应该移动的 Now / Next 动作；这里不是完整 todo app，也不是已完成记录。
+- 待推进：1-3 个近期应该移动的 Now / Next 动作；由 `dash/data/project-status.json` 从 `ROADMAP.md` 显式生成，这里不是完整 todo app，也不得包含 Done 项。
 - Home 不再单独展示“今日记录”卡片；静态项目原则和边界说明进入规格、上下文或版本更新，真正的当天个人判断由顶部今日状态承载。
 - 今日 Todo：Home 右侧只展示 personal-wiki 同步来的当天明确执行日期待办；以浏览器当天日期匹配 `due_at`，不混入过期未完成或无日期待办。v1 只读展示，不支持在 MaxNow 内编辑或标记完成。
 - 系统状态：作为云服务页入口，用来快速判断机器是否健康；点击卡片进入“云服务”页查看“系统与托管”模块，其中包含 Host、站点域名、nginx、证书、部署版本、CPU、磁盘、内存和运行时间等完整服务器状态快照。`TLS / nginx` 不再作为单独任务卡展示，也不展示部署根目录、nginx 配置路径或采集器说明这类低频实现细节。
@@ -260,6 +262,8 @@ dash/data/openclaw-usage.json
 dash/data/openclaw-usage.js
 dash/data/project-meta.json
 dash/data/project-meta.js
+dash/data/project-status.json
+dash/data/project-status.js
 dash/data/market-indices.json
 dash/data/market-indices.js
 dash/data/dounai_checkin.json
@@ -282,9 +286,11 @@ IDEAS.md
 UPDATE_LOG.md
 ```
 
-`dash/data/dashboard.json` 负责个人状态、主线、行动、时间线、系统状态、Token 使用、Home 天气卡和时间卡片的手动特殊日期列表。历史 `journal` 字段可保留为数据兼容，但 Home 不再读取它生成独立卡片。
+`dash/data/dashboard.json` 负责人工个人状态、时间线、系统状态、历史 Token 字段、Home 天气卡和时间卡片的手动特殊日期列表。历史 `journal` 字段可保留为数据兼容，但 Home 不再读取它生成独立卡片；生成的主线和待推进事项不再存放在这里。
 
-其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`mainlines` 和 `actions` 仍保留 Owner 判断或受控草稿，不由系统状态脚本覆盖。`today` 可以保留当天人工 override，但 Home 主状态默认由前端从今日 Todo、ROADMAP、Token 和自动化信号推导，过期 `today` 不再作为主判断。
+其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`today` 保留当天人工 override。Home 主状态默认由前端从今日 Todo、`project-status.*`、Token 和自动化信号推导，过期 `today` 不再作为主判断。
+
+`dash/data/project-status.json` 负责 Home 的项目主线和待推进事项，由 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 的 Now / Next 显式生成。它必须记录 `sourceUpdatedAt`、`generatedAt`、`staleAfterHours` 和 ROADMAP 内容指纹；前端超过阈值时显示“待刷新”，并停止用过期项目状态生成 Today Status 推荐。`scripts/check.py` 必须验证数据仍匹配当前 ROADMAP，并拒绝指向 Done 的事项。服务器日常 `runtime` 和 OpenClaw 不得覆盖该文件或 `dashboard.today`。
 
 `specialDates` 是可选数组，用于 Home 时间卡片当天匹配。支持固定公历日期：
 

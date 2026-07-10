@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 10:04",
-  "version": "1.0.0.50",
-  "versionLabel": "v1.0.0.50",
-  "branch": "feature/maxnow-audit-roadmap",
-  "commit": "d15b4fc",
+  "updatedAt": "2026-07-10 10:25",
+  "version": "1.0.0.51",
+  "versionLabel": "v1.0.0.51",
+  "branch": "bugfix/home-project-status",
+  "commit": "f0cca0a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/maxnow-audit-roadmap · commit d15b4fc · 有未提交代码改动",
+  "deployNote": "bugfix/home-project-status · commit f0cca0a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "修复 Home 项目状态过期和已完成任务误报",
+      "summary": "新增独立 `dash/data/project-status.*`，从 `ROADMAP.md` 生成 Home 主线和待推进事项，不再把自动生成结果写入 `dashboard.*` 或修改 `dashboard.today`。"
+    },
     {
       "date": "2026-07-10",
       "title": "记录 MaxNow 整体体检后的优化路线",
@@ -28,11 +33,6 @@
       "date": "2026-07-09",
       "title": "替换 Home 顶部状态小卡",
       "summary": "Home 顶部状态条前两张小卡从“当前主线 / 待推进”改为“今日执行 / 数据同步”。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "将 Today Status 竖线改为今日时间轴",
-      "summary": "Today Status 右侧竖线改为按 00:00-24:00 推进的今日进度轴，显示 00:00、当前时间和 24:00。"
     }
   ]
 }

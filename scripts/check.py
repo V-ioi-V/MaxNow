@@ -1,3 +1,4 @@
+import hashlib
 import json
 import re
 import sys
@@ -21,6 +22,7 @@ DATASETS = [
     ("token-usage", "dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
     ("market-indices", "dash/data/market-indices.json", "dash/data/market-indices.js", "MAXNOW_MARKET_INDICES_DATA"),
     ("project-meta", "dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
+    ("project-status", "dash/data/project-status.json", "dash/data/project-status.js", "MAXNOW_PROJECT_STATUS_DATA"),
     ("ricky", "dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
     ("life-foods", "dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
 ]
@@ -63,6 +65,8 @@ def check_required_files():
         "dash/data/life-foods.js",
         "dash/data/market-indices.json",
         "dash/data/market-indices.js",
+        "dash/data/project-status.json",
+        "dash/data/project-status.js",
         "blog/index.html",
         "blog/overview.html",
         "blog/topics.html",
@@ -251,6 +255,64 @@ def check_project_meta():
     return "project-meta: version and recent updates are valid"
 
 
+def roadmap_titles_by_area():
+    areas = {}
+    current_area = ""
+    for raw_line in (ROOT / "ROADMAP.md").read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if line.startswith("## "):
+            current_area = line[3:].strip()
+        elif line.startswith("### "):
+            areas.setdefault(current_area, set()).add(line[4:].strip())
+    return areas
+
+
+def check_project_status():
+    path = ROOT / "dash/data/project-status.json"
+    data = load_json(path)
+    roadmap_text = (ROOT / "ROADMAP.md").read_text(encoding="utf-8")
+    expected_fingerprint = hashlib.sha256(roadmap_text.encode("utf-8")).hexdigest()
+    if data.get("schemaVersion") != 1:
+        raise ValueError("project-status: schemaVersion must be 1")
+    if data.get("source") != "ROADMAP.md":
+        raise ValueError("project-status: source must be ROADMAP.md")
+    if data.get("sourceFingerprint") != expected_fingerprint:
+        raise ValueError("project-status: ROADMAP.md changed; run python scripts/update_data.py project-status")
+    for key in ["sourceUpdatedAt", "generatedAt"]:
+        datetime.strptime(data[key], "%Y-%m-%d %H:%M")
+    if int(data.get("staleAfterHours", 0)) <= 0:
+        raise ValueError("project-status: staleAfterHours must be positive")
+    dashboard = load_json(ROOT / "dash/data/dashboard.json")
+    legacy_fields = [key for key in ["mainlines", "actions"] if key in dashboard]
+    if legacy_fields:
+        raise ValueError(f"project-status: generated fields must not remain in dashboard.json: {legacy_fields}")
+
+    areas = roadmap_titles_by_area()
+    active_titles = areas.get("Now", set()) | areas.get("Next", set())
+    done_titles = areas.get("Done", set())
+    overlap = active_titles & done_titles
+    if overlap:
+        raise ValueError(f"project-status: ROADMAP titles appear in active and Done: {sorted(overlap)}")
+
+    mainlines = data.get("mainlines", [])
+    actions = data.get("actions", [])
+    if not isinstance(mainlines, list) or not isinstance(actions, list):
+        raise ValueError("project-status: mainlines and actions must be lists")
+    items = [*mainlines, *actions]
+    item_titles = [item.get("title", "") for item in items]
+    if len(item_titles) != len(set(item_titles)):
+        raise ValueError("project-status: mainlines and actions must not contain duplicate titles")
+    for item in items:
+        title = item.get("title", "")
+        if not title or title not in active_titles:
+            raise ValueError(f"project-status: {title or '<missing title>'} is not in ROADMAP Now / Next")
+        if title in done_titles:
+            raise ValueError(f"project-status: {title} points to a ROADMAP Done item")
+        if item.get("sourceArea") not in {"Now", "Next"}:
+            raise ValueError(f"project-status: {title} sourceArea must be Now or Next")
+    return "project-status: ROADMAP source, freshness metadata, and active items are valid"
+
+
 def check_market_indices():
     data = load_json(ROOT / "dash/data/market-indices.json")
     if data.get("schemaVersion") != 1:
@@ -307,6 +369,7 @@ def main():
     checks.append(check_token_usage())
     checks.append(check_market_indices())
     checks.append(check_project_meta())
+    checks.append(check_project_status())
     checks.append(check_dashboard_weather())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))

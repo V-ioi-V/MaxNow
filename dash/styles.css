@@ -1393,6 +1393,16 @@ body[data-view="tokens"] .topbar-token-ranges {
   font-weight: 700;
 }
 
+.status-pill[data-state="stale"] {
+  border-color: rgba(238, 154, 73, 0.38);
+  background: #fff7ed;
+  color: #b85f18;
+}
+
+.actions-panel[data-health="unknown"] {
+  border-color: rgba(238, 154, 73, 0.34);
+}
+
 .task-item,
 .wiki-todo-item,
 .ai-news-item,

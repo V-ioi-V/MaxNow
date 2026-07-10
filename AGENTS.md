@@ -30,6 +30,7 @@ Read this file before making code changes in this repository.
 - Update `SERVER_RUNBOOK.md` when the change affects SSH, nginx, GitHub CLI, deployment, cron/systemd timers, server paths, auth state, or operational commands.
 - When adding, removing, or changing server cron/systemd timers that are part of MaxNow operations, update the Cloud service tab copy in `dash/index.html` in the same branch so the displayed automation inventory does not drift from the server.
 - Every completed owner-visible or operational change must bump `VERSION` and refresh `dash/data/project-meta.*` with `python scripts/update_data.py project-meta` before finishing. This includes small UI, copy, and layout adjustments; page capability changes; new data sources; new automation; and repository rule changes.
+- Whenever `ROADMAP.md` Now / Next / Done changes, run `python scripts/update_data.py project-status` in the same branch. `scripts/check.py` must fail if `dash/data/project-status.*` no longer matches the current roadmap.
 - Version bump policy: small UI / copy / layout adjustments, new page capabilities, new data sources, and new automation normally bump the final two-digit build segment, for example `1.0.0.00` -> `1.0.0.01`; a stable important feature module bumps patch and resets build, for example `1.0.0.99` -> `1.0.1.00`; large product phase changes bump minor or major.
 - Do not leave completed work only in chat. If the owner asks to "记个待办", "优化待办", "做完了", "服务器搞好了", or similar, reflect that in the relevant repository documents.
 
@@ -113,6 +114,8 @@ dash/data/token-usage.json
 dash/data/token-usage.js
 dash/data/project-meta.json
 dash/data/project-meta.js
+dash/data/project-status.json
+dash/data/project-status.js
 dash/data/dounai_checkin.json
 dash/data/life-foods.json
 dash/data/life-foods.js
@@ -122,7 +125,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 
 ## Data Rules
 
-- `dash/data/dashboard.json` owns personal state, mainlines, actions, daily log, timeline, system status, Home weather, and Token usage.
+- `dash/data/dashboard.json` owns manual personal state, daily log, timeline, system status, Home weather, and legacy Token fields. It must not own generated project mainlines or actions.
 - `dash/data/ai-news.json` owns AI external inputs only.
 - `dash/data/last-30.json` owns the rolling 30-day external AI signal memory: daily AI signals, weekly AI changes, 30-day AI mainlines, impact notes, and watch items.
 - `dash/data/wiki-todos.json` owns the read-only MaxNow cache generated from personal-wiki `wiki/tasks/todo.json`.
@@ -132,6 +135,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - `dash/data/codex-server-usage.json` owns server Codex token usage aggregates and OpenAI API-equivalent cost estimates generated from server-side `/root/.codex/sessions`; it must follow the same no prompt / response body export rule.
 - `dash/data/token-usage.json` owns the combined Token page ledger generated from OpenClaw and Codex source ledgers.
 - `dash/data/project-meta.json` owns the displayed MaxNow version, deploy note, and recent update summaries generated from `VERSION`, Git state, and `UPDATE_LOG.md`.
+- `dash/data/project-status.json` owns Home project mainlines and actions generated explicitly from `ROADMAP.md`. It records `sourceUpdatedAt`, `generatedAt`, a roadmap fingerprint, and the stale threshold; routine server `runtime` jobs and OpenClaw must not overwrite it.
 - `dash/data/dounai_checkin.json` owns Dounai check-in rewards, account balance snapshots, direct traffic usage pulled from `dounai.pro/user/trafficlog`, and accumulated traffic usage history. Direct traffic usage is read-only and should be collected by the server-side OpenClaw/root Dounai automation; do not expose Dounai credentials or subscription links in frontend code.
 - The Dounai traffic closeout cron should run traffic-only at 00:05 and exclude the current date from history, so actual-usage charts use completed days rather than a partial day.
 - `dash/data/ricky.json` owns the read-only "我和 Ricky" map, places, trip records, notes, and optional photo/source links.
@@ -142,7 +146,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Regenerate each `.js` wrapper from its matching JSON file.
 - Validate JSON before finishing data changes.
 - Use `python scripts/sync_wiki_todos.py` to refresh `dash/data/wiki-todos.*` from private personal-wiki through the local or server `gh` login; never put GitHub tokens in frontend code.
-- Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `dash/data/dashboard.*`; do not let it overwrite owner judgment fields such as today, mainlines, actions, or journal.
+- Use `python scripts/sync_system_status.py` to refresh machine-collected `automation` and `system` fields in `dash/data/dashboard.*`; do not let it overwrite owner judgment fields such as today or journal.
 - Use `python scripts/sync_weather.py` or `python scripts/update_data.py weather` to refresh the Home weather card for Beijing Haidian District; `runtime` also runs this refresh.
 - Use `python scripts/sync_openclaw_usage.py` or `python scripts/update_data.py openclaw-usage` on the server to refresh OpenClaw token usage from `/root/.openclaw`; costs are estimates using OpenRouter model prices, not real provider billing.
 - Use `python scripts/sync_codex_usage.py` or `python scripts/update_data.py codex-usage` to refresh the Windows/local-compatible Codex token ledger from `.codex/sessions`; export only token usage, model name, timestamp, source label, and equivalent cost fields, never prompt or response body text.
@@ -156,7 +160,7 @@ OpenClaw routine jobs must not edit page code or documentation.
 - Use `python scripts/sync_ricky_travel.py` or `python scripts/update_data.py ricky-travel` to refresh the "我和 Ricky" travel map from personal-wiki `wiki/relationships/ricky-travel.json`.
 - Use `python scripts/sync_life_foods.py` or `python scripts/update_data.py life-foods` to refresh the Life page food picker candidates from personal-wiki `wiki/life/food-picker.md`.
 - Use `python scripts/sync_ai_last30.py` or `python scripts/update_data.py ai-last30` to refresh free external AI signals into `dash/data/ai-news.*` and `dash/data/last-30.*`.
-- Prefer `python scripts/update_data.py runtime` for server runtime refreshes, including wiki todos, Ricky travel records, Life food candidates, weather, system status, and project metadata; use `python scripts/update_data.py wrap all` for wrapper regeneration, and `python scripts/update_data.py project-status` only when the owner wants Home project status refreshed from `ROADMAP.md`.
+- Prefer `python scripts/update_data.py runtime` for server runtime refreshes, including wiki todos, Ricky travel records, Life food candidates, weather, system status, and project metadata; use `python scripts/update_data.py wrap all` for wrapper regeneration. Run `python scripts/update_data.py project-status` whenever ROADMAP Now / Next / Done changes; it updates only `project-status.*` and never overwrites `dashboard.today`.
 - Use `python scripts/check.py` for local consistency checks when data wrappers or docs change.
 
 ## Product Direction

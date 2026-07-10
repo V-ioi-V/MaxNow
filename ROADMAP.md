@@ -47,16 +47,6 @@
 - 补充 CSP、`X-Content-Type-Options`、`Referrer-Policy` 等安全响应头，并隐藏不必要的 nginx 版本信息。
 - 更新 `DEPLOY.md` 和 `SERVER_RUNBOOK.md`，记录访问、密码轮换、紧急恢复和验证命令；真实用户名、密码和验证码不得写入仓库。
 
-### 修复 Home 项目状态可信度
-
-- 来源：2026-07-10 MaxNow 整体体检。
-- 建议分支：`bugfix/home-project-status`
-- 清理 `dashboard.json` 中已经完成或与当前事实矛盾的“待推进”，例如 Token 真数据已接入、Last-30 已进入日常自动更新后仍显示旧草稿描述。
-- 明确 `ROADMAP.md`、Owner 人工判断和自动生成项目状态之间的优先级；定时 `runtime` 继续不得擅自覆盖 Owner 判断。
-- 在路线图或功能状态完成合并后，增加明确的 `project-status` 刷新步骤，避免 Home 长期展示旧任务。
-- 为生成状态记录来源和更新时间；状态过期或来源不一致时，页面应提示“待确认 / 待刷新”，不能继续把旧内容当作当前建议。
-- 扩展校验：Home action 不应引用 `ROADMAP.md` 已完成项，也不应继续描述已经落地的数据链路为“未接入”。
-
 ### 建立数据失败与新鲜度闭环
 
 - 来源：2026-07-10 MaxNow 整体体检。
@@ -143,6 +133,14 @@
 - 博客是否需要评论、订阅邮件、搜索索引、统计分析等公开站能力待后续确认；第一阶段先不做。
 
 ## Done
+
+### 已修复 Home 项目状态可信度
+
+- 2026-07-10 将 ROADMAP 生成的主线和待推进从 `dashboard.*` 拆到独立 `project-status.*`，`dashboard.today` 继续只承担 Owner 当天人工 override。
+- `project-status.*` 记录 ROADMAP 来源更新时间、生成时间、7 天过期阈值和内容指纹；过期时 Home 显示“待刷新”，并停止用旧项目状态生成 Today Status 推荐。
+- `scripts/check.py` 会验证项目状态仍匹配当前 ROADMAP Now / Next，拒绝 Done 项和同名 active / Done 冲突；ROADMAP 变化后未刷新会直接校验失败。
+- 当前错误待推进“Last-30 还是 2026-06-14 草稿”和“补充 Token 使用页真实数据”已从 `dashboard.*` 移除。
+- 仓库规则已要求 ROADMAP Now / Next / Done 变化后运行 `python scripts/update_data.py project-status`；服务器日常 `runtime` 和 OpenClaw 不得覆盖项目状态。
 
 ### 已收紧 Last-30 首页外露口径
 

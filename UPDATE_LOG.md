@@ -11,6 +11,19 @@
 
 ## 2026-07-10
 
+### 修复 Home 项目状态过期和已完成任务误报
+
+- 新增独立 `dash/data/project-status.*`，从 `ROADMAP.md` 生成 Home 主线和待推进事项，不再把自动生成结果写入 `dashboard.*` 或修改 `dashboard.today`。
+- 项目状态新增 ROADMAP 来源更新时间、生成时间、7 天过期阈值和内容指纹；Home 待推进卡展示同步状态，过期数据停止驱动 Today Status 推荐。
+- `scripts/check.py` 新增 ROADMAP 一致性检查：项目状态必须来自 Now / Next，不能引用 Done，ROADMAP 变化但未刷新时校验失败。
+- 移除旧的“Last-30 还是 2026-06-14 草稿”和“补充 Token 使用页真实数据”，当前待推进改为访问保护、数据健康闭环和前端自动测试。
+- 更新 `AGENTS.md` 和 OpenClaw skill，要求 ROADMAP Now / Next / Done 变化后刷新 `project-status.*`，服务器日常 `runtime` 和 OpenClaw 不得覆盖它。
+- 将 Dash 缓存版本提升到 `styles.css?v=123` 和 `app.js?v=108`，并将 `VERSION` 从 `1.0.0.50` 提升到 `1.0.0.51`。
+
+原因：
+
+- Home 的自动建议必须与当前 ROADMAP 和已完成功能一致，不能让过期项目状态误导 Owner 的每日判断。
+
 ### 记录 MaxNow 整体体检后的优化路线
 
 - 在 `ROADMAP.md` 增加 Dash 访问保护、Home 项目状态可信度、数据失败与新鲜度闭环、前端自动测试 / 无障碍 / 移动端验证、外部依赖和链接安全等可执行任务。

@@ -6,6 +6,7 @@ const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
 const TOKEN_USAGE_URL = "./data/token-usage.json";
 const MARKET_INDICES_URL = "./data/market-indices.json";
 const PROJECT_META_URL = "./data/project-meta.json";
+const PROJECT_STATUS_URL = "./data/project-status.json";
 const RICKY_URL = "./data/ricky.json";
 const LIFE_FOODS_URL = "./data/life-foods.json";
 const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
@@ -20,6 +21,7 @@ const fallbackOpenclawUsage = window.MAXNOW_OPENCLAW_USAGE_DATA || { days: [] };
 const fallbackTokenUsage = window.MAXNOW_TOKEN_USAGE_DATA || { days: [] };
 const fallbackMarketIndices = window.MAXNOW_MARKET_INDICES_DATA || { indices: [] };
 const fallbackProjectMeta = window.MAXNOW_PROJECT_META_DATA || { recentUpdates: [] };
+const fallbackProjectStatus = window.MAXNOW_PROJECT_STATUS_DATA || { mainlines: [], actions: [] };
 const fallbackRicky = window.MAXNOW_RICKY_DATA || { stats: [], places: [], records: [] };
 const fallbackLifeFoods = window.MAXNOW_LIFE_FOODS_DATA || { sections: [] };
 
@@ -31,6 +33,7 @@ let openclawUsageData = fallbackOpenclawUsage;
 let tokenUsageData = fallbackTokenUsage;
 let marketIndicesData = fallbackMarketIndices;
 let projectMetaData = fallbackProjectMeta;
+let projectStatusData = fallbackProjectStatus;
 let rickyData = fallbackRicky;
 let lifeFoodsData = fallbackLifeFoods;
 let wikiTodoError = "";
@@ -704,6 +707,11 @@ function getDataSyncStatus() {
     { label: "\u5e02\u573a", updatedAt: marketIndicesData.updatedAt, staleAfterHours: 72 },
     { label: "Last-30", updatedAt: last30Data.updatedAt, staleAfterHours: 168 },
     { label: "\u7248\u672c", updatedAt: projectMetaData.updatedAt, staleAfterHours: 72 },
+    {
+      label: "Roadmap",
+      updatedAt: projectStatusData.generatedAt,
+      staleAfterHours: Number(projectStatusData.staleAfterHours || 168),
+    },
   ];
   const now = new Date();
   const items = sources.map((source) => {
@@ -1818,11 +1826,36 @@ function normalizeTaskTitle(value) {
 }
 
 function getHomeWorkItems() {
-  const mainlines = dashboardData.mainlines || dashboardData.projects || dashboardData.tasks || [];
-  const rawActions = dashboardData.actions || dashboardData.tasks || [];
+  const mainlines = projectStatusData.mainlines || [];
+  const rawActions = projectStatusData.actions || [];
   const mainlineTitles = new Set(mainlines.map((item) => normalizeTaskTitle(item.title)).filter(Boolean));
   const actions = rawActions.filter((item) => !mainlineTitles.has(normalizeTaskTitle(item.title)));
-  return { mainlines, actions };
+  return { mainlines, actions, freshness: getProjectStatusFreshness() };
+}
+
+function getProjectStatusFreshness(now = new Date()) {
+  const generatedAt = parseLocalDateTime(projectStatusData.generatedAt);
+  const staleAfterHours = Number(projectStatusData.staleAfterHours || 168);
+  const ageHours = generatedAt ? (now.getTime() - generatedAt.getTime()) / (60 * 60 * 1000) : Infinity;
+  const hasItems = Boolean((projectStatusData.mainlines || []).length || (projectStatusData.actions || []).length);
+  const stale = !hasItems || !Number.isFinite(ageHours) || ageHours > staleAfterHours;
+  return {
+    stale,
+    ageHours,
+    label: stale ? "\u5f85\u5237\u65b0" : "\u8def\u7ebf\u56fe\u5df2\u540c\u6b65",
+    detail: projectStatusData.sourceUpdatedAt
+      ? `ROADMAP ${formatSourceUpdatedAt(projectStatusData.sourceUpdatedAt)}`
+      : "\u7b49\u5f85 ROADMAP \u540c\u6b65",
+  };
+}
+
+function renderProjectStatusFreshness(freshness) {
+  const node = qs("#project-status-freshness");
+  if (!node) return;
+  node.textContent = freshness.label;
+  node.dataset.state = freshness.stale ? "stale" : "fresh";
+  node.title = freshness.detail;
+  qs("#actions")?.setAttribute("data-health", freshness.stale ? "unknown" : "ok");
 }
 
 function setSummaryLiveTone(selector, tone) {
@@ -1987,7 +2020,9 @@ function renderTodayStatus(mainlines, actions, todayTodos, token1d, token7d, aut
 }
 
 function renderHome() {
-  const { mainlines, actions } = getHomeWorkItems();
+  const { mainlines, actions, freshness: projectFreshness } = getHomeWorkItems();
+  const trustedMainlines = projectFreshness.stale ? [] : mainlines;
+  const trustedActions = projectFreshness.stale ? [] : actions;
   const openTodos = getOpenWikiTodos();
   const todayTodos = getTodayWikiTodos(openTodos);
   const token7d = getTokenRange("7d");
@@ -1995,7 +2030,8 @@ function renderHome() {
   const tokenAll = getTokenRange("all");
   const automation = dashboardData.automation || {};
 
-  renderTodayStatus(mainlines, actions, todayTodos, token1d, token7d, automation);
+  renderTodayStatus(trustedMainlines, trustedActions, todayTodos, token1d, token7d, automation);
+  renderProjectStatusFreshness(projectFreshness);
   const automationStatus = automation.status || copy.waiting;
   const automationTitle = automation.summary
     ? `系统自动化：${automation.summary}`
@@ -2351,13 +2387,15 @@ async function loadHomeData({ force = false } = {}) {
     readJson(CHECKIN_URL, fallbackCheckin),
     readJson(MARKET_INDICES_URL, window.MAXNOW_MARKET_INDICES_DATA || fallbackMarketIndices),
     readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta),
-  ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta]) => {
+    readJson(PROJECT_STATUS_URL, window.MAXNOW_PROJECT_STATUS_DATA || fallbackProjectStatus),
+  ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta, projectStatus]) => {
     dashboardData = dashboard;
     last30Data = last30;
     wikiTodoData = wikiTodo;
     checkinData = checkin;
     marketIndicesData = marketIndices;
     projectMetaData = projectMeta;
+    projectStatusData = projectStatus;
     renderHome();
     if (getActiveView() === "dounai") renderDounai();
   });

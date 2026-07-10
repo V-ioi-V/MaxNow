@@ -34,34 +34,6 @@
     "summary": "OpenClaw 日常只更新 data/ 下的数据文件",
     "lastRun": "2026-05-26 00:40"
   },
-  "mainlines": [
-    {
-      "title": "规划个人博客发布链路",
-      "note": "建议分支：`feature/blog-module-plan`",
-      "label": "Now",
-      "status": "active"
-    }
-  ],
-  "actions": [
-    {
-      "title": "规划个人博客发布链路",
-      "note": "建议分支：`feature/blog-module-plan`",
-      "label": "Now",
-      "status": "active"
-    },
-    {
-      "title": "让 Last-30 进入增量更新节奏",
-      "note": "当前 `dash/data/last-30.json` 还是 2026-06-14 的草稿，需要进入日常增量更新。",
-      "label": "Next",
-      "status": "waiting"
-    },
-    {
-      "title": "补充 Token 使用页真实数据",
-      "note": "来源 ID：`maxnow-token-usage`",
-      "label": "Next",
-      "status": "waiting"
-    }
-  ],
   "journal": [
     {
       "source": "Owner",

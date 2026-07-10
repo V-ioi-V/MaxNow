@@ -13,6 +13,8 @@ dash/
   data/
     dashboard.json
     dashboard.js
+    project-status.json
+    project-status.js
     ai-news.json
     ai-news.js
     last-30.json
@@ -105,6 +107,7 @@ http://127.0.0.1:4173/blog/preview.html
 Home 页面读取：
 
 - `dash/data/dashboard.json`
+- `dash/data/project-status.json`
 - `dash/data/ai-news.json`
 - `dash/data/last-30.json`
 - `dash/data/wiki-todos.json`
@@ -127,7 +130,7 @@ python scripts/update_data.py runtime
 - `wrap all`：只从 JSON 重新生成所有 `.js` wrapper，并运行校验。
 - `ai-last30`：从免费公开源刷新首页 AI 输入和 Last-30 AI 外部信号滚动记忆。
 - `market-indices`：刷新 Home 市场涨幅卡的国内外指数点位、涨跌幅和迷你走势。
-- `project-status`：显式从 `ROADMAP.md` 刷新 Home 的当前主线 / 今日推进，不由 cron 自动覆盖。
+- `project-status`：显式从 `ROADMAP.md` 刷新独立的 `project-status.*`，不修改 `dashboard.today`，也不由服务器日常 cron 自动覆盖。ROADMAP Now / Next / Done 变化后必须运行。
 - `runtime`：服务器定时任务使用，刷新 wiki-todos、天气、行情、生活 / 同行记缓存、系统状态和项目元信息，然后运行校验。
 
 ## 本地校验
@@ -150,12 +153,17 @@ python scripts/check.py
 `dash/data/dashboard.json`：
 
 - 今日状态
-- 当前主线
-- 今日推进
+- 人工今日状态
 - 日常记录
 - 时间点
 - 系统状态
 - Token 使用
+
+`dash/data/project-status.json`：
+
+- 从 `ROADMAP.md` 生成的当前主线和待推进事项
+- ROADMAP 来源更新时间、生成时间、过期阈值和内容指纹
+- 只允许 Now / Next，不能引用 Done
 
 `dash/data/ai-news.json`：
 

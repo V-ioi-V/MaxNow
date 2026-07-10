@@ -106,7 +106,7 @@ cd /var/www/maxnow-dashboard
 python3 scripts/update_data.py runtime
 ```
 
-需要显式刷新 Home 的当前主线 / 今日推进时：
+ROADMAP Now / Next / Done 变化后，需要显式刷新独立的 Home 项目状态数据；该命令不修改 `dashboard.today`：
 
 ```bash
 cd /var/www/maxnow-dashboard

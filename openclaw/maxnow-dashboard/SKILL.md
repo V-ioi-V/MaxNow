@@ -1,13 +1,13 @@
 ﻿---
 name: maxnow-data
-description: Maintain MaxNow personal status workstation data. Use when OpenClaw updates daily personal state, current mainlines, actions, logs, automation status, token usage, and AI external inputs for the static dashboard without changing page code.
+description: Maintain MaxNow personal status workstation data. Use when OpenClaw updates daily personal state, logs, automation status, token usage, and AI external inputs for the static dashboard without changing page code or roadmap-generated project status.
 ---
 
 # MaxNow Data
 
 Maintain the data files for the private MaxNow workstation deployed at `dash.maxnow.cn`.
 
-MaxNow is not a news site and not an OpenClaw report page. It is the owner's personal status workstation: today's state, current mainlines, today's actions, daily log, time points, system health, Token usage, and a small external-input area.
+MaxNow is not a news site and not an OpenClaw report page. It is the owner's personal status workstation: today's state, roadmap-generated project status, daily log, time points, system health, Token usage, and a small external-input area.
 
 ## Hard Boundary
 
@@ -35,6 +35,8 @@ IDEAS.md
 UPDATE_LOG.md
 dash/data/last-30.json
 dash/data/last-30.js
+dash/data/project-status.json
+dash/data/project-status.js
 ```
 
 If a page structure or style change is needed, stop and report it. Do not modify page code.
@@ -44,8 +46,7 @@ If a page structure or style change is needed, stop and report it. Do not modify
 Create a concise daily personal status snapshot:
 
 - today's mode, energy, focus, and one-sentence judgment
-- current mainlines and next steps
-- 1-3 actions that should move today
+- preserve roadmap-generated mainlines and next steps; OpenClaw does not write them
 - short daily log notes and decisions
 - time points and automation rhythm
 - OpenClaw/server/data/GitHub state
@@ -56,7 +57,7 @@ OpenClaw records facts and drafts summaries. The owner keeps final judgment. Do 
 
 ## Data Files
 
-`dash/data/dashboard.json` is the main data source for Home and Token. `dash/data/dashboard.js` must contain the same object assigned to `window.MAXNOW_DASHBOARD_DATA`.
+`dash/data/dashboard.json` owns manual personal state and machine status fields used by Home. `dash/data/dashboard.js` must contain the same object assigned to `window.MAXNOW_DASHBOARD_DATA`. Project mainlines and actions live in `dash/data/project-status.*`, generated explicitly from `ROADMAP.md` by Codex or the owner; OpenClaw must not edit them.
 
 `dash/data/ai-news.json` is only for Home AI external inputs. It normally contains 0-3 high-signal items from the free external AI signal collector or Last-30 AI signal memory. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
 
@@ -83,22 +84,6 @@ Preserve this shape when possible:
     "summary": "OpenClaw 已更新今日状态快照。",
     "lastRun": "YYYY-MM-DD HH:mm"
   },
-  "mainlines": [
-    {
-      "title": "MaxNow",
-      "note": "当前状态、下一步、卡点。",
-      "label": "主线",
-      "status": "active"
-    }
-  ],
-  "actions": [
-    {
-      "title": "今天要推进的动作",
-      "note": "一句话说明。",
-      "label": "推进",
-      "status": "active"
-    }
-  ],
   "journal": [
     {
       "source": "Owner / OpenClaw / GitHub",
@@ -158,16 +143,8 @@ Preserve this shape when possible:
 }
 ```
 
-Status values for `mainlines` and `actions`:
-
-- `active`: should move soon
-- `waiting`: blocked or waiting
-- `done`: completed
-
 Keep arrays short:
 
-- `mainlines`: 1-3
-- `actions`: 1-3
 - `journal`: 2-5
 - `timeline`: 3-5
 - `feeds`: 0-3
@@ -212,9 +189,8 @@ Automatic sources:
 
 Semi-automatic sources:
 
-- current mainlines
 - daily log draft
-- project progress summary
+- project progress summary outside roadmap-generated task fields
 
 Manual or owner-confirmed fields:
 

@@ -65,7 +65,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `openclaw/maxnow-dashboard/SKILL.md`：OpenClaw 更新 dashboard / ai-news 数据时的执行规则。
 - `openclaw/last-30/SKILL.md`：OpenClaw 更新 Last-30 滚动记忆时的执行规则。
 - `scripts/check.py`：本地一致性校验脚本。
-- `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态和项目元信息，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新 Home 项目状态。
+- `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态和项目元信息，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新独立的 Home 项目状态数据。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
 - `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段；Home 系统状态卡作为入口，云服务页复用同一份快照展示更完整的服务器状态。
 - `scripts/sync_openclaw_usage.py`：只读服务器 `/root/.openclaw` 轨迹，生成 OpenClaw Token 用量账本和 OpenRouter 等价费用估算。
@@ -91,7 +91,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 这些文件驱动当前网页。
 
-- `dash/data/dashboard.json`：个人状态、主线、待推进事项、日常记录、系统状态、Token 使用、Home 天气卡和 Home 时间卡片的手动特殊日期列表。
+- `dash/data/dashboard.json`：人工个人状态、日常记录、系统状态、历史 Token 字段、Home 天气卡和 Home 时间卡片的手动特殊日期列表。
 - `dash/data/dashboard.js`：从 `dashboard.json` 生成的浏览器 wrapper。
 - `dash/data/ai-news.json`：首页展示用的外部 AI 输入，取免费 AI 外部信号中的 0-3 条高相关内容。
 - `dash/data/ai-news.js`：从 `ai-news.json` 生成的浏览器 wrapper。
@@ -107,6 +107,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/market-indices.js`：从 `market-indices.json` 生成的浏览器 wrapper。
 - `dash/data/project-meta.json`：MaxNow 当前版本、部署说明和版本更新摘要，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成。
 - `dash/data/project-meta.js`：从 `project-meta.json` 生成的浏览器 wrapper。
+- `dash/data/project-status.json`：从 `ROADMAP.md` 显式生成的 Home 项目主线和待推进事项，附带来源时间、生成时间、过期阈值和内容指纹。
+- `dash/data/project-status.js`：从 `project-status.json` 生成的浏览器 wrapper。
 - `dash/data/dounai_checkin.json`：豆奶每日签到记录、账号余量快照、账号日均可用历史和直接流量使用记录，由 OpenClaw / root 侧豆奶自动化更新；Home 只读展示今日流量、今日豆丁、今日账号有效期延长时长、累计签到天数、累计流量和累计账号有效期延长时长，并作为豆奶详情页入口。豆奶详情页展示近 30 天实际使用流量、账号日均可用、签到流量和签到时长折线图，以及剩余流量、有效期和每日可用预算。2026-07-05 已接入 `dounai.pro/user/trafficlog` 只读抓取：`traffic_usage.daily` 保存豆奶页面直接展示的近 7 天真实使用量，`traffic_usage_history` 会随同步累积最多 60 天；00:05 traffic-only closeout 会排除当天，只保留已完成日期用于近 30 天实际使用图。
 - `dash/data/ricky.json`：同行记页面的只读数据源，由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 生成，维护“我和 Ricky”的世界地图点位、地点、旅行记录、统计和可选照片 / 来源链接。
 - `dash/data/ricky.js`：从 `ricky.json` 生成的浏览器 wrapper。
@@ -136,7 +138,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 本机 Codex 用量自动化支持 Windows Task Scheduler 和 macOS launchd。Windows 任务调用 `wscript.exe scripts/report_codex_usage_hidden.vbs`，再用 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 PowerShell console 瞬时闪窗；macOS 任务调用 `scripts/report_codex_usage.sh`。任务默认每 1 小时运行一次，要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`。Windows 成功后只提交并推送 `codex-usage.*`；macOS 成功后只提交并推送 `codex-macos-usage.*`。Owner Windows 机器上的计划任务应指向专用 clone `D:\Personal\MaxNow-token-report`；Owner macOS 当前使用专用 clone `/Users/bytedance/.maxnow-token-report`，避免 Desktop 路径的 macOS 权限拦截和日常开发分支影响自动上报。
 - 服务器 Codex 用量自动化由 root crontab 的 `MAXNOW-CODEX-SERVER-USAGE` 每天刷新，日志写入 `logs/codex-server-usage.log`，锁为 `/tmp/maxnow-codex-server-usage.lock`。统一 Token 总账刷新由 `ubuntu` crontab 的 `MAXNOW-TOKEN-USAGE-REFRESH` 每 10 分钟运行 `scripts/refresh_token_usage_on_server.sh`，日志写入 `logs/token-usage-refresh.log`，锁为 `/tmp/maxnow-token-usage-refresh.lock`；它会在 pull 前备份运行态账本，恢复 OpenClaw / server Codex 源账本后再合并 `token-usage.*`。
 - `dash/data/token-usage.json` 是 Token 页统一入口；OpenClaw、Codex Windows / macOS、Codex server 和后续其他来源都应合入这个总账。Token 页 `1d` 按当前浏览器本地日期 00:00 起算，`7d` / `30d` 包括今天在内的最近 7 / 30 个自然日；来源费用面板和模型占比、调用消耗同层并列展示，并且来源 token、费用和 runs 跟随当前范围更新。页头展示各来源账本的最后更新时间。
-- 2026-07-08 起，Dash 首屏不再同步预加载 `dash/data/*.js` wrapper，也不再等待所有页面数据才渲染。Home 先读取 dashboard / last-30 / wiki-todos / dounai_checkin / market-indices / project-meta 小数据并渲染；Token 总账、Ricky、生活页数据和 Leaflet 地图资源按当前视图需要再加载。`.js` wrapper 仍由脚本生成并校验，但主要作为数据一致性和静态兜底资产，不要重新放回首屏同步脚本列表。
+- 2026-07-10 起，Dash Home 首批读取 dashboard / project-status / last-30 / wiki-todos / dounai_checkin / market-indices / project-meta 小数据并渲染；Token 总账、Ricky、生活页数据和 Leaflet 地图资源按当前视图需要再加载。`.js` wrapper 仍由脚本生成并校验，但主要作为数据一致性和静态兜底资产，不要重新放回首屏同步脚本列表。
 - 2026-07-08 起，Home 状态条下方主内容采用统一 `home-board` 两列版式：左列 `home-lane-primary` 放 Token 热力格、Personal Wiki、待推进、外部输入和版本更新，版本更新固定排在外部输入下方；右列 `home-side-stack` 视觉上是 widget 网格，按优先级放市场涨幅、今日 Todo、近期用量、豆奶和系统状态。两列外壳负责大块对齐，左列负责吸收内容型长模块，右列 widget 卡型负责半宽 / 满宽短状态入口，避免左列空着而右列继续下排，也避免所有卡片被二列布局拉成大卡。后续新增 Home 卡片必须先选 lane，再选 `wide-short` / `wide-tall` / `mid-short` / `mid-tall` / `widget-compact` / `widget-wide` 卡型。
 - 2026-07-10 线上已部署提交 `008ed5a`，当前 MaxNow 版本为 `1.0.0.49`、Dash 样式缓存为 `styles.css?v=122`；部署时已保护并恢复服务器运行数据，Codex Server 账本未被仓库基线覆盖。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史、直接流量使用记录和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。真实流量消耗优先使用 `traffic_usage_history`，不要再用账号余量快照差分作为主口径；余量差分只可作为缺数据时的估算说明。
@@ -221,7 +223,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 ## 当前缺口
 
-- 2026-07-10 整体体检确认下一阶段优先从“继续增加功能”转向“可信状态工作站”：先为 `dash.maxnow.cn` 和 `/data/` 增加访问保护，再修复 Home 项目状态与实际完成情况不一致、JSON 读取失败静默显示空数据、wrapper 兜底定位不清、自动测试覆盖不足、无障碍状态缺失和外部依赖安全等问题；可执行条目以 `ROADMAP.md` 为准。
+- 2026-07-10 整体体检确认下一阶段优先从“继续增加功能”转向“可信状态工作站”：先为 `dash.maxnow.cn` 和 `/data/` 增加访问保护，再处理 JSON 读取失败静默显示空数据、wrapper 兜底定位不清、自动测试覆盖不足、无障碍状态缺失和外部依赖安全等问题。Home 项目状态可信度已通过独立 `project-status.*`、ROADMAP 指纹校验和过期提示完成修复；可执行条目以 `ROADMAP.md` 为准。
 - Home 页面已将外部输入收敛为单一 Last-30 展示模块：左栏最新信号、中栏本周观察、右栏近 30 天主线；不再额外铺一张重复的 AI 外部输入卡。2026-07-05 已收紧外露口径，把左栏从 Today 改成最新信号，并把 `confidence` 和右侧数量解释为来源/候选归类而非权威判断。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天实际使用流量、日均可用、签到流量和签到时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本由 9:00 cron 管理，真实流量日结由 00:05 traffic-only cron 管理。
 - 2026-07-05 已接入豆奶真实流量使用抓取和 00:05 日结：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；`--traffic-only --exclude-today` 模式会把当天从 direct daily 和 `traffic_usage_history` 中剔除，避免 00:05 的当天碎片污染近 30 天实际使用口径。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。
@@ -235,7 +237,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Dash 左侧导航已新增“云服务”tab，位于 Token 下方。该页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作；页面不再保留顶部重复摘要卡，Host 与站点域名归入“系统与托管”模块，后续任务卡自然排列，不再插入独立“定时任务”分组标题。系统与托管模块不展示部署根目录、nginx 配置路径、采集器说明等低频实现细节。
 - Dash 左侧导航已新增“同行记”tab，副标题为“我和 Ricky”。该页用 Leaflet + OpenStreetMap 真实地图和轻量统计承载两人的共同足迹，地点和旅行记录暂时只进入 marker / popup 数据，不单独铺列表；内置 SVG 地图只作为 fallback。
 - Dash 左侧导航已新增“生活”tab，副标题为“吃啥”。该页当前提供“吃啥”随机选择器：默认全选、数量默认 1，可临时取消候选并从勾选项中随机选取一个或多个结果；候选从 personal-wiki `wiki/life/food-picker.md` 同步。
-- `dash/data/dashboard.json` 的项目主线可以用 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新；定时任务只运行 `runtime`，不自动覆盖 Owner 判断字段。
+- Home 项目主线和待推进事项由 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新到 `dash/data/project-status.*`；ROADMAP Now / Next / Done 变化后校验会要求同步刷新。定时任务只运行 `runtime`，不覆盖项目状态或 `dashboard.today` 的 Owner 人工判断。
 - Home 顶部 Today Status 卡已改为自动推导主状态：今日 Todo 优先，其次参考自动化异常、当前时段、ROADMAP 待推进 / 主线和 Token 活跃生成执行、巡检、复盘、推进、探索等模式。右侧信号区的中间竖线是 00:00-24:00 的今日进度轴，当前时间点随当天已过比例移动；顶部横线只作为卡片状态强调。状态条四张小卡固定为今日执行、数据同步、Token 7 天、系统自动化，不再保留重复的“当前主线 / 待推进”数字卡。`dashboard.json.today` 只作为当天人工 override；旧日期判断会被忽略，不再显示“待刷新 N 天”。
 - Home 右侧原“时间点”静态模块已替换为“今日 Todo”：从 `dash/data/wiki-todos.json` 里只筛选 `due_at` 等于浏览器当天日期的未完成待办；过期未完成和无日期待办仍留在近期待办卡，不进入今日 Todo。
 - Home 时间卡片已支持 `dashboard.json.specialDates`：用手动维护的公历日期或一次性日期在当天显示生日、纪念日等轻量提醒；没有命中时继续显示“今日无节日”。
@@ -253,6 +255,6 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 ## 建议下一步
 
 1. 为 `dash.maxnow.cn` 及 `/data/` 增加访问保护；第一阶段优先 nginx Basic Auth，后续再评估 Cloudflare Access 邮箱验证码，`blog.maxnow.cn` 保持公开。
-2. 修复 Home 项目状态可信度和数据读取失败提示，避免已完成任务或请求失败继续被显示成当前建议 / 真实为 0。
+2. 建立数据读取失败和新鲜度闭环，避免请求失败继续被显示成真实为 0 或“暂无数据”。
 3. 补前端 smoke test、JavaScript 语法检查、移动端几何回归和无障碍状态，再继续扩展 Blog 发布链路。
 4. 观察 Last-30 免费源和豆奶 00:05 traffic closeout 的连续稳定性。

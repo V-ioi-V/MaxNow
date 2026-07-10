@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -21,6 +22,7 @@ DATASETS = {
     "token-usage": ("dash/data/token-usage.json", "dash/data/token-usage.js", "MAXNOW_TOKEN_USAGE_DATA"),
     "market-indices": ("dash/data/market-indices.json", "dash/data/market-indices.js", "MAXNOW_MARKET_INDICES_DATA"),
     "project-meta": ("dash/data/project-meta.json", "dash/data/project-meta.js", "MAXNOW_PROJECT_META_DATA"),
+    "project-status": ("dash/data/project-status.json", "dash/data/project-status.js", "MAXNOW_PROJECT_STATUS_DATA"),
     "ricky": ("dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
     "life-foods": ("dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
 }
@@ -119,62 +121,52 @@ def first_bullet(section):
 
 
 def refresh_project_status():
+    roadmap_path = ROOT / "ROADMAP.md"
+    roadmap_text = roadmap_path.read_text(encoding="utf-8")
     sections = collect_roadmap_sections()
     now_sections = [item for item in sections if item["area"] == "Now"]
     next_sections = [item for item in sections if item["area"] == "Next"]
 
-    mainline_source = now_sections[:3] or sections[:3]
-    action_source = (now_sections + next_sections)[:3]
+    mainline_source = now_sections[:1] or next_sections[:1]
+    mainline_titles = {section["title"] for section in mainline_source}
+    action_source = [
+        section for section in now_sections + next_sections
+        if section["title"] not in mainline_titles
+    ][:3]
+    source_updated_at = datetime.fromtimestamp(roadmap_path.stat().st_mtime, timezone.utc).astimezone()
 
-    dashboard = load_json("dash/data/dashboard.json")
-    dashboard["feedSource"] = "ROADMAP.md"
-    dashboard["journalSource"] = "Repo status"
-    dashboard["mainlines"] = [
-        {
-            "title": section["title"],
-            "note": first_bullet(section),
-            "label": section["area"],
-            "status": "active",
-        }
-        for section in mainline_source
-    ]
-    dashboard["actions"] = [
-        {
-            "title": section["title"],
-            "note": first_bullet(section),
-            "label": section["area"],
-            "status": "active" if section["area"] == "Now" else "waiting",
-        }
-        for section in action_source
-    ]
-    existing_feeds = [
-        feed for feed in dashboard.get("feeds", [])
-        if feed.get("source") not in {"Roadmap", "Automation"}
-    ]
-    dashboard["feeds"] = [
-        {
-            "source": "Roadmap",
-            "title": "当前可执行任务",
-            "summary": "Home 的当前主线和待推进事项由 scripts/update_data.py project-status 从 ROADMAP.md 显式刷新。",
-            "url": "https://github.com/V-ioi-V/MaxNow/blob/main/ROADMAP.md",
-        },
-        {
-            "source": "Automation",
-            "title": "服务器同步链路",
-            "summary": "wiki-todos 与系统状态每 10 分钟由服务器 crontab 刷新，失败信息进入系统状态列表。",
-            "url": "",
-        },
-    ] + existing_feeds[:1]
+    project_status = {
+        "schemaVersion": 1,
+        "source": "ROADMAP.md",
+        "sourceUpdatedAt": source_updated_at.strftime("%Y-%m-%d %H:%M"),
+        "generatedAt": now_text(),
+        "staleAfterHours": 168,
+        "sourceFingerprint": hashlib.sha256(roadmap_text.encode("utf-8")).hexdigest(),
+        "mainlines": [
+            {
+                "title": section["title"],
+                "note": first_bullet(section),
+                "label": section["area"],
+                "status": "active",
+                "sourceArea": section["area"],
+            }
+            for section in mainline_source
+        ],
+        "actions": [
+            {
+                "title": section["title"],
+                "note": first_bullet(section),
+                "label": section["area"],
+                "status": "active" if section["area"] == "Now" else "waiting",
+                "sourceArea": section["area"],
+            }
+            for section in action_source
+        ],
+    }
 
-    today = dashboard.setdefault("today", {})
-    today["focus"] = action_source[0]["title"] if action_source else today.get("focus", "")
-    today["updatedAt"] = now_text()
-    if action_source:
-        today["summary"] = f"当前优先推进：{action_source[0]['title']}。"
-
-    write_json("dash/data/dashboard.json", dashboard)
-    write_wrapper("dashboard")
-    print("[ok] refreshed dashboard project status from ROADMAP.md")
+    write_json("dash/data/project-status.json", project_status)
+    write_wrapper("project-status")
+    print("[ok] refreshed project status from ROADMAP.md")
 
 
 def parse_args():
