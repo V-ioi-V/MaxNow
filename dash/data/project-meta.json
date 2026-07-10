@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 12:47",
-  "version": "1.0.1.01",
-  "versionLabel": "v1.0.1.01",
-  "branch": "bugfix/dash-basic-auth",
-  "commit": "b965994",
+  "updatedAt": "2026-07-10 14:09",
+  "version": "1.0.1.02",
+  "versionLabel": "v1.0.1.02",
+  "branch": "feature/rotate-dash-password",
+  "commit": "4b25e3c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/dash-basic-auth · commit b965994 · 有未提交代码改动",
+  "deployNote": "feature/rotate-dash-password · commit 4b25e3c · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "轮换私人 Dash 访问密码",
+      "summary": "已轮换 `dash.maxnow.cn` 的 nginx Basic Auth 密码；用户名保持 `maxnow`，真实密码和哈希均未写入仓库。"
+    },
     {
       "date": "2026-07-10",
       "title": "为私人 Dash 启用账号密码访问保护",
@@ -28,11 +33,6 @@
       "date": "2026-07-10",
       "title": "记录 MaxNow 整体体检后的优化路线",
       "summary": "在 `ROADMAP.md` 增加 Dash 访问保护、Home 项目状态可信度、数据失败与新鲜度闭环、前端自动测试 / 无障碍 / 移动端验证、外部依赖和链接安全等可执行任务。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "调整 Home 版本更新模块位置",
-      "summary": "将“最近更新”改名为“版本更新”，并移动到外部输入模块下方。"
     }
   ]
 }

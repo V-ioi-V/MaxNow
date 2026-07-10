@@ -11,6 +11,12 @@
 
 ## 2026-07-10
 
+### 轮换私人 Dash 访问密码
+
+- 已轮换 `dash.maxnow.cn` 的 nginx Basic Auth 密码；用户名保持 `maxnow`，真实密码和哈希均未写入仓库。
+- `nginx -t` 通过并完成 reload；新凭据访问 Dash 返回 200，未认证 Dash 与 `/data/` 返回 401，Blog 保持 200。
+- 将 `VERSION` 从 `1.0.1.01` 提升到 `1.0.1.02`。
+
 ### 为私人 Dash 启用账号密码访问保护
 
 - nginx Basic Auth 已覆盖 `dash.maxnow.cn` 首页、静态资源和 `/data/`；未认证请求与直接源站访问均返回 401，正确凭据返回 200。
