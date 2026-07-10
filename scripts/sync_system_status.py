@@ -57,6 +57,8 @@ GENERATED_DATA_PATHS = {
     "dash/data/market-indices.js",
     "dash/data/project-meta.json",
     "dash/data/project-meta.js",
+    "dash/data/project-status.json",
+    "dash/data/project-status.js",
     "dash/data/ricky.json",
     "dash/data/ricky.js",
     "dash/data/life-foods.json",

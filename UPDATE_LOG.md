@@ -17,6 +17,7 @@
 - `blog.maxnow.cn` 继续公开；Dash 新增 CSP、`X-Content-Type-Options`、`Referrer-Policy`、`X-Frame-Options`、`Permissions-Policy` 和 HSTS，并通过 `server_tokens off` 隐藏 nginx 版本。
 - `maxnow.cn` nameserver 已恢复为 DNSPod；Cloudflare Access / Tunnel 不进入当前生产链路。
 - `scripts/sync_system_status.py` 将带 `WWW-Authenticate` 的 401 识别为预期健康状态，避免 Home 把访问保护误报成 HTTPS 故障。
+- 将 `project-status.*` 纳入服务器自动生成数据白名单，避免状态刷新后被 deploy check 误判为代码脏改动。
 - 补充密码轮换、紧急恢复、源站绕过检查和响应头维护说明；真实凭据不进入仓库。
 - 将 `VERSION` 从 `1.0.0.52` 提升到 `1.0.1.00`。
 

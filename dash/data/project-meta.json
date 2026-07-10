@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 12:43",
-  "version": "1.0.1.00",
-  "versionLabel": "v1.0.1.00",
+  "updatedAt": "2026-07-10 12:47",
+  "version": "1.0.1.01",
+  "versionLabel": "v1.0.1.01",
   "branch": "bugfix/dash-basic-auth",
-  "commit": "2be7b49",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/dash-basic-auth · commit 2be7b49 · 干净",
+  "commit": "b965994",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/dash-basic-auth · commit b965994 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-10",
