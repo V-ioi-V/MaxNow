@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 12:01",
-  "version": "1.0.0.52",
-  "versionLabel": "v1.0.0.52",
-  "branch": "feature/token-runtime-schedule",
-  "commit": "178bbd0",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/token-runtime-schedule · commit 178bbd0 · 有未提交代码改动",
+  "updatedAt": "2026-07-10 12:43",
+  "version": "1.0.1.00",
+  "versionLabel": "v1.0.1.00",
+  "branch": "bugfix/dash-basic-auth",
+  "commit": "2be7b49",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/dash-basic-auth · commit 2be7b49 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "为私人 Dash 启用账号密码访问保护",
+      "summary": "nginx Basic Auth 已覆盖 `dash.maxnow.cn` 首页、静态资源和 `/data/`；未认证请求与直接源站访问均返回 401，正确凭据返回 200。"
+    },
     {
       "date": "2026-07-10",
       "title": "统一 Token 活跃时长与固定小时上报周期",
@@ -28,11 +33,6 @@
       "date": "2026-07-10",
       "title": "调整 Home 版本更新模块位置",
       "summary": "将“最近更新”改名为“版本更新”，并移动到外部输入模块下方。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "修复 Today Status 当前时间与进度轴重叠",
-      "summary": "将 00:00、当前时间和 24:00 的右边缘统一锚定在进度轴左侧，并为当前时间与进度圆点保留固定间距。"
     }
   ]
 }

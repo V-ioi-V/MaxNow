@@ -37,16 +37,6 @@
 
 ## Next
 
-### 为私人 Dash 增加访问保护
-
-- 来源：2026-07-10 MaxNow 整体体检。
-- 建议分支：`bugfix/dash-access-protection`
-- 第一阶段优先在 nginx 为 `dash.maxnow.cn` 及 `/data/` 增加 Basic Auth；Owner 仍使用原网址访问，只在新设备或登录态失效时输入专用用户名和密码。
-- `blog.maxnow.cn` 继续保持公开，不与 Dash 共用访问限制。
-- 第二阶段可评估 Cloudflare Access 邮箱一次性验证码，让 Windows、macOS 和手机从任意网络访问时不必维护固定 IP 或安装 VPN 客户端。
-- 补充 CSP、`X-Content-Type-Options`、`Referrer-Policy` 等安全响应头，并隐藏不必要的 nginx 版本信息。
-- 更新 `DEPLOY.md` 和 `SERVER_RUNBOOK.md`，记录访问、密码轮换、紧急恢复和验证命令；真实用户名、密码和验证码不得写入仓库。
-
 ### 建立数据失败与新鲜度闭环
 
 - 来源：2026-07-10 MaxNow 整体体检。
@@ -133,6 +123,13 @@
 - 博客是否需要评论、订阅邮件、搜索索引、统计分析等公开站能力待后续确认；第一阶段先不做。
 
 ## Done
+
+### 已完成私人 Dash 访问保护
+
+- nginx Basic Auth 已覆盖 `dash.maxnow.cn` 全站及 `/data/`，未认证请求返回 401，正确凭据和源站直连验证均符合预期。
+- `blog.maxnow.cn` 保持公开；Dash 新增 CSP、`X-Content-Type-Options`、`Referrer-Policy`、`X-Frame-Options`、`Permissions-Policy` 和 HSTS，并隐藏 nginx 版本号。
+- 系统状态采集将带 `WWW-Authenticate` 的 401 识别为“已保护且健康”，避免自动化把预期认证响应误报成 HTTPS 故障。
+- 真实用户名和密码只保存在服务器凭据文件与 Owner 密码管理器中，不进入仓库；密码轮换和紧急恢复步骤记录在部署文档与服务器手册。
 
 ### 已修复 Home 项目状态可信度
 

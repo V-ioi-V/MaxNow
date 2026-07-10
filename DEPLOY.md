@@ -249,7 +249,35 @@ server {
 
 ## 隐私建议
 
-MaxNow 是私人状态工作站。如果里面包含个人状态、Token 使用、项目进展或其他私密信息，建议至少使用一种访问限制：
+MaxNow 是私人状态工作站。线上 `dash.maxnow.cn` 必须使用 nginx Basic Auth 保护整个 server block，因此首页、静态资源和 `/data/` 使用同一套访问限制；`blog.maxnow.cn` 保持公开。
+
+凭据文件放在服务器 `/etc/nginx/.htpasswd-maxnow`，权限应为 `root:www-data 0640`。真实用户名、密码和密码哈希不得写入仓库。轮换密码时在服务器交互输入，避免明文进入 shell history：
+
+```bash
+read -rsp "New MaxNow password: " password && echo
+hash=$(printf %s "$password" | openssl passwd -6 -stdin)
+unset password
+echo "<username>:$hash" | sudo tee /etc/nginx/.htpasswd-maxnow >/dev/null
+unset hash
+sudo chown root:www-data /etc/nginx/.htpasswd-maxnow
+sudo chmod 640 /etc/nginx/.htpasswd-maxnow
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+验证时不要把密码放进命令历史；`curl --user '<username>'` 会交互询问密码：
+
+```bash
+curl -I https://dash.maxnow.cn/
+curl -I https://dash.maxnow.cn/data/dashboard.json
+curl --user '<username>' -I https://dash.maxnow.cn/
+curl -I https://blog.maxnow.cn/
+```
+
+预期结果：Dash 和 `/data/` 未认证返回 `401`，认证后返回 `200`，Blog 返回 `200`。紧急恢复时可以先从备份恢复 nginx 配置，执行 `sudo nginx -t` 后再 reload；不要删除凭据文件或放宽 `/data/` 作为临时绕过。
+
+安全响应头由 `/etc/nginx/snippets/maxnow-security-headers.conf` 统一维护。Dash 当前包含 CSP、`X-Content-Type-Options`、`Referrer-Policy`、`X-Frame-Options`、`Permissions-Policy` 和 HSTS；新增外部脚本、样式或图片源时，需要同步评估 CSP 白名单。
+
+其他可选访问限制仍包括：
 
 - Basic Auth
 - 内网 / VPN

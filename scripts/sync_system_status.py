@@ -154,6 +154,20 @@ def site_state(url):
             "value": str(status),
             "note": final_url if final_url != url else url,
         }, ok
+    except urllib.error.HTTPError as error:
+        if error.code == 401 and error.headers.get("WWW-Authenticate"):
+            return {
+                "key": "https",
+                "name": "HTTPS",
+                "value": "401 Auth",
+                "note": "Basic Auth is enabled and responding",
+            }, True
+        return {
+            "key": "https",
+            "name": "HTTPS",
+            "value": str(error.code),
+            "note": str(error.reason),
+        }, False
     except (urllib.error.URLError, TimeoutError) as error:
         return {
             "key": "https",

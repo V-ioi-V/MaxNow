@@ -224,7 +224,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 ## 当前缺口
 
-- 2026-07-10 整体体检确认下一阶段优先从“继续增加功能”转向“可信状态工作站”：先为 `dash.maxnow.cn` 和 `/data/` 增加访问保护，再处理 JSON 读取失败静默显示空数据、wrapper 兜底定位不清、自动测试覆盖不足、无障碍状态缺失和外部依赖安全等问题。Home 项目状态可信度已通过独立 `project-status.*`、ROADMAP 指纹校验和过期提示完成修复；可执行条目以 `ROADMAP.md` 为准。
+- 2026-07-10 整体体检推动 MaxNow 从“继续增加功能”转向“可信状态工作站”。`dash.maxnow.cn` 和 `/data/` 已由 nginx Basic Auth 保护，Blog 保持公开；后续重点转为 JSON 读取失败与新鲜度闭环、wrapper 定位、自动测试、无障碍状态和外部依赖安全。Home 项目状态可信度已通过独立 `project-status.*`、ROADMAP 指纹校验和过期提示完成修复；可执行条目以 `ROADMAP.md` 为准。
 - Home 页面已将外部输入收敛为单一 Last-30 展示模块：左栏最新信号、中栏本周观察、右栏近 30 天主线；不再额外铺一张重复的 AI 外部输入卡。2026-07-05 已收紧外露口径，把左栏从 Today 改成最新信号，并把 `confidence` 和右侧数量解释为来源/候选归类而非权威判断。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天实际使用流量、日均可用、签到流量和签到时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本由 9:00 cron 管理，真实流量日结由 00:05 traffic-only cron 管理。
 - 2026-07-05 已接入豆奶真实流量使用抓取和 00:05 日结：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；`--traffic-only --exclude-today` 模式会把当天从 direct daily 和 `traffic_usage_history` 中剔除，避免 00:05 的当天碎片污染近 30 天实际使用口径。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。
@@ -246,6 +246,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Home 主内容区顶部已拆成左侧 Token 热力格 + Personal Wiki 近期待办竖向栈、右侧市场涨幅卡：左侧上方展示近 90 天 Token 活动，左侧下方展示 personal-wiki 近期待办，右侧展示纳指100、标普500、上证指数、深证成指和创业板指；行情数据来自 `dash/data/market-indices.json` 并由 `runtime` 每 10 分钟刷新。
 - Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留原有三个入口，不做折叠侧栏。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
+- Dash 访问保护由服务器 nginx Basic Auth 负责，覆盖页面、静态资源和 `/data/`；未认证 401 是预期健康状态。真实凭据不进入仓库，Blog 不继承 Dash 认证策略。
+- `maxnow.cn` 权威 DNS 继续由 DNSPod 托管，nameserver 为 `achernar.dnspod.net` / `cylinder.dnspod.net`；Cloudflare Access 评估已停止，不属于当前访问链路。
 - 服务器 GitHub CLI 已授权，可以读取 private personal-wiki；同步命令已固化为 crontab，失败日志会进入 Home 系统状态。
 - 个人博客已确定推荐走 `blog.maxnow.cn`，但还缺发布 manifest / front matter 策略、构建脚本、nginx 子域名配置和第一批公开文章清单。
 - 同行记已经有页面、数据契约和 personal-wiki 同步脚本；后续重点是继续在 personal-wiki 补真实地点、日期、备注和照片入口。
@@ -255,7 +257,6 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 ## 建议下一步
 
-1. 为 `dash.maxnow.cn` 及 `/data/` 增加访问保护；第一阶段优先 nginx Basic Auth，后续再评估 Cloudflare Access 邮箱验证码，`blog.maxnow.cn` 保持公开。
-2. 建立数据读取失败和新鲜度闭环，避免请求失败继续被显示成真实为 0 或“暂无数据”。
-3. 补前端 smoke test、JavaScript 语法检查、移动端几何回归和无障碍状态，再继续扩展 Blog 发布链路。
-4. 观察 Last-30 免费源和豆奶 00:05 traffic closeout 的连续稳定性。
+1. 建立数据读取失败和新鲜度闭环，避免请求失败继续被显示成真实为 0 或“暂无数据”。
+2. 补前端 smoke test、JavaScript 语法检查、移动端几何回归和无障碍状态，再继续扩展 Blog 发布链路。
+3. 观察 Basic Auth 访问体验、Last-30 免费源和豆奶 00:05 traffic closeout 的连续稳定性。

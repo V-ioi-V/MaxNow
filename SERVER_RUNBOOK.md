@@ -66,6 +66,27 @@ https://blog.maxnow.cn
 
 当前 HTTPS 已启用，HTTP 请求会跳转到 HTTPS。`blog.maxnow.cn` 证书由 certbot 在 2026-06-17 申请，当前到期日为 2026-09-15，certbot 已配置自动续期。
 
+`maxnow.cn` 当前权威 DNS 仍由 DNSPod 托管：
+
+```text
+achernar.dnspod.net
+cylinder.dnspod.net
+```
+
+2026-07-10 曾短暂评估 Cloudflare Access，最终因 Zero Trust Free 仍要求付款方式而放弃；nameserver 已恢复到 DNSPod。服务器上保留 `cloudflared 2026.7.1` 二进制，但未安装 tunnel service、未配置 token、没有运行进程，不属于当前流量路径。删除该软件包前仍需 Owner 单独确认。
+
+2026-07-10 已为私人 Dash 启用 nginx Basic Auth：
+
+```text
+dash.maxnow.cn -> 全站与 /data/ 均需认证
+blog.maxnow.cn -> 保持公开
+credential file -> /etc/nginx/.htpasswd-maxnow (root:www-data 0640)
+security headers -> /etc/nginx/snippets/maxnow-security-headers.conf
+nginx version -> hidden by server_tokens off
+```
+
+未认证访问 Dash 返回 `401` 是预期健康状态；`scripts/sync_system_status.py` 会在响应带 `WWW-Authenticate` 时显示 `401 Auth`，不得把它改回 HTTPS Fail。真实用户名、密码和哈希不得写入仓库或服务器手册。
+
 2026-06-17 晚间已部署参考风格刷新版本：
 
 ```text
@@ -925,6 +946,47 @@ ls -la /var/www/maxnow-dashboard
 
 ## 后续待补
 
-- 决定是否加 Basic Auth、VPN、IP 限制或其他访问保护。
 - 给定时同步补失败提醒，或让 Home 更明确展示最近一次自动同步结果。
 - 做数据更新工具，让 `dash/data/*.json` 与 `.js` wrapper 自动保持一致。
+
+## Dash Basic Auth 运维
+
+当前 nginx 配置与回滚备份：
+
+```text
+/etc/nginx/sites-available/maxnow-dashboard
+/etc/nginx/sites-available/maxnow-dashboard.bak-20260710-basic-auth
+/etc/nginx/nginx.conf.bak-20260710-basic-auth
+/etc/nginx/snippets/maxnow-security-headers.conf
+/etc/nginx/.htpasswd-maxnow
+```
+
+轮换密码时使用交互输入，避免明文进入 history：
+
+```bash
+read -rsp "New MaxNow password: " password && echo
+hash=$(printf %s "$password" | openssl passwd -6 -stdin)
+unset password
+echo "<username>:$hash" | sudo tee /etc/nginx/.htpasswd-maxnow >/dev/null
+unset hash
+sudo chown root:www-data /etc/nginx/.htpasswd-maxnow
+sudo chmod 640 /etc/nginx/.htpasswd-maxnow
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+验证矩阵：
+
+```bash
+curl -I https://dash.maxnow.cn/                         # 401
+curl -I https://dash.maxnow.cn/data/dashboard.json      # 401
+curl --user '<username>' -I https://dash.maxnow.cn/     # 交互输入密码，200
+curl -I https://blog.maxnow.cn/                         # 200
+```
+
+需要验证源站无法绕过时，从可信管理机运行：
+
+```bash
+curl --resolve dash.maxnow.cn:443:43.160.240.244 -I https://dash.maxnow.cn/data/dashboard.json
+```
+
+未认证仍应返回 401。紧急回滚只能恢复已知备份并先执行 `sudo nginx -t`；不要只对首页加认证，也不要让 `/data/` 单独公开。

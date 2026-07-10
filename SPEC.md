@@ -508,7 +508,7 @@ maxnow.cn       -> 未来公开主页 / 个人入口
 
 第一阶段约束：
 
-- 保持静态站，不引入登录、数据库或后端 API。
+- 保持静态站，不引入应用内登录、数据库或后端 API；`dash.maxnow.cn` 可以由 nginx Basic Auth 等站点级访问控制保护，`blog.maxnow.cn` 继续公开。
 - 只发布明确筛选为 `public` / `published` 的文章。
 - 不从公开前端直接读取 private personal-wiki。
 - 不把旧博客全部无筛选发布；每篇文章至少要有标题、日期、slug、分类、标签、来源文件和可发布状态。
@@ -527,6 +527,6 @@ maxnow.cn       -> 未来公开主页 / 个人入口
 ## 实现边界
 
 - v1 保留 Home、豆奶、Token、云服务、生活和同行记。
-- v1 保持静态站点：不加登录、数据库或后端 API。
+- v1 保持静态站点：不加应用内登录、数据库或后端 API；私人 Dash 的访问保护由 nginx 等站点基础设施负责。
 - 任何新的日常维护数据字段，都必须同时写进这里和 OpenClaw skill。
 - 页面代码变化需要 Codex 或 Owner 明确意图；OpenClaw 永远不能改变页面结构。

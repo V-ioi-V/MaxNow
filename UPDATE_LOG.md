@@ -11,6 +11,19 @@
 
 ## 2026-07-10
 
+### 为私人 Dash 启用账号密码访问保护
+
+- nginx Basic Auth 已覆盖 `dash.maxnow.cn` 首页、静态资源和 `/data/`；未认证请求与直接源站访问均返回 401，正确凭据返回 200。
+- `blog.maxnow.cn` 继续公开；Dash 新增 CSP、`X-Content-Type-Options`、`Referrer-Policy`、`X-Frame-Options`、`Permissions-Policy` 和 HSTS，并通过 `server_tokens off` 隐藏 nginx 版本。
+- `maxnow.cn` nameserver 已恢复为 DNSPod；Cloudflare Access / Tunnel 不进入当前生产链路。
+- `scripts/sync_system_status.py` 将带 `WWW-Authenticate` 的 401 识别为预期健康状态，避免 Home 把访问保护误报成 HTTPS 故障。
+- 补充密码轮换、紧急恢复、源站绕过检查和响应头维护说明；真实凭据不进入仓库。
+- 将 `VERSION` 从 `1.0.0.52` 提升到 `1.0.1.00`。
+
+原因：
+
+- Dash 包含个人待办、旅行、Token 和服务器状态，必须在源站统一拦截未认证访问，同时保持 Blog 公开。
+
 ### 统一 Token 活跃时长与固定小时上报周期
 
 - Codex collector 新增 `task_complete.duration_ms` 统计，Token 页按 1d / 7d / 30d / all 展示已完成任务的活跃时长，并在来源与会话中展示对应时长；轮次间空闲时间不计入。
