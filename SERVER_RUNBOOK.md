@@ -640,6 +640,17 @@ runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后
 verification: 2048px 下圆环中心与状态卡中心误差小于 0.001px，四行标签与主值基线最大误差约 0.09px；1366px / 390px 无横向溢出；python3 scripts/check.py ok；nginx -t ok；线上源文件确认 v134、等宽三列和第一行节点规则均存在。
 ```
 
+2026-07-11 已部署全部 tab 卡片顶部彩条移除：
+
+```text
+deployed commit: ce4ea10 style: remove card top accent bars
+changes: Home、豆奶、Token、云服务、生活和同行记的页头卡、摘要卡、普通面板、图表卡与统计卡统一取消顶部 4px 彩色或渐变强调线；保留文字、数值、图标、状态点、pill、边框反馈和轻背景中的语义色；缓存提升到 styles.css?v=135，版本提升到 1.0.4.03。
+runtime data backup before deploy: /tmp/maxnow-pre-clean-cards-20260711-002837
+runtime data stash before deploy: pre-clean-cards-20260711-002837
+runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后恢复全部运行数据，再重新生成 project-meta。
+verification: 2048px 与 390px 下逐页检查 6 个 tab，卡片顶部彩条计数均为 0、横向溢出均为 0、控制台无报错；python3 scripts/check.py ok；nginx -t ok；线上源文件确认 v135 且旧顶条选择器均不存在。
+```
+
 刷新 Home 天气卡：
 
 ```bash
