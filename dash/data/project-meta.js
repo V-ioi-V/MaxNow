@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 09:12",
-  "version": "1.0.0.48",
-  "versionLabel": "v1.0.0.48",
-  "branch": "bugfix/today-progress-time-overlap",
-  "commit": "8898097",
+  "updatedAt": "2026-07-10 09:18",
+  "version": "1.0.0.49",
+  "versionLabel": "v1.0.0.49",
+  "branch": "feature/version-update-after-external",
+  "commit": "7c489ed",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/today-progress-time-overlap · commit 8898097 · 有未提交代码改动",
+  "deployNote": "feature/version-update-after-external · commit 7c489ed · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "调整 Home 版本更新模块位置",
+      "summary": "将“最近更新”改名为“版本更新”，并移动到外部输入模块下方。"
+    },
     {
       "date": "2026-07-10",
       "title": "修复 Today Status 当前时间与进度轴重叠",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "移除 Home 今日记录模块",
       "summary": "从 Home 左侧内容流移除“今日记录 / Daily Log”模块，避免静态项目原则被误认为当天真实日志。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "调整 Token 来源同步位置",
-      "summary": "Token 页“各来源最后同步”改回显示具体时间 `YYYY-MM-DD HH:mm`，不再使用“今天 / 昨天 / X 分钟前”这类相对时间。"
     }
   ]
 };

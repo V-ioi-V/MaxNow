@@ -1192,11 +1192,11 @@ body[data-view="tokens"] .topbar-token-ranges {
 }
 
 .home-lane-primary .home-card-updates {
-  order: 50;
+  order: 60;
 }
 
 .home-lane-primary .home-card-last30 {
-  order: 60;
+  order: 50;
 }
 
 .home-side-stack .home-card-system .system-list {

@@ -54,7 +54,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 当前 MD 文件不算冗余严重；它们分别承担规则、规格、路线、上下文、想法、更新记录、部署和服务器操作。
 - 轻微重叠主要出现在 `SPEC.md` 和 `CONTEXT.md`：`SPEC.md` 写稳定产品规则，`CONTEXT.md` 写代理接手时需要知道的当前状态和文件地图。
 - 前端视觉规则不要继续散落在聊天或 `CONTEXT.md` 段落里；稳定的样式口径写进 `STYLE_CONTEXT.md`。
-- Home 主内容区的稳定版式是 `home-board` 两列外壳：左列为 `home-lane-primary`，右列为 `home-side-stack`。左列承载个人主任务和内容型长模块，当前包括 Token 热力格、Personal Wiki、待推进、最近更新和外部输入；右列只承载短扫读状态入口。`home-lane-signal` / `home-lane-rail` 在右列内只作为语义分组，视觉上展平成 widget 网格；`widget-compact` 占半宽，`widget-wide` / `mid-*` 占满右列。Home 不再保留单独“稍后留意”或“今日记录”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，静态项目原则进入规格、上下文或最近更新。所有首页模块必须先归入语义 lane，保留 `home-card-*` 语义类和 `data-card-size`，不能再用固定 `grid-area`、临时局部左右列、固定空白或强行二列 / 三列来拼卡片。
+- Home 主内容区的稳定版式是 `home-board` 两列外壳：左列为 `home-lane-primary`，右列为 `home-side-stack`。左列承载个人主任务和内容型长模块，当前包括 Token 热力格、Personal Wiki、待推进、外部输入和版本更新，其中版本更新固定放在外部输入下方；右列只承载短扫读状态入口。`home-lane-signal` / `home-lane-rail` 在右列内只作为语义分组，视觉上展平成 widget 网格；`widget-compact` 占半宽，`widget-wide` / `mid-*` 占满右列。Home 不再保留单独“稍后留意”或“今日记录”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，静态项目原则进入规格、上下文或版本更新。所有首页模块必须先归入语义 lane，保留 `home-card-*` 语义类和 `data-card-size`，不能再用固定 `grid-area`、临时局部左右列、固定空白或强行二列 / 三列来拼卡片。
 - 暂时不把文档移入 `docs/`，因为根目录文档更容易被 Owner 和代理第一时间发现；等文档数量继续增长后再考虑整理目录。
 
 ### 2. 代理执行上下文
@@ -105,7 +105,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/*-usage.js`：从对应 usage JSON 生成的浏览器 wrapper。
 - `dash/data/market-indices.json`：Home 市场涨幅卡片的只读指数缓存，由 `scripts/sync_market_indices.py` 从腾讯公开行情接口生成，只保存点位、涨跌、涨幅、更新时间和压缩后的日内走势点。
 - `dash/data/market-indices.js`：从 `market-indices.json` 生成的浏览器 wrapper。
-- `dash/data/project-meta.json`：MaxNow 当前版本、部署说明和最近更新摘要，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成。
+- `dash/data/project-meta.json`：MaxNow 当前版本、部署说明和版本更新摘要，由 `scripts/sync_project_meta.py` 从 `VERSION`、Git 状态和 `UPDATE_LOG.md` 生成。
 - `dash/data/project-meta.js`：从 `project-meta.json` 生成的浏览器 wrapper。
 - `dash/data/dounai_checkin.json`：豆奶每日签到记录、账号余量快照、账号日均可用历史和直接流量使用记录，由 OpenClaw / root 侧豆奶自动化更新；Home 只读展示今日流量、今日豆丁、今日账号有效期延长时长、累计签到天数、累计流量和累计账号有效期延长时长，并作为豆奶详情页入口。豆奶详情页展示近 30 天实际使用流量、账号日均可用、签到流量和签到时长折线图，以及剩余流量、有效期和每日可用预算。2026-07-05 已接入 `dounai.pro/user/trafficlog` 只读抓取：`traffic_usage.daily` 保存豆奶页面直接展示的近 7 天真实使用量，`traffic_usage_history` 会随同步累积最多 60 天；00:05 traffic-only closeout 会排除当天，只保留已完成日期用于近 30 天实际使用图。
 - `dash/data/ricky.json`：同行记页面的只读数据源，由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 生成，维护“我和 Ricky”的世界地图点位、地点、旅行记录、统计和可选照片 / 来源链接。
@@ -131,13 +131,13 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 天气可以由 `python scripts/update_data.py weather` 或服务器 `runtime` 定时刷新，数据源是 Open-Meteo 免费 forecast API。
 - 市场涨幅可以由 `python scripts/update_data.py market-indices` 或服务器 `runtime` 定时刷新，数据源是腾讯公开行情接口；前端只读 `dash/data/market-indices.json`，不直接请求第三方行情接口。
 - OpenClaw 用量可以由 `python scripts/update_data.py openclaw-usage` 刷新。脚本读取 OpenClaw trajectory 中的 `usage.input`、`usage.output`、`usage.cacheRead` 和 `usage.total`，按 Asia/Shanghai 日期聚合；费用字段使用 OpenRouter 当前或缓存价格估算，不能当作真实供应商扣费。服务器 root crontab 的 `MAXNOW-OPENCLAW-USAGE` 已接入每天 00:20 自动刷新，日志写入 `logs/openclaw-usage.log`；2026-07-05 复查确认 2026-07-03 至 2026-07-05 连续成功。
-- MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与最近更新模块。任何已完成的 Owner 可见或运维相关改动都要升版本：小 UI / 文案 / 布局调整、新页面能力、新数据源和新自动化默认升最后两位；重要功能模块稳定落地升 patch；大版本阶段切换升 minor / major。
+- MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与版本更新模块。任何已完成的 Owner 可见或运维相关改动都要升版本：小 UI / 文案 / 布局调整、新页面能力、新数据源和新自动化默认升最后两位；重要功能模块稳定落地升 patch；大版本阶段切换升 minor / major。
 - Windows 本机 Codex 用量可以由 `python scripts/update_data.py codex-usage` 刷新；macOS 本机 Codex 用量可以由 `python scripts/update_data.py codex-macos-usage` 刷新；服务器 Codex 用量由 root 运行 `python3 scripts/update_data.py codex-server-usage` 刷新。它们都只读取 `.codex/sessions` 中的 `token_count` 与 `turn_context.model`，只导出 token 统计、模型名、时间戳、来源和 OpenAI API 等价费用估算，不导出对话正文。
 - 本机 Codex 用量自动化支持 Windows Task Scheduler 和 macOS launchd。Windows 任务调用 `wscript.exe scripts/report_codex_usage_hidden.vbs`，再用 window style 0 启动 `scripts/report_codex_usage.ps1`，避免 PowerShell console 瞬时闪窗；macOS 任务调用 `scripts/report_codex_usage.sh`。任务默认每 1 小时运行一次，要求运行目录在 `main` 且无无关脏文件；每次上报前会 `git pull --ff-only origin main`。Windows 成功后只提交并推送 `codex-usage.*`；macOS 成功后只提交并推送 `codex-macos-usage.*`。Owner Windows 机器上的计划任务应指向专用 clone `D:\Personal\MaxNow-token-report`；Owner macOS 当前使用专用 clone `/Users/bytedance/.maxnow-token-report`，避免 Desktop 路径的 macOS 权限拦截和日常开发分支影响自动上报。
 - 服务器 Codex 用量自动化由 root crontab 的 `MAXNOW-CODEX-SERVER-USAGE` 每天刷新，日志写入 `logs/codex-server-usage.log`，锁为 `/tmp/maxnow-codex-server-usage.lock`。统一 Token 总账刷新由 `ubuntu` crontab 的 `MAXNOW-TOKEN-USAGE-REFRESH` 每 10 分钟运行 `scripts/refresh_token_usage_on_server.sh`，日志写入 `logs/token-usage-refresh.log`，锁为 `/tmp/maxnow-token-usage-refresh.lock`；它会在 pull 前备份运行态账本，恢复 OpenClaw / server Codex 源账本后再合并 `token-usage.*`。
 - `dash/data/token-usage.json` 是 Token 页统一入口；OpenClaw、Codex Windows / macOS、Codex server 和后续其他来源都应合入这个总账。Token 页 `1d` 按当前浏览器本地日期 00:00 起算，`7d` / `30d` 包括今天在内的最近 7 / 30 个自然日；来源费用面板和模型占比、调用消耗同层并列展示，并且来源 token、费用和 runs 跟随当前范围更新。页头展示各来源账本的最后更新时间。
 - 2026-07-08 起，Dash 首屏不再同步预加载 `dash/data/*.js` wrapper，也不再等待所有页面数据才渲染。Home 先读取 dashboard / last-30 / wiki-todos / dounai_checkin / market-indices / project-meta 小数据并渲染；Token 总账、Ricky、生活页数据和 Leaflet 地图资源按当前视图需要再加载。`.js` wrapper 仍由脚本生成并校验，但主要作为数据一致性和静态兜底资产，不要重新放回首屏同步脚本列表。
-- 2026-07-08 起，Home 状态条下方主内容采用统一 `home-board` 两列版式：左列 `home-lane-primary` 放 Token 热力格、Personal Wiki、待推进、最近更新和外部输入；右列 `home-side-stack` 视觉上是 widget 网格，按优先级放市场涨幅、今日 Todo、近期用量、豆奶和系统状态。两列外壳负责大块对齐，左列负责吸收内容型长模块，右列 widget 卡型负责半宽 / 满宽短状态入口，避免左列空着而右列继续下排，也避免所有卡片被二列布局拉成大卡。后续新增 Home 卡片必须先选 lane，再选 `wide-short` / `wide-tall` / `mid-short` / `mid-tall` / `widget-compact` / `widget-wide` 卡型。
+- 2026-07-08 起，Home 状态条下方主内容采用统一 `home-board` 两列版式：左列 `home-lane-primary` 放 Token 热力格、Personal Wiki、待推进、外部输入和版本更新，版本更新固定排在外部输入下方；右列 `home-side-stack` 视觉上是 widget 网格，按优先级放市场涨幅、今日 Todo、近期用量、豆奶和系统状态。两列外壳负责大块对齐，左列负责吸收内容型长模块，右列 widget 卡型负责半宽 / 满宽短状态入口，避免左列空着而右列继续下排，也避免所有卡片被二列布局拉成大卡。后续新增 Home 卡片必须先选 lane，再选 `wide-short` / `wide-tall` / `mid-short` / `mid-tall` / `widget-compact` / `widget-wide` 卡型。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史、直接流量使用记录和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。真实流量消耗优先使用 `traffic_usage_history`，不要再用账号余量快照差分作为主口径；余量差分只可作为缺数据时的估算说明。
 - 同行记页面只读取 `dash/data/ricky.json`，不在前端编辑、不回写 personal-wiki、不依赖外部在线地图服务；事实来源归 personal-wiki 的 `wiki/relationships/ricky-travel.json`。
 - 生活页“吃啥”只读取 `dash/data/life-foods.json`；前端允许本次会话内临时勾选 / 取消勾选和随机，但不回写 personal-wiki，候选长期来源归 `wiki/life/food-picker.md`。
