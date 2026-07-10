@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=127" />
+    <link rel="stylesheet" href="./styles.css?v=128" />
   </head>
   <body>
     <div class="app-shell">
@@ -254,35 +254,35 @@
                 <div class="project-update-list" id="project-update-list"></div>
               </article>
 
-              <article class="panel last30-panel home-board-card home-card-last30" id="last-30" data-card-size="wide-short" aria-label="外部输入">
+              <article class="panel last30-panel home-board-card home-card-last30" id="last-30" data-card-size="wide-short" aria-label="AI 前沿简报">
                 <header class="panel-head last30-head">
                   <div>
-                    <p class="eyebrow">External Input</p>
-                    <h2>外部输入</h2>
+                    <p class="eyebrow">每日简报</p>
+                    <h2>AI 前沿</h2>
                   </div>
                   <span class="status-pill" id="last30-source">等待同步</span>
                 </header>
                 <div class="last30-grid">
-                  <section class="last30-column" aria-label="最新 AI 信号">
+                  <section class="last30-column" aria-label="最新发布">
                     <div class="last30-column-head">
-                      <span>Latest</span>
-                      <strong id="last30-today-title">最新信号</strong>
+                      <span>最近 3 天</span>
+                      <strong id="last30-today-title">最新发布</strong>
                     </div>
                     <p class="last30-summary" id="last30-today-summary"></p>
                     <div class="last30-list" id="last30-today-list"></div>
                   </section>
-                  <section class="last30-column" aria-label="本周观察">
+                  <section class="last30-column" aria-label="本周前沿">
                     <div class="last30-column-head">
-                      <span>Week</span>
-                      <strong id="last30-week-title">本周观察</strong>
+                      <span>本周</span>
+                      <strong id="last30-week-title">本周前沿</strong>
                     </div>
                     <p class="last30-summary" id="last30-week-summary"></p>
                     <div class="last30-list" id="last30-week-list"></div>
                   </section>
-                  <section class="last30-column" aria-label="近 30 天主线">
+                  <section class="last30-column" aria-label="近 30 天关键进展">
                     <div class="last30-column-head">
-                      <span>30 Days</span>
-                      <strong id="last30-mainline-title">近 30 天主线</strong>
+                      <span>近 30 天</span>
+                      <strong id="last30-mainline-title">关键进展</strong>
                     </div>
                     <p class="last30-summary" id="last30-mainline-summary"></p>
                     <div class="last30-list" id="last30-mainline-list"></div>
@@ -642,7 +642,7 @@
                 </div>
                 <span class="status-pill">&#24050;&#25509;&#20837;</span>
               </header>
-              <p class="item-copy"><code>python3 scripts/update_data.py ai-last30</code> &#21047;&#26032; AI &#22806;&#37096;&#36755;&#20837;&#21644; Last-30 &#28378;&#21160;&#35760;&#24518;&#12290;&#22522;&#30784;&#37319;&#38598;&#21482;&#29992;&#20813;&#36153;&#20844;&#24320;&#28304;&#65292;&#19981;&#35843;&#29992;&#27169;&#22411;&#12290;</p>
+              <p class="item-copy"><code>python3 scripts/update_data.py ai-last30</code> 刷新中文 AI 前沿简报和 Last-30 滚动记忆。采集器优先正式发布、过滤客户案例并跨栏目去重，不调用模型。</p>
               <dl class="cloud-meta">
                 <div><dt>&#26631;&#35760;</dt><dd>MAXNOW-AI-LAST30-SYNC</dd></div>
                 <div><dt>&#26085;&#24535;</dt><dd>logs/ai-last30.log</dd></div>
@@ -862,6 +862,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=109"></script>
+    <script src="./app.js?v=110"></script>
   </body>
 </html>

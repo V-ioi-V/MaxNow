@@ -59,7 +59,7 @@ OpenClaw records facts and drafts summaries. The owner keeps final judgment. Do 
 
 `dash/data/dashboard.json` owns manual personal state and machine status fields used by Home. `dash/data/dashboard.js` must contain the same object assigned to `window.MAXNOW_DASHBOARD_DATA`. Project mainlines and actions live in `dash/data/project-status.*`, generated explicitly from `ROADMAP.md` by Codex or the owner; OpenClaw must not edit them.
 
-`dash/data/ai-news.json` is only for Home AI external inputs. It normally contains 0-3 high-signal items from the free external AI signal collector or Last-30 AI signal memory. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
+`dash/data/ai-news.json` is only for the Home AI frontier brief. It normally contains 0-3 concrete model, API, agent, pricing, open-source, or research releases from the free collector or Last-30 memory. Visible titles and summaries must be fact-first Chinese; preserve the official URL and optional `originalTitle` for audit. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
 
 `dash/data/dounai_checkin.json` stores Dounai daily check-in results, account balance snapshots, and account daily-budget history. OpenClaw check-in automation may update it, but MaxNow should only display traffic, account-extension hours, cumulative check-in days, remaining usable traffic, expiry, daily traffic budget, daily-budget history, and recent records for charts/tables; beans are raw data only and should not drive UI.
 
@@ -164,17 +164,18 @@ Keep arrays short:
   "items": [
     {
       "source": "OpenAI / Anthropic / HN / GitHub / Reddit / X",
-      "title": "短标题",
-      "summary": "说明它和 owner、项目、工具、模型或成本有什么关系。",
+      "title": "中文事实标题，例如 OpenAI 正式发布 GPT-5.6",
+      "summary": "具体说明发布了什么、开放到哪里或能力如何变化。",
       "url": "https://example.com",
       "publishedAt": "YYYY-MM-DD",
-      "signal": "official"
+      "signal": "official",
+      "originalTitle": "Optional original source title"
     }
   ]
 }
 ```
 
-Show at most 3 items on the page. Use free public sources first: official blogs/RSS, Hacker News, GitHub releases, Reddit/public community sources, arXiv, GDELT, and research labs. X/Twitter is useful for early signals but is not required and must not be used through paid API unless the owner explicitly approves budget and account list.
+Show at most 3 items on the page. Prioritize official model/product releases, API or agent capability changes, pricing/access changes, major open-source releases, and concrete research results. Exclude customer case studies, partnerships, generic adoption stories, pure SDK version numbers, and boilerplate advice such as “关注它的影响”. Use free public sources first: official blogs/RSS, Hacker News, GitHub releases, Reddit/public community sources, arXiv, GDELT, and research labs. X/Twitter is useful for early signals but is not required and must not be used through paid API unless the owner explicitly approves budget and account list.
 
 ## Source Policy
 
@@ -228,4 +229,4 @@ Use short operational Chinese. Prefer:
 - `下一步是把服务器部署和数据定时更新接起来。`
 - `AI 外部输入只保留与工具、模型或成本有关的信号。`
 
-Avoid hype, long reports, marketing language, and markdown inside JSON string fields.
+Avoid hype, long reports, marketing language, generic watch-list language, visible English source-title dumps, and markdown inside JSON string fields.

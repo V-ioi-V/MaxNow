@@ -95,9 +95,9 @@ const copy = {
   focus: "\u7126\u70b9",
   updatedAtShort: "\u66f4\u65b0",
   statusSnapshot: "\u72b6\u6001\u5feb\u7167",
-  todayEvents: "\u6700\u65b0\u4fe1\u53f7",
-  weekEvents: "\u672c\u5468\u89c2\u5bdf",
-  last30Mainlines: "\u8fd1 30 \u5929\u4e3b\u7ebf",
+  todayEvents: "\u6700\u65b0\u53d1\u5e03",
+  weekEvents: "\u672c\u5468\u524d\u6cbf",
+  last30Mainlines: "\u8fd1 30 \u5929\u5173\u952e\u8fdb\u5c55",
   wikiTodoReady: "\u5df2\u8bfb\u53d6",
   wikiTodoFailed: "\u8bfb\u53d6\u5931\u8d25",
   wikiTodoEmpty: "\u6682\u65e0\u672a\u5b8c\u6210\u5f85\u529e",
@@ -405,7 +405,7 @@ function createLast30Item(item) {
   if (item.url) {
     article.href = item.url;
     article.target = "_blank";
-    article.rel = "noreferrer";
+    article.rel = "noopener noreferrer";
     article.setAttribute("aria-label", `${copy.open} ${item.title || copy.unnamedInfo}`);
   }
   article.innerHTML = `
@@ -414,9 +414,8 @@ function createLast30Item(item) {
       <span class="item-tag"></span>
     </div>
     <p class="item-copy"></p>
-    <div class="last30-meta" aria-label="signal metadata">
+    <div class="last30-meta" aria-label="来源">
       <span data-role="source"></span>
-      <span data-role="confidence"></span>
     </div>
   `;
   article.querySelector(".item-title").textContent = item.title || copy.unnamedInfo;
@@ -424,18 +423,8 @@ function createLast30Item(item) {
   article.querySelector(".item-tag").textContent = item.needsOwnerConfirm
     ? "\u5f85\u786e\u8ba4"
     : item.date || item.status || item.source || copy.item;
-  article.querySelector('[data-role="source"]').textContent = item.sourceType || item.source || item.status || copy.item;
-  article.querySelector('[data-role="confidence"]').textContent = formatSignalConfidence(item);
+  article.querySelector('[data-role="source"]').textContent = [item.source, item.sourceType].filter(Boolean).join(" · ") || copy.item;
   return article;
-}
-
-function formatSignalConfidence(item) {
-  if (item.needsOwnerConfirm) return "\u9700 Owner \u786e\u8ba4";
-  const value = String(item.confidence || "").toLowerCase();
-  if (value === "high") return "\u6765\u6e90\u8f83\u7a33";
-  if (value === "medium") return "\u81ea\u52a8\u89c2\u5bdf";
-  if (value === "low") return "\u5f85\u6838\u5b9e";
-  return item.confidence || "\u5df2\u7eb3\u5165\u89c2\u5bdf";
 }
 
 function createWikiTodoItem(task) {
@@ -2058,7 +2047,7 @@ function renderHome() {
   const automationTitle = automation.summary
     ? `系统自动化：${automation.summary}`
     : "系统自动化状态：nginx、证书、部署、cron、失败日志和资源快照";
-  setText("#last30-source", last30Data.sourceSummary || last30Data.updatedAt || copy.syncWaiting);
+  setText("#last30-source", last30Data.updatedAt ? `${copy.updatedAtShort} ${last30Data.updatedAt}` : copy.syncWaiting);
   renderWeather();
 
   const syncStatus = getDataSyncStatus();

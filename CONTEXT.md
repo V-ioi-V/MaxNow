@@ -123,7 +123,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/sync_life_foods.py`：通过本地相邻 personal-wiki checkout 或服务器 `gh` 登录态读取 `wiki/life/food-picker.md`，刷新 `dash/data/life-foods.*`。
 - `scripts/sync_weather.py`：抓取北京市海淀区天气、温度、当前降水、高低温和天气图标类型，只刷新 dashboard 的 `weather` 字段。
 - `scripts/sync_market_indices.py`：抓取国内外指数行情和 1 日 5 分钟走势，刷新 `dash/data/market-indices.*`；接口失败时保留旧缓存并标记 `stale`。
-- `scripts/sync_ai_last30.py`：抓取免费公开 AI 信号源，刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`；采集脚本本身不调用模型，不消耗 token。
+- `scripts/sync_ai_last30.py`：抓取免费公开 AI 信号源，按正式发布 / 客户案例等事件类型排序，生成中文事实标题与摘要，并跨“最新 / 本周 / 近 30 天”去重；采集脚本本身不调用模型，不消耗 token。
 
 维护方式：
 
@@ -143,16 +143,16 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 服务器 root crontab 使用 `MAXNOW-TOKEN-SOURCE-REFRESH` 和 `/tmp/maxnow-token-source-refresh.lock`，日志写入 `logs/token-source-refresh.log`；ubuntu crontab 使用 `MAXNOW-TOKEN-USAGE-REFRESH` 和 `/tmp/maxnow-token-usage-refresh.lock`，每小时 `:10` 拉取并合并总账。
 - `dash/data/token-usage.json` 是 Token 页统一入口；OpenClaw、Codex Windows / macOS、Codex server 和后续其他来源都应合入这个总账。Token 页 `1d` 按当前浏览器本地日期 00:00 起算，`7d` / `30d` 包括今天在内的最近 7 / 30 个自然日；来源费用面板和模型占比、调用消耗同层并列展示，并且来源 token、费用和 runs 跟随当前范围更新。页头展示各来源账本的最后更新时间。
 - 2026-07-10 起，Dash Home 首批读取 dashboard / project-status / last-30 / wiki-todos / dounai_checkin / market-indices / project-meta 小数据并渲染；Token 总账、Ricky、生活页数据和 Leaflet 地图资源按当前视图需要再加载。`.js` wrapper 仍由脚本生成并校验，但主要作为数据一致性和静态兜底资产，不要重新放回首屏同步脚本列表。
-- 2026-07-08 起，Home 状态条下方主内容采用统一 `home-board` 两列版式：左列 `home-lane-primary` 放 Token 热力格、Personal Wiki、待推进、外部输入和版本更新，版本更新固定排在外部输入下方；右列 `home-side-stack` 视觉上是 widget 网格，按优先级放市场涨幅、今日 Todo、近期用量、豆奶和系统状态。两列外壳负责大块对齐，左列负责吸收内容型长模块，右列 widget 卡型负责半宽 / 满宽短状态入口，避免左列空着而右列继续下排，也避免所有卡片被二列布局拉成大卡。后续新增 Home 卡片必须先选 lane，再选 `wide-short` / `wide-tall` / `mid-short` / `mid-tall` / `widget-compact` / `widget-wide` 卡型。
+- 2026-07-08 起，Home 状态条下方主内容采用统一 `home-board` 两列版式：左列 `home-lane-primary` 放 Token 热力格、Personal Wiki、待推进、AI 前沿和版本更新，版本更新固定排在 AI 前沿下方；右列 `home-side-stack` 视觉上是 widget 网格，按优先级放市场涨幅、今日 Todo、近期用量、豆奶和系统状态。两列外壳负责大块对齐，左列负责吸收内容型长模块，右列 widget 卡型负责半宽 / 满宽短状态入口，避免左列空着而右列继续下排，也避免所有卡片被二列布局拉成大卡。后续新增 Home 卡片必须先选 lane，再选 `wide-short` / `wide-tall` / `mid-short` / `mid-tall` / `widget-compact` / `widget-wide` 卡型。
 - 2026-07-10 线上已部署提交 `eade306`，当前 MaxNow 版本为 `1.0.0.51`、Dash 缓存为 `styles.css?v=123` / `app.js?v=108`；部署时已保护并恢复服务器运行数据，Home 项目状态改读独立 `project-status.*`，旧 `dashboard.mainlines/actions` 已从线上运行态移除。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史、直接流量使用记录和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。真实流量消耗优先使用 `traffic_usage_history`，不要再用账号余量快照差分作为主口径；余量差分只可作为缺数据时的估算说明。
 - 同行记页面只读取 `dash/data/ricky.json`，不在前端编辑、不回写 personal-wiki、不依赖外部在线地图服务；事实来源归 personal-wiki 的 `wiki/relationships/ricky-travel.json`。
 - 生活页“吃啥”只读取 `dash/data/life-foods.json`；前端允许本次会话内临时勾选 / 取消勾选和随机，但不回写 personal-wiki，候选长期来源归 `wiki/life/food-picker.md`。
 - 服务器上的豆奶签到由 root/OpenClaw 侧脚本维护；`/root/.openclaw/gen_checkin_data.py` 会把生成结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和线上部署目录 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。线上页面读取后者。2026-06-21 已扩展该脚本，让它用现有豆奶登录态只读抓取剩余流量、账号有效期、VIP 有效期和日均可用流量，写入 `account` 字段，并按日期维护 `account_history`。2026-07-05 已继续扩展脚本，读取 `/user/trafficlog` 的近 7 天真实使用量并合并到 `traffic_usage_history`，同时读取 `?ajax=1` 的近 12 小时节点活跃分布；同日新增 root cron `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT`，每天 00:05 执行 `gen_checkin_data.py --traffic-only --exclude-today`，专门更新昨天及更早的真实使用量。2026-07-06 已确认豆奶脚本依赖 root 的 Playwright `chromium_headless_shell-1208`；清理服务器浏览器缓存后需要运行 `python3 -m playwright install chromium` 并做 headless launch smoke test，补签应优先用不发通知的 `/root/.openclaw/daily_checkin.sh`。
 
-### 4. AI 外部信号滚动记忆
+### 4. AI 前沿简报与滚动记忆
 
-这是 Last-30 当前定位：保存今天、本周和近 30 天的 AI 外部信号。它不是 MaxNow 内部项目日志，也不是泛新闻流；只保留和 Owner 当前工具、模型选择、agent 能力、开发者生态或成本有关的信号。
+这是 Last-30 当前定位：保存最新、本周和近 30 天的 AI 前沿正式发布。它不是 MaxNow 内部项目日志、英文 RSS 搬运或关键词观察报告；只保留模型、API、Agent、开发者工具、成本和重要研究的实质变化。
 
 已经新增：
 
@@ -162,22 +162,21 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 它负责保存：
 
-- 最新 AI 信号：左栏固定表达为“最新信号”，优先当天，若当天暂无新条目则回退到最近 7 天内最新高相关信号；不要把回退数据标成“今日”，也不要外露“进入观察池”这类采集器内部话术。
-- 本周 AI 变化。
-- 近 30 天 AI 主线。
-- 对 MaxNow、Codex、OpenClaw、模型选择或 token 成本的潜在影响。
+- 最新发布：最近 3 天最重要的 1-3 条正式发布。
+- 本周前沿：补充最新发布未覆盖的本周高信号事项。
+- 近 30 天关键进展：展示具体里程碑，不展示自动关键词分类。
+- 中文事实标题和具体能力 / 开放范围摘要；官方英文标题保存在 `originalTitle` 便于追溯。
 - 需要继续观察或 Owner 确认的信号。
 
 维护方式：
 
 - 免费版由 `scripts/sync_ai_last30.py` 抓取官方 RSS / 博客、GitHub releases、Hacker News、GDELT、arXiv 等免费公开源，写入 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
 - 服务器已通过 `ubuntu` 用户 crontab 接入 `MAXNOW-AI-LAST30-SYNC`：每天服务器本地时间 00:00 运行 `python3 scripts/update_data.py ai-last30`，日志写入 `/var/www/maxnow-dashboard/logs/ai-last30.log`。
-- 脚本先做本地抓取、关键词打分、去重和短摘要，不调用模型；采集本身不消耗 token。
+- 脚本先做本地抓取、事件类型与优先级判断、主题去重和中文事实摘要，不调用模型；采集本身不消耗 token。
 - 如果让 OpenClaw 二次总结，只应喂少量候选，避免把新闻全文直接交给模型。
 - X / Twitter 官方 API 暂不接入，除非 Owner 明确批准付费 API 和博主白名单。
-- 每条记录尽量带来源、置信度、是否需要 Owner 确认。
-- `confidence` 只表示来源/自动归类口径，不代表内容判断已被 Owner 确认；前端应展示为“来源较稳 / 自动观察 / 待核实”，右侧主线数字只表示当前候选中的关键词归类数量。
-- “最新 / 本周”应优先呈现 AI 大事：模型、agent、研究、API、成本或开发者生态的实质变化。SDK release、普通 GitHub 开源更新和底层工程文章只有明确影响这些方向时才进入主列表。
+- 每条记录尽量带来源、日期、官方链接和 `originalTitle`；前端只显示来源与日期，不显示内部置信度。
+- “最新 / 本周”优先模型发布、API / Agent 能力、价格与开放范围；客户案例、合作、泛采用、纯 SDK 版本号和 updated packages 不进入主列表。
 
 ### 5. 公开博客上下文
 

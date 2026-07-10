@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 20:59",
-  "version": "1.0.2.03",
-  "versionLabel": "v1.0.2.03",
-  "branch": "bugfix/today-status-alignment",
-  "commit": "701833d",
+  "updatedAt": "2026-07-10 21:27",
+  "version": "1.0.3.00",
+  "versionLabel": "v1.0.3.00",
+  "branch": "feature/ai-frontier-news",
+  "commit": "fd0c6e4",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/today-status-alignment · commit 701833d · 有未提交代码改动",
+  "deployNote": "feature/ai-frontier-news · commit fd0c6e4 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "将 Last-30 重构为中文 AI 前沿简报",
+      "summary": "Home 原“外部输入”改为“AI 前沿”，三栏固定展示“最新发布 / 本周前沿 / 近 30 天关键进展”，只保留中文事实标题、具体变化、日期和来源。"
+    },
     {
       "date": "2026-07-10",
       "title": "修正 Today Status 时间轴方向与当前时间对齐",
@@ -28,11 +33,6 @@
       "date": "2026-07-10",
       "title": "用 MaxNow 风格登录页替代浏览器原生认证弹窗",
       "summary": "新增双栏登录页，复用 MaxNow 的浅蓝灰背景、白卡片、语义色小图标、输入框 focus 和轻量 hover；`760px` 以下自动切换单栏。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "轮换私人 Dash 访问密码",
-      "summary": "已轮换 `dash.maxnow.cn` 的 nginx Basic Auth 密码；用户名保持 `maxnow`，真实密码和哈希均未写入仓库。"
     }
   ]
 }

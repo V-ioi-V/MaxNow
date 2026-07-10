@@ -107,6 +107,134 @@ SUBSTANTIVE_AI_TERMS = (
     "benchmark",
 )
 
+OFFICIAL_LABS = {"OpenAI", "Anthropic", "Google AI", "DeepMind", "Mistral AI"}
+
+CASE_STUDY_TERMS = (
+    "case study",
+    "customer story",
+    "moves faster with",
+    "aims to become ai-native",
+    "uses claude",
+    "with chatgpt and codex",
+    "educators",
+    "government and national security partnerships",
+    "adoption has expanded",
+    "partner to bring",
+)
+
+RELEASE_TERMS = (
+    "introducing",
+    "launching",
+    "launched",
+    "release",
+    "released",
+    "now available",
+    "general availability",
+    "previewing",
+    "new capabilities",
+    "new generation",
+    "adds support",
+    "is now the preferred model",
+)
+
+RESEARCH_TERMS = (
+    "benchmark",
+    "evaluation",
+    "evaluations",
+    "research",
+    "system card",
+)
+
+PRODUCT_PATTERNS = (
+    re.compile(r"\bGPT[-\s]?\d+(?:\.\d+)?(?:\s+(?:Sol|Terra|Luna|Instant Mini))?\b", re.I),
+    re.compile(r"\bGPT[-\s]?Live\b", re.I),
+    re.compile(r"\bChatGPT Work\b", re.I),
+    re.compile(r"\bClaude(?:\s+[A-Za-z]+){0,2}\s+\d+(?:\.\d+)?\b", re.I),
+    re.compile(r"\bClaude Science\b", re.I),
+    re.compile(r"\bGemini(?:\s+API|\s+\d+(?:\.\d+)?(?:\s+[A-Za-z]+){0,2})\b", re.I),
+    re.compile(r"\bMistral\s+(?:OCR|Medium|Small|Large)\s+\d+(?:\.\d+)?\b", re.I),
+)
+
+CURATED_EVENTS = {
+    "/index/gpt-5-6": {
+        "title": "OpenAI 正式发布 GPT-5.6",
+        "summary": "GPT-5.6 Sol、Terra 和 Luna 已向 ChatGPT、Codex 与 API 全面开放，并新增 max / ultra 推理档位、多智能体测试版和程序化工具调用。",
+        "kind": "model_release",
+        "priority": 120,
+        "topic": "gpt-5.6",
+    },
+    "/index/gpt-5-6-preferred-model-microsoft-365-copilot": {
+        "title": "GPT-5.6 成为 Microsoft 365 Copilot 首选模型",
+        "summary": "Microsoft 365 Copilot 已将 GPT-5.6 用于 Word、Excel、PowerPoint、Chat 和 Cowork 等工作场景。",
+        "kind": "model_release",
+        "priority": 92,
+        "topic": "gpt-5.6",
+    },
+    "/index/chatgpt-for-your-most-ambitious-work": {
+        "title": "OpenAI 发布 ChatGPT Work 长时任务 Agent",
+        "summary": "ChatGPT Work 可跨应用和文件执行任务、持续工作数小时，并把目标整理成可交付成果。",
+        "kind": "product_release",
+        "priority": 108,
+        "topic": "chatgpt-work",
+    },
+    "/index/introducing-gpt-live": {
+        "title": "OpenAI 发布 GPT-Live 实时语音模型",
+        "summary": "新一代实时语音模型已用于 ChatGPT Voice，重点改善自然对话、噪声处理和打断体验。",
+        "kind": "model_release",
+        "priority": 104,
+        "topic": "gpt-live",
+    },
+    "/index/separating-signal-from-noise-coding-evaluations": {
+        "title": "OpenAI 指出 SWE-Bench Pro 评测存在可靠性问题",
+        "summary": "官方分析认为该编码基准的可靠性与准确性存在问题，比较编码模型时不能只看单一榜单。",
+        "kind": "research",
+        "priority": 82,
+        "topic": "swe-bench-pro-reliability",
+    },
+    "/innovation-and-ai/technology/developers-tools/expanding-managed-agents-gemini-api": {
+        "title": "Gemini API 增强托管 Agent：后台任务与远程 MCP",
+        "summary": "Google 为 Gemini API 的托管 Agent 增加后台任务、远程 MCP 等能力，面向可持续运行的生产级 Agent。",
+        "kind": "api_update",
+        "priority": 98,
+        "topic": "gemini-managed-agents",
+    },
+    "/news/reflect-with-claude": {
+        "title": "Anthropic 为 Claude 增加使用回顾功能",
+        "summary": "Claude 新增个人使用回顾入口，用于整理用户与 Claude 的协作方式和变化。",
+        "kind": "product_release",
+        "priority": 78,
+        "topic": "claude-reflection",
+    },
+    "/news/claude-sonnet-5": {
+        "title": "Anthropic 发布 Claude Sonnet 5",
+        "summary": "Claude Sonnet 5 面向编码、Agent 和专业工作负载，是 Anthropic 新一代主力模型。",
+        "kind": "model_release",
+        "priority": 112,
+        "topic": "claude-sonnet-5",
+    },
+    "/news/claude-science-ai-workbench": {
+        "title": "Anthropic 发布 Claude Science 科研工作台",
+        "summary": "Claude Science 集成科研常用工具、软件包和计算资源，并强调可审计的研究产物。",
+        "kind": "product_release",
+        "priority": 90,
+        "topic": "claude-science",
+    },
+    "/news/redeploying-fable-5": {
+        "title": "Claude Fable 5 与 Mythos 5 恢复全球开放",
+        "summary": "Anthropic 在出口限制解除后恢复两款模型的全球访问，并同步更新越狱风险评估框架。",
+        "kind": "model_release",
+        "priority": 88,
+        "topic": "claude-fable-5-access",
+    },
+    "/innovation-and-ai/models-and-research/google-research/amie-for-disease-management-in-nature": {
+        "title": "Google AMIE 医疗 AI 完成复杂疾病管理研究",
+        "summary": "Nature 研究显示，AMIE 对复杂疾病管理的表现接近初级保健医生，是医疗对话模型的重要进展。",
+        "kind": "research",
+        "priority": 72,
+        "topic": "google-amie-disease-management",
+    },
+}
+
 
 def has_term(text, term):
     escaped = re.escape(term)
@@ -120,8 +248,98 @@ def has_any_term(text, terms):
 
 
 def signal_subject_text(item):
-    summary = re.split(r"[；;]", item.summary or "", maxsplit=1)[0]
-    return f"{item.title} {summary}".lower()
+    return f"{item.title} {item.summary or ''}".lower()
+
+
+def event_path(item):
+    return urllib.parse.urlparse(item.url or "").path.rstrip("/")
+
+
+def curated_event(item):
+    return CURATED_EVENTS.get(event_path(item))
+
+
+def extract_product_label(text):
+    for pattern in PRODUCT_PATTERNS:
+        match = pattern.search(text or "")
+        if match:
+            return re.sub(r"\s+", " ", match.group(0)).strip()
+    return ""
+
+
+def event_kind(item):
+    curated = curated_event(item)
+    if curated:
+        return curated["kind"]
+
+    text = signal_subject_text(item)
+    if re.fullmatch(r"v?\d+\.\d+\.\d+", item.title.strip(), re.I):
+        return "noise"
+    if has_any_term(text, CASE_STUDY_TERMS):
+        return "noise"
+    if "the latest ai news we announced" in text:
+        return "noise"
+    if item.signal == "github" and has_any_term(text, LOW_LEVEL_RELEASE_TERMS):
+        return "noise"
+
+    product = extract_product_label(text)
+    if product and has_any_term(text, RELEASE_TERMS):
+        return "model_release" if re.search(r"\d|gpt-live", product, re.I) else "product_release"
+    if product and item.source in OFFICIAL_LABS:
+        return "model_update"
+    if has_any_term(text, RELEASE_TERMS) and has_any_term(text, ("agent", "mcp", "api", "tool use", "computer use")):
+        return "api_update"
+    if item.source in OFFICIAL_LABS and has_any_term(text, RESEARCH_TERMS) and has_any_term(text, SUBSTANTIVE_AI_TERMS):
+        return "research"
+    if item.signal == "github" and has_any_term(text, ("agent", "mcp", "model", "api")):
+        return "developer_release"
+    return "noise"
+
+
+def topic_key(item):
+    curated = curated_event(item)
+    if curated:
+        return curated["topic"]
+    product = extract_product_label(signal_subject_text(item))
+    if product:
+        return re.sub(r"[^a-z0-9]+", "-", product.lower()).strip("-")
+    path = event_path(item)
+    return path.rsplit("/", 1)[-1] or re.sub(r"\W+", "-", item.title.lower()).strip("-")
+
+
+def localized_signal(item):
+    curated = curated_event(item)
+    if curated:
+        return curated["title"], curated["summary"]
+
+    text = signal_subject_text(item)
+    product = extract_product_label(text)
+    kind = event_kind(item)
+    if product:
+        verb = "发布" if kind in {"model_release", "product_release"} else "更新"
+        title = f"{item.source} {verb} {product}"
+    elif "managed agents" in text or ("agent" in text and "api" in text):
+        title = f"{item.source} 发布 Agent 与 API 能力更新"
+    elif "mcp" in text:
+        title = f"{item.source} 发布 MCP 开发者工具更新"
+    elif has_any_term(text, RESEARCH_TERMS):
+        title = f"{item.source} 发布 AI 评测与研究进展"
+    else:
+        title = f"{item.source} 发布 AI 前沿更新"
+
+    if "background task" in text and "remote mcp" in text:
+        summary = "官方新增后台任务和远程 MCP 等能力，面向可持续运行的生产级 Agent。"
+    elif "voice" in text or "gpt-live" in text:
+        summary = "官方发布实时语音能力更新，重点改善自然对话、噪声处理和打断体验。"
+    elif "pricing" in text or "cost" in text or "token" in text:
+        summary = "官方公告包含模型定价或 Token 成本变化，具体价格与开放范围已保留在原文。"
+    elif has_any_term(text, RESEARCH_TERMS):
+        summary = "官方发布新的模型评测或研究结果，可用于校准模型能力判断。"
+    elif "agent" in text or "mcp" in text or "tool use" in text:
+        summary = "官方更新 Agent 或工具调用能力，具体功能与开放范围已保留在原文。"
+    else:
+        summary = "官方发布模型或产品能力更新，具体功能、价格与开放范围已保留在原文。"
+    return title, summary
 
 OFFICIAL_SOURCES = [
     ("OpenAI", "https://openai.com/news/rss.xml", "official"),
@@ -224,7 +442,7 @@ def score_signal(title, summary, source):
     for keyword, weight in KEYWORDS.items():
         if keyword in text:
             score += weight
-    if source in {"OpenAI", "Anthropic", "Google AI", "DeepMind", "Mistral AI"}:
+    if source in OFFICIAL_LABS:
         score += 6
     if source in {"GitHub Blog"} and not has_any_term(text, CORE_AI_TERMS):
         score -= 8
@@ -232,45 +450,27 @@ def score_signal(title, summary, source):
         score -= 4
     if "pricing" in text or "cost" in text or "token" in text:
         score += 4
+    if re.search(r"\b(?:gpt|claude|gemini|mistral|llama)[-\s]?\d", text, re.I):
+        score += 20
+    if has_any_term(text, RELEASE_TERMS):
+        score += 12
+    if has_any_term(text, CASE_STUDY_TERMS):
+        score -= 30
     return score
 
 
 def is_ai_relevant(item):
+    if curated_event(item):
+        return True
     body = signal_subject_text(item)
     text = f"{body} {item.source}".lower()
-    if item.source in {"OpenAI", "Anthropic", "Google AI", "DeepMind", "Mistral AI", "arXiv"}:
+    if item.source in OFFICIAL_LABS | {"arXiv"}:
         return has_any_term(body, SUBSTANTIVE_AI_TERMS)
     return has_any_term(text, CORE_AI_TERMS)
 
 
 def is_major_ai_event(item):
-    body = signal_subject_text(item)
-    text = f"{body} {item.source}".lower()
-    if item.signal == "github":
-        has_major_feature = has_any_term(text, ("agent", "model", "claude", "openai", "mcp", "api"))
-        is_patch_noise = has_any_term(text, LOW_LEVEL_RELEASE_TERMS)
-        return has_major_feature and not is_patch_noise
-    if item.source in {"OpenAI", "Anthropic", "Google AI", "DeepMind", "Mistral AI"}:
-        return has_any_term(body, SUBSTANTIVE_AI_TERMS)
-    if item.source == "GitHub Blog" and not has_any_term(text, CORE_AI_TERMS):
-        return False
-    return is_ai_relevant(item)
-
-
-def make_summary(source, title, text, signal):
-    cleaned = clean_text(text)
-    if cleaned and cleaned.lower() != title.lower():
-        base = cleaned[:130].rstrip()
-    else:
-        base = title
-    reason = "关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。"
-    if signal == "github":
-        reason = "这是开发者生态更新；只有涉及模型、agent、MCP 或 API 能力变化时，才适合作为 AI 大事跟踪。"
-    if signal == "community":
-        reason = "这是社区热度信号，适合用来判断新工具或新方向是否正在扩散。"
-    if signal == "research":
-        reason = "这是 AI 研究进展，重点看它是否影响 agent 安全、协作方式或能力边界。"
-    return f"{source}：{base}；{reason}"
+    return event_kind(item) != "noise"
 
 
 def parse_rss(source, url, signal):
@@ -333,7 +533,7 @@ def build_signal(source, title, summary, url, published_at, signal):
     return Signal(
         source=source,
         title=title,
-        summary=make_summary(source, title, summary, signal),
+        summary=clean_text(summary),
         url=url,
         published_at=published_at,
         signal=signal,
@@ -343,7 +543,11 @@ def build_signal(source, title, summary, url, published_at, signal):
 
 def fetch_hn():
     query = urllib.parse.quote("(AI OR LLM OR OpenAI OR Anthropic OR agent OR coding)")
-    url = f"https://hn.algolia.com/api/v1/search_by_date?query={query}&tags=story&hitsPerPage=20"
+    cutoff = int((now_local() - timedelta(days=30)).timestamp())
+    url = (
+        f"https://hn.algolia.com/api/v1/search_by_date?query={query}&tags=story&hitsPerPage=20"
+        f"&numericFilters=created_at_i%3E{cutoff}"
+    )
     data = json.loads(fetch_text(url))
     items = []
     for hit in data.get("hits", []):
@@ -425,7 +629,7 @@ def dedupe(signals):
 
 def within_days(item, days):
     if not item.published_at:
-        return True
+        return False
     try:
         date = datetime.strptime(item.published_at, "%Y-%m-%d").replace(tzinfo=TZ)
     except ValueError:
@@ -451,41 +655,58 @@ def recency_bonus(item):
 
 
 def to_item(item):
+    title, summary = localized_signal(item)
     return {
         "source": item.source,
-        "title": item.title,
-        "summary": item.summary,
+        "title": title,
+        "summary": summary,
         "url": item.url,
         "publishedAt": item.published_at,
         "signal": item.signal,
+        "originalTitle": item.title,
     }
 
 
-def select_diverse(signals, limit, max_per_source=2):
+def frontier_priority(item):
+    curated = curated_event(item)
+    if curated:
+        return curated["priority"] + recency_bonus(item)
+    kind_bonus = {
+        "model_release": 70,
+        "product_release": 58,
+        "api_update": 54,
+        "model_update": 48,
+        "developer_release": 38,
+        "research": 30,
+    }
+    return item.score + recency_bonus(item) + kind_bonus.get(event_kind(item), 0)
+
+
+def select_frontier_events(signals, limit, excluded_topics=None):
+    excluded = set(excluded_topics or [])
     selected = []
-    counts = {}
-    for item in signals:
-        if counts.get(item.source, 0) >= max_per_source:
+    seen_topics = set(excluded)
+    candidates = sorted(
+        (item for item in signals if is_major_ai_event(item)),
+        key=lambda item: (frontier_priority(item), item.published_at),
+        reverse=True,
+    )
+    for item in candidates:
+        topic = topic_key(item)
+        if topic in seen_topics:
             continue
         selected.append(item)
-        counts[item.source] = counts.get(item.source, 0) + 1
+        seen_topics.add(topic)
         if len(selected) >= limit:
             break
-    if len(selected) < limit:
-        for item in signals:
-            if item in selected:
-                continue
-            selected.append(item)
-            if len(selected) >= limit:
-                break
     return selected
 
 
 def update_ai_news(signals, failures):
-    top = select_diverse(signals, 3, max_per_source=1)
+    top = select_frontier_events([item for item in signals if within_days(item, 7)], 3)
     data = {
         "updatedAt": now_local().strftime("%Y-%m-%d %H:%M"),
-        "sourceSummary": "免费 AI 外部信号",
+        "sourceSummary": "AI 前沿简报 · 官方来源优先",
         "items": [to_item(item) for item in top],
     }
     if failures:
@@ -502,41 +723,28 @@ def update_ai_news(signals, failures):
 
 def group_summary(items, label):
     if not items:
-        return f"暂无新的{label}，保留观察。"
-    sources = []
-    for item in items:
-        if item.source not in sources:
-            sources.append(item.source)
-    return f"本栏从 {', '.join(sources[:4])} 收录 {len(items)} 条 AI 大事；优先展示模型、agent、研究和开发者生态的实质变化。"
-
-
-def select_ai_events(signals, limit):
-    major = [item for item in signals if is_major_ai_event(item) and item.signal != "github"]
-    selected = select_diverse(major, limit)
-    if len(selected) < limit:
-        fallback = [item for item in signals if is_major_ai_event(item) and item not in selected]
-        selected.extend(select_diverse(fallback, limit - len(selected)))
-    return selected[:limit]
+        return f"暂无新的{label}。"
+    if label == "最新发布":
+        return f"最近 3 天最重要的 {len(items)} 条模型与产品发布。"
+    if label == "本周前沿":
+        return f"本周其他 {len(items)} 条值得了解的模型、Agent 与评测更新。"
+    return f"近 30 天值得补看的 {len(items)} 个正式发布与重要研究。"
 
 
 def latest_signal_group(signals, today):
-    exact_today = [item for item in signals if item.published_at == today.isoformat()]
-    if exact_today:
-        items = select_ai_events(exact_today, 3)
-        if items:
-            return {
-                "date": today.isoformat(),
-                "title": "最新 AI 信号",
-                "summary": group_summary(items, "最新 AI 信号"),
-                "items": items,
-            }
-
-    recent = select_ai_events([item for item in signals if within_days(item, 7)], 3)
+    recent = select_frontier_events([item for item in signals if within_days(item, 3)], 3)
+    if len(recent) < 3:
+        fallback = select_frontier_events(
+            [item for item in signals if within_days(item, 7)],
+            3 - len(recent),
+            {topic_key(item) for item in recent},
+        )
+        recent.extend(fallback)
     latest_date = recent[0].published_at if recent else today.isoformat()
     return {
         "date": latest_date,
-        "title": "最新 AI 信号",
-        "summary": group_summary(recent, "最新 AI 信号"),
+        "title": "最新发布",
+        "summary": group_summary(recent, "最新发布"),
         "items": recent,
     }
 
@@ -544,9 +752,18 @@ def latest_signal_group(signals, today):
 def update_last30(signals, failures):
     today = now_local().date()
     latest_group = latest_signal_group(signals, today)
-    week_items = select_ai_events([item for item in signals if within_days(item, 7)], 7)
-    month_items = [item for item in signals if within_days(item, 30) and is_major_ai_event(item)][:16]
-    mainlines = build_mainlines(month_items)
+    latest_topics = {topic_key(item) for item in latest_group["items"]}
+    week_items = select_frontier_events(
+        [item for item in signals if within_days(item, 7)],
+        4,
+        latest_topics,
+    )
+    used_topics = latest_topics | {topic_key(item) for item in week_items}
+    month_items = select_frontier_events(
+        [item for item in signals if within_days(item, 30)],
+        5,
+        used_topics,
+    )
     waiting = []
     if failures:
         waiting.append({
@@ -559,7 +776,7 @@ def update_last30(signals, failures):
 
     data = {
         "updatedAt": now_local().strftime("%Y-%m-%d %H:%M"),
-        "sourceSummary": "免费 AI 外部信号滚动记忆",
+        "sourceSummary": "AI 前沿简报 · 官方来源优先",
         "today": {
             "date": latest_group["date"],
             "title": latest_group["title"],
@@ -568,15 +785,15 @@ def update_last30(signals, failures):
         },
         "week": {
             "range": f"{(today - timedelta(days=6)).isoformat()}/{today.isoformat()}",
-            "title": "本周 AI 变化",
-            "summary": group_summary(week_items, "本周 AI 变化"),
-            "items": [last30_item(item) for item in week_items[:7]],
+            "title": "本周前沿",
+            "summary": group_summary(week_items, "本周前沿"),
+            "items": [last30_item(item) for item in week_items],
         },
         "last30": {
             "range": f"{(today - timedelta(days=29)).isoformat()}/{today.isoformat()}",
-            "title": "近 30 天 AI 主线",
-            "summary": "用免费公开源追踪模型、agent、开发者工具、成本和开源生态的持续变化。",
-            "mainlines": mainlines,
+            "title": "近 30 天关键进展",
+            "summary": group_summary(month_items, "近 30 天关键进展"),
+            "mainlines": [last30_item(item) for item in month_items],
             "decisions": [
                 {
                     "date": today.isoformat(),
@@ -598,21 +815,23 @@ def update_last30(signals, failures):
 
 
 def last30_item(item):
+    title, summary = localized_signal(item)
     return {
         "date": item.published_at,
-        "title": item.title,
-        "summary": item.summary,
+        "title": title,
+        "summary": summary,
         "source": item.source,
         "sourceType": signal_source_type(item.signal),
         "confidence": "medium" if item.signal in {"community", "news", "research"} else "high",
         "needsOwnerConfirm": False,
         "url": item.url,
+        "originalTitle": item.title,
     }
 
 
 def signal_source_type(signal):
     labels = {
-        "official": "官方来源",
+        "official": "官方发布",
         "github": "开发者发布",
         "community": "社区来源",
         "research": "研究来源",
@@ -621,38 +840,45 @@ def signal_source_type(signal):
     return labels.get(signal, "公开来源")
 
 
-def build_mainlines(items):
-    buckets = [
-        ("模型与 API 更新", ["openai", "anthropic", "gemini", "mistral", "llama", "api", "model"]),
-        ("Agent 与工具调用", ["agent", "tool use", "computer use", "browser use", "mcp"]),
-        ("开发者工具与 SDK", ["github", "sdk", "coding", "code", "release"]),
-        ("成本与 Token", ["cost", "pricing", "token"]),
-        ("开源与研究", ["open source", "arxiv", "research", "benchmark"]),
-    ]
-    results = []
-    for title, keywords in buckets:
-        matched = []
-        for item in items:
-            text = f"{item.title} {item.summary} {item.source}".lower()
-            if any(keyword in text for keyword in keywords):
-                matched.append(item)
-        if matched:
-            results.append({
-                "title": title,
-                "summary": f"当前候选中约 {len(matched)} 条相关信号；代表来源包括 {', '.join(sorted({item.source for item in matched})[:3])}。这是关键词自动归类，不等同于完整趋势统计。",
-                "status": "active",
-                "source": "候选归类",
-                "sourceType": "自动归类",
-                "confidence": "medium",
-                "needsOwnerConfirm": False,
-            })
-    return results[:5]
+def run_self_test():
+    gpt = build_signal(
+        "OpenAI",
+        "GPT-5.6: Frontier intelligence that scales with your ambition",
+        "More intelligence from every token and stronger performance per dollar.",
+        "https://openai.com/index/gpt-5-6/",
+        "2026-07-09",
+        "official",
+    )
+    case_study = build_signal(
+        "OpenAI",
+        "Australian Payments Plus moves faster with ChatGPT and Codex",
+        "A customer story about enterprise adoption.",
+        "https://openai.com/index/australian-payments-plus/",
+        "2026-07-07",
+        "official",
+    )
+    gpt_followup = build_signal(
+        "OpenAI",
+        "GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
+        "GPT-5.6 powers Microsoft 365 Copilot.",
+        "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot/",
+        "2026-07-09",
+        "official",
+    )
+    assert is_major_ai_event(gpt)
+    assert not is_major_ai_event(case_study)
+    title, summary = localized_signal(gpt)
+    assert title == "OpenAI 正式发布 GPT-5.6"
+    assert "关注它" not in summary and re.search(r"[\u4e00-\u9fff]", summary)
+    selected = select_frontier_events([gpt_followup, gpt], 3)
+    assert len(selected) == 1 and topic_key(selected[0]) == "gpt-5.6"
+    print("[ok] AI frontier ranking and Chinese brief self-test")
 
 
 def main():
     signals, failures = collect_signals()
     signals = [item for item in dedupe(signals) if item.score > 0 and is_ai_relevant(item)]
-    signals.sort(key=lambda item: (item.score + recency_bonus(item), item.published_at), reverse=True)
+    signals.sort(key=lambda item: (frontier_priority(item), item.published_at), reverse=True)
     signals = signals[:40]
 
     if not signals:
@@ -667,7 +893,10 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        if "--self-test" in sys.argv:
+            run_self_test()
+        else:
+            main()
     except (urllib.error.URLError, RuntimeError, ET.ParseError, json.JSONDecodeError) as error:
         print(f"[fail] {error}", file=sys.stderr)
         sys.exit(1)

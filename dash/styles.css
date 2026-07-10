@@ -2306,10 +2306,6 @@ a.last30-item {
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-  border: 1px solid #e6eef7;
-  border-radius: 999px;
-  padding: 3px 7px;
-  background: #f8fbff;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

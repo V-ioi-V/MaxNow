@@ -395,6 +395,62 @@ def check_dashboard_weather():
     return "dashboard weather: shape is valid"
 
 
+def check_ai_frontier_brief():
+    data = load_json(ROOT / "dash/data/last-30.json")
+    ai_news = load_json(ROOT / "dash/data/ai-news.json")
+    groups = [
+        ("today", data.get("today", {}).get("items", []), 3),
+        ("week", data.get("week", {}).get("items", []), 4),
+        ("last30", data.get("last30", {}).get("mainlines", []), 5),
+    ]
+    if data.get("today", {}).get("title") != "最新发布":
+        raise ValueError("AI frontier: today title must be 最新发布")
+    if data.get("week", {}).get("title") != "本周前沿":
+        raise ValueError("AI frontier: week title must be 本周前沿")
+    if data.get("last30", {}).get("title") != "近 30 天关键进展":
+        raise ValueError("AI frontier: last30 title must be 近 30 天关键进展")
+
+    banned = ("关注它", "适合进入观察池", "关键词自动归类", "来源较稳", "自动观察")
+    seen_urls = set()
+    for group_name, items, limit in groups:
+        group = data.get("last30" if group_name == "last30" else group_name, {})
+        group_summary = str(group.get("summary", ""))
+        if any(phrase in group_summary for phrase in banned):
+            raise ValueError(f"AI frontier: internal classification copy leaked in {group_name} summary")
+        if not isinstance(items, list) or len(items) > limit:
+            raise ValueError(f"AI frontier: {group_name} must contain at most {limit} items")
+        for item in items:
+            title = str(item.get("title", ""))
+            summary = str(item.get("summary", ""))
+            visible = f"{title} {summary}"
+            if not re.search(r"[\u4e00-\u9fff]", title) or not re.search(r"[\u4e00-\u9fff]", summary):
+                raise ValueError(f"AI frontier: visible copy must be Chinese-first: {title or '<missing title>'}")
+            if any(phrase in visible for phrase in banned) or item.get("status") == "active":
+                raise ValueError(f"AI frontier: internal classification copy leaked: {title}")
+            url = str(item.get("url", "")).strip()
+            if url:
+                if url in seen_urls:
+                    raise ValueError(f"AI frontier: duplicate story across groups: {url}")
+                seen_urls.add(url)
+
+    for item in ai_news.get("items", []):
+        if not re.search(r"[\u4e00-\u9fff]", str(item.get("title", ""))):
+            raise ValueError("AI frontier: ai-news titles must be Chinese-first")
+
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/sync_ai_last30.py"), "--self-test"],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError("AI frontier: collector self-test failed: " + result.stdout.strip())
+    return "AI frontier: Chinese facts, ranking, deduplication, and collector checks are valid"
+
+
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
@@ -408,6 +464,7 @@ def main():
     checks.append(check_project_meta())
     checks.append(check_project_status())
     checks.append(check_dashboard_weather())
+    checks.append(check_ai_frontier_brief())
     checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))

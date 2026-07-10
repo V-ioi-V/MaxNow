@@ -344,7 +344,7 @@ python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断或独立项目状态。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`market-indices` 会刷新纳指100、标普500、上证指数、深证成指和创业板指，数据源为腾讯公开行情接口。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 `dash/data/project-status.*` 的当前主线 / 待推进、来源时间、生成时间和内容指纹；ROADMAP Now / Next / Done 变化后必须执行，且不会修改 `dashboard.today`。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Windows 兼容本机 Codex 源账本并合并统一 Token 总账；`codex-macos-usage` 刷新 macOS 本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新免费 AI 外部信号和 Last-30 滚动记忆，采集脚本本身不调用模型、不消耗 token。
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断或独立项目状态。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`market-indices` 会刷新纳指100、标普500、上证指数、深证成指和创业板指，数据源为腾讯公开行情接口。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 `dash/data/project-status.*` 的当前主线 / 待推进、来源时间、生成时间和内容指纹；ROADMAP Now / Next / Done 变化后必须执行，且不会修改 `dashboard.today`。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Windows 兼容本机 Codex 源账本并合并统一 Token 总账；`codex-macos-usage` 刷新 macOS 本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新中文 AI 前沿简报和 Last-30 滚动记忆，优先正式发布、过滤客户案例并跨栏目去重；采集脚本本身不调用模型、不消耗 token。
 
 刷新服务器 Codex Token 用量：
 
@@ -582,7 +582,7 @@ python3 scripts/check.py
 
 市场涨幅卡读取 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 写入并同步生成 `dash/data/market-indices.js`。当前指数为纳指100、标普500、上证指数、深证成指和创业板指；脚本保存点位、昨收、涨跌幅和压缩后的 1 日分钟走势点。前端只读本地数据，不直接请求第三方行情接口。
 
-刷新免费 AI 外部信号和 Last-30：
+刷新中文 AI 前沿简报和 Last-30：
 
 ```bash
 cd /var/www/maxnow-dashboard

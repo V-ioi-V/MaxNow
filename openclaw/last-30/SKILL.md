@@ -40,11 +40,11 @@ If the data shape, page structure, or product boundary needs to change, stop and
 
 ## Goal
 
-Keep a concise rolling memory of:
+Keep a concise rolling Chinese frontier-news memory of:
 
-- today's important external AI signals
-- this week's AI changes
-- recent 30-day AI mainlines
+- the latest 1-3 concrete AI releases
+- this week's additional, non-duplicate frontier changes
+- recent 30-day concrete milestones, not keyword buckets
 - potential impact on MaxNow, Codex, OpenClaw, model choices, or token cost
 - watch items and uncertain signals
 - judgments that still need owner confirmation
@@ -67,7 +67,7 @@ Preserve this shape when possible:
   "sourceSummary": "Last-30 rolling context",
   "today": {
     "date": "YYYY-MM-DD",
-    "title": "今日 AI 信号",
+    "title": "最新发布",
     "summary": "一句话摘要。",
     "items": [
       {
@@ -83,13 +83,13 @@ Preserve this shape when possible:
   },
   "week": {
     "range": "YYYY-MM-DD/YYYY-MM-DD",
-    "title": "本周 AI 变化",
+    "title": "本周前沿",
     "summary": "一句话摘要。",
     "items": []
   },
   "last30": {
     "range": "YYYY-MM-DD/YYYY-MM-DD",
-    "title": "近 30 天 AI 主线",
+    "title": "近 30 天关键进展",
     "summary": "一句话摘要。",
     "mainlines": [],
     "decisions": [],
@@ -118,6 +118,15 @@ Prefer automatic facts:
 - GDELT/free news index results when available
 - already-collected candidates from `scripts/sync_ai_last30.py`
 
+Visible output rules:
+
+- Use Chinese fact titles and concrete Chinese summaries; brand names and product identifiers may stay in English.
+- Prioritize official model launches, API/agent capability changes, pricing/access changes, major open-source releases, and material research results.
+- Exclude customer stories, partnerships, generic enterprise adoption, education events, pure SDK version numbers, and updated-package releases.
+- Deduplicate the same topic across latest, week, and 30-day groups.
+- Never emit `active`, `自动归类`, `来源较稳`, `自动观察`, or generic advice such as `关注它的影响` as user-facing content.
+- Preserve official links and optional `originalTitle` for traceability.
+
 Be careful with judgments:
 
 - Do not invent impact on the owner.
@@ -127,9 +136,9 @@ Be careful with judgments:
 
 Keep arrays compact:
 
-- `today.items`: 1-5
-- `week.items`: 3-7
-- `last30.mainlines`: 3-6
+- `today.items`: 1-3
+- `week.items`: 0-4
+- `last30.mainlines`: 0-5
 - `last30.decisions`: 0-6
 - `last30.waiting`: 0-6
 
@@ -151,4 +160,4 @@ If a source fails, keep the last safe value and add a short waiting item if the 
 
 ## Good Output Style
 
-Use short operational Chinese inside JSON string fields. Avoid hype, long reports, and markdown.
+Use short factual Chinese inside JSON string fields. Prefer “OpenAI 正式发布 GPT-5.6” and “已向 ChatGPT、Codex 与 API 开放” over raw English titles or generic “建议关注” language. Avoid hype, long reports, and markdown.

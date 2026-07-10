@@ -1,35 +1,38 @@
 {
-  "updatedAt": "2026-07-05 22:28",
-  "sourceSummary": "免费 AI 外部信号",
+  "updatedAt": "2026-07-10 21:30",
+  "sourceSummary": "AI 前沿简报 · 官方来源优先",
   "items": [
     {
-      "source": "Anthropic",
-      "title": "Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale",
-      "summary": "Anthropic：Introducing Claude Sonnet 5 Sonnet 5 delivers frontier performance across coding, agents, and professional work at scale；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
-      "url": "https://www.anthropic.com/news/claude-sonnet-5",
-      "publishedAt": "2026-06-30",
-      "signal": "official"
+      "source": "OpenAI",
+      "title": "OpenAI 正式发布 GPT-5.6",
+      "summary": "GPT-5.6 Sol、Terra 和 Luna 已向 ChatGPT、Codex 与 API 全面开放，并新增 max / ultra 推理档位、多智能体测试版和程序化工具调用。",
+      "url": "https://openai.com/index/gpt-5-6",
+      "publishedAt": "2026-07-09",
+      "signal": "official",
+      "originalTitle": "GPT-5.6: Frontier intelligence that scales with your ambition"
     },
     {
       "source": "OpenAI",
-      "title": "How agents are transforming work",
-      "summary": "OpenAI：A new OpenAI research paper shows how AI agents are transforming work, enabling longer, more complex tasks and expanding productiv；关注它对模型能力、产品入口、agent 使用方式或成本结构的影响。",
-      "url": "https://openai.com/index/how-agents-are-transforming-work",
-      "publishedAt": "2026-06-25",
-      "signal": "official"
+      "title": "OpenAI 发布 ChatGPT Work 长时任务 Agent",
+      "summary": "ChatGPT Work 可跨应用和文件执行任务、持续工作数小时，并把目标整理成可交付成果。",
+      "url": "https://openai.com/index/chatgpt-for-your-most-ambitious-work",
+      "publishedAt": "2026-07-09",
+      "signal": "official",
+      "originalTitle": "ChatGPT is now a partner for your most ambitious work"
     },
     {
-      "source": "Hacker News",
-      "title": "Show HN: Built an open-source local firewall for AI coding agents",
-      "summary": "Hacker News：Show HN: Built an open-source local firewall for AI coding agents；这是社区热度信号，适合用来判断新工具或新方向是否正在扩散。",
-      "url": "https://news.ycombinator.com/item?id=48456339",
-      "publishedAt": "2026-06-09",
-      "signal": "community"
+      "source": "OpenAI",
+      "title": "OpenAI 发布 GPT-Live 实时语音模型",
+      "summary": "新一代实时语音模型已用于 ChatGPT Voice，重点改善自然对话、噪声处理和打断体验。",
+      "url": "https://openai.com/index/introducing-gpt-live",
+      "publishedAt": "2026-07-08",
+      "signal": "official",
+      "originalTitle": "Introducing GPT-Live"
     }
   ],
   "notes": {
     "partialFailures": [
-      "fetch_gdelt: HTTP Error 429: Too Many Requests",
+      "fetch_gdelt: <urlopen error _ssl.c:990: The handshake operation timed out>",
       "fetch_arxiv: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1007)>"
     ],
     "policy": "失败源不会清空已有页面；下一次同步会继续尝试。"
