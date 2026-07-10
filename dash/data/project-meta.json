@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 14:53",
-  "version": "1.0.2.01",
-  "versionLabel": "v1.0.2.01",
-  "branch": "bugfix/token-update-card-width",
-  "commit": "b5cdd83",
+  "updatedAt": "2026-07-10 15:00",
+  "version": "1.0.2.02",
+  "versionLabel": "v1.0.2.02",
+  "branch": "bugfix/weather-cma-source",
+  "commit": "8793649",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/token-update-card-width · commit b5cdd83 · 有未提交代码改动",
+  "deployNote": "bugfix/weather-cma-source · commit 8793649 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "修复海淀降雨被显示为阴天",
+      "summary": "北京天气从 Open-Meteo 默认 Best Match 切换到中国气象局 CMA / GRAPES 模型；同一时刻默认模型返回阴且降水为 0，CMA 模型返回阵雨和 2.3mm 降水。"
+    },
     {
       "date": "2026-07-10",
       "title": "收紧 Token 来源更新时间卡",
@@ -28,11 +33,6 @@
       "date": "2026-07-10",
       "title": "为私人 Dash 启用账号密码访问保护",
       "summary": "nginx Basic Auth 已覆盖 `dash.maxnow.cn` 首页、静态资源和 `/data/`；未认证请求与直接源站访问均返回 401，正确凭据返回 200。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "统一 Token 活跃时长与固定小时上报周期",
-      "summary": "Codex collector 新增 `task_complete.duration_ms` 统计，Token 页按 1d / 7d / 30d / all 展示已完成任务的活跃时长，并在来源与会话中展示对应时长；轮次间空闲时间不计入。"
     }
   ]
 }

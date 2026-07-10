@@ -322,14 +322,18 @@ UPDATE_LOG.md
   "condition": "晴",
   "icon": "sun",
   "tempC": 22,
+  "precipitationMm": 0,
+  "rainMm": 0,
+  "showersMm": 0,
   "highC": 35,
   "lowC": 23,
   "updatedAt": "2026-06-23 20:04",
-  "source": "Open-Meteo"
+  "source": "Open-Meteo / CMA",
+  "sourceModel": "CMA GRAPES"
 }
 ```
 
-`icon` 支持 `sun`、`cloud`、`rain`、`storm`、`snow`、`fog`。页面只读取这些字段展示，不从浏览器端请求天气 API。日常刷新由 `scripts/sync_weather.py` 更新 `dashboard.json` 并重新生成 `dashboard.js`；服务器 `runtime` 定时任务会一并运行该刷新。
+`icon` 支持 `sun`、`cloud`、`rain`、`storm`、`snow`、`fog`。北京天气使用 Open-Meteo 的中国气象局 CMA / GRAPES 模型，并保存当前 `precipitationMm`、`rainMm`、`showersMm`；当模型天气码仍为云而当前降水量大于 0 时，按雨或阵雨展示，避免正在降水时只显示阴天。页面只读取这些字段展示，不从浏览器端请求天气 API。日常刷新由 `scripts/sync_weather.py` 更新 `dashboard.json` 并重新生成 `dashboard.js`；服务器 `runtime` 定时任务会一并运行该刷新。
 
 `dash/data/ai-news.json` 只负责首页展示用的外部 AI 输入，通常取 Last-30 外部信号中的 0-3 条高相关内容。
 

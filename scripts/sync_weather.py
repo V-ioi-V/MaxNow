@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DASHBOARD_JSON = ROOT / "dash" / "data" / "dashboard.json"
 DASHBOARD_JS = ROOT / "dash" / "data" / "dashboard.js"
 GLOBAL_NAME = "MAXNOW_DASHBOARD_DATA"
+WEATHER_API_URL = "https://api.open-meteo.com/v1/cma"
 
 LOCATION = {
     "city": "北京市",
@@ -68,19 +69,24 @@ def fetch_weather():
     params = {
         "latitude": LOCATION["latitude"],
         "longitude": LOCATION["longitude"],
-        "current": "temperature_2m,weather_code,is_day",
+        "current": "temperature_2m,weather_code,precipitation,rain,showers,is_day",
         "daily": "weather_code,temperature_2m_max,temperature_2m_min",
         "timezone": "Asia/Shanghai",
         "forecast_days": 1,
     }
-    url = "https://api.open-meteo.com/v1/forecast?" + urllib.parse.urlencode(params)
+    url = WEATHER_API_URL + "?" + urllib.parse.urlencode(params)
     request = urllib.request.Request(url, headers={"User-Agent": "MaxNow weather sync"})
     with urllib.request.urlopen(request, timeout=12) as response:
         payload = json.loads(response.read().decode("utf-8"))
 
     current = payload.get("current") or {}
     daily = payload.get("daily") or {}
+    precipitation = float(current.get("precipitation") or 0)
+    rain = float(current.get("rain") or 0)
+    showers = float(current.get("showers") or 0)
     code = int(current.get("weather_code", daily.get("weather_code", [3])[0]))
+    if precipitation > 0 and code < 50:
+        code = 80 if showers > 0 else 61
     condition, icon = WEATHER_CODES.get(code, ("天气", "cloud"))
     daily_code = daily.get("weather_code", [code])[0]
     daily_condition, daily_icon = WEATHER_CODES.get(int(daily_code), (condition, icon))
@@ -93,11 +99,16 @@ def fetch_weather():
         "weatherCode": code,
         "dailyWeatherCode": int(daily_code),
         "tempC": current.get("temperature_2m"),
+        "precipitationMm": precipitation,
+        "rainMm": rain,
+        "showersMm": showers,
         "highC": (daily.get("temperature_2m_max") or [None])[0],
         "lowC": (daily.get("temperature_2m_min") or [None])[0],
         "isDay": bool(current.get("is_day", 1)),
         "updatedAt": datetime.now().astimezone().strftime("%Y-%m-%d %H:%M"),
-        "source": "Open-Meteo",
+        "observedAt": current.get("time"),
+        "source": "Open-Meteo / CMA",
+        "sourceModel": "CMA GRAPES",
         "sourceUrl": url,
     }
 
@@ -111,6 +122,7 @@ def main():
         "[ok] updated weather "
         f"location=Beijing-Haidian code={weather['weatherCode']} icon={weather['icon']} "
         f"tempC={round(float(weather['tempC']))} "
+        f"precipitationMm={weather['precipitationMm']:.1f} "
         f"rangeC={round(float(weather['highC']))}/{round(float(weather['lowC']))}"
     )
 

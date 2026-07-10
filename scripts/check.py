@@ -389,6 +389,9 @@ def check_dashboard_weather():
             value = float(weather[key])
             if value < -50 or value > 60:
                 raise ValueError(f"dashboard weather: {key} is out of range")
+        for key in ["precipitationMm", "rainMm", "showersMm"]:
+            if key in weather and float(weather[key]) < 0:
+                raise ValueError(f"dashboard weather: {key} cannot be negative")
     return "dashboard weather: shape is valid"
 
 
