@@ -607,6 +607,17 @@ runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后
 verification: python3 scripts/check.py ok；nginx -t ok；线上源文件确认圆环、环内百分比、环外时间均存在，旧竖轴代码已移除。
 ```
 
+2026-07-10 已部署全部非首页页面统一视觉：
+
+```text
+deployed commit: 18c8c67 feat: unify secondary tab styling
+changes: 豆奶、Token、云服务、生活和同行记统一使用 secondary-view / secondary-page-head；共用顶部 4px 主题线、轻色渐变白底、圆角、阴影、hover / focus 和状态 pill，各页保留自己的语义色；缓存提升到 styles.css?v=132，版本提升到 1.0.4.00。
+runtime data backup before deploy: /tmp/maxnow-pre-secondary-style-20260710-233245
+runtime data stash before deploy: pre-secondary-style-20260710-233245
+runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后恢复全部运行数据，再重新生成 project-meta。
+verification: 五页桌面并列卡同顶同底；390px 窄屏全部单列且 overflow=0；python3 scripts/check.py ok；nginx -t ok；线上源文件确认五个 secondary view / page head 均存在，Home 未继承该外壳。
+```
+
 刷新 Home 天气卡：
 
 ```bash
