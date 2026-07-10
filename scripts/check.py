@@ -484,6 +484,10 @@ def check_today_progress_ring():
         raise ValueError("Today progress ring: circular theme progress style is missing")
     if "grid-template-columns: 140px minmax(0, 1fr)" not in dashboard_css or "gap: 30px" not in dashboard_css:
         raise ValueError("Today progress ring: meter and signal columns are not separated")
+    if "grid-template-columns: minmax(0, 1fr) 140px minmax(0, 1fr)" not in dashboard_css:
+        raise ValueError("Today progress ring: desktop meter is not centered in equal side columns")
+    if ".summary-live {\n    display: contents;" not in dashboard_css:
+        raise ValueError("Today progress ring: desktop live group does not expose the centered grid columns")
     if "grid-template-rows: repeat(4, minmax(0, 1fr))" not in dashboard_css:
         raise ValueError("Today progress ring: signal rows are not evenly distributed")
     if 'setProperty("--today-progress-angle", progressAngle)' not in dashboard_js:
@@ -495,11 +499,13 @@ def check_today_progress_ring():
         raise ValueError("Today progress ring: retired vertical axis remains")
     if (
         ".summary-live-item::before" not in dashboard_css
-        or "top: 50%" not in dashboard_css
-        or "transform: translateY(-50%)" not in dashboard_css
+        or "position: static" not in dashboard_css
+        or "grid-column: 1" not in dashboard_css
+        or "grid-row: 1" not in dashboard_css
+        or "align-self: center" not in dashboard_css
     ):
         raise ValueError("Today progress ring: signal node alignment rule is missing")
-    return "Today progress ring: title freshness, separated columns, equal rows, outside time, and centered nodes are valid"
+    return "Today progress ring: centered meter, equal side columns, first-line nodes, and responsive fallbacks are valid"
 
 
 def check_secondary_view_style():
@@ -525,7 +531,7 @@ def check_secondary_view_style():
     )
     if any(rule not in dashboard_css for rule in required_css):
         raise ValueError("secondary views: shared theme, accent, or card rules are incomplete")
-    if "styles.css?v=133" not in dashboard_html:
+    if "styles.css?v=134" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     return "secondary views: five tabs share page heads, theme accents, card shells, and responsive rules"
 
