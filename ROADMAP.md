@@ -37,6 +37,55 @@
 
 ## Next
 
+### 为私人 Dash 增加访问保护
+
+- 来源：2026-07-10 MaxNow 整体体检。
+- 建议分支：`bugfix/dash-access-protection`
+- 第一阶段优先在 nginx 为 `dash.maxnow.cn` 及 `/data/` 增加 Basic Auth；Owner 仍使用原网址访问，只在新设备或登录态失效时输入专用用户名和密码。
+- `blog.maxnow.cn` 继续保持公开，不与 Dash 共用访问限制。
+- 第二阶段可评估 Cloudflare Access 邮箱一次性验证码，让 Windows、macOS 和手机从任意网络访问时不必维护固定 IP 或安装 VPN 客户端。
+- 补充 CSP、`X-Content-Type-Options`、`Referrer-Policy` 等安全响应头，并隐藏不必要的 nginx 版本信息。
+- 更新 `DEPLOY.md` 和 `SERVER_RUNBOOK.md`，记录访问、密码轮换、紧急恢复和验证命令；真实用户名、密码和验证码不得写入仓库。
+
+### 修复 Home 项目状态可信度
+
+- 来源：2026-07-10 MaxNow 整体体检。
+- 建议分支：`bugfix/home-project-status`
+- 清理 `dashboard.json` 中已经完成或与当前事实矛盾的“待推进”，例如 Token 真数据已接入、Last-30 已进入日常自动更新后仍显示旧草稿描述。
+- 明确 `ROADMAP.md`、Owner 人工判断和自动生成项目状态之间的优先级；定时 `runtime` 继续不得擅自覆盖 Owner 判断。
+- 在路线图或功能状态完成合并后，增加明确的 `project-status` 刷新步骤，避免 Home 长期展示旧任务。
+- 为生成状态记录来源和更新时间；状态过期或来源不一致时，页面应提示“待确认 / 待刷新”，不能继续把旧内容当作当前建议。
+- 扩展校验：Home action 不应引用 `ROADMAP.md` 已完成项，也不应继续描述已经落地的数据链路为“未接入”。
+
+### 建立数据失败与新鲜度闭环
+
+- 来源：2026-07-10 MaxNow 整体体检。
+- 建议分支：`feature/data-health-states`
+- 区分“真实为 0 / 暂无记录 / 请求失败 / 数据过期 / 尚未同步”，避免 JSON 请求失败后静默显示空数据。
+- 为所有 Owner 可见数据源统一输出最后成功时间、当前状态和可读错误摘要；Home 数据同步状态应覆盖豆奶、同行记、生活等实际展示的数据源。
+- 明确 `.js` wrapper 的定位：要么实现 JSON 失败后按需加载 wrapper，要么取消“运行时兜底”描述，只保留生成一致性用途。
+- 评估保留浏览器侧最后一次成功数据，让短时网络故障不会把完整页面降级成多个空卡片。
+- 给关键自动化增加连续失败告警，不只依赖 Owner 主动打开 Home 查看时间戳。
+
+### 补齐前端自动测试、无障碍与移动端验证
+
+- 来源：2026-07-10 MaxNow 整体体检。
+- 建议分支：`feature/frontend-smoke-tests`
+- 在 CI 或本地统一命令中启动静态服务，检查 Dash 六个 tab、Blog 主要页面、控制台错误、失效资源和关键交互。
+- 增加 JavaScript 语法检查和关键数据新鲜度 / Roadmap 一致性检查；自动测试环境中本地服务不可达应判失败，不再仅显示 skipped。
+- 为 Home 同行卡、Today Status 时间轴和主要网格增加桌面 / 手机几何断言，检查同排卡片上下边缘、高度和水平溢出。
+- 为侧栏当前页面补 `aria-current`，为 Token 范围补完整 tab 语义、`aria-selected` 和键盘行为。
+- 补 390px 左右手机宽度的真实浏览器回归测试，再决定是否需要移动端导航或卡片密度调整。
+
+### 收紧外部依赖和链接安全
+
+- 来源：2026-07-10 MaxNow 整体体检。
+- 建议分支：`bugfix/frontend-external-safety`
+- 外部数据中的链接只允许 `https:` / `http:`，拒绝 `javascript:` 等非预期协议，并统一使用 `rel="noopener noreferrer"`。
+- 评估把 Leaflet 静态资源放入仓库，减少 unpkg 不可用、供应链变化或 CSP 收紧后导致同行记地图失效的风险。
+- 保留地图 fallback，并明确提示当前展示的是真实在线地图还是静态 fallback；评估第三方瓦片请求的隐私影响。
+- 为将来的严格 CSP 预先梳理 Dash / Blog 所需的脚本、样式、图片和地图来源，避免上线访问控制后仍保留过宽的外部资源权限。
+
 ### 让 Last-30 免费 AI 信号稳定运行
 
 - 当前已新增 `scripts/sync_ai_last30.py`，并已接入服务器 `MAXNOW-AI-LAST30-SYNC` 每天 00:00 自动刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
@@ -60,12 +109,6 @@
 - 尝试让服务器上的噗噗 / OpenClaw 每天通过 cron 汇总 personal-wiki 当天或近期未完成待办，并主动提醒 Owner。
 - 先确认提醒渠道、发送时间、消息格式和失败日志位置；真实发送消息前需要 Owner 明确确认发送目标和内容边界。
 - 数据源优先复用现有 `scripts/sync_wiki_todos.py` / `dash/data/wiki-todos.*`，避免前端或 cron 直接暴露 private personal-wiki 权限。
-
-### 补充访问控制和隐私策略
-
-- 选择 v1 的保护方式：Basic Auth、VPN、IP 限制、反代鉴权或其他方式。
-- 明确 HTTPS / 域名 / 反代配置。
-- 更新 `DEPLOY.md`。
 
 ## Later
 

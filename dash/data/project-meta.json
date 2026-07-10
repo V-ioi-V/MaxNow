@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 09:18",
-  "version": "1.0.0.49",
-  "versionLabel": "v1.0.0.49",
-  "branch": "feature/version-update-after-external",
-  "commit": "7c489ed",
+  "updatedAt": "2026-07-10 10:04",
+  "version": "1.0.0.50",
+  "versionLabel": "v1.0.0.50",
+  "branch": "feature/maxnow-audit-roadmap",
+  "commit": "d15b4fc",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/version-update-after-external · commit 7c489ed · 有未提交代码改动",
+  "deployNote": "feature/maxnow-audit-roadmap · commit d15b4fc · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "记录 MaxNow 整体体检后的优化路线",
+      "summary": "在 `ROADMAP.md` 增加 Dash 访问保护、Home 项目状态可信度、数据失败与新鲜度闭环、前端自动测试 / 无障碍 / 移动端验证、外部依赖和链接安全等可执行任务。"
+    },
     {
       "date": "2026-07-10",
       "title": "调整 Home 版本更新模块位置",
@@ -28,11 +33,6 @@
       "date": "2026-07-08",
       "title": "将 Today Status 竖线改为今日时间轴",
       "summary": "Today Status 右侧竖线改为按 00:00-24:00 推进的今日进度轴，显示 00:00、当前时间和 24:00。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "移除 Home 今日记录模块",
-      "summary": "从 Home 左侧内容流移除“今日记录 / Daily Log”模块，避免静态项目原则被误认为当天真实日志。"
     }
   ]
 }

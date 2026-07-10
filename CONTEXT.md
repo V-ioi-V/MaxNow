@@ -221,6 +221,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 ## 当前缺口
 
+- 2026-07-10 整体体检确认下一阶段优先从“继续增加功能”转向“可信状态工作站”：先为 `dash.maxnow.cn` 和 `/data/` 增加访问保护，再修复 Home 项目状态与实际完成情况不一致、JSON 读取失败静默显示空数据、wrapper 兜底定位不清、自动测试覆盖不足、无障碍状态缺失和外部依赖安全等问题；可执行条目以 `ROADMAP.md` 为准。
 - Home 页面已将外部输入收敛为单一 Last-30 展示模块：左栏最新信号、中栏本周观察、右栏近 30 天主线；不再额外铺一张重复的 AI 外部输入卡。2026-07-05 已收紧外露口径，把左栏从 Today 改成最新信号，并把 `confidence` 和右侧数量解释为来源/候选归类而非权威判断。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天实际使用流量、日均可用、签到流量和签到时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本由 9:00 cron 管理，真实流量日结由 00:05 traffic-only cron 管理。
 - 2026-07-05 已接入豆奶真实流量使用抓取和 00:05 日结：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；`--traffic-only --exclude-today` 模式会把当天从 direct daily 和 `traffic_usage_history` 中剔除，避免 00:05 的当天碎片污染近 30 天实际使用口径。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。
@@ -251,6 +252,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 ## 建议下一步
 
-1. 为 `blog.maxnow.cn` 补静态博客构建链路：发布 manifest、Markdown 转换、图片复制、文章列表、标签归档和 nginx 配置。
-2. 观察 Last-30 免费 AI 外部信号的来源稳定性，并在必要时替换长期失败的免费源。
-3. 观察 00:05 豆奶 traffic closeout 连续运行情况；`traffic_usage_history` 累积满 30 天后，“近 30 天实际使用流量”图会自然从已完成日期展示完整窗口。
+1. 为 `dash.maxnow.cn` 及 `/data/` 增加访问保护；第一阶段优先 nginx Basic Auth，后续再评估 Cloudflare Access 邮箱验证码，`blog.maxnow.cn` 保持公开。
+2. 修复 Home 项目状态可信度和数据读取失败提示，避免已完成任务或请求失败继续被显示成当前建议 / 真实为 0。
+3. 补前端 smoke test、JavaScript 语法检查、移动端几何回归和无障碍状态，再继续扩展 Blog 发布链路。
+4. 观察 Last-30 免费源和豆奶 00:05 traffic closeout 的连续稳定性。
