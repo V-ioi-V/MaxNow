@@ -941,7 +941,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 .summary-live-meter span {
   position: absolute;
   left: 26px;
-  bottom: 16px;
+  top: 16px;
   width: 6px;
   height: calc((100% - 32px) * var(--today-progress-ratio, 0));
   z-index: 1;
@@ -966,7 +966,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   content: "";
   position: absolute;
   left: 22px;
-  bottom: calc(16px + (100% - 32px) * var(--today-progress-ratio, 0));
+  top: calc(16px + (100% - 32px) * var(--today-progress-ratio, 0));
   width: 14px;
   height: 14px;
   z-index: 2;
@@ -974,6 +974,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   border-radius: 999px;
   background: var(--cyan);
   box-shadow: 0 6px 16px rgba(0, 166, 200, 0.22);
+  transform: translateY(-50%);
 }
 
 .summary-live-start,
@@ -996,8 +997,8 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .summary-live-meter strong {
   right: 40px;
-  bottom: clamp(30px, calc(16px + (100% - 32px) * var(--today-progress-ratio, 0)), calc(100% - 30px));
-  transform: translateY(50%);
+  top: clamp(30px, calc(16px + (100% - 32px) * var(--today-progress-ratio, 0)), calc(100% - 30px));
+  transform: translateY(-50%);
   color: var(--cyan);
   font-size: 11px;
 }

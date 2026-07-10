@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 15:00",
-  "version": "1.0.2.02",
-  "versionLabel": "v1.0.2.02",
-  "branch": "bugfix/weather-cma-source",
-  "commit": "8793649",
+  "updatedAt": "2026-07-10 20:59",
+  "version": "1.0.2.03",
+  "versionLabel": "v1.0.2.03",
+  "branch": "bugfix/today-status-alignment",
+  "commit": "701833d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/weather-cma-source · commit 8793649 · 有未提交代码改动",
+  "deployNote": "bugfix/today-status-alignment · commit 701833d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "修正 Today Status 时间轴方向与当前时间对齐",
+      "summary": "将 00:00-24:00 今日进度轴统一为从上向下推进，当前时间圆点、时间文字和进度填充共用同一坐标方向。"
+    },
     {
       "date": "2026-07-10",
       "title": "修复海淀降雨被显示为阴天",
@@ -28,11 +33,6 @@
       "date": "2026-07-10",
       "title": "轮换私人 Dash 访问密码",
       "summary": "已轮换 `dash.maxnow.cn` 的 nginx Basic Auth 密码；用户名保持 `maxnow`，真实密码和哈希均未写入仓库。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "为私人 Dash 启用账号密码访问保护",
-      "summary": "nginx Basic Auth 已覆盖 `dash.maxnow.cn` 首页、静态资源和 `/data/`；未认证请求与直接源站访问均返回 401，正确凭据返回 200。"
     }
   ]
 }
