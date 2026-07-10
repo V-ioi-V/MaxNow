@@ -1,14 +1,24 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-09 00:13",
-  "version": "1.0.0.47",
-  "versionLabel": "v1.0.0.47",
-  "branch": "feature/home-status-metrics",
-  "commit": "eac9f3a",
+  "updatedAt": "2026-07-10 09:18",
+  "version": "1.0.0.49",
+  "versionLabel": "v1.0.0.49",
+  "branch": "feature/version-update-after-external",
+  "commit": "7c489ed",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/home-status-metrics · commit eac9f3a · 有未提交代码改动",
+  "deployNote": "feature/version-update-after-external · commit 7c489ed · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "调整 Home 版本更新模块位置",
+      "summary": "将“最近更新”改名为“版本更新”，并移动到外部输入模块下方。"
+    },
+    {
+      "date": "2026-07-10",
+      "title": "修复 Today Status 当前时间与进度轴重叠",
+      "summary": "将 00:00、当前时间和 24:00 的右边缘统一锚定在进度轴左侧，并为当前时间与进度圆点保留固定间距。"
+    },
     {
       "date": "2026-07-09",
       "title": "替换 Home 顶部状态小卡",
@@ -23,16 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-08",
       "title": "移除 Home 今日记录模块",
       "summary": "从 Home 左侧内容流移除“今日记录 / Daily Log”模块，避免静态项目原则被误认为当天真实日志。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "调整 Token 来源同步位置",
-      "summary": "Token 页“各来源最后同步”改回显示具体时间 `YYYY-MM-DD HH:mm`，不再使用“今天 / 昨天 / X 分钟前”这类相对时间。"
-    },
-    {
-      "date": "2026-07-08",
-      "title": "移除 Home 稍后留意模块",
-      "summary": "从 Home 左侧内容流移除“稍后留意 / Links”模块，避免 Roadmap 任务、服务器链路和文档入口重复占用首页空间。"
     }
   ]
 };
