@@ -398,6 +398,9 @@ def check_dashboard_weather():
 def check_ai_frontier_brief():
     data = load_json(ROOT / "dash/data/last-30.json")
     ai_news = load_json(ROOT / "dash/data/ai-news.json")
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     groups = [
         ("today", data.get("today", {}).get("items", []), 3),
         ("week", data.get("week", {}).get("items", []), 4),
@@ -437,6 +440,22 @@ def check_ai_frontier_brief():
         if not re.search(r"[\u4e00-\u9fff]", str(item.get("title", ""))):
             raise ValueError("AI frontier: ai-news titles must be Chinese-first")
 
+    for label in ("最近 3 天", "本周", "近 30 天"):
+        if f"<span>{label}</span>" not in dashboard_html:
+            raise ValueError(f"AI frontier: visible time-range label is missing: {label}")
+    retired_ids = (
+        "last30-today-title",
+        "last30-week-title",
+        "last30-mainline-title",
+        "last30-today-summary",
+        "last30-week-summary",
+        "last30-mainline-summary",
+    )
+    if any(retired_id in dashboard_html or retired_id in dashboard_js for retired_id in retired_ids):
+        raise ValueError("AI frontier: redundant column title or summary rendering remains")
+    if ".last30-summary" in dashboard_css or ".last30-column-head strong" in dashboard_css:
+        raise ValueError("AI frontier: retired column heading styles remain")
+
     result = subprocess.run(
         [sys.executable, str(ROOT / "scripts/sync_ai_last30.py"), "--self-test"],
         cwd=ROOT,
@@ -448,7 +467,7 @@ def check_ai_frontier_brief():
     )
     if result.returncode != 0:
         raise ValueError("AI frontier: collector self-test failed: " + result.stdout.strip())
-    return "AI frontier: Chinese facts, ranking, deduplication, and collector checks are valid"
+    return "AI frontier: compact time-range headings, Chinese facts, ranking, deduplication, and collector checks are valid"
 
 
 def check_today_axis():

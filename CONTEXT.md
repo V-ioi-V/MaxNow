@@ -227,7 +227,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 ## 当前缺口
 
 - 2026-07-10 整体体检推动 MaxNow 从“继续增加功能”转向“可信状态工作站”。`dash.maxnow.cn` 和 `/data/` 已由自定义登录页、nginx `auth_request` 和服务器本机 Cookie 认证服务保护，Blog 保持公开；后续重点转为 JSON 读取失败与新鲜度闭环、wrapper 定位、自动测试、无障碍状态和外部依赖安全。Home 项目状态可信度已通过独立 `project-status.*`、ROADMAP 指纹校验和过期提示完成修复；可执行条目以 `ROADMAP.md` 为准。
-- Home 页面已将旧外部输入重构为单一中文 AI 前沿模块：三栏分别展示最新发布、本周前沿和近 30 天关键进展；只展示中文事实标题、具体变化、来源和日期，英文原题仅保存在数据里追溯，页面不再出现 `confidence`、候选数量、关键词自动归类或“关注它”等套话。
+- Home 页面已将旧外部输入重构为单一中文 AI 前沿模块：三栏数据分别为最新发布、本周前沿和近 30 天关键进展，栏头只显示蓝色时间范围“最近 3 天 / 本周 / 近 30 天”，不再重复黑色栏目名和栏目简介；新闻卡片只展示中文事实标题、具体变化、来源和日期，英文原题仅保存在数据里追溯，页面不再出现 `confidence`、候选数量、关键词自动归类或“关注它”等套话。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天实际使用流量、日均可用、签到流量和签到时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本由 9:00 cron 管理，真实流量日结由 00:05 traffic-only cron 管理。
 - 2026-07-05 已接入豆奶真实流量使用抓取和 00:05 日结：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；`--traffic-only --exclude-today` 模式会把当天从 direct daily 和 `traffic_usage_history` 中剔除，避免 00:05 的当天碎片污染近 30 天实际使用口径。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。
 - 2026-07-06 已修复豆奶 Playwright 运行时缺失：补齐 `/root/.cache/ms-playwright/chromium_headless_shell-1208` 后，手动跑 `/root/.openclaw/daily_checkin.sh` 补入当天签到，今日数据为 768 MB、1 豆丁、延长 2.96 小时；随后运行 `gen_checkin_data.py --traffic-only --exclude-today`，线上 `account` 和 `traffic_usage` 不再带 `stale` / `last_error`。

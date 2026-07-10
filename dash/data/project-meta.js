@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 22:57",
-  "version": "1.0.3.02",
-  "versionLabel": "v1.0.3.02",
-  "branch": "bugfix/today-axis-alignment",
-  "commit": "43d718b",
+  "updatedAt": "2026-07-10 23:09",
+  "version": "1.0.3.03",
+  "versionLabel": "v1.0.3.03",
+  "branch": "bugfix/ai-column-headings",
+  "commit": "718627d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/today-axis-alignment · commit 43d718b · 有未提交代码改动",
+  "deployNote": "bugfix/ai-column-headings · commit 718627d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "精简 AI 前沿三栏栏头",
+      "summary": "三栏只保留蓝色时间范围“最近 3 天 / 本周 / 近 30 天”，删除重复的黑色栏目名和栏目简介，新闻卡片直接接在时间范围下方。"
+    },
     {
       "date": "2026-07-10",
       "title": "反转 Today Status 时间轴并校正信号节点",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-10",
       "title": "修正 Today Status 时间轴方向与当前时间对齐",
       "summary": "将 00:00-24:00 今日进度轴统一为从上向下推进，当前时间圆点、时间文字和进度填充共用同一坐标方向。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "修复海淀降雨被显示为阴天",
-      "summary": "北京天气从 Open-Meteo 默认 Best Match 切换到中国气象局 CMA / GRAPES 模型；同一时刻默认模型返回阴且降水为 0，CMA 模型返回阵雨和 2.3mm 降水。"
     }
   ]
 };

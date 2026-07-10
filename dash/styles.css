@@ -2221,7 +2221,6 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .last30-column-head {
   display: grid;
-  gap: 3px;
 }
 
 .last30-column-head span {
@@ -2230,18 +2229,6 @@ body[data-view="tokens"] .topbar-token-ranges {
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-.last30-column-head strong {
-  color: var(--text);
-  font-size: 15px;
-}
-
-.last30-summary {
-  margin: 0;
-  color: var(--soft);
-  font-size: 13px;
-  line-height: 1.55;
 }
 
 .last30-list {

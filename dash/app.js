@@ -95,9 +95,6 @@ const copy = {
   focus: "\u7126\u70b9",
   updatedAtShort: "\u66f4\u65b0",
   statusSnapshot: "\u72b6\u6001\u5feb\u7167",
-  todayEvents: "\u6700\u65b0\u53d1\u5e03",
-  weekEvents: "\u672c\u5468\u524d\u6cbf",
-  last30Mainlines: "\u8fd1 30 \u5929\u5173\u952e\u8fdb\u5c55",
   wikiTodoReady: "\u5df2\u8bfb\u53d6",
   wikiTodoFailed: "\u8bfb\u53d6\u5931\u8d25",
   wikiTodoEmpty: "\u6682\u65e0\u672a\u5b8c\u6210\u5f85\u529e",
@@ -1122,11 +1119,8 @@ function getLast30Items(key) {
   return group.items || [];
 }
 
-function renderLast30Column(key, titleSelector, summarySelector, listSelector, fallbackTitle) {
-  const group = getLast30Group(key);
+function renderLast30Column(key, listSelector) {
   const itemLimit = key === "mainlines" ? 5 : 4;
-  setText(titleSelector, group.title || fallbackTitle);
-  setText(summarySelector, group.summary || "");
   clearAndFill(qs(listSelector), createLast30Item, getLast30Items(key).slice(0, itemLimit));
 }
 
@@ -2105,15 +2099,9 @@ function renderHome() {
   clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
   renderCheckin();
   renderWikiTodos(openTodos);
-  renderLast30Column("today", "#last30-today-title", "#last30-today-summary", "#last30-today-list", copy.todayEvents);
-  renderLast30Column("week", "#last30-week-title", "#last30-week-summary", "#last30-week-list", copy.weekEvents);
-  renderLast30Column(
-    "mainlines",
-    "#last30-mainline-title",
-    "#last30-mainline-summary",
-    "#last30-mainline-list",
-    copy.last30Mainlines,
-  );
+  renderLast30Column("today", "#last30-today-list");
+  renderLast30Column("week", "#last30-week-list");
+  renderLast30Column("mainlines", "#last30-mainline-list");
 }
 
 function createRangeButton(range) {
