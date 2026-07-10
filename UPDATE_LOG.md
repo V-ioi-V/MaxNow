@@ -19,6 +19,7 @@
 - 本机 Git 增加 HTTP 低速边界和 SSH keepalive，避免一次 `git pull` / `push` 卡死占住后续小时周期。
 - 修复 Token 最近 30 天图表在 390px 移动端把整页撑宽的问题；宽图改为卡片内部横向滚动。
 - 云服务页同步更新 Token 自动化时间和锁 / 日志说明，Dash 缓存版本提升到 `styles.css?v=124`、`app.js?v=109`。
+- 已部署到服务器并手动跑通一轮：root `:05`、ubuntu `:10` cron 生效，线上总账写入 macOS 与 Server Codex 活跃时长；macOS launchd 已按 `Minute=0` 重装并首次上报成功。
 
 原因：
 

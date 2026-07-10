@@ -522,6 +522,21 @@ runtime preservation: 恢复 ai-news、dashboard、豆奶、Last-30、市场、R
 verification: python3 scripts/check.py ok；nginx -t ok；reload ok；https://dash.maxnow.cn 200；https://dash.maxnow.cn/data/project-status.json 200；线上 VERSION 1.0.0.51；待推进为访问保护、数据健康闭环、前端自动测试
 ```
 
+2026-07-10 已部署 Token 活跃时长和固定小时周期：
+
+```text
+deployed commit: cacd002 Update macOS Codex token usage
+feature commit: 178bbd0 Add token runtime and fixed reporting cycle
+changes: Codex 账本新增 task_complete.duration_ms 活跃时长；固定周期为 macOS :00、Windows :02、服务器源采集 :05、总账发布 :10；本机 Git 增加低速和 SSH keepalive 边界；Token 页新增 Codex 时长并修复 390px 图表横向溢出
+dash styles version: styles.css?v=124
+dash app version: app.js?v=109
+runtime data backup before deploy: /home/ubuntu/maxnow-deploy-backups/20260710-115834-before-token-runtime
+root crontab backup: /home/ubuntu/maxnow-deploy-backups/20260710-115913-root-crontab-before-token-cycle
+ubuntu crontab backup: /home/ubuntu/maxnow-deploy-backups/20260710-115913-ubuntu-crontab-before-token-cycle
+runtime preservation: 恢复 dashboard、AI、Last-30、Wiki、市场、同行记、生活、豆奶、OpenClaw 和 Codex Server 运行态数据；重新生成 project-meta 和 token-usage
+verification: macOS launchd StartCalendarInterval Minute=0、首次运行 exit 0；root :05 / ubuntu :10 cron 生效且旧 Token cron 已移除；OpenClaw 373 runs、Codex Server 11 sessions；总账 activeSeconds=226868、completedTurns=3738；python3 scripts/check.py ok；nginx -t ok；https://dash.maxnow.cn 200；线上 v1.0.0.52、1d Codex 时长 20m、无横向溢出
+```
+
 刷新 Home 天气卡：
 
 ```bash

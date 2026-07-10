@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 11:54",
+  "updatedAt": "2026-07-10 12:01",
   "version": "1.0.0.52",
   "versionLabel": "v1.0.0.52",
   "branch": "feature/token-runtime-schedule",
-  "commit": "2290092",
+  "commit": "178bbd0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/token-runtime-schedule · commit 2290092 · 有未提交代码改动",
+  "deployNote": "feature/token-runtime-schedule · commit 178bbd0 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-10",
