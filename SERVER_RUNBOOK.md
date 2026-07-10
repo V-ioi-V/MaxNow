@@ -75,17 +75,21 @@ cylinder.dnspod.net
 
 2026-07-10 曾短暂评估 Cloudflare Access，最终因 Zero Trust Free 仍要求付款方式而放弃；nameserver 已恢复到 DNSPod。服务器上保留 `cloudflared 2026.7.1` 二进制，但未安装 tunnel service、未配置 token、没有运行进程，不属于当前流量路径。删除该软件包前仍需 Owner 单独确认。
 
-2026-07-10 已为私人 Dash 启用 nginx Basic Auth：
+2026-07-10 已将私人 Dash 从浏览器原生 Basic Auth 弹窗升级为 MaxNow 自定义登录页：
 
 ```text
-dash.maxnow.cn -> 全站与 /data/ 均需认证
+dash.maxnow.cn -> 自定义登录页 + nginx auth_request
+session auth -> maxnow-auth.service (127.0.0.1:8765)
+session cookie -> 7 天，HttpOnly + Secure + SameSite=Strict
+dash page / assets / data -> 均需有效会话
 blog.maxnow.cn -> 保持公开
 credential file -> /etc/nginx/.htpasswd-maxnow (root:www-data 0640)
+session secret -> /etc/maxnow-auth/session.key (root:www-data 0640)
 security headers -> /etc/nginx/snippets/maxnow-security-headers.conf
 nginx version -> hidden by server_tokens off
 ```
 
-未认证访问 Dash 返回 `401` 是预期健康状态；`scripts/sync_system_status.py` 会在响应带 `WWW-Authenticate` 时显示 `401 Auth`，不得把它改回 HTTPS Fail。真实用户名、密码和哈希不得写入仓库或服务器手册。
+未认证访问 Dash 首页应 `302` 跳转 `/login`，登录页返回 `200`，直接访问 `/data/` 返回 `401` 且不再触发浏览器原生弹窗。`scripts/sync_system_status.py` 会把最终落到 `/login` 识别为 `Login` 健康状态。真实用户名、密码、哈希和会话密钥不得写入仓库或服务器手册。
 
 2026-06-17 晚间已部署参考风格刷新版本：
 
@@ -949,7 +953,7 @@ ls -la /var/www/maxnow-dashboard
 - 给定时同步补失败提醒，或让 Home 更明确展示最近一次自动同步结果。
 - 做数据更新工具，让 `dash/data/*.json` 与 `.js` wrapper 自动保持一致。
 
-## Dash Basic Auth 运维
+## Dash 自定义登录运维
 
 当前 nginx 配置与回滚备份：
 
@@ -958,8 +962,42 @@ ls -la /var/www/maxnow-dashboard
 /etc/nginx/sites-available/maxnow-dashboard.bak-20260710-basic-auth
 /etc/nginx/nginx.conf.bak-20260710-basic-auth
 /etc/nginx/snippets/maxnow-security-headers.conf
+/etc/nginx/snippets/maxnow-auth-locations.conf
+/etc/nginx/conf.d/maxnow-auth-rate-limit.conf
 /etc/nginx/.htpasswd-maxnow
+/etc/maxnow-auth/session.key
+/etc/systemd/system/maxnow-auth.service
 ```
+
+仓库内可复现配置：
+
+```text
+dash/login.html
+dash/login.js
+scripts/maxnow_auth_service.py
+server/maxnow-auth.service
+server/maxnow-auth-rate-limit.conf
+server/maxnow-auth-locations.conf
+server/maxnow-dashboard.conf
+```
+
+首次安装或重新部署认证服务：
+
+```bash
+sudo install -d -o root -g www-data -m 0750 /etc/maxnow-auth
+sudo openssl rand -out /etc/maxnow-auth/session.key 48
+sudo chown root:www-data /etc/maxnow-auth/session.key
+sudo chmod 640 /etc/maxnow-auth/session.key
+sudo install -m 0644 server/maxnow-auth.service /etc/systemd/system/maxnow-auth.service
+sudo install -m 0644 server/maxnow-auth-rate-limit.conf /etc/nginx/conf.d/maxnow-auth-rate-limit.conf
+sudo install -m 0644 server/maxnow-auth-locations.conf /etc/nginx/snippets/maxnow-auth-locations.conf
+sudo install -m 0644 server/maxnow-dashboard.conf /etc/nginx/sites-available/maxnow-dashboard
+sudo systemctl daemon-reload
+sudo systemctl enable --now maxnow-auth.service
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+已有 `/etc/maxnow-auth/session.key` 时不要重复执行 `openssl rand`，否则会让所有现有会话立即失效。认证服务每次登录都会重新读取 htpasswd，因此只轮换密码不需要重启服务。
 
 轮换密码时使用交互输入，避免明文进入 history：
 
@@ -977,10 +1015,36 @@ sudo nginx -t && sudo systemctl reload nginx
 验证矩阵：
 
 ```bash
-curl -I https://dash.maxnow.cn/                         # 401
+curl -I https://dash.maxnow.cn/                         # 302 -> /login
+curl -I https://dash.maxnow.cn/login                    # 200
 curl -I https://dash.maxnow.cn/data/dashboard.json      # 401
-curl --user '<username>' -I https://dash.maxnow.cn/     # 交互输入密码，200
 curl -I https://blog.maxnow.cn/                         # 200
+sudo systemctl is-active maxnow-auth.service            # active
+curl -I http://127.0.0.1:8765/health                    # 204
+```
+
+完整登录验证时交互输入密码，避免进入 history：
+
+```bash
+read -rsp "MaxNow password: " password && echo
+curl -sS -c /tmp/maxnow-cookie -o /dev/null -w '%{http_code}\n' \
+  -X POST \
+  --data-urlencode 'username=maxnow' \
+  --data-urlencode "password=$password" \
+  --data-urlencode 'next=/' \
+  https://dash.maxnow.cn/auth/login                     # 303
+unset password
+curl -b /tmp/maxnow-cookie -I https://dash.maxnow.cn/   # 200
+rm -f /tmp/maxnow-cookie
+```
+
+需要强制退出全部设备时，重新生成会话密钥并重启认证服务：
+
+```bash
+sudo openssl rand -out /etc/maxnow-auth/session.key 48
+sudo chown root:www-data /etc/maxnow-auth/session.key
+sudo chmod 640 /etc/maxnow-auth/session.key
+sudo systemctl restart maxnow-auth.service
 ```
 
 需要验证源站无法绕过时，从可信管理机运行：
@@ -989,4 +1053,4 @@ curl -I https://blog.maxnow.cn/                         # 200
 curl --resolve dash.maxnow.cn:443:43.160.240.244 -I https://dash.maxnow.cn/data/dashboard.json
 ```
 
-未认证仍应返回 401。紧急回滚只能恢复已知备份并先执行 `sudo nginx -t`；不要只对首页加认证，也不要让 `/data/` 单独公开。
+未认证 `/data/` 仍应返回 401。紧急回滚只能恢复已知备份并先执行 `sudo nginx -t`；不要只保护首页，也不要让 `/data/` 单独公开。若认证服务异常，nginx 必须失败关闭并拒绝 Dash，不能临时绕过 `auth_request`。

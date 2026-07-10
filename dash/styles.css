@@ -62,6 +62,434 @@ a {
   color: inherit;
 }
 
+.auth-body {
+  min-width: 320px;
+  background:
+    linear-gradient(90deg, rgba(35, 156, 231, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(35, 156, 231, 0.035) 1px, transparent 1px),
+    var(--bg);
+  background-size: 32px 32px;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.auth-card {
+  width: min(920px, 100%);
+  min-height: 560px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.06fr);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 24px 70px rgba(25, 43, 72, 0.14), var(--shadow);
+}
+
+.auth-context,
+.auth-form-panel {
+  min-width: 0;
+  padding: 48px;
+}
+
+.auth-context {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-brand img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.auth-brand strong {
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.auth-context-copy {
+  margin-top: 62px;
+}
+
+.auth-context-copy .eyebrow,
+.auth-form-heading .eyebrow {
+  margin: 0;
+  color: #5a8ec2;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.auth-context-copy h1 {
+  max-width: 330px;
+  margin: 10px 0 14px;
+  font-size: clamp(28px, 3.2vw, 38px);
+  line-height: 1.18;
+  letter-spacing: -0.045em;
+}
+
+.auth-context-copy > p:last-child {
+  max-width: 340px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.auth-signal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 34px;
+}
+
+.auth-signal {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 11px;
+  background: #ffffff;
+  box-shadow: var(--shadow-soft);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.auth-signal-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 11px;
+}
+
+.auth-signal-icon svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
+.auth-signal > span:last-child {
+  min-width: 0;
+}
+
+.auth-signal strong,
+.auth-signal small {
+  display: block;
+}
+
+.auth-signal strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-signal small {
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-signal-blue .auth-signal-icon {
+  background: #e8f4ff;
+  color: var(--accent);
+}
+
+.auth-signal-purple .auth-signal-icon {
+  background: #f5e8ff;
+  color: var(--purple);
+}
+
+.auth-signal-cyan .auth-signal-icon {
+  background: #e7fbff;
+  color: var(--cyan);
+}
+
+.auth-signal-green .auth-signal-icon {
+  background: #f0fbf4;
+  color: var(--ok);
+}
+
+.auth-context-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: auto 0 0;
+  padding-top: 28px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.auth-context-note span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 4px rgba(32, 169, 107, 0.1);
+}
+
+.auth-form-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-form-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.auth-lock {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #cfe8ff;
+  border-radius: var(--radius);
+  background: #edf7ff;
+  color: var(--accent-strong);
+  box-shadow: var(--shadow-soft);
+}
+
+.auth-lock svg {
+  width: 21px;
+  height: 21px;
+  fill: currentColor;
+}
+
+.auth-form-heading h2 {
+  margin: 5px 0 0;
+  font-size: 25px;
+  letter-spacing: -0.03em;
+}
+
+.auth-form-intro {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.auth-message {
+  margin: 18px 0 0;
+  border: 1px solid var(--red-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff7f9;
+  color: #c73355;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.auth-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 26px;
+}
+
+.auth-field {
+  display: grid;
+  gap: 8px;
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.auth-input-wrap {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 0 14px;
+  background: #ffffff;
+  box-shadow: inset 0 1px 2px rgba(25, 43, 72, 0.035);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.auth-input-wrap:focus-within {
+  border-color: var(--blue-border);
+  box-shadow: 0 0 0 4px rgba(35, 156, 231, 0.11);
+}
+
+.auth-input-wrap > svg {
+  width: 18px;
+  height: 18px;
+  fill: #8ea0b3;
+}
+
+.auth-input-wrap input {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.auth-password-toggle {
+  border: 0;
+  padding: 6px 0 6px 8px;
+  background: transparent;
+  color: var(--accent-strong);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.auth-submit {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid var(--accent-strong);
+  border-radius: var(--radius);
+  background: var(--accent-strong);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(38, 136, 232, 0.24);
+  font-size: 14px;
+  font-weight: 850;
+  transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.auth-submit svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.auth-submit:hover {
+  background: #167bd8;
+  box-shadow: 0 13px 28px rgba(38, 136, 232, 0.3);
+  transform: translateY(-2px);
+}
+
+.auth-submit:focus-visible,
+.auth-password-toggle:focus-visible {
+  outline: 3px solid rgba(35, 156, 231, 0.2);
+  outline-offset: 2px;
+}
+
+.auth-submit:disabled {
+  cursor: wait;
+  opacity: 0.78;
+  transform: none;
+}
+
+.auth-session-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.auth-session-note svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  margin-top: 1px;
+  fill: var(--ok);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .auth-signal:hover {
+    border-color: var(--blue-border);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 760px) {
+  .auth-shell {
+    place-items: start center;
+    padding: 18px;
+  }
+
+  .auth-card {
+    min-height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .auth-context,
+  .auth-form-panel {
+    padding: 28px;
+  }
+
+  .auth-context {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .auth-context-copy {
+    margin-top: 32px;
+  }
+
+  .auth-context-copy h1 {
+    font-size: 28px;
+  }
+
+  .auth-signal-grid {
+    margin-top: 24px;
+  }
+
+  .auth-context-note {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 440px) {
+  .auth-shell {
+    padding: 0;
+  }
+
+  .auth-card {
+    min-height: 100vh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .auth-context,
+  .auth-form-panel {
+    padding: 24px 20px;
+  }
+
+  .auth-signal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 210px minmax(0, 1fr);
@@ -273,6 +701,10 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.topbar-logout {
+  margin: 0;
 }
 
 .topbar-token-ranges {
@@ -1345,6 +1777,12 @@ body[data-view="tokens"] .topbar-token-ranges {
   width: 38px;
   height: 38px;
   font-size: 18px;
+}
+
+.icon-button svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
 }
 
 .text-button {

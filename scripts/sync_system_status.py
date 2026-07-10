@@ -149,6 +149,13 @@ def site_state(url):
         with urllib.request.urlopen(request, timeout=8) as response:
             status = response.status
             final_url = response.geturl()
+        if urlparse(final_url).path == "/login":
+            return {
+                "key": "https",
+                "name": "HTTPS",
+                "value": "Login",
+                "note": "MaxNow session authentication is enabled and responding",
+            }, True
         ok = 200 <= status < 400
         return {
             "key": "https",

@@ -1,6 +1,7 @@
 import hashlib
 import json
 import re
+import subprocess
 import sys
 import urllib.error
 import urllib.request
@@ -56,6 +57,8 @@ def check_required_files():
     required = [
         "index.html",
         "dash/index.html",
+        "dash/login.html",
+        "dash/login.js",
         "dash/styles.css",
         "dash/app.js",
         "dash/data/dounai_checkin.json",
@@ -104,6 +107,11 @@ def check_required_files():
         "scripts/report_codex_usage.sh",
         "scripts/install_local_codex_usage_launchd.sh",
         "scripts/refresh_token_usage_on_server.sh",
+        "scripts/maxnow_auth_service.py",
+        "server/maxnow-auth.service",
+        "server/maxnow-auth-rate-limit.conf",
+        "server/maxnow-auth-locations.conf",
+        "server/maxnow-dashboard.conf",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
     ]
@@ -111,6 +119,32 @@ def check_required_files():
     if missing:
         raise FileNotFoundError("missing required files: " + ", ".join(missing))
     return "required files exist"
+
+
+def check_auth_surface():
+    login_html = (ROOT / "dash/login.html").read_text(encoding="utf-8")
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    if 'action="/auth/login"' not in login_html:
+        raise ValueError("auth surface: login form action is missing")
+    if 'name="username"' not in login_html or 'name="password"' not in login_html:
+        raise ValueError("auth surface: username/password fields are missing")
+    if 'action="/auth/logout"' not in dashboard_html:
+        raise ValueError("auth surface: dashboard logout action is missing")
+    nginx_locations = (ROOT / "server/maxnow-auth-locations.conf").read_text(encoding="utf-8")
+    if "auth_request /_auth;" not in nginx_locations or "@login_redirect" not in nginx_locations:
+        raise ValueError("auth surface: nginx session gate is incomplete")
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/maxnow_auth_service.py"), "--self-test"],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError("auth surface: service self-test failed: " + result.stdout.strip())
+    return "auth surface: login, logout, and session checks are valid"
 
 
 def check_local_server(url):
@@ -371,8 +405,10 @@ def main():
     checks.append(check_project_meta())
     checks.append(check_project_status())
     checks.append(check_dashboard_weather())
+    checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
+    checks.append(check_local_server("http://127.0.0.1:4173/dash/login.html"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/overview.html"))
     checks.append(check_local_server("http://127.0.0.1:4173/blog/topics.html"))

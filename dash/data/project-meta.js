@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 14:09",
-  "version": "1.0.1.02",
-  "versionLabel": "v1.0.1.02",
-  "branch": "feature/rotate-dash-password",
-  "commit": "4b25e3c",
+  "updatedAt": "2026-07-10 14:31",
+  "version": "1.0.2.00",
+  "versionLabel": "v1.0.2.00",
+  "branch": "feature/custom-login-page",
+  "commit": "0384825",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/rotate-dash-password · commit 4b25e3c · 有未提交代码改动",
+  "deployNote": "feature/custom-login-page · commit 0384825 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "用 MaxNow 风格登录页替代浏览器原生认证弹窗",
+      "summary": "新增双栏登录页，复用 MaxNow 的浅蓝灰背景、白卡片、语义色小图标、输入框 focus 和轻量 hover；`760px` 以下自动切换单栏。"
+    },
     {
       "date": "2026-07-10",
       "title": "轮换私人 Dash 访问密码",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-10",
       "title": "修复 Home 项目状态过期和已完成任务误报",
       "summary": "新增独立 `dash/data/project-status.*`，从 `ROADMAP.md` 生成 Home 主线和待推进事项，不再把自动生成结果写入 `dashboard.*` 或修改 `dashboard.today`。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "记录 MaxNow 整体体检后的优化路线",
-      "summary": "在 `ROADMAP.md` 增加 Dash 访问保护、Home 项目状态可信度、数据失败与新鲜度闭环、前端自动测试 / 无障碍 / 移动端验证、外部依赖和链接安全等可执行任务。"
     }
   ]
 };

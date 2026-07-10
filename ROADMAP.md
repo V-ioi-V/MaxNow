@@ -124,11 +124,12 @@
 
 ## Done
 
-### 已完成私人 Dash 访问保护
+### 已完成私人 Dash 自定义登录与访问保护
 
-- nginx Basic Auth 已覆盖 `dash.maxnow.cn` 全站及 `/data/`，未认证请求返回 401，正确凭据和源站直连验证均符合预期。
+- MaxNow 风格登录页替代浏览器原生 Basic Auth 弹窗；nginx `auth_request` 统一保护 `dash.maxnow.cn` 页面、静态资源和 `/data/`。
+- 服务器本机认证服务复用 `/etc/nginx/.htpasswd-maxnow` 校验密码，签发 7 天 `HttpOnly + Secure + SameSite=Strict` Cookie，不引入数据库或业务 API。
 - `blog.maxnow.cn` 保持公开；Dash 新增 CSP、`X-Content-Type-Options`、`Referrer-Policy`、`X-Frame-Options`、`Permissions-Policy` 和 HSTS，并隐藏 nginx 版本号。
-- 系统状态采集将带 `WWW-Authenticate` 的 401 识别为“已保护且健康”，避免自动化把预期认证响应误报成 HTTPS 故障。
+- 系统状态采集将跳转到 `/login` 识别为“认证已启用且健康”，避免自动化把预期登录入口误报成 HTTPS 故障。
 - 真实用户名和密码只保存在服务器凭据文件与 Owner 密码管理器中，不进入仓库；密码轮换和紧急恢复步骤记录在部署文档与服务器手册。
 
 ### 已修复 Home 项目状态可信度

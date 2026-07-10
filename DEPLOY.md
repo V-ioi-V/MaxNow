@@ -18,13 +18,13 @@ blog.maxnow.cn
 
 ## 站点性质
 
-MaxNow v1 是纯静态站点：
+MaxNow v1 的业务内容是静态站点：
 
-- 不需要登录系统。
 - 不需要数据库。
-- 不需要后端 API。
+- 不需要业务 API。
 - 页面读取 `dash/data/*.json`。
 - `.js` wrapper 继续由脚本生成并校验，但 Dash 首屏不再预加载这些 wrapper；前端优先按需读取 JSON。
+- 私人访问使用单独的最小认证服务：只校验现有 htpasswd 密码并签发 HttpOnly Cookie，不读取业务数据。
 
 公开博客第一阶段也保持纯静态站：
 
@@ -40,6 +40,8 @@ MaxNow v1 是纯静态站点：
 ```text
 /var/www/maxnow-dashboard
   dash/index.html
+  dash/login.html
+  dash/login.js
   dash/styles.css
   dash/app.js
   dash/data/
@@ -51,6 +53,11 @@ MaxNow v1 是纯静态站点：
     ai-news.js
     last-30.json
     last-30.js
+  scripts/maxnow_auth_service.py
+  server/maxnow-auth.service
+  server/maxnow-auth-rate-limit.conf
+  server/maxnow-auth-locations.conf
+  server/maxnow-dashboard.conf
 ```
 
 公开博客当前预览页随同 MaxNow 仓库部署，nginx 指向同仓库下的 `blog/`：
@@ -249,7 +256,7 @@ server {
 
 ## 隐私建议
 
-MaxNow 是私人状态工作站。线上 `dash.maxnow.cn` 必须使用 nginx Basic Auth 保护整个 server block，因此首页、静态资源和 `/data/` 使用同一套访问限制；`blog.maxnow.cn` 保持公开。
+MaxNow 是私人状态工作站。线上 `dash.maxnow.cn` 使用自定义登录页，nginx 通过 `auth_request` 保护首页、静态资源和 `/data/`；`blog.maxnow.cn` 保持公开。认证服务只监听 `127.0.0.1:8765`，复用 `/etc/nginx/.htpasswd-maxnow` 校验密码，并使用 `/etc/maxnow-auth/session.key` 签发 7 天 HttpOnly 会话 Cookie。
 
 凭据文件放在服务器 `/etc/nginx/.htpasswd-maxnow`，权限应为 `root:www-data 0640`。真实用户名、密码和密码哈希不得写入仓库。轮换密码时在服务器交互输入，避免明文进入 shell history：
 
@@ -264,22 +271,22 @@ sudo chmod 640 /etc/nginx/.htpasswd-maxnow
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
-验证时不要把密码放进命令历史；`curl --user '<username>'` 会交互询问密码：
+验证时不要把密码放进命令历史；使用浏览器登录，或通过 Cookie jar 做完整表单验证：
 
 ```bash
-curl -I https://dash.maxnow.cn/
-curl -I https://dash.maxnow.cn/data/dashboard.json
-curl --user '<username>' -I https://dash.maxnow.cn/
-curl -I https://blog.maxnow.cn/
+curl -I https://dash.maxnow.cn/                       # 302 -> /login
+curl -I https://dash.maxnow.cn/login                  # 200
+curl -I https://dash.maxnow.cn/data/dashboard.json    # 401
+curl -I https://blog.maxnow.cn/                       # 200
 ```
 
-预期结果：Dash 和 `/data/` 未认证返回 `401`，认证后返回 `200`，Blog 返回 `200`。紧急恢复时可以先从备份恢复 nginx 配置，执行 `sudo nginx -t` 后再 reload；不要删除凭据文件或放宽 `/data/` 作为临时绕过。
+预期结果：首页未认证跳转登录页，登录页返回 200，`/data/` 未认证返回 401，登录后 Dash 返回 200，Blog 返回 200。紧急恢复时可以先从备份恢复 nginx 配置，执行 `sudo nginx -t` 后再 reload；不要删除凭据文件、会话密钥或放宽 `/data/` 作为临时绕过。
 
 安全响应头由 `/etc/nginx/snippets/maxnow-security-headers.conf` 统一维护。Dash 当前包含 CSP、`X-Content-Type-Options`、`Referrer-Policy`、`X-Frame-Options`、`Permissions-Policy` 和 HSTS；新增外部脚本、样式或图片源时，需要同步评估 CSP 白名单。
 
 其他可选访问限制仍包括：
 
-- Basic Auth
+- MaxNow 自定义 Cookie 认证
 - 内网 / VPN
 - 服务器防火墙限制来源 IP
 - 反向代理访问控制

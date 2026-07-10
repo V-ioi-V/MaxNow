@@ -27,6 +27,8 @@ MaxNow 由四类文件组成：
 
 1. 页面代码
    - `dash/index.html`
+   - `dash/login.html`
+   - `dash/login.js`
    - `dash/styles.css`
    - `dash/app.js`
    - 由 Codex 或 Owner 维护。
@@ -87,6 +89,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_market_indices.py`
    - `scripts/sync_ricky_travel.py`
    - `scripts/sync_life_foods.py`
+   - `scripts/maxnow_auth_service.py`
    - 由 Codex 或 Owner 维护。
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
    - `scripts/sync_system_status.py` 采集机器可判断的系统状态，只更新 `dash/data/dashboard.*` 中的 `automation` 和 `system` 字段。
@@ -105,6 +108,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_market_indices.py` 从腾讯公开行情接口刷新纳指100、标普500和 A 股主指数，只生成 `dash/data/market-indices.*`。
    - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
    - `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 刷新生活页吃啥候选，只生成 `dash/data/life-foods.*`。
+   - `scripts/maxnow_auth_service.py` 仅在服务器本机监听，读取 nginx 密码哈希并签发短期 HttpOnly 会话 Cookie；它不读取 Dashboard 数据，也不提供业务 API。
 
 6. 产品记忆文档
    - `CONTEXT.md`
@@ -508,7 +512,7 @@ maxnow.cn       -> 未来公开主页 / 个人入口
 
 第一阶段约束：
 
-- 保持静态站，不引入应用内登录、数据库或后端 API；`dash.maxnow.cn` 可以由 nginx Basic Auth 等站点级访问控制保护，`blog.maxnow.cn` 继续公开。
+- Dash 业务内容与 Blog 保持静态，不引入数据库或业务 API；`dash.maxnow.cn` 使用 MaxNow 自定义登录页和服务器本机 Cookie 认证服务保护，`blog.maxnow.cn` 继续公开。
 - 只发布明确筛选为 `public` / `published` 的文章。
 - 不从公开前端直接读取 private personal-wiki。
 - 不把旧博客全部无筛选发布；每篇文章至少要有标题、日期、slug、分类、标签、来源文件和可发布状态。
@@ -527,6 +531,6 @@ maxnow.cn       -> 未来公开主页 / 个人入口
 ## 实现边界
 
 - v1 保留 Home、豆奶、Token、云服务、生活和同行记。
-- v1 保持静态站点：不加应用内登录、数据库或后端 API；私人 Dash 的访问保护由 nginx 等站点基础设施负责。
+- v1 的 Dashboard 业务内容保持静态，不加数据库或业务 API；唯一后端是仅供 nginx 调用的最小认证服务，用于校验密码和签发 HttpOnly 会话 Cookie。
 - 任何新的日常维护数据字段，都必须同时写进这里和 OpenClaw skill。
 - 页面代码变化需要 Codex 或 Owner 明确意图；OpenClaw 永远不能改变页面结构。
