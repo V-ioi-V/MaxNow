@@ -1067,3 +1067,13 @@ service: maxnow-auth.service active；127.0.0.1:8765/health 返回 204
 verification: 首页未登录 302 -> /login；登录页 / 样式 / 脚本 200；未登录 auth/check 与 /data/ 401；源站直连 /data/ 401；Blog 200；无 WWW-Authenticate
 full flow: 正确密码登录 303；带会话访问首页与 /data/ 均为 200；退出 303；退出后首页恢复 302
 ```
+
+2026-07-10 已收紧 Token 来源更新时间卡：
+
+```text
+deployed commit: b5b2986 Compact Token update card
+changes: Token 页头右侧来源更新时间卡收紧为 410px；说明文字移到四行来源时间上方；860px 以下保持单列满宽
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260710-before-token-update-card
+runtime data stash: before-token-update-card-runtime-data
+verification: 本地 1280px 下右卡宽 410px 且与左卡同顶同底；390px 下单列宽 362px、无横向溢出；线上 styles.css?v=126 返回 200；nginx -t 和认证服务均正常
+```
