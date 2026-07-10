@@ -562,6 +562,18 @@ runtime preservation: 恢复 dashboard、AI、Last-30、Wiki、市场、同行�
 verification: macOS launchd StartCalendarInterval Minute=0、首次运行 exit 0；root :05 / ubuntu :10 cron 生效且旧 Token cron 已移除；OpenClaw 373 runs、Codex Server 11 sessions；总账 activeSeconds=226868、completedTurns=3738；python3 scripts/check.py ok；nginx -t ok；https://dash.maxnow.cn 200；线上 v1.0.0.52、1d Codex 时长 20m、无横向溢出
 ```
 
+2026-07-10 已部署中文 AI 前沿简报：
+
+```text
+deployed commit: 538dc40 Update Codex usage data
+feature commit: 1cde610 feat: turn Last-30 into AI frontier brief
+changes: Home “外部输入”改为“AI 前沿”，固定展示“最新发布 / 本周前沿 / 近 30 天关键进展”；页面只显示中文事实标题、具体变化、来源和日期，过滤客户案例、纯 SDK 版本和“关注它”等套话。
+runtime data backup before deploy: /tmp/maxnow-pre-ai-frontier-20260710-223503
+runtime data stash before deploy: pre-ai-frontier-deploy-20260710-223503
+runtime preservation: 只恢复 dashboard、豆奶、行情、同行记和 Wiki Todo；不恢复旧 ai-news、last-30、project-meta，随后重新生成 AI 前沿与项目元信息。
+verification: python3 scripts/sync_ai_last30.py ok（1 个免费源部分失败）；python3 scripts/update_data.py project-meta ok；python3 scripts/check.py ok；nginx -t ok；线上目录包含“AI 前沿”，最新发布为 GPT-5.6、ChatGPT Work、GPT-Live，禁用套话检查为 false。
+```
+
 刷新 Home 天气卡：
 
 ```bash
@@ -598,7 +610,7 @@ python3 scripts/check.py
 0 0 * * * cd /var/www/maxnow-dashboard && /usr/bin/flock -n /tmp/maxnow-ai-last30.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] maxnow ai-last30 sync start"; python3 scripts/update_data.py ai-last30; echo "[$(date -Is)] maxnow ai-last30 sync ok"' >> /var/www/maxnow-dashboard/logs/ai-last30.log 2>&1
 ```
 
-该任务每天服务器本地时间 00:00 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。脚本只使用免费公开源，本身不调用模型、不消耗 token。Last-30 左列采用“当天优先、最新回退”：当天有高相关信号时显示“今日 AI 信号”；当天暂无条目时显示“最新 AI 信号”，从最近 7 天内选择最新高相关信号，避免 00:00 刷新后空白。
+该任务每天服务器本地时间 00:00 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。脚本只使用免费公开源，本身不调用模型、不消耗 token。输出固定分为“最新发布 / 本周前沿 / 近 30 天关键进展”，以中文事实标题和具体变化为展示口径；同一事件跨栏去重，客户案例、泛采用、纯 SDK 版本号和关键词关注套话不得占据前沿位置。
 
 刷新 MaxNow 版本号和最近更新模块：
 

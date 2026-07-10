@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 21:27",
-  "version": "1.0.3.00",
-  "versionLabel": "v1.0.3.00",
-  "branch": "feature/ai-frontier-news",
-  "commit": "fd0c6e4",
+  "updatedAt": "2026-07-10 22:45",
+  "version": "1.0.3.01",
+  "versionLabel": "v1.0.3.01",
+  "branch": "bugfix/ai-frontier-deploy-record",
+  "commit": "538dc40",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ai-frontier-news · commit fd0c6e4 · 有未提交代码改动",
+  "deployNote": "bugfix/ai-frontier-deploy-record · commit 538dc40 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "完成 AI 前沿线上部署与旧规则清理",
+      "summary": "线上部署目录从旧提交 `a19dad6` 快进到 `538dc40`，先备份并暂存服务器运行数据，再只恢复 dashboard、豆奶、行情、同行记和 Wiki Todo，未恢复旧 `ai-news.*` / `last-30.*`。"
+    },
     {
       "date": "2026-07-10",
       "title": "将 Last-30 重构为中文 AI 前沿简报",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-10",
       "title": "收紧 Token 来源更新时间卡",
       "summary": "Token 页头右侧来源更新时间卡改为 `410px` 内容宽度，不再按比例铺满半行；说明文字移到四行来源时间上方。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "用 MaxNow 风格登录页替代浏览器原生认证弹窗",
-      "summary": "新增双栏登录页，复用 MaxNow 的浅蓝灰背景、白卡片、语义色小图标、输入框 focus 和轻量 hover；`760px` 以下自动切换单栏。"
     }
   ]
 };

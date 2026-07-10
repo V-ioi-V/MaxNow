@@ -54,7 +54,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 当前 MD 文件不算冗余严重；它们分别承担规则、规格、路线、上下文、想法、更新记录、部署和服务器操作。
 - 轻微重叠主要出现在 `SPEC.md` 和 `CONTEXT.md`：`SPEC.md` 写稳定产品规则，`CONTEXT.md` 写代理接手时需要知道的当前状态和文件地图。
 - 前端视觉规则不要继续散落在聊天或 `CONTEXT.md` 段落里；稳定的样式口径写进 `STYLE_CONTEXT.md`。
-- Home 主内容区的稳定版式是 `home-board` 两列外壳：左列为 `home-lane-primary`，右列为 `home-side-stack`。左列承载个人主任务和内容型长模块，当前包括 Token 热力格、Personal Wiki、待推进、外部输入和版本更新，其中版本更新固定放在外部输入下方；右列只承载短扫读状态入口。`home-lane-signal` / `home-lane-rail` 在右列内只作为语义分组，视觉上展平成 widget 网格；`widget-compact` 占半宽，`widget-wide` / `mid-*` 占满右列。Home 不再保留单独“稍后留意”或“今日记录”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，静态项目原则进入规格、上下文或版本更新。所有首页模块必须先归入语义 lane，保留 `home-card-*` 语义类和 `data-card-size`，不能再用固定 `grid-area`、临时局部左右列、固定空白或强行二列 / 三列来拼卡片。
+- Home 主内容区的稳定版式是 `home-board` 两列外壳：左列为 `home-lane-primary`，右列为 `home-side-stack`。左列承载个人主任务和内容型长模块，当前包括 Token 热力格、Personal Wiki、待推进、AI 前沿和版本更新，其中版本更新固定放在 AI 前沿下方；右列只承载短扫读状态入口。`home-lane-signal` / `home-lane-rail` 在右列内只作为语义分组，视觉上展平成 widget 网格；`widget-compact` 占半宽，`widget-wide` / `mid-*` 占满右列。Home 不再保留单独“稍后留意”或“今日记录”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，静态项目原则进入规格、上下文或版本更新。所有首页模块必须先归入语义 lane，保留 `home-card-*` 语义类和 `data-card-size`，不能再用固定 `grid-area`、临时局部左右列、固定空白或强行二列 / 三列来拼卡片。
 - 暂时不把文档移入 `docs/`，因为根目录文档更容易被 Owner 和代理第一时间发现；等文档数量继续增长后再考虑整理目录。
 
 ### 2. 代理执行上下文
@@ -144,7 +144,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/token-usage.json` 是 Token 页统一入口；OpenClaw、Codex Windows / macOS、Codex server 和后续其他来源都应合入这个总账。Token 页 `1d` 按当前浏览器本地日期 00:00 起算，`7d` / `30d` 包括今天在内的最近 7 / 30 个自然日；来源费用面板和模型占比、调用消耗同层并列展示，并且来源 token、费用和 runs 跟随当前范围更新。页头展示各来源账本的最后更新时间。
 - 2026-07-10 起，Dash Home 首批读取 dashboard / project-status / last-30 / wiki-todos / dounai_checkin / market-indices / project-meta 小数据并渲染；Token 总账、Ricky、生活页数据和 Leaflet 地图资源按当前视图需要再加载。`.js` wrapper 仍由脚本生成并校验，但主要作为数据一致性和静态兜底资产，不要重新放回首屏同步脚本列表。
 - 2026-07-08 起，Home 状态条下方主内容采用统一 `home-board` 两列版式：左列 `home-lane-primary` 放 Token 热力格、Personal Wiki、待推进、AI 前沿和版本更新，版本更新固定排在 AI 前沿下方；右列 `home-side-stack` 视觉上是 widget 网格，按优先级放市场涨幅、今日 Todo、近期用量、豆奶和系统状态。两列外壳负责大块对齐，左列负责吸收内容型长模块，右列 widget 卡型负责半宽 / 满宽短状态入口，避免左列空着而右列继续下排，也避免所有卡片被二列布局拉成大卡。后续新增 Home 卡片必须先选 lane，再选 `wide-short` / `wide-tall` / `mid-short` / `mid-tall` / `widget-compact` / `widget-wide` 卡型。
-- 2026-07-10 线上已部署提交 `eade306`，当前 MaxNow 版本为 `1.0.0.51`、Dash 缓存为 `styles.css?v=123` / `app.js?v=108`；部署时已保护并恢复服务器运行数据，Home 项目状态改读独立 `project-status.*`，旧 `dashboard.mainlines/actions` 已从线上运行态移除。
+- 2026-07-10 线上已部署提交 `538dc40`，AI 前沿功能版本为 `1.0.3.00`、Dash 缓存为 `styles.css?v=128` / `app.js?v=110`；部署前完整备份并暂存服务器运行数据，只恢复不与 AI 前沿冲突的 dashboard、豆奶、行情、同行记和 Wiki Todo，随后重新生成 `ai-news.*`、`last-30.*` 与 `project-meta.*`。
 - 豆奶签到展示只读取 `dash/data/dounai_checkin.json` 中的流量、豆丁、时长、累计签到天数、账号余量快照、账号日均可用历史、直接流量使用记录和近 30 天 records；豆丁只进入 Home 摘要，不进入豆奶详情页展示口径，不要在 MaxNow 前端增加签到写入、账号操作或 cron 管理。真实流量消耗优先使用 `traffic_usage_history`，不要再用账号余量快照差分作为主口径；余量差分只可作为缺数据时的估算说明。
 - 同行记页面只读取 `dash/data/ricky.json`，不在前端编辑、不回写 personal-wiki、不依赖外部在线地图服务；事实来源归 personal-wiki 的 `wiki/relationships/ricky-travel.json`。
 - 生活页“吃啥”只读取 `dash/data/life-foods.json`；前端允许本次会话内临时勾选 / 取消勾选和随机，但不回写 personal-wiki，候选长期来源归 `wiki/life/food-picker.md`。
@@ -227,7 +227,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 ## 当前缺口
 
 - 2026-07-10 整体体检推动 MaxNow 从“继续增加功能”转向“可信状态工作站”。`dash.maxnow.cn` 和 `/data/` 已由自定义登录页、nginx `auth_request` 和服务器本机 Cookie 认证服务保护，Blog 保持公开；后续重点转为 JSON 读取失败与新鲜度闭环、wrapper 定位、自动测试、无障碍状态和外部依赖安全。Home 项目状态可信度已通过独立 `project-status.*`、ROADMAP 指纹校验和过期提示完成修复；可执行条目以 `ROADMAP.md` 为准。
-- Home 页面已将外部输入收敛为单一 Last-30 展示模块：左栏最新信号、中栏本周观察、右栏近 30 天主线；不再额外铺一张重复的 AI 外部输入卡。2026-07-05 已收紧外露口径，把左栏从 Today 改成最新信号，并把 `confidence` 和右侧数量解释为来源/候选归类而非权威判断。
+- Home 页面已将旧外部输入重构为单一中文 AI 前沿模块：三栏分别展示最新发布、本周前沿和近 30 天关键进展；只展示中文事实标题、具体变化、来源和日期，英文原题仅保存在数据里追溯，页面不再出现 `confidence`、候选数量、关键词自动归类或“关注它”等套话。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天实际使用流量、日均可用、签到流量和签到时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本由 9:00 cron 管理，真实流量日结由 00:05 traffic-only cron 管理。
 - 2026-07-05 已接入豆奶真实流量使用抓取和 00:05 日结：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；`--traffic-only --exclude-today` 模式会把当天从 direct daily 和 `traffic_usage_history` 中剔除，避免 00:05 的当天碎片污染近 30 天实际使用口径。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。
 - 2026-07-06 已修复豆奶 Playwright 运行时缺失：补齐 `/root/.cache/ms-playwright/chromium_headless_shell-1208` 后，手动跑 `/root/.openclaw/daily_checkin.sh` 补入当天签到，今日数据为 768 MB、1 豆丁、延长 2.96 小时；随后运行 `gen_checkin_data.py --traffic-only --exclude-today`，线上 `account` 和 `traffic_usage` 不再带 `stale` / `last_error`。
