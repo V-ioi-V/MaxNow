@@ -960,6 +960,7 @@ ls -la /var/www/maxnow-dashboard
 ```text
 /etc/nginx/sites-available/maxnow-dashboard
 /etc/nginx/sites-available/maxnow-dashboard.bak-20260710-basic-auth
+/etc/nginx/sites-available/maxnow-dashboard.bak-20260710-custom-login
 /etc/nginx/nginx.conf.bak-20260710-basic-auth
 /etc/nginx/snippets/maxnow-security-headers.conf
 /etc/nginx/snippets/maxnow-auth-locations.conf
@@ -1054,3 +1055,15 @@ curl --resolve dash.maxnow.cn:443:43.160.240.244 -I https://dash.maxnow.cn/data/
 ```
 
 未认证 `/data/` 仍应返回 401。紧急回滚只能恢复已知备份并先执行 `sudo nginx -t`；不要只保护首页，也不要让 `/data/` 单独公开。若认证服务异常，nginx 必须失败关闭并拒绝 Dash，不能临时绕过 `auth_request`。
+
+2026-07-10 已部署 MaxNow 自定义登录页：
+
+```text
+deployed commit: b3451f8 Add MaxNow custom login
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260710-before-custom-login
+runtime data stash: before-custom-login-runtime-data
+nginx backup: /etc/nginx/sites-available/maxnow-dashboard.bak-20260710-custom-login
+service: maxnow-auth.service active；127.0.0.1:8765/health 返回 204
+verification: 首页未登录 302 -> /login；登录页 / 样式 / 脚本 200；未登录 auth/check 与 /data/ 401；源站直连 /data/ 401；Blog 200；无 WWW-Authenticate
+full flow: 正确密码登录 303；带会话访问首页与 /data/ 均为 200；退出 303；退出后首页恢复 302
+```
