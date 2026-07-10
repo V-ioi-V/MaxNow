@@ -159,6 +159,7 @@ Home 按顺序回答这些问题：
 - 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
 - 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
 - Home 主内容版式：状态条下方使用统一 `home-board` 两列外壳，`home-lane-primary` 承载左侧主任务和内容型长模块，右侧 `home-side-stack` 只承载短扫读次级信号和状态入口；`home-lane-signal` / `home-lane-rail` 只作为语义分组，视觉上展平成右侧 widget 网格。所有 Home 模块都保留 `home-card-*` 和 `data-card-size`，右侧小组件用 `widget-compact` 占半宽，需要内部指标网格或列表宽度的短状态模块用 `widget-wide` 或 `mid-*` 占满右列。外部输入和版本更新属于左侧内容流，版本更新固定放在外部输入下方；不要再保留单独“稍后留意”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，文档入口进入版本更新或项目状态。不要再用固定 `grid-area`、局部左右列、固定高度或空白补丁拼模块，也不要为了二列或三列对齐硬拉大所有卡片。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认语义 lane 和卡型。
+- 除 Home 外，豆奶、Token、云服务、生活和同行记统一使用 `secondary-view` / `secondary-page-head` 页面协议：共用顶部 4px 主题线、轻色渐变白底、圆角、阴影、hover / focus 和状态 pill；每页保留自己的语义色与内容结构，不为了视觉统一改写数据契约或交互。
 - Token 近期活动：Home `wide-short` 卡展示近 90 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
 - 市场涨幅：Home `mid-tall` 卡展示纳指100、标普500、上证指数、深证成指和创业板指的当前点位、涨跌幅和日内迷你走势；数据来自 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 或服务器 `runtime` 每 10 分钟刷新，前端不直接请求行情接口。
 - 待推进：1-3 个近期应该移动的 Now / Next 动作；由 `dash/data/project-status.json` 从 `ROADMAP.md` 显式生成，这里不是完整 todo app，也不得包含 Done 项。

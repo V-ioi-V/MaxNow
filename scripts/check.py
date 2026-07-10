@@ -492,6 +492,34 @@ def check_today_progress_ring():
     return "Today progress ring: theme ring, inner percentage, outside time, and node alignment are valid"
 
 
+def check_secondary_view_style():
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    for view_id in ("tokens-view", "dounai-view", "cloud-view", "life-view", "ricky-view"):
+        if f'class="view secondary-view" id="{view_id}"' not in dashboard_html:
+            raise ValueError(f"secondary views: shared view class is missing on {view_id}")
+    if 'class="view secondary-view" id="home-view"' in dashboard_html:
+        raise ValueError("secondary views: Home must not inherit the secondary shell")
+    if dashboard_html.count("secondary-page-head") != 5:
+        raise ValueError("secondary views: every non-Home page must use the shared page head")
+    required_css = (
+        ".secondary-view {",
+        ".secondary-page-head {",
+        "#tokens-view {",
+        "#dounai-view {",
+        "#cloud-view {",
+        "#life-view {",
+        "#ricky-view {",
+        ".secondary-view .panel::before",
+        "height: 4px",
+    )
+    if any(rule not in dashboard_css for rule in required_css):
+        raise ValueError("secondary views: shared theme, accent, or card rules are incomplete")
+    if "styles.css?v=132" not in dashboard_html:
+        raise ValueError("secondary views: stylesheet cache version is stale")
+    return "secondary views: five tabs share page heads, theme accents, card shells, and responsive rules"
+
+
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
@@ -507,6 +535,7 @@ def main():
     checks.append(check_dashboard_weather())
     checks.append(check_ai_frontier_brief())
     checks.append(check_today_progress_ring())
+    checks.append(check_secondary_view_style())
     checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))

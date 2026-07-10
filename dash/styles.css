@@ -4164,6 +4164,210 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   background: #f7f9fc;
 }
 
+/* Shared visual shell for every sidebar view except Home. */
+.secondary-view {
+  --view-accent: var(--accent-strong);
+  --view-border: var(--blue-border);
+}
+
+#tokens-view {
+  --view-accent: var(--purple);
+  --view-border: var(--purple-border);
+}
+
+#dounai-view {
+  --view-accent: var(--cyan);
+  --view-border: var(--cyan-border);
+}
+
+#cloud-view {
+  --view-accent: var(--accent-strong);
+  --view-border: var(--blue-border);
+}
+
+#life-view {
+  --view-accent: var(--ok);
+  --view-border: var(--green-border);
+}
+
+#ricky-view {
+  --view-accent: var(--pink);
+  --view-border: var(--pink-border);
+}
+
+.secondary-page-head {
+  --card-color: var(--view-accent);
+  --card-border: var(--view-border);
+}
+
+.secondary-page-head:not(.token-usage-head, .dounai-page-head),
+.secondary-view .token-head-card,
+.secondary-view .dounai-title-tab,
+.secondary-view .dounai-top-tabs {
+  position: relative;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--card-color) 18%, #dfe8f2);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card-color) 4%, #ffffff), #ffffff 72%);
+}
+
+.secondary-page-head:not(.token-usage-head, .dounai-page-head) {
+  min-height: 124px;
+  align-items: center;
+  padding: 20px 24px;
+}
+
+.secondary-page-head:not(.token-usage-head, .dounai-page-head) h1 {
+  margin-top: 5px;
+  font-size: clamp(30px, 2.5vw, 38px);
+  line-height: 1.02;
+}
+
+.secondary-page-head:not(.token-usage-head, .dounai-page-head) p:last-child {
+  max-width: 760px;
+  margin-top: 8px;
+  color: var(--soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.secondary-page-head .status-pill {
+  border-color: color-mix(in srgb, var(--view-accent) 24%, #dbe7f4);
+  background: color-mix(in srgb, var(--view-accent) 9%, #ffffff);
+  color: var(--view-accent);
+}
+
+.secondary-page-head:not(.token-usage-head, .dounai-page-head)::before,
+.secondary-view .token-head-card::before,
+.secondary-view .dounai-title-tab::before,
+.secondary-view .dounai-top-tabs::before,
+.secondary-view .panel::before,
+.secondary-view .token-summary article::before,
+.secondary-view .ricky-stats article::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 2;
+  background: linear-gradient(90deg, var(--card-color), color-mix(in srgb, var(--card-color) 28%, transparent), transparent 72%);
+  pointer-events: none;
+}
+
+.secondary-view .token-head-card,
+.secondary-view .dounai-title-tab,
+.secondary-view .dounai-top-tabs,
+.secondary-view .panel,
+.secondary-view .token-summary article,
+.secondary-view .ricky-stats article {
+  position: relative;
+  border-color: color-mix(in srgb, var(--card-color) 15%, #dfe8f2);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--card-color) 8%, rgba(29, 78, 126, 0.08));
+}
+
+.secondary-view .panel {
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card-color) 2.5%, #ffffff), #ffffff 110px);
+}
+
+#tokens-view .token-main-tab {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
+}
+
+#tokens-view .token-source-sync {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
+#tokens-view .token-main-tab h1 {
+  margin-top: 5px;
+  font-size: clamp(32px, 2.7vw, 42px);
+  line-height: 1;
+}
+
+#tokens-view .token-summary article {
+  min-height: 88px;
+  overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-color) 5%, #ffffff), #ffffff 72%);
+}
+
+#tokens-view .token-summary article:nth-child(2),
+#tokens-view .token-summary article:nth-child(4) {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
+#tokens-view .token-summary article:nth-child(3),
+#tokens-view .token-summary article:nth-child(7) {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
+}
+
+#tokens-view .token-summary article:nth-child(5) {
+  --card-color: var(--ok);
+  --card-border: var(--green-border);
+}
+
+#tokens-view .token-summary article:nth-child(6) {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
+}
+
+#dounai-view .dounai-today-tab {
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
+}
+
+#dounai-view .dounai-balance-tab {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
+}
+
+#dounai-view .dounai-total-tab {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
+}
+
+#dounai-view .dounai-title-tab > span,
+#dounai-view .dounai-top-tabs > span {
+  border-color: color-mix(in srgb, var(--card-color) 18%, #e2eaf3);
+  background: color-mix(in srgb, var(--card-color) 4%, #ffffff);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--card-color) 8%, transparent);
+}
+
+#dounai-view .dounai-chart-card:nth-child(2) {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
+#dounai-view .dounai-chart-card:nth-child(3) {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
+}
+
+#dounai-view .dounai-chart-card:nth-child(4) {
+  --card-color: var(--orange);
+  --card-border: var(--orange-border);
+}
+
+#cloud-view .cloud-meta div {
+  border-color: color-mix(in srgb, var(--card-color) 12%, #e6edf5);
+  background: color-mix(in srgb, var(--card-color) 3.5%, #ffffff);
+}
+
+#life-view .life-food-panel {
+  background:
+    linear-gradient(180deg, rgba(244, 252, 247, 0.72), #ffffff 150px);
+}
+
+#ricky-view .ricky-stats article {
+  overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-color) 5%, #ffffff), #ffffff 72%);
+}
+
 .empty-state {
   margin: 0;
   color: var(--muted);
