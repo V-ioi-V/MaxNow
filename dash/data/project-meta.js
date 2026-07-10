@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-10 14:31",
-  "version": "1.0.2.00",
-  "versionLabel": "v1.0.2.00",
-  "branch": "feature/custom-login-page",
-  "commit": "0384825",
+  "updatedAt": "2026-07-10 14:53",
+  "version": "1.0.2.01",
+  "versionLabel": "v1.0.2.01",
+  "branch": "bugfix/token-update-card-width",
+  "commit": "b5cdd83",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/custom-login-page · commit 0384825 · 有未提交代码改动",
+  "deployNote": "bugfix/token-update-card-width · commit b5cdd83 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-10",
+      "title": "收紧 Token 来源更新时间卡",
+      "summary": "Token 页头右侧来源更新时间卡改为 `410px` 内容宽度，不再按比例铺满半行；说明文字移到四行来源时间上方。"
+    },
     {
       "date": "2026-07-10",
       "title": "用 MaxNow 风格登录页替代浏览器原生认证弹窗",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-10",
       "title": "统一 Token 活跃时长与固定小时上报周期",
       "summary": "Codex collector 新增 `task_complete.duration_ms` 统计，Token 页按 1d / 7d / 30d / all 展示已完成任务的活跃时长，并在来源与会话中展示对应时长；轮次间空闲时间不计入。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "修复 Home 项目状态过期和已完成任务误报",
-      "summary": "新增独立 `dash/data/project-status.*`，从 `ROADMAP.md` 生成 Home 主线和待推进事项，不再把自动生成结果写入 `dashboard.*` 或修改 `dashboard.today`。"
     }
   ]
 };

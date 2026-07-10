@@ -826,7 +826,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 }
 
 .token-usage-head {
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 410px);
   align-items: stretch;
   height: auto;
   padding: 0;
@@ -2922,10 +2922,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .token-source-sync {
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.64fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
   align-items: center;
-  padding: 16px 22px;
+  padding: 14px 18px;
 }
 
 .token-source-sync > span {
