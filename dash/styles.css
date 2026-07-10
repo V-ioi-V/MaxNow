@@ -775,16 +775,6 @@ body[data-view="tokens"] .topbar-token-ranges {
   --card-border: var(--blue-border);
 }
 
-.summary-bar::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--card-color), color-mix(in srgb, var(--card-color) 22%, transparent), transparent);
-}
-
 .summary-bar[data-freshness="fresh"] {
   --card-color: var(--ok);
   --card-border: var(--green-border);
@@ -4285,24 +4275,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   border-color: color-mix(in srgb, var(--view-accent) 24%, #dbe7f4);
   background: color-mix(in srgb, var(--view-accent) 9%, #ffffff);
   color: var(--view-accent);
-}
-
-.secondary-page-head:not(.token-usage-head, .dounai-page-head)::before,
-.secondary-view .token-head-card::before,
-.secondary-view .dounai-title-tab::before,
-.secondary-view .dounai-top-tabs::before,
-.secondary-view .panel::before,
-.secondary-view .token-summary article::before,
-.secondary-view .ricky-stats article::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  z-index: 2;
-  background: linear-gradient(90deg, var(--card-color), color-mix(in srgb, var(--card-color) 28%, transparent), transparent 72%);
-  pointer-events: none;
 }
 
 .secondary-view .token-head-card,

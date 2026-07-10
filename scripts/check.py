@@ -490,6 +490,8 @@ def check_today_progress_ring():
         raise ValueError("Today progress ring: desktop live group does not expose the centered grid columns")
     if "grid-template-rows: repeat(4, minmax(0, 1fr))" not in dashboard_css:
         raise ValueError("Today progress ring: signal rows are not evenly distributed")
+    if ".summary-bar::before" in dashboard_css:
+        raise ValueError("Today progress ring: retired card-top accent bar remains")
     if 'setProperty("--today-progress-angle", progressAngle)' not in dashboard_js:
         raise ValueError("Today progress ring: angle update is missing")
     if 'setText("#today-pulse-percent", progressPercent)' not in dashboard_js:
@@ -526,14 +528,23 @@ def check_secondary_view_style():
         "#cloud-view {",
         "#life-view {",
         "#ricky-view {",
-        ".secondary-view .panel::before",
-        "height: 4px",
     )
     if any(rule not in dashboard_css for rule in required_css):
         raise ValueError("secondary views: shared theme, accent, or card rules are incomplete")
-    if "styles.css?v=134" not in dashboard_html:
+    retired_top_bars = (
+        ".secondary-page-head:not(.token-usage-head, .dounai-page-head)::before",
+        ".secondary-view .token-head-card::before",
+        ".secondary-view .dounai-title-tab::before",
+        ".secondary-view .dounai-top-tabs::before",
+        ".secondary-view .panel::before",
+        ".secondary-view .token-summary article::before",
+        ".secondary-view .ricky-stats article::before",
+    )
+    if any(rule in dashboard_css for rule in retired_top_bars):
+        raise ValueError("secondary views: retired card-top accent bar remains")
+    if "styles.css?v=135" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
-    return "secondary views: five tabs share page heads, theme accents, card shells, and responsive rules"
+    return "secondary views: five tabs share clean card shells without top accent bars"
 
 
 def main():

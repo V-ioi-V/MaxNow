@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-11 00:06",
-  "version": "1.0.4.02",
-  "versionLabel": "v1.0.4.02",
-  "branch": "bugfix/center-today-ring",
-  "commit": "45f3069",
+  "updatedAt": "2026-07-11 00:18",
+  "version": "1.0.4.03",
+  "versionLabel": "v1.0.4.03",
+  "branch": "bugfix/remove-card-top-bars",
+  "commit": "11ab065",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/center-today-ring · commit 45f3069 · 有未提交代码改动",
+  "deployNote": "bugfix/remove-card-top-bars · commit 11ab065 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-11",
+      "title": "移除全部 tab 卡片顶部彩色横条",
+      "summary": "Home、豆奶、Token、云服务、生活和同行记的页头卡、摘要卡、普通面板、图表卡与统计卡统一取消顶部 4px 彩色或渐变强调线。"
+    },
     {
       "date": "2026-07-11",
       "title": "居中 Today Status 日进度并对齐信号节点",
@@ -28,11 +33,6 @@
       "date": "2026-07-10",
       "title": "将 Today Status 时间轴改为圆形日进度",
       "summary": "用青色 24 小时圆形进度环替换竖向时间轴，环内显示今天已过去的整数百分比，当前时间单独显示在环外。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "精简 AI 前沿三栏栏头",
-      "summary": "三栏只保留蓝色时间范围“最近 3 天 / 本周 / 近 30 天”，删除重复的黑色栏目名和栏目简介，新闻卡片直接接在时间范围下方。"
     }
   ]
 }
