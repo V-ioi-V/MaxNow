@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-11 21:03",
+  "updatedAt": "2026-07-11 22:04",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
@@ -7,29 +7,29 @@
   "pricingStale": false,
   "sinceDays": 3650,
   "summary": {
-    "inputTokens": 1216521755,
-    "outputTokens": 3580785,
-    "cacheReadTokens": 1151292032,
-    "cacheBaseTokens": 1216521755,
-    "totalTokens": 1220102540,
-    "estimatedCostUsd": 1009.218181,
-    "runs": 112,
-    "activeSeconds": 231243,
-    "completedTurns": 1051
+    "inputTokens": 1224945545,
+    "outputTokens": 3601124,
+    "cacheReadTokens": 1159498624,
+    "cacheBaseTokens": 1224945545,
+    "totalTokens": 1228546669,
+    "estimatedCostUsd": 1015.017637,
+    "runs": 113,
+    "activeSeconds": 232534,
+    "completedTurns": 1055
   },
   "sources": [
     {
       "key": "codex-windows",
       "label": "Codex Windows",
-      "inputTokens": 1216521755,
-      "outputTokens": 3580785,
-      "cacheReadTokens": 1151292032,
-      "cacheBaseTokens": 1216521755,
-      "totalTokens": 1220102540,
-      "estimatedCostUsd": 1009.218181,
-      "runs": 112,
-      "activeSeconds": 231243,
-      "completedTurns": 1051
+      "inputTokens": 1224945545,
+      "outputTokens": 3601124,
+      "cacheReadTokens": 1159498624,
+      "cacheBaseTokens": 1224945545,
+      "totalTokens": 1228546669,
+      "estimatedCostUsd": 1015.017637,
+      "runs": 113,
+      "activeSeconds": 232534,
+      "completedTurns": 1055
     }
   ],
   "days": [
@@ -38,29 +38,29 @@
       "sources": [
         "codex-windows"
       ],
-      "inputTokens": 121047491,
-      "outputTokens": 297839,
-      "cacheReadTokens": 117489152,
-      "cacheBaseTokens": 121047491,
-      "totalTokens": 121345330,
-      "estimatedCostUsd": 85.471441,
-      "runs": 5,
-      "activeSeconds": 7188,
-      "completedTurns": 29,
+      "inputTokens": 129471281,
+      "outputTokens": 318178,
+      "cacheReadTokens": 125695744,
+      "cacheBaseTokens": 129471281,
+      "totalTokens": 129789459,
+      "estimatedCostUsd": 91.270897,
+      "runs": 6,
+      "activeSeconds": 8479,
+      "completedTurns": 33,
       "byModel": [
         {
           "model": "gpt-5.5",
           "provider": "openai",
           "openrouterModel": null,
-          "inputTokens": 121047491,
-          "outputTokens": 297839,
-          "cacheReadTokens": 117489152,
-          "cacheBaseTokens": 121047491,
-          "totalTokens": 121345330,
-          "estimatedCostUsd": 85.471441,
-          "runs": 5,
-          "activeSeconds": 7188,
-          "completedTurns": 29,
+          "inputTokens": 129471281,
+          "outputTokens": 318178,
+          "cacheReadTokens": 125695744,
+          "cacheBaseTokens": 129471281,
+          "totalTokens": 129789459,
+          "estimatedCostUsd": 91.270897,
+          "runs": 6,
+          "activeSeconds": 8479,
+          "completedTurns": 33,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -86,15 +86,15 @@
           "kind": "codex-session",
           "label": "ronbay_hr_agent",
           "model": "gpt-5.5",
-          "inputTokens": 53460913,
-          "outputTokens": 103572,
-          "cacheReadTokens": 52266496,
-          "cacheBaseTokens": 53460913,
-          "totalTokens": 53564485,
-          "estimatedCostUsd": 35.212493,
-          "runs": 2,
-          "activeSeconds": 5322,
-          "completedTurns": 23,
+          "inputTokens": 61884703,
+          "outputTokens": 123911,
+          "cacheReadTokens": 60473088,
+          "cacheBaseTokens": 61884703,
+          "totalTokens": 62008614,
+          "estimatedCostUsd": 41.011949,
+          "runs": 3,
+          "activeSeconds": 6613,
+          "completedTurns": 27,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -2349,6 +2349,38 @@
   "recentRuns": [
     {
       "date": "2026-07-11",
+      "timestamp": "2026-07-11T21:53:34+08:00",
+      "source": "codex-windows",
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "openrouterModel": null,
+      "sessionId": "019f515c-ae21-7ed0-9e44-537377a0e993",
+      "runId": "019f515c-ae21-7ed0-9e44-537377a0e993",
+      "kind": "codex-session",
+      "label": "ronbay_hr_agent",
+      "inputTokens": 8423790,
+      "outputTokens": 20339,
+      "cacheReadTokens": 8206592,
+      "cacheBaseTokens": 8423790,
+      "reasoningOutputTokens": 5786,
+      "totalTokens": 8444129,
+      "pricingEstimated": true,
+      "pricingModel": "gpt-5.5",
+      "contextWindow": 353400,
+      "tokenCountEvents": 75,
+      "activeSeconds": 1291,
+      "completedTurns": 4,
+      "activeByDate": [
+        {
+          "date": "2026-07-11",
+          "activeSeconds": 1291,
+          "completedTurns": 4
+        }
+      ],
+      "estimatedCostUsd": 5.799456
+    },
+    {
+      "date": "2026-07-11",
       "timestamp": "2026-07-11T17:53:51+08:00",
       "source": "codex-windows",
       "provider": "openai",
@@ -3309,38 +3341,6 @@
         }
       ],
       "estimatedCostUsd": 2.246353
-    },
-    {
-      "date": "2026-06-27",
-      "timestamp": "2026-06-27T10:33:52+08:00",
-      "source": "codex-windows",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "019f066d-e6cc-7e13-9d63-bca923adc459",
-      "runId": "019f066d-e6cc-7e13-9d63-bca923adc459",
-      "kind": "codex-session",
-      "label": "daily-ai-news",
-      "inputTokens": 27729024,
-      "outputTokens": 73476,
-      "cacheReadTokens": 26609792,
-      "cacheBaseTokens": 27729024,
-      "reasoningOutputTokens": 12399,
-      "totalTokens": 27802500,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 208,
-      "activeSeconds": 3238,
-      "completedTurns": 26,
-      "activeByDate": [
-        {
-          "date": "2026-06-27",
-          "activeSeconds": 3238,
-          "completedTurns": 26
-        }
-      ],
-      "estimatedCostUsd": 21.105336
     }
   ],
   "pricingSnapshot": [
