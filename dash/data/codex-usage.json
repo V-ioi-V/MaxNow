@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-14 23:03",
+  "updatedAt": "2026-07-15 00:04",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
@@ -7,29 +7,29 @@
   "pricingStale": false,
   "sinceDays": 3650,
   "summary": {
-    "inputTokens": 1233452458,
-    "outputTokens": 3645556,
-    "cacheReadTokens": 1167701888,
-    "cacheBaseTokens": 1233452458,
-    "totalTokens": 1237098014,
-    "estimatedCostUsd": 1021.970474,
+    "inputTokens": 1242638928,
+    "outputTokens": 3674623,
+    "cacheReadTokens": 1176699008,
+    "cacheBaseTokens": 1242638928,
+    "totalTokens": 1246313551,
+    "estimatedCostUsd": 1028.287794,
     "runs": 114,
-    "activeSeconds": 234718,
-    "completedTurns": 1069
+    "activeSeconds": 236404,
+    "completedTurns": 1077
   },
   "sources": [
     {
       "key": "codex-windows",
       "label": "Codex Windows",
-      "inputTokens": 1233452458,
-      "outputTokens": 3645556,
-      "cacheReadTokens": 1167701888,
-      "cacheBaseTokens": 1233452458,
-      "totalTokens": 1237098014,
-      "estimatedCostUsd": 1021.970474,
+      "inputTokens": 1242638928,
+      "outputTokens": 3674623,
+      "cacheReadTokens": 1176699008,
+      "cacheBaseTokens": 1242638928,
+      "totalTokens": 1246313551,
+      "estimatedCostUsd": 1028.287794,
       "runs": 114,
-      "activeSeconds": 234718,
-      "completedTurns": 1069
+      "activeSeconds": 236404,
+      "completedTurns": 1077
     }
   ],
   "days": [
@@ -38,29 +38,29 @@
       "sources": [
         "codex-windows"
       ],
-      "inputTokens": 8325387,
-      "outputTokens": 44095,
-      "cacheReadTokens": 8022272,
-      "cacheBaseTokens": 8325387,
-      "totalTokens": 8369482,
-      "estimatedCostUsd": 6.849561,
+      "inputTokens": 17511857,
+      "outputTokens": 73162,
+      "cacheReadTokens": 17019392,
+      "cacheBaseTokens": 17511857,
+      "totalTokens": 17585019,
+      "estimatedCostUsd": 13.166881,
       "runs": 1,
-      "activeSeconds": 2172,
-      "completedTurns": 13,
+      "activeSeconds": 3858,
+      "completedTurns": 21,
       "byModel": [
         {
           "model": "gpt-5.5",
           "provider": "openai",
           "openrouterModel": null,
-          "inputTokens": 8325387,
-          "outputTokens": 44095,
-          "cacheReadTokens": 8022272,
-          "cacheBaseTokens": 8325387,
-          "totalTokens": 8369482,
-          "estimatedCostUsd": 6.849561,
+          "inputTokens": 17511857,
+          "outputTokens": 73162,
+          "cacheReadTokens": 17019392,
+          "cacheBaseTokens": 17511857,
+          "totalTokens": 17585019,
+          "estimatedCostUsd": 13.166881,
           "runs": 1,
-          "activeSeconds": 2172,
-          "completedTurns": 13,
+          "activeSeconds": 3858,
+          "completedTurns": 21,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -70,15 +70,15 @@
           "kind": "codex-session",
           "label": "ronbay_hr_agent",
           "model": "gpt-5.5",
-          "inputTokens": 8325387,
-          "outputTokens": 44095,
-          "cacheReadTokens": 8022272,
-          "cacheBaseTokens": 8325387,
-          "totalTokens": 8369482,
-          "estimatedCostUsd": 6.849561,
+          "inputTokens": 17511857,
+          "outputTokens": 73162,
+          "cacheReadTokens": 17019392,
+          "cacheBaseTokens": 17511857,
+          "totalTokens": 17585019,
+          "estimatedCostUsd": 13.166881,
           "runs": 1,
-          "activeSeconds": 2172,
-          "completedTurns": 13,
+          "activeSeconds": 3858,
+          "completedTurns": 21,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -2401,7 +2401,7 @@
   "recentRuns": [
     {
       "date": "2026-07-14",
-      "timestamp": "2026-07-14T23:03:20+08:00",
+      "timestamp": "2026-07-14T23:40:02+08:00",
       "source": "codex-windows",
       "provider": "openai",
       "model": "gpt-5.5",
@@ -2410,26 +2410,26 @@
       "runId": "019f60d2-f206-7d30-a67d-3edd81da3199",
       "kind": "codex-session",
       "label": "ronbay_hr_agent",
-      "inputTokens": 8325387,
-      "outputTokens": 44095,
-      "cacheReadTokens": 8022272,
-      "cacheBaseTokens": 8325387,
-      "reasoningOutputTokens": 15866,
-      "totalTokens": 8369482,
+      "inputTokens": 17511857,
+      "outputTokens": 73162,
+      "cacheReadTokens": 17019392,
+      "cacheBaseTokens": 17511857,
+      "reasoningOutputTokens": 25410,
+      "totalTokens": 17585019,
       "pricingEstimated": true,
       "pricingModel": "gpt-5.5",
       "contextWindow": 258400,
-      "tokenCountEvents": 119,
-      "activeSeconds": 2172,
-      "completedTurns": 13,
+      "tokenCountEvents": 174,
+      "activeSeconds": 3858,
+      "completedTurns": 21,
       "activeByDate": [
         {
           "date": "2026-07-14",
-          "activeSeconds": 2172,
-          "completedTurns": 13
+          "activeSeconds": 3858,
+          "completedTurns": 21
         }
       ],
-      "estimatedCostUsd": 6.849561
+      "estimatedCostUsd": 13.166881
     },
     {
       "date": "2026-07-11",
