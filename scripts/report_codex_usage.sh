@@ -10,6 +10,8 @@ NO_DEPLOY=0
 ALLOW_DIRTY=0
 LOG_PATH="${MAXNOW_CODEX_REPORT_LOG:-$HOME/Library/Logs/MaxNow/local-codex-usage-report.log}"
 LOCK_DIR="${TMPDIR:-/tmp}/maxnow-local-codex-usage-report.lock"
+REPORT_COMMIT_MESSAGE="Update macOS Codex token usage"
+MAX_PUSH_ATTEMPTS="${MAXNOW_CODEX_PUSH_ATTEMPTS:-3}"
 
 ALLOWED_FILES=(
   "dash/data/codex-macos-usage.json"
@@ -174,6 +176,44 @@ run_step() {
   "$@" > >(tee -a "$LOG_PATH") 2>&1
 }
 
+local_only_commits_are_generated() {
+  local commit
+  local path
+  local found=0
+
+  while IFS= read -r commit; do
+    found=1
+    if [[ "$(git show -s --format=%s "$commit")" != "$REPORT_COMMIT_MESSAGE" ]]; then
+      return 1
+    fi
+    while IFS= read -r path; do
+      if [[ -n "$path" ]] && ! is_allowed_path "$path"; then
+        return 1
+      fi
+    done < <(git diff-tree --no-commit-id --name-only -r "$commit")
+  done < <(git rev-list origin/main..HEAD)
+
+  [[ "$found" -eq 1 ]]
+}
+
+sync_origin_main() {
+  run_step "fetch latest origin/main" git fetch origin main
+
+  if git merge-base --is-ancestor HEAD origin/main; then
+    if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+      run_step "fast-forward to origin/main" git merge --ff-only origin/main
+    fi
+    return
+  fi
+
+  if ! local_only_commits_are_generated; then
+    fail "local main diverged with commits outside the generated macOS usage boundary; manual recovery required"
+  fi
+
+  log "recover generated-only local divergence from origin/main"
+  run_step "reset generated reporting commits to origin/main" git reset --hard origin/main
+}
+
 find_python() {
   if [[ -n "$PYTHON_BIN" ]]; then
     return
@@ -235,34 +275,54 @@ fi
 
 assert_clean_worktree "before refresh"
 
-run_step "pull latest origin/main" git pull --ff-only origin main
-run_step "refresh local Codex usage ledger" refresh_local_usage
-run_step "run consistency check" "$PYTHON_BIN" scripts/check.py
-
-assert_no_blocking_dirty_files "after refresh"
-
-changed_allowed="$(git status --porcelain -- "${ALLOWED_FILES[@]}")"
-if [[ -z "$changed_allowed" ]]; then
-  log "no Codex usage data changes to report"
-  exit 0
+if ! [[ "$MAX_PUSH_ATTEMPTS" =~ ^[1-9][0-9]*$ ]]; then
+  fail "MAXNOW_CODEX_PUSH_ATTEMPTS must be a positive integer"
 fi
 
-if [[ "$NO_COMMIT" -eq 1 ]]; then
-  log "skip commit because --no-commit was set; changed files: $(dirty_paths_text "$changed_allowed" | paste -sd ', ' -)"
-  exit 0
-fi
+attempt=1
+while [[ "$attempt" -le "$MAX_PUSH_ATTEMPTS" ]]; do
+  sync_origin_main
+  run_step "refresh local Codex usage ledger" refresh_local_usage
+  run_step "run consistency check" "$PYTHON_BIN" scripts/check.py
 
-run_step "stage generated usage ledgers" git add -- "${ALLOWED_FILES[@]}"
-log "staged: $(git diff --cached --name-only | paste -sd ', ' -)"
-run_step "commit generated usage ledgers" git commit -m "Update macOS Codex token usage"
+  assert_no_blocking_dirty_files "after refresh"
 
-if [[ "$NO_PUSH" -eq 1 ]]; then
-  log "skip push because --no-push was set"
-else
-  run_step "push generated usage ledgers to origin/main" git push origin HEAD:main
-  if [[ "$NO_DEPLOY" -eq 1 ]]; then
-    log "--no-deploy is deprecated; server token merge is scheduled independently"
+  changed_allowed="$(git status --porcelain -- "${ALLOWED_FILES[@]}")"
+  if [[ -z "$changed_allowed" ]]; then
+    log "no Codex usage data changes to report"
+    exit 0
   fi
+
+  if [[ "$NO_COMMIT" -eq 1 ]]; then
+    log "skip commit because --no-commit was set; changed files: $(dirty_paths_text "$changed_allowed" | paste -sd ', ' -)"
+    exit 0
+  fi
+
+  run_step "stage generated usage ledgers" git add -- "${ALLOWED_FILES[@]}"
+  log "staged: $(git diff --cached --name-only | paste -sd ', ' -)"
+  run_step "commit generated usage ledgers" git commit -m "$REPORT_COMMIT_MESSAGE"
+
+  if [[ "$NO_PUSH" -eq 1 ]]; then
+    log "skip push because --no-push was set"
+    break
+  fi
+
+  log "push generated usage ledgers to origin/main (attempt $attempt/$MAX_PUSH_ATTEMPTS)"
+  if git push origin HEAD:main > >(tee -a "$LOG_PATH") 2>&1; then
+    break
+  fi
+
+  if [[ "$attempt" -ge "$MAX_PUSH_ATTEMPTS" ]]; then
+    fail "push failed after $MAX_PUSH_ATTEMPTS attempts; the next scheduled run will retry safely"
+  fi
+
+  attempt=$((attempt + 1))
+  log "push raced with another main update; resync and regenerate before retry"
+  sleep 2
+done
+
+if [[ "$NO_DEPLOY" -eq 1 ]]; then
+  log "--no-deploy is deprecated; server token merge is scheduled independently"
 fi
 
 log "local Codex usage report ok"
