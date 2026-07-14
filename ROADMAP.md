@@ -175,6 +175,7 @@
 - Token 页面优先读取统一总账，保留 1d / 7d / 30d / all、来源费用面板、模型占比、最近调用和最近 30 天折线图，并显式区分 OpenClaw、Codex Windows / macOS、Codex server；来源费用跟随当前范围更新。Home 原“当前主线”位置展示近 180 天每日 Token 活动热力格。
 - `scripts/update_data.py codex-usage` 会刷新 Windows 兼容本机 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py codex-macos-usage` 会刷新 macOS 本机 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py codex-server-usage` 会刷新服务器 Codex 源账本、统一总账和 wrapper；`scripts/update_data.py token-usage` 可单独合并现有账本。
 - Windows Task Scheduler 固定每小时 `:02` 上报，macOS launchd 固定每小时 `:00` 上报；两端错开推送并设置网络超时 / 任务运行上限。
+- macOS 上报已支持生成提交分叉自愈和并发 push 有限重试；只有提交标题与改动文件都严格落在 macOS 源账本边界内才允许自动 reset，人工提交继续要求手工处理。
 - 服务器 root crontab 使用 `MAXNOW-TOKEN-SOURCE-REFRESH` 每小时 `:05` 刷新 OpenClaw / Codex server 源账本；ubuntu 使用 `MAXNOW-TOKEN-USAGE-REFRESH` 每小时 `:10` 拉取并发布统一总账。
 
 ### 已完成的同行记入口
