@@ -653,6 +653,16 @@ runtime preservation: 拉取代码前完整备份并暂存 dash/data，拉取后
 verification: 2048px 与 390px 下逐页检查 6 个 tab，卡片顶部彩条计数均为 0、横向溢出均为 0、控制台无报错；python3 scripts/check.py ok；nginx -t ok；线上源文件确认 v135 且旧顶条选择器均不存在。
 ```
 
+2026-07-15 已部署数据失败与新鲜度闭环：
+
+```text
+deployed commit: bad3b3b Avoid deployment bytecode artifacts
+changes: 10 个 Owner 可见数据源统一区分已同步、暂无记录、读取失败、数据过期和尚未同步；关键自动化连续 3 次失败时进入异常；最近成功日志可清除历史失败；检查脚本不再生成 Python 字节码产物；版本提升到 1.0.4.08。
+runtime data backups before deploy: /home/ubuntu/maxnow-deploy-backups/20260715-171334-before-data-health；/home/ubuntu/maxnow-deploy-backups/20260715-171558-before-data-health-recovery-fix
+runtime preservation: 拉取代码前备份并暂存 dash/data，拉取后恢复运行数据，再执行 runtime 生成和一致性检查。
+verification: python3 scripts/update_data.py runtime ok；python3 scripts/check.py ok；nginx -t 与 reload ok；automation-failures 为 Clear；data-health 为 9/10 正常，Life 数据因 personal-wiki 源读取 404 保留旧缓存并显示数据过期，系统总状态因此为“注意”。
+```
+
 刷新 Home 天气卡：
 
 ```bash
