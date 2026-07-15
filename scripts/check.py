@@ -241,7 +241,7 @@ def check_openclaw_usage():
     return "openclaw-usage: ledger shape is valid"
 
 
-def check_usage_ledger(name, rel_path, allowed_pricing_basis):
+def check_usage_ledger(name, rel_path, allowed_pricing_basis, require_unique_runs=False):
     data = load_json(ROOT / rel_path)
     if data.get("pricingBasis") not in allowed_pricing_basis:
         raise ValueError(f"{name}: pricingBasis is not supported")
@@ -258,19 +258,27 @@ def check_usage_ledger(name, rel_path, allowed_pricing_basis):
                 raise ValueError(f"{name}: {key} cannot be negative")
         if float(day.get("estimatedCostUsd", 0)) < 0:
             raise ValueError(f"{name}: estimatedCostUsd cannot be negative")
+    if int(data.get("summary", {}).get("totalTokens", 0)) != sum(
+        int(day.get("totalTokens", 0)) for day in data.get("days", [])
+    ):
+        raise ValueError(f"{name}: summary totalTokens must equal the sum of days")
+    if require_unique_runs:
+        run_ids = [run.get("runId") for run in data.get("recentRuns", [])]
+        if any(not run_id for run_id in run_ids) or len(run_ids) != len(set(run_ids)):
+            raise ValueError(f"{name}: recentRuns must have unique runId values")
     return f"{name}: ledger shape is valid"
 
 
 def check_codex_usage():
-    return check_usage_ledger("codex-usage", "dash/data/codex-usage.json", {"openai-api-equivalent"})
+    return check_usage_ledger("codex-usage", "dash/data/codex-usage.json", {"openai-api-equivalent"}, True)
 
 
 def check_codex_macos_usage():
-    return check_usage_ledger("codex-macos-usage", "dash/data/codex-macos-usage.json", {"openai-api-equivalent"})
+    return check_usage_ledger("codex-macos-usage", "dash/data/codex-macos-usage.json", {"openai-api-equivalent"}, True)
 
 
 def check_codex_server_usage():
-    return check_usage_ledger("codex-server-usage", "dash/data/codex-server-usage.json", {"openai-api-equivalent"})
+    return check_usage_ledger("codex-server-usage", "dash/data/codex-server-usage.json", {"openai-api-equivalent"}, True)
 
 
 def check_token_usage():

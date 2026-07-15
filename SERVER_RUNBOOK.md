@@ -404,7 +404,7 @@ bash scripts/install_local_codex_usage_launchd.sh --repo-root /Users/bytedance/.
 
 修复后手动触发验证成功：`launchctl` 上次退出码为 `0`，`~/Library/Logs/MaxNow/local-codex-usage-report.log` 记录 `2026-07-07 17:32` 成功提交 `Update macOS Codex token usage`，线上 `token-usage.json` 的 `Codex macOS` 来源更新时间为 `2026-07-07 17:32`。
 
-Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count`、`turn_context.model` 和 `task_complete.duration_ms`，导出 token、已完成任务活跃时长、时间、来源、模型和费用估算；活跃时长不包含轮次之间空闲时间，不导出 prompt / response 正文。Windows、macOS、server 继续使用三个独立源账本。
+Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count`、`turn_context.model` 和 `task_complete.duration_ms`，按 `total_token_usage` 相邻快照的正向增量与原始事件日期记账，并在同一会话树内去重分叉文件继承的历史；导出 token、已完成任务活跃时长、时间、来源、模型和费用估算，活跃时长不包含轮次之间空闲时间，不导出 prompt / response 正文。Windows、macOS、server 继续使用三个独立源账本。
 
 2026-07-10 将 OpenClaw / Codex server 合并为固定小时源采集，标记块为 `MAXNOW-TOKEN-SOURCE-REFRESH`：
 

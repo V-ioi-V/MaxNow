@@ -69,7 +69,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
 - `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段；Home 系统状态卡作为入口，云服务页复用同一份快照展示更完整的服务器状态。
 - `scripts/sync_openclaw_usage.py`：只读服务器 `/root/.openclaw` 轨迹，生成 OpenClaw Token 用量账本和 OpenRouter 等价费用估算。
-- `scripts/sync_codex_usage.py`：只读 `.codex/sessions` 中的 `token_count`、`turn_context.model` 和 `task_complete.duration_ms`，生成 Codex Token 用量与已完成任务活跃时长；不导出 prompt / response 正文。
+- `scripts/sync_codex_usage.py`：只读 `.codex/sessions` 中的 `token_count`、`turn_context.model` 和 `task_complete.duration_ms`，按累计快照增量和事件日期生成 Codex Token 用量与已完成任务活跃时长；同一会话树内去重分叉文件继承的历史，不导出 prompt / response 正文。
 - `scripts/sync_token_usage.py`：合并 OpenClaw / Codex Windows / macOS / server 源账本，生成 Token 页面优先读取的统一总账。
 - `scripts/report_codex_usage.ps1`：Owner Windows 本机的 Codex 用量上报脚本；只刷新并提交本机 `codex-usage.*` 源账本，推送后不再 SSH 触发服务器合并。
 - `scripts/report_codex_usage_hidden.vbs`：Task Scheduler 使用的无窗口 launcher，通过 `wscript.exe` 以 window style 0 启动 PowerShell 上报脚本，避免瞬时命令行窗口。
@@ -100,7 +100,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/wiki-todos.js`：从 `wiki-todos.json` 生成的浏览器 wrapper。
 - `dash/data/openclaw-usage.json`：OpenClaw 每日 token 用量、按模型 / 任务拆分和 OpenRouter 等价费用估算。
 - `dash/data/codex-usage.json`：Windows 兼容本机 Codex 每日 token 用量、按模型 / 任务拆分；来源为本机 `.codex/sessions` 的 `token_count` 事件。
-- `dash/data/codex-macos-usage.json`：macOS 本机 Codex 每日 token 用量、按模型 / 任务拆分；来源为 macOS 本机 `.codex/sessions` 的 `token_count` 事件。
+- `dash/data/codex-macos-usage.json`：macOS 本机 Codex 每日 token 用量、按模型 / 任务拆分；来源为 macOS 本机 `.codex/sessions` 的 `token_count` 事件，分叉 session 的继承历史不重复计入。
 - `dash/data/codex-server-usage.json`：服务器 Codex 每日 token 用量、按模型 / 任务拆分；来源为服务器 `/root/.codex/sessions` 的 `token_count` 事件。
 - `dash/data/token-usage.json`：OpenClaw / Codex 合并后的统一 Token 总账，Token 页面优先读取它。
 - `dash/data/*-usage.js`：从对应 usage JSON 生成的浏览器 wrapper。

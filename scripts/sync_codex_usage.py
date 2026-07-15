@@ -163,21 +163,37 @@ def iter_rollout_files(state_dir):
     yield from sorted(sessions_dir.rglob("*.jsonl"))
 
 
-def load_session_usage(path, source_key, source_label, cutoff):
-    session_meta = {}
-    event_count = 0
-    final_total = None
-    last_timestamp = None
+TOKEN_FIELDS = (
+    ("inputTokens", "input_tokens"),
+    ("outputTokens", "output_tokens"),
+    ("cacheReadTokens", "cached_input_tokens"),
+    ("reasoningOutputTokens", "reasoning_output_tokens"),
+    ("totalTokens", "total_tokens"),
+)
+
+
+def normalized_total(raw_usage):
+    return {name: to_int(raw_usage.get(raw_name)) for name, raw_name in TOKEN_FIELDS}
+
+
+def usage_key(usage):
+    return tuple(usage[name] for name, _ in TOKEN_FIELDS)
+
+
+def usage_delta(current, previous):
+    return {name: current[name] - previous[name] for name, _ in TOKEN_FIELDS}
+
+
+def parse_session_file(path):
+    session_meta = None
+    token_events = []
+    completion_events = []
     last_model = DEFAULT_PRICING_MODEL
-    last_context_window = 0
-    active_seconds = 0
-    completed_turns = 0
-    active_by_date = defaultdict(lambda: {"activeSeconds": 0, "completedTurns": 0})
 
     try:
         handle = path.open(encoding="utf-8", errors="replace")
     except OSError:
-        return []
+        return None
 
     with handle:
         for line in handle:
@@ -189,13 +205,16 @@ def load_session_usage(path, source_key, source_label, cutoff):
             record_type = record.get("type")
             if record_type == "session_meta":
                 payload = record.get("payload") or {}
-                session_meta = {
-                    "sessionId": payload.get("session_id") or payload.get("id") or path.stem,
-                    "cwd": payload.get("cwd") or "",
-                    "originator": payload.get("originator") or "Codex",
-                    "source": payload.get("source") or "",
-                    "modelProvider": payload.get("model_provider") or "openai",
-                }
+                if session_meta is None:
+                    session_id = payload.get("id") or payload.get("session_id") or path.stem
+                    parent_id = payload.get("forked_from_id") or payload.get("parent_thread_id")
+                    session_meta = {
+                        "sessionId": session_id,
+                        "parentId": parent_id if parent_id != session_id else None,
+                        "cwd": payload.get("cwd") or "",
+                        "originator": payload.get("originator") or "Codex",
+                        "modelProvider": payload.get("model_provider") or "openai",
+                    }
                 continue
             if record_type == "turn_context":
                 turn_model = (record.get("payload") or {}).get("model")
@@ -209,73 +228,167 @@ def load_session_usage(path, source_key, source_label, cutoff):
             if payload.get("type") == "task_complete":
                 duration_ms = to_int(payload.get("duration_ms"))
                 completed_at = parse_event_ts(payload.get("completed_at")) or parse_ts(record.get("timestamp"))
-                if duration_ms > 0 and completed_at and completed_at >= cutoff:
-                    duration_seconds = (duration_ms + 999) // 1000
-                    active_seconds += duration_seconds
-                    completed_turns += 1
-                    active_day = active_by_date[completed_at.strftime("%Y-%m-%d")]
-                    active_day["activeSeconds"] += duration_seconds
-                    active_day["completedTurns"] += 1
+                if duration_ms > 0 and completed_at:
+                    completion_events.append(
+                        {
+                            "timestamp": completed_at,
+                            "durationMs": duration_ms,
+                            "fingerprint": json.dumps(payload, sort_keys=True, separators=(",", ":")),
+                        }
+                    )
                 continue
             if payload.get("type") != "token_count":
                 continue
 
             happened_at = parse_ts(record.get("timestamp"))
-            if not happened_at or happened_at < cutoff:
+            if not happened_at:
                 continue
             info = payload.get("info") or {}
             total_usage = info.get("total_token_usage") or {}
             if not total_usage:
                 continue
-            event_count += 1
-            final_total = total_usage
-            last_timestamp = happened_at
             rate_limits = record.get("rate_limits") or {}
             last_model = normalize_model(rate_limits.get("limit_name") or last_model)
-            last_context_window = to_int(info.get("model_context_window"))
+            token_events.append(
+                {
+                    "timestamp": happened_at,
+                    "model": last_model,
+                    "contextWindow": to_int(info.get("model_context_window")),
+                    "total": normalized_total(total_usage),
+                }
+            )
 
-    if not final_total or not last_timestamp:
-        return []
-
-    session_id = session_meta.get("sessionId") or path.stem
-    label = display_label(session_meta.get("cwd"), session_meta.get("originator"), source_label)
-    item = {
-        "date": last_timestamp.strftime("%Y-%m-%d"),
-        "timestamp": last_timestamp.isoformat(timespec="seconds"),
-        "source": source_key,
-        "provider": session_meta.get("modelProvider") or "openai",
-        "model": last_model,
-        "openrouterModel": None,
-        "sessionId": session_id,
-        "runId": session_id,
-        "kind": "codex-session",
-        "label": label,
-        "inputTokens": to_int(final_total.get("input_tokens")),
-        "outputTokens": to_int(final_total.get("output_tokens")),
-        "cacheReadTokens": to_int(final_total.get("cached_input_tokens")),
-        "cacheBaseTokens": to_int(final_total.get("input_tokens")),
-        "reasoningOutputTokens": to_int(final_total.get("reasoning_output_tokens")),
-        "totalTokens": to_int(final_total.get("total_tokens")),
-        "pricingEstimated": True,
-        "pricingModel": last_model,
-        "contextWindow": last_context_window,
-        "tokenCountEvents": event_count,
-        "activeSeconds": active_seconds,
-        "completedTurns": completed_turns,
-        "activeByDate": [
-            {"date": date, **usage}
-            for date, usage in sorted(active_by_date.items())
-        ],
+    if session_meta is None:
+        session_meta = {
+            "sessionId": path.stem,
+            "parentId": None,
+            "cwd": "",
+            "originator": "Codex",
+            "modelProvider": "openai",
+        }
+    return {
+        "meta": session_meta,
+        "tokenEvents": token_events,
+        "completionEvents": completion_events,
     }
-    item["estimatedCostUsd"] = round(estimate_cost(item, last_model), 8)
-    return [item]
 
 
 def collect_runs(state_dir, source_key, source_label, since_days):
     cutoff = datetime.now(TZ) - timedelta(days=since_days)
-    runs = []
+    sessions = []
+    parents = {}
     for path in iter_rollout_files(state_dir) or []:
-        runs.extend(load_session_usage(path, source_key, source_label, cutoff))
+        session = parse_session_file(path)
+        if not session:
+            continue
+        sessions.append(session)
+        meta = session["meta"]
+        parents[meta["sessionId"]] = meta.get("parentId")
+
+    def root_id(session_id):
+        seen = set()
+        current = session_id
+        while parents.get(current) and current not in seen:
+            seen.add(current)
+            current = parents[current]
+        return current
+
+    seen_edges = set()
+    seen_completions = set()
+    runs_by_key = {}
+    active_by_session = defaultdict(lambda: defaultdict(lambda: {"activeSeconds": 0, "completedTurns": 0}))
+    zero_total = normalized_total({})
+
+    for session in sessions:
+        meta = session["meta"]
+        session_id = meta["sessionId"]
+        session_root = root_id(session_id)
+        label = display_label(meta.get("cwd"), meta.get("originator"), source_label)
+        previous = zero_total
+        segment = 0
+
+        for event in session["tokenEvents"]:
+            current = event["total"]
+            if current == previous:
+                continue
+            if any(current[name] < previous[name] for name, _ in TOKEN_FIELDS):
+                segment += 1
+                previous = zero_total
+            edge_key = (session_root, segment, usage_key(previous), usage_key(current))
+            delta = usage_delta(current, previous)
+            previous = current
+            if edge_key in seen_edges:
+                continue
+            seen_edges.add(edge_key)
+
+            happened_at = event["timestamp"]
+            if happened_at < cutoff:
+                continue
+            date = happened_at.strftime("%Y-%m-%d")
+            run_key = (session_id, date)
+            run = runs_by_key.setdefault(
+                run_key,
+                {
+                    "date": date,
+                    "timestamp": happened_at.isoformat(timespec="seconds"),
+                    "source": source_key,
+                    "provider": meta.get("modelProvider") or "openai",
+                    "model": event["model"],
+                    "openrouterModel": None,
+                    "sessionId": session_id,
+                    "runId": f"{session_id}:{date}",
+                    "kind": "codex-session",
+                    "label": label,
+                    "inputTokens": 0,
+                    "outputTokens": 0,
+                    "cacheReadTokens": 0,
+                    "cacheBaseTokens": 0,
+                    "reasoningOutputTokens": 0,
+                    "totalTokens": 0,
+                    "pricingEstimated": True,
+                    "pricingModel": event["model"],
+                    "contextWindow": event["contextWindow"],
+                    "tokenCountEvents": 0,
+                    "activeSeconds": 0,
+                    "completedTurns": 0,
+                    "activeByDate": [],
+                },
+            )
+            for name, _ in TOKEN_FIELDS:
+                run[name] += delta[name]
+            run["cacheBaseTokens"] = run["inputTokens"]
+            run["tokenCountEvents"] += 1
+            if happened_at.isoformat(timespec="seconds") >= run["timestamp"]:
+                run["timestamp"] = happened_at.isoformat(timespec="seconds")
+                run["model"] = event["model"]
+                run["pricingModel"] = event["model"]
+                run["contextWindow"] = event["contextWindow"]
+
+        for event in session["completionEvents"]:
+            completion_key = (session_root, event["fingerprint"])
+            if completion_key in seen_completions:
+                continue
+            seen_completions.add(completion_key)
+            completed_at = event["timestamp"]
+            if completed_at < cutoff:
+                continue
+            active = active_by_session[session_id][completed_at.strftime("%Y-%m-%d")]
+            active["activeSeconds"] += (event["durationMs"] + 999) // 1000
+            active["completedTurns"] += 1
+
+    runs = list(runs_by_key.values())
+    for run in runs:
+        run["estimatedCostUsd"] = round(estimate_cost(run, run["pricingModel"]), 8)
+
+    for session_id, by_date in active_by_session.items():
+        for date, usage in by_date.items():
+            run = runs_by_key.get((session_id, date))
+            if not run:
+                continue
+            run["activeByDate"] = [{"date": date, **usage}]
+            run["activeSeconds"] = usage["activeSeconds"]
+            run["completedTurns"] = usage["completedTurns"]
+
     return sorted(runs, key=lambda item: item["timestamp"])
 
 
@@ -418,7 +531,8 @@ def summarize_runs(runs, source_key, source_label, since_days):
             for model, pricing in sorted(MODEL_PRICING.items())
         ],
         "notes": [
-            "Codex usage is collected from local session token_count events.",
+            "Codex usage is collected as per-event deltas from local session token_count events.",
+            "Inherited history in forked session files is deduplicated within each session tree.",
             "Active time is the sum of completed task duration_ms values; idle time between turns is excluded.",
             "No prompt or response body is exported into this ledger.",
             "estimatedCostUsd is an OpenAI API-equivalent estimate, not an actual Codex subscription bill.",

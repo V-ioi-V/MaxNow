@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-14 10:51",
-  "version": "1.0.4.04",
-  "versionLabel": "v1.0.4.04",
-  "branch": "bugfix/codex-macos-report-self-heal",
-  "commit": "480dd89",
+  "updatedAt": "2026-07-15 16:21",
+  "version": "1.0.4.05",
+  "versionLabel": "v1.0.4.05",
+  "branch": "bugfix/codex-token-dedup",
+  "commit": "a78d364",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/codex-macos-report-self-heal · commit 480dd89 · 有未提交代码改动",
+  "deployNote": "bugfix/codex-token-dedup · commit a78d364 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-15",
+      "title": "修复 Codex 分叉会话 Token 重复累计",
+      "summary": "`scripts/sync_codex_usage.py` 改为按 `total_token_usage` 相邻快照的正向增量记账，并在同一会话树内去重分叉文件继承的历史边。"
+    },
     {
       "date": "2026-07-14",
       "title": "修复 macOS Codex 上报分叉后永久停摆",
@@ -28,11 +33,6 @@
       "date": "2026-07-10",
       "title": "拉开 Today Status 右侧信息层级",
       "summary": "将“自动生成”新鲜度 pill 从圆环旁收回 `Today Status` eyebrow 旁，避免左侧状态与右侧进度争抢视觉中心。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "统一全部非首页页面视觉",
-      "summary": "豆奶、Token、云服务、生活和同行记新增共享 `secondary-view` / `secondary-page-head` 外壳，统一顶部 4px 主题线、轻色渐变白底、圆角、阴影、hover / focus 和状态 pill。"
     }
   ]
 }

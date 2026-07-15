@@ -203,7 +203,7 @@ Token 页面只回答 Token 相关问题：
 Token 真实数据按来源接入，并由统一总账合并展示：
 
 - `dash/data/openclaw-usage.json` 保存 OpenClaw 的 input / output / cacheRead / total token、按天、按模型、按任务拆分，以及按 OpenRouter 价格折算的等价费用。
-- `dash/data/codex-usage.json` 保存 Windows 兼容本机 Codex 的 input / output / cacheRead / total token、按天、按模型、按任务拆分；来源为本机 `.codex/sessions` 中的 `token_count` 事件，不导出 prompt / response 正文。
+- `dash/data/codex-usage.json` 保存 Windows 兼容本机 Codex 的 input / output / cacheRead / total token、按天、按模型、按任务拆分；来源为本机 `.codex/sessions` 中的 `token_count` 事件。统计按相邻累计快照的正向增量和原始事件日期记账，同一会话树内必须去重分叉文件继承的历史，不导出 prompt / response 正文。
 - `dash/data/codex-macos-usage.json` 保存 macOS 本机 Codex 的同类账本，来源为 macOS 本机 `.codex/sessions`，source 固定为 `codex-macos` / `Codex macOS`，避免覆盖 Windows 账本。
 - `dash/data/codex-server-usage.json` 保存服务器 Codex 的同类账本；来源为服务器 `/root/.codex/sessions`，由 root cron 刷新，不导出 prompt / response 正文。
 - `dash/data/token-usage.json` 保存合并后的统一 Token 总账，Token 页面优先读取这个文件。
