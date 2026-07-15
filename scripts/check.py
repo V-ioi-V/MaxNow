@@ -599,6 +599,8 @@ def check_data_health_contract():
                 handle.write("[4] job start\n[4] job ok\n")
             if sync_system_status.consecutive_failure_count(path, "job start", "job ok") != 0:
                 raise ValueError("data health: a successful run does not clear the failure streak")
+        if not sync_system_status.is_success_log_line("[2026-07-15T17:10:02+08:00] maxnow dashboard sync ok"):
+            raise ValueError("data health: outer automation success does not clear an old child failure")
     finally:
         sys.path.pop(0)
     return "data health: five states, last-good fallback, ten-source summary, and failure streak checks are valid"

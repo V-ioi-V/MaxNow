@@ -664,6 +664,11 @@ def timer_state():
     }, bool(found)
 
 
+def is_success_log_line(line):
+    lowered = line.lower()
+    return line.startswith("[ok]") or " sync ok" in lowered or " refresh ok" in lowered
+
+
 def failure_log_state():
     candidates = [
         LOG_DIR / "ai-last30.log",
@@ -700,7 +705,7 @@ def failure_log_state():
             # keeps re-triggering the failure-log check after the original cause is gone.
             if "[ok] status " in line or ("status " in lowered and "checks failed" in lowered) or ("status " in lowered and "checks unknown" in lowered):
                 continue
-            if line.startswith("[ok]"):
+            if is_success_log_line(line):
                 break
             if any(marker in lowered for marker in failure_markers):
                 failure_lines.append(f"{path.name}: {line}")
