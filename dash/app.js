@@ -12,6 +12,70 @@ const LIFE_FOODS_URL = "./data/life-foods.json";
 const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const DATA_CACHE_PREFIX = "maxnow:last-good:v1:";
+
+const DATA_SOURCE_OPTIONS = {
+  weather: {
+    label: "天气",
+    staleAfterHours: 72,
+    updatedAt: (data) => data.weather?.updatedAt,
+    hasData: (data) => Boolean(data.weather?.condition),
+  },
+  last30: {
+    label: "Last-30",
+    staleAfterHours: 168,
+    updatedAt: (data) => data.updatedAt,
+    hasData: (data) => hasEntries(data.today?.items) || hasEntries(data.week?.items) || hasEntries(data.last30?.mainlines),
+  },
+  wiki: {
+    label: "Wiki",
+    staleAfterHours: 72,
+    updatedAt: (data) => data.synced_at || data.updated_at,
+    hasData: (data) => Boolean((data.tasks || []).length),
+  },
+  dounai: {
+    label: "豆奶",
+    staleAfterHours: 36,
+    updatedAt: (data) => data.updatedAt || data.account?.synced_at,
+    hasData: (data) => Boolean(data.today || (data.records || []).length || data.account),
+  },
+  market: {
+    label: "市场",
+    staleAfterHours: 72,
+    updatedAt: (data) => data.updatedAt,
+    hasData: (data) => Boolean((data.indices || []).length),
+  },
+  version: {
+    label: "版本",
+    staleAfterHours: 72,
+    updatedAt: (data) => data.updatedAt,
+    hasData: (data) => Boolean(data.version),
+  },
+  roadmap: {
+    label: "Roadmap",
+    staleAfterHours: 168,
+    updatedAt: (data) => data.generatedAt,
+    hasData: (data) => Boolean((data.mainlines || []).length || (data.actions || []).length),
+  },
+  token: {
+    label: "Token",
+    staleAfterHours: 72,
+    updatedAt: (data) => data.updatedAt,
+    hasData: (data) => Boolean((data.days || []).length),
+  },
+  ricky: {
+    label: "同行记",
+    staleAfterHours: 72,
+    updatedAt: (data) => data.synced_at || data.updated_at,
+    hasData: (data) => Boolean((data.places || []).length || (data.records || []).length),
+  },
+  life: {
+    label: "生活",
+    staleAfterHours: 72,
+    updatedAt: (data) => data.synced_at || data.updated_at,
+    hasData: (data) => Boolean((data.sections || []).length),
+  },
+};
 
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
 const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
@@ -48,6 +112,7 @@ let tokenDataPromise = null;
 let rickyDataPromise = null;
 let lifeDataPromise = null;
 let leafletPromise = null;
+const browserDataHealth = new Map();
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
 
@@ -260,6 +325,66 @@ function parseLocalDateTime(value = "") {
   const [, year, month, day, hour = "0", minute = "0"] = match;
   const date = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function hasEntries(value) {
+  if (Array.isArray(value)) return value.length > 0;
+  if (value && typeof value === "object") return Object.values(value).some(hasEntries);
+  return Boolean(value);
+}
+
+function dataHealthStatus(options, data) {
+  const updatedAt = options.updatedAt(data) || "";
+  const updatedDate = parseLocalDateTime(normalizeSourceUpdatedAt(updatedAt));
+  if (!updatedDate) return { status: "unsynced", statusLabel: "尚未同步", updatedAt };
+  const ageHours = (Date.now() - updatedDate.getTime()) / (60 * 60 * 1000);
+  if (!Number.isFinite(ageHours) || ageHours > options.staleAfterHours) {
+    return { status: "stale", statusLabel: "数据过期", updatedAt };
+  }
+  if (!options.hasData(data)) return { status: "empty", statusLabel: "暂无记录", updatedAt };
+  return { status: "fresh", statusLabel: "已同步", updatedAt };
+}
+
+function updateBrowserDataHealth(key, data, error = "") {
+  const options = DATA_SOURCE_OPTIONS[key];
+  if (!options) return;
+  if (error) {
+    const updatedAt = options.updatedAt(data) || "";
+    browserDataHealth.set(key, {
+      key,
+      label: options.label,
+      status: "failed",
+      statusLabel: "请求失败",
+      updatedAt,
+      staleAfterHours: options.staleAfterHours,
+      error,
+    });
+    return;
+  }
+  browserDataHealth.set(key, {
+    key,
+    label: options.label,
+    staleAfterHours: options.staleAfterHours,
+    error: "",
+    ...dataHealthStatus(options, data),
+  });
+}
+
+function readLastGood(key) {
+  try {
+    const cached = JSON.parse(localStorage.getItem(`${DATA_CACHE_PREFIX}${key}`) || "null");
+    return cached?.data || null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveLastGood(key, data) {
+  try {
+    localStorage.setItem(`${DATA_CACHE_PREFIX}${key}`, JSON.stringify({ savedAt: new Date().toISOString(), data }));
+  } catch (error) {
+    // The live response remains usable when browser storage is unavailable or full.
+  }
 }
 
 function isTodayDateTime(value, now = new Date()) {
@@ -681,7 +806,7 @@ function formatSystemNote(item) {
 function getSystemHealth(item) {
   const value = String(item.value || "").toLowerCase();
   const note = String(item.note || "").toLowerCase();
-  if (["fail", "failed", "check", "not set"].includes(value)) return "bad";
+  if (["fail", "failed", "check", "alert", "not set"].includes(value)) return "bad";
   if (value === "unknown" || value === "pending") return "unknown";
   if (item.key === "failure-log" && note.includes("[fail]")) return "bad";
   return "ok";
@@ -695,34 +820,21 @@ function getAutomationHealth(status = "") {
 }
 
 function getDataSyncStatus() {
-  const sources = [
-    { label: "Wiki", updatedAt: wikiTodoData.synced_at || wikiTodoData.updated_at, staleAfterHours: 72 },
-    { label: "Token", updatedAt: getTokenUsage().updatedAt, staleAfterHours: 72 },
-    { label: "\u5929\u6c14", updatedAt: dashboardData.weather?.updatedAt, staleAfterHours: 72 },
-    { label: "\u5e02\u573a", updatedAt: marketIndicesData.updatedAt, staleAfterHours: 72 },
-    { label: "Last-30", updatedAt: last30Data.updatedAt, staleAfterHours: 168 },
-    { label: "\u7248\u672c", updatedAt: projectMetaData.updatedAt, staleAfterHours: 72 },
-    {
-      label: "Roadmap",
-      updatedAt: projectStatusData.generatedAt,
-      staleAfterHours: Number(projectStatusData.staleAfterHours || 168),
-    },
-  ];
-  const now = new Date();
-  const items = sources.map((source) => {
-    const date = parseLocalDateTime(normalizeSourceUpdatedAt(source.updatedAt));
-    const ageHours = date ? (now.getTime() - date.getTime()) / (60 * 60 * 1000) : Infinity;
-    const fresh = Number.isFinite(ageHours) && ageHours <= source.staleAfterHours;
-    return { ...source, ageHours, fresh };
-  });
-  const stale = items.filter((item) => !item.fresh);
-  const okCount = items.length - stale.length;
-  const oldestStale = stale[0];
-  const label = stale.length ? `${stale.length} \u4e2a\u8fc7\u671f` : `${okCount}/${items.length} \u6b63\u5e38`;
-  const note = stale.length
-    ? `${oldestStale.label} ${oldestStale.updatedAt ? formatSourceUpdatedAt(oldestStale.updatedAt) : copy.syncWaiting}`
-    : "\u5173\u952e\u6765\u6e90\u5df2\u5237\u65b0";
-  return { label, note, health: stale.length ? "unknown" : "ok", items };
+  const serverSources = getSystemItem("data-health").sources || [];
+  const merged = new Map(serverSources.map((source) => [source.key, source]));
+  browserDataHealth.forEach((source, key) => merged.set(key, source));
+  const items = [...merged.values()];
+  const unhealthy = items.filter((item) => ["failed", "stale", "unsynced"].includes(item.status));
+  const failed = unhealthy.filter((item) => item.status === "failed");
+  const empty = items.filter((item) => item.status === "empty");
+  const firstIssue = failed[0] || unhealthy[0];
+  const label = unhealthy.length ? `${unhealthy.length} 个异常` : `${items.length}/${items.length} 正常`;
+  const note = firstIssue
+    ? `${firstIssue.label} ${firstIssue.statusLabel}${firstIssue.updatedAt ? ` · 保留 ${formatSourceUpdatedAt(firstIssue.updatedAt)}` : ""}`
+    : empty.length
+      ? `${empty[0].label} 暂无记录（同步正常）`
+      : "关键数据源已刷新";
+  return { label, note, health: failed.length ? "bad" : unhealthy.length ? "unknown" : "ok", items };
 }
 
 function getTone(value = "") {
@@ -2048,6 +2160,12 @@ function renderHome() {
   setText("#metric-sync", syncStatus.label);
   setText("#metric-sync-note", syncStatus.note);
   qs(".metric-sync")?.setAttribute("data-health", syncStatus.health);
+  const syncMetric = qs(".metric-sync");
+  if (syncMetric) {
+    syncMetric.title = syncStatus.items
+      .map((item) => `${item.label}: ${item.statusLabel}${item.updatedAt ? ` (${formatSourceUpdatedAt(item.updatedAt)})` : ""}`)
+      .join("\n");
+  }
   setText("#metric-token-total", formatToken(token7d.total));
   setText("#metric-token-note", `${copy.day1} ${formatToken(token1d.total)}`);
   setText("#metric-automation", automationStatus || "--");
@@ -2340,30 +2458,33 @@ function createSessionItem(session) {
   return article;
 }
 
-async function readJson(url, fallback) {
+async function readJson(url, fallback, sourceKey) {
   try {
     const response = await fetch(url, { cache: "no-cache" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
+    const data = await response.json();
+    if (sourceKey) {
+      saveLastGood(sourceKey, data);
+      updateBrowserDataHealth(sourceKey, data);
+    }
+    return data;
   } catch (error) {
-    return fallback;
+    const cached = sourceKey ? readLastGood(sourceKey) : null;
+    const data = cached || fallback;
+    if (sourceKey) updateBrowserDataHealth(sourceKey, data, error.message || String(error));
+    return data;
   }
 }
 
 async function readWikiTodo() {
-  try {
-    const response = await fetch(WIKI_TODO_URL, { cache: "no-cache" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    wikiTodoError = "";
-    return await response.json();
-  } catch (error) {
-    if ((fallbackWikiTodo.tasks || []).length) {
-      wikiTodoError = "";
-      return fallbackWikiTodo;
-    }
-    wikiTodoError = "\u8bf7\u5148\u8fd0\u884c scripts/sync_wiki_todos.py";
-    return fallbackWikiTodo;
-  }
+  const data = await readJson(WIKI_TODO_URL, fallbackWikiTodo, "wiki");
+  const health = browserDataHealth.get("wiki");
+  wikiTodoError = health?.status === "failed"
+    ? health.updatedAt
+      ? "请求失败，正在展示最后一次成功数据"
+      : "请求失败，当前没有可用数据"
+    : "";
+  return data;
 }
 
 function getActiveView() {
@@ -2383,13 +2504,13 @@ async function loadHomeData({ force = false } = {}) {
   if (!force && homeDataPromise) return homeDataPromise;
 
   homeDataPromise = Promise.all([
-    readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData),
-    readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30),
+    readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData, "weather"),
+    readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30, "last30"),
     readWikiTodo(),
-    readJson(CHECKIN_URL, fallbackCheckin),
-    readJson(MARKET_INDICES_URL, window.MAXNOW_MARKET_INDICES_DATA || fallbackMarketIndices),
-    readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta),
-    readJson(PROJECT_STATUS_URL, window.MAXNOW_PROJECT_STATUS_DATA || fallbackProjectStatus),
+    readJson(CHECKIN_URL, fallbackCheckin, "dounai"),
+    readJson(MARKET_INDICES_URL, window.MAXNOW_MARKET_INDICES_DATA || fallbackMarketIndices, "market"),
+    readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta, "version"),
+    readJson(PROJECT_STATUS_URL, window.MAXNOW_PROJECT_STATUS_DATA || fallbackProjectStatus, "roadmap"),
   ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta, projectStatus]) => {
     dashboardData = dashboard;
     last30Data = last30;
@@ -2408,7 +2529,7 @@ async function loadHomeData({ force = false } = {}) {
 async function loadTokenData({ force = false } = {}) {
   if (!force && tokenDataPromise) return tokenDataPromise;
 
-  tokenDataPromise = readJson(TOKEN_USAGE_URL, window.MAXNOW_TOKEN_USAGE_DATA || fallbackTokenUsage)
+  tokenDataPromise = readJson(TOKEN_USAGE_URL, window.MAXNOW_TOKEN_USAGE_DATA || fallbackTokenUsage, "token")
     .then(async (tokenUsage) => {
       tokenUsageData = tokenUsage;
       if (!Array.isArray(tokenUsageData.days) || !tokenUsageData.days.length) {
@@ -2461,7 +2582,7 @@ async function ensureRickyMapAssets() {
 async function loadRickyData({ force = false } = {}) {
   if (!force && rickyDataPromise) return rickyDataPromise;
 
-  rickyDataPromise = readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky)
+  rickyDataPromise = readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky, "ricky")
     .then(async (ricky) => {
       rickyData = ricky;
       renderRicky();
@@ -2477,7 +2598,7 @@ async function loadRickyData({ force = false } = {}) {
 async function loadLifeData({ force = false } = {}) {
   if (!force && lifeDataPromise) return lifeDataPromise;
 
-  lifeDataPromise = readJson(LIFE_FOODS_URL, window.MAXNOW_LIFE_FOODS_DATA || fallbackLifeFoods)
+  lifeDataPromise = readJson(LIFE_FOODS_URL, window.MAXNOW_LIFE_FOODS_DATA || fallbackLifeFoods, "life")
     .then((lifeFoods) => {
       lifeFoodsData = lifeFoods;
       renderLife();

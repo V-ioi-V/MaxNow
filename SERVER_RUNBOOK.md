@@ -804,6 +804,10 @@ crontab -l
 /var/www/maxnow-dashboard/logs/maxnow-sync.log
 ```
 
+`scripts/sync_system_status.py` 会从这些日志以及 `token-source-refresh.log` / `token-usage-refresh.log` 中识别成对的 `start` / `ok` 记录。Dashboard runtime、AI Last-30、Token sources 或 Token ledger 任一任务连续 3 次没有成功结束时，Home 系统自动化状态变为异常，并在“连续失败”项显示任务名和次数。`scripts/update_data.py` 的子同步失败后会补跑一次系统状态采集，让连续失败在故障轮次内写入 Dashboard；最近一次仍可能正在执行且没有明确错误的 20 分钟内未闭合记录不计入连续失败，避免瞬时误报。
+
+同一状态采集还会读取 10 个 Owner 可见数据源的最后成功时间，输出已同步、暂无记录、读取失败、数据过期或尚未同步。前端 JSON 请求失败属于浏览器侧状态，会继续展示浏览器保存的最后成功数据；服务器文件读取失败则进入 `data-health` 系统状态。
+
 如果只想预览将采集到的状态，不写文件：
 
 ```bash

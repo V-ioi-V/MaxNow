@@ -67,7 +67,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/check.py`：本地一致性校验脚本。
 - `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态和项目元信息，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新独立的 Home 项目状态数据。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
-- `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存和 wiki-todos 同步状态，只刷新 dashboard 的系统状态字段；Home 系统状态卡作为入口，云服务页复用同一份快照展示更完整的服务器状态。
+- `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存、10 个 Owner 可见数据源状态和关键自动化连续失败次数，只刷新 dashboard 的 `automation` / `system` 字段；Home 系统状态卡作为入口，云服务页复用同一份快照展示更完整的服务器状态。
 - `scripts/sync_openclaw_usage.py`：只读服务器 `/root/.openclaw` 轨迹，生成 OpenClaw Token 用量账本和 OpenRouter 等价费用估算。
 - `scripts/sync_codex_usage.py`：只读 `.codex/sessions` 中的 `token_count`、`turn_context.model` 和 `task_complete.duration_ms`，按累计快照增量和事件日期生成 Codex Token 用量与已完成任务活跃时长；同一会话树内去重分叉文件继承的历史，不导出 prompt / response 正文。
 - `scripts/sync_token_usage.py`：合并 OpenClaw / Codex Windows / macOS / server 源账本，生成 Token 页面优先读取的统一总账。
@@ -226,7 +226,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 ## 当前缺口
 
-- 2026-07-10 整体体检推动 MaxNow 从“继续增加功能”转向“可信状态工作站”。`dash.maxnow.cn` 和 `/data/` 已由自定义登录页、nginx `auth_request` 和服务器本机 Cookie 认证服务保护，Blog 保持公开；后续重点转为 JSON 读取失败与新鲜度闭环、wrapper 定位、自动测试、无障碍状态和外部依赖安全。Home 项目状态可信度已通过独立 `project-status.*`、ROADMAP 指纹校验和过期提示完成修复；可执行条目以 `ROADMAP.md` 为准。
+- 2026-07-15 已补齐 JSON 读取失败与新鲜度闭环：前端区分已同步、暂无记录、请求失败、数据过期和尚未同步，并按来源保留浏览器最后成功响应；Home 数据健康覆盖 Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、同行记和生活。服务器状态会把 Dashboard runtime、AI Last-30、Token sources、Token ledger 连续失败 3 次升级为异常。`.js` wrapper 保留生成一致性用途，不再作为运行时失败的主要兜底。
+- 2026-07-10 整体体检推动 MaxNow 从“继续增加功能”转向“可信状态工作站”。`dash.maxnow.cn` 和 `/data/` 已由自定义登录页、nginx `auth_request` 和服务器本机 Cookie 认证服务保护，Blog 保持公开；后续重点转为自动测试、无障碍状态和外部依赖安全。Home 项目状态可信度已通过独立 `project-status.*`、ROADMAP 指纹校验和过期提示完成修复；可执行条目以 `ROADMAP.md` 为准。
 - Home 页面已将旧外部输入重构为单一中文 AI 前沿模块：三栏数据分别为最新发布、本周前沿和近 30 天关键进展，栏头只显示蓝色时间范围“最近 3 天 / 本周 / 近 30 天”，不再重复黑色栏目名和栏目简介；新闻卡片只展示中文事实标题、具体变化、来源和日期，英文原题仅保存在数据里追溯，页面不再出现 `confidence`、候选数量、关键词自动归类或“关注它”等套话。
 - Home 右侧已接入豆奶签到只读摘要卡片，点击可进入豆奶详情 tab；详情页展示近 30 天实际使用流量、日均可用、签到流量和签到时长折线图。数据来自 `dash/data/dounai_checkin.json`，签到脚本由 9:00 cron 管理，真实流量日结由 00:05 traffic-only cron 管理。
 - 2026-07-05 已接入豆奶真实流量使用抓取和 00:05 日结：登录后 `/user/trafficlog` 页面直接展示最近 7 天使用量；`--traffic-only --exclude-today` 模式会把当天从 direct daily 和 `traffic_usage_history` 中剔除，避免 00:05 的当天碎片污染近 30 天实际使用口径。`?ajax=1` 返回近 12 小时节点分布，不等同于 30 天总量。

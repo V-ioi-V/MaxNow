@@ -8,7 +8,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -22,6 +22,25 @@ DEFAULT_SITE_URL = "https://dash.maxnow.cn/"
 METADATA_BASE_URL = "http://metadata.tencentyun.com/latest/meta-data"
 LOG_DIR = ROOT / "logs"
 SYNC_LOG = LOG_DIR / "maxnow-sync.log"
+DATA_SOURCE_SPECS = [
+    ("wiki", "Wiki", "dash/data/wiki-todos.json", ("synced_at", "updated_at"), ("tasks",), 72),
+    ("token", "Token", "dash/data/token-usage.json", ("updatedAt",), ("days",), 72),
+    ("weather", "天气", "dash/data/dashboard.json", ("weather.updatedAt",), ("weather.condition",), 72),
+    ("market", "市场", "dash/data/market-indices.json", ("updatedAt",), ("indices",), 72),
+    ("last30", "Last-30", "dash/data/last-30.json", ("updatedAt",), ("today.items", "week.items", "last30.mainlines"), 168),
+    ("version", "版本", "dash/data/project-meta.json", ("updatedAt",), ("version",), 72),
+    ("roadmap", "Roadmap", "dash/data/project-status.json", ("generatedAt",), ("mainlines", "actions"), 168),
+    ("dounai", "豆奶", "dash/data/dounai_checkin.json", ("updatedAt", "account.synced_at"), ("today", "records", "account"), 36),
+    ("ricky", "同行记", "dash/data/ricky.json", ("synced_at", "updated_at"), ("places", "records"), 72),
+    ("life", "生活", "dash/data/life-foods.json", ("synced_at", "updated_at"), ("sections",), 72),
+]
+AUTOMATION_LOG_SPECS = [
+    ("Dashboard runtime", "maxnow-sync.log", "maxnow dashboard sync start", "maxnow dashboard sync ok"),
+    ("AI Last-30", "ai-last30.log", "maxnow ai-last30 sync start", "maxnow ai-last30 sync ok"),
+    ("Token sources", "token-source-refresh.log", "token source refresh start", "token source refresh ok"),
+    ("Token ledger", "token-usage-refresh.log", "token usage server refresh start", "token usage server refresh ok"),
+]
+CONSECUTIVE_FAILURE_THRESHOLD = 3
 CRON_MARKER = "MAXNOW-DASHBOARD-SYNC"
 KNOWN_TIMER_UNITS = [
     "maxnow-wiki-todos.timer",
@@ -72,6 +91,134 @@ def now_text():
 
 def format_local_datetime(timestamp):
     return datetime.fromtimestamp(timestamp, timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M")
+
+
+def nested_value(data, path):
+    value = data
+    for key in path.split("."):
+        if not isinstance(value, dict):
+            return None
+        value = value.get(key)
+    return value
+
+
+def parse_data_time(value):
+    if not value:
+        return None
+    text = str(value).strip().replace("Z", "+00:00")
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.astimezone()
+    return parsed
+
+
+def data_source_health_state():
+    now = datetime.now(timezone.utc).astimezone()
+    sources = []
+
+    for key, label, rel_path, timestamp_paths, content_paths, stale_after_hours in DATA_SOURCE_SPECS:
+        path = ROOT / rel_path
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            sources.append({
+                "key": key,
+                "label": label,
+                "status": "failed",
+                "statusLabel": "读取失败",
+                "updatedAt": "",
+                "staleAfterHours": stale_after_hours,
+                "error": str(error)[:120],
+            })
+            continue
+
+        updated_at = next((nested_value(data, item) for item in timestamp_paths if nested_value(data, item)), "")
+        parsed = parse_data_time(updated_at)
+        has_content = any(bool(nested_value(data, item)) for item in content_paths)
+        if not parsed:
+            status, status_label = "unsynced", "尚未同步"
+        elif now - parsed.astimezone(now.tzinfo) > timedelta(hours=stale_after_hours):
+            status, status_label = "stale", "数据过期"
+        elif not has_content:
+            status, status_label = "empty", "暂无记录"
+        else:
+            status, status_label = "fresh", "已同步"
+        sources.append({
+            "key": key,
+            "label": label,
+            "status": status,
+            "statusLabel": status_label,
+            "updatedAt": str(updated_at),
+            "staleAfterHours": stale_after_hours,
+            "error": "",
+        })
+
+    unhealthy = [item for item in sources if item["status"] in {"failed", "stale", "unsynced"}]
+    failed = [item for item in unhealthy if item["status"] == "failed"]
+    note = "关键数据源已刷新" if not unhealthy else "；".join(
+        f"{item['label']} {item['statusLabel']}" for item in unhealthy[:3]
+    )
+    item = {
+        "key": "data-health",
+        "name": "数据源",
+        "value": f"{len(sources) - len(unhealthy)}/{len(sources)} 正常",
+        "note": note,
+        "sources": sources,
+    }
+    return item, False if failed else (None if unhealthy else True)
+
+
+def consecutive_failure_count(path, start_marker, success_marker):
+    if not path.exists():
+        return 0
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()[-4000:]
+    starts = [index for index, line in enumerate(lines) if start_marker in line]
+    if not starts:
+        return 0
+    outcomes = []
+    completed_failures = []
+    for position, start in enumerate(starts):
+        end = starts[position + 1] if position + 1 < len(starts) else len(lines)
+        segment = lines[start:end]
+        outcomes.append(any(success_marker in line for line in segment))
+        completed_failures.append(any(
+            marker in line.lower()
+            for line in segment
+            for marker in ("[fail]", "traceback", "error", "failed")
+        ))
+    if outcomes and not outcomes[-1] and not completed_failures[-1] and time.time() - path.stat().st_mtime < 20 * 60:
+        outcomes.pop()
+    count = 0
+    for succeeded in reversed(outcomes):
+        if succeeded:
+            break
+        count += 1
+    return count
+
+
+def automation_failures_state():
+    failures = []
+    for label, filename, start_marker, success_marker in AUTOMATION_LOG_SPECS:
+        count = consecutive_failure_count(LOG_DIR / filename, start_marker, success_marker)
+        if count >= CONSECUTIVE_FAILURE_THRESHOLD:
+            failures.append((label, count))
+    if failures:
+        label, count = failures[0]
+        return {
+            "key": "automation-failures",
+            "name": "连续失败",
+            "value": "Alert",
+            "note": f"{label} 已连续失败 {count} 次",
+        }, False
+    return {
+        "key": "automation-failures",
+        "name": "连续失败",
+        "value": "Clear",
+        "note": f"关键任务连续失败少于 {CONSECUTIVE_FAILURE_THRESHOLD} 次",
+    }, True
 
 
 def run_command(args, timeout=5):
@@ -519,8 +666,12 @@ def timer_state():
 
 def failure_log_state():
     candidates = [
+        LOG_DIR / "ai-last30.log",
         LOG_DIR / "wiki-todos.log",
         LOG_DIR / "weather.log",
+        LOG_DIR / "market-indices.log",
+        LOG_DIR / "token-source-refresh.log",
+        LOG_DIR / "token-usage-refresh.log",
         LOG_DIR / "system-status.log",
         SYNC_LOG,
     ]
@@ -621,6 +772,8 @@ def build_status(site_url):
     timers, timers_ok = timer_state()
     wiki_todos, wiki_todos_ok = wiki_todos_state()
     failure_log, failure_log_ok = failure_log_state()
+    data_health, data_health_ok = data_source_health_state()
+    automation_failures, automation_failures_ok = automation_failures_state()
     cloud_location, cloud_location_ok = cloud_location_state()
     billing, billing_ok = billing_state()
     cpu, cpu_ok = cpu_state()
@@ -637,6 +790,8 @@ def build_status(site_url):
         ("timers", timers_ok),
         ("wiki-todos", wiki_todos_ok),
         ("failure-log", failure_log_ok),
+        ("data-health", data_health_ok),
+        ("automation-failures", automation_failures_ok),
         ("cloud-location", cloud_location_ok),
         ("billing", billing_ok),
         ("cpu", cpu_ok),
@@ -681,6 +836,8 @@ def build_status(site_url):
             disk,
             memory,
             uptime,
+            data_health,
+            automation_failures,
         ],
     }
 

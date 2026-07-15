@@ -82,6 +82,17 @@ def run_python(script, log_name=None, extra_args=None, env=None):
             log.flush()
         code = process.wait()
     if code:
+        if script != "scripts/sync_system_status.py":
+            status_log = LOG_DIR / "system-status.log"
+            with status_log.open("a", encoding="utf-8") as log:
+                subprocess.run(
+                    [sys.executable, "scripts/sync_system_status.py"],
+                    cwd=ROOT,
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    check=False,
+                )
         raise subprocess.CalledProcessError(code, command)
 
 

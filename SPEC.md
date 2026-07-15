@@ -155,7 +155,7 @@ Home 按顺序回答这些问题：
 必备模块：
 
 - 今日状态：由前端根据今日 Todo、当前时段、ROADMAP 待推进 / 主线、Token 活跃和自动化状态自动推导“执行 / 推进 / 复盘 / 探索 / 巡检”等模式；“自动生成”新鲜度紧邻左侧 `Today Status` 标识。宽桌面使用左文案、正中央圆环、右信号三列，圆环必须落在状态卡内容区的水平中心；圆环表达当天已过比例，百分比显示在环内，当前时间用独立 pill 显示在环外。时段、推进、Token、自动化四条信号等高排列，每个彩色节点进入第一行网格，并与该行的标签和主值居中对齐，而不是按两行内容整体居中。`dashboard.json.today` 只作为当天人工 override，旧日期判断不再占据主状态。
-- 顶部状态条：只保留每天扫一眼能决策的短指标：今日执行、数据同步、Token 7 天和系统自动化。今日执行读取 personal-wiki 中 `due_at` 等于浏览器当天日期的未完成待办；数据同步聚合 Wiki Todo、Token、天气、市场、Last-30 和项目元信息的新鲜度，不再把“当前主线 / 待推进”做成独立数字小卡。
+- 顶部状态条：只保留每天扫一眼能决策的短指标：今日执行、数据同步、Token 7 天和系统自动化。今日执行读取 personal-wiki 中 `due_at` 等于浏览器当天日期的未完成待办；数据同步聚合 Wiki Todo、Token、天气、市场、Last-30、项目元信息、Roadmap、豆奶、同行记和生活的新鲜度，不再把“当前主线 / 待推进”做成独立数字小卡。状态必须区分已同步、暂无记录、请求失败、数据过期和尚未同步；请求失败时展示最后成功数据和时间，不能把失败伪装成数值 `0` 或空列表。
 - 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
 - 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
 - Home 主内容版式：状态条下方使用统一 `home-board` 两列外壳，`home-lane-primary` 承载左侧主任务和内容型长模块，右侧 `home-side-stack` 只承载短扫读次级信号和状态入口；`home-lane-signal` / `home-lane-rail` 只作为语义分组，视觉上展平成右侧 widget 网格。所有 Home 模块都保留 `home-card-*` 和 `data-card-size`，右侧小组件用 `widget-compact` 占半宽，需要内部指标网格或列表宽度的短状态模块用 `widget-wide` 或 `mid-*` 占满右列。外部输入和版本更新属于左侧内容流，版本更新固定放在外部输入下方；不要再保留单独“稍后留意”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，文档入口进入版本更新或项目状态。不要再用固定 `grid-area`、局部左右列、固定高度或空白补丁拼模块，也不要为了二列或三列对齐硬拉大所有卡片。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认语义 lane 和卡型。
@@ -297,7 +297,9 @@ UPDATE_LOG.md
 
 `dash/data/dashboard.json` 负责人工个人状态、时间线、系统状态、历史 Token 字段、Home 天气卡和时间卡片的手动特殊日期列表。历史 `journal` 字段可保留为数据兼容，但 Home 不再读取它生成独立卡片；生成的主线和待推进事项不再存放在这里。
 
-其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`today` 保留当天人工 override。Home 主状态默认由前端从今日 Todo、`project-status.*`、Token 和自动化信号推导，过期 `today` 不再作为主判断。
+其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`system` 内的 `data-health` 项保存 10 个 Owner 可见数据源的状态摘要，`automation-failures` 项记录关键任务是否达到连续 3 次失败阈值。`today` 保留当天人工 override。Home 主状态默认由前端从今日 Todo、`project-status.*`、Token 和自动化信号推导，过期 `today` 不再作为主判断。
+
+前端每次成功读取 JSON 后，在同源浏览器存储中保留该数据源的最后成功响应。后续请求失败时继续展示这份响应，并把来源状态标记为“请求失败”；如果从未成功同步则显示“尚未同步”。`.js` wrapper 继续由脚本生成并校验一致性，不再承担运行时请求失败的主要兜底职责。
 
 `dash/data/project-status.json` 负责 Home 的项目主线和待推进事项，由 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 的 Now / Next 显式生成。它必须记录 `sourceUpdatedAt`、`generatedAt`、`staleAfterHours` 和 ROADMAP 内容指纹；前端超过阈值时显示“待刷新”，并停止用过期项目状态生成 Today Status 推荐。`scripts/check.py` 必须验证数据仍匹配当前 ROADMAP，并拒绝指向 Done 的事项。服务器日常 `runtime` 和 OpenClaw 不得覆盖该文件或 `dashboard.today`。
 

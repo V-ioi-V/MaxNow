@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-15 16:21",
-  "version": "1.0.4.05",
-  "versionLabel": "v1.0.4.05",
-  "branch": "bugfix/codex-token-dedup",
-  "commit": "a78d364",
+  "updatedAt": "2026-07-15 17:07",
+  "version": "1.0.4.06",
+  "versionLabel": "v1.0.4.06",
+  "branch": "feature/data-health-states",
+  "commit": "53c2c52",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/codex-token-dedup · commit a78d364 · 有未提交代码改动",
+  "deployNote": "feature/data-health-states · commit 53c2c52 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-15",
+      "title": "建立数据失败与新鲜度闭环",
+      "summary": "Home 数据同步开始区分已同步、暂无记录、请求失败、数据过期和尚未同步，覆盖 Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、同行记和生活。"
+    },
     {
       "date": "2026-07-15",
       "title": "修复 Codex 分叉会话 Token 重复累计",
@@ -28,11 +33,6 @@
       "date": "2026-07-11",
       "title": "居中 Today Status 日进度并对齐信号节点",
       "summary": "宽桌面改为左文案、正中央圆环、右信号三列，左右使用等宽弹性区域，让圆环中心与状态卡内容区中心严格重合。"
-    },
-    {
-      "date": "2026-07-10",
-      "title": "拉开 Today Status 右侧信息层级",
-      "summary": "将“自动生成”新鲜度 pill 从圆环旁收回 `Today Status` eyebrow 旁，避免左侧状态与右侧进度争抢视觉中心。"
     }
   ]
 }

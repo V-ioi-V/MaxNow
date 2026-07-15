@@ -1,8 +1,10 @@
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.request
 from datetime import datetime
@@ -555,6 +557,53 @@ def check_secondary_view_style():
     return "secondary views: five tabs share clean card shells without top accent bars"
 
 
+def check_data_health_contract():
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    system_status = (ROOT / "scripts/sync_system_status.py").read_text(encoding="utf-8")
+    required_frontend = (
+        'const DATA_CACHE_PREFIX = "maxnow:last-good:v1:"',
+        'status: "failed"',
+        'status: "unsynced"',
+        'status: "stale"',
+        'status: "empty"',
+        "saveLastGood(sourceKey, data)",
+        "readLastGood(sourceKey)",
+    )
+    if any(value not in dashboard_js for value in required_frontend):
+        raise ValueError("data health: frontend state or last-good fallback is incomplete")
+    if "app.js?v=114" not in dashboard_html:
+        raise ValueError("data health: script cache version is stale")
+    if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
+        raise ValueError("data health: server source summary or failure threshold is missing")
+    update_data = (ROOT / "scripts/update_data.py").read_text(encoding="utf-8")
+    if 'script != "scripts/sync_system_status.py"' not in update_data:
+        raise ValueError("data health: failed syncs do not refresh the alert snapshot")
+
+    sys.path.insert(0, str(ROOT / "scripts"))
+    try:
+        import sync_system_status
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "automation.log"
+            path.write_text(
+                "[1] job start\n[1] failed\n[2] job start\n[2] failed\n[3] job start\n[3] failed\n",
+                encoding="utf-8",
+            )
+            old_time = path.stat().st_mtime - 3600
+            path.touch()
+            os.utime(path, (old_time, old_time))
+            if sync_system_status.consecutive_failure_count(path, "job start", "job ok") != 3:
+                raise ValueError("data health: three consecutive failures are not detected")
+            with path.open("a", encoding="utf-8") as handle:
+                handle.write("[4] job start\n[4] job ok\n")
+            if sync_system_status.consecutive_failure_count(path, "job start", "job ok") != 0:
+                raise ValueError("data health: a successful run does not clear the failure streak")
+    finally:
+        sys.path.pop(0)
+    return "data health: five states, last-good fallback, ten-source summary, and failure streak checks are valid"
+
+
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
@@ -571,6 +620,7 @@ def main():
     checks.append(check_ai_frontier_brief())
     checks.append(check_today_progress_ring())
     checks.append(check_secondary_view_style())
+    checks.append(check_data_health_contract())
     checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
