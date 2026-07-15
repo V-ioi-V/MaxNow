@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-15 17:15",
-  "version": "1.0.4.07",
-  "versionLabel": "v1.0.4.07",
+  "updatedAt": "2026-07-15 17:17",
+  "version": "1.0.4.08",
+  "versionLabel": "v1.0.4.08",
   "branch": "feature/data-health-states",
-  "commit": "06c3cb4",
+  "commit": "7065a8a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/data-health-states · commit 06c3cb4 · 有未提交代码改动",
+  "deployNote": "feature/data-health-states · commit 7065a8a · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-15",
