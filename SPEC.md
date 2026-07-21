@@ -157,7 +157,7 @@ Home 按顺序回答这些问题：
 - 今日状态：由前端根据今日 Todo、当前时段、ROADMAP 待推进 / 主线、Token 活跃和自动化状态自动推导“执行 / 推进 / 复盘 / 探索 / 巡检”等模式；“自动生成”新鲜度紧邻左侧 `Today Status` 标识。宽桌面使用左文案、正中央圆环、右信号三列，圆环必须落在状态卡内容区的水平中心；圆环表达当天已过比例，百分比显示在环内，当前时间用独立 pill 显示在环外。时段、推进、Token、自动化四条信号等高排列，每个彩色节点进入第一行网格，并与该行的标签和主值居中对齐，而不是按两行内容整体居中。`dashboard.json.today` 只作为当天人工 override，旧日期判断不再占据主状态。
 - 顶部状态条：只保留每天扫一眼能决策的短指标：今日执行、数据同步、Token 7 天和系统自动化。今日执行读取 personal-wiki 中 `due_at` 等于浏览器当天日期的未完成待办；数据同步聚合 Wiki Todo、Token、天气、市场、Last-30、项目元信息、Roadmap、豆奶、同行记和生活的新鲜度，不再把“当前主线 / 待推进”做成独立数字小卡。状态必须区分已同步、暂无记录、请求失败、数据过期和尚未同步；请求失败时展示最后成功数据和时间，不能把失败伪装成数值 `0` 或空列表。
 - 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
-- 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；节日用于提示父亲节、端午节、春节等常见日期，不依赖数据文件写入。个人特殊日期采用 `dash/data/dashboard.json` 中的 `specialDates` 手动维护，只服务“今天是否需要提醒”，不扩展成完整日历。
+- 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；另一行始终展示严格晚于今天的最近特殊日期，格式为“x天后是xx日（x月x日）”。两行独立存在，当天命中生日、纪念日或续费日时，下一行仍继续寻找后续日期。候选同时包含父亲节、母亲节、春节等内置节日，以及 `dash/data/dashboard.json.specialDates` 中维护的生日、纪念日和续费日。
 - Home 主内容版式：状态条下方使用统一 `home-board` 两列外壳，`home-lane-primary` 承载左侧主任务和内容型长模块，右侧 `home-side-stack` 只承载短扫读次级信号和状态入口；`home-lane-signal` / `home-lane-rail` 只作为语义分组，视觉上展平成右侧 widget 网格。所有 Home 模块都保留 `home-card-*` 和 `data-card-size`，右侧小组件用 `widget-compact` 占半宽，需要内部指标网格或列表宽度的短状态模块用 `widget-wide` 或 `mid-*` 占满右列。外部输入和版本更新属于左侧内容流，版本更新固定放在外部输入下方；不要再保留单独“稍后留意”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，文档入口进入版本更新或项目状态。不要再用固定 `grid-area`、局部左右列、固定高度或空白补丁拼模块，也不要为了二列或三列对齐硬拉大所有卡片。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认语义 lane 和卡型。
 - 除 Home 外，豆奶、Token、云服务、生活和同行记统一使用 `secondary-view` / `secondary-page-head` 页面协议：共用轻色渐变白底、圆角、阴影、hover / focus 和状态 pill，不使用卡片顶部彩色横条；每页保留自己的语义色与内容结构，不为了视觉统一改写数据契约或交互。
 - Token 近期活动：Home `wide-short` 卡展示近 90 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
@@ -303,7 +303,7 @@ UPDATE_LOG.md
 
 `dash/data/project-status.json` 负责 Home 的项目主线和待推进事项，由 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 的 Now / Next 显式生成。它必须记录 `sourceUpdatedAt`、`generatedAt`、`staleAfterHours` 和 ROADMAP 内容指纹；前端超过阈值时显示“待刷新”，并停止用过期项目状态生成 Today Status 推荐。`scripts/check.py` 必须验证数据仍匹配当前 ROADMAP，并拒绝指向 Done 的事项。服务器日常 `runtime` 和 OpenClaw 不得覆盖该文件或 `dashboard.today`。
 
-`specialDates` 是可选数组，用于 Home 时间卡片当天匹配。支持固定公历日期：
+`specialDates` 是可选数组，用于 Home 时间卡片的当天匹配和下一特殊日期计算。生日、纪念日等每年重复的固定公历日期写为：
 
 ```json
 { "month": 7, "day": 18, "title": "77 生日", "type": "birthday" }
@@ -315,7 +315,13 @@ UPDATE_LOG.md
 { "date": "2026-07-18", "title": "重要纪念日", "type": "anniversary" }
 ```
 
-如果提供 `startYear`，页面会在标题后显示周年数。没有命中当天特殊日期时，页面保持“今日无节日”的低干扰提示。
+每月重复的日期写为：
+
+```json
+{ "day": 25, "title": "Codex 续费日", "type": "renewal", "repeat": "monthly" }
+```
+
+如果提供 `startYear`，页面会在标题后显示周年数。当天没有命中时，第一行保持“今日无节日”的低干扰提示；下一行仍从内置节日和个人日期中选择最近的未来日期。
 
 `weather` 是可选对象，用于 Home 顶部天气卡展示北京市海淀区的今日天气摘要：
 

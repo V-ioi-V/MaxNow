@@ -1289,7 +1289,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 9px;
+  gap: 8px;
   padding: 18px 22px;
   text-align: center;
 }
@@ -1322,6 +1322,14 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .summary-clock .holiday-label {
   color: var(--orange);
+}
+
+.summary-clock .next-special-label {
+  max-width: 100%;
+  color: var(--purple);
+  font-size: 13px;
+  line-height: 1.35;
+  text-wrap: balance;
 }
 
 .status-strip {

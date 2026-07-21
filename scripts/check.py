@@ -430,6 +430,61 @@ def check_dashboard_weather():
     return "dashboard weather: shape is valid"
 
 
+def check_special_dates():
+    data = load_json(ROOT / "dash/data/dashboard.json")
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    special_dates = data.get("specialDates", [])
+    if not isinstance(special_dates, list):
+        raise ValueError("special dates: specialDates must be a list")
+    for item in special_dates:
+        if not item.get("title"):
+            raise ValueError("special dates: title is required")
+        day = int(item.get("day", 0))
+        if item.get("repeat") == "monthly":
+            if day < 1 or day > 31:
+                raise ValueError("special dates: monthly day must be between 1 and 31")
+        elif item.get("date"):
+            datetime.strptime(str(item["date"]), "%Y-%m-%d")
+        else:
+            month = int(item.get("month", 0))
+            if month < 1 or month > 12 or day < 1 or day > 31:
+                raise ValueError("special dates: annual month/day is invalid")
+    required_items = (
+        ("77 生日", 7, 18),
+        ("Max 生日", 8, 28),
+        ("Codex 续费日", None, 25),
+    )
+    for title, month, day in required_items:
+        if not any(
+            item.get("title") == title
+            and item.get("day") == day
+            and (month is None or item.get("month") == month)
+            for item in special_dates
+        ):
+            raise ValueError(f"special dates: missing {title}")
+    if not any(
+        item.get("title") == "Codex 续费日" and item.get("repeat") == "monthly"
+        for item in special_dates
+    ):
+        raise ValueError("special dates: Codex renewal must repeat monthly")
+    required_frontend = (
+        'id="next-special-label"',
+        ".summary-clock .next-special-label",
+        'item.repeat === "monthly"',
+        "function getNextSpecialDate(",
+        "getHolidayLabels(candidate)",
+        "occurrence > today",
+        'setText("#next-special-label", formatNextSpecialDate(now))',
+        "projectStatusData = projectStatus;\n    updateClock();",
+    )
+    combined = "\n".join((dashboard_html, dashboard_css, dashboard_js))
+    if any(value not in combined for value in required_frontend):
+        raise ValueError("special dates: upcoming-date UI or calculation is incomplete")
+    return "special dates: holidays, birthdays, anniversaries, and monthly renewals are valid"
+
+
 def check_ai_frontier_brief():
     data = load_json(ROOT / "dash/data/last-30.json")
     ai_news = load_json(ROOT / "dash/data/ai-news.json")
@@ -577,7 +632,7 @@ def check_secondary_view_style():
     )
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
-    if "styles.css?v=135" not in dashboard_html:
+    if "styles.css?v=136" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     return "secondary views: five tabs share clean card shells without top accent bars"
 
@@ -597,7 +652,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=114" not in dashboard_html:
+    if "app.js?v=115" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
@@ -644,6 +699,7 @@ def main():
     checks.append(check_project_meta())
     checks.append(check_project_status())
     checks.append(check_dashboard_weather())
+    checks.append(check_special_dates())
     checks.append(check_ai_frontier_brief())
     checks.append(check_today_progress_ring())
     checks.append(check_secondary_view_style())

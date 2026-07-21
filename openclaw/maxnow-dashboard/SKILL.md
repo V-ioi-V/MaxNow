@@ -149,7 +149,7 @@ Keep arrays short:
 - `timeline`: 3-5
 - `feeds`: 0-3
 
-`specialDates` is optional and manually maintained. It powers only the Home time card's same-day birthday / anniversary hint. Use either fixed Gregorian dates with `month` and `day`, or one-time dates with `date: "YYYY-MM-DD"`. Do not expand it into a calendar system.
+`specialDates` is optional and manually maintained. It powers the Home time card's same-day hint and next-special-date line. Use fixed Gregorian `month` / `day` for annual birthdays and anniversaries, `date: "YYYY-MM-DD"` for one-time dates, or `day` plus `repeat: "monthly"` for monthly dates. Preserve existing entries when routine jobs update dashboard data.
 
 `weather` is maintained by `scripts/sync_weather.py` / `python scripts/update_data.py runtime`. Preserve it when editing dashboard data manually. Supported `icon` values are `sun`, `cloud`, `rain`, `storm`, `snow`, and `fog`.
 

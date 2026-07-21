@@ -147,6 +147,7 @@ const copy = {
   hour24: "24\u5c0f\u65f6",
   day1: "1d",
   noHoliday: "\u4eca\u65e5\u65e0\u8282\u65e5",
+  noUpcomingSpecialDate: "\u6682\u65e0\u5f85\u5230\u7279\u6b8a\u65e5",
   updatedAt: "\u66f4\u65b0\u4e8e",
   ledgerMergedAt: "\u603b\u8d26\u5408\u5e76\u4e8e",
   noNote: "\u6682\u65e0\u8bf4\u660e\u3002",
@@ -2519,6 +2520,7 @@ async function loadHomeData({ force = false } = {}) {
     marketIndicesData = marketIndices;
     projectMetaData = projectMeta;
     projectStatusData = projectStatus;
+    updateClock();
     renderHome();
     if (getActiveView() === "dounai") renderDounai();
   });
@@ -2814,19 +2816,95 @@ function getSpecialDateLabels(date) {
   return specialDates
     .filter((item) => {
       if (item.date) return String(item.date).slice(0, 10) === dateKey;
+      if (item.repeat === "monthly") return Number(item.day) === day;
       return Number(item.month) === month && Number(item.day) === day;
     })
     .map((item) => {
-      const title = item.title || item.label || item.name || "";
-      if (!title) return "";
-      const startYear = Number(item.startYear || item.year);
-      if (Number.isFinite(startYear) && startYear > 0 && year > startYear) {
-        const years = year - startYear;
-        return `${title} ${years}\u5468\u5e74`;
-      }
-      return title;
+      return formatSpecialDateTitle(item, year);
     })
     .filter(Boolean);
+}
+
+function formatSpecialDateTitle(item, year) {
+  const title = item.title || item.label || item.name || "";
+  if (!title) return "";
+  const startYear = Number(item.startYear || item.year);
+  if (Number.isFinite(startYear) && startYear > 0 && year > startYear) {
+    return `${title} ${year - startYear}\u5468\u5e74`;
+  }
+  return title;
+}
+
+function createLocalDate(year, month, day) {
+  const candidate = new Date(year, month - 1, day);
+  if (
+    candidate.getFullYear() !== year ||
+    candidate.getMonth() !== month - 1 ||
+    candidate.getDate() !== day
+  ) {
+    return null;
+  }
+  return candidate;
+}
+
+function getNextSpecialDate(date) {
+  const specialDates = Array.isArray(dashboardData.specialDates) ? dashboardData.specialDates : [];
+  const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const occurrences = [];
+
+  for (let offset = 1; offset <= 370; offset += 1) {
+    const candidate = addDays(today, offset);
+    const holidayLabels = getHolidayLabels(candidate);
+    if (holidayLabels.length) {
+      holidayLabels.forEach((title) => occurrences.push({ date: candidate, title }));
+      break;
+    }
+  }
+
+  specialDates.forEach((item) => {
+    let candidate = null;
+    if (item.date) {
+      const match = String(item.date).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (match) candidate = createLocalDate(Number(match[1]), Number(match[2]), Number(match[3]));
+    } else if (item.repeat === "monthly") {
+      const day = Number(item.day);
+      for (let offset = 0; offset < 24 && !candidate; offset += 1) {
+        const monthStart = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+        const occurrence = createLocalDate(monthStart.getFullYear(), monthStart.getMonth() + 1, day);
+        if (occurrence && occurrence > today) candidate = occurrence;
+      }
+    } else {
+      const month = Number(item.month);
+      const day = Number(item.day);
+      for (let offset = 0; offset < 8 && !candidate; offset += 1) {
+        const occurrence = createLocalDate(today.getFullYear() + offset, month, day);
+        if (occurrence && occurrence > today) candidate = occurrence;
+      }
+    }
+
+    const title = candidate ? formatSpecialDateTitle(item, candidate.getFullYear()) : "";
+    if (candidate && candidate > today && title) occurrences.push({ date: candidate, title });
+  });
+
+  if (!occurrences.length) return null;
+  occurrences.sort((first, second) => first.date - second.date);
+  const nextDate = occurrences[0].date;
+  const titles = occurrences
+    .filter((item) => isSameDay(item.date, nextDate))
+    .map((item) => item.title);
+  const daysUntil = Math.round(
+    (Date.UTC(nextDate.getFullYear(), nextDate.getMonth(), nextDate.getDate()) -
+      Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())) /
+      86400000,
+  );
+  return { date: nextDate, daysUntil, titles: [...new Set(titles)] };
+}
+
+function formatNextSpecialDate(date) {
+  const next = getNextSpecialDate(date);
+  if (!next) return copy.noUpcomingSpecialDate;
+  const dateLabel = `${next.date.getMonth() + 1}\u6708${next.date.getDate()}\u65e5`;
+  return `${next.daysUntil}\u5929\u540e\u662f${next.titles.join("\u3001")}\uff08${dateLabel}\uff09`;
 }
 
 function renderWeather() {
@@ -2900,6 +2978,7 @@ function updateClock() {
   setText("#lunar-label", formatLunarDate(now));
   const labels = [...getHolidayLabels(now), ...getSpecialDateLabels(now)];
   setText("#holiday-label", labels.length ? [...new Set(labels)].join(" \u00b7 ") : copy.noHoliday);
+  setText("#next-special-label", formatNextSpecialDate(now));
   updateTodayPhase();
 }
 

@@ -10,6 +10,44 @@ window.MAXNOW_DASHBOARD_DATA = {
     "summary": "当前优先推进：规划个人博客发布链路。",
     "updatedAt": "2026-06-18 19:53"
   },
+  "specialDates": [
+    {
+      "month": 7,
+      "day": 18,
+      "title": "77 生日",
+      "type": "birthday"
+    },
+    {
+      "month": 8,
+      "day": 28,
+      "title": "Max 生日",
+      "type": "birthday"
+    },
+    {
+      "month": 9,
+      "day": 30,
+      "title": "和 77 认识纪念日",
+      "type": "anniversary"
+    },
+    {
+      "month": 10,
+      "day": 7,
+      "title": "和 77 第一次见面纪念日",
+      "type": "anniversary"
+    },
+    {
+      "month": 10,
+      "day": 14,
+      "title": "和 77 在一起纪念日",
+      "type": "anniversary"
+    },
+    {
+      "day": 25,
+      "title": "Codex 续费日",
+      "type": "renewal",
+      "repeat": "monthly"
+    }
+  ],
   "weather": {
     "city": "北京市",
     "district": "海淀",

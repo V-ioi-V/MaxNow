@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-21 11:13",
-  "version": "1.0.4.09",
-  "versionLabel": "v1.0.4.09",
-  "branch": "feature/dounai-precise-traffic",
-  "commit": "19ccccc",
+  "updatedAt": "2026-07-21 11:37",
+  "version": "1.0.4.10",
+  "versionLabel": "v1.0.4.10",
+  "branch": "feature/monthly-special-dates",
+  "commit": "d750927",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/dounai-precise-traffic · commit 19ccccc · 有未提交代码改动",
+  "deployNote": "feature/monthly-special-dates · commit d750927 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-21",
+      "title": "首页小日历增加下一特殊日期",
+      "summary": "小日历新增独立的下一特殊日期行，统一比较内置公历 / 农历节日和个人特殊日期，按“x天后是xx日（x月x日）”展示严格晚于今天的最近一项；当天节日 / 特殊日期行继续保留，两者可同时显示。"
+    },
     {
       "date": "2026-07-21",
       "title": "将豆奶余量与日均预算切换为字节级精确数据",
@@ -28,11 +33,6 @@
       "date": "2026-07-14",
       "title": "修复 macOS Codex 上报分叉后永久停摆",
       "summary": "`scripts/report_codex_usage.sh` 每轮先 fetch 最新 `origin/main`；若本地独有提交全部是该任务生成、提交标题匹配且只修改 `codex-macos-usage.*`，自动丢弃旧生成提交并基于最新主线重新采集。"
-    },
-    {
-      "date": "2026-07-11",
-      "title": "移除全部 tab 卡片顶部彩色横条",
-      "summary": "Home、豆奶、Token、云服务、生活和同行记的页头卡、摘要卡、普通面板、图表卡与统计卡统一取消顶部 4px 彩色或渐变强调线。"
     }
   ]
 }
