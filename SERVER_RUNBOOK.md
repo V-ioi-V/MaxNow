@@ -851,6 +851,14 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 - root crontab 里有两个豆奶任务：09:00 的 `MAXNOW-DOUNAL-CHECKIN` 负责签到、账号快照和完整生成；00:05 的 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT` 只运行 `gen_checkin_data.py --traffic-only --exclude-today`，专门更新昨天及更早的真实流量使用量。
 - 线上 `dash.maxnow.cn` 读取 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 
+2026-07-21 已把账号余量和日均可用预算切换为字节级精确口径：
+
+- `/root/.openclaw/gen_checkin_data.py` 先从用户面板已有的“查看地址”入口读取专属订阅，再只读取标准 `subscription-userinfo` header 的 `total / upload / download`；`remaining_flow_bytes = total - upload - download`，`remaining_flow_mb` 和 `daily_available_mb` 均从该精确值换算。
+- 生成数据成功时写入 `remaining_flow_precision: byte` 和 `source: dounai.pro/subscription-userinfo`；订阅地址、查询参数和令牌不写入数据文件或日志。响应头不可用时保留原用户面板解析作为降级，并标记 `remaining_flow_precision: rounded-label`。
+- `account_history` 从 2026-07-21 起同步保存 `remaining_flow_bytes` 和精度标记；此前只有两位 TB / GB 标签的历史点保持原样，不伪造精确历史。
+- 正式脚本备份：`/root/.openclaw/gen_checkin_data.py.bak-20260721-precise-traffic`；首次刷新前数据备份：`/tmp/dounai_checkin-before-precise-20260721.json`。
+- 首次线上验证得到 `remaining_flow_precision=byte`，`remaining_flow_bytes=1368690004659`，`daily_available_mb=4563.93`（约 `4.46 GB/d`），两份输出均成功写入并通过 `python3 scripts/check.py`。
+
 2026-07-05 已做只读调研并接入直接流量使用抓取，确认当前数据边界：
 
 - `records` 保存签到奖励记录，当前线上有 61 天。

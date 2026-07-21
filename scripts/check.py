@@ -166,10 +166,31 @@ def check_dounai_checkin():
     data = load_json(ROOT / "dash/data/dounai_checkin.json")
     account = data.get("account")
 
+    def check_remaining_precision(item, label):
+        precision = item.get("remaining_flow_precision")
+        if precision is None:
+            return
+        if precision not in {"byte", "rounded-label"}:
+            raise ValueError(f"dounai-checkin: {label}.remaining_flow_precision is invalid")
+        if precision != "byte":
+            return
+        remaining_bytes = item.get("remaining_flow_bytes")
+        if isinstance(remaining_bytes, bool) or not isinstance(remaining_bytes, int) or remaining_bytes < 0:
+            raise ValueError(f"dounai-checkin: {label}.remaining_flow_bytes must be a non-negative integer")
+        expected_mb = round(remaining_bytes / 1024 / 1024, 2)
+        if abs(float(item["remaining_flow_mb"]) - expected_mb) > 0.001:
+            raise ValueError(f"dounai-checkin: {label}.remaining_flow_mb does not match byte precision")
+        days_remaining = int(item.get("days_remaining", 0))
+        if days_remaining > 0:
+            expected_daily = round(expected_mb / days_remaining, 2)
+            if abs(float(item["daily_available_mb"]) - expected_daily) > 0.001:
+                raise ValueError(f"dounai-checkin: {label}.daily_available_mb does not match precise remaining flow")
+
     if account and "remaining_flow_mb" in account:
         remaining = float(account["remaining_flow_mb"])
         if remaining < 0:
             raise ValueError("dounai-checkin: account.remaining_flow_mb cannot be negative")
+        check_remaining_precision(account, "account")
 
     expiry = account.get("effective_expires_at") or account.get("vip_expires_at") or account.get("account_expires_at") if account else None
     if expiry:
@@ -188,6 +209,7 @@ def check_dounai_checkin():
         daily = float(item["daily_available_mb"])
         if daily < 0:
             raise ValueError("dounai-checkin: account_history.daily_available_mb cannot be negative")
+        check_remaining_precision(item, "account_history item")
 
     traffic_usage = data.get("traffic_usage")
     traffic_excludes_today = bool(traffic_usage.get("excluded_today")) if traffic_usage else False
