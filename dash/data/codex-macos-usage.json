@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-24 11:00",
+  "updatedAt": "2026-07-24 12:00",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
@@ -7,29 +7,29 @@
   "pricingStale": false,
   "sinceDays": 3650,
   "summary": {
-    "inputTokens": 1951981550,
-    "outputTokens": 6758242,
-    "cacheReadTokens": 1813412229,
-    "cacheBaseTokens": 1951981550,
-    "totalTokens": 1958739792,
-    "estimatedCostUsd": 1802.091293,
+    "inputTokens": 1953454794,
+    "outputTokens": 6764921,
+    "cacheReadTokens": 1814755095,
+    "cacheBaseTokens": 1953454794,
+    "totalTokens": 1960219715,
+    "estimatedCostUsd": 1803.614986,
     "runs": 562,
-    "activeSeconds": 291168,
-    "completedTurns": 4445
+    "activeSeconds": 291387,
+    "completedTurns": 4456
   },
   "sources": [
     {
       "key": "codex-macos",
       "label": "Codex macOS",
-      "inputTokens": 1951981550,
-      "outputTokens": 6758242,
-      "cacheReadTokens": 1813412229,
-      "cacheBaseTokens": 1951981550,
-      "totalTokens": 1958739792,
-      "estimatedCostUsd": 1802.091293,
+      "inputTokens": 1953454794,
+      "outputTokens": 6764921,
+      "cacheReadTokens": 1814755095,
+      "cacheBaseTokens": 1953454794,
+      "totalTokens": 1960219715,
+      "estimatedCostUsd": 1803.614986,
       "runs": 562,
-      "activeSeconds": 291168,
-      "completedTurns": 4445
+      "activeSeconds": 291387,
+      "completedTurns": 4456
     }
   ],
   "days": [
@@ -38,29 +38,29 @@
       "sources": [
         "codex-macos"
       ],
-      "inputTokens": 616797,
-      "outputTokens": 4232,
-      "cacheReadTokens": 547349,
-      "cacheBaseTokens": 616797,
-      "totalTokens": 621029,
-      "estimatedCostUsd": 0.747874,
+      "inputTokens": 2090041,
+      "outputTokens": 10911,
+      "cacheReadTokens": 1890215,
+      "cacheBaseTokens": 2090041,
+      "totalTokens": 2100952,
+      "estimatedCostUsd": 2.271568,
       "runs": 1,
-      "activeSeconds": 134,
-      "completedTurns": 1,
+      "activeSeconds": 353,
+      "completedTurns": 12,
       "byModel": [
         {
           "model": "gpt-5.5",
           "provider": "openai",
           "openrouterModel": null,
-          "inputTokens": 616797,
-          "outputTokens": 4232,
-          "cacheReadTokens": 547349,
-          "cacheBaseTokens": 616797,
-          "totalTokens": 621029,
-          "estimatedCostUsd": 0.747874,
+          "inputTokens": 2090041,
+          "outputTokens": 10911,
+          "cacheReadTokens": 1890215,
+          "cacheBaseTokens": 2090041,
+          "totalTokens": 2100952,
+          "estimatedCostUsd": 2.271568,
           "runs": 1,
-          "activeSeconds": 134,
-          "completedTurns": 1,
+          "activeSeconds": 353,
+          "completedTurns": 12,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -70,15 +70,15 @@
           "kind": "codex-session",
           "label": "https-bytedance-larkoffice-com-docx-qh24d6inhobpyzxphw4cbdkbnth",
           "model": "gpt-5.5",
-          "inputTokens": 616797,
-          "outputTokens": 4232,
-          "cacheReadTokens": 547349,
-          "cacheBaseTokens": 616797,
-          "totalTokens": 621029,
-          "estimatedCostUsd": 0.747874,
+          "inputTokens": 2090041,
+          "outputTokens": 10911,
+          "cacheReadTokens": 1890215,
+          "cacheBaseTokens": 2090041,
+          "totalTokens": 2100952,
+          "estimatedCostUsd": 2.271568,
           "runs": 1,
-          "activeSeconds": 134,
-          "completedTurns": 1,
+          "activeSeconds": 353,
+          "completedTurns": 12,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -3657,7 +3657,7 @@
   "recentRuns": [
     {
       "date": "2026-07-24",
-      "timestamp": "2026-07-24T10:59:54+08:00",
+      "timestamp": "2026-07-24T11:24:38+08:00",
       "source": "codex-macos",
       "provider": "openai",
       "model": "gpt-5.5",
@@ -3666,26 +3666,26 @@
       "runId": "019f920d-e9d4-7c02-90be-6642dc7f8b36:2026-07-24",
       "kind": "codex-session",
       "label": "https-bytedance-larkoffice-com-docx-qh24d6inhobpyzxphw4cbdkbnth",
-      "inputTokens": 616797,
-      "outputTokens": 4232,
-      "cacheReadTokens": 547349,
-      "cacheBaseTokens": 616797,
-      "reasoningOutputTokens": 1405,
-      "totalTokens": 621029,
+      "inputTokens": 2090041,
+      "outputTokens": 10911,
+      "cacheReadTokens": 1890215,
+      "cacheBaseTokens": 2090041,
+      "reasoningOutputTokens": 4351,
+      "totalTokens": 2100952,
       "pricingEstimated": true,
       "pricingModel": "gpt-5.5",
       "contextWindow": 258400,
-      "tokenCountEvents": 13,
-      "activeSeconds": 134,
-      "completedTurns": 1,
+      "tokenCountEvents": 28,
+      "activeSeconds": 353,
+      "completedTurns": 12,
       "activeByDate": [
         {
           "date": "2026-07-24",
-          "activeSeconds": 134,
-          "completedTurns": 1
+          "activeSeconds": 353,
+          "completedTurns": 12
         }
       ],
-      "estimatedCostUsd": 0.7478745
+      "estimatedCostUsd": 2.2715675
     },
     {
       "date": "2026-07-23",
