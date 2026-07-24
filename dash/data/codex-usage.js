@@ -1,5 +1,5 @@
 window.MAXNOW_CODEX_USAGE_DATA = {
-  "updatedAt": "2026-07-24 22:20",
+  "updatedAt": "2026-07-24 23:04",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
