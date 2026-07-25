@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-21 11:37",
-  "version": "1.0.4.10",
-  "versionLabel": "v1.0.4.10",
-  "branch": "feature/monthly-special-dates",
-  "commit": "d750927",
+  "updatedAt": "2026-07-25 19:33",
+  "version": "1.0.4.11",
+  "versionLabel": "v1.0.4.11",
+  "branch": "feature/ballet-booking-plan",
+  "commit": "3bb30e9",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/monthly-special-dates · commit d750927 · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-plan · commit 3bb30e9 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-25",
+      "title": "记录 LIJUN 芭蕾远端自动约课方案",
+      "summary": "在 `ROADMAP.md` Later 固化微信公众号 H5 自动约课方案，明确会话生命周期验证、课程解析 dry-run、真实预约三阶段，以及课程优先级、候补、幂等、失败停止和通知要求。"
+    },
     {
       "date": "2026-07-21",
       "title": "首页小日历增加下一特殊日期",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-15",
       "title": "修复 Codex 分叉会话 Token 重复累计",
       "summary": "`scripts/sync_codex_usage.py` 改为按 `total_token_usage` 相邻快照的正向增量记账，并在同一会话树内去重分叉文件继承的历史边。"
-    },
-    {
-      "date": "2026-07-14",
-      "title": "修复 macOS Codex 上报分叉后永久停摆",
-      "summary": "`scripts/report_codex_usage.sh` 每轮先 fetch 最新 `origin/main`；若本地独有提交全部是该任务生成、提交标题匹配且只修改 `codex-macos-usage.*`，自动丢弃旧生成提交并基于最新主线重新采集。"
     }
   ]
 };
