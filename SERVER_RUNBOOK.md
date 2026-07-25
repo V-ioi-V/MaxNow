@@ -91,6 +91,49 @@ nginx version -> hidden by server_tokens off
 
 未认证访问 Dash 首页应 `302` 跳转 `/login`，登录页返回 `200`，直接访问 `/data/` 返回 `401` 且不再触发浏览器原生弹窗。`scripts/sync_system_status.py` 会把最终落到 `/login` 识别为 `Login` 健康状态。真实用户名、密码、哈希和会话密钥不得写入仓库或服务器手册。
 
+2026-07-25 已完成 OpenClaw 与服务器入口加固：
+
+```text
+Tencent firewall -> 80/443 对公网开放；22 仅允许 Owner 当前公网 IPv4 /32
+OpenClaw Gateway -> 仅监听 127.0.0.1:12123 和 [::1]:12123
+unused public ports -> 12123/16980/3000 无腾讯云公网放行规则
+Control UI -> allowInsecureAuth=false, dangerouslyDisableDeviceAuth=false
+gateway auth -> 10 次/分钟，连续失败锁定 5 分钟
+browser SSRF -> dangerouslyAllowPrivateNetwork=false
+third-party plugin allowlist -> memory-tencentdb, openclaw-weixin
+OpenClaw config/session files -> 0600
+OpenClaw session directories -> 0700
+Gateway service -> UMask=0077
+```
+
+Control UI 不再支持从公网直接打开。需要临时维护时，从 Owner 已获准的网络建立 SSH 隧道，并保持 Gateway 仍为 loopback：
+
+```powershell
+ssh -i "$env:USERPROFILE\.ssh\id_ed25519" -L 12123:127.0.0.1:12123 ubuntu@43.160.240.244
+```
+
+本次配置和脚本修改前的 root-only 备份：
+
+```text
+/root/.openclaw/openclaw.json.20260725_224341.bak
+/root/.openclaw/openclaw.json.20260725_224907.pre-allowlist.bak
+/root/.config/systemd/user/openclaw-gateway.service.20260725_224557.bak
+/root/.openclaw/workspace/skills/tencent-docs/generate_slide.js.20260725_2304.bak
+```
+
+深度审计从 `4 critical / 19 warn` 降至 `2 critical / 12 warn`。剩余两个 critical 均为静态代码模式提示：禁用且未进入 allowlist 的 Discord 插件包含用于音频转码的 `spawn`；腾讯文档幻灯片脚本仍需启动 `mcporter`，但已从 shell 字符串拼接改为 `execFileSync` 参数数组，消除了参数进入 shell 的路径。剩余 warn 主要来自禁用插件安装元数据，以及微信 / 腾讯云记忆插件正常的文件读取和网络发送能力；不要为了清零扫描数字盲目升级或删除插件，变更前应单独评估兼容性。
+
+复验标准：
+
+```text
+nginx / maxnow-auth / ssh / openclaw-gateway -> active
+ss -> 12123 仅 127.0.0.1 和 ::1；8765 仅 127.0.0.1
+https://dash.maxnow.cn/ -> 未登录 302 到 /login
+https://dash.maxnow.cn/data/dashboard.json -> 未登录 401
+新建 OpenClaw session file -> 0600
+噗噗 dedicated session -> 正常回复，不向微信真实通道投递测试消息
+```
+
 2026-06-17 晚间已部署参考风格刷新版本：
 
 ```text

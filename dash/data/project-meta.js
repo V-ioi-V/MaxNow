@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-25 19:33",
-  "version": "1.0.4.11",
-  "versionLabel": "v1.0.4.11",
-  "branch": "feature/ballet-booking-plan",
-  "commit": "3bb30e9",
+  "updatedAt": "2026-07-25 22:56",
+  "version": "1.0.4.12",
+  "versionLabel": "v1.0.4.12",
+  "branch": "bugfix/openclaw-security-hardening",
+  "commit": "41110c6",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-plan · commit 3bb30e9 · 有未提交代码改动",
+  "deployNote": "bugfix/openclaw-security-hardening · commit 41110c6 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-25",
+      "title": "收紧 OpenClaw 公网入口、认证与本地文件权限",
+      "summary": "腾讯云防火墙仅保留公网 HTTP / HTTPS，以及来源为 Owner 当前公网 IPv4 `/32` 的 SSH；OpenClaw Gateway 改为只监听 `127.0.0.1` / `::1`，12123、16980 和 3000 不再作为公网入口。"
+    },
     {
       "date": "2026-07-25",
       "title": "记录 LIJUN 芭蕾远端自动约课方案",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-15",
       "title": "建立数据失败与新鲜度闭环",
       "summary": "Home 数据同步开始区分已同步、暂无记录、请求失败、数据过期和尚未同步，覆盖 Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、同行记和生活。"
-    },
-    {
-      "date": "2026-07-15",
-      "title": "修复 Codex 分叉会话 Token 重复累计",
-      "summary": "`scripts/sync_codex_usage.py` 改为按 `total_token_usage` 相邻快照的正向增量记账，并在同一会话树内去重分叉文件继承的历史边。"
     }
   ]
 };

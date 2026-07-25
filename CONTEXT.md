@@ -226,6 +226,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 ## 当前缺口
 
+- 2026-07-25 已完成 OpenClaw 与服务器入口加固：腾讯云仅公开 80/443，SSH 仅允许 Owner 当前公网 IPv4 `/32`；Gateway 只监听 loopback，关闭不安全认证和设备认证绕过，增加认证限速，关闭浏览器私网 SSRF 放行，并将非内置插件收敛到 `memory-tencentdb` / `openclaw-weixin` allowlist。配置与会话文件为 `0600`、目录为 `0700`，Gateway 使用 `UMask=0077`；腾讯文档脚本已从 shell 字符串拼接改为参数数组执行。Dash 未登录数据请求仍为 `401`，噗噗和微信通道复验正常。后续如需 Control UI，只通过 Owner 白名单网络上的 SSH 隧道访问，不恢复公网 12123/16980/3000。
 - 2026-07-25 已记录 LIJUN 芭蕾远端自动约课方案，暂不实施。目标入口是微信公众号内 H5 而非小程序，通过微信 `snsapi_base` OAuth 建立 `PHPSESSID` 网站会话。一次只读验证已证明：电脑微信退出后，MaxNow 服务器可用仅经 SSH 内存传递的会话访问首页和课程表且不重新 OAuth；本次未提交预约 / 候补，也未在服务器或本机临时目录保留会话。后续按 `ROADMAP.md` 的 Later 分三阶段推进：先验证会话 24 小时 / 7 天生命周期与低频保活取舍，再做课程解析 dry-run，最后在 Owner 明确配置课程优先级、候补规则、通知渠道并批准真实提交后启用。任何 `PHPSESSID` 必须按约课网站密码处理，不得进入 Git、前端、日志、备份、环境变量或命令参数。
 - 2026-07-15 已补齐 JSON 读取失败与新鲜度闭环：前端区分已同步、暂无记录、请求失败、数据过期和尚未同步，并按来源保留浏览器最后成功响应；Home 数据健康覆盖 Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、同行记和生活。服务器状态会把 Dashboard runtime、AI Last-30、Token sources、Token ledger 连续失败 3 次升级为异常。`.js` wrapper 保留生成一致性用途，不再作为运行时失败的主要兜底。
 - 2026-07-10 整体体检推动 MaxNow 从“继续增加功能”转向“可信状态工作站”。`dash.maxnow.cn` 和 `/data/` 已由自定义登录页、nginx `auth_request` 和服务器本机 Cookie 认证服务保护，Blog 保持公开；后续重点转为自动测试、无障碍状态和外部依赖安全。Home 项目状态可信度已通过独立 `project-status.*`、ROADMAP 指纹校验和过期提示完成修复；可执行条目以 `ROADMAP.md` 为准。
