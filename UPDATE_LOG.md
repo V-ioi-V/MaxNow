@@ -11,6 +11,13 @@
 
 ## 2026-07-26
 
+### 将闻道 Session 持续活动探针降频至 20 分钟
+
+- MaxNow 服务器已从 v3 每 10 分钟阶段安全交接到 `maxnow-wenda-session-lifetime-20260726-v4.service` 每 20 分钟阶段，请求频率由每小时 6 次降为 3 次；v4 首条验证为 HTTP 200 / authenticated 后才停止 v3。
+- 两阶段原始 JSONL 分开保留，v3 凭据挂载已随服务停止消失；v4 直接使用 systemd credential 内存交接，没有新增凭据上传文件。两个进程的随机 HMAC 指纹只允许各自纵向比较。
+- v4 继承原实验绝对截止时间 2026-08-25 19:07:15，没有重置 30 天上限；Codex 心跳继续每 30 分钟只读检查，健康样本容忍窗口相应调整为 45 分钟。
+- 版本提升到 `1.0.4.15`。
+
 ### 启动闻道 Session 服务器持续活动实验
 
 - 新增只允许访问闻道 `simpleclass` 课程表 GET 路径的 `scripts/probe_ballet_session.py`；每条样本仅记录 HTTP / 登录状态、响应摘要、`Set-Cookie` 名称和脱敏 Session 指纹，身份失效或连续 3 次未知 / 网络异常即停止，不具备预约、取消或转课能力。

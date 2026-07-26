@@ -139,33 +139,37 @@ https://dash.maxnow.cn/data/dashboard.json -> 未登录 401
 Owner 已批准在 MaxNow 服务器上验证闻道 `PHPSESSID` 在持续活动下的最长寿命。该实验只读访问课程表，不具备预约、候补、取消或转课能力：
 
 ```text
-unit -> maxnow-wenda-session-lifetime-20260726-v3.service
+current unit -> maxnow-wenda-session-lifetime-20260726-v4.service
 probe -> /usr/local/lib/maxnow-wenda-session/probe_ballet_session.py（root:root 0555）
 probe sha256 -> server CRLF bytes `75cf495f1abac3f5a9f2cedb73021a0905f384ad6d19f9cd7438342edc99ede4`；repository LF bytes `2a1451872515865a0edf7cfd79ecbd3399de1d806de8be4f0fb62f3f9a42c3b5`；换行归一化后内容一致
-log -> /var/lib/maxnow-wenda-session/server-lifetime-20260726-1906.jsonl（0600）
-interval -> 600 秒
-duration cap -> 30 天
-start -> 2026-07-26 19:07 Asia/Shanghai
+current log -> /var/lib/maxnow-wenda-session-v4/server-lifetime-20260726-1941-20min.jsonl（0600）
+historical 10m log -> /var/lib/maxnow-wenda-session/server-lifetime-20260726-1906.jsonl（0400，只读保留）
+interval -> 1200 秒
+original start -> 2026-07-26 19:07:15 Asia/Shanghai
+20m handoff -> 2026-07-26 19:41:46 Asia/Shanghai
+absolute end -> 2026-08-25 19:07:15 Asia/Shanghai
 monitor -> Codex heartbeat automation id=session，30 分钟只读检查
 ```
+
+2026-07-26 19:41 将请求间隔从 600 秒调整为 1200 秒，请求频率由每小时 6 次降为每小时 3 次。v3 阶段共完成 4 次查询，均为 HTTP 200 / authenticated，未出现 `Set-Cookie` 或 Session 进程内变化；v4 首次交接验证同样为 HTTP 200 / authenticated。v4 继承原实验绝对截止时间，启动时仅获得剩余 `2589929` 秒，不会因为换进程而重置 30 天上限。
 
 安全边界：
 
 - systemd 使用 `DynamicUser`、`ProtectSystem=strict`、`ProtectHome=yes`、`NoNewPrivileges` 和空 capability 集运行探针。
-- `PHPSESSID` 通过 `LoadCredential` 进入服务专属 `/run/credentials`；上传源在首条样本成功后已删除，服务退出时凭据目录由 systemd 自动清理。
+- `PHPSESSID` 通过 `LoadCredential` 进入服务专属 `/run/credentials`。v4 从仍在运行的 v3 凭据挂载直接完成一次内存交接，没有创建新的上传文件；v4 首条验证成功后 v3 已停止，其凭据目录已由 systemd 自动清理。
 - 脚本只允许固定 URL `https://gm.wendaosoft.com/gm/weixin/classtable/simpleclass/54114/430`，拒绝 query、其他租户 / 课表、其他端口和写接口；凭据只接受单一 `PHPSESSID`，请求使用固定 Referer。
-- 代码和 unit 均禁用代理；stdout 设为 `null`，避免脱敏 JSONL 再复制进 journald。日志不保存响应正文、Cookie 或 OAuth 信息，Session 指纹使用仅本次进程可比较的随机 HMAC。
+- 代码和 unit 均禁用代理；stdout 设为 `null`，避免脱敏 JSONL 再复制进 journald。日志不保存响应正文、Cookie 或 OAuth 信息，Session 指纹使用仅本次进程可比较的随机 HMAC；v3 与 v4 的 HMAC 密钥不同，禁止横向比较两个阶段的指纹值。
 - 登录有效必须同时命中 `check_cardtypecourse` 与 `do_addbook` 两个课程页结构标记；普通 200、通用 JSON、OAuth / 登录页和无法判断的响应不会误报 authenticated。
 - 任务收到身份失效即退出；连续 3 次未知 / 网络异常也会退出，避免页面变化或网络故障后无限请求。
 - 这是 transient unit，没有 enable，也不会在服务器重启后自动恢复；因此不列入 Dash 云服务页的长期自动化清单。
 
-`systemctl cat` 的去敏审计快照如下；`LoadCredential` 的源文件已在启动成功后删除，所以不能直接 restart 该 unit，必须由 Owner 重新提供有效会话后新建实验：
+`systemctl cat` 的去敏审计快照如下；v4 使用的 `LoadCredential` 源路径已随 v3 停止而消失，所以不能直接 restart 该 unit，必须由 Owner 重新提供有效会话后新建实验：
 
 ```ini
 [Service]
 Type=simple
 DynamicUser=yes
-StateDirectory=maxnow-wenda-session
+StateDirectory=maxnow-wenda-session-v4
 StateDirectoryMode=0700
 UMask=0077
 NoNewPrivileges=yes
@@ -175,33 +179,33 @@ PrivateTmp=yes
 PrivateDevices=yes
 CapabilityBoundingSet=
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
-RuntimeMaxSec=4w 2d 10min
+RuntimeMaxSec=4w 1d 23h 35min 29s
 Restart=no
 StandardOutput=null
 StandardError=journal
-LoadCredential=wenda.json:/run/maxnow-wenda-session-upload/credentials.json
-ExecStopPost=+/usr/bin/rm -f /run/maxnow-wenda-session-upload/credentials.json
-Environment=WENDA_INTERVAL_SECONDS=600 WENDA_DURATION_SECONDS=2592000
+LoadCredential=wenda.json:/run/credentials/maxnow-wenda-session-lifetime-20260726-v3.service/wenda.json
+Environment=WENDA_INTERVAL_SECONDS=1200 WENDA_DURATION_SECONDS=2589929
 ExecStart=/usr/bin/python3 /usr/local/lib/maxnow-wenda-session/probe_ballet_session.py
 ```
 
 只读检查，不要为了监控额外请求闻道：
 
 ```bash
-sudo systemctl show maxnow-wenda-session-lifetime-20260726-v3.service \
+sudo systemctl show maxnow-wenda-session-lifetime-20260726-v4.service \
   -p ActiveState -p SubState -p MainPID -p Result -p ExecMainStatus
+sudo tail -n 5 /var/lib/maxnow-wenda-session-v4/server-lifetime-20260726-1941-20min.jsonl
 sudo tail -n 5 /var/lib/maxnow-wenda-session/server-lifetime-20260726-1906.jsonl
-sudo systemctl cat maxnow-wenda-session-lifetime-20260726-v3.service
+sudo systemctl cat maxnow-wenda-session-lifetime-20260726-v4.service
 ```
 
 需要人工提前停止时：
 
 ```bash
-sudo systemctl stop maxnow-wenda-session-lifetime-20260726-v3.service
-sudo test ! -e /run/credentials/maxnow-wenda-session-lifetime-20260726-v3.service/wenda.json
+sudo systemctl stop maxnow-wenda-session-lifetime-20260726-v4.service
+sudo test ! -e /run/credentials/maxnow-wenda-session-lifetime-20260726-v4.service/wenda.json
 ```
 
-停止进程和删除本地 / 服务器凭据只能终止后续使用，不能证明闻道服务端 Session 已被吊销；如果没有安全的官方 logout / revoke 接口，结论中必须保留这一残余有效窗口说明。本实验验证的是“每 10 分钟活动时的寿命”，不能外推静默闲置过期时间。
+停止进程和删除本地 / 服务器凭据只能终止后续使用，不能证明闻道服务端 Session 已被吊销；如果没有安全的官方 logout / revoke 接口，结论中必须保留这一残余有效窗口说明。本实验分为 v3 每 10 分钟和 v4 每 20 分钟两个阶段，最终按绝对时间合并观察；它验证的是“持续活动时的寿命”，不能外推静默闲置过期时间。
 
 2026-06-17 晚间已部署参考风格刷新版本：
 

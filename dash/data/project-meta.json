@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-26 19:13",
-  "version": "1.0.4.14",
-  "versionLabel": "v1.0.4.14",
-  "branch": "unknown",
-  "commit": "98d0a9f",
+  "updatedAt": "2026-07-26 19:45",
+  "version": "1.0.4.15",
+  "versionLabel": "v1.0.4.15",
+  "branch": "feature/ballet-session-20min",
+  "commit": "0e2d94e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "unknown · commit 98d0a9f · 有未提交代码改动",
+  "deployNote": "feature/ballet-session-20min · commit 0e2d94e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-26",
+      "title": "将闻道 Session 持续活动探针降频至 20 分钟",
+      "summary": "MaxNow 服务器已从 v3 每 10 分钟阶段安全交接到 `maxnow-wenda-session-lifetime-20260726-v4.service` 每 20 分钟阶段，请求频率由每小时 6 次降为 3 次；v4 首条验证为 HTTP 200 / authenticated 后才停止 v3。"
+    },
     {
       "date": "2026-07-26",
       "title": "启动闻道 Session 服务器持续活动实验",
@@ -28,11 +33,6 @@
       "date": "2026-07-25",
       "title": "记录 LIJUN 芭蕾远端自动约课方案",
       "summary": "在 `ROADMAP.md` Later 固化微信公众号 H5 自动约课方案，明确会话生命周期验证、课程解析 dry-run、真实预约三阶段，以及课程优先级、候补、幂等、失败停止和通知要求。"
-    },
-    {
-      "date": "2026-07-21",
-      "title": "首页小日历增加下一特殊日期",
-      "summary": "小日历新增独立的下一特殊日期行，统一比较内置公历 / 农历节日和个人特殊日期，按“x天后是xx日（x月x日）”展示严格晚于今天的最近一项；当天节日 / 特殊日期行继续保留，两者可同时显示。"
     }
   ]
 }
