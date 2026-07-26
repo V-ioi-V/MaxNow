@@ -487,6 +487,7 @@ def check_ballet_session_status():
         or "Group=maxnow-ballet-status" not in service
         or "StateDirectory=maxnow-ballet-session-status" not in service
         or "ReadWritePaths=/var/lib/maxnow-ballet-session-status" not in service
+        or "ReadOnlyPaths=/var/lib/maxnow-ballet-session-status/source" not in service
         or "InaccessiblePaths=-/run/credentials -/etc/credstore.encrypted" not in service
         or "ExecStartPre=/usr/bin/test ! -r /run/credentials" not in service
         or (
