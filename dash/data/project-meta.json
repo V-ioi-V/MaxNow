@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-26 19:45",
-  "version": "1.0.4.15",
-  "versionLabel": "v1.0.4.15",
-  "branch": "feature/ballet-session-20min",
-  "commit": "0e2d94e",
+  "updatedAt": "2026-07-26 20:29",
+  "version": "1.0.4.16",
+  "versionLabel": "v1.0.4.16",
+  "branch": "feature/ballet-module-plan",
+  "commit": "77cbee3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-session-20min · commit 0e2d94e · 有未提交代码改动",
+  "deployNote": "feature/ballet-module-plan · commit 77cbee3 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-26",
+      "title": "规划 MaxNow 芭蕾学习模块",
+      "summary": "将原“LIJUN 远端自动约课”方向扩展为“学习记录 + 课程计划 + 受控约课”：未来优先展示下一节课、本周训练、未来预约、独立上课记录、学习进度和课堂笔记，自动约课排在最后阶段。"
+    },
     {
       "date": "2026-07-26",
       "title": "将闻道 Session 持续活动探针降频至 20 分钟",
@@ -28,11 +33,6 @@
       "date": "2026-07-25",
       "title": "收紧 OpenClaw 公网入口、认证与本地文件权限",
       "summary": "腾讯云防火墙仅保留公网 HTTP / HTTPS，以及来源为 Owner 当前公网 IPv4 `/32` 的 SSH；OpenClaw Gateway 改为只监听 `127.0.0.1` / `::1`，12123、16980 和 3000 不再作为公网入口。"
-    },
-    {
-      "date": "2026-07-25",
-      "title": "记录 LIJUN 芭蕾远端自动约课方案",
-      "summary": "在 `ROADMAP.md` Later 固化微信公众号 H5 自动约课方案，明确会话生命周期验证、课程解析 dry-run、真实预约三阶段，以及课程优先级、候补、幂等、失败停止和通知要求。"
     }
   ]
 }

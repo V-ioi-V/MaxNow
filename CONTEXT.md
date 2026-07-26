@@ -208,6 +208,19 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - 不把所有旧文一次性公开发布；先通过 public / published 标记或发布 manifest 筛选。
 - `dash.maxnow.cn` 顶部右侧可放一个指向 `blog.maxnow.cn` 的弱外部链接；左侧导航只保留 Dash 内部页面。页面内最多展示发布进度、待筛选数量和最近发布摘要。
 
+### 6. 芭蕾学习模块上下文
+
+Owner 已确认后续要在 MaxNow 增加芭蕾模块。产品定义从原来的“远端自动约课”扩展为“学习记录 + 课程计划 + 受控约课”：
+
+- 闻道微信公众号 H5 提供课程表、当前预约、候补 / 余位、上课记录和会员课次等机器事实；已验证课程、预约和上课记录可以分别读取。
+- personal-wiki 负责当前级别、阶段目标、课堂笔记、老师纠正、动作标签、练习记录和 Owner 人工判断；MaxNow 只做单向同步与只读展示。
+- 未来芭蕾数据由服务器隔离采集器生成脱敏 read model，前端不直连闻道、不回写 personal-wiki，也不因打开页面而触发预约。
+- 只读 MVP 的优先级是：下一节课、本周训练、未来预约、真实上课历史、学习统计和数据新鲜度；自动约课排在数据可信与学习闭环之后。
+- 芭蕾内容不并入“生活 / 吃啥”。数据稳定后可评估独立 `secondary-view` 页面；Home 最多显示下一节课、本周进度和状态，Cloud 只显示采集 / Session / 自动化健康。
+- 当前 Session 生命周期实验属于可行性证据，不是最终登录方案，也不能证明空闲 Session 寿命；unit、原始日志、凭据挂载和停止方式只在 `SERVER_RUNBOOK.md` 维护。
+- 未来 `dash/data/ballet.*` 只能保存脱敏前端读模型；`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端或仓库。
+- 自动化模式固定分为 `off`、`dry-run`、`enabled`。真实提交必须在连续 dry-run、幂等校验、有限重试、失败停止和 Owner 单独批准后启用；默认不自动取消或转课。
+
 ## 上下文更新规则
 
 - 不要直接在 `main` 上修改代码或文档；先从最新 `main` 拉短期工作分支。
@@ -252,7 +265,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - Home 时间卡片已支持 `dashboard.json.specialDates`：固定月日用于每年重复的生日 / 纪念日，`repeat: "monthly"` 用于每月重复日期，一次性事项使用完整公历日期。第一行显示当天内置节日和个人特殊日期，第二行独立显示严格晚于当天的最近一项；候选会统一比较母亲节、父亲节、农历节日、生日、纪念日和续费日。MaxNow 已录入 personal-wiki 中的 77 / Max 生日和三项关系纪念日，并记录每月 25 日为 Codex 续费日。
 - Home 顶部已新增北京市海淀区天气卡：地点、天气、当前温度、今日高低温和图标来自 `dashboard.json.weather`，并由 `runtime` 定时刷新。
 - Home 主内容区顶部已拆成左侧 Token 热力格 + Personal Wiki 近期待办竖向栈、右侧市场涨幅卡：左侧上方展示近 90 天 Token 活动，左侧下方展示 personal-wiki 近期待办，右侧展示纳指100、标普500、上证指数、深证成指和创业板指；行情数据来自 `dash/data/market-indices.json` 并由 `runtime` 每 10 分钟刷新。
-- Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留原有三个入口，不做折叠侧栏。
+- Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留当前六个一级入口，不做折叠侧栏。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
 - Dash 访问保护由 `dash/login.html`、`scripts/maxnow_auth_service.py`、nginx `auth_request` 和 7 天 HttpOnly 会话 Cookie 共同负责，覆盖页面、静态资源和 `/data/`；认证服务只监听 `127.0.0.1:8765`，复用现有 htpasswd 哈希，不读取 Dashboard 数据。真实凭据和会话密钥不进入仓库，Blog 不继承 Dash 认证策略。
 - `maxnow.cn` 权威 DNS 继续由 DNSPod 托管，nameserver 为 `achernar.dnspod.net` / `cylinder.dnspod.net`；Cloudflare Access 评估已停止，不属于当前访问链路。
@@ -265,6 +278,6 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 
 ## 建议下一步
 
-1. 建立数据读取失败和新鲜度闭环，避免请求失败继续被显示成真实为 0 或“暂无数据”。
-2. 补前端 smoke test、JavaScript 语法检查、移动端几何回归和无障碍状态，再继续扩展 Blog 发布链路。
-3. 观察自定义登录会话、Last-30 免费源和豆奶 00:05 traffic closeout 的连续稳定性。
+1. 继续完成 Blog 发布 manifest、front matter 策略、第一批公开文章清单和静态构建链路。
+2. 补前端 smoke test、JavaScript 语法检查、移动端几何回归和无障碍状态，再扩展新的一级页面。
+3. 观察闻道 Session 生命周期实验；结束后先定义芭蕾模块脱敏数据契约和 personal-wiki 学习记录格式，再实现只读 MVP。
