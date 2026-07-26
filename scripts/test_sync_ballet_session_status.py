@@ -480,16 +480,16 @@ class BalletSessionStatusTests(unittest.TestCase):
                 status.validate_config(payload)
 
     @unittest.skipIf(os.name == "nt", "POSIX ownership and mode only")
-    def test_root_only_config_permissions(self):
+    def test_restricted_config_permissions(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "config.json"
             path.write_text("{}\n", encoding="utf-8")
             path.chmod(0o644)
             with self.assertRaises(status.StatusPublishError):
-                status.assert_root_only_config(path)
+                status.assert_restricted_config(path)
             if os.geteuid() == 0:
-                path.chmod(0o600)
-                status.assert_root_only_config(path)
+                path.chmod(0o640)
+                status.assert_restricted_config(path)
 
 
 if __name__ == "__main__":

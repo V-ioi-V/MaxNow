@@ -10,6 +10,9 @@ User=maxnow-ballet-status
 Group=maxnow-ballet-status
 WorkingDirectory=/
 Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStartPre=/usr/bin/test -r /etc/maxnow-ballet/session-experiment.json
+ExecStartPre=/usr/bin/test ! -r /etc/credstore.encrypted/maxnow-ballet-wenda.cred
+ExecStartPre=/usr/bin/test ! -r /run/credentials
 ExecStart=/usr/bin/python3 -B /usr/local/lib/maxnow-ballet-session-status/sync_ballet_session_status.py --config /etc/maxnow-ballet/session-experiment.json --output /var/lib/maxnow-ballet-session-status/public/ballet-session.json --wrapper /var/lib/maxnow-ballet-session-status/public/ballet-session.js
 TimeoutStartSec=30
 UMask=0022

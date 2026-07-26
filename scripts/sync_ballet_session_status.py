@@ -138,16 +138,19 @@ def parse_timestamp(value: Any, field: str) -> datetime:
     return parsed
 
 
-def assert_root_only_config(path: Path) -> None:
-    """Require a regular, single-link, root-only file on POSIX."""
+def assert_restricted_config(path: Path) -> None:
+    """Require a regular, single-link, root-owned restricted file on POSIX."""
 
     if os.name == "nt":
         return
     metadata = path.stat(follow_symlinks=False)
     if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
         raise StatusPublishError("config must be a regular single-link file")
-    if metadata.st_uid != 0 or stat.S_IMODE(metadata.st_mode) & 0o077:
-        raise StatusPublishError("config must be owned by root and root-only")
+    mode = stat.S_IMODE(metadata.st_mode)
+    if metadata.st_uid != 0 or mode & 0o027:
+        raise StatusPublishError(
+            "config must be root-owned, group-read-only, and closed to others"
+        )
 
 
 def validate_config(payload: Any) -> ExperimentConfig:
@@ -232,7 +235,7 @@ def validate_config(payload: Any) -> ExperimentConfig:
 
 def load_config(path: Path, *, enforce_permissions: bool = True) -> ExperimentConfig:
     if enforce_permissions:
-        assert_root_only_config(path)
+        assert_restricted_config(path)
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
