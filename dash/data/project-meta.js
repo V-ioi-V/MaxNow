@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 00:15",
-  "version": "1.0.5.03",
-  "versionLabel": "v1.0.5.03",
-  "branch": "feature/ballet-session-status",
-  "commit": "c7b64a9",
+  "updatedAt": "2026-07-27 00:34",
+  "version": "1.0.5.04",
+  "versionLabel": "v1.0.5.04",
+  "branch": "feature/ballet-session-v6",
+  "commit": "e9a03b7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-session-status · commit c7b64a9 · 有未提交代码改动",
+  "deployNote": "feature/ballet-session-v6 · commit e9a03b7 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "刷新闻道会话并启动 v6 每 20 分钟实验",
+      "summary": "Owner 在微信内重新打开闻道页面并完全退出微信后，本机从最新微信资料目录安全提取新一代 `PHPSESSID`；仅比较脱敏哈希确认它与旧会话不同，未在终端、日志、聊天或 Git 输出 Cookie 值。"
+    },
     {
       "date": "2026-07-26",
       "title": "增加 PHPSESSID 活跃实验状态卡并降频至 25 分钟",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-26",
       "title": "规划 MaxNow 芭蕾学习模块",
       "summary": "将原“LIJUN 远端自动约课”方向扩展为“学习记录 + 课程计划 + 受控约课”：未来优先展示下一节课、本周训练、未来预约、独立上课记录、学习进度和课堂笔记，自动约课排在最后阶段。"
-    },
-    {
-      "date": "2026-07-26",
-      "title": "将闻道 Session 持续活动探针降频至 20 分钟",
-      "summary": "MaxNow 服务器已从 v3 每 10 分钟阶段安全交接到 `maxnow-wenda-session-lifetime-20260726-v4.service` 每 20 分钟阶段，请求频率由每小时 6 次降为 3 次；v4 首条验证为 HTTP 200 / authenticated 后才停止 v3。"
     }
   ]
 };

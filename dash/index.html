@@ -865,13 +865,14 @@
                   <p class="eyebrow">Daily 00:17 / Monthly 00:47 / Local 5min</p>
                   <h2>芭蕾只读同步</h2>
                 </div>
-                <span class="status-pill">待刷新凭据</span>
+                <span class="status-pill">实验运行中</span>
               </header>
-              <p class="item-copy">25 分钟阶段已在首个标准检查确认登录失效；课程采集继续保持未启用，等待 Owner 在电脑微信重新登录并安全刷新凭据。下一次新会话探针按每 20 分钟运行；独立状态发布器每 5 分钟只读服务器本地日志，不访问闻道。</p>
+              <p class="item-copy">v6 新会话探针自 2026-07-27 00:26 起每 20 分钟只读课程列表，首条检查已确认登录有效；生产课程采集仍保持未启用。独立日志转存与状态发布任务每 5 分钟只读服务器本地脱敏日志，不访问闻道。</p>
               <dl class="cloud-meta">
                 <div><dt>日常</dt><dd>00:17 重扫最近 60 个逻辑日</dd></div>
                 <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
-                <div><dt>实验状态</dt><dd>每 5 分钟发布脱敏 ballet-session.*</dd></div>
+                <div><dt>实验请求</dt><dd>每 20 分钟固定只读课程列表 GET</dd></div>
+                <div><dt>本地状态</dt><dd>每 5 分钟转存并发布脱敏 ballet-session.*</dd></div>
                 <div><dt>失败</dt><dd>保留最后成功缓存并提示重新登录</dd></div>
                 <div><dt>边界</dt><dd>不执行预约、取消、候补或转课</dd></div>
               </dl>
