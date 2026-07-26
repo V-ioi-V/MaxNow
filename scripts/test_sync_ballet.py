@@ -153,6 +153,8 @@ class BalletSyncTests(unittest.TestCase):
                     ballet.load_credentials(path).session_id, SESSION
                 )
 
+            if os.name != "nt":
+                path.chmod(0o600)
             path.write_text(
                 json.dumps(
                     {
