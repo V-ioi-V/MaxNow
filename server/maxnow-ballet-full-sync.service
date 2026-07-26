@@ -1,0 +1,48 @@
+[Unit]
+Description=MaxNow read-only Wenda ballet monthly full reconciliation
+Documentation=file:/var/www/maxnow-dashboard/SERVER_RUNBOOK.md
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/etc/maxnow-ballet/enable-sync
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=www-data
+WorkingDirectory=/var/www/maxnow-dashboard
+Environment=PYTHONDONTWRITEBYTECODE=1
+LoadCredentialEncrypted=wenda-session.json:/etc/credstore.encrypted/maxnow-ballet-wenda.cred
+LoadCredential=credential-version:/etc/maxnow-ballet/credential-version
+StateDirectory=maxnow-ballet
+StateDirectoryMode=0700
+RuntimeDirectory=maxnow-ballet
+RuntimeDirectoryMode=0700
+ExecStartPre=/usr/bin/echo maxnow ballet sync start
+ExecStart=/usr/bin/flock --nonblock /run/maxnow-ballet/sync.lock /usr/bin/python3 -B scripts/sync_ballet.py --mode full --state-dir /var/lib/maxnow-ballet --output /var/www/maxnow-dashboard/dash/data/ballet.json --credential-file=%d/wenda-session.json --credential-version-file=%d/credential-version
+TimeoutStartSec=300
+UMask=0027
+StandardOutput=append:/var/www/maxnow-dashboard/logs/ballet-sync.log
+StandardError=append:/var/www/maxnow-dashboard/logs/ballet-sync.log
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/maxnow-ballet
+ReadWritePaths=/var/www/maxnow-dashboard/dash/data
+ReadWritePaths=/var/www/maxnow-dashboard/logs
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+ProcSubset=pid
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+SystemCallArchitectures=native

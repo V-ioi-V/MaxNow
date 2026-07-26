@@ -207,6 +207,59 @@ sudo test ! -e /run/credentials/maxnow-wenda-session-lifetime-20260726-v4.servic
 
 停止进程和删除本地 / 服务器凭据只能终止后续使用，不能证明闻道服务端 Session 已被吊销；如果没有安全的官方 logout / revoke 接口，结论中必须保留这一残余有效窗口说明。本实验分为 v3 每 10 分钟和 v4 每 20 分钟两个阶段，最终按绝对时间合并观察；它验证的是“持续活动时的寿命”，不能外推静默闲置过期时间。
 
+### 芭蕾生产只读同步（待启用）
+
+芭蕾页面与脱敏缓存可以先部署，但生产闻道抓取当前保持未启用。原因是 `maxnow-wenda-session-lifetime-20260726-v4.service` 正在以固定 20 分钟间隔验证 `PHPSESSID` 的持续活动寿命；额外的 00:17 请求会改变活动频率，污染滑动窗口实验。除非 Owner 明确接受这项影响，否则不得手动运行生产同步、启用 timer，或为了“检查是否可用”向闻道追加请求。
+
+目标运行边界：
+
+```text
+service -> maxnow-ballet-sync.service
+timer -> maxnow-ballet-sync.timer
+schedule -> Asia/Shanghai 每日 00:17
+monthly service -> maxnow-ballet-full-sync.service
+monthly timer -> maxnow-ballet-full-sync.timer
+monthly schedule -> Asia/Shanghai 每月 1 日 00:47
+private state -> /var/lib/maxnow-ballet/
+credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
+credential version -> /etc/maxnow-ballet/credential-version
+enable gate -> /etc/maxnow-ballet/enable-sync
+frontend read model -> /var/www/maxnow-dashboard/dash/data/ballet.json + ballet.js
+current state -> 加密凭据已密封；代码 / page / unit 可部署，enable gate 不存在且两个生产 timer 保持 disabled
+```
+
+同步器只允许已确认的闻道只读 GET 页面：
+
+- 上课记录索引：`/gm/weixin/my/checkrecord/54114`
+- 预约记录索引：`/gm/weixin/my/bookrecord/54114`
+- 从预约索引发现的同租户数字详情：`/gm/weixin/my/bookrecordone/54114/<digits>`
+
+禁止 POST，禁止调用预约、取消、候补、转课、会员登录或未知接口。首次成功同步可回填当前源站能返回的历史；后续使用私有 canonical ledger 幂等 upsert、稳定键去重和原子替换。日常任务以北京时间 00:00 为逻辑日界，在 00:17 结算前一日；同步失败只更新安全状态，不清空最后成功的 records、summary、aggregates 或预约快照。
+
+生产凭据规则：
+
+- `PHPSESSID` 只能以服务器 host-bound systemd 加密凭据保存，并由 `LoadCredentialEncrypted` 放入服务专属 `/run/credentials`；不得写入 Git、普通配置文件、环境变量、命令参数、日志、前端、备份或聊天。
+- 创建或刷新凭据时，应从受控输入流直接交给 `systemd-creds encrypt --with-key=host`，写入临时文件后以 root `0600` 原子替换 `/etc/credstore.encrypted/maxnow-ballet-wenda.cred`。不要 `echo`、`cat`、打印或复制明文值，也不要把值留进 shell history。
+- 只允许记录非敏感的 `credentialVersion`（例如加密文件版本 / 修改代次）；不得记录 Session 原文、可逆摘要或跨系统可关联指纹。
+- Owner 刷新流程是：在电脑微信重新登录并打开闻道页面，使用本地受控提取流程取得新会话，再通过不回显的加密输入流更新服务器凭据。任何文档、日志和聊天只记录“凭据已更新”和安全版本，不记录值。
+
+2026-07-26 21:23 已在服务器内部把 v4 生命周期实验当前的临时 systemd credential 密封为上述 host-bound 加密凭据，并用只写临时输出的解密自检确认可用后立即删除临时明文；全过程没有把值输出、下载或写入仓库。加密文件为 root `0600`。本机没有完整 TPM 保护，systemd host key 位于服务器 root 管理的 `/var/lib/systemd/credential.secret`；因此它能防止普通文件读取和误入 Git / 日志，但拥有服务器 root 权限的人仍可解密，不能把它描述成硬件不可导出密钥。生产同步仍未发起任何请求。
+
+身份与错误处理：
+
+- `AUTH_REQUIRED`、`WX_OAUTH_REQUIRED`、`MEMBER_LOGIN_REQUIRED` 立即停止本轮和后续自动重试，保留旧缓存并将 read model 标记为需要重新登录。
+- 在 `credentialVersion` 变化前，timer 即使再次触发也只更新或保留阻断状态，不向闻道发起请求，避免失效凭据反复打站点。
+- 页面只显示脱敏原因、最近尝试时间、最后成功时间和“请在电脑微信重新登录并刷新凭据”；不得显示 Cookie、Session 指纹、手机号、会员标识、原始响应或内部凭据路径。
+- 网络抖动可以有限重试；页面结构变化、解析歧义或无法确认身份状态时 fail closed，并保留最后成功缓存。
+
+实验结束后的启用顺序：
+
+1. 先按本节规则写入新的 host-bound 加密凭据，不复用实验 unit 的临时 `/run/credentials` 路径。
+2. 用本地脱敏样本完成 parser / 去重测试；首次真实同步只允许已确认的 GET 路径。
+3. 检查私有账本 `0600`、read model 无敏感字段、重复同步不增加历史数量、失败时旧缓存仍在。
+4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认下一次触发分别为每日 00:17 和每月 1 日 00:47；不要把测试性即时请求算作定时任务证据。
+5. 更新 Cloud 页自动化清单和系统状态来源，并在 `UPDATE_LOG.md` 记录真实启用时间与脱敏结果。
+
 2026-06-17 晚间已部署参考风格刷新版本：
 
 ```text
@@ -932,7 +985,7 @@ crontab -l
 
 `scripts/sync_system_status.py` 会从这些日志以及 `token-source-refresh.log` / `token-usage-refresh.log` 中识别成对的 `start` / `ok` 记录。Dashboard runtime、AI Last-30、Token sources 或 Token ledger 任一任务连续 3 次没有成功结束时，Home 系统自动化状态变为异常，并在“连续失败”项显示任务名和次数。`scripts/update_data.py` 的子同步失败后会补跑一次系统状态采集，让连续失败在故障轮次内写入 Dashboard；最近一次仍可能正在执行且没有明确错误的 20 分钟内未闭合记录不计入连续失败，避免瞬时误报。
 
-同一状态采集还会读取 10 个 Owner 可见数据源的最后成功时间，输出已同步、暂无记录、读取失败、数据过期或尚未同步。前端 JSON 请求失败属于浏览器侧状态，会继续展示浏览器保存的最后成功数据；服务器文件读取失败则进入 `data-health` 系统状态。
+同一状态采集还会读取 11 个 Owner 可见数据源的最后成功时间，输出已同步、暂无记录、读取失败、数据过期、需要重新登录或尚未同步。前端 JSON 请求失败属于浏览器侧状态，会继续展示浏览器保存的最后成功数据；服务器文件读取失败则进入 `data-health` 系统状态。
 
 如果只想预览将采集到的状态，不写文件：
 

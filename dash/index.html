@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=136" />
+    <link rel="stylesheet" href="./styles.css?v=137" />
   </head>
   <body>
     <div class="app-shell">
@@ -44,6 +44,15 @@
             <span class="nav-copy">
               <strong>Token</strong>
               <small id="sidebar-token-total">&#29992;&#37327;&#27010;&#35272;</small>
+            </span>
+          </button>
+          <button class="side-nav-item nav-ballet" type="button" data-view="ballet">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7.1 3.4a1 1 0 0 1 1.4.1l3.4 3.8 3.6-3.8a1 1 0 1 1 1.4 1.4l-3.6 3.9 2.3 2.6c1.7 1.9 2.4 4.4 2 6.9l-.3 1.8a1 1 0 0 1-1 .9H7.7a1 1 0 0 1-1-.9l-.3-1.8a10 10 0 0 1 2.2-7l1.9-2.4L7 4.8a1 1 0 0 1 .1-1.4Zm4.8 7.1-1.8 2.2a8 8 0 0 0-1.7 5.2l.2 1.1h6.8l.2-1.1a7.9 7.9 0 0 0-1.5-5.2Z"/></svg>
+            </span>
+            <span class="nav-copy">
+              <strong>芭蕾</strong>
+              <small>课程与进度</small>
             </span>
           </button>
           <button class="side-nav-item nav-cloud" type="button" data-view="cloud">
@@ -184,7 +193,7 @@
               <strong id="metric-today-execution">0</strong>
               <small id="metric-today-execution-note">&#26242;&#26080;&#26126;&#30830;&#25191;&#34892;&#26085;&#26399;</small>
             </article>
-            <article class="metric-sync" title="Owner 可见数据源状态：Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、同行记和生活">
+            <article class="metric-sync" title="Owner 可见数据源状态：Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、芭蕾、同行记和生活">
               <span>&#25968;&#25454;&#21516;&#27493;</span>
               <strong id="metric-sync">--</strong>
               <small id="metric-sync-note">&#31561;&#24453;&#21516;&#27493;</small>
@@ -405,6 +414,25 @@
                 </div>
                 </article>
 
+                <article class="panel ballet-home-card home-board-card home-card-ballet" id="home-ballet-card" data-card-size="widget-wide" role="button" tabindex="0" aria-label="打开芭蕾课程与进度">
+                  <header class="panel-head">
+                    <div>
+                      <p class="eyebrow">Ballet</p>
+                      <h2>芭蕾进度</h2>
+                    </div>
+                    <span class="status-pill" id="home-ballet-status">等待同步</span>
+                  </header>
+                  <div class="ballet-home-next">
+                    <span id="home-ballet-next-time">下一节 · --</span>
+                    <strong id="home-ballet-next-course">等待课程数据</strong>
+                    <small id="home-ballet-next-meta">同步成功后显示预约与进度</small>
+                  </div>
+                  <div class="ballet-home-foot">
+                    <span id="home-ballet-progress">累计 -- 节 · -- 小时</span>
+                    <small id="home-ballet-updated">尚未同步</small>
+                  </div>
+                </article>
+
                 <article class="panel system-panel home-board-card home-card-system" id="system-panel" data-card-size="widget-wide" role="button" tabindex="0" aria-label="打开云服务系统状态">
                 <header class="panel-head">
                   <div>
@@ -590,6 +618,126 @@
           </section>
         </section>
 
+        <section class="view secondary-view" id="ballet-view" data-view-panel="ballet">
+          <header class="token-page-head secondary-page-head ballet-page-head">
+            <div>
+              <p class="eyebrow">Ballet Progress</p>
+              <h1>芭蕾</h1>
+              <p id="ballet-updated">课程记录与学习进度 · 等待首次同步</p>
+            </div>
+            <span class="status-pill" id="ballet-sync-status" aria-live="polite">等待同步</span>
+          </header>
+
+          <div class="ballet-sync-alert" id="ballet-sync-alert" role="status" aria-live="polite" hidden>
+            <span class="ballet-sync-alert-icon" aria-hidden="true">!</span>
+            <div>
+              <strong id="ballet-sync-alert-title">课程数据更新失败</strong>
+              <p id="ballet-sync-alert-message">仍显示最后一次成功缓存。</p>
+            </div>
+          </div>
+
+          <section class="ballet-overview-grid" aria-label="芭蕾课程概览">
+            <article class="panel ballet-next-card">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Next Class</p>
+                  <h2>下一节预约</h2>
+                </div>
+                <span class="status-pill" id="ballet-next-status">等待同步</span>
+              </header>
+              <div class="ballet-next-date">
+                <strong id="ballet-next-day">--</strong>
+                <span id="ballet-next-weekday">--</span>
+              </div>
+              <div class="ballet-next-copy">
+                <h3 id="ballet-next-course">等待课程数据</h3>
+                <p id="ballet-next-time">--:-- · --</p>
+                <small id="ballet-next-note">同步完成后显示老师和取消截止时间</small>
+              </div>
+            </article>
+
+            <div class="ballet-stat-grid" aria-label="芭蕾核心统计">
+              <article class="ballet-stat-card">
+                <span>累计上课</span>
+                <strong id="ballet-total-classes">--</strong>
+                <small>节</small>
+              </article>
+              <article class="ballet-stat-card">
+                <span>累计训练</span>
+                <strong id="ballet-total-hours">--</strong>
+                <small>小时</small>
+              </article>
+              <article class="ballet-stat-card">
+                <span>本月上课</span>
+                <strong id="ballet-month-classes">--</strong>
+                <small>节</small>
+              </article>
+              <article class="ballet-stat-card">
+                <span>本月训练</span>
+                <strong id="ballet-month-hours">--</strong>
+                <small>小时</small>
+              </article>
+            </div>
+          </section>
+
+          <section class="ballet-distribution-grid" aria-label="课程分布">
+            <article class="panel ballet-distribution-card">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Course Type</p>
+                  <h2>课程课型</h2>
+                </div>
+                <span class="status-pill" id="ballet-course-type-count">0 类</span>
+              </header>
+              <div class="ballet-bar-list" id="ballet-course-types"></div>
+            </article>
+
+            <article class="panel ballet-distribution-card">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Level</p>
+                  <h2>课程级别</h2>
+                </div>
+                <span class="status-pill" id="ballet-level-count">0 级</span>
+              </header>
+              <div class="ballet-bar-list" id="ballet-levels"></div>
+            </article>
+          </section>
+
+          <article class="panel ballet-trend-panel">
+            <header class="panel-head ballet-trend-head">
+              <div>
+                <p class="eyebrow">Training Trend</p>
+                <h2 id="ballet-trend-title">年度上课节数</h2>
+              </div>
+              <span class="status-pill" id="ballet-trend-unit">节</span>
+            </header>
+            <div class="ballet-chart-controls">
+              <div class="ballet-segmented" role="group" aria-label="趋势时间范围">
+                <button class="ballet-segment-button" type="button" data-ballet-period="month">月</button>
+                <button class="ballet-segment-button is-active" type="button" data-ballet-period="year">年</button>
+                <button class="ballet-segment-button" type="button" data-ballet-period="all">全部</button>
+              </div>
+              <div class="ballet-segmented" role="group" aria-label="趋势统计指标">
+                <button class="ballet-segment-button is-active" type="button" data-ballet-metric="classes">节数</button>
+                <button class="ballet-segment-button" type="button" data-ballet-metric="hours">小时</button>
+              </div>
+            </div>
+            <div class="line-chart ballet-line-chart" id="ballet-trend-chart"></div>
+          </article>
+
+          <article class="panel ballet-history-panel">
+            <header class="panel-head">
+              <div>
+                <p class="eyebrow">Attendance</p>
+                <h2>上课历史</h2>
+              </div>
+              <span class="status-pill" id="ballet-history-count">0 节</span>
+            </header>
+            <div class="ballet-history-list" id="ballet-history"></div>
+          </article>
+        </section>
+
         <section class="view secondary-view" id="cloud-view" data-view-panel="cloud">
           <header class="token-page-head secondary-page-head cloud-page-head">
             <div>
@@ -662,6 +810,23 @@
                 <div><dt>&#31614;&#21040;&#24555;&#29031;</dt><dd>09:00 /root/.openclaw/dounai_cron.sh</dd></div>
                 <div><dt>&#29983;&#25104;</dt><dd>/root/.openclaw/gen_checkin_data.py</dd></div>
                 <div><dt>&#20889;&#20837;</dt><dd>/var/www/maxnow-dashboard/dash/data/dounai_checkin.json</dd></div>
+              </dl>
+            </article>
+
+            <article class="panel cloud-card" data-tone="purple">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Daily 00:17 / Monthly 00:47</p>
+                  <h2>芭蕾只读同步</h2>
+                </div>
+                <span class="status-pill">待实验结束</span>
+              </header>
+              <p class="item-copy">只读采集上课记录和当前预约，生成脱敏缓存。当前保持未启用，避免额外请求改变正在运行的 20 分钟 Session 活跃寿命实验。</p>
+              <dl class="cloud-meta">
+                <div><dt>日常</dt><dd>00:17 重扫最近 60 个逻辑日</dd></div>
+                <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
+                <div><dt>失败</dt><dd>保留最后成功缓存并提示重新登录</dd></div>
+                <div><dt>边界</dt><dd>不执行预约、取消、候补或转课</dd></div>
               </dl>
             </article>
 
@@ -860,6 +1025,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=115"></script>
+    <script src="./app.js?v=116"></script>
   </body>
 </html>

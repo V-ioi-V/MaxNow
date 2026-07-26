@@ -53,8 +53,15 @@ MaxNow v1 的业务内容是静态站点：
     ai-news.js
     last-30.json
     last-30.js
+    ballet.json
+    ballet.js
   scripts/maxnow_auth_service.py
+  scripts/sync_ballet.py
   server/maxnow-auth.service
+  server/maxnow-ballet-sync.service
+  server/maxnow-ballet-sync.timer
+  server/maxnow-ballet-full-sync.service
+  server/maxnow-ballet-full-sync.timer
   server/maxnow-auth-rate-limit.conf
   server/maxnow-auth-locations.conf
   server/maxnow-dashboard.conf
@@ -180,6 +187,8 @@ README.md
 DEPLOY.md
 openclaw/*/SKILL.md
 ```
+
+芭蕾数据不由 OpenClaw 维护。它由独立的受限 systemd oneshot 生成脱敏 `dash/data/ballet.*`；私有 ledger 与源记录 ID 留在 `/var/lib/maxnow-ballet`，加密会话凭据由 `LoadCredentialEncrypted` 注入。当前生命周期实验期间两个 timer 保持 disabled，详见 `SERVER_RUNBOOK.md`。
 
 ## 本地校验命令
 

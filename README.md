@@ -21,6 +21,8 @@ dash/
     last-30.js
     wiki-todos.json
     wiki-todos.js
+    ballet.json
+    ballet.js
 blog/
   index.html
   overview.html
@@ -44,6 +46,7 @@ scripts/
   sync_system_status.py
   sync_wiki_todos.py
   sync_ai_last30.py
+  sync_ballet.py
 ```
 
 `dash/` 是 `dash.maxnow.cn` 的静态站目录。`blog/` 是 `blog.maxnow.cn` 的发布层工作区，当前先放文章流首页、归档总览、专题索引、分类二级页、细分标签索引和方案说明页预览。根目录 `index.html` 只作为本地开发入口，不是线上 dashboard 本体。
@@ -112,6 +115,7 @@ Home 页面读取：
 - `dash/data/last-30.json`
 - `dash/data/wiki-todos.json`
 - `dash/data/market-indices.json`
+- `dash/data/ballet.json`
 
 对应的 `.js` wrapper 是静态兜底，必须和 JSON 保持一致。
 
@@ -124,6 +128,7 @@ python scripts/update_data.py wrap all
 python scripts/update_data.py ai-last30
 python scripts/update_data.py market-indices
 python scripts/update_data.py project-status
+python scripts/update_data.py ballet --dry-run
 python scripts/update_data.py runtime
 ```
 
@@ -131,6 +136,7 @@ python scripts/update_data.py runtime
 - `ai-last30`：从免费公开源刷新首页 AI 输入和 Last-30 AI 外部信号滚动记忆。
 - `market-indices`：刷新 Home 市场涨幅卡的国内外指数点位、涨跌幅和迷你走势。
 - `project-status`：显式从 `ROADMAP.md` 刷新独立的 `project-status.*`，不修改 `dashboard.today`，也不由服务器日常 cron 自动覆盖。ROADMAP Now / Next / Done 变化后必须运行。
+- `ballet --dry-run`：只验证芭蕾同步器配置和 GET-only 边界，不读取凭据、不访问闻道、不写数据；生产同步只能按 `SERVER_RUNBOOK.md` 通过隔离的 systemd unit 运行。
 - `runtime`：服务器定时任务使用，刷新 wiki-todos、天气、行情、生活 / 同行记缓存、系统状态和项目元信息，然后运行校验。
 
 ## 本地校验
@@ -178,6 +184,12 @@ python scripts/check.py
 - 近 30 天 AI 主线
 - 可能影响 MaxNow、Codex、OpenClaw、模型选择或 token 成本的信号
 - 等待观察 / 待 Owner 确认判断
+
+`dash/data/ballet.json`：
+
+- 脱敏的实际上课记录、当前预约快照、累计 / 月度 / 年度聚合和同步状态
+- 不保存 PHPSESSID、Cookie、OAuth 数据、会员标识、源记录 ID 或原始响应
+- 私有 canonical ledger 只保存在服务器 `/var/lib/maxnow-ballet`
 
 `scripts/sync_ai_last30.py` 使用免费公开源做本地抓取、关键词打分、去重和短摘要，采集本身不调用模型、不消耗 token。X / Twitter 暂不作为基础来源。
 

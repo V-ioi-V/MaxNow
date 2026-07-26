@@ -25,6 +25,7 @@ DATASETS = {
     "project-status": ("dash/data/project-status.json", "dash/data/project-status.js", "MAXNOW_PROJECT_STATUS_DATA"),
     "ricky": ("dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
     "life-foods": ("dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
+    "ballet": ("dash/data/ballet.json", "dash/data/ballet.js", "MAXNOW_BALLET_DATA"),
 }
 LOG_DIR = ROOT / "logs"
 
@@ -204,6 +205,13 @@ def parse_args():
     subparsers.add_parser("project-meta", help="Refresh MaxNow version and recent update metadata.")
     subparsers.add_parser("ricky-travel", help="Sync Ricky travel records from personal-wiki.")
     subparsers.add_parser("life-foods", help="Sync Life food picker candidates from personal-wiki.")
+    ballet = subparsers.add_parser("ballet", help="Sync the read-only Wenda ballet cache.")
+    ballet.add_argument("--credential-file", help="Restricted JSON containing only PHPSESSID and user_agent.")
+    ballet.add_argument("--credential-version-file", help="Restricted non-secret credential generation token.")
+    ballet.add_argument("--state-dir", help="Private canonical-ledger directory.")
+    ballet.add_argument("--mode", choices=["rolling", "full"], default="rolling")
+    ballet.add_argument("--fixture-dir", help="Use synthetic HTML fixtures; never access Wenda.")
+    ballet.add_argument("--dry-run", action="store_true", help="Validate without network or writes.")
     subparsers.add_parser("runtime", help="Run server runtime sync without changing owner judgment fields.")
     subparsers.add_parser("project-status", help="Refresh Home project status from ROADMAP.md and validate data.")
     subparsers.add_parser("all", help="Run wiki todos, system status, project status, wrappers, and checks.")
@@ -279,6 +287,26 @@ def main():
 
     if args.command in {"life-foods", "runtime", "all"}:
         run_python("scripts/sync_life_foods.py", "life-foods.log")
+
+    if args.command == "ballet":
+        extra_args = ["--mode", args.mode]
+        if args.credential_file:
+            extra_args.extend(["--credential-file", args.credential_file])
+        if args.credential_version_file:
+            extra_args.extend(["--credential-version-file", args.credential_version_file])
+        if args.state_dir:
+            extra_args.extend(["--state-dir", args.state_dir])
+        if args.fixture_dir:
+            extra_args.extend(["--fixture-dir", args.fixture_dir])
+        if args.dry_run:
+            extra_args.append("--dry-run")
+        run_python(
+            "scripts/sync_ballet.py",
+            None if args.dry_run else "ballet-sync.log",
+            extra_args=extra_args,
+        )
+        if not args.dry_run:
+            write_wrapper("ballet")
 
     if args.command in {"project-status", "all"}:
         refresh_project_status()

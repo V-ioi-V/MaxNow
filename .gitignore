@@ -9,3 +9,7 @@ Thumbs.db
 # Temporary local preview files
 .cache/
 dist/
+
+# Python bytecode
+__pycache__/
+*.pyc

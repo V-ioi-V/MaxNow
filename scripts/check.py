@@ -32,6 +32,7 @@ DATASETS = [
     ("project-status", "dash/data/project-status.json", "dash/data/project-status.js", "MAXNOW_PROJECT_STATUS_DATA"),
     ("ricky", "dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
     ("life-foods", "dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
+    ("ballet", "dash/data/ballet.json", "dash/data/ballet.js", "MAXNOW_BALLET_DATA"),
 ]
 
 
@@ -72,6 +73,8 @@ def check_required_files():
         "dash/data/ricky.js",
         "dash/data/life-foods.json",
         "dash/data/life-foods.js",
+        "dash/data/ballet.json",
+        "dash/data/ballet.js",
         "dash/data/market-indices.json",
         "dash/data/market-indices.js",
         "dash/data/project-status.json",
@@ -115,8 +118,14 @@ def check_required_files():
         "scripts/refresh_token_usage_on_server.sh",
         "scripts/probe_ballet_session.py",
         "scripts/test_probe_ballet_session.py",
+        "scripts/sync_ballet.py",
+        "scripts/test_sync_ballet.py",
         "scripts/maxnow_auth_service.py",
         "server/maxnow-auth.service",
+        "server/maxnow-ballet-sync.service",
+        "server/maxnow-ballet-sync.timer",
+        "server/maxnow-ballet-full-sync.service",
+        "server/maxnow-ballet-full-sync.timer",
         "server/maxnow-auth-rate-limit.conf",
         "server/maxnow-auth-locations.conf",
         "server/maxnow-dashboard.conf",
@@ -178,6 +187,87 @@ def check_ballet_session_probe():
         "ballet session probe: fixed read-only URL, fail-closed auth, "
         "secret-safe logs, rotation, and stop paths are valid"
     )
+
+
+def check_ballet_sync():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(ROOT / "scripts/test_sync_ballet.py"),
+        ],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "ballet sync: fixture self-test failed: " + result.stdout.strip()
+        )
+    return (
+        "ballet sync: read-only allowlist, private ledger, idempotent upsert, "
+        "safe auth failure, aggregates, redaction, and dry-run are valid"
+    )
+
+
+def check_ballet_read_model():
+    data = load_json(ROOT / "dash/data/ballet.json")
+    if data.get("schemaVersion") != 1 or data.get("timezone") != "Asia/Shanghai":
+        raise ValueError("ballet: schemaVersion/timezone is invalid")
+    sync = data.get("sync") or {}
+    if sync.get("cacheState") not in {"fresh", "stale", "unavailable"}:
+        raise ValueError("ballet: sync.cacheState is invalid")
+    if sync.get("lastAttemptStatus") not in {
+        "never",
+        "success",
+        "auth_required",
+        "network_error",
+        "http_error",
+        "source_changed",
+        "parse_error",
+        "duplicate_key",
+        "configuration_error",
+        "write_error",
+    }:
+        raise ValueError("ballet: sync.lastAttemptStatus is invalid")
+    records = data.get("records")
+    if not isinstance(records, list):
+        raise ValueError("ballet: records must be an array")
+    summary = data.get("summary") or {}
+    if summary.get("classes") != len(records):
+        raise ValueError("ballet: summary.classes does not match records")
+    expected_minutes = sum(
+        item["durationMinutes"]
+        for item in records
+        if item.get("durationMinutes") is not None
+    )
+    if summary.get("minutes") != expected_minutes:
+        raise ValueError("ballet: summary.minutes does not match records")
+    text = json.dumps(data, ensure_ascii=False)
+    forbidden = (
+        "PHPSESSID=",
+        '"id":',
+        '"source"',
+        '"attendanceRecordId"',
+        '"bookingRecordId"',
+        '"courseInstanceId"',
+        '"stableKey"',
+    )
+    if any(marker in text for marker in forbidden):
+        raise ValueError("ballet: public read model contains a private identifier")
+    aggregates = data.get("aggregates") or {}
+    if not all(isinstance(aggregates.get(key), list) for key in ("daily", "monthly", "yearly")):
+        raise ValueError("ballet: daily/monthly/yearly aggregates are required")
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    if (
+        "function balletClassBoundary" not in dashboard_js
+        or "boundary >= Date.now()" not in dashboard_js
+    ):
+        raise ValueError("ballet: expired bookings are not filtered from the next class")
+    return "ballet: read model schema, totals, aggregates, and redaction are valid"
 
 
 def check_local_server(url):
@@ -640,18 +730,19 @@ def check_today_progress_ring():
 def check_secondary_view_style():
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
-    for view_id in ("tokens-view", "dounai-view", "cloud-view", "life-view", "ricky-view"):
+    for view_id in ("tokens-view", "dounai-view", "ballet-view", "cloud-view", "life-view", "ricky-view"):
         if f'class="view secondary-view" id="{view_id}"' not in dashboard_html:
             raise ValueError(f"secondary views: shared view class is missing on {view_id}")
     if 'class="view secondary-view" id="home-view"' in dashboard_html:
         raise ValueError("secondary views: Home must not inherit the secondary shell")
-    if dashboard_html.count("secondary-page-head") != 5:
+    if dashboard_html.count("secondary-page-head") != 6:
         raise ValueError("secondary views: every non-Home page must use the shared page head")
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
         "#tokens-view {",
         "#dounai-view {",
+        "#ballet-view {",
         "#cloud-view {",
         "#life-view {",
         "#ricky-view {",
@@ -669,9 +760,9 @@ def check_secondary_view_style():
     )
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
-    if "styles.css?v=136" not in dashboard_html:
+    if "styles.css?v=137" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
-    return "secondary views: five tabs share clean card shells without top accent bars"
+    return "secondary views: six tabs share clean card shells without top accent bars"
 
 
 def check_data_health_contract():
@@ -689,7 +780,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=115" not in dashboard_html:
+    if "app.js?v=116" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
@@ -701,8 +792,12 @@ def check_data_health_contract():
     try:
         import sync_system_status
 
+        source_keys = {item[0] for item in sync_system_status.DATA_SOURCE_SPECS}
+        if len(source_keys) != 11 or "ballet" not in source_keys:
+            raise ValueError("data health: the 11-source summary does not include ballet")
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "automation.log"
+            temporary_root = Path(directory)
+            path = temporary_root / "automation.log"
             path.write_text(
                 "[1] job start\n[1] failed\n[2] job start\n[2] failed\n[3] job start\n[3] failed\n",
                 encoding="utf-8",
@@ -716,11 +811,40 @@ def check_data_health_contract():
                 handle.write("[4] job start\n[4] job ok\n")
             if sync_system_status.consecutive_failure_count(path, "job start", "job ok") != 0:
                 raise ValueError("data health: a successful run does not clear the failure streak")
+            ballet_path = temporary_root / "ballet.json"
+            ballet_path.write_text(
+                json.dumps(
+                    {
+                        "sync": {
+                            "lastSuccessAt": datetime.now().astimezone().isoformat(),
+                            "lastAttemptStatus": "network_error",
+                            "errorMessage": "闻道暂时无法连接",
+                        },
+                        "records": [{"courseName": "fixture"}],
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            old_root = sync_system_status.ROOT
+            old_specs = sync_system_status.DATA_SOURCE_SPECS
+            try:
+                sync_system_status.ROOT = temporary_root
+                sync_system_status.DATA_SOURCE_SPECS = [
+                    ("ballet", "芭蕾", "ballet.json", ("sync.lastSuccessAt",), ("records",), 36)
+                ]
+                health, healthy = sync_system_status.data_source_health_state()
+            finally:
+                sync_system_status.ROOT = old_root
+                sync_system_status.DATA_SOURCE_SPECS = old_specs
+            ballet_health = health["sources"][0]
+            if healthy is not False or ballet_health["status"] != "failed":
+                raise ValueError("data health: a fresh ballet cache masks its latest sync failure")
         if not sync_system_status.is_success_log_line("[2026-07-15T17:10:02+08:00] maxnow dashboard sync ok"):
             raise ValueError("data health: outer automation success does not clear an old child failure")
     finally:
         sys.path.pop(0)
-    return "data health: five states, last-good fallback, ten-source summary, and failure streak checks are valid"
+    return "data health: five states, last-good fallback, 11-source summary, and failure streak checks are valid"
 
 
 def main():
@@ -741,6 +865,8 @@ def main():
     checks.append(check_today_progress_ring())
     checks.append(check_secondary_view_style())
     checks.append(check_data_health_contract())
+    checks.append(check_ballet_read_model())
+    checks.append(check_ballet_sync())
     checks.append(check_ballet_session_probe())
     checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))

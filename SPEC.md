@@ -64,6 +64,8 @@ MaxNow 由四类文件组成：
    - `dash/data/ricky.js`
    - `dash/data/life-foods.json`
    - `dash/data/life-foods.js`
+   - `dash/data/ballet.json`
+   - `dash/data/ballet.js`
    - 这是页面和自动化之间的数据契约。
 
 3. OpenClaw skill
@@ -89,6 +91,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_market_indices.py`
    - `scripts/sync_ricky_travel.py`
    - `scripts/sync_life_foods.py`
+   - `scripts/sync_ballet.py`
    - `scripts/maxnow_auth_service.py`
    - 由 Codex 或 Owner 维护。
    - `scripts/sync_wiki_todos.py` 使用本地或服务器的 `gh` 登录态读取 private personal-wiki，并生成 MaxNow 可静态读取的 `dash/data/wiki-todos.*`。
@@ -108,6 +111,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_market_indices.py` 从腾讯公开行情接口刷新纳指100、标普500和 A 股主指数，只生成 `dash/data/market-indices.*`。
    - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
    - `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 刷新生活页吃啥候选，只生成 `dash/data/life-foods.*`。
+   - `scripts/sync_ballet.py` 只通过已确认的闻道 GET 页面读取预约与实际上课记录，使用服务器私有账本增量去重并生成脱敏 `dash/data/ballet.*`；它不包含预约、取消、候补或转课写操作。
    - `scripts/maxnow_auth_service.py` 仅在服务器本机监听，读取 nginx 密码哈希并签发短期 HttpOnly 会话 Cookie；它不读取 Dashboard 数据，也不提供业务 API。
 
 6. 产品记忆文档
@@ -121,7 +125,7 @@ MaxNow 由四类文件组成：
 
 ## 导航
 
-v1 保留六个一级入口：
+v1 保留七个一级入口：
 
 1. Home
    - 私人状态工作站。
@@ -130,16 +134,18 @@ v1 保留六个一级入口：
    - 豆奶签到详情页，展示近 30 天流量和账号有效期延长时长。
 3. Token
    - Token 使用详情页。
-4. 云服务
+4. 芭蕾
+   - “课程与进度”只读学习页，展示预约、实际上课记录、累计节数 / 小时、课程细分、趋势和同步状态。
+5. 云服务
    - 服务器自动化详情页，只读列出云服务器上的系统与托管状态、定时任务、数据同步和运行边界；不保留与下方任务卡重复的顶部摘要卡。
-5. 生活
+6. 生活
    - 轻量生活工具页；当前先承载“吃啥”随机选择器。
-6. 同行记
+7. 同行记
    - “我和 Ricky”的只读共同记录页，当前先承载地图和轻量统计。
 
 不要随便新增页面。只有当某个问题无法放进 Home，且会明显伤害日常扫读体验时，才考虑新增页面。
 
-已确认的下一入口是“芭蕾 / 课程与进度”。它实现后固定放在 Home 下、豆奶上，导航顺序变为 Home → 芭蕾 → 豆奶 → Token → 云服务 → 生活 → 同行记。这个位置只授予完整的长期学习模块，不授予单一抢课按钮；规划阶段不把尚未上线的入口写成当前能力。
+“芭蕾 / 课程与进度”固定放在 Token 与云服务之间，导航顺序为 Home → 豆奶 → Token → 芭蕾 → 云服务 → 生活 → 同行记。这个位置只授予完整的长期学习模块，不授予单一抢课按钮。
 
 公开博客不属于 `dash.maxnow.cn` 的内部页面。博客应作为独立公开站点发布到 `blog.maxnow.cn`；`dash.maxnow.cn` 只允许放紧凑的外部跳转入口、发布状态或最近发布摘要，不承载完整博客阅读体验。
 
@@ -157,11 +163,11 @@ Home 按顺序回答这些问题：
 必备模块：
 
 - 今日状态：由前端根据今日 Todo、当前时段、ROADMAP 待推进 / 主线、Token 活跃和自动化状态自动推导“执行 / 推进 / 复盘 / 探索 / 巡检”等模式；“自动生成”新鲜度紧邻左侧 `Today Status` 标识。宽桌面使用左文案、正中央圆环、右信号三列，圆环必须落在状态卡内容区的水平中心；圆环表达当天已过比例，百分比显示在环内，当前时间用独立 pill 显示在环外。时段、推进、Token、自动化四条信号等高排列，每个彩色节点进入第一行网格，并与该行的标签和主值居中对齐，而不是按两行内容整体居中。`dashboard.json.today` 只作为当天人工 override，旧日期判断不再占据主状态。
-- 顶部状态条：只保留每天扫一眼能决策的短指标：今日执行、数据同步、Token 7 天和系统自动化。今日执行读取 personal-wiki 中 `due_at` 等于浏览器当天日期的未完成待办；数据同步聚合 Wiki Todo、Token、天气、市场、Last-30、项目元信息、Roadmap、豆奶、同行记和生活的新鲜度，芭蕾 read model 上线后再把它作为第 11 个来源并入，不再把“当前主线 / 待推进”做成独立数字小卡。状态必须区分已同步、暂无记录、请求失败、数据过期和尚未同步；请求失败时展示最后成功数据和时间，不能把失败伪装成数值 `0` 或空列表。
+- 顶部状态条：只保留每天扫一眼能决策的短指标：今日执行、数据同步、Token 7 天和系统自动化。今日执行读取 personal-wiki 中 `due_at` 等于浏览器当天日期的未完成待办；数据同步聚合 Wiki Todo、Token、天气、市场、Last-30、项目元信息、Roadmap、豆奶、同行记、生活和芭蕾的新鲜度，不再把“当前主线 / 待推进”做成独立数字小卡。状态必须区分已同步、暂无记录、请求失败、数据过期、需要重新登录和尚未同步；请求失败时展示最后成功数据和时间，不能把失败伪装成数值 `0` 或空列表。
 - 顶部天气卡：Home 顶部右侧、时间卡左边展示北京市海淀区今日天气、当前温度、今日高低温和对应天气图标；天气来自 `dash/data/dashboard.json` 的 `weather` 字段，由 `scripts/sync_weather.py` 或 `python scripts/update_data.py runtime` 定时刷新，前端不实时请求外部天气接口。
 - 今日小日历：Home 顶部右侧展示公历日期、当前时间、农历日期、当天节日和当天命中的个人特殊日期；另一行始终展示严格晚于今天的最近特殊日期，格式为“x天后是xx日（x月x日）”。两行独立存在，当天命中生日、纪念日或续费日时，下一行仍继续寻找后续日期。候选同时包含父亲节、母亲节、春节等内置节日，以及 `dash/data/dashboard.json.specialDates` 中维护的生日、纪念日和续费日。
 - Home 主内容版式：状态条下方使用统一 `home-board` 两列外壳，`home-lane-primary` 承载左侧主任务和内容型长模块，右侧 `home-side-stack` 只承载短扫读次级信号和状态入口；`home-lane-signal` / `home-lane-rail` 只作为语义分组，视觉上展平成右侧 widget 网格。所有 Home 模块都保留 `home-card-*` 和 `data-card-size`，右侧小组件用 `widget-compact` 占半宽，需要内部指标网格或列表宽度的短状态模块用 `widget-wide` 或 `mid-*` 占满右列。外部输入和版本更新属于左侧内容流，版本更新固定放在外部输入下方；不要再保留单独“稍后留意”卡片，待办线索进入待推进 / Roadmap，系统链路进入云服务 / 系统状态，文档入口进入版本更新或项目状态。不要再用固定 `grid-area`、局部左右列、固定高度或空白补丁拼模块，也不要为了二列或三列对齐硬拉大所有卡片。新增模块必须先在 `STYLE_CONTEXT.md` 的页面版式协议中确认语义 lane 和卡型。
-- 除 Home 外，豆奶、Token、云服务、生活和同行记统一使用 `secondary-view` / `secondary-page-head` 页面协议：共用轻色渐变白底、圆角、阴影、hover / focus 和状态 pill，不使用卡片顶部彩色横条；每页保留自己的语义色与内容结构，不为了视觉统一改写数据契约或交互。
+- 除 Home 外，豆奶、Token、芭蕾、云服务、生活和同行记统一使用 `secondary-view` / `secondary-page-head` 页面协议：共用轻色渐变白底、圆角、阴影、hover / focus 和状态 pill，不使用卡片顶部彩色横条；每页保留自己的语义色与内容结构，不为了视觉统一改写数据契约或交互。
 - Token 近期活动：Home `wide-short` 卡展示近 90 天每日 Token 活动热力格，替代原“当前主线”列表；顶部状态条仍保留 7 天 Token 小摘要。
 - 市场涨幅：Home `mid-tall` 卡展示纳指100、标普500、上证指数、深证成指和创业板指的当前点位、涨跌幅和日内迷你走势；数据来自 `dash/data/market-indices.json`，由 `scripts/sync_market_indices.py` 或服务器 `runtime` 每 10 分钟刷新，前端不直接请求行情接口。
 - 待推进：1-3 个近期应该移动的 Now / Next 动作；由 `dash/data/project-status.json` 从 `ROADMAP.md` 显式生成，这里不是完整 todo app，也不得包含 Done 项。
@@ -169,7 +175,7 @@ Home 按顺序回答这些问题：
 - 今日 Todo：Home 右侧只展示 personal-wiki 同步来的当天明确执行日期待办；以浏览器当天日期匹配 `due_at`，不混入过期未完成或无日期待办。v1 只读展示，不支持在 MaxNow 内编辑或标记完成。
 - 系统状态：作为云服务页入口，用来快速判断机器是否健康；点击卡片进入“云服务”页查看“系统与托管”模块，其中包含 Host、站点域名、nginx、证书、部署版本、CPU、磁盘、内存和运行时间等完整服务器状态快照。`TLS / nginx` 不再作为单独任务卡展示，也不展示部署根目录、nginx 配置路径或采集器说明这类低频实现细节。
 - 豆奶签到：Home 只展示每日签到摘要入口，第一排展示今日流量、今日豆丁和今日账号有效期延长时长，第二排展示累计签到天数、累计流量和累计账号有效期延长时长；不在 Home 放趋势图。点击卡片进入“豆奶”详情页。数据来自 `dash/data/dounai_checkin.json`。
-- 芭蕾摘要：只读数据稳定后在 `home-lane-rail` 增加一张可点击的 `home-card-ballet` / `widget-wide`，顺序位于 Today Todo 后、豆奶前。它最多显示下一节课的日期时间、课程 / 老师、正式 / 候补状态，以及本周进度或最近成功更新时间；历史列表、可约课程、图表、Session 和自动化技术细节不进入 Home。同步失败时保留最后成功内容并明确标记“数据过期”或“需重新登录”，不得显示成“暂无预约”。
+- 芭蕾摘要：在 `home-lane-rail` 使用一张可点击的 `home-card-ballet` / `widget-wide`，最多显示下一节课的日期时间、课程 / 老师、正式 / 候补状态，以及本周进度或最近成功更新时间；历史列表、可约课程、图表、Session 和自动化技术细节不进入 Home。同步失败时保留最后成功内容并明确标记“数据过期”或“需重新登录”，不得显示成“暂无预约”。
 - AI 前沿：Home 只保留一个 AI 前沿简报模块，由 Last-30 展示“最新发布 / 本周前沿 / 近 30 天关键进展”三组数据；三栏页面顶部只显示蓝色时间范围“最近 3 天 / 本周 / 近 30 天”，不重复显示黑色栏目名或栏目简介。新闻标题和摘要必须以中文事实为主，品牌、模型名和 API 名可保留英文；不要再单独铺一张重复的 AI 外部输入卡，也不承接杂项链接。
 - personal-wiki 近期待办入口：Home `wide-tall` 卡只读展示近期未完成待办的前 4 条，并跳转到 personal-wiki；v1 不支持编辑或标记完成。完整数量只进入状态 pill，不允许用全部待办撑高首页。
 - MaxNow 版本更新：Home 左侧内容流在外部输入下方展示当前可读版本号、部署说明和最近几条 `UPDATE_LOG.md` 更新摘要；版本号由根目录 `VERSION` 维护，格式为 `x.x.x.xx`。任何已完成的 Owner 可见或运维相关改动都必须升版本并刷新 `project-meta`：小 UI / 文案 / 布局调整、新增页面能力、新数据源和新自动化默认升最后两位；重要功能模块稳定落地升 patch；大版本阶段切换升 minor / major。
@@ -300,7 +306,7 @@ UPDATE_LOG.md
 
 `dash/data/dashboard.json` 负责人工个人状态、时间线、系统状态、历史 Token 字段、Home 天气卡和时间卡片的手动特殊日期列表。历史 `journal` 字段可保留为数据兼容，但 Home 不再读取它生成独立卡片；生成的主线和待推进事项不再存放在这里。
 
-其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`system` 内的 `data-health` 项保存 10 个 Owner 可见数据源的状态摘要，`automation-failures` 项记录关键任务是否达到连续 3 次失败阈值。`today` 保留当天人工 override。Home 主状态默认由前端从今日 Todo、`project-status.*`、Token 和自动化信号推导，过期 `today` 不再作为主判断。
+其中 `automation` 和 `system` 可以由 `scripts/sync_system_status.py` 自动更新；`system` 内的 `data-health` 项保存 11 个 Owner 可见数据源的状态摘要，`automation-failures` 项记录关键任务是否达到连续 3 次失败阈值。`today` 保留当天人工 override。Home 主状态默认由前端从今日 Todo、`project-status.*`、Token 和自动化信号推导，过期 `today` 不再作为主判断。
 
 前端每次成功读取 JSON 后，在同源浏览器存储中保留该数据源的最后成功响应。后续请求失败时继续展示这份响应，并把来源状态标记为“请求失败”；如果从未成功同步则显示“尚未同步”。`.js` wrapper 继续由脚本生成并校验一致性，不再承担运行时请求失败的主要兜底职责。
 
@@ -490,7 +496,7 @@ Last-30 负责：
 
 ## 已确认方向：芭蕾学习模块
 
-MaxNow 未来增加的芭蕾能力应定位为 Owner 的个人学习模块，而不是单独的抢课工具。它要持续回答五个问题：
+MaxNow 的芭蕾能力定位为 Owner 的个人学习模块，而不是单独的抢课工具。它要持续回答五个问题：
 
 1. 下一节课是什么，是否已正式预约或仍在候补？
 2. 本周计划上几节、已经完成几节、预计训练多久？
@@ -500,9 +506,9 @@ MaxNow 未来增加的芭蕾能力应定位为 Owner 的个人学习模块，而
 
 页面边界：
 
-- 当前 v1 仍保留六个一级入口，不在规划阶段提前修改页面代码；实现时新增独立 `secondary-view` 页面“芭蕾 / 课程与进度”，导航固定放在 Home 下、豆奶上。
+- v1 新增独立 `secondary-view` 页面“芭蕾 / 课程与进度”，导航固定放在 Token 与云服务之间。
 - 芭蕾内容不并入“生活 / 吃啥”。生活页继续承载低负担临时工具，芭蕾页承载长期学习记录、课程计划和受控自动化。
-- Home 后续最多增加一张紧凑入口卡，只显示下一节课、预约 / 候补状态、本周进度和数据新鲜度；完整课表、上课历史、学习笔记和自动化日志留在芭蕾页。
+- Home 最多保留一张紧凑入口卡，只显示下一节课、预约 / 候补状态、本周进度和数据新鲜度；完整课表、上课历史、学习笔记和自动化日志留在芭蕾页。
 - Cloud 页面只展示同步任务和 Session 探针的运维健康，不复制课程与学习业务数据。
 
 只读 MVP 信息结构：
@@ -525,8 +531,8 @@ MaxNow 未来增加的芭蕾能力应定位为 Owner 的个人学习模块，而
 - 服务器私有目录维护一份 canonical attendance ledger，建议路径为 `/var/lib/maxnow-ballet/attendance-ledger.json` 且权限为 `0600`；它保存用于去重的源记录 ID，不进入 Git 或前端。第一次成功同步全量回填历史，之后每天只重扫最近 60 个逻辑日并执行 upsert；每月 1 日 00:47 进行一次全量校验，防止旧记录补录或状态回改。
 - 去重键优先级固定为：闻道上课记录 ID → 预约 / 课程实例 ID → `场馆 + 日期 + 起止时间 + 规范化课程名 + 老师` 的哈希。兜底键发生碰撞时同步失败并等待人工确认，不得静默覆盖；出勤状态等可变字段不进入稳定键。若课程名或老师更正导致兜底哈希变化，先用场馆、日期和起止时间寻找唯一旧场次并记录 alias；匹配不唯一时停止合并，不能生成重复历史。
 - 另用 `/var/lib/maxnow-ballet/sync-state.json` 保存每次同步尝试结果；失败只能原子更新这个状态文件，不能改成功账本。未来预约 / 下一节课使用独立 `/var/lib/maxnow-ballet/booking-snapshot.json`，不混入 attendance ledger。
-- 逻辑日以 `Asia/Shanghai` 的 00:00 为界，日常任务默认 00:17 运行并结算前一日 23:59:59 前的数据，避开服务器现有 00:00、00:05、00:10 任务并给源站留出入账时间。任务使用单实例锁、有限网络重试；身份失效不重试。
-- 00:17 任务同时刷新当前预约快照；它的默认 TTL 为 36 小时，成功后记录 `dataAsOf`，失败继续保留上一份并按年龄标记 stale。后续受控约课任务若真实改变预约，必须在结束后刷新该快照；页面打开本身永远不刷新。可约课程属于另一份短期源数据，不纳入历史统计，也不承诺由午夜任务保持实时。
+- 逻辑日以 `Asia/Shanghai` 的 00:00 为界，生产日常任务目标为 00:17 运行并结算前一日 23:59:59 前的数据，避开服务器现有 00:00、00:05、00:10 任务并给源站留出入账时间。任务使用单实例锁、有限网络重试；身份失效不重试。当前在 Session 实验结束前保持未启用。
+- 未来启用的 00:17 任务同时刷新当前预约快照；它的默认 TTL 为 36 小时，成功后记录 `dataAsOf`，失败继续保留上一份并按年龄标记 stale。后续受控约课任务若真实改变预约，必须在结束后刷新该快照；页面打开本身永远不刷新。可约课程属于另一份短期源数据，不纳入历史统计，也不承诺由午夜任务保持实时。
 - 日常增量只重算受影响月份、年份和全局累计；前端直接读取预聚合的 `monthly` / `yearly` 序列。课程归类规则带 `classificationVersion`，规则变化时可以从本地账本重新归类，不需要重新请求闻道。
 - 每次成功账本写入先校验 schema、稳定键唯一性、记录数和累计分钟，再通过临时文件原子替换。同步失败时不得清空或覆盖上次成功的 records、summary、aggregates 和 `dataAsOf`，只原子更新 `sync-state.json`。
 - 全量校验中一次未返回的旧记录先标记为待确认，不立即删除；只有连续两次成功全量校验都缺失，且源站语义确认不是分页 / 查询范围问题后，才能进入 tombstone，避免短暂漏页让历史课时倒退。
@@ -534,11 +540,13 @@ MaxNow 未来增加的芭蕾能力应定位为 Owner 的个人学习模块，而
 
 数据契约与状态：
 
-- 实施时新增 `dash/data/ballet.json` / `dash/data/ballet.js` 作为脱敏 read model；规划阶段不提前创建空数据文件，也不把它写成已存在的数据契约。
+- `dash/data/ballet.json` / `dash/data/ballet.js` 是脱敏 read model；前端只读取它们，不接触服务器私有账本或闻道身份。
 - read model 至少区分 `schemaVersion`、`timezone`、`dataAsOf`、`sync`、`classification`、`summary`、`records`、`aggregates`、`upcoming`、`learningLogs`、`authHealth` 和 `automation`；预约状态和上课状态不得混为一类，`classification` 同时保存 `courseType` 与 `level` 规则版本。
 - `sync` 至少记录 `logicalDate`、`lastAttemptAt`、`lastSuccessAt`、`lastDataChangeAt`、`lastAttemptStatus`、`cacheState`、`consecutiveFailures`、安全的 `errorCode` / `errorMessage`、抓取窗口和本次源记录 / 合并记录数。
 - `cacheState` 只描述最后成功缓存的可用性：`fresh`、`stale`、`unavailable`；`lastAttemptStatus` 只描述本次尝试：`success`、`auth_required`、`network_error`、`source_changed`、`parse_error`。页面必须组合表达两者，例如“本次授权失效；仍显示 7 月 25 日缓存”，不能把错误类型和新鲜度混成一个状态；连续 3 次失败再升级为 Cloud / 系统异常。
 - 运行日志只记录时间、状态、耗时、页数、记录数、变更数和安全错误码；不得记录 Cookie、OAuth、完整 URL 参数、会员标识或原始响应正文。
+- 采集器只允许已确认的只读 GET 页面；禁止调用预约、取消、候补、转课、登录写接口或未知方法。日常同步计划为北京时间 00:17，但在固定 20 分钟 Session 活跃寿命实验结束前保持未启用，避免额外请求污染实验结论。
+- 生产凭据使用服务器 host-bound systemd 加密凭据与 `LoadCredentialEncrypted` 注入；`PHPSESSID` 不得进入 Git、日志、前端、聊天、环境变量或命令参数。身份失败后保留最后成功缓存并停止重试，直到检测到安全的凭据版本变化；页面只显示脱敏错误和“请在电脑微信重新登录并刷新凭据”。
 - 前端永远不直接访问闻道，不保存 Cookie，不提供 Session 输入框，也不允许由页面打开、刷新或按钮点击触发真实预约。
 - “维护一个文档”在实现上以单一 JSON 账本为权威，不每天重写一份可手改 Markdown。若以后需要人类可读的芭蕾档案，只允许从账本单向生成 Markdown 摘要，不能形成第二份可编辑事实源。
 

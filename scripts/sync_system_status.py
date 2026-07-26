@@ -31,6 +31,7 @@ DATA_SOURCE_SPECS = [
     ("version", "版本", "dash/data/project-meta.json", ("updatedAt",), ("version",), 72),
     ("roadmap", "Roadmap", "dash/data/project-status.json", ("generatedAt",), ("mainlines", "actions"), 168),
     ("dounai", "豆奶", "dash/data/dounai_checkin.json", ("updatedAt", "account.synced_at"), ("today", "records", "account"), 36),
+    ("ballet", "芭蕾", "dash/data/ballet.json", ("sync.lastSuccessAt",), ("records",), 36),
     ("ricky", "同行记", "dash/data/ricky.json", ("synced_at", "updated_at"), ("places", "records"), 72),
     ("life", "生活", "dash/data/life-foods.json", ("synced_at", "updated_at"), ("sections",), 72),
 ]
@@ -39,6 +40,7 @@ AUTOMATION_LOG_SPECS = [
     ("AI Last-30", "ai-last30.log", "maxnow ai-last30 sync start", "maxnow ai-last30 sync ok"),
     ("Token sources", "token-source-refresh.log", "token source refresh start", "token source refresh ok"),
     ("Token ledger", "token-usage-refresh.log", "token usage server refresh start", "token usage server refresh ok"),
+    ("Ballet sync", "ballet-sync.log", "maxnow ballet sync start", '"status":"success"'),
 ]
 CONSECUTIVE_FAILURE_THRESHOLD = 3
 CRON_MARKER = "MAXNOW-DASHBOARD-SYNC"
@@ -46,11 +48,15 @@ KNOWN_TIMER_UNITS = [
     "maxnow-wiki-todos.timer",
     "maxnow-system-status.timer",
     "maxnow-dashboard-sync.timer",
+    "maxnow-ballet-sync.timer",
+    "maxnow-ballet-full-sync.timer",
 ]
 KNOWN_SERVICE_UNITS = [
     "maxnow-wiki-todos.service",
     "maxnow-system-status.service",
     "maxnow-dashboard-sync.service",
+    "maxnow-ballet-sync.service",
+    "maxnow-ballet-full-sync.service",
 ]
 GENERATED_DATA_PATHS = {
     "dash/data/dashboard.json",
@@ -72,6 +78,8 @@ GENERATED_DATA_PATHS = {
     "dash/data/token-usage.json",
     "dash/data/token-usage.js",
     "dash/data/dounai_checkin.json",
+    "dash/data/ballet.json",
+    "dash/data/ballet.js",
     "dash/data/market-indices.json",
     "dash/data/market-indices.js",
     "dash/data/project-meta.json",
@@ -138,7 +146,23 @@ def data_source_health_state():
         updated_at = next((nested_value(data, item) for item in timestamp_paths if nested_value(data, item)), "")
         parsed = parse_data_time(updated_at)
         has_content = any(bool(nested_value(data, item)) for item in content_paths)
-        if not parsed:
+        ballet_attempt = str(
+            nested_value(data, "sync.lastAttemptStatus") or ""
+        ).strip().lower()
+        ballet_auth_required = (
+            key == "ballet"
+            and ballet_attempt in {"auth_required", "auth_blocked"}
+        )
+        ballet_sync_failed = (
+            key == "ballet"
+            and ballet_attempt
+            not in {"", "success", "never", "waiting", "pending", "idle", "disabled"}
+        )
+        if ballet_auth_required:
+            status, status_label = "failed", "需要重新登录"
+        elif ballet_sync_failed:
+            status, status_label = "failed", "更新失败"
+        elif not parsed:
             status, status_label = "unsynced", "尚未同步"
         elif now - parsed.astimezone(now.tzinfo) > timedelta(hours=stale_after_hours):
             status, status_label = "stale", "数据过期"
@@ -153,7 +177,11 @@ def data_source_health_state():
             "statusLabel": status_label,
             "updatedAt": str(updated_at),
             "staleAfterHours": stale_after_hours,
-            "error": "",
+            "error": (
+                str(nested_value(data, "sync.errorMessage") or "")[:120]
+                if ballet_auth_required or ballet_sync_failed
+                else ""
+            ),
         })
 
     unhealthy = [item for item in sources if item["status"] in {"failed", "stale", "unsynced"}]
@@ -677,6 +705,7 @@ def failure_log_state():
         LOG_DIR / "market-indices.log",
         LOG_DIR / "token-source-refresh.log",
         LOG_DIR / "token-usage-refresh.log",
+        LOG_DIR / "ballet-sync.log",
         LOG_DIR / "system-status.log",
         SYNC_LOG,
     ]

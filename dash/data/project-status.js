@@ -1,10 +1,10 @@
 window.MAXNOW_PROJECT_STATUS_DATA = {
   "schemaVersion": 1,
   "source": "ROADMAP.md",
-  "sourceUpdatedAt": "2026-07-26 21:00",
-  "generatedAt": "2026-07-26 21:01",
+  "sourceUpdatedAt": "2026-07-26 22:01",
+  "generatedAt": "2026-07-26 22:01",
   "staleAfterHours": 168,
-  "sourceFingerprint": "400f7e9d219bd85acd6abfc8e2ca0eb260cd1ad5aa2bce7b0b8c2a1f38d200b7",
+  "sourceFingerprint": "18cc1e21885553751aad070d1686bac13b4a6690a73e9830d89ca0f80503e466",
   "mainlines": [
     {
       "title": "规划个人博客发布链路",
@@ -16,6 +16,13 @@ window.MAXNOW_PROJECT_STATUS_DATA = {
   ],
   "actions": [
     {
+      "title": "完成芭蕾只读模块并等待生产抓取启用",
+      "note": "来源：2026-07-25 至 2026-07-26 Owner 需求、课程 / 预约 / 上课记录只读验证和 Session 生命周期实验。",
+      "label": "Now",
+      "status": "active",
+      "sourceArea": "Now"
+    },
+    {
       "title": "补齐前端自动测试、无障碍与移动端验证",
       "note": "来源：2026-07-10 MaxNow 整体体检。",
       "label": "Next",
@@ -25,13 +32,6 @@ window.MAXNOW_PROJECT_STATUS_DATA = {
     {
       "title": "收紧外部依赖和链接安全",
       "note": "来源：2026-07-10 MaxNow 整体体检。",
-      "label": "Next",
-      "status": "waiting",
-      "sourceArea": "Next"
-    },
-    {
-      "title": "让 Last-30 免费 AI 信号稳定运行",
-      "note": "中文 AI 前沿简报、正式发布优先排序、三栏主题去重和无用客户案例过滤已经落地；服务器 `MAXNOW-AI-LAST30-SYNC` 继续每天 00:00 自动刷新。",
       "label": "Next",
       "status": "waiting",
       "sourceArea": "Next"

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run MaxNow ballet full reconciliation monthly at 00:47 Asia/Shanghai
+
+[Timer]
+OnCalendar=*-*-01 00:47:00 Asia/Shanghai
+Persistent=true
+AccuracySec=30s
+RandomizedDelaySec=0
+Unit=maxnow-ballet-full-sync.service
+
+[Install]
+WantedBy=timers.target
