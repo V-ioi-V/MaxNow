@@ -227,7 +227,7 @@ public URL -> authenticated nginx aliases /data/ballet-session.json + ballet-ses
 
 公开字段使用固定 allowlist：状态、实验 / 阶段起始、最近检查 / 最近认证 / 下次检查、计划截止、25 分钟间隔、截至最后认证样本的已验证秒数、阶段 / 总样本数、是否观察到 Session 轮换 / `Set-Cookie`、最近 HTTP / 登录状态和受控错误。禁止输出 Session 值或指纹、run ID、unit / 日志路径、URL、响应摘要 / 正文、凭据版本或会员信息。
 
-该 oneshot 不能以 root 运行，也不能直接执行 ubuntu / Git 可更新的仓库脚本。部署时创建专用无登录用户，把脚本复制为 root-owned `0555` 固定副本；三份实验日志通过同 inode 的 root 管理只读硬链接映射到专属 StateDirectory，不能放宽 `/var/lib/private` 的 `0700` 父目录，也不能复制成会漂移的第二份日志。配置为 `root:maxnow-ballet-status 0640`。unit 使用空 capability 集，并以 `InaccessiblePaths` 遮蔽 `/run/credentials` 与 `/etc/credstore.encrypted`。输出只写专属 StateDirectory，nginx 通过已有登录校验的精确 alias 提供两个状态文件；发布器没有仓库或其他 Dashboard 数据的写权限。
+该 oneshot 不能以 root 运行，也不能直接执行 ubuntu / Git 可更新的仓库脚本。部署时创建专用无登录用户，把脚本复制为 root-owned `0555` 固定副本；确认 v3 / v4 / v5 均已停止后，把三份日志 inode 固定为 `root:maxnow-ballet-status 0440`，再通过同 inode 的只读硬链接映射到 StateDirectory 外的 `/var/lib/maxnow-ballet-session-source`。不能放宽 `/var/lib/private` 的 `0700` 父目录，也不能复制成会漂移的第二份日志。配置为 `root:maxnow-ballet-status 0640`。unit 使用空 capability 集，并以 `InaccessiblePaths` 遮蔽 `/run/credentials` 与 `/etc/credstore.encrypted`。输出只写专属 StateDirectory，nginx 通过已有登录校验的精确 alias 提供两个状态文件；发布器没有仓库或其他 Dashboard 数据的写权限。
 
 安装与检查：
 
@@ -243,21 +243,21 @@ public URL -> authenticated nginx aliases /data/ballet-session.json + ballet-ses
     {
       "key": "v3-10m",
       "unit": "maxnow-wenda-session-lifetime-20260726-v3.service",
-      "log": "/var/lib/maxnow-ballet-session-status/source/v3-10m.jsonl",
+      "log": "/var/lib/maxnow-ballet-session-source/v3-10m.jsonl",
       "intervalSeconds": 600,
       "handoffValidationSamples": 0
     },
     {
       "key": "v4-20m",
       "unit": "maxnow-wenda-session-lifetime-20260726-v4.service",
-      "log": "/var/lib/maxnow-ballet-session-status/source/v4-20m.jsonl",
+      "log": "/var/lib/maxnow-ballet-session-source/v4-20m.jsonl",
       "intervalSeconds": 1200,
       "handoffValidationSamples": 1
     },
     {
       "key": "v5-25m",
       "unit": "maxnow-wenda-session-lifetime-20260726-v5.service",
-      "log": "/var/lib/maxnow-ballet-session-status/source/v5-25m.jsonl",
+      "log": "/var/lib/maxnow-ballet-session-source/v5-25m.jsonl",
       "intervalSeconds": 1500,
       "handoffValidationSamples": 1
     }
@@ -270,7 +270,7 @@ public URL -> authenticated nginx aliases /data/ballet-session.json + ballet-ses
 ```bash
 sudo install -o root -g root -m 0644 server/maxnow-ballet-session-status.sysusers /usr/lib/sysusers.d/maxnow-ballet-session-status.conf
 sudo systemd-sysusers /usr/lib/sysusers.d/maxnow-ballet-session-status.conf
-sudo chgrp maxnow-ballet-status \
+sudo chown root:maxnow-ballet-status \
   /var/lib/private/maxnow-wenda-session/server-lifetime-20260726-1906.jsonl \
   /var/lib/private/maxnow-wenda-session-v4/server-lifetime-20260726-1941-20min.jsonl \
   /var/lib/private/maxnow-wenda-session-v5/server-lifetime-20260726-2300-25min.jsonl
@@ -278,11 +278,10 @@ sudo chmod 0440 \
   /var/lib/private/maxnow-wenda-session/server-lifetime-20260726-1906.jsonl \
   /var/lib/private/maxnow-wenda-session-v4/server-lifetime-20260726-1941-20min.jsonl \
   /var/lib/private/maxnow-wenda-session-v5/server-lifetime-20260726-2300-25min.jsonl
-sudo install -d -o root -g maxnow-ballet-status -m 0750 /var/lib/maxnow-ballet-session-status/source
-sudo ln -f /var/lib/private/maxnow-wenda-session/server-lifetime-20260726-1906.jsonl /var/lib/maxnow-ballet-session-status/source/v3-10m.jsonl
-sudo ln -f /var/lib/private/maxnow-wenda-session-v4/server-lifetime-20260726-1941-20min.jsonl /var/lib/maxnow-ballet-session-status/source/v4-20m.jsonl
-sudo ln -f /var/lib/private/maxnow-wenda-session-v5/server-lifetime-20260726-2300-25min.jsonl /var/lib/maxnow-ballet-session-status/source/v5-25m.jsonl
-sudo chown root:maxnow-ballet-status /var/lib/maxnow-ballet-session-status/source
+sudo install -d -o root -g maxnow-ballet-status -m 0750 /var/lib/maxnow-ballet-session-source
+sudo ln -f /var/lib/private/maxnow-wenda-session/server-lifetime-20260726-1906.jsonl /var/lib/maxnow-ballet-session-source/v3-10m.jsonl
+sudo ln -f /var/lib/private/maxnow-wenda-session-v4/server-lifetime-20260726-1941-20min.jsonl /var/lib/maxnow-ballet-session-source/v4-20m.jsonl
+sudo ln -f /var/lib/private/maxnow-wenda-session-v5/server-lifetime-20260726-2300-25min.jsonl /var/lib/maxnow-ballet-session-source/v5-25m.jsonl
 sudo install -d -o root -g maxnow-ballet-status -m 0750 /etc/maxnow-ballet
 sudo install -o root -g maxnow-ballet-status -m 0640 /path/to/session-experiment.json /etc/maxnow-ballet/session-experiment.json
 sudo install -d -o root -g root -m 0755 /usr/local/lib/maxnow-ballet-session-status
@@ -301,7 +300,9 @@ sudo test "$(stat -c '%U:%G %a' /usr/local/lib/maxnow-ballet-session-status/sync
 sudo cmp -s scripts/sync_ballet_session_status.py /usr/local/lib/maxnow-ballet-session-status/sync_ballet_session_status.py
 sudo test "$(stat -c '%U:%G %a' /etc/maxnow-ballet/session-experiment.json)" = "root:maxnow-ballet-status 640"
 sudo test "$(stat -c '%U:%G %a' /var/lib/maxnow-ballet-session-status/public/ballet-session.json)" = "maxnow-ballet-status:maxnow-ballet-status 644"
-sudo test "$(stat -c '%i' /var/lib/private/maxnow-wenda-session-v5/server-lifetime-20260726-2300-25min.jsonl)" = "$(stat -c '%i' /var/lib/maxnow-ballet-session-status/source/v5-25m.jsonl)"
+sudo test /var/lib/private/maxnow-wenda-session/server-lifetime-20260726-1906.jsonl -ef /var/lib/maxnow-ballet-session-source/v3-10m.jsonl
+sudo test /var/lib/private/maxnow-wenda-session-v4/server-lifetime-20260726-1941-20min.jsonl -ef /var/lib/maxnow-ballet-session-source/v4-20m.jsonl
+sudo test /var/lib/private/maxnow-wenda-session-v5/server-lifetime-20260726-2300-25min.jsonl -ef /var/lib/maxnow-ballet-session-source/v5-25m.jsonl
 sudo -u maxnow-ballet-status test ! -r /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 python3 scripts/check.py
 ```
