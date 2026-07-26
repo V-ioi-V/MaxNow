@@ -359,7 +359,7 @@ experiment status -> maxnow-ballet-session-status.timer 每 5 分钟只读本机
 
 新凭据就绪后的启用顺序：
 
-1. 先按本节规则写入新的 host-bound 加密凭据，不复用实验 unit 的临时 `/run/credentials` 路径。
+1. 先按本节规则写入新的 host-bound 加密凭据，不复用实验 unit 的临时 `/run/credentials` 路径；若重建生命周期探针，按 Owner 最新要求使用 1200 秒（20 分钟），不要改写已结束 v5 的 1500 秒历史配置或日志。
 2. 用本地脱敏样本完成 parser / 去重测试；首次真实同步只允许已确认的 GET 路径。
 3. 检查私有账本 `0600`、read model 无敏感字段、重复同步不增加历史数量、失败时旧缓存仍在。
 4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认下一次触发分别为每日 00:17 和每月 1 日 00:47；不要把测试性即时请求算作定时任务证据。

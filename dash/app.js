@@ -15,6 +15,7 @@ const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 const BALLET_SESSION_PUBLISH_STALE_MS = 15 * 60 * 1000;
+const BALLET_SESSION_NEXT_RUN_INTERVAL_MINUTES = 20;
 const DATA_CACHE_PREFIX = "maxnow:last-good:v1:";
 
 const DATA_SOURCE_OPTIONS = {
@@ -2446,6 +2447,15 @@ function renderBalletSessionExperiment(now = new Date()) {
     "#ballet-session-interval",
     Number.isFinite(interval) && interval > 0 ? `每 ${interval} 分钟` : "--",
   );
+  const nextRunPlan = qs("#ballet-session-next-plan");
+  const showNextRunPlan =
+    ["auth_required", "interrupted", "complete"].includes(state.key) &&
+    interval !== BALLET_SESSION_NEXT_RUN_INTERVAL_MINUTES;
+  setText(
+    "#ballet-session-next-plan",
+    `新凭据后计划每 ${BALLET_SESSION_NEXT_RUN_INTERVAL_MINUTES} 分钟`,
+  );
+  if (nextRunPlan) nextRunPlan.hidden = !showNextRunPlan;
   renderBalletSessionCountdown(now);
 
   const errorLabel = getBalletSessionErrorLabel();

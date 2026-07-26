@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-26 23:43",
-  "version": "1.0.5.01",
-  "versionLabel": "v1.0.5.01",
+  "updatedAt": "2026-07-26 23:55",
+  "version": "1.0.5.02",
+  "versionLabel": "v1.0.5.02",
   "branch": "feature/ballet-session-status",
-  "commit": "92daf04",
+  "commit": "b71380b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-session-status · commit 92daf04 · 有未提交代码改动",
+  "deployNote": "feature/ballet-session-status · commit b71380b · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-26",

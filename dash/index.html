@@ -677,6 +677,7 @@
               <span id="ballet-session-phase">阶段起始 --</span>
               <span id="ballet-session-samples">样本 --</span>
               <span id="ballet-session-end">计划结束 --</span>
+              <span id="ballet-session-next-plan" hidden>新凭据后计划每 20 分钟</span>
               <span id="ballet-session-observations">等待观察结果</span>
             </div>
           </article>
@@ -866,7 +867,7 @@
                 </div>
                 <span class="status-pill">待刷新凭据</span>
               </header>
-              <p class="item-copy">25 分钟阶段已在首个标准检查确认登录失效；课程采集继续保持未启用，等待 Owner 在电脑微信重新登录并安全刷新凭据。独立状态发布器每 5 分钟只读服务器本地日志，不访问闻道。</p>
+              <p class="item-copy">25 分钟阶段已在首个标准检查确认登录失效；课程采集继续保持未启用，等待 Owner 在电脑微信重新登录并安全刷新凭据。下一次新会话探针按每 20 分钟运行；独立状态发布器每 5 分钟只读服务器本地日志，不访问闻道。</p>
               <dl class="cloud-meta">
                 <div><dt>日常</dt><dd>00:17 重扫最近 60 个逻辑日</dd></div>
                 <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
@@ -1071,6 +1072,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=117"></script>
+    <script src="./app.js?v=118"></script>
   </body>
 </html>

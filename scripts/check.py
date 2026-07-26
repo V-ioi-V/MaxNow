@@ -463,11 +463,13 @@ def check_ballet_session_status():
     if (
         'const BALLET_SESSION_URL = "./data/ballet-session.json"' not in dashboard_js
         or "const BALLET_SESSION_PUBLISH_STALE_MS = 15 * 60 * 1000" not in dashboard_js
+        or "const BALLET_SESSION_NEXT_RUN_INTERVAL_MINUTES = 20" not in dashboard_js
         or "function renderBalletSessionExperiment(now = new Date())" not in dashboard_js
         or "function isBalletSessionPublisherStale(" not in dashboard_js
         or "renderBalletSessionExperiment(now);" not in dashboard_js
         or "getBalletVerifiedAliveSeconds" not in dashboard_js
         or 'id="ballet-session-duration"' not in dashboard_html
+        or 'id="ballet-session-next-plan"' not in dashboard_html
         or ".ballet-session-metrics {" not in dashboard_css
     ):
         raise ValueError("ballet session status: frontend card or frozen evidence rendering is incomplete")
@@ -1027,7 +1029,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=117" not in dashboard_html:
+    if "app.js?v=118" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
