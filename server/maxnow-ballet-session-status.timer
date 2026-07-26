@@ -1,0 +1,14 @@
+[Unit]
+Description=Refresh MaxNow redacted Wenda session experiment status
+Documentation=file:/var/www/maxnow-dashboard/SERVER_RUNBOOK.md
+ConditionPathExists=/etc/maxnow-ballet/session-experiment.json
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=30s
+Unit=maxnow-ballet-session-status.service
+Persistent=false
+
+[Install]
+WantedBy=timers.target

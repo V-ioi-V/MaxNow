@@ -116,6 +116,7 @@ Home 页面读取：
 - `dash/data/wiki-todos.json`
 - `dash/data/market-indices.json`
 - `dash/data/ballet.json`
+- `dash/data/ballet-session.json`
 
 对应的 `.js` wrapper 是静态兜底，必须和 JSON 保持一致。
 
@@ -129,6 +130,7 @@ python scripts/update_data.py ai-last30
 python scripts/update_data.py market-indices
 python scripts/update_data.py project-status
 python scripts/update_data.py ballet --dry-run
+python scripts/update_data.py ballet-session --config <restricted-server-config> --dry-run
 python scripts/update_data.py runtime
 ```
 
@@ -137,6 +139,7 @@ python scripts/update_data.py runtime
 - `market-indices`：刷新 Home 市场涨幅卡的国内外指数点位、涨跌幅和迷你走势。
 - `project-status`：显式从 `ROADMAP.md` 刷新独立的 `project-status.*`，不修改 `dashboard.today`，也不由服务器日常 cron 自动覆盖。ROADMAP Now / Next / Done 变化后必须运行。
 - `ballet --dry-run`：只验证芭蕾同步器配置和 GET-only 边界，不读取凭据、不访问闻道、不写数据；生产同步只能按 `SERVER_RUNBOOK.md` 通过隔离的 systemd unit 运行。
+- `ballet-session --config ... --dry-run`：开发 / 检查入口，只读服务器本地 Session 实验配置与 JSONL，生成或预览脱敏状态；生产由专用无登录用户通过 root-owned 固定脚本运行，输出到 `/var/lib/maxnow-ballet-session-status/public`，再经已有登录校验的 nginx alias 提供。它没有网络能力，不会请求闻道，也不会输出 Cookie、指纹或内部路径。
 - `runtime`：服务器定时任务使用，刷新 wiki-todos、天气、行情、生活 / 同行记缓存、系统状态和项目元信息，然后运行校验。
 
 ## 本地校验
@@ -190,6 +193,12 @@ python scripts/check.py
 - 脱敏的实际上课记录、当前预约快照、累计 / 月度 / 年度聚合和同步状态
 - 不保存 PHPSESSID、Cookie、OAuth 数据、会员标识、源记录 ID 或原始响应
 - 私有 canonical ledger 只保存在服务器 `/var/lib/maxnow-ballet`
+
+`dash/data/ballet-session.json`：
+
+- 保存 PHPSESSID 持续活动实验的脱敏状态、已确认有效时长、起始 / 最近 / 下次检查、25 分钟间隔和安全错误
+- 与课程缓存分文件维护，不会因为状态卡更新而改写课程数据时间
+- 不保存 Session 值或指纹、run ID、unit / 日志路径、URL、响应摘要 / 正文或凭据版本
 
 `scripts/sync_ai_last30.py` 使用免费公开源做本地抓取、关键词打分、去重和短摘要，采集本身不调用模型、不消耗 token。X / Twitter 暂不作为基础来源。
 

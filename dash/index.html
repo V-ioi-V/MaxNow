@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=137" />
+    <link rel="stylesheet" href="./styles.css?v=138" />
   </head>
   <body>
     <div class="app-shell">
@@ -636,6 +636,51 @@
             </div>
           </div>
 
+          <article class="panel ballet-session-card" aria-labelledby="ballet-session-title">
+            <header class="panel-head">
+              <div>
+                <p class="eyebrow">Session Lifetime</p>
+                <h2 id="ballet-session-title">PHPSESSID 活跃实验</h2>
+              </div>
+              <span class="status-pill" id="ballet-session-status" aria-live="polite">等待状态</span>
+            </header>
+
+            <div class="ballet-session-duration">
+              <span>已确认有效</span>
+              <strong id="ballet-session-duration">--</strong>
+              <small>持续时间只计算到最近一次验证成功，不随当前时间外推。</small>
+            </div>
+
+            <dl class="ballet-session-metrics">
+              <div>
+                <dt>实验起始</dt>
+                <dd id="ballet-session-started">--</dd>
+              </div>
+              <div>
+                <dt>最近自动检查</dt>
+                <dd id="ballet-session-last-probe">--</dd>
+              </div>
+              <div>
+                <dt>下次自动检查</dt>
+                <dd id="ballet-session-next-probe">--</dd>
+              </div>
+              <div>
+                <dt>检查间隔</dt>
+                <dd id="ballet-session-interval">--</dd>
+              </div>
+            </dl>
+
+            <p class="ballet-session-note" id="ballet-session-note">
+              这是无副作用的只读探针，不代表 PHPSESSID 已实现自动续期。
+            </p>
+            <div class="ballet-session-evidence" aria-label="实验辅助信息">
+              <span id="ballet-session-phase">阶段起始 --</span>
+              <span id="ballet-session-samples">样本 --</span>
+              <span id="ballet-session-end">计划结束 --</span>
+              <span id="ballet-session-observations">等待观察结果</span>
+            </div>
+          </article>
+
           <section class="ballet-overview-grid" aria-label="芭蕾课程概览">
             <article class="panel ballet-next-card">
               <header class="panel-head">
@@ -816,15 +861,16 @@
             <article class="panel cloud-card" data-tone="purple">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 00:17 / Monthly 00:47</p>
+                  <p class="eyebrow">Daily 00:17 / Monthly 00:47 / Local 5min</p>
                   <h2>芭蕾只读同步</h2>
                 </div>
-                <span class="status-pill">待实验结束</span>
+                <span class="status-pill">待刷新凭据</span>
               </header>
-              <p class="item-copy">只读采集上课记录和当前预约，生成脱敏缓存。当前保持未启用，避免额外请求改变正在运行的 20 分钟 Session 活跃寿命实验。</p>
+              <p class="item-copy">25 分钟阶段已在首个标准检查确认登录失效；课程采集继续保持未启用，等待 Owner 在电脑微信重新登录并安全刷新凭据。独立状态发布器每 5 分钟只读服务器本地日志，不访问闻道。</p>
               <dl class="cloud-meta">
                 <div><dt>日常</dt><dd>00:17 重扫最近 60 个逻辑日</dd></div>
                 <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
+                <div><dt>实验状态</dt><dd>每 5 分钟发布脱敏 ballet-session.*</dd></div>
                 <div><dt>失败</dt><dd>保留最后成功缓存并提示重新登录</dd></div>
                 <div><dt>边界</dt><dd>不执行预约、取消、候补或转课</dd></div>
               </dl>
@@ -1025,6 +1071,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=116"></script>
+    <script src="./app.js?v=117"></script>
   </body>
 </html>

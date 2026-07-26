@@ -1398,6 +1398,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 .session-item,
 .system-item,
 .cloud-meta div,
+.ballet-session-metrics div,
 .ricky-place-item,
 .ricky-record-item,
 .life-food-option,
@@ -1439,6 +1440,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   .session-item:hover,
   .system-item:hover,
   .cloud-meta div:hover,
+  .ballet-session-metrics div:hover,
   .ricky-place-item:hover,
     .ricky-record-item:hover,
     .life-food-option:hover,
@@ -4316,6 +4318,131 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   grid-template-columns: minmax(0, 1fr) auto;
 }
 
+#ballet-view .ballet-session-card {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  margin-bottom: var(--page-section-gap);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--ballet) 7%, #ffffff), #ffffff 58%);
+}
+
+#ballet-view .ballet-session-card[data-state="auth_required"],
+#ballet-view .ballet-session-card[data-state="interrupted"] {
+  border-color: var(--red-border);
+}
+
+#ballet-view .ballet-session-card[data-state="delayed"] {
+  border-color: var(--orange-border);
+}
+
+.ballet-session-duration {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px 12px;
+  margin: 4px 0 18px;
+  padding: 15px 17px;
+  border: 1px solid color-mix(in srgb, var(--ballet) 18%, var(--line));
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.ballet-session-duration span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.ballet-session-duration strong {
+  min-width: 0;
+  color: var(--ballet);
+  font-size: clamp(27px, 3vw, 40px);
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.ballet-session-duration small {
+  flex: 1 1 260px;
+  min-width: 0;
+  color: var(--soft);
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: right;
+}
+
+.ballet-session-metrics {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--page-grid-gap);
+  margin: 0;
+}
+
+.ballet-session-metrics div {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  padding: 12px 13px;
+  border: 1px solid color-mix(in srgb, var(--ballet) 13%, var(--line));
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.ballet-session-metrics dt,
+.ballet-session-metrics dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.ballet-session-metrics dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ballet-session-metrics dd {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.ballet-session-note {
+  margin: 15px 0 0;
+  color: var(--soft);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.ballet-session-evidence {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.ballet-session-evidence span {
+  min-width: 0;
+  padding: 5px 9px;
+  border: 1px solid color-mix(in srgb, var(--ballet) 12%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ballet) 4%, #ffffff);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 .ballet-sync-alert {
   display: flex;
   align-items: flex-start;
@@ -5041,6 +5168,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     grid-template-columns: 1fr;
   }
 
+  .ballet-session-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .home-lane,
   .home-side-stack,
   .home-lane-rail {
@@ -5228,6 +5359,31 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   .ballet-home-foot small {
     max-width: 100%;
     text-align: left;
+  }
+
+  .ballet-session-duration {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ballet-session-duration small {
+    flex-basis: auto;
+    text-align: left;
+  }
+
+  .ballet-session-metrics {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .ballet-session-evidence {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ballet-session-evidence span {
+    width: 100%;
+    border-radius: 10px;
   }
 
   .ballet-next-card {

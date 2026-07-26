@@ -10,9 +10,11 @@ const PROJECT_STATUS_URL = "./data/project-status.json";
 const RICKY_URL = "./data/ricky.json";
 const LIFE_FOODS_URL = "./data/life-foods.json";
 const BALLET_URL = "./data/ballet.json";
+const BALLET_SESSION_URL = "./data/ballet-session.json";
 const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const BALLET_SESSION_PUBLISH_STALE_MS = 15 * 60 * 1000;
 const DATA_CACHE_PREFIX = "maxnow:last-good:v1:";
 
 const DATA_SOURCE_OPTIONS = {
@@ -109,6 +111,12 @@ const fallbackBallet = window.MAXNOW_BALLET_DATA || {
   records: [],
   upcoming: { records: [] },
 };
+const fallbackBalletSession = window.MAXNOW_BALLET_SESSION_DATA || {
+  schemaVersion: 1,
+  timezone: "Asia/Shanghai",
+  status: "unknown",
+  refreshIntervalMinutes: 25,
+};
 
 let dashboardData = fallbackData;
 let last30Data = fallbackLast30;
@@ -122,6 +130,7 @@ let projectStatusData = fallbackProjectStatus;
 let rickyData = fallbackRicky;
 let lifeFoodsData = fallbackLifeFoods;
 let balletData = fallbackBallet;
+let balletSessionData = fallbackBalletSession;
 let wikiTodoError = "";
 let activeTokenRange = "1d";
 let weatherMetaFitFrame = 0;
@@ -2227,6 +2236,248 @@ function formatBalletHours(minutes) {
   return hours.toFixed(hours >= 100 ? 0 : hours >= 10 ? 1 : 2).replace(/\.?0+$/, "");
 }
 
+const BALLET_SESSION_STATES = {
+  running: {
+    label: "正常运行",
+    tone: "success",
+    message: "最近一次只读检查正常；这不代表 PHPSESSID 已实现自动续期。",
+  },
+  complete: {
+    label: "实验完成",
+    tone: "success",
+    message: "持续活动寿命实验已结束，时长冻结在最后一次验证成功。",
+  },
+  auth_required: {
+    label: "需要重新登录",
+    tone: "auth",
+    message: "会话授权已失效；请在电脑微信重新登录后刷新服务器凭据。",
+  },
+  delayed: {
+    label: "检查延迟",
+    tone: "stale",
+    message: "最近一次自动检查未按计划完成；已确认有效时长保持不变。",
+  },
+  interrupted: {
+    label: "实验中断",
+    tone: "error",
+    message: "只读探针已停止；已确认有效时长保持不变。",
+  },
+  unknown: {
+    label: "等待状态",
+    tone: "waiting",
+    message: "等待服务器写入脱敏实验状态。",
+  },
+};
+
+const BALLET_SESSION_ERROR_LABELS = {
+  auth_required: "需要重新登录微信并刷新服务器凭据。",
+  identity_expired: "会话身份已失效。",
+  network_error: "最近一次检查遇到网络异常。",
+  http_error: "最近一次检查返回异常 HTTP 状态。",
+  unknown_response: "最近一次响应无法安全判断登录状态。",
+  probe_delayed: "只读检查已超过预期时间，当前登录状态待确认。",
+  probe_interrupted: "自动检查服务已停止，当前登录状态待确认。",
+  probe_inconclusive: "连续检查无法确认登录状态，实验已安全停止。",
+  source_config_mismatch: "实验配置与日志中的检查间隔不一致。",
+  source_log_invalid: "实验状态日志暂时无法完整解析。",
+  invalid_completion: "实验完成标记尚未通过完整性校验。",
+  status_unknown: "暂时无法确认当前会话状态。",
+  stopped_consecutive_unknown: "连续多次无法判断状态，探针已安全停止。",
+  service_inactive: "只读探针当前未运行。",
+};
+
+function parseBalletSessionTimestamp(value) {
+  const text = String(value || "").trim();
+  if (!text) return null;
+  const absolute = new Date(text);
+  if (!Number.isNaN(absolute.getTime())) return absolute;
+  return parseLocalDateTime(text);
+}
+
+function formatBalletSessionTimestamp(value) {
+  const date = parseBalletSessionTimestamp(value);
+  if (!date) return "--";
+  try {
+    const parts = Object.fromEntries(
+      new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      })
+        .formatToParts(date)
+        .filter((item) => item.type !== "literal")
+        .map((item) => [item.type, item.value]),
+    );
+    return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`;
+  } catch (error) {
+    return normalizeSourceUpdatedAt(value) || "--";
+  }
+}
+
+function getBalletVerifiedAliveSeconds(data = balletSessionData) {
+  const explicit = data?.verifiedAliveSeconds;
+  if (explicit !== null && explicit !== undefined && explicit !== "") {
+    const seconds = Number(explicit);
+    if (Number.isFinite(seconds) && seconds >= 0) return Math.floor(seconds);
+  }
+  const startedAt = parseBalletSessionTimestamp(data?.experimentStartedAt);
+  const authenticatedAt = parseBalletSessionTimestamp(data?.lastAuthenticatedAt);
+  if (!startedAt || !authenticatedAt || authenticatedAt < startedAt) return null;
+  return Math.floor((authenticatedAt.getTime() - startedAt.getTime()) / 1000);
+}
+
+function formatBalletVerifiedDuration(seconds) {
+  if (!Number.isFinite(Number(seconds)) || Number(seconds) < 0) return "--";
+  const totalMinutes = Math.floor(Number(seconds) / 60);
+  const days = Math.floor(totalMinutes / (24 * 60));
+  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+  const minutes = totalMinutes % 60;
+  return `${days}天 ${hours}小时 ${minutes}分`;
+}
+
+function isBalletSessionPublisherStale(data = balletSessionData, now = new Date()) {
+  const updatedAt = parseBalletSessionTimestamp(data?.updatedAt);
+  return !updatedAt || now.getTime() - updatedAt.getTime() > BALLET_SESSION_PUBLISH_STALE_MS;
+}
+
+function getBalletSessionState(now = new Date()) {
+  const key = String(balletSessionData?.status || "unknown").trim().toLowerCase();
+  if (key === "running" && isBalletSessionPublisherStale(balletSessionData, now)) {
+    return {
+      key: "delayed",
+      ...BALLET_SESSION_STATES.delayed,
+      message: "实验状态缓存已超过 15 分钟未更新；已确认有效时长保持不变。",
+    };
+  }
+  return { key, ...(BALLET_SESSION_STATES[key] || BALLET_SESSION_STATES.unknown) };
+}
+
+function getBalletSessionErrorLabel() {
+  const error = balletSessionData?.lastError;
+  const rawCode = typeof error === "string" ? error : error?.code;
+  const code = String(rawCode || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, "")
+    .slice(0, 48);
+  if (!code) return "";
+  return BALLET_SESSION_ERROR_LABELS[code] || "最近错误的详细信息已安全隐藏。";
+}
+
+function getBalletSessionResultLabel() {
+  const result = balletSessionData?.lastResult;
+  if (!result || typeof result !== "object") return "最近结果：待观察";
+  const status = Number(result.httpStatus);
+  const loginState = String(result.loginState || "").trim().toLowerCase();
+  const loginLabels = {
+    authenticated: "已登录",
+    expired: "登录失效",
+    identity_expired: "登录失效",
+    unauthenticated: "未登录",
+    network_error: "网络异常",
+    redirect: "发生跳转",
+    unknown: "待确认",
+  };
+  const parts = [
+    Number.isInteger(status) && status >= 100 && status <= 599 ? `HTTP ${status}` : "",
+    loginLabels[loginState] || "",
+    result.networkError === true ? "网络异常" : "",
+  ].filter(Boolean);
+  return parts.length ? `最近结果：${parts.join(" · ")}` : "最近结果：待观察";
+}
+
+function formatBalletSessionCountdown(milliseconds) {
+  const totalMinutes = Math.max(1, Math.ceil(milliseconds / 60000));
+  const days = Math.floor(totalMinutes / (24 * 60));
+  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+  const minutes = totalMinutes % 60;
+  if (days) return `${days}天 ${hours}小时`;
+  if (hours) return `${hours}小时 ${minutes}分`;
+  return `${minutes}分`;
+}
+
+function renderBalletSessionCountdown(now = new Date()) {
+  const target = parseBalletSessionTimestamp(balletSessionData?.nextProbeAt);
+  if (!target) {
+    setText("#ballet-session-next-probe", "--");
+    return;
+  }
+  const scheduled = formatBalletSessionTimestamp(balletSessionData.nextProbeAt);
+  const state = getBalletSessionState(now);
+  if (!["running", "delayed"].includes(state.key)) {
+    setText("#ballet-session-next-probe", scheduled);
+    return;
+  }
+  const remaining = target.getTime() - now.getTime();
+  setText(
+    "#ballet-session-next-probe",
+    remaining > 0
+      ? `${scheduled} · ${formatBalletSessionCountdown(remaining)}后`
+      : `${scheduled} · 等待本轮结果`,
+  );
+}
+
+function renderBalletSessionExperiment(now = new Date()) {
+  const state = getBalletSessionState(now);
+  const status = qs("#ballet-session-status");
+  const card = qs(".ballet-session-card");
+  setText("#ballet-session-status", state.label);
+  if (status) status.dataset.state = state.tone;
+  if (card) card.dataset.state = state.key;
+
+  setText(
+    "#ballet-session-duration",
+    formatBalletVerifiedDuration(getBalletVerifiedAliveSeconds()),
+  );
+  setText(
+    "#ballet-session-started",
+    formatBalletSessionTimestamp(balletSessionData?.experimentStartedAt),
+  );
+  setText(
+    "#ballet-session-last-probe",
+    formatBalletSessionTimestamp(balletSessionData?.lastProbeAt),
+  );
+  const interval = Number(balletSessionData?.refreshIntervalMinutes);
+  setText(
+    "#ballet-session-interval",
+    Number.isFinite(interval) && interval > 0 ? `每 ${interval} 分钟` : "--",
+  );
+  renderBalletSessionCountdown(now);
+
+  const errorLabel = getBalletSessionErrorLabel();
+  setText(
+    "#ballet-session-note",
+    [state.message, errorLabel].filter(Boolean).join(" "),
+  );
+  setText(
+    "#ballet-session-phase",
+    `阶段起始 ${formatBalletSessionTimestamp(balletSessionData?.phaseStartedAt)}`,
+  );
+  const phaseSamples = Math.max(0, Math.floor(balletNumber(balletSessionData?.phaseSamples)));
+  const totalSamples = Math.max(0, Math.floor(balletNumber(balletSessionData?.totalSamples)));
+  setText("#ballet-session-samples", `本阶段 ${phaseSamples} 次 · 累计 ${totalSamples} 次`);
+  setText(
+    "#ballet-session-end",
+    `计划结束 ${formatBalletSessionTimestamp(balletSessionData?.scheduledEndAt)}`,
+  );
+  const sessionChanged =
+    typeof balletSessionData?.sessionChangedObserved === "boolean"
+      ? `各阶段进程内会话变化：${balletSessionData.sessionChangedObserved ? "已观察到" : "未观察到"}`
+      : "各阶段进程内会话变化：待观察";
+  const setCookie =
+    typeof balletSessionData?.setCookieObserved === "boolean"
+      ? `Set-Cookie：${balletSessionData.setCookieObserved ? "已观察到" : "未观察到"}`
+      : "Set-Cookie：待观察";
+  setText(
+    "#ballet-session-observations",
+    `${getBalletSessionResultLabel()} · ${sessionChanged} · ${setCookie}`,
+  );
+}
+
 function balletRecordDate(item = {}) {
   return String(item.date || item.classDate || item.startDate || item.startAt || item.startTime || "").slice(0, 10);
 }
@@ -2742,6 +2993,7 @@ function renderBallet() {
     if (alert) alert.dataset.state = state.key;
   }
 
+  renderBalletSessionExperiment();
   setText("#ballet-total-classes", summary.totalClasses || "0");
   setText("#ballet-total-hours", formatBalletHours(summary.totalMinutes));
   setText("#ballet-month-classes", summary.monthClasses || "0");
@@ -3146,7 +3398,12 @@ async function loadHomeData({ force = false } = {}) {
     readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta, "version"),
     readJson(PROJECT_STATUS_URL, window.MAXNOW_PROJECT_STATUS_DATA || fallbackProjectStatus, "roadmap"),
     readJson(BALLET_URL, window.MAXNOW_BALLET_DATA || fallbackBallet, "ballet"),
-  ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta, projectStatus, ballet]) => {
+    readJson(
+      BALLET_SESSION_URL,
+      window.MAXNOW_BALLET_SESSION_DATA || fallbackBalletSession,
+      "ballet-session",
+    ),
+  ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta, projectStatus, ballet, balletSession]) => {
     dashboardData = dashboard;
     last30Data = last30;
     wikiTodoData = wikiTodo;
@@ -3154,6 +3411,7 @@ async function loadHomeData({ force = false } = {}) {
     marketIndicesData = marketIndices;
     projectMetaData = projectMeta;
     balletData = ballet;
+    balletSessionData = balletSession;
     projectStatusData = projectStatus;
     updateClock();
     renderHome();
@@ -3619,6 +3877,9 @@ function updateClock() {
   setText("#holiday-label", labels.length ? [...new Set(labels)].join(" \u00b7 ") : copy.noHoliday);
   setText("#next-special-label", formatNextSpecialDate(now));
   updateTodayPhase();
+  if (qs("#ballet-view")?.classList.contains("is-active")) {
+    renderBalletSessionExperiment(now);
+  }
 }
 
 qsa("[data-view]").forEach((button) => {

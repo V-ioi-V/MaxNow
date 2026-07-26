@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "timezone": "Asia/Shanghai",
+  "updatedAt": "2026-07-26T23:28:22+08:00",
+  "status": "auth_required",
+  "experimentStartedAt": "2026-07-26T19:07:15+08:00",
+  "phaseStartedAt": "2026-07-26T23:03:21+08:00",
+  "lastProbeAt": "2026-07-26T23:28:22+08:00",
+  "lastAuthenticatedAt": "2026-07-26T23:03:21+08:00",
+  "nextProbeAt": null,
+  "scheduledEndAt": "2026-08-25T19:07:15+08:00",
+  "refreshIntervalMinutes": 25,
+  "verifiedAliveSeconds": 14166,
+  "phaseSamples": 2,
+  "totalSamples": 17,
+  "sessionChangedObserved": false,
+  "setCookieObserved": false,
+  "lastResult": {
+    "httpStatus": 307,
+    "loginState": "expired",
+    "attempts": 1,
+    "networkError": false
+  },
+  "lastError": {
+    "code": "identity_expired",
+    "message": "PHPSESSID 已失效，请在电脑微信重新登录并刷新服务器凭据。"
+  }
+}

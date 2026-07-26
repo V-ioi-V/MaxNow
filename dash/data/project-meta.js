@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-26 22:13",
-  "version": "1.0.5.00",
-  "versionLabel": "v1.0.5.00",
-  "branch": "feature/ballet-module",
-  "commit": "7a57225",
+  "updatedAt": "2026-07-26 23:43",
+  "version": "1.0.5.01",
+  "versionLabel": "v1.0.5.01",
+  "branch": "feature/ballet-session-status",
+  "commit": "92daf04",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-module · commit 7a57225 · 有未提交代码改动",
+  "deployNote": "feature/ballet-session-status · commit 92daf04 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-26",
+      "title": "增加 PHPSESSID 活跃实验状态卡并降频至 25 分钟",
+      "summary": "芭蕾页新增独立粉白状态卡，展示 PHPSESSID 从原始起点到最后一次认证样本的“已确认有效时长”、实验起始、最近 / 下次自动检查和当前间隔；页面不会按当前时间外推证据，也不会把持续活动仍有效表述为已证明自动续期。"
+    },
     {
       "date": "2026-07-26",
       "title": "上线芭蕾只读学习模块",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-26",
       "title": "将闻道 Session 持续活动探针降频至 20 分钟",
       "summary": "MaxNow 服务器已从 v3 每 10 分钟阶段安全交接到 `maxnow-wenda-session-lifetime-20260726-v4.service` 每 20 分钟阶段，请求频率由每小时 6 次降为 3 次；v4 首条验证为 HTTP 200 / authenticated 后才停止 v3。"
-    },
-    {
-      "date": "2026-07-26",
-      "title": "启动闻道 Session 服务器持续活动实验",
-      "summary": "新增只允许访问闻道 `simpleclass` 课程表 GET 路径的 `scripts/probe_ballet_session.py`；每条样本仅记录 HTTP / 登录状态、响应摘要、`Set-Cookie` 名称和脱敏 Session 指纹，身份失效或连续 3 次未知 / 网络异常即停止，不具备预约、取消或转课能力。"
     }
   ]
 };

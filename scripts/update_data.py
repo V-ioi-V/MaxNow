@@ -26,6 +26,7 @@ DATASETS = {
     "ricky": ("dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
     "life-foods": ("dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
     "ballet": ("dash/data/ballet.json", "dash/data/ballet.js", "MAXNOW_BALLET_DATA"),
+    "ballet-session": ("dash/data/ballet-session.json", "dash/data/ballet-session.js", "MAXNOW_BALLET_SESSION_DATA"),
 }
 LOG_DIR = ROOT / "logs"
 
@@ -212,6 +213,17 @@ def parse_args():
     ballet.add_argument("--mode", choices=["rolling", "full"], default="rolling")
     ballet.add_argument("--fixture-dir", help="Use synthetic HTML fixtures; never access Wenda.")
     ballet.add_argument("--dry-run", action="store_true", help="Validate without network or writes.")
+    ballet_session = subparsers.add_parser(
+        "ballet-session",
+        help="Publish the redacted local Wenda Session experiment status.",
+    )
+    ballet_session.add_argument("--config", required=True, help="Root-only local experiment configuration JSON.")
+    ballet_session.add_argument(
+        "--service-state",
+        choices=["active", "activating", "inactive", "deactivating", "failed", "unknown"],
+        help="Override systemd state for controlled tests.",
+    )
+    ballet_session.add_argument("--dry-run", action="store_true", help="Validate and print without writing data.")
     subparsers.add_parser("runtime", help="Run server runtime sync without changing owner judgment fields.")
     subparsers.add_parser("project-status", help="Refresh Home project status from ROADMAP.md and validate data.")
     subparsers.add_parser("all", help="Run wiki todos, system status, project status, wrappers, and checks.")
@@ -307,6 +319,25 @@ def main():
         )
         if not args.dry_run:
             write_wrapper("ballet")
+
+    if args.command == "ballet-session":
+        extra_args = [
+            "--config",
+            args.config,
+            "--output",
+            "dash/data/ballet-session.json",
+            "--wrapper",
+            "dash/data/ballet-session.js",
+        ]
+        if args.service_state:
+            extra_args.extend(["--service-state", args.service_state])
+        if args.dry_run:
+            extra_args.append("--dry-run")
+        run_python(
+            "scripts/sync_ballet_session_status.py",
+            None,
+            extra_args=extra_args,
+        )
 
     if args.command in {"project-status", "all"}:
         refresh_project_status()

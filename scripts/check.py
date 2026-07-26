@@ -33,6 +33,7 @@ DATASETS = [
     ("ricky", "dash/data/ricky.json", "dash/data/ricky.js", "MAXNOW_RICKY_DATA"),
     ("life-foods", "dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
     ("ballet", "dash/data/ballet.json", "dash/data/ballet.js", "MAXNOW_BALLET_DATA"),
+    ("ballet-session", "dash/data/ballet-session.json", "dash/data/ballet-session.js", "MAXNOW_BALLET_SESSION_DATA"),
 ]
 
 
@@ -75,6 +76,8 @@ def check_required_files():
         "dash/data/life-foods.js",
         "dash/data/ballet.json",
         "dash/data/ballet.js",
+        "dash/data/ballet-session.json",
+        "dash/data/ballet-session.js",
         "dash/data/market-indices.json",
         "dash/data/market-indices.js",
         "dash/data/project-status.json",
@@ -120,12 +123,17 @@ def check_required_files():
         "scripts/test_probe_ballet_session.py",
         "scripts/sync_ballet.py",
         "scripts/test_sync_ballet.py",
+        "scripts/sync_ballet_session_status.py",
+        "scripts/test_sync_ballet_session_status.py",
         "scripts/maxnow_auth_service.py",
         "server/maxnow-auth.service",
         "server/maxnow-ballet-sync.service",
         "server/maxnow-ballet-sync.timer",
         "server/maxnow-ballet-full-sync.service",
         "server/maxnow-ballet-full-sync.timer",
+        "server/maxnow-ballet-session-status.service",
+        "server/maxnow-ballet-session-status.timer",
+        "server/maxnow-ballet-session-status.sysusers",
         "server/maxnow-auth-rate-limit.conf",
         "server/maxnow-auth-locations.conf",
         "server/maxnow-dashboard.conf",
@@ -268,6 +276,239 @@ def check_ballet_read_model():
     ):
         raise ValueError("ballet: expired bookings are not filtered from the next class")
     return "ballet: read model schema, totals, aggregates, and redaction are valid"
+
+
+def check_ballet_session_status():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(ROOT / "scripts/test_sync_ballet_session_status.py"),
+        ],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=20,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "ballet session status: self-test failed: " + result.stdout.strip()
+        )
+
+    data = load_json(ROOT / "dash/data/ballet-session.json")
+    expected_keys = {
+        "schemaVersion",
+        "timezone",
+        "updatedAt",
+        "status",
+        "experimentStartedAt",
+        "phaseStartedAt",
+        "lastProbeAt",
+        "lastAuthenticatedAt",
+        "nextProbeAt",
+        "scheduledEndAt",
+        "refreshIntervalMinutes",
+        "verifiedAliveSeconds",
+        "phaseSamples",
+        "totalSamples",
+        "sessionChangedObserved",
+        "setCookieObserved",
+        "lastResult",
+        "lastError",
+    }
+    if set(data) != expected_keys:
+        raise ValueError("ballet session status: public field allowlist drifted")
+    if data.get("schemaVersion") != 1 or data.get("timezone") != "Asia/Shanghai":
+        raise ValueError("ballet session status: schemaVersion/timezone is invalid")
+    if data.get("status") not in {
+        "running",
+        "complete",
+        "auth_required",
+        "delayed",
+        "interrupted",
+        "unknown",
+    }:
+        raise ValueError("ballet session status: status is invalid")
+    if data.get("refreshIntervalMinutes") != 25:
+        raise ValueError("ballet session status: current probe interval must be 25 minutes")
+    if not all(
+        isinstance(data.get(key), int)
+        and not isinstance(data.get(key), bool)
+        and data.get(key) >= 0
+        for key in ("verifiedAliveSeconds", "phaseSamples", "totalSamples")
+    ):
+        raise ValueError("ballet session status: duration/sample counters are invalid")
+    if data["totalSamples"] < data["phaseSamples"]:
+        raise ValueError("ballet session status: phaseSamples exceeds totalSamples")
+
+    def parse_timestamp(key):
+        value = data.get(key)
+        if value is None:
+            return None
+        try:
+            parsed = datetime.fromisoformat(value)
+        except (TypeError, ValueError) as error:
+            raise ValueError(f"ballet session status: {key} is invalid") from error
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError(f"ballet session status: {key} lacks timezone")
+        return parsed
+
+    started = parse_timestamp("experimentStartedAt")
+    authenticated = parse_timestamp("lastAuthenticatedAt")
+    last_probe = parse_timestamp("lastProbeAt")
+    next_probe = parse_timestamp("nextProbeAt")
+    scheduled_end = parse_timestamp("scheduledEndAt")
+    parse_timestamp("updatedAt")
+    parse_timestamp("phaseStartedAt")
+    if not started or not scheduled_end or scheduled_end <= started:
+        raise ValueError("ballet session status: experiment time range is invalid")
+    if authenticated:
+        expected_seconds = max(0, int((authenticated - started).total_seconds()))
+        if data["verifiedAliveSeconds"] != expected_seconds:
+            raise ValueError("ballet session status: verified duration exceeds or trails evidence")
+    elif data["verifiedAliveSeconds"] != 0:
+        raise ValueError("ballet session status: duration exists without authenticated evidence")
+    if data["status"] == "running":
+        if not last_probe or not next_probe or next_probe <= last_probe:
+            raise ValueError("ballet session status: running probe lacks its next schedule")
+    if data["status"] in {"complete", "auth_required", "interrupted"} and next_probe is not None:
+        raise ValueError("ballet session status: stopped state must not advertise another probe")
+
+    last_result = data.get("lastResult")
+    if last_result is not None and set(last_result) != {
+        "httpStatus",
+        "loginState",
+        "attempts",
+        "networkError",
+    }:
+        raise ValueError("ballet session status: lastResult exposes unsupported fields")
+    if last_result is not None:
+        http_status = last_result.get("httpStatus")
+        attempts = last_result.get("attempts")
+        if not (
+            http_status is None
+            or (
+                isinstance(http_status, int)
+                and not isinstance(http_status, bool)
+                and 100 <= http_status <= 599
+            )
+        ):
+            raise ValueError("ballet session status: lastResult httpStatus is invalid")
+        if last_result.get("loginState") not in {
+            "authenticated",
+            "expired",
+            "network_error",
+            "redirect",
+            "unknown",
+        }:
+            raise ValueError("ballet session status: lastResult loginState is invalid")
+        if not (
+            attempts is None
+            or (
+                isinstance(attempts, int)
+                and not isinstance(attempts, bool)
+                and 1 <= attempts <= 6
+            )
+        ):
+            raise ValueError("ballet session status: lastResult attempts is invalid")
+        if not isinstance(last_result.get("networkError"), bool):
+            raise ValueError("ballet session status: lastResult networkError is invalid")
+    last_error = data.get("lastError")
+    if last_error is not None and (
+        not isinstance(last_error, dict) or set(last_error) != {"code", "message"}
+    ):
+        raise ValueError("ballet session status: lastError is not controlled")
+    controlled_errors = {
+        "identity_expired": "PHPSESSID 已失效，请在电脑微信重新登录并刷新服务器凭据。",
+        "probe_delayed": "只读检查已超过预期时间，当前登录状态待确认。",
+        "probe_interrupted": "自动检查服务已停止，当前登录状态待确认。",
+        "source_config_mismatch": "实验配置与日志中的检查间隔不一致。",
+        "source_log_invalid": "实验状态日志暂时无法完整解析。",
+        "invalid_completion": "实验完成标记尚未通过时间与样本完整性校验。",
+        "probe_inconclusive": "连续检查无法确认登录状态，实验已安全停止。",
+        "network_error": "最近一次只读检查遇到网络异常。",
+        "unknown_response": "最近一次响应无法安全判断登录状态。",
+        "http_error": "最近一次只读检查返回异常 HTTP 状态。",
+        "status_unknown": "暂时无法确认 PHPSESSID 的当前状态。",
+    }
+    if last_error is not None and controlled_errors.get(
+        last_error.get("code")
+    ) != last_error.get("message"):
+        raise ValueError("ballet session status: lastError value is outside the allowlist")
+
+    serialized = json.dumps(data, ensure_ascii=False)
+    forbidden = (
+        "PHPSESSID=",
+        '"run_id"',
+        '"session_fingerprints"',
+        '"response_sha256"',
+        '"response_bytes"',
+        '"api_host"',
+        '"api_path"',
+        '"source"',
+        ".service",
+        "/var/lib/",
+        "/run/credentials/",
+        "gm.wendaosoft.com",
+        "credentialVersion",
+    )
+    if any(marker in serialized for marker in forbidden):
+        raise ValueError("ballet session status: public model exposes an internal or secret field")
+
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    if (
+        'const BALLET_SESSION_URL = "./data/ballet-session.json"' not in dashboard_js
+        or "const BALLET_SESSION_PUBLISH_STALE_MS = 15 * 60 * 1000" not in dashboard_js
+        or "function renderBalletSessionExperiment(now = new Date())" not in dashboard_js
+        or "function isBalletSessionPublisherStale(" not in dashboard_js
+        or "renderBalletSessionExperiment(now);" not in dashboard_js
+        or "getBalletVerifiedAliveSeconds" not in dashboard_js
+        or 'id="ballet-session-duration"' not in dashboard_html
+        or ".ballet-session-metrics {" not in dashboard_css
+    ):
+        raise ValueError("ballet session status: frontend card or frozen evidence rendering is incomplete")
+    if "lastError?.message" in dashboard_js or "error?.message" in dashboard_js:
+        raise ValueError("ballet session status: frontend renders an uncontrolled error message")
+
+    service = (ROOT / "server/maxnow-ballet-session-status.service").read_text(encoding="utf-8")
+    timer = (ROOT / "server/maxnow-ballet-session-status.timer").read_text(encoding="utf-8")
+    sysusers = (ROOT / "server/maxnow-ballet-session-status.sysusers").read_text(encoding="utf-8")
+    auth_locations = (ROOT / "server/maxnow-auth-locations.conf").read_text(encoding="utf-8")
+    if (
+        "RestrictAddressFamilies=AF_UNIX" not in service
+        or "IPAddressDeny=any" not in service
+        or "User=maxnow-ballet-status" not in service
+        or "Group=maxnow-ballet-status" not in service
+        or "StateDirectory=maxnow-ballet-session-status" not in service
+        or "ReadWritePaths=/var/lib/maxnow-ballet-session-status" not in service
+        or "InaccessiblePaths=-/run/credentials -/etc/credstore.encrypted" not in service
+        or "CapabilityBoundingSet=\n" not in service
+        or (
+            "ExecStart=/usr/bin/python3 -B "
+            "/usr/local/lib/maxnow-ballet-session-status/"
+            "sync_ballet_session_status.py"
+        )
+        not in service
+        or "WorkingDirectory=/var/www/maxnow-dashboard" in service
+        or "maxnow-ballet-status" not in sysusers
+        or "location = /data/ballet-session.json" not in auth_locations
+        or "auth_request /_auth;" not in auth_locations
+        or (
+            "alias /var/lib/maxnow-ballet-session-status/public/"
+            "ballet-session.json;"
+        )
+        not in auth_locations
+        or "OnUnitActiveSec=5min" not in timer
+    ):
+        raise ValueError("ballet session status: local-only publisher hardening or schedule is incomplete")
+    return (
+        "ballet session status: 25-minute evidence, redaction, frozen duration, "
+        "local-only publisher, and frontend card are valid"
+    )
 
 
 def check_local_server(url):
@@ -760,7 +1001,7 @@ def check_secondary_view_style():
     )
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
-    if "styles.css?v=137" not in dashboard_html:
+    if "styles.css?v=138" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     return "secondary views: six tabs share clean card shells without top accent bars"
 
@@ -780,7 +1021,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=116" not in dashboard_html:
+    if "app.js?v=117" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
@@ -868,6 +1109,7 @@ def main():
     checks.append(check_ballet_read_model())
     checks.append(check_ballet_sync())
     checks.append(check_ballet_session_probe())
+    checks.append(check_ballet_session_status())
     checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))
