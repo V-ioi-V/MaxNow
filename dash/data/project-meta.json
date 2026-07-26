@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-25 22:56",
-  "version": "1.0.4.12",
-  "versionLabel": "v1.0.4.12",
-  "branch": "bugfix/openclaw-security-hardening",
-  "commit": "41110c6",
+  "updatedAt": "2026-07-26 10:12",
+  "version": "1.0.4.13",
+  "versionLabel": "v1.0.4.13",
+  "branch": "feature/precise-dounai-daily-budget",
+  "commit": "6e0609c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/openclaw-security-hardening · commit 41110c6 · 有未提交代码改动",
+  "deployNote": "feature/precise-dounai-daily-budget · commit 6e0609c · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-26",
+      "title": "修复豆奶日均预算整数天分母造成的假下降",
+      "summary": "服务器豆奶生成脚本新增 `remaining_days_exact`，用账号快照到有效期的精确剩余秒数计算日均可用预算；`days_remaining` 只保留为整天摘要，不再参与预算计算。"
+    },
     {
       "date": "2026-07-25",
       "title": "收紧 OpenClaw 公网入口、认证与本地文件权限",
@@ -28,11 +33,6 @@
       "date": "2026-07-21",
       "title": "将豆奶余量与日均预算切换为字节级精确数据",
       "summary": "服务器豆奶生成脚本不再把用户面板的两位 TB / GB 标签当作精确余量；每天 09:00 的账号快照优先读取现有订阅 `subscription-userinfo` header，以 `total - upload - download` 计算精确剩余字节和日均可用预算。"
-    },
-    {
-      "date": "2026-07-15",
-      "title": "建立数据失败与新鲜度闭环",
-      "summary": "Home 数据同步开始区分已同步、暂无记录、请求失败、数据过期和尚未同步，覆盖 Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、同行记和生活。"
     }
   ]
 }

@@ -1,5 +1,6 @@
 import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -172,19 +173,28 @@ def check_dounai_checkin():
             return
         if precision not in {"byte", "rounded-label"}:
             raise ValueError(f"dounai-checkin: {label}.remaining_flow_precision is invalid")
-        if precision != "byte":
+        expected_mb = float(item["remaining_flow_mb"])
+        if precision == "byte":
+            remaining_bytes = item.get("remaining_flow_bytes")
+            if isinstance(remaining_bytes, bool) or not isinstance(remaining_bytes, int) or remaining_bytes < 0:
+                raise ValueError(f"dounai-checkin: {label}.remaining_flow_bytes must be a non-negative integer")
+            expected_mb = round(remaining_bytes / 1024 / 1024, 2)
+            if abs(float(item["remaining_flow_mb"]) - expected_mb) > 0.001:
+                raise ValueError(f"dounai-checkin: {label}.remaining_flow_mb does not match byte precision")
+        remaining_days_exact = item.get("remaining_days_exact")
+        if remaining_days_exact is not None:
+            remaining_days_exact = float(remaining_days_exact)
+            if not math.isfinite(remaining_days_exact) or remaining_days_exact <= 0:
+                raise ValueError(f"dounai-checkin: {label}.remaining_days_exact must be finite and positive")
+            expected_daily = round(expected_mb / remaining_days_exact, 2)
+            if abs(float(item["daily_available_mb"]) - expected_daily) > 0.001:
+                raise ValueError(f"dounai-checkin: {label}.daily_available_mb does not match exact remaining duration")
             return
-        remaining_bytes = item.get("remaining_flow_bytes")
-        if isinstance(remaining_bytes, bool) or not isinstance(remaining_bytes, int) or remaining_bytes < 0:
-            raise ValueError(f"dounai-checkin: {label}.remaining_flow_bytes must be a non-negative integer")
-        expected_mb = round(remaining_bytes / 1024 / 1024, 2)
-        if abs(float(item["remaining_flow_mb"]) - expected_mb) > 0.001:
-            raise ValueError(f"dounai-checkin: {label}.remaining_flow_mb does not match byte precision")
         days_remaining = int(item.get("days_remaining", 0))
         if days_remaining > 0:
             expected_daily = round(expected_mb / days_remaining, 2)
             if abs(float(item["daily_available_mb"]) - expected_daily) > 0.001:
-                raise ValueError(f"dounai-checkin: {label}.daily_available_mb does not match precise remaining flow")
+                raise ValueError(f"dounai-checkin: {label}.legacy daily_available_mb does not match whole remaining days")
 
     if account and "remaining_flow_mb" in account:
         remaining = float(account["remaining_flow_mb"])

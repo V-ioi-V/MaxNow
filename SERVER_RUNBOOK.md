@@ -902,6 +902,12 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 - 正式脚本备份：`/root/.openclaw/gen_checkin_data.py.bak-20260721-precise-traffic`；首次刷新前数据备份：`/tmp/dounai_checkin-before-precise-20260721.json`。
 - 首次线上验证得到 `remaining_flow_precision=byte`，`remaining_flow_bytes=1368690004659`，`daily_available_mb=4563.93`（约 `4.46 GB/d`），两份输出均成功写入并通过 `python3 scripts/check.py`。
 
+2026-07-26 已把日均可用预算的时间分母切换为精确剩余时长：
+
+- `/root/.openclaw/gen_checkin_data.py` 新增 `remaining_days_exact`，按账号快照时刻到 `effective_expires_at` 的剩余秒数除以 86400 得到。
+- `daily_available_mb` 改为 `remaining_flow_mb / remaining_days_exact`；`days_remaining` 继续保留为整天摘要，但不再参与预算计算，避免签到延长有效期后连续两天整数分母相同而产生锯齿式假下降。
+- `account` 和当天 `account_history` 保存同一精确时长字段；2026-07-25 及更早历史点保持原口径，不回填伪造的精确时长。
+
 2026-07-05 已做只读调研并接入直接流量使用抓取，确认当前数据边界：
 
 - `records` 保存签到奖励记录，当前线上有 61 天。
