@@ -350,6 +350,8 @@ experiment status -> maxnow-ballet-session-status.timer 每 5 分钟只读本机
 
 2026-07-26 22:12 已部署主分支 `7a57225`（版本 `1.0.5.00`），安装四个生产 unit 模板并完成 `systemd-analyze verify`、Linux fixture tests、`scripts/check.py`、`nginx -t` 与前端 read model 脱敏校验。两个 timer 均为 `disabled / inactive`，两个 service 均为 `inactive`，enable gate 不存在；部署过程没有启动同步器，也没有向闻道增加请求。部署前服务器运行数据备份保留在 `/home/ubuntu/maxnow-deploy-backups/20260726-220836-before-ballet-module`，原有 runtime 数据已恢复。部署完成时 v4 实验仍为 active，权威日志更新时间在一个 20 分钟周期内。
 
+2026-07-27 00:14 已部署主分支 `46f8dce`（版本 `1.0.5.03`）的脱敏 Session 状态发布器。`maxnow-ballet-session-status.timer` 为 `enabled / active / waiting`，oneshot 最近结果为 `success / 0`；它每 5 分钟只读本机日志，不访问闻道。三份已停止日志的 inode 固定为 `root:maxnow-ballet-status 0440`，通过 `/var/lib/maxnow-ballet-session-source` 的同 inode 硬链接供专用无登录账号读取，`/var/lib/private` 及三个原目录均保持 `0700`。公开 read model 校验为 `auth_required`、历史间隔 25 分钟、最后认证 23:03:21、最后检查 23:28:22、已确认 14,166 秒、三阶段样本 4 / 11 / 2；无 Session 值、指纹、内部路径或响应正文。`scripts/check.py`、`nginx -t`、源文件与安装副本比对、硬链接设备 / inode、权限和新鲜度均通过；未登录 `/`、`/data/ballet-session.json`、公开 Blog 分别返回 302 / 401 / 200。生产每日 / 月度 timer 继续 `disabled / inactive`，enable gate 不存在，部署未向闻道新增请求。部署备份保留在 `/home/ubuntu/maxnow-deploy-backups/20260727-001331-before-ballet-source-final`。
+
 身份与错误处理：
 
 - `AUTH_REQUIRED`、`WX_OAUTH_REQUIRED`、`MEMBER_LOGIN_REQUIRED` 立即停止本轮和后续自动重试，保留旧缓存并将 read model 标记为需要重新登录。
