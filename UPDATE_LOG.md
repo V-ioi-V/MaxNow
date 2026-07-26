@@ -11,6 +11,14 @@
 
 ## 2026-07-26
 
+### 启动闻道 Session 服务器持续活动实验
+
+- 新增只允许访问闻道 `simpleclass` 课程表 GET 路径的 `scripts/probe_ballet_session.py`；每条样本仅记录 HTTP / 登录状态、响应摘要、`Set-Cookie` 名称和脱敏 Session 指纹，身份失效或连续 3 次未知 / 网络异常即停止，不具备预约、取消或转课能力。
+- MaxNow 服务器已启动临时 systemd 单元 `maxnow-wenda-session-lifetime-20260726-v3.service`：北京时间 2026-07-26 19:07 起每 10 分钟请求一次，最多持续 30 天；第一条样本返回 HTTP 200 / authenticated，Windows 原 3 小时计划任务随后移除。
+- 探针以 systemd `DynamicUser` 运行，代码为 root 只读，凭据通过 `LoadCredential` 进入 `/run/credentials` 内存运行态；上传源已删除，代码同时锁死唯一课程表 URL、单一 `PHPSESSID`、固定 Referer 与双 HTML 登录标记，显式禁用代理，stdout 不进入 journald。Codex 心跳自动化 `session` 每 30 分钟只读检查服务与脱敏日志，不会追加闻道请求。
+- 本实验只验证“持续活动时能维持多久”，不能据此判断静默闲置寿命；没有调用预约、候补、取消或转课接口。删除本地 / 服务器凭据文件也不等于吊销闻道服务端仍可能有效的 Session。
+- 版本提升到 `1.0.4.14`。
+
 ### 修复豆奶日均预算整数天分母造成的假下降
 
 - 服务器豆奶生成脚本新增 `remaining_days_exact`，用账号快照到有效期的精确剩余秒数计算日均可用预算；`days_remaining` 只保留为整天摘要，不再参与预算计算。

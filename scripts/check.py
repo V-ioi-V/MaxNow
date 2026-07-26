@@ -113,6 +113,8 @@ def check_required_files():
         "scripts/report_codex_usage.sh",
         "scripts/install_local_codex_usage_launchd.sh",
         "scripts/refresh_token_usage_on_server.sh",
+        "scripts/probe_ballet_session.py",
+        "scripts/test_probe_ballet_session.py",
         "scripts/maxnow_auth_service.py",
         "server/maxnow-auth.service",
         "server/maxnow-auth-rate-limit.conf",
@@ -151,6 +153,31 @@ def check_auth_surface():
     if result.returncode != 0:
         raise ValueError("auth surface: service self-test failed: " + result.stdout.strip())
     return "auth surface: login, logout, and session checks are valid"
+
+
+def check_ballet_session_probe():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(ROOT / "scripts/test_probe_ballet_session.py"),
+        ],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=20,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "ballet session probe: self-test failed: "
+            + result.stdout.strip()
+        )
+    return (
+        "ballet session probe: fixed read-only URL, fail-closed auth, "
+        "secret-safe logs, rotation, and stop paths are valid"
+    )
 
 
 def check_local_server(url):
@@ -714,6 +741,7 @@ def main():
     checks.append(check_today_progress_ring())
     checks.append(check_secondary_view_style())
     checks.append(check_data_health_contract())
+    checks.append(check_ballet_session_probe())
     checks.append(check_auth_surface())
     checks.append(check_local_server("http://127.0.0.1:4173/"))
     checks.append(check_local_server("http://127.0.0.1:4173/dash/"))

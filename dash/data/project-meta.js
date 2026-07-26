@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-26 10:12",
-  "version": "1.0.4.13",
-  "versionLabel": "v1.0.4.13",
-  "branch": "feature/precise-dounai-daily-budget",
-  "commit": "6e0609c",
+  "updatedAt": "2026-07-26 19:13",
+  "version": "1.0.4.14",
+  "versionLabel": "v1.0.4.14",
+  "branch": "unknown",
+  "commit": "98d0a9f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/precise-dounai-daily-budget · commit 6e0609c · 有未提交代码改动",
+  "deployNote": "unknown · commit 98d0a9f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-26",
+      "title": "启动闻道 Session 服务器持续活动实验",
+      "summary": "新增只允许访问闻道 `simpleclass` 课程表 GET 路径的 `scripts/probe_ballet_session.py`；每条样本仅记录 HTTP / 登录状态、响应摘要、`Set-Cookie` 名称和脱敏 Session 指纹，身份失效或连续 3 次未知 / 网络异常即停止，不具备预约、取消或转课能力。"
+    },
     {
       "date": "2026-07-26",
       "title": "修复豆奶日均预算整数天分母造成的假下降",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-21",
       "title": "首页小日历增加下一特殊日期",
       "summary": "小日历新增独立的下一特殊日期行，统一比较内置公历 / 农历节日和个人特殊日期，按“x天后是xx日（x月x日）”展示严格晚于今天的最近一项；当天节日 / 特殊日期行继续保留，两者可同时显示。"
-    },
-    {
-      "date": "2026-07-21",
-      "title": "将豆奶余量与日均预算切换为字节级精确数据",
-      "summary": "服务器豆奶生成脚本不再把用户面板的两位 TB / GB 标签当作精确余量；每天 09:00 的账号快照优先读取现有订阅 `subscription-userinfo` header，以 `total - upload - download` 计算精确剩余字节和日均可用预算。"
     }
   ]
 };
