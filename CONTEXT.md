@@ -14,6 +14,7 @@ MaxNow 要成为一个私人状态工作站，而不是新闻站或通用仪表�
 - 我当前正在推进哪些主线。
 - 今天和本周发生了什么重要事情。
 - 最近 30 天有哪些持续主线、决定和卡点。
+- 下一节芭蕾课是什么、最近实际训练节奏如何。
 - OpenClaw、服务器、数据同步和 Token 使用是否正常。
 - 有哪些外部 AI / 工具信号值得稍后注意。
 
@@ -215,10 +216,13 @@ Owner 已确认后续要在 MaxNow 增加芭蕾模块。产品定义从原来的
 - 闻道微信公众号 H5 提供课程表、当前预约、候补 / 余位、上课记录和会员课次等机器事实；已验证课程、预约和上课记录可以分别读取。
 - personal-wiki 负责当前级别、阶段目标、课堂笔记、老师纠正、动作标签、练习记录和 Owner 人工判断；MaxNow 只做单向同步与只读展示。
 - 未来芭蕾数据由服务器隔离采集器生成脱敏 read model，前端不直连闻道、不回写 personal-wiki，也不因打开页面而触发预约。
-- 只读 MVP 的优先级是：下一节课、本周训练、未来预约、真实上课历史、学习统计和数据新鲜度；自动约课排在数据可信与学习闭环之后。
-- 芭蕾内容不并入“生活 / 吃啥”。数据稳定后可评估独立 `secondary-view` 页面；Home 最多显示下一节课、本周进度和状态，Cloud 只显示采集 / Session / 自动化健康。
+- 已确认独立 `secondary-view` 页面名称“芭蕾”、副标题“课程与进度”，入口实现后位于 Home 下、豆奶上。页面使用粉玫瑰 + 白卡语义但不另做宣传型视觉；导航图标用舞鞋而非心形。
+- 只读 MVP 的优先级是：下一节课、本周训练、未来预约、真实上课历史、累计节数 / 小时、课型与 L1-L4 级别细分、月 / 年趋势和数据新鲜度；自动约课排在数据可信与学习闭环之后。
+- 芭蕾内容不并入“生活 / 吃啥”。Home 只显示下一节课、本周进度和状态，独立页承载明细与图表，Cloud 只显示采集 / Session / 自动化健康。
+- 服务器私有 canonical ledger 是上课事实唯一机器真相：首次全量回填，日常重扫最近 60 个逻辑日并幂等 upsert，每月 1 日 00:47 全量校验；逻辑日界为北京时间 00:00，实际默认 00:17 运行。同步失败保留上次成功账本与聚合，只更新独立 `sync-state.json`；当前预约另存 36 小时 TTL 的 `booking-snapshot.json`。
+- 月、年和全局的节数 / 分钟以及课程分类在同步时预聚合；前端不重复遍历全历史。人类可读文档若需要，只从账本单向生成，不成为第二份可编辑事实源。
 - 当前 Session 生命周期实验属于可行性证据，不是最终登录方案，也不能证明空闲 Session 寿命；unit、原始日志、凭据挂载和停止方式只在 `SERVER_RUNBOOK.md` 维护。
-- 未来 `dash/data/ballet.*` 只能保存脱敏前端读模型；`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端或仓库。
+- 未来 `dash/data/ballet.*` 只能保存脱敏前端读模型与预聚合统计；同步状态同时保存最近尝试、最近成功、数据变更时间、逻辑日期、抓取窗口、连续失败和安全错误码。`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端或仓库。
 - 自动化模式固定分为 `off`、`dry-run`、`enabled`。真实提交必须在连续 dry-run、幂等校验、有限重试、失败停止和 Owner 单独批准后启用；默认不自动取消或转课。
 
 ## 上下文更新规则
@@ -240,7 +244,7 @@ Owner 已确认后续要在 MaxNow 增加芭蕾模块。产品定义从原来的
 ## 当前缺口
 
 - 2026-07-25 已完成 OpenClaw 与服务器入口加固：腾讯云仅公开 80/443，SSH 仅允许 Owner 当前公网 IPv4 `/32`；Gateway 只监听 loopback，关闭不安全认证和设备认证绕过，增加认证限速，关闭浏览器私网 SSRF 放行，并将非内置插件收敛到 `memory-tencentdb` / `openclaw-weixin` allowlist。配置与会话文件为 `0600`、目录为 `0700`，Gateway 使用 `UMask=0077`；腾讯文档脚本已从 shell 字符串拼接改为参数数组执行。Dash 未登录数据请求仍为 `401`，噗噗和微信通道复验正常。后续如需 Control UI，只通过 Owner 白名单网络上的 SSH 隧道访问，不恢复公网 12123/16980/3000。
-- 2026-07-25 已记录 LIJUN 芭蕾远端自动约课方案。目标入口是微信公众号内 H5 而非小程序，通过微信 `snsapi_base` OAuth 建立 `PHPSESSID` 网站会话；一次只读验证已证明，电脑微信退出后，MaxNow 服务器仍可使用该会话访问首页和课程表而不重新 OAuth。
+- 2026-07-26 已将 LIJUN 方向完善为“芭蕾学习模块 + 受控约课”：确认未来导航位于 Home 下、豆奶上，页面采用粉玫瑰 + 白卡，机器事实使用首次全量 / 60 日滚动 upsert / 每月全量校验的本地账本，趋势使用月 / 年 / 全部与节数 / 小时切换。目标入口是微信公众号内 H5 而非小程序，通过微信 `snsapi_base` OAuth 建立 `PHPSESSID` 网站会话；一次只读验证已证明，电脑微信退出后，MaxNow 服务器仍可使用该会话访问首页和课程表而不重新 OAuth。
 - 2026-07-26 19:07 已开始第一阶段服务器持续活动实验；19:41 按 Owner 要求将只读课程表频率由每 10 分钟降为每 20 分钟。当前临时单元为 `maxnow-wenda-session-lifetime-20260726-v4.service`，首条交接样本为 HTTP 200 / authenticated；原 v3 已正常停止、凭据挂载已消失，10 分钟与 20 分钟阶段日志分开保留。v4 沿用原始绝对截止时间 2026-08-25 19:07:15，不重置 30 天上限，服务器重启后不会自动恢复。探针继续使用 root 只读代码、systemd `DynamicUser` 与 `LoadCredential`；活动凭据只存在于 v4 的 `/run/credentials` 运行态。Windows 原实验任务已移除，Codex 心跳自动化 `session` 每 30 分钟只读合并检查两阶段脱敏日志。
 - 这项实验不提交预约 / 候补 / 取消 / 转课，也不能证明静默闲置寿命。后续仍按 `ROADMAP.md` 的 Later 分阶段推进：先完成会话寿命结论，再做课程解析 dry-run，最后在 Owner 明确课程优先级、候补规则、通知渠道并批准真实提交后启用。`PHPSESSID` 必须按约课网站密码处理，不得进入 Git、前端、日志、备份、环境变量或命令参数；删除本地凭据不等于吊销闻道服务端会话。
 - 2026-07-15 已补齐 JSON 读取失败与新鲜度闭环：前端区分已同步、暂无记录、请求失败、数据过期和尚未同步，并按来源保留浏览器最后成功响应；Home 数据健康覆盖 Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、同行记和生活。服务器状态会把 Dashboard runtime、AI Last-30、Token sources、Token ledger 连续失败 3 次升级为异常。`.js` wrapper 保留生成一致性用途，不再作为运行时失败的主要兜底。
@@ -266,6 +270,7 @@ Owner 已确认后续要在 MaxNow 增加芭蕾模块。产品定义从原来的
 - Home 顶部已新增北京市海淀区天气卡：地点、天气、当前温度、今日高低温和图标来自 `dashboard.json.weather`，并由 `runtime` 定时刷新。
 - Home 主内容区顶部已拆成左侧 Token 热力格 + Personal Wiki 近期待办竖向栈、右侧市场涨幅卡：左侧上方展示近 90 天 Token 活动，左侧下方展示 personal-wiki 近期待办，右侧展示纳指100、标普500、上证指数、深证成指和创业板指；行情数据来自 `dash/data/market-indices.json` 并由 `runtime` 每 10 分钟刷新。
 - Home 左侧导航栏已收窄到更紧凑的桌面宽度，保留当前六个一级入口，不做折叠侧栏。
+- 芭蕾是已确认但尚未实现的第七入口；上线时需验证短屏侧栏滚动，以及 `720px` / `768px` 高度和 `860px` / `390px` 宽度下的导航与图表几何。
 - 前端静态站已部署到 `dash.maxnow.cn`；仓库位于 `/var/www/maxnow-dashboard`，nginx 应指向 `/var/www/maxnow-dashboard/dash`。
 - Dash 访问保护由 `dash/login.html`、`scripts/maxnow_auth_service.py`、nginx `auth_request` 和 7 天 HttpOnly 会话 Cookie 共同负责，覆盖页面、静态资源和 `/data/`；认证服务只监听 `127.0.0.1:8765`，复用现有 htpasswd 哈希，不读取 Dashboard 数据。真实凭据和会话密钥不进入仓库，Blog 不继承 Dash 认证策略。
 - `maxnow.cn` 权威 DNS 继续由 DNSPod 托管，nameserver 为 `achernar.dnspod.net` / `cylinder.dnspod.net`；Cloudflare Access 评估已停止，不属于当前访问链路。
@@ -280,4 +285,4 @@ Owner 已确认后续要在 MaxNow 增加芭蕾模块。产品定义从原来的
 
 1. 继续完成 Blog 发布 manifest、front matter 策略、第一批公开文章清单和静态构建链路。
 2. 补前端 smoke test、JavaScript 语法检查、移动端几何回归和无障碍状态，再扩展新的一级页面。
-3. 观察闻道 Session 生命周期实验；结束后先定义芭蕾模块脱敏数据契约和 personal-wiki 学习记录格式，再实现只读 MVP。
+3. 观察闻道 Session 生命周期实验；结束后先落地芭蕾 canonical ledger、稳定键、同步状态和脱敏 `ballet.*` 契约，再实现只读页面、Home 摘要和 personal-wiki 学习记录同步。
