@@ -225,7 +225,7 @@ credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 credential version -> /etc/maxnow-ballet/credential-version
 enable gate -> /etc/maxnow-ballet/enable-sync
 frontend read model -> /var/www/maxnow-dashboard/dash/data/ballet.json + ballet.js
-current state -> 加密凭据已密封；代码 / page / unit 可部署，enable gate 不存在且两个生产 timer 保持 disabled
+current state -> 代码 / page 已部署；加密凭据已密封；unit 已安装，enable gate 不存在且两个生产 timer 保持 disabled
 ```
 
 同步器只允许已确认的闻道只读 GET 页面：
@@ -244,6 +244,8 @@ current state -> 加密凭据已密封；代码 / page / unit 可部署，enable
 - Owner 刷新流程是：在电脑微信重新登录并打开闻道页面，使用本地受控提取流程取得新会话，再通过不回显的加密输入流更新服务器凭据。任何文档、日志和聊天只记录“凭据已更新”和安全版本，不记录值。
 
 2026-07-26 21:23 已在服务器内部把 v4 生命周期实验当前的临时 systemd credential 密封为上述 host-bound 加密凭据，并用只写临时输出的解密自检确认可用后立即删除临时明文；全过程没有把值输出、下载或写入仓库。加密文件为 root `0600`。本机没有完整 TPM 保护，systemd host key 位于服务器 root 管理的 `/var/lib/systemd/credential.secret`；因此它能防止普通文件读取和误入 Git / 日志，但拥有服务器 root 权限的人仍可解密，不能把它描述成硬件不可导出密钥。生产同步仍未发起任何请求。
+
+2026-07-26 22:12 已部署主分支 `7a57225`（版本 `1.0.5.00`），安装四个生产 unit 模板并完成 `systemd-analyze verify`、Linux fixture tests、`scripts/check.py`、`nginx -t` 与前端 read model 脱敏校验。两个 timer 均为 `disabled / inactive`，两个 service 均为 `inactive`，enable gate 不存在；部署过程没有启动同步器，也没有向闻道增加请求。部署前服务器运行数据备份保留在 `/home/ubuntu/maxnow-deploy-backups/20260726-220836-before-ballet-module`，原有 runtime 数据已恢复。部署完成时 v4 实验仍为 active，权威日志更新时间在一个 20 分钟周期内。
 
 身份与错误处理：
 

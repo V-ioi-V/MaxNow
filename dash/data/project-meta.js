@@ -1,17 +1,17 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-26 22:01",
+  "updatedAt": "2026-07-26 22:13",
   "version": "1.0.5.00",
   "versionLabel": "v1.0.5.00",
   "branch": "feature/ballet-module",
-  "commit": "6c8c7a3",
+  "commit": "7a57225",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-module · commit 6c8c7a3 · 有未提交代码改动",
+  "deployNote": "feature/ballet-module · commit 7a57225 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-26",
-      "title": "开始实现芭蕾只读学习模块",
+      "title": "上线芭蕾只读学习模块",
       "summary": "左侧导航顺序调整为首页 → 豆奶 → Token → 芭蕾 → 云服务 → 生活 → 同行记，取代当天较早记录的 Home 下方候选位置；芭蕾页沿用 `secondary-view`，使用粉玫瑰 + 白卡语义，并提供 Home 紧凑摘要。"
     },
     {
