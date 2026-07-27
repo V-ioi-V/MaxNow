@@ -152,7 +152,7 @@ scheduled end -> 2026-08-26 00:26:55 Asia/Shanghai
 first sample -> 2026-07-27 00:26:56 / HTTP 200 / authenticated / attempts=1
 ```
 
-v6 首条样本没有观察到 `Set-Cookie` 或 Session 变化。这个结果只证明 00:26:56 时该会话有效；后续正常样本也只能扩展“持续活动下已确认有效”的证据，不能单独证明滑动过期、自动续期或空闲寿命。
+v6 首条样本没有观察到 `Set-Cookie` 或 Session 变化。这个结果只证明 00:26:56 时该会话有效；后续正常样本也只能扩展“持续活动下已确认有效”的证据，不能单独证明滑动过期、自动续期或空闲寿命。2026-07-27 12:01 起，该 Session 还执行过一次 Owner 批准的预约 / 上课记录只读同步，因此 12:01 后的证据只能称为“持续只读活动寿命”，不能再声称请求来源只有固定课程列表探针。
 
 上一代 v3-v5 已结束，保留为独立历史证据：
 
@@ -291,9 +291,9 @@ python3 scripts/check.py
 
 两个 5 分钟任务只做本地脱敏日志转存和状态发布，不是 20 分钟闻道请求频率，也不是 Session 续期器。探针失效 / 延迟 / 中断后，页面冻结最后一次 `authenticated` 时长并显示安全原因。
 
-### 芭蕾生产只读同步（待启用）
+### 芭蕾生产只读同步（首次同步完成，定时待启用）
 
-芭蕾页面与脱敏缓存已经部署，但生产闻道抓取当前保持未启用。2026-07-27 已用新会话原子替换生产 host-bound 加密凭据并更新非敏感凭据版本；v6 固定课程列表探针的首条只读验证已通过，但这不等于生产历史 / 预约抓取已获准。不得手动运行生产同步或启用 timer；只有 Owner 单独批准 enable gate 后，再按下述流程启用。
+芭蕾页面与脱敏缓存已经部署。2026-07-27 已用新会话原子替换生产 host-bound 加密凭据；Owner 于 12:01 单独批准并完成一次 rolling 只读同步，成功刷新真实上课记录和预约快照。每日 / 每月自动抓取仍未启用；不得把一次手动同步解释为 timer 已获准，只有 Owner 再次单独批准后，才创建长期 enable gate 并启用 timer。
 
 目标运行边界：
 
@@ -309,8 +309,8 @@ credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 credential version -> /etc/maxnow-ballet/credential-version
 enable gate -> /etc/maxnow-ballet/enable-sync
 frontend read model -> /var/www/maxnow-dashboard/dash/data/ballet.json + ballet.js
-current state -> 代码 / page 已部署；2026-07-27 新加密凭据已密封；unit 已安装，enable gate 不存在且两个生产 timer 保持 disabled
-experiment status -> v6 每 20 分钟只读课程列表；本地 exporter / status timer 每 5 分钟转存并发布 ballet-session.*，不访问闻道
+current state -> 代码 / page 已部署；2026-07-27 新加密凭据已密封；首次 rolling 同步成功；enable gate 不存在且两个生产 timer 保持 disabled
+experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾执行一次额外预约 / 上课记录只读同步；本地 exporter / status timer 每 5 分钟转存并发布 ballet-session.*，不访问闻道
 ```
 
 同步器只允许已确认的闻道只读 GET 页面：
@@ -335,6 +335,8 @@ experiment status -> v6 每 20 分钟只读课程列表；本地 exporter / stat
 2026-07-27 00:14 已部署主分支 `46f8dce`（版本 `1.0.5.03`）的脱敏 Session 状态发布器。`maxnow-ballet-session-status.timer` 为 `enabled / active / waiting`，oneshot 最近结果为 `success / 0`；它每 5 分钟只读本机日志，不访问闻道。三份已停止日志的 inode 固定为 `root:maxnow-ballet-status 0440`，通过 `/var/lib/maxnow-ballet-session-source` 的同 inode 硬链接供专用无登录账号读取，`/var/lib/private` 及三个原目录均保持 `0700`。公开 read model 校验为 `auth_required`、历史间隔 25 分钟、最后认证 23:03:21、最后检查 23:28:22、已确认 14,166 秒、三阶段样本 4 / 11 / 2；无 Session 值、指纹、内部路径或响应正文。`scripts/check.py`、`nginx -t`、源文件与安装副本比对、硬链接设备 / inode、权限和新鲜度均通过；未登录 `/`、`/data/ballet-session.json`、公开 Blog 分别返回 302 / 401 / 200。生产每日 / 月度 timer 继续 `disabled / inactive`，enable gate 不存在，部署未向闻道新增请求。部署备份保留在 `/home/ubuntu/maxnow-deploy-backups/20260727-001331-before-ballet-source-final`。
 
 2026-07-27 00:26 Owner 建立新微信会话后，本机只在内存解密最新 `gm.wendaosoft.com` Cookie 并确认与旧会话不同；新凭据经 SSH 标准输入直接密封为 `/etc/credstore.encrypted/maxnow-wenda-session-v6.cred` 和新的生产 `/etc/credstore.encrypted/maxnow-ballet-wenda.cred`，均为 root `0600`，没有在服务器持久化明文。00:26:55 启动 v6 每 20 分钟 transient 探针，00:26:56 首条为 HTTP 200 / authenticated、`attempts=1`、无 `Set-Cookie` / Session 变化。新增 `maxnow-ballet-session-log-export.timer` 每 5 分钟原子转存活动脱敏日志，随后由非 root 状态发布器生成页面数据；00:29 公开状态为 `running`、间隔 20 分钟、样本 1、下一次 00:46:55。生产每日 / 月度 timer 及 enable gate 继续关闭。
+
+2026-07-27 12:01 已部署主分支 `e5d10258` 的多节预约展示并完成 Owner 批准的首次真实 rolling 同步。部署前运行时数据和 Git 差异备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-bookings-tDzq1X`，服务器 Git remote 从失效的 `ssh.github.com:443` 切回与现有 `gh` 登录一致的 HTTPS。首次启动因非敏感凭据版本包含 `:` / `+` 在网络请求前安全退出；规范化为 `v6-20260727T002655-0800` 后成功，PHPSESSID 加密文件未改动。成功同步发出 7 个 allowlist GET，写入 1 条实际上课记录和 3 条未来正式预约；同步后 gate 已删除，两个生产 timer 仍为 disabled。服务器项目检查和状态发布器 oneshot 均通过。12:01 后的 v6 证据包含这组额外只读请求，不再属于“仅固定课程列表 GET”的纯实验阶段。
 
 身份与错误处理：
 
