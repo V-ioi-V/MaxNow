@@ -342,6 +342,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 
 2026-07-27 14:57 临时创建 enable gate 完成一次 Owner 要求的 rolling 只读复查，成功后立即删除 gate；每日 / 月度 timer 继续 disabled。复查缓存仍只有 3 条未来预约，随后用同一 host-bound 凭据在受限 transient unit 中各执行一次约课索引和排队详情 GET，只输出脱敏解析字段：索引实际包含 3 条“已预约”、1 条“排队中”和 1 条“已上课”，排队详情状态为“等候中, 排队序号 4”。根因是同步器只接受精确的“排队中 / 候补中”，已在 `1.0.5.08` 将“等候中”前缀归一为 `waitlist` 并补回归测试。诊断未输出记录 ID、响应正文或凭据，备份位于 `/home/ubuntu/maxnow-deploy-backups/20260727-booking-refresh-rN6L2e`。
 
+2026-07-27 15:04 已部署主分支 `34209b91`（版本 `1.0.5.08`），部署前运行数据和芭蕾私有状态备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-waitlist-fix-mTtO1I`。服务器 12 项芭蕾同步测试和全仓检查通过；随后临时创建 enable gate 执行一次 rolling 只读同步并立即删除。最终 read model 为 2 节 / 150 分钟上课历史、3 条 `booked` 和 1 条 `waitlist`；同步服务 `success / 0`，每日 / 月度 timer 继续 disabled，v6 20 分钟实验仍 active。
+
 身份与错误处理：
 
 - `AUTH_REQUIRED`、`WX_OAUTH_REQUIRED`、`MEMBER_LOGIN_REQUIRED` 立即停止本轮和后续自动重试，保留旧缓存并将 read model 标记为需要重新登录。
