@@ -354,6 +354,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 
 2026-07-27 16:24 已部署主分支 `df6fa7e`（版本 `1.0.5.13`），撤销下一节预约的固定宽度居中，改为日期 / 弹性课程信息 / 状态三段式自适应布局，并在 `1200px` 以下提前堆叠顶部两个 tab。部署前运行数据备份在 `/home/ubuntu/maxnow-deploy-backups/ballet-adaptive-z5IQdSnY`；服务器全仓检查通过，预约缓存仍为 3 条 `booked` + 1 条 `waitlist`。本次部署未访问闻道、未创建 enable gate；每日 / 月度 timer 继续 disabled。
 
+2026-07-27 16:38 已部署主分支 `1724fb7`（版本 `1.0.5.14`），移除共享 hover 规则强制覆盖的纯白背景，使各详情页卡片在上浮、加强边框和阴影时继续保留原有白底或轻主题渐变。部署前运行数据备份在 `/home/ubuntu/maxnow-deploy-backups/card-hover-3q1eOwVm`；服务器全仓检查通过，预约缓存仍为 3 条 `booked` + 1 条 `waitlist`。本次部署未访问闻道、未创建 enable gate；每日 / 月度 timer 继续 disabled。
+
 身份与错误处理：
 
 - `AUTH_REQUIRED`、`WX_OAUTH_REQUIRED`、`MEMBER_LOGIN_REQUIRED` 立即停止本轮和后续自动重试，保留旧缓存并将 read model 标记为需要重新登录。
