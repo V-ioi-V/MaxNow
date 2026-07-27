@@ -1066,7 +1066,7 @@ def check_secondary_view_style():
         ".secondary-page-head {",
         ".ballet-primary-grid {",
         ".ballet-bookings-panel {",
-        ".ballet-upcoming-item.is-featured {",
+        ".ballet-upcoming-note {",
         "#tokens-view {",
         "#dounai-view {",
         "#ballet-view {",
@@ -1106,13 +1106,14 @@ def check_secondary_view_style():
     if any(retired in ballet_view_markup for retired in ("ballet-page-intro", "ballet-head-next", "ballet-next-status", "ballet-next-panel")):
         raise ValueError("secondary views: retired next-class layout remains")
     if (
-        "function createBalletUpcomingItem(record, isFeatured = false)" not in dashboard_js
+        "function createBalletUpcomingItem(record)" not in dashboard_js
         or "formatBalletCancellation(record)" not in dashboard_js
-        or "createBalletUpcomingItem(record, index === 0)" not in dashboard_js
+        or "records.map(createBalletUpcomingItem)" not in dashboard_js
         or 'class="panel ballet-bookings-panel"' not in ballet_view_markup
-        or "ballet-upcoming-priority" not in dashboard_js
+        or 'cancellation.className = "ballet-upcoming-note"' not in dashboard_js
+        or "is-featured" in dashboard_js
     ):
-        raise ValueError("secondary views: featured next booking hierarchy is incomplete")
+        raise ValueError("secondary views: uniform booking rows or cancellation deadlines are incomplete")
     if (
         '<details class="panel ballet-session-card" open' not in ballet_view_markup
         or '<summary class="ballet-session-summary">' not in ballet_view_markup
@@ -1124,9 +1125,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=156" not in dashboard_html
+        "styles.css?v=157" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=129" not in dashboard_html
+        or "app.js?v=130" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     polish_rules = (
@@ -1165,7 +1166,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=129" not in dashboard_html:
+    if "app.js?v=130" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

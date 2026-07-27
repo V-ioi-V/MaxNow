@@ -4495,7 +4495,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-bookings-panel .ballet-upcoming-list {
   flex: 1;
   display: grid;
-  grid-template-rows: minmax(190px, 1fr);
   grid-auto-rows: auto;
   gap: 8px;
 }
@@ -5144,62 +5143,22 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-bookings-panel .ballet-upcoming-item {
   grid-template-columns: 70px minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
   gap: 10px;
   padding: 9px 11px;
 }
 
-.ballet-bookings-panel .ballet-upcoming-item.is-featured {
-  grid-template-columns: minmax(96px, 0.3fr) minmax(0, 1fr);
-  grid-template-rows: 1fr auto;
-  gap: 14px 16px;
-  min-height: 190px;
-  padding: 18px;
-  border-color: var(--ballet-border);
-  background: linear-gradient(135deg, #fff3f7, #ffffff 72%);
-}
-
-.ballet-bookings-panel .ballet-upcoming-item.is-featured .ballet-upcoming-date {
-  min-height: 96px;
+.ballet-bookings-panel .ballet-upcoming-date {
   grid-row: 1 / span 2;
-  align-content: center;
-  justify-items: center;
-  padding: 12px 8px;
-  border: 1px solid var(--ballet-border);
-  border-radius: var(--radius);
-  background: #ffffff;
-  text-align: center;
-}
-
-.ballet-bookings-panel .ballet-upcoming-item.is-featured .ballet-upcoming-date strong {
-  font-size: 18px;
-}
-
-.ballet-bookings-panel .ballet-upcoming-item.is-featured > div:nth-child(2) > strong {
-  font-size: 20px;
-  line-height: 1.2;
-}
-
-.ballet-upcoming-priority {
-  width: max-content;
-  border: 1px solid var(--ballet-border);
-  border-radius: 999px;
-  padding: 3px 8px;
-  background: #ffffff;
-  color: var(--ballet);
-  font-size: 10px;
-  font-weight: 850;
-  letter-spacing: 0.06em;
 }
 
 .ballet-upcoming-note {
+  grid-column: 2 / -1;
+  grid-row: 2;
   color: var(--ballet) !important;
-  font-weight: 750;
-  line-height: 1.45;
-}
-
-.ballet-bookings-panel .ballet-upcoming-item.is-featured .ballet-history-meta {
-  grid-column: 2;
-  justify-content: flex-start;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 /* Shared visual shell for every sidebar view except Home. */
@@ -5767,13 +5726,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     justify-content: flex-start;
   }
 
-  .ballet-bookings-panel .ballet-upcoming-item:not(.is-featured) {
-    grid-template-columns: minmax(82px, 0.2fr) minmax(0, 1fr);
-  }
-
-  .ballet-bookings-panel .ballet-upcoming-item:not(.is-featured) .ballet-history-meta {
-    grid-column: 2;
-  }
 }
 
 @media (max-width: 560px) {
@@ -5848,15 +5800,14 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     grid-column: auto;
   }
 
-  .ballet-bookings-panel .ballet-upcoming-item,
-  .ballet-bookings-panel .ballet-upcoming-item.is-featured {
+  .ballet-bookings-panel .ballet-upcoming-item {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
   }
 
-  .ballet-bookings-panel .ballet-upcoming-item.is-featured .ballet-upcoming-date,
-  .ballet-bookings-panel .ballet-upcoming-item.is-featured .ballet-history-meta,
-  .ballet-bookings-panel .ballet-upcoming-item:not(.is-featured) .ballet-history-meta {
+  .ballet-bookings-panel .ballet-upcoming-date,
+  .ballet-bookings-panel .ballet-upcoming-note,
+  .ballet-bookings-panel .ballet-upcoming-item .ballet-history-meta {
     grid-column: auto;
     grid-row: auto;
     justify-content: flex-start;

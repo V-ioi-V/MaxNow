@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 00:09",
-  "version": "1.0.5.26",
-  "versionLabel": "v1.0.5.26",
-  "branch": "feature/expand-ballet-session-details",
-  "commit": "db41677",
+  "updatedAt": "2026-07-28 00:15",
+  "version": "1.0.5.27",
+  "versionLabel": "v1.0.5.27",
+  "branch": "feature/unify-ballet-bookings",
+  "commit": "1807ca7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/expand-ballet-session-details · commit db41677 · 有未提交代码改动",
+  "deployNote": "feature/unify-ballet-bookings · commit 1807ca7 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "统一所有预约行并补齐取消截止",
+      "summary": "删除第一条预约的大号主卡和“下一节”特殊标识，让所有未来预约使用同一紧凑行样式；每条预约都在时间与老师下方增加小字号真实最晚取消时间。"
+    },
     {
       "date": "2026-07-28",
       "title": "默认展开 PHPSESSID 实验详情",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-27",
       "title": "合并顶部预约并强化下一节层级",
       "summary": "删除独立“下一节预约”面板和下方重复的整宽预约面板，将“所有预约”直接放进顶部左卡，与本周训练、课程卡并列。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "将芭蕾核心三卡置顶",
-      "summary": "芭蕾页顶部改为“下一节预约 / 本周训练 / 课程卡”三个同级面板，宽桌面同排同高，`1200px` 及以下按使用顺序单列堆叠。"
     }
   ]
 };

@@ -3152,10 +3152,9 @@ function renderBalletHistory() {
   container.append(...records.slice(0, 24).map(createBalletHistoryItem));
 }
 
-function createBalletUpcomingItem(record, isFeatured = false) {
+function createBalletUpcomingItem(record) {
   const article = document.createElement("article");
   article.className = "ballet-upcoming-item";
-  if (isFeatured) article.classList.add("is-featured");
   const date = document.createElement("time");
   const dateText = balletRecordDate(record);
   const parsedDate = parseLocalDateTime(dateText);
@@ -3179,17 +3178,10 @@ function createBalletUpcomingItem(record, isFeatured = false) {
     timeRange,
     balletTeacher(record),
   ].filter(Boolean).join(" · ") || "课程详情待补";
-  if (isFeatured) {
-    const priority = document.createElement("span");
-    priority.className = "ballet-upcoming-priority";
-    priority.textContent = "下一节";
-    const cancellation = document.createElement("small");
-    cancellation.className = "ballet-upcoming-note";
-    cancellation.textContent = formatBalletCancellation(record) || "取消截止时间待补";
-    main.append(priority, title, meta, cancellation);
-  } else {
-    main.append(title, meta);
-  }
+  const cancellation = document.createElement("small");
+  cancellation.className = "ballet-upcoming-note";
+  cancellation.textContent = formatBalletCancellation(record) || "最晚取消时间待同步";
+  main.append(title, meta);
   const tags = document.createElement("div");
   tags.className = "ballet-history-meta";
   const bookingLabel = getBalletBookingStatusLabel(record);
@@ -3210,7 +3202,7 @@ function createBalletUpcomingItem(record, isFeatured = false) {
       if (item.status) span.dataset.bookingStatus = item.status;
       tags.appendChild(span);
     });
-  article.append(date, main, tags);
+  article.append(date, main, cancellation, tags);
   return article;
 }
 
@@ -3226,9 +3218,7 @@ function renderBalletUpcoming() {
     container.appendChild(emptyTemplate.content.cloneNode(true));
     return;
   }
-  container.append(
-    ...records.map((record, index) => createBalletUpcomingItem(record, index === 0)),
-  );
+  container.append(...records.map(createBalletUpcomingItem));
 }
 
 function renderBalletHome() {
