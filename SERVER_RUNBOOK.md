@@ -378,6 +378,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 
 2026-07-27 删除芭蕾内容区重复标题卡。部署前页面文件已备份至 `/home/ubuntu/maxnow-deploy-backups/ballet-compact-header-kS2cEb`；线上只保留低权重“数据更新”时间，下一节预约成为首个全宽有效模块，不再显示 `Ballet Progress / 芭蕾 / 已同步` 重复信息。服务器全仓检查与 `nginx -t` 通过，匿名访问边界保持 Dash `302`、`ballet.json` `401`、Blog `200`，页面缓存为 `styles.css?v=148` / `app.js?v=124`。
 
+2026-07-27 按使用优先级重排芭蕾页面。部署前页面文件已备份至 `/home/ubuntu/maxnow-deploy-backups/ballet-layout-priority-NT0sXO`；线上顺序为更新时间 / 下一节课、本周训练 / 课程卡、所有预约、上课统计、上课历史、PHPSESSID 实验详情。1280px 下本周训练与课程卡分别约 313px / 650px 宽、均为 414px 高；1200px 及以下按顺序堆叠。PHPSESSID 详情默认收起，摘要可聚焦并保留异常状态。服务器全仓检查与 `nginx -t` 通过，匿名访问边界保持 Dash `302`、`ballet.json` `401`、Blog `200`，样式缓存为 `styles.css?v=149`。
+
 2026-06-17 晚间已部署参考风格刷新版本：
 
 ```text
