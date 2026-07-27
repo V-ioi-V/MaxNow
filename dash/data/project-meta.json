@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 15:45",
-  "version": "1.0.5.12",
-  "versionLabel": "v1.0.5.12",
-  "branch": "feature/ballet-center-deploy-record",
-  "commit": "04d6413",
+  "updatedAt": "2026-07-27 16:23",
+  "version": "1.0.5.13",
+  "versionLabel": "v1.0.5.13",
+  "branch": "feature/ballet-next-adaptive-layout",
+  "commit": "cac0e8d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-center-deploy-record · commit 04d6413 · 有未提交代码改动",
+  "deployNote": "feature/ballet-next-adaptive-layout · commit cac0e8d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "将下一节预约改为自适应信息布局",
+      "summary": "撤销固定 `470px` 内容块的机械居中，右侧 tab 改为“紧凑日期 / 弹性课程信息 / 状态”三段式布局；标题与课程信息共享左基线，元素会随卡片宽度自然分配空间。"
+    },
     {
       "date": "2026-07-27",
       "title": "居中芭蕾下一节预约内容",
@@ -28,11 +33,6 @@
       "date": "2026-07-27",
       "title": "压缩下一节预约并移入芭蕾页头",
       "summary": "将独占整行的“下一节预约”大卡移入芭蕾页头右半区；桌面端标题与课程各占约 1/2，保留日期、时间、课程、老师、级别和预约状态。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "修复排队课程未进入所有预约",
-      "summary": "实时只读诊断确认闻道约课列表完整返回 3 条“已预约”、1 条“排队中”和 1 条“已上课”；排队课程详情页的状态实际为“等候中, 排队序号 4”，旧归一化因只接受精确的“排队中 / 候补中”而将其过滤。"
     }
   ]
 }
