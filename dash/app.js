@@ -3282,14 +3282,11 @@ function renderBalletHome() {
 function renderBallet() {
   const state = getBalletUiState();
   const nextClass = getBalletNextClass();
-  setText("#ballet-sync-status", state.label);
-  const syncStatus = qs("#ballet-sync-status");
-  if (syncStatus) syncStatus.dataset.state = state.key;
   setText(
     "#ballet-updated",
     balletData.dataAsOf || balletData.sync?.lastSuccessAt
-      ? `课程记录与学习进度 · 数据截至 ${formatBalletUpdatedAt()}`
-      : "课程记录与学习进度 · 等待首次同步",
+      ? `数据更新 ${formatBalletUpdatedAt()}`
+      : "数据尚未更新",
   );
 
   const alert = qs("#ballet-sync-alert");

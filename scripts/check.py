@@ -1057,12 +1057,12 @@ def check_secondary_view_style():
             raise ValueError(f"secondary views: shared view class is missing on {view_id}")
     if 'class="view secondary-view" id="home-view"' in dashboard_html:
         raise ValueError("secondary views: Home must not inherit the secondary shell")
-    if dashboard_html.count("secondary-page-head") != 6:
-        raise ValueError("secondary views: every non-Home page must use the shared page head")
+    if dashboard_html.count("secondary-page-head") != 5:
+        raise ValueError("secondary views: five detail pages must use the shared page head")
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
-        ".ballet-top-tabs {",
+        ".ballet-page-intro {",
         "#tokens-view {",
         "#dounai-view {",
         "#ballet-view {",
@@ -1083,22 +1083,22 @@ def check_secondary_view_style():
     )
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
-    ballet_tabs = dashboard_html.split('<section class="ballet-top-tabs"', 1)
-    if len(ballet_tabs) != 2:
-        raise ValueError("secondary views: ballet sibling top tabs are missing")
-    ballet_tabs_markup = ballet_tabs[1].split("</section>", 1)[0]
-    if ballet_tabs_markup.find("</header>") > ballet_tabs_markup.find(
-        '<article class="ballet-head-next"'
-    ):
-        raise ValueError("secondary views: next ballet class is still nested in the title tab")
-    if "styles.css?v=147" not in dashboard_html:
+    ballet_intro = dashboard_html.split('<section class="ballet-page-intro"', 1)
+    if len(ballet_intro) != 2:
+        raise ValueError("secondary views: compact ballet intro is missing")
+    ballet_intro_markup = ballet_intro[1].split("</section>", 1)[0]
+    if 'id="ballet-updated"' not in ballet_intro_markup or '<article class="ballet-head-next"' not in ballet_intro_markup:
+        raise ValueError("secondary views: ballet update time and next class must share the compact intro")
+    if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
+        raise ValueError("secondary views: retired ballet title tab remains")
+    if "styles.css?v=148" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
         "\n  }\n\n  .token-usage-head:hover", 1
     )[0]
     if "background: #ffffff;" in shared_hover:
         raise ValueError("secondary views: shared hover must preserve component backgrounds")
-    return "secondary views: six tabs share clean card shells without top accent bars"
+    return "secondary views: shared card shells and compact ballet intro are valid"
 
 
 def check_data_health_contract():
@@ -1116,7 +1116,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=123" not in dashboard_html:
+    if "app.js?v=124" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

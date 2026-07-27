@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=147" />
+    <link rel="stylesheet" href="./styles.css?v=148" />
   </head>
   <body>
     <div class="app-shell">
@@ -619,17 +619,8 @@
         </section>
 
         <section class="view secondary-view" id="ballet-view" data-view-panel="ballet">
-          <section class="ballet-top-tabs" aria-label="芭蕾概览">
-            <header class="token-page-head secondary-page-head ballet-page-head">
-              <div class="ballet-page-copy">
-                <p class="eyebrow">Ballet Progress</p>
-                <h1>芭蕾</h1>
-                <div class="ballet-page-meta">
-                  <p id="ballet-updated">课程记录与学习进度 · 等待首次同步</p>
-                  <span class="status-pill" id="ballet-sync-status" aria-live="polite">等待同步</span>
-                </div>
-              </div>
-            </header>
+          <section class="ballet-page-intro" aria-label="芭蕾概览">
+            <p class="ballet-update-time" id="ballet-updated" aria-live="polite">数据尚未更新</p>
             <article class="ballet-head-next" aria-label="下一节芭蕾课程">
               <header class="ballet-head-next-top">
                 <p class="eyebrow">Next Class · 下一节预约</p>
@@ -1117,6 +1108,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=123"></script>
+    <script src="./app.js?v=124"></script>
   </body>
 </html>

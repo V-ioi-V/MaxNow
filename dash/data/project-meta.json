@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 17:38",
-  "version": "1.0.5.16",
-  "versionLabel": "v1.0.5.16",
-  "branch": "feature/ballet-card-forecast",
-  "commit": "2e2815e",
+  "updatedAt": "2026-07-27 19:10",
+  "version": "1.0.5.17",
+  "versionLabel": "v1.0.5.17",
+  "branch": "feature/ballet-compact-header",
+  "commit": "45c32fa",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-card-forecast · commit 2e2815e · 有未提交代码改动",
+  "deployNote": "feature/ballet-compact-header · commit 45c32fa · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "删除芭蕾重复标题卡",
+      "summary": "删除芭蕾内容区重复的 “Ballet Progress / 芭蕾 / 已同步”标题卡，只保留一行低权重数据更新时间。"
+    },
     {
       "date": "2026-07-27",
       "title": "修正课程卡预测口径",
@@ -28,11 +33,6 @@
       "date": "2026-07-27",
       "title": "将下一节预约改为自适应信息布局",
       "summary": "撤销固定 `470px` 内容块的机械居中，右侧 tab 改为“紧凑日期 / 弹性课程信息 / 状态”三段式布局；标题与课程信息共享左基线，元素会随卡片宽度自然分配空间。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "居中芭蕾下一节预约内容",
-      "summary": "将右侧“下一节预约”tab 的标题与“日期 + 课程信息”内容组整体横向居中，状态 pill 继续固定在右上角，减少内容偏左造成的空洞感。"
     }
   ]
 }

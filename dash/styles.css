@@ -4321,40 +4321,19 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   --card-border: var(--ballet-border);
 }
 
-.ballet-top-tabs {
+.ballet-page-intro {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
-  gap: var(--page-grid-gap);
+  gap: 8px;
   margin-bottom: var(--page-section-gap);
 }
 
-.ballet-top-tabs .ballet-page-head {
-  grid-template-columns: minmax(0, 1fr);
-  margin-bottom: 0;
-}
-
-.ballet-page-copy {
-  min-width: 0;
-  display: grid;
-  align-content: center;
-}
-
-.ballet-page-meta {
-  min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 10px;
-}
-
-.ballet-page-meta p {
-  min-width: 0;
-  margin: 0;
-  color: var(--soft);
-  font-size: 14px;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
+.ballet-update-time {
+  margin: 0 2px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: right;
 }
 
 .ballet-head-next {
@@ -5369,12 +5348,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   }
 }
 
-@media (max-width: 1200px) {
-  .ballet-top-tabs {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 1100px) {
   .token-detail-grid {
     grid-template-columns: 1fr;
@@ -5434,7 +5407,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   .token-page-head,
   .token-usage-head,
   .cloud-page-head,
-  .ballet-top-tabs,
   .life-food-toolbar {
     grid-template-columns: 1fr;
   }
