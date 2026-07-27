@@ -3152,10 +3152,9 @@ function renderBalletHistory() {
   container.append(...records.slice(0, 24).map(createBalletHistoryItem));
 }
 
-function createBalletUpcomingItem(record, index) {
-  const isNext = index === 0;
+function createBalletUpcomingItem(record) {
   const article = document.createElement("article");
-  article.className = `ballet-upcoming-item${isNext ? " is-next" : ""}`;
+  article.className = "ballet-upcoming-item";
   const date = document.createElement("time");
   const dateText = balletRecordDate(record);
   const parsedDate = parseLocalDateTime(dateText);
@@ -3173,18 +3172,11 @@ function createBalletUpcomingItem(record, index) {
   const main = document.createElement("div");
   const title = document.createElement("strong");
   const meta = document.createElement("small");
-  if (isNext) {
-    const marker = document.createElement("span");
-    marker.className = "ballet-next-marker";
-    marker.textContent = "下一节";
-    main.appendChild(marker);
-  }
   title.textContent = balletCourseName(record);
   const timeRange = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
   meta.textContent = [
     timeRange,
     balletTeacher(record),
-    isNext ? formatBalletCancellation(record) : "",
   ].filter(Boolean).join(" · ") || "课程详情待补";
   main.append(title, meta);
   const tags = document.createElement("div");
@@ -3226,6 +3218,48 @@ function renderBalletUpcoming() {
   container.append(...records.map(createBalletUpcomingItem));
 }
 
+function renderBalletNext(nextClass, state) {
+  const status = nextClass ? getBalletBookingStatusLabel(nextClass) : state.label;
+  setText("#ballet-next-booking-status", status);
+  const statusNode = qs("#ballet-next-booking-status");
+  if (statusNode) {
+    statusNode.removeAttribute("data-booking-status");
+    statusNode.removeAttribute("data-state");
+    if (nextClass) {
+      statusNode.dataset.bookingStatus =
+        status.startsWith("排队第") || status === "排队中" ? "waitlist" : "booked";
+    } else {
+      statusNode.dataset.state = state.key;
+    }
+  }
+
+  if (!nextClass) {
+    setText("#ballet-next-day", "--");
+    setText("#ballet-next-weekday", "--");
+    setText("#ballet-next-course", state.key === "success" ? "暂无后续预约" : "等待课程数据");
+    setText("#ballet-next-time", "--:-- · --");
+    setText("#ballet-next-note", state.key === "success" ? "当前缓存中没有后续预约" : state.message);
+    return;
+  }
+
+  const dateText = balletRecordDate(nextClass);
+  const date = parseLocalDateTime(dateText);
+  setText("#ballet-next-day", dateText ? `${Number(dateText.slice(5, 7))}月${Number(dateText.slice(8, 10))}日` : "--");
+  setText(
+    "#ballet-next-weekday",
+    date ? new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(date) : "--",
+  );
+  setText("#ballet-next-course", balletCourseName(nextClass));
+  const timeRange = [balletStartTime(nextClass), balletEndTime(nextClass)].filter(Boolean).join("–") || "时间待确认";
+  setText("#ballet-next-time", [timeRange, nextClass.level].filter(Boolean).join(" · "));
+  setText(
+    "#ballet-next-note",
+    [balletTeacher(nextClass), formatBalletCancellation(nextClass)]
+      .filter(Boolean)
+      .join(" · ") || "老师与取消截止时间待补",
+  );
+}
+
 function renderBalletHome() {
   const state = getBalletUiState();
   const summary = getBalletSummary();
@@ -3255,6 +3289,7 @@ function renderBalletHome() {
 
 function renderBallet() {
   const state = getBalletUiState();
+  const nextClass = getBalletNextClass();
   setText(
     "#ballet-updated",
     balletData.dataAsOf || balletData.sync?.lastSuccessAt
@@ -3272,6 +3307,7 @@ function renderBallet() {
   }
 
   renderBalletSessionExperiment();
+  renderBalletNext(nextClass, state);
   renderBalletMembership();
   renderBalletWeek();
   renderBalletUpcoming();

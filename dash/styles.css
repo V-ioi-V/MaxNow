@@ -4402,6 +4402,102 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   margin-bottom: var(--page-section-gap);
 }
 
+.ballet-booking-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.52fr) minmax(600px, 1fr);
+  align-items: stretch;
+  gap: var(--page-grid-gap);
+  margin-bottom: var(--page-section-gap);
+}
+
+.ballet-booking-grid .ballet-next-panel,
+.ballet-booking-grid .ballet-upcoming-panel {
+  min-width: 0;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+.ballet-next-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.ballet-next-summary {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(88px, 0.32fr) minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--ballet-border);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #fff4f8, #ffffff 72%);
+}
+
+.ballet-next-date {
+  min-height: 76px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 5px;
+  border: 1px solid var(--ballet-border);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--ballet);
+  text-align: center;
+}
+
+.ballet-next-date strong {
+  font-size: 17px;
+  line-height: 1.1;
+}
+
+.ballet-next-date span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ballet-next-copy {
+  min-width: 0;
+}
+
+.ballet-next-copy h3 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.ballet-next-copy p {
+  margin: 7px 0 4px;
+  color: var(--ballet);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ballet-next-copy small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ballet-next-panel .status-pill[data-booking-status="booked"] {
+  border-color: #f0d5df;
+  background: #fff5f8;
+  color: var(--ballet);
+}
+
+.ballet-next-panel .status-pill[data-booking-status="waitlist"] {
+  border-color: var(--orange-border);
+  background: #fff7ed;
+  color: #b85f18;
+}
+
 .ballet-decision-grid .ballet-membership-card,
 .ballet-decision-grid .ballet-week-panel {
   min-width: 0;
@@ -4956,10 +5052,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   padding: 36px 20px;
 }
 
-.ballet-upcoming-panel {
-  margin-bottom: var(--page-section-gap);
-}
-
 .ballet-history-item,
 .ballet-upcoming-item {
   --card-color: var(--ballet);
@@ -5043,23 +5135,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   border-color: var(--orange-border);
   background: #fff7ed;
   color: #b85f18;
-}
-
-.ballet-upcoming-item.is-next {
-  border-color: var(--ballet-border);
-  background: linear-gradient(135deg, #fff4f8, #ffffff 72%);
-}
-
-.ballet-next-marker {
-  width: fit-content;
-  border-radius: 999px;
-  padding: 3px 8px;
-  background: #fbe7ef;
-  color: var(--ballet);
-  font-size: 10px;
-  font-weight: 850;
-  line-height: 1;
-  letter-spacing: 0.08em;
 }
 
 /* Shared visual shell for every sidebar view except Home. */
@@ -5329,6 +5404,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 @media (max-width: 1200px) {
+  .ballet-booking-grid,
   .ballet-decision-grid {
     grid-template-columns: 1fr;
   }
