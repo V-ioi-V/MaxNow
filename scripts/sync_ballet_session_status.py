@@ -143,7 +143,7 @@ def assert_restricted_config(path: Path) -> None:
 
     if os.name == "nt":
         return
-    metadata = path.stat(follow_symlinks=False)
+    metadata = os.stat(path, follow_symlinks=False)
     if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
         raise StatusPublishError("config must be a regular single-link file")
     mode = stat.S_IMODE(metadata.st_mode)

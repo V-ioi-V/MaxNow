@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=138" />
+    <link rel="stylesheet" href="./styles.css?v=139" />
   </head>
   <body>
     <div class="app-shell">
@@ -726,6 +726,17 @@
             </div>
           </section>
 
+          <article class="panel ballet-upcoming-panel" id="ballet-upcoming-panel" hidden>
+            <header class="panel-head">
+              <div>
+                <p class="eyebrow">Upcoming</p>
+                <h2>后续预约</h2>
+              </div>
+              <span class="status-pill" id="ballet-upcoming-count">0 节</span>
+            </header>
+            <div class="ballet-upcoming-list" id="ballet-upcoming-list"></div>
+          </article>
+
           <section class="ballet-distribution-grid" aria-label="课程分布">
             <article class="panel ballet-distribution-card">
               <header class="panel-head">
@@ -1073,6 +1084,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=118"></script>
+    <script src="./app.js?v=119"></script>
   </body>
 </html>
