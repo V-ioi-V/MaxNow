@@ -698,6 +698,58 @@ def normalize_attendance(
     return record
 
 
+def normalize_manual_attendance(
+    detail: dict[str, Any], observed_at: str
+) -> dict[str, Any]:
+    course_name = normalize_space(str(detail.get("courseName", "")))
+    day = str(detail.get("date", ""))
+    start_time = str(detail.get("startTime", ""))
+    end_time = str(detail.get("endTime", ""))
+    teacher = normalize_space(str(detail.get("teacher", "")))
+    if (
+        not course_name
+        or not teacher
+        or not re.fullmatch(r"20\d{2}-\d{2}-\d{2}", day)
+        or not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", start_time)
+        or not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", end_time)
+    ):
+        raise SyncFailure("configuration_error")
+    try:
+        date.fromisoformat(day)
+    except ValueError:
+        raise SyncFailure("configuration_error")
+    start_minutes = int(start_time[:2]) * 60 + int(start_time[3:])
+    end_minutes = int(end_time[:2]) * 60 + int(end_time[3:])
+    duration = end_minutes - start_minutes
+    if not 0 < duration <= 8 * 60:
+        raise SyncFailure("configuration_error")
+    course_type, level = classify_course(course_name)
+    components = [day, start_time, end_time, normalize_course_name(course_name), teacher]
+    digest = hashlib.sha256("\x1f".join(components).encode("utf-8")).hexdigest()
+    return {
+        "stableKey": f"manual:{digest}",
+        "keySource": "manual",
+        "source": {"manual": True},
+        "courseName": course_name,
+        "courseType": course_type,
+        "level": level,
+        "date": day,
+        "startTime": start_time,
+        "endTime": end_time,
+        "durationMinutes": duration,
+        "teacher": teacher,
+        "venue": normalize_space(str(detail.get("venue", ""))),
+        "studio": normalize_space(str(detail.get("studio", ""))),
+        "attendanceStatus": "attended",
+        "bookedAt": "",
+        "attendedAt": "",
+        "firstSeenAt": observed_at,
+        "lastSeenAt": observed_at,
+        "missingFullSyncCount": 0,
+        "recordState": "active",
+    }
+
+
 def normalize_upcoming(detail: dict[str, Any]) -> dict[str, Any] | None:
     raw_status = normalize_space(detail.get("bookingStatus", ""))
     statuses = {
@@ -822,8 +874,10 @@ def _period_bucket() -> dict[str, Any]:
         "classes": 0,
         "minutes": 0,
         "missingDurationClasses": 0,
-        "byCourseType": {key: 0 for key in COURSE_TYPE_ORDER},
-        "byLevel": {key: 0 for key in LEVEL_ORDER},
+        "byCourseType": {
+            key: {"classes": 0, "minutes": 0} for key in COURSE_TYPE_ORDER
+        },
+        "byLevel": {key: {"classes": 0, "minutes": 0} for key in LEVEL_ORDER},
     }
 
 
@@ -834,8 +888,11 @@ def _add_to_bucket(bucket: dict[str, Any], record: dict[str, Any]) -> None:
         bucket["missingDurationClasses"] += 1
     else:
         bucket["minutes"] += duration
-    bucket["byCourseType"][record["courseType"]] += 1
-    bucket["byLevel"][record["level"]] += 1
+    bucket["byCourseType"][record["courseType"]]["classes"] += 1
+    bucket["byLevel"][record["level"]]["classes"] += 1
+    if duration is not None:
+        bucket["byCourseType"][record["courseType"]]["minutes"] += duration
+        bucket["byLevel"][record["level"]]["minutes"] += duration
 
 
 def _display_bucket(period: str, bucket: dict[str, Any]) -> dict[str, Any]:
@@ -849,7 +906,7 @@ def _display_bucket(period: str, bucket: dict[str, Any]) -> dict[str, Any]:
             {
                 "key": key,
                 "label": COURSE_TYPE_LABELS[key],
-                "classes": bucket["byCourseType"][key],
+                **bucket["byCourseType"][key],
             }
             for key in COURSE_TYPE_ORDER
         ],
@@ -857,7 +914,7 @@ def _display_bucket(period: str, bucket: dict[str, Any]) -> dict[str, Any]:
             {
                 "key": key,
                 "label": LEVEL_LABELS[key],
-                "classes": bucket["byLevel"][key],
+                **bucket["byLevel"][key],
             }
             for key in LEVEL_ORDER
         ],
@@ -940,6 +997,9 @@ def _public_record(record: dict[str, Any]) -> dict[str, Any]:
         "venue": record["venue"],
         "studio": record["studio"],
         "attendanceStatus": record["attendanceStatus"],
+        "recordOrigin": (
+            "manual" if record.get("keySource") == "manual" else "wenda"
+        ),
     }
 
 
@@ -1209,7 +1269,7 @@ def synchronize(
 
         if mode == "full":
             for key, record in list(merged_by_key.items()):
-                if key in seen_keys:
+                if key in seen_keys or record.get("keySource") == "manual":
                     continue
                 missing = int(record.get("missingFullSyncCount", 0)) + 1
                 updated = dict(record)

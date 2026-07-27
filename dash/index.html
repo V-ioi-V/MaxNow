@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=139" />
+    <link rel="stylesheet" href="./styles.css?v=140" />
   </head>
   <body>
     <div class="app-shell">
@@ -682,7 +682,7 @@
             </div>
           </article>
 
-          <section class="ballet-overview-grid" aria-label="芭蕾课程概览">
+          <section class="ballet-overview-grid" aria-label="下一节芭蕾课程">
             <article class="panel ballet-next-card">
               <header class="panel-head">
                 <div>
@@ -701,86 +701,76 @@
                 <small id="ballet-next-note">同步完成后显示老师和取消截止时间</small>
               </div>
             </article>
-
-            <div class="ballet-stat-grid" aria-label="芭蕾核心统计">
-              <article class="ballet-stat-card">
-                <span>累计上课</span>
-                <strong id="ballet-total-classes">--</strong>
-                <small>节</small>
-              </article>
-              <article class="ballet-stat-card">
-                <span>累计训练</span>
-                <strong id="ballet-total-hours">--</strong>
-                <small>小时</small>
-              </article>
-              <article class="ballet-stat-card">
-                <span>本月上课</span>
-                <strong id="ballet-month-classes">--</strong>
-                <small>节</small>
-              </article>
-              <article class="ballet-stat-card">
-                <span>本月训练</span>
-                <strong id="ballet-month-hours">--</strong>
-                <small>小时</small>
-              </article>
-            </div>
           </section>
 
-          <article class="panel ballet-upcoming-panel" id="ballet-upcoming-panel" hidden>
+          <article class="panel ballet-upcoming-panel" id="ballet-upcoming-panel">
             <header class="panel-head">
               <div>
-                <p class="eyebrow">Upcoming</p>
-                <h2>后续预约</h2>
+                <p class="eyebrow">Bookings</p>
+                <h2>所有预约</h2>
               </div>
               <span class="status-pill" id="ballet-upcoming-count">0 节</span>
             </header>
             <div class="ballet-upcoming-list" id="ballet-upcoming-list"></div>
           </article>
 
-          <section class="ballet-distribution-grid" aria-label="课程分布">
-            <article class="panel ballet-distribution-card">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Course Type</p>
-                  <h2>课程课型</h2>
-                </div>
-                <span class="status-pill" id="ballet-course-type-count">0 类</span>
-              </header>
-              <div class="ballet-bar-list" id="ballet-course-types"></div>
-            </article>
-
-            <article class="panel ballet-distribution-card">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Level</p>
-                  <h2>课程级别</h2>
-                </div>
-                <span class="status-pill" id="ballet-level-count">0 级</span>
-              </header>
-              <div class="ballet-bar-list" id="ballet-levels"></div>
-            </article>
-          </section>
-
-          <article class="panel ballet-trend-panel">
-            <header class="panel-head ballet-trend-head">
+          <article class="panel ballet-training-panel">
+            <header class="panel-head ballet-training-head">
               <div>
-                <p class="eyebrow">Training Trend</p>
-                <h2 id="ballet-trend-title">年度上课节数</h2>
+                <p class="eyebrow">Training</p>
+                <h2>上课统计</h2>
               </div>
-              <span class="status-pill" id="ballet-trend-unit">节</span>
             </header>
             <div class="ballet-chart-controls">
-              <div class="ballet-segmented" role="group" aria-label="趋势时间范围">
-                <button class="ballet-segment-button" type="button" data-ballet-period="month">月</button>
-                <button class="ballet-segment-button is-active" type="button" data-ballet-period="year">年</button>
+              <div class="ballet-segmented" role="group" aria-label="统计时间范围">
+                <button class="ballet-segment-button is-active" type="button" data-ballet-period="month">本月</button>
+                <button class="ballet-segment-button" type="button" data-ballet-period="year">今年</button>
                 <button class="ballet-segment-button" type="button" data-ballet-period="all">全部</button>
               </div>
-              <div class="ballet-segmented" role="group" aria-label="趋势统计指标">
+              <div class="ballet-segmented" role="group" aria-label="统计指标">
                 <button class="ballet-segment-button is-active" type="button" data-ballet-metric="classes">节数</button>
-                <button class="ballet-segment-button" type="button" data-ballet-metric="hours">小时</button>
+                <button class="ballet-segment-button" type="button" data-ballet-metric="hours">时间</button>
               </div>
             </div>
-            <div class="line-chart ballet-line-chart" id="ballet-trend-chart"></div>
+            <div class="ballet-training-overview">
+              <section class="ballet-training-total" aria-live="polite">
+                <span id="ballet-training-period">本月上课</span>
+                <div>
+                  <strong id="ballet-training-value">0</strong>
+                  <small id="ballet-training-unit">节</small>
+                </div>
+                <p id="ballet-training-secondary">共 0 节 · 0 小时</p>
+              </section>
+              <div class="ballet-breakdown-grid">
+                <section class="ballet-breakdown-section">
+                  <header>
+                    <div>
+                      <p class="eyebrow">Course Type</p>
+                      <h3>课程类型</h3>
+                    </div>
+                    <span class="status-pill" id="ballet-course-type-count">0 类</span>
+                  </header>
+                  <div class="ballet-bar-list" id="ballet-course-types"></div>
+                </section>
+                <section class="ballet-breakdown-section">
+                  <header>
+                    <div>
+                      <p class="eyebrow">Level</p>
+                      <h3>课程级别</h3>
+                    </div>
+                    <span class="status-pill" id="ballet-level-count">0 级</span>
+                  </header>
+                  <div class="ballet-bar-list" id="ballet-levels"></div>
+                </section>
+              </div>
+            </div>
+            <section class="ballet-training-trend">
+              <header>
+                <h3 id="ballet-trend-title">本月上课节数</h3>
+                <span class="status-pill" id="ballet-trend-unit">节</span>
+              </header>
+              <div class="line-chart ballet-line-chart" id="ballet-trend-chart"></div>
+            </section>
           </article>
 
           <article class="panel ballet-history-panel">
@@ -1084,6 +1074,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=119"></script>
+    <script src="./app.js?v=120"></script>
   </body>
 </html>
