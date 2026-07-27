@@ -1027,7 +1027,7 @@ def check_secondary_view_style():
         '<article class="ballet-head-next"'
     ):
         raise ValueError("secondary views: next ballet class is still nested in the title tab")
-    if "styles.css?v=142" not in dashboard_html:
+    if "styles.css?v=143" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     return "secondary views: six tabs share clean card shells without top accent bars"
 
