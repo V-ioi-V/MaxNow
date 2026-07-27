@@ -116,7 +116,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ricky.js`：从 `ricky.json` 生成的浏览器 wrapper。
 - `dash/data/life-foods.json`：生活页“吃啥”随机选择器的只读候选数据，由 `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 生成。
 - `dash/data/life-foods.js`：从 `life-foods.json` 生成的浏览器 wrapper。
-- `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要，以及每张课程卡独立的开卡进度、余次 / 有效期、计划情景和样本充足后的实际节奏预测；不保存 Cookie、会员卡号、会员标识或原始响应。前端将最近一节有效预约放进“下一节预约”主卡，并在独立“所有预约”列表完整展示未来课程。
+- `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要，以及每张课程卡独立的开卡进度、余次 / 有效期、计划情景和样本充足后的实际节奏预测；不保存 Cookie、会员卡号、会员标识或原始响应。前端在统一“所有预约”列表完整展示未来课程，并将最近一节有效预约作为第一条突出显示。
 - `dash/data/ballet-session.json`：芭蕾页底部 PHPSESSID 折叠实验详情的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
 - `dash/data/ballet.js`：从 `ballet.json` 生成的浏览器 wrapper。
 - `dash/login.html` / `dash/login.js`：MaxNow 私人访问入口；只提交用户名和密码到同源 `/auth/login`，不在浏览器保存或读取会话 Cookie。
@@ -271,7 +271,7 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - Dash 左侧导航顺序为首页、豆奶、Token、芭蕾、云服务、生活、同行记。云服务页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作；页面不再保留顶部重复摘要卡，Host 与站点域名归入“系统与托管”模块，后续任务卡自然排列，不再插入独立“定时任务”分组标题。系统与托管模块不展示部署根目录、nginx 配置路径、采集器说明等低频实现细节。
 - Dash 左侧导航已新增“同行记”tab，副标题为“我和 Ricky”。该页用 Leaflet + OpenStreetMap 真实地图和轻量统计承载两人的共同足迹，地点和旅行记录暂时只进入 marker / popup 数据，不单独铺列表；内置 SVG 地图只作为 fallback。
 - Dash 左侧导航已新增“生活”tab，副标题为“吃啥”。该页当前提供“吃啥”随机选择器：默认全选、数量默认 1，可临时取消候选并从勾选项中随机选取一个或多个结果；候选从 personal-wiki `wiki/life/food-picker.md` 同步。
-- 豆奶、Token、芭蕾、云服务、生活和同行记统一使用 `secondary-view` 视觉协议：轻色渐变白底、统一圆角 / 阴影 / hover 与状态 pill；芭蕾顶部栏已有页面名称，因此内容区不再重复标题卡，只保留低权重数据更新时间和下一节预约。2026-07-11 起所有 Dash tab 卡片统一取消顶部彩色横条，语义色只保留在文字、数值、图标、状态点、pill 和轻背景中。
+- 豆奶、Token、芭蕾、云服务、生活和同行记统一使用 `secondary-view` 视觉协议：轻色渐变白底、统一圆角 / 阴影 / hover 与状态 pill；芭蕾顶部栏已有页面名称，因此内容区不再重复标题卡，只保留低权重数据更新时间和统一预约列表，第一条突出下一节。2026-07-11 起所有 Dash tab 卡片统一取消顶部彩色横条，语义色只保留在文字、数值、图标、状态点、pill 和轻背景中。
 - Home 项目主线和待推进事项由 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新到 `dash/data/project-status.*`；ROADMAP Now / Next / Done 变化后校验会要求同步刷新。定时任务只运行 `runtime`，不覆盖项目状态或 `dashboard.today` 的 Owner 人工判断。
 - Home 顶部 Today Status 卡已改为自动推导主状态：今日 Todo 优先，其次参考自动化异常、当前时段、ROADMAP 待推进 / 主线和 Token 活跃生成执行、巡检、复盘、推进、探索等模式。宽桌面使用左文案 / 正中央圆环 / 右信号三列，圆环中心与状态卡内容区中心重合，当前时间用独立 pill 显示在环下方；`自动生成` 新鲜度 pill 位于左侧 eyebrow 旁。右侧四条信号等高排列，彩色节点进入第一行网格并与标签、主值对齐。状态条四张小卡固定为今日执行、数据同步、Token 7 天、系统自动化，不再保留重复的“当前主线 / 待推进”数字卡。`dashboard.json.today` 只作为当天人工 override；旧日期判断会被忽略，不再显示“待刷新 N 天”。
 - Home 右侧原“时间点”静态模块已替换为“今日 Todo”：从 `dash/data/wiki-todos.json` 里只筛选 `due_at` 等于浏览器当天日期的未完成待办；过期未完成和无日期待办仍留在近期待办卡，不进入今日 Todo。

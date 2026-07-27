@@ -1052,6 +1052,7 @@ def check_today_progress_ring():
 def check_secondary_view_style():
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     for view_id in ("tokens-view", "dounai-view", "ballet-view", "cloud-view", "life-view", "ricky-view"):
         if f'class="view secondary-view" id="{view_id}"' not in dashboard_html:
             raise ValueError(f"secondary views: shared view class is missing on {view_id}")
@@ -1062,7 +1063,7 @@ def check_secondary_view_style():
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
-        ".ballet-page-intro {",
+        ".ballet-upcoming-item.is-next {",
         "#tokens-view {",
         "#dounai-view {",
         "#ballet-view {",
@@ -1083,17 +1084,11 @@ def check_secondary_view_style():
     )
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
-    ballet_intro = dashboard_html.split('<section class="ballet-page-intro"', 1)
-    if len(ballet_intro) != 2:
-        raise ValueError("secondary views: compact ballet intro is missing")
-    ballet_intro_markup = ballet_intro[1].split("</section>", 1)[0]
-    if 'id="ballet-updated"' not in ballet_intro_markup or '<article class="ballet-head-next"' not in ballet_intro_markup:
-        raise ValueError("secondary views: ballet update time and next class must share the compact intro")
     ballet_view_markup = dashboard_html.split('id="ballet-view"', 1)[1].split('id="cloud-view"', 1)[0]
     layout_markers = (
-        'class="ballet-page-intro"',
-        'class="ballet-decision-grid"',
+        'id="ballet-updated"',
         'class="panel ballet-upcoming-panel"',
+        'class="ballet-decision-grid"',
         'class="panel ballet-training-panel"',
         'class="panel ballet-history-panel"',
         'class="panel ballet-session-card"',
@@ -1103,6 +1098,13 @@ def check_secondary_view_style():
         raise ValueError("secondary views: ballet information priority order is invalid")
     if ballet_view_markup.find("ballet-week-panel") > ballet_view_markup.find("ballet-membership-card"):
         raise ValueError("secondary views: weekly training must precede the course card")
+    if any(retired in ballet_view_markup for retired in ("ballet-page-intro", "ballet-head-next", "ballet-next-status")):
+        raise ValueError("secondary views: standalone next-class card remains")
+    if (
+        'marker.textContent = "下一节"' not in dashboard_js
+        or 'isNext ? formatBalletCancellation(record) : ""' not in dashboard_js
+    ):
+        raise ValueError("secondary views: unified bookings must identify the next class and retain its cancellation deadline")
     if (
         '<details class="panel ballet-session-card"' not in ballet_view_markup
         or '<summary class="ballet-session-summary">' not in ballet_view_markup
@@ -1114,7 +1116,7 @@ def check_secondary_view_style():
         raise ValueError("secondary views: ballet decision grid or collapsed session details are incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
-    if "styles.css?v=149" not in dashboard_html:
+    if "styles.css?v=150" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
         "\n  }\n\n  .token-usage-head:hover", 1
@@ -1139,7 +1141,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=124" not in dashboard_html:
+    if "app.js?v=125" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
