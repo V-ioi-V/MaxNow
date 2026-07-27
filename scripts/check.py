@@ -270,11 +270,19 @@ def check_ballet_read_model():
     if not all(isinstance(aggregates.get(key), list) for key in ("daily", "monthly", "yearly")):
         raise ValueError("ballet: daily/monthly/yearly aggregates are required")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     if (
         "function balletClassBoundary" not in dashboard_js
         or "boundary >= Date.now()" not in dashboard_js
     ):
         raise ValueError("ballet: expired bookings are not filtered from the next class")
+    if (
+        'date.className = "ballet-upcoming-date"' not in dashboard_js
+        or 'weekday: "long"' not in dashboard_js
+        or "span.dataset.bookingStatus = item.status" not in dashboard_js
+        or '[data-booking-status="waitlist"]' not in dashboard_css
+    ):
+        raise ValueError("ballet: booking weekday or status color contract is incomplete")
     return "ballet: read model schema, totals, aggregates, and redaction are valid"
 
 
@@ -1030,7 +1038,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=120" not in dashboard_html:
+    if "app.js?v=121" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

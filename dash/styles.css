@@ -4884,6 +4884,25 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   font-weight: 850;
 }
 
+.ballet-upcoming-date {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+}
+
+.ballet-upcoming-date strong {
+  color: var(--ballet);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.ballet-upcoming-date span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
 .ballet-history-item > div:nth-child(2),
 .ballet-upcoming-item > div:nth-child(2) {
   min-width: 0;
@@ -4920,6 +4939,12 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   color: var(--ballet);
   font-size: 11px;
   font-weight: 750;
+}
+
+.ballet-upcoming-item [data-booking-status="waitlist"] {
+  border-color: var(--orange-border);
+  background: #fff7ed;
+  color: #b85f18;
 }
 
 /* Shared visual shell for every sidebar view except Home. */

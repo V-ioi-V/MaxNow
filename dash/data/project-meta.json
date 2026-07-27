@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 15:17",
-  "version": "1.0.5.09",
-  "versionLabel": "v1.0.5.09",
-  "branch": "feature/ballet-header-deploy-record",
-  "commit": "f8f96c8",
+  "updatedAt": "2026-07-27 15:19",
+  "version": "1.0.5.10",
+  "versionLabel": "v1.0.5.10",
+  "branch": "feature/ballet-booking-status-colors",
+  "commit": "d3fee11",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-header-deploy-record · commit f8f96c8 · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-status-colors · commit d3fee11 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "区分预约状态颜色并重排星期",
+      "summary": "“所有预约”中的“已预约”保留粉玫瑰色，“排队中”改用橙色，候补状态不再与正式预约使用相同颜色。"
+    },
     {
       "date": "2026-07-27",
       "title": "压缩下一节预约并移入芭蕾页头",
@@ -28,11 +33,6 @@
       "date": "2026-07-27",
       "title": "部署多节预约并完成首次真实同步",
       "summary": "服务器已快进到 `e5d10258`，上线“下一节预约 + 后续预约”展示；部署前完整备份运行时数据并恢复非项目元信息数据，服务器 Git remote 从失效的 SSH 地址切回与现有 `gh` 登录一致的 HTTPS。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "展示多节未来预约",
-      "summary": "“下一节预约”继续只突出最近一节有效预约；当缓存中还有其他已预约 / 候补课程时，芭蕾页在概览下方新增“后续预约”列表，展示日期、时间、课程、老师、级别和状态，不与实际上课历史混排。"
     }
   ]
 }
