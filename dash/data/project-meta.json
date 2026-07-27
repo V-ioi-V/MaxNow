@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 16:23",
+  "updatedAt": "2026-07-27 16:25",
   "version": "1.0.5.13",
   "versionLabel": "v1.0.5.13",
-  "branch": "feature/ballet-next-adaptive-layout",
-  "commit": "cac0e8d",
+  "branch": "feature/ballet-adaptive-deploy-record",
+  "commit": "df6fa7e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-next-adaptive-layout · commit cac0e8d · 有未提交代码改动",
+  "deployNote": "feature/ballet-adaptive-deploy-record · commit df6fa7e · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-27",
