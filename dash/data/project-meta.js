@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 15:02",
+  "updatedAt": "2026-07-27 15:05",
   "version": "1.0.5.08",
   "versionLabel": "v1.0.5.08",
-  "branch": "bugfix/waitlist-detail-status",
-  "commit": "5bd67ef",
+  "branch": "bugfix/waitlist-deploy-record",
+  "commit": "34209b9",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/waitlist-detail-status · commit 5bd67ef · 有未提交代码改动",
+  "deployNote": "bugfix/waitlist-deploy-record · commit 34209b9 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-27",
