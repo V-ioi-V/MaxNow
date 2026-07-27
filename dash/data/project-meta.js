@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 00:03",
-  "version": "1.0.5.25",
-  "versionLabel": "v1.0.5.25",
-  "branch": "bugfix/revert-ballet-visual-polish",
-  "commit": "760e0f0",
+  "updatedAt": "2026-07-28 00:09",
+  "version": "1.0.5.26",
+  "versionLabel": "v1.0.5.26",
+  "branch": "feature/expand-ballet-session-details",
+  "commit": "db41677",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/revert-ballet-visual-polish · commit 760e0f0 · 有未提交代码改动",
+  "deployNote": "feature/expand-ballet-session-details · commit db41677 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "默认展开 PHPSESSID 实验详情",
+      "summary": "芭蕾页底部 `PHPSESSID 实验详情` 改为进入页面时默认展开，同时保留原生折叠箭头和手动收起能力；版本提升到 `1.0.5.26`。"
+    },
     {
       "date": "2026-07-28",
       "title": "回退芭蕾核心卡视觉改造",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-27",
       "title": "将芭蕾核心三卡置顶",
       "summary": "芭蕾页顶部改为“下一节预约 / 本周训练 / 课程卡”三个同级面板，宽桌面同排同高，`1200px` 及以下按使用顺序单列堆叠。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "拆分下一节与所有预约为双面板",
-      "summary": "将芭蕾页顶部预约区改为两个同级面板：桌面端左侧约 1/3 展示下一节，右侧约 2/3 展示全部预约且包含下一节；`1200px` 以下改为单列堆叠。"
     }
   ]
 };

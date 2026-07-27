@@ -1114,14 +1114,13 @@ def check_secondary_view_style():
     ):
         raise ValueError("secondary views: featured next booking hierarchy is incomplete")
     if (
-        '<details class="panel ballet-session-card"' not in ballet_view_markup
+        '<details class="panel ballet-session-card" open' not in ballet_view_markup
         or '<summary class="ballet-session-summary">' not in ballet_view_markup
-        or '<details class="panel ballet-session-card" open' in ballet_view_markup
         or ".ballet-primary-grid {" not in dashboard_css
         or ".ballet-session-summary {" not in dashboard_css
         or ".ballet-session-card[open] .ballet-session-toggle {" not in dashboard_css
     ):
-        raise ValueError("secondary views: ballet decision grid or collapsed session details are incomplete")
+        raise ValueError("secondary views: ballet decision grid or default-open session details are incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
