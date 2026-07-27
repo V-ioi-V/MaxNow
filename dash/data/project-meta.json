@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 11:18",
-  "version": "1.0.5.05",
-  "versionLabel": "v1.0.5.05",
-  "branch": "feature/ballet-bookings",
-  "commit": "eb5eb3d",
+  "updatedAt": "2026-07-27 12:04",
+  "version": "1.0.5.06",
+  "versionLabel": "v1.0.5.06",
+  "branch": "feature/ballet-bookings-sync-record",
+  "commit": "e5d1025",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-bookings · commit eb5eb3d · 有未提交代码改动",
+  "deployNote": "feature/ballet-bookings-sync-record · commit e5d1025 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "部署多节预约并完成首次真实同步",
+      "summary": "服务器已快进到 `e5d10258`，上线“下一节预约 + 后续预约”展示；部署前完整备份运行时数据并恢复非项目元信息数据，服务器 Git remote 从失效的 SSH 地址切回与现有 `gh` 登录一致的 HTTPS。"
+    },
     {
       "date": "2026-07-27",
       "title": "展示多节未来预约",
@@ -28,11 +33,6 @@
       "date": "2026-07-26",
       "title": "上线芭蕾只读学习模块",
       "summary": "左侧导航顺序调整为首页 → 豆奶 → Token → 芭蕾 → 云服务 → 生活 → 同行记，取代当天较早记录的 Home 下方候选位置；芭蕾页沿用 `secondary-view`，使用粉玫瑰 + 白卡语义，并提供 Home 紧凑摘要。"
-    },
-    {
-      "date": "2026-07-26",
-      "title": "完善芭蕾学习模块的缓存、统计与视觉方案",
-      "summary": "确认未来导航顺序为 Home → 芭蕾 → 豆奶 → Token → 云服务 → 生活 → 同行记；芭蕾页标题为“芭蕾 / 课程与进度”，使用区别于同行记亮粉的粉玫瑰 + 白卡语义，Home 只保留下一节课、本周进度和同步状态摘要。"
     }
   ]
 }
