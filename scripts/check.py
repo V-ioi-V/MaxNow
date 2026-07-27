@@ -1051,6 +1051,7 @@ def check_today_progress_ring():
 
 def check_secondary_view_style():
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    login_html = (ROOT / "dash/login.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     for view_id in ("tokens-view", "dounai-view", "ballet-view", "cloud-view", "life-view", "ricky-view"):
@@ -1123,14 +1124,31 @@ def check_secondary_view_style():
         raise ValueError("secondary views: ballet decision grid or collapsed session details are incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
-    if "styles.css?v=153" not in dashboard_html or "app.js?v=127" not in dashboard_html:
+    if (
+        "styles.css?v=154" not in dashboard_html
+        or "styles.css?v=127" not in login_html
+        or "app.js?v=127" not in dashboard_html
+    ):
         raise ValueError("secondary views: stylesheet cache version is stale")
+    polish_rules = (
+        "--focus-ring:",
+        "font-variant-numeric: tabular-nums;",
+        ".side-nav-item:focus-visible {",
+        ".life-count-control:focus-within {",
+        ".line-chart > .empty-state {",
+        "@media (prefers-reduced-motion: reduce) {",
+    )
+    if any(rule not in dashboard_css for rule in polish_rules):
+        raise ValueError("secondary views: global typography, focus, empty-state, or reduced-motion polish is incomplete")
+    mobile_rules = dashboard_css.split("@media (max-width: 560px) {", 1)[1]
+    if ".side-nav {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }" not in mobile_rules:
+        raise ValueError("secondary views: mobile navigation must remain a two-column grid")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
         "\n  }\n\n  .token-usage-head:hover", 1
     )[0]
     if "background: #ffffff;" in shared_hover:
         raise ValueError("secondary views: shared hover must preserve component backgrounds")
-    return "secondary views: shared shells and ballet priority layout are valid"
+    return "secondary views: shared shells, interaction polish, and ballet priority layout are valid"
 
 
 def check_data_health_contract():

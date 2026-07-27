@@ -4,8 +4,9 @@
   --sidebar: #ffffff;
   --surface: #ffffff;
   --surface-soft: #f8fbff;
-  --line: #e3eaf3;
-  --line-strong: #d6e0eb;
+  --surface-muted: #f5f8fc;
+  --line: #dfe7f1;
+  --line-strong: #d2deea;
   --text: #172033;
   --muted: #708093;
   --soft: #3d4b60;
@@ -27,8 +28,9 @@
   --ballet-border: #efbfd1;
   --red-border: #f2c7c7;
   --radius: 14px;
-  --shadow: 0 10px 24px rgba(25, 43, 72, 0.08), 0 1px 2px rgba(25, 43, 72, 0.06);
-  --shadow-soft: 0 4px 12px rgba(25, 43, 72, 0.06);
+  --shadow: 0 12px 30px rgba(25, 43, 72, 0.065), 0 1px 2px rgba(25, 43, 72, 0.055);
+  --shadow-soft: 0 5px 14px rgba(25, 43, 72, 0.055);
+  --focus-ring: 0 0 0 3px rgba(35, 156, 231, 0.18);
   --page-pad-x: clamp(24px, 3vw, 64px);
   --page-pad-y: 34px;
   --page-section-gap: 16px;
@@ -51,8 +53,12 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
-  text-rendering: geometricPrecision;
+  font-family: "Segoe UI Variable Text", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  font-synthesis: none;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 button {
@@ -62,6 +68,11 @@ button {
 
 a {
   color: inherit;
+}
+
+::selection {
+  background: rgba(35, 156, 231, 0.18);
+  color: var(--text);
 }
 
 .auth-body {
@@ -650,6 +661,12 @@ a {
   transform: translateY(-1px);
 }
 
+.side-nav-item:focus-visible {
+  border-color: color-mix(in srgb, var(--nav-color, var(--accent)) 34%, #ffffff);
+  outline: 0;
+  box-shadow: inset 3px 0 0 var(--nav-color, var(--accent)), var(--focus-ring), var(--shadow-soft);
+}
+
 .nav-home {
   --nav-color: var(--accent);
 }
@@ -741,6 +758,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   font-size: 12px;
   font-weight: 800;
   text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .topbar-link:hover {
@@ -891,6 +909,8 @@ body[data-view="tokens"] .topbar-token-ranges {
   margin: 8px 0 8px;
   font-size: clamp(30px, 3vw, 42px);
   line-height: 1.05;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 
 .summary-copy #daily-brief,
@@ -1361,7 +1381,8 @@ body[data-view="tokens"] .topbar-token-ranges {
 .token-source-item {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--card-color, var(--accent-strong)) 1.8%, #ffffff), #ffffff 128px);
   box-shadow: var(--shadow);
 }
 
@@ -1837,6 +1858,9 @@ body[data-view="tokens"] .topbar-token-ranges {
 .panel h2 {
   margin: 4px 0 0;
   font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
 }
 
 .icon-button,
@@ -1847,6 +1871,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   background: #fbfdff;
   color: var(--text);
   box-shadow: var(--shadow-soft);
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .icon-button {
@@ -1876,7 +1901,26 @@ body[data-view="tokens"] .topbar-token-ranges {
 .text-button:hover,
 .range-tab:hover {
   border-color: #b8d8f5;
+  background: #ffffff;
   color: var(--accent);
+}
+
+.icon-button:focus-visible,
+.text-button:focus-visible,
+.range-tab:focus-visible,
+.topbar-link:focus-visible {
+  border-color: var(--blue-border);
+  outline: 0;
+  box-shadow: var(--focus-ring), var(--shadow-soft);
+}
+
+.icon-button:active:not(:disabled),
+.text-button:active:not(:disabled),
+.range-tab:active:not(:disabled),
+.topbar-link:active,
+.side-nav-item:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
 .icon-button:disabled {
@@ -3809,6 +3853,13 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   border-radius: var(--radius);
   padding: 7px 9px;
   background: #fbfdff;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.life-count-control:focus-within {
+  border-color: var(--green-border);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(32, 169, 107, 0.14);
 }
 
 .life-count-control span {
@@ -3839,6 +3890,23 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   font-size: 18px;
   font-weight: 900;
   line-height: 1;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.life-step-button:hover {
+  border-color: var(--green-border);
+  background: #f2fbf5;
+}
+
+.life-step-button:focus-visible {
+  border-color: var(--green-border);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(32, 169, 107, 0.16);
+}
+
+.life-step-button:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
 .life-food-actions {
@@ -3856,6 +3924,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   justify-content: center;
   font-size: 14px;
   font-weight: 900;
+  box-shadow: 0 7px 16px rgba(32, 169, 107, 0.1);
 }
 
 .life-eat-button:disabled {
@@ -3896,6 +3965,12 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   accent-color: var(--card-color);
 }
 
+.life-food-option:has(input:focus-visible) {
+  border-color: var(--card-border);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--card-color) 17%, transparent);
+}
+
 .life-food-option span {
   min-width: 0;
   color: var(--text);
@@ -3907,7 +3982,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .life-food-option:has(input:not(:checked)) {
   border-color: #e4ebf3;
   background: #f8fbff;
-  opacity: 0.56;
+  opacity: 0.68;
 }
 
 .life-food-option[data-tone="cyan"] {
@@ -3940,7 +4015,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   --card-border: var(--green-border);
   position: relative;
   min-width: 0;
-  height: 340px;
+  height: 300px;
   display: grid;
   place-items: center;
   border: 0;
@@ -4037,7 +4112,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .life-wheel-item {
   --card-color: var(--cyan);
   width: 100%;
-  height: var(--life-wheel-lane-height, 340px);
+  height: var(--life-wheel-lane-height, 300px);
   display: grid;
   place-items: center;
   border: 0;
@@ -4076,6 +4151,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .life-wheel-item[data-tone="gray"] {
   --card-color: #64748b;
+  font-size: clamp(26px, 3.2vw, 42px);
+  font-weight: 800;
 }
 
 .life-food-wheel.is-rolling .life-wheel-item {
@@ -5317,9 +5394,44 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .empty-state {
+  min-height: 76px;
+  display: grid;
+  grid-column: 1 / -1;
+  place-items: center;
   margin: 0;
+  border: 1px dashed #d5e0eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--surface-muted);
   color: var(--muted);
   font-size: 14px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.line-chart > .empty-state {
+  min-height: 176px;
+  border: 0;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(35, 156, 231, 0.07), transparent 38%),
+    var(--surface-muted);
+}
+
+.panel a:not(.text-button):focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--card-color, var(--accent-strong)) 22%, transparent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 1320px) {
@@ -5514,7 +5626,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   }
 
   .life-result-card {
-    height: 280px;
+    height: 240px;
     padding: 0;
   }
 
@@ -5524,7 +5636,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   }
 
   .life-wheel-item {
-    height: var(--life-wheel-lane-height, 280px);
+    height: var(--life-wheel-lane-height, 240px);
     padding: 0 18px;
     font-size: clamp(32px, 10vw, 48px);
   }
@@ -5666,7 +5778,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 @media (max-width: 560px) {
   .side-nav {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .ballet-home-foot,

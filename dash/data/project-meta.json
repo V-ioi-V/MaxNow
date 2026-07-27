@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 23:03",
-  "version": "1.0.5.22",
-  "versionLabel": "v1.0.5.22",
-  "branch": "feature/ballet-booking-hierarchy",
-  "commit": "ac959b8",
+  "updatedAt": "2026-07-27 23:37",
+  "version": "1.0.5.23",
+  "versionLabel": "v1.0.5.23",
+  "branch": "feature/dash-visual-polish",
+  "commit": "cfd1d87",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-hierarchy · commit ac959b8 · 有未提交代码改动",
+  "deployNote": "feature/dash-visual-polish · commit cfd1d87 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "微调 Dash 全页面视觉与交互",
+      "summary": "对首页、豆奶、Token、芭蕾、云服务、生活、同行记及登录入口做一次不改变信息架构的整体微调：统一系统字体回退与等宽数字、减轻卡片阴影、补齐焦点和按压反馈、规范空状态并增加 reduced-motion 兜底。"
+    },
     {
       "date": "2026-07-27",
       "title": "合并顶部预约并强化下一节层级",
@@ -28,11 +33,6 @@
       "date": "2026-07-27",
       "title": "合并下一节与所有预约",
       "summary": "删除独占整行且与列表重复的“下一节预约”卡，将“所有预约”移到芭蕾页顶部；列表第一条作为下一节，用浅粉背景和“下一节”标识突出，并保留取消截止时间。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "按使用优先级重排芭蕾页面",
-      "summary": "页面顺序调整为：更新时间与下一节课 → 本周训练 / 课程卡 → 所有预约 → 上课统计 → 上课历史 → PHPSESSID 实验详情。"
     }
   ]
 }
