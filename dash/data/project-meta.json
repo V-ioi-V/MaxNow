@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 23:37",
-  "version": "1.0.5.23",
-  "versionLabel": "v1.0.5.23",
-  "branch": "feature/dash-visual-polish",
-  "commit": "cfd1d87",
+  "updatedAt": "2026-07-28 00:03",
+  "version": "1.0.5.25",
+  "versionLabel": "v1.0.5.25",
+  "branch": "bugfix/revert-ballet-visual-polish",
+  "commit": "760e0f0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/dash-visual-polish · commit cfd1d87 · 有未提交代码改动",
+  "deployNote": "bugfix/revert-ballet-visual-polish · commit 760e0f0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "回退芭蕾核心卡视觉改造",
+      "summary": "按 Owner 反馈回退“一主三辅”顶部指标、统一统计信息带和紧凑面积趋势图，恢复到 `1.0.5.23` 的芭蕾页面构图；此前确认的所有预约合并、下一节主次和顶部三栏结构继续保留。"
+    },
     {
       "date": "2026-07-27",
       "title": "微调 Dash 全页面视觉与交互",
@@ -28,11 +33,6 @@
       "date": "2026-07-27",
       "title": "拆分下一节与所有预约为双面板",
       "summary": "将芭蕾页顶部预约区改为两个同级面板：桌面端左侧约 1/3 展示下一节，右侧约 2/3 展示全部预约且包含下一节；`1200px` 以下改为单列堆叠。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "合并下一节与所有预约",
-      "summary": "删除独占整行且与列表重复的“下一节预约”卡，将“所有预约”移到芭蕾页顶部；列表第一条作为下一节，用浅粉背景和“下一节”标识突出，并保留取消截止时间。"
     }
   ]
 }
