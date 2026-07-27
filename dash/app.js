@@ -1839,12 +1839,26 @@ function createLineChart(records, options) {
   const yFormatter = options.yFormatter || ((value) => `${Math.round(value)}${unit}`);
   const xFormatter = options.xFormatter || ((record) => formatDateShort(record.date));
   const width = options.width || Math.max(920, records.length * 46 + 96);
-  const height = 340;
-  const padding = { top: 28, right: 26, bottom: 64, left: 56 };
+  const height = Math.max(180, Number(options.height) || 340);
+  const padding = {
+    top: 28,
+    right: 26,
+    bottom: 64,
+    left: 56,
+    ...(options.padding || {}),
+  };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
   const values = records.map((record) => Number(record[key]) || 0);
-  const yScale = options.integerYScale ? getIntegerChartScale(values) : getChartScale(values);
+  const baseYScale = options.integerYScale ? getIntegerChartScale(values) : getChartScale(values);
+  const yHeadroom = Math.max(0, Number(options.yHeadroom) || 0);
+  const yScale = yHeadroom
+    ? {
+        ...baseYScale,
+        max: baseYScale.max + yHeadroom,
+        ticks: [...baseYScale.ticks, baseYScale.max + yHeadroom],
+      }
+    : baseYScale;
   const yRange = yScale.max - yScale.min || 1;
   const points = records.map((record, index) => {
     const x = padding.left + (records.length <= 1 ? 0 : (index / (records.length - 1)) * chartWidth);
@@ -1852,6 +1866,10 @@ function createLineChart(records, options) {
     return { record, value: Number(record[key]) || 0, x, y };
   });
   const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ");
+  const chartBottom = padding.top + chartHeight;
+  const areaPath = points.length
+    ? `${linePath} L ${points.at(-1).x.toFixed(1)} ${chartBottom.toFixed(1)} L ${points[0].x.toFixed(1)} ${chartBottom.toFixed(1)} Z`
+    : "";
   const yTicks = yScale.ticks.map((value) => {
     const y = padding.top + chartHeight - ((value - yScale.min) / yRange) * chartHeight;
     return { value, y };
@@ -1879,23 +1897,34 @@ function createLineChart(records, options) {
           `,
         )
         .join("")}
+      ${options.showArea ? `<path class="chart-area" d="${areaPath}" style="--chart-stroke: ${stroke}" />` : ""}
       <path class="chart-line" d="${linePath}" style="--chart-stroke: ${stroke}" />
       ${points
-        .map(
-          (point, index) => `
+        .map((point, index) => {
+          const showPoint = !(options.hideZeroPoints && point.value === 0);
+          const showValue = !(options.hideZeroLabels && point.value === 0);
+          return `
             <g class="chart-point-group">
-              <circle class="chart-point" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4">
-                <title>${escapeHtml(xFormatter(point.record))}: ${escapeHtml(formatter(point.value))}</title>
-              </circle>
-              <text class="chart-value-label" x="${point.x.toFixed(1)}" y="${Math.max(12, point.y - 9).toFixed(1)}" text-anchor="middle">${escapeHtml(formatter(point.value))}</text>
+              ${
+                showPoint
+                  ? `<circle class="chart-point" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4">
+                      <title>${escapeHtml(xFormatter(point.record))}: ${escapeHtml(formatter(point.value))}</title>
+                    </circle>`
+                  : ""
+              }
+              ${
+                showValue
+                  ? `<text class="chart-value-label" x="${point.x.toFixed(1)}" y="${Math.max(12, point.y - 9).toFixed(1)}" text-anchor="middle">${escapeHtml(formatter(point.value))}</text>`
+                  : ""
+              }
               ${
                 xLabelIndexes.has(index)
                   ? `<text class="chart-x-label" x="${point.x.toFixed(1)}" y="${padding.top + chartHeight + 24}" text-anchor="middle">${escapeHtml(xFormatter(point.record))}</text>`
                   : ""
               }
             </g>
-          `,
-        )
+          `;
+        })
         .join("")}
     </svg>
   `;
@@ -2942,7 +2971,13 @@ function renderBalletTrend() {
     yFormatter: (value) => (isClasses ? `${Math.round(value)}` : value.toFixed(1).replace(/\.0$/, "")),
     integerYScale: isClasses,
     stroke: "#c44778",
-    width: Math.max(getChartRenderWidth(chart), records.length * 58 + 104),
+    width: Math.max(getChartRenderWidth(chart), records.length * 38 + 104),
+    height: 224,
+    padding: { top: 22, right: 24, bottom: 46, left: 48 },
+    yHeadroom: isClasses ? 1 : 0.5,
+    showArea: true,
+    hideZeroPoints: true,
+    hideZeroLabels: true,
     xFormatter,
     labelInterval,
   });
