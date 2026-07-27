@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 15:19",
+  "updatedAt": "2026-07-27 15:22",
   "version": "1.0.5.10",
   "versionLabel": "v1.0.5.10",
-  "branch": "feature/ballet-booking-status-colors",
-  "commit": "d3fee11",
+  "branch": "feature/booking-status-deploy-record",
+  "commit": "921769c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-status-colors · commit d3fee11 · 有未提交代码改动",
+  "deployNote": "feature/booking-status-deploy-record · commit 921769c · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-27",
