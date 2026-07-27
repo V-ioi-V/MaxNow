@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 19:10",
+  "updatedAt": "2026-07-27 19:12",
   "version": "1.0.5.17",
   "versionLabel": "v1.0.5.17",
   "branch": "feature/ballet-compact-header",
-  "commit": "45c32fa",
+  "commit": "78e647e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-compact-header · commit 45c32fa · 有未提交代码改动",
+  "deployNote": "feature/ballet-compact-header · commit 78e647e · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-27",

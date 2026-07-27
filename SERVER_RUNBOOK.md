@@ -376,6 +376,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 
 2026-07-27 课程卡预测改为按卡独立计算。部署前 `dash/data` 和 `/var/lib/maxnow-ballet` 已备份至 `/home/ubuntu/maxnow-deploy-backups/ballet-card-forecast-eYFyLE`；服务器 15 项同步器测试、全仓检查和一次 production rolling service 均通过。当前卡明确以 2026-07-26 为开卡日，页面显示第 2 / 182 天、到期前所需 1.5 节 / 周、按每周 2 节预计 2026-12-10 用完，以及每周 1 节时到期约剩 13 节。因为开卡未满 28 天，`observedClassesPerWeek` 和 `observedCanFinish` 均为空，read model 不再包含固定窗口 `historyWindowDays` / `currentClassesPerWeek`。每日和月度 timer 保持 `active`。
 
+2026-07-27 删除芭蕾内容区重复标题卡。部署前页面文件已备份至 `/home/ubuntu/maxnow-deploy-backups/ballet-compact-header-kS2cEb`；线上只保留低权重“数据更新”时间，下一节预约成为首个全宽有效模块，不再显示 `Ballet Progress / 芭蕾 / 已同步` 重复信息。服务器全仓检查与 `nginx -t` 通过，匿名访问边界保持 Dash `302`、`ballet.json` `401`、Blog `200`，页面缓存为 `styles.css?v=148` / `app.js?v=124`。
+
 2026-06-17 晚间已部署参考风格刷新版本：
 
 ```text
