@@ -594,15 +594,22 @@
         "totalClasses": 40,
         "usedClasses": 1,
         "pace": {
-          "historyWindowDays": 28,
-          "historyClasses": 2,
-          "currentClassesPerWeek": 0.5,
+          "validityDays": 182,
+          "elapsedDays": 2,
+          "openDayNumber": 2,
           "remainingDays": 181,
           "remainingWeeks": 25.9,
           "requiredClassesPerWeek": 1.5,
           "recommendedWholeClassesPerWeek": 2,
-          "additionalClassesPerWeek": 1.0,
-          "canFinishAtCurrentPace": false
+          "plannedFinishDate": "2026-12-10",
+          "plannedBufferDays": 44,
+          "oneClassPerWeekProjectedRemaining": 13,
+          "sampleMinimumDays": 28,
+          "sampleSufficient": false,
+          "observedClassesPerWeek": null,
+          "observedFinishDate": null,
+          "observedProjectedRemainingAtExpiry": null,
+          "observedCanFinish": null
         }
       }
     ]

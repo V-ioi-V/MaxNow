@@ -116,7 +116,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ricky.js`：从 `ricky.json` 生成的浏览器 wrapper。
 - `dash/data/life-foods.json`：生活页“吃啥”随机选择器的只读候选数据，由 `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 生成。
 - `dash/data/life-foods.js`：从 `life-foods.json` 生成的浏览器 wrapper。
-- `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要，以及课程卡余次 / 有效期和到期前用完节奏判断；不保存 Cookie、会员卡号、会员标识或原始响应。前端将最近一节有效预约放进“下一节预约”主卡，并在独立“所有预约”列表完整展示未来课程。
+- `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要，以及每张课程卡独立的开卡进度、余次 / 有效期、计划情景和样本充足后的实际节奏预测；不保存 Cookie、会员卡号、会员标识或原始响应。前端将最近一节有效预约放进“下一节预约”主卡，并在独立“所有预约”列表完整展示未来课程。
 - `dash/data/ballet-session.json`：芭蕾页 PHPSESSID 活跃实验卡的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
 - `dash/data/ballet.js`：从 `ballet.json` 生成的浏览器 wrapper。
 - `dash/login.html` / `dash/login.js`：MaxNow 私人访问入口；只提交用户名和密码到同源 `/auth/login`，不在浏览器保存或读取会话 Cookie。
@@ -228,7 +228,7 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - 固定 25 分钟的旧会话阶段已于 2026-07-26 23:28 返回登录失效并停止，最后认证为 23:03、已确认有效 3 小时 56 分 06 秒。Owner 于 2026-07-27 重新打开闻道并退出微信后，本机提取到不同的新会话；v6 自 00:26:55 起按每 20 分钟独立计时，首条为 HTTP 200 / authenticated。旧三阶段与 v6 属于不同凭据代次，不能合并寿命，也不能据此证明精确空闲寿命或滑动续期；unit、原始日志、凭据挂载和停止方式只在 `SERVER_RUNBOOK.md` 维护。
 - 芭蕾页可展示 `ballet-session.*` 的脱敏实验卡：持续时间只计算到最后一个 `authenticated` 样本，页面每 5 分钟读取静态状态，服务器本地发布器不访问闻道。文案使用“自动检查”，不能将正常样本解释成已证明 Session 自动续期。
 - 状态发布器以专用无登录账号运行；已停止实验的日志 inode 使用 root-owned 只读硬链接保存，当前 v6 活动日志由独立 root oneshot 每 5 分钟原子复制为只读脱敏快照，再由非 root 发布器生成页面状态。两项本地任务都不访问闻道，`/var/lib/private` 继续保持 `0700`。
-- `dash/data/ballet.*` 只能保存脱敏前端读模型与预聚合统计；同步状态同时保存最近尝试、最近成功、数据变更时间、逻辑日期、抓取窗口、连续失败和安全错误码。课程卡只允许输出名称、有效期、总 / 剩余 / 已用课次和由实际历史推导的周频率。`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、源记录 ID、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端、仓库、日志或聊天。
+- `dash/data/ballet.*` 只能保存脱敏前端读模型与预聚合统计；同步状态同时保存最近尝试、最近成功、数据变更时间、逻辑日期、抓取窗口、连续失败和安全错误码。课程卡只允许输出名称、有效期、总 / 剩余 / 已用课次和由该卡自身有效期 / 使用量推导的计划与实际节奏；不同卡不能共享消耗样本，开卡未满 28 天时实际节奏字段保持空值。`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、源记录 ID、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端、仓库、日志或聊天。
 - 生产凭据已于 2026-07-27 使用新会话重新密封为 host-bound systemd 加密凭据，通过 `LoadCredentialEncrypted` 注入；页面、同步器和 unit 已部署。Owner 于 12:01 批准并完成一次受控 rolling 只读同步；14:57 复查发现列表页“排队中”在详情页写成“等候中, 排队序号 N”，同步器已将该详情状态补充归一为 `waitlist`。同步后 enable gate 均立即删除，每日 / 每月 timer 仍 disabled。身份失效时采集器保留旧缓存、记录脱敏错误并停止重试，直到检测到非敏感凭据版本变化；Owner 看到的操作提示固定为在电脑微信重新登录后安全刷新凭据，不展示任何 Session 值。
 - 自动化模式固定分为 `off`、`dry-run`、`enabled`。真实提交必须在连续 dry-run、幂等校验、有限重试、失败停止和 Owner 单独批准后启用；默认不自动取消或转课。
 

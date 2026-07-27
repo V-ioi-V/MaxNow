@@ -2985,10 +2985,13 @@ function createBalletMembershipItem(card = {}) {
   const title = document.createElement("div");
   const eyebrow = document.createElement("p");
   const name = document.createElement("h3");
+  const period = document.createElement("small");
   eyebrow.className = "eyebrow";
   eyebrow.textContent = "Active Card";
   name.textContent = String(card.name || "课程卡");
-  title.append(eyebrow, name);
+  period.className = "ballet-membership-period";
+  period.textContent = card.validFrom ? `${formatDateOnly(card.validFrom)} 开卡` : "开卡日期待同步";
+  title.append(eyebrow, name, period);
   const validity = document.createElement("span");
   validity.className = "status-pill";
   validity.textContent = card.validThrough ? `有效至 ${String(card.validThrough).slice(0, 10)}` : "有效期待同步";
@@ -3000,7 +3003,13 @@ function createBalletMembershipItem(card = {}) {
   [
     ["剩余课次", `${Math.max(0, Math.floor(balletNumber(card.remainingClasses)))} / ${Math.max(0, Math.floor(balletNumber(card.totalClasses)))} 节`, "blue"],
     ["已使用", `${Math.max(0, Math.floor(balletNumber(card.usedClasses)))} 节`, "purple"],
-    ["近 28 天节奏", `${balletNumber(pace.currentClassesPerWeek).toFixed(1)} 节/周`, "cyan"],
+    [
+      "开卡进度",
+      balletNumber(pace.openDayNumber) > 0
+        ? `第 ${Math.floor(balletNumber(pace.openDayNumber))} / ${Math.floor(balletNumber(pace.validityDays))} 天`
+        : "尚未开卡",
+      "cyan",
+    ],
     ["到期前所需", `${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`, "orange"],
   ].forEach(([label, value, tone]) => {
     const section = document.createElement("section");
@@ -3015,15 +3024,35 @@ function createBalletMembershipItem(card = {}) {
 
   const verdict = document.createElement("div");
   verdict.className = "ballet-membership-verdict";
-  verdict.dataset.state = pace.canFinishAtCurrentPace ? "success" : "attention";
   const verdictTitle = document.createElement("strong");
   const verdictCopy = document.createElement("p");
-  if (pace.canFinishAtCurrentPace) {
-    verdictTitle.textContent = "按当前节奏可以在到期前上完";
-    verdictCopy.textContent = `当前约 ${balletNumber(pace.currentClassesPerWeek).toFixed(1)} 节/周，最低需要 ${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周。`;
+  const remainingClasses = Math.max(0, Math.floor(balletNumber(card.remainingClasses)));
+  const plannedRate = Math.max(0, Math.floor(balletNumber(pace.recommendedWholeClassesPerWeek)));
+  if (!remainingClasses) {
+    verdict.dataset.state = "success";
+    verdictTitle.textContent = "课程卡课次已用完";
+    verdictCopy.textContent = "当前没有剩余课次需要安排。";
+  } else if (balletNumber(pace.remainingDays) <= 0) {
+    verdict.dataset.state = "attention";
+    verdictTitle.textContent = "课程卡已到期";
+    verdictCopy.textContent = `到期时仍剩 ${remainingClasses} 节。`;
   } else {
-    verdictTitle.textContent = "按当前节奏预计无法在到期前上完";
-    verdictCopy.textContent = `每周还需增加 ${balletNumber(pace.additionalClassesPerWeek).toFixed(1)} 节；建议每周至少安排 ${Math.max(0, Math.floor(balletNumber(pace.recommendedWholeClassesPerWeek)))} 节。`;
+    verdict.dataset.state = "plan";
+    verdictTitle.textContent = `按每周 ${plannedRate} 节，预计 ${formatDateOnly(pace.plannedFinishDate)} 用完`;
+    const scenario = balletNumber(pace.oneClassPerWeekProjectedRemaining) > 0
+      ? `若每周 1 节，到期约剩 ${Math.floor(balletNumber(pace.oneClassPerWeekProjectedRemaining))} 节。`
+      : "若每周 1 节，也可在有效期内用完。";
+    verdictCopy.textContent = `预计比到期早 ${Math.floor(balletNumber(pace.plannedBufferDays))} 天；${scenario}`;
+    if (pace.sampleSufficient && Number.isFinite(Number(pace.observedClassesPerWeek))) {
+      const observed = document.createElement("p");
+      const observedRate = balletNumber(pace.observedClassesPerWeek).toFixed(1);
+      observed.textContent = pace.observedCanFinish
+        ? `开卡后实际 ${observedRate} 节/周，按此预计 ${formatDateOnly(pace.observedFinishDate)} 用完。`
+        : `开卡后实际 ${observedRate} 节/周，到期预计约剩 ${Math.floor(balletNumber(pace.observedProjectedRemainingAtExpiry))} 节。`;
+      verdict.append(verdictTitle, verdictCopy, observed);
+      article.append(header, metrics, verdict);
+      return article;
+    }
   }
   verdict.append(verdictTitle, verdictCopy);
   article.append(header, metrics, verdict);

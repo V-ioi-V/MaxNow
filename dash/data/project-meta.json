@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 17:12",
-  "version": "1.0.5.15",
-  "versionLabel": "v1.0.5.15",
-  "branch": "feature/ballet-readonly-loop",
-  "commit": "ac337f5",
+  "updatedAt": "2026-07-27 17:33",
+  "version": "1.0.5.16",
+  "versionLabel": "v1.0.5.16",
+  "branch": "feature/ballet-card-forecast",
+  "commit": "e7ac14f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-readonly-loop · commit ac337f5 · 有未提交代码改动",
+  "deployNote": "feature/ballet-card-forecast · commit e7ac14f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "修正课程卡预测口径",
+      "summary": "删除没有业务依据的固定“近 28 天节奏”：它会把开卡前日期当成未上课，还会让不同课程卡共享全局上课样本。"
+    },
     {
       "date": "2026-07-27",
       "title": "补齐芭蕾只读训练闭环",
@@ -28,11 +33,6 @@
       "date": "2026-07-27",
       "title": "居中芭蕾下一节预约内容",
       "summary": "将右侧“下一节预约”tab 的标题与“日期 + 课程信息”内容组整体横向居中，状态 pill 继续固定在右上角，减少内容偏左造成的空洞感。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "将芭蕾顶部改为两个独立等宽 tab",
-      "summary": "修正此前对“各占一半”的理解：芭蕾标题与“下一节预约”改为两个同级独立 tab，不再把课程模块嵌套在标题卡内部。"
     }
   ]
 }

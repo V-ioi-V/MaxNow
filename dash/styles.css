@@ -4465,6 +4465,14 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   overflow-wrap: anywhere;
 }
 
+.ballet-membership-period {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
 .ballet-membership-metrics,
 .ballet-week-grid {
   display: grid;
@@ -4522,6 +4530,11 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   background: #fff8ee;
 }
 
+.ballet-membership-verdict[data-state="plan"] {
+  border-color: #b9dcfa;
+  background: #f3f9ff;
+}
+
 .ballet-membership-verdict strong {
   color: var(--ok);
   font-size: 14px;
@@ -4529,6 +4542,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-membership-verdict[data-state="attention"] strong {
   color: #b85f18;
+}
+
+.ballet-membership-verdict[data-state="plan"] strong {
+  color: #2678be;
 }
 
 .ballet-membership-verdict p {

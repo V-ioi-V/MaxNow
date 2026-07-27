@@ -286,6 +286,59 @@ class BalletSyncTests(unittest.TestCase):
             ],
         )
 
+    def test_membership_forecast_is_isolated_per_card_and_hides_short_samples(self):
+        membership = {
+            "dataAsOf": "2026-07-27T00:17:00+08:00",
+            "cards": [
+                {
+                    "name": "新卡",
+                    "validFrom": "2026-07-26",
+                    "validThrough": "2027-01-23",
+                    "remainingClasses": 39,
+                    "totalClasses": 40,
+                    "usedClasses": 1,
+                },
+                {
+                    "name": "旧卡",
+                    "validFrom": "2026-06-01",
+                    "validThrough": "2026-11-30",
+                    "remainingClasses": 32,
+                    "totalClasses": 40,
+                    "usedClasses": 8,
+                },
+            ],
+        }
+        cards = ballet.build_membership_view(membership, NOW)["cards"]
+        new_card, mature_card = cards
+
+        self.assertEqual(new_card["pace"]["validityDays"], 182)
+        self.assertEqual(new_card["pace"]["openDayNumber"], 2)
+        self.assertFalse(new_card["pace"]["sampleSufficient"])
+        self.assertIsNone(new_card["pace"]["observedClassesPerWeek"])
+        self.assertIsNone(new_card["pace"]["observedCanFinish"])
+        self.assertEqual(new_card["pace"]["recommendedWholeClassesPerWeek"], 2)
+        self.assertEqual(new_card["pace"]["plannedFinishDate"], "2026-12-10")
+        self.assertEqual(new_card["pace"]["oneClassPerWeekProjectedRemaining"], 13)
+
+        self.assertTrue(mature_card["pace"]["sampleSufficient"])
+        self.assertEqual(mature_card["pace"]["observedClassesPerWeek"], 1.0)
+        self.assertEqual(mature_card["pace"]["openDayNumber"], 57)
+
+        day_one = ballet.build_membership_view(
+            {"cards": [membership["cards"][0]]},
+            datetime.fromisoformat("2026-07-26T00:17:00+08:00"),
+        )["cards"][0]
+        self.assertEqual(day_one["pace"]["openDayNumber"], 1)
+        self.assertFalse(day_one["pace"]["sampleSufficient"])
+
+        late_card = ballet.build_membership_view(
+            {"cards": [membership["cards"][0]]},
+            datetime.fromisoformat("2027-01-22T00:17:00+08:00"),
+        )["cards"][0]
+        self.assertEqual(late_card["pace"]["openDayNumber"], 181)
+        self.assertTrue(late_card["pace"]["sampleSufficient"])
+        self.assertEqual(late_card["pace"]["remainingDays"], 2)
+
     def test_fixture_full_sync_is_idempotent_and_public_data_is_redacted(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -327,8 +380,9 @@ class BalletSyncTests(unittest.TestCase):
             self.assertEqual(model["week"]["expectedClassesMin"], 1)
             card = model["membership"]["cards"][0]
             self.assertEqual(card["remainingClasses"], 39)
-            self.assertEqual(card["pace"]["historyClasses"], 1)
-            self.assertEqual(card["pace"]["currentClassesPerWeek"], 0.3)
+            self.assertEqual(card["pace"]["openDayNumber"], 2)
+            self.assertFalse(card["pace"]["sampleSufficient"])
+            self.assertIsNone(card["pace"]["observedClassesPerWeek"])
             self.assertGreater(card["pace"]["requiredClassesPerWeek"], 0)
             self.assertTrue(all("id" not in record for record in model["records"]))
             self.assertTrue(

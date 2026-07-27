@@ -303,6 +303,23 @@ def check_ballet_read_model():
             "pace",
         }.issubset(card):
             raise ValueError("ballet: membership card fields are incomplete")
+        pace = card["pace"]
+        if not isinstance(pace, dict) or not {
+            "validityDays",
+            "openDayNumber",
+            "remainingDays",
+            "requiredClassesPerWeek",
+            "recommendedWholeClassesPerWeek",
+            "plannedFinishDate",
+            "oneClassPerWeekProjectedRemaining",
+            "sampleSufficient",
+            "observedClassesPerWeek",
+        }.issubset(pace):
+            raise ValueError("ballet: membership forecast fields are incomplete")
+        if "historyWindowDays" in pace or "currentClassesPerWeek" in pace:
+            raise ValueError("ballet: retired fixed-window forecast remains")
+        if not pace["sampleSufficient"] and pace["observedClassesPerWeek"] is not None:
+            raise ValueError("ballet: short-sample observed pace must stay hidden")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
@@ -322,6 +339,8 @@ def check_ballet_read_model():
         "function formatBalletCancellation(" not in dashboard_js
         or "function renderBalletMembership()" not in dashboard_js
         or "function renderBalletWeek()" not in dashboard_js
+        or "pace.sampleSufficient" not in dashboard_js
+        or "近 28 天节奏" in dashboard_js
         or 'id="ballet-membership-list"' not in dashboard_html
         or 'id="ballet-week-completed"' not in dashboard_html
         or ".ballet-membership-card," not in dashboard_css
@@ -1072,7 +1091,7 @@ def check_secondary_view_style():
         '<article class="ballet-head-next"'
     ):
         raise ValueError("secondary views: next ballet class is still nested in the title tab")
-    if "styles.css?v=146" not in dashboard_html:
+    if "styles.css?v=147" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
         "\n  }\n\n  .token-usage-head:hover", 1
@@ -1097,7 +1116,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=122" not in dashboard_html:
+    if "app.js?v=123" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

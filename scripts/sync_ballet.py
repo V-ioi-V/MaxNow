@@ -1230,50 +1230,113 @@ def _round_pace(value: float) -> float:
 
 def build_membership_view(
     membership: dict[str, Any],
-    records: list[dict[str, Any]],
     now: datetime,
 ) -> dict[str, Any]:
     today = now.astimezone(TIMEZONE).date()
-    recent_start = today - timedelta(days=27)
-    recent_classes = sum(
-        1
-        for item in records
-        if recent_start.isoformat() <= str(item.get("date", "")) <= today.isoformat()
-    )
-    current_weekly_rate = recent_classes / 4
     cards = []
     for card in membership.get("cards", []):
+        valid_from = date.fromisoformat(card["validFrom"])
         valid_through = date.fromisoformat(card["validThrough"])
-        remaining_days = max(0, (valid_through - today).days + 1)
+        validity_days = max(1, (valid_through - valid_from).days + 1)
+        elapsed_days = (
+            0
+            if today < valid_from
+            else min(validity_days, (today - valid_from).days + 1)
+        )
+        forecast_start = max(today, valid_from)
+        remaining_days = max(0, (valid_through - forecast_start).days + 1)
         remaining_weeks = remaining_days / 7
         remaining_classes = int(card["remainingClasses"])
+        used_classes = int(card["usedClasses"])
         required_rate = (
             remaining_classes / remaining_weeks
             if remaining_classes and remaining_weeks > 0
             else 0
         )
-        additional_rate = max(0, required_rate - current_weekly_rate)
-        projected_capacity = current_weekly_rate * remaining_weeks
+        recommended_rate = math.ceil(required_rate) if required_rate > 0 else 0
+        planned_days = (
+            math.ceil(remaining_classes / recommended_rate * 7)
+            if recommended_rate > 0
+            else 0
+        )
+        planned_finish = (
+            forecast_start + timedelta(days=max(0, planned_days - 1))
+            if planned_days
+            else None
+        )
+        sample_sufficient = elapsed_days >= 28
+        observed_rate = (
+            used_classes / elapsed_days * 7
+            if sample_sufficient and elapsed_days > 0
+            else None
+        )
+        observed_capacity = (
+            observed_rate * remaining_weeks
+            if observed_rate is not None
+            else None
+        )
+        observed_finish = (
+            forecast_start
+            + timedelta(
+                days=max(
+                    0,
+                    math.ceil(remaining_classes / observed_rate * 7) - 1,
+                )
+            )
+            if observed_rate and remaining_classes
+            else None
+        )
         cards.append(
             {
                 **card,
                 "pace": {
-                    "historyWindowDays": 28,
-                    "historyClasses": recent_classes,
-                    "currentClassesPerWeek": _round_pace(current_weekly_rate),
+                    "validityDays": validity_days,
+                    "elapsedDays": elapsed_days,
+                    "openDayNumber": elapsed_days,
                     "remainingDays": remaining_days,
                     "remainingWeeks": _round_pace(remaining_weeks),
                     "requiredClassesPerWeek": _round_pace(required_rate),
-                    "recommendedWholeClassesPerWeek": (
-                        math.ceil(required_rate) if required_rate > 0 else 0
+                    "recommendedWholeClassesPerWeek": recommended_rate,
+                    "plannedFinishDate": (
+                        planned_finish.isoformat() if planned_finish else None
                     ),
-                    "additionalClassesPerWeek": _round_pace(additional_rate),
-                    "canFinishAtCurrentPace": (
+                    "plannedBufferDays": (
+                        max(0, (valid_through - planned_finish).days)
+                        if planned_finish and planned_finish <= valid_through
+                        else 0
+                    ),
+                    "oneClassPerWeekProjectedRemaining": max(
+                        0,
+                        remaining_classes
+                        - math.floor(remaining_weeks + 0.5),
+                    ),
+                    "sampleMinimumDays": 28,
+                    "sampleSufficient": sample_sufficient,
+                    "observedClassesPerWeek": (
+                        _round_pace(observed_rate)
+                        if observed_rate is not None
+                        else None
+                    ),
+                    "observedFinishDate": (
+                        observed_finish.isoformat() if observed_finish else None
+                    ),
+                    "observedProjectedRemainingAtExpiry": (
+                        max(
+                            0,
+                            remaining_classes
+                            - math.floor((observed_capacity or 0) + 0.5),
+                        )
+                        if observed_capacity is not None
+                        else None
+                    ),
+                    "observedCanFinish": (
                         remaining_classes == 0
                         or (
-                            remaining_weeks > 0
-                            and projected_capacity + 1e-9 >= remaining_classes
+                            observed_capacity is not None
+                            and observed_capacity + 1e-9 >= remaining_classes
                         )
+                        if sample_sufficient
+                        else None
                     ),
                 },
             }
@@ -1350,7 +1413,7 @@ def build_read_model(
             "records": [_public_upcoming(item) for item in upcoming],
         },
         "week": compute_week_summary(records, upcoming, now),
-        "membership": build_membership_view(membership, records, now),
+        "membership": build_membership_view(membership, now),
         "learningLogs": [],
         "authHealth": {
             "status": auth_status,
@@ -1393,12 +1456,23 @@ def validate_read_model(model: dict[str, Any]) -> None:
     if not isinstance(cards, list):
         raise SyncFailure("parse_error")
     for card in cards:
+        if not isinstance(card, dict):
+            raise SyncFailure("parse_error")
+        pace = card.get("pace")
         if (
-            not isinstance(card, dict)
-            or not isinstance(card.get("remainingClasses"), int)
+            not isinstance(card.get("remainingClasses"), int)
             or not isinstance(card.get("totalClasses"), int)
             or card["remainingClasses"] > card["totalClasses"]
-            or not isinstance(card.get("pace"), dict)
+            or not isinstance(pace, dict)
+            or not isinstance(pace.get("validityDays"), int)
+            or not isinstance(pace.get("openDayNumber"), int)
+            or pace["validityDays"] <= 0
+            or not 0 <= pace["openDayNumber"] <= pace["validityDays"]
+            or not isinstance(pace.get("sampleSufficient"), bool)
+            or (
+                not pace["sampleSufficient"]
+                and pace.get("observedClassesPerWeek") is not None
+            )
         ):
             raise SyncFailure("parse_error")
     serialized = json.dumps(model, ensure_ascii=False)
