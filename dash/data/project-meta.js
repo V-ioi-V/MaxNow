@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 20:48",
-  "version": "1.0.5.20",
-  "versionLabel": "v1.0.5.20",
-  "branch": "feature/ballet-booking-tabs",
-  "commit": "28519ab",
+  "updatedAt": "2026-07-27 22:49",
+  "version": "1.0.5.21",
+  "versionLabel": "v1.0.5.21",
+  "branch": "feature/ballet-top-three-tabs",
+  "commit": "54a4669",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-tabs · commit 28519ab · 有未提交代码改动",
+  "deployNote": "feature/ballet-top-three-tabs · commit 54a4669 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "将芭蕾核心三卡置顶",
+      "summary": "芭蕾页顶部改为“下一节预约 / 本周训练 / 课程卡”三个同级面板，宽桌面同排同高，`1200px` 及以下按使用顺序单列堆叠。"
+    },
     {
       "date": "2026-07-27",
       "title": "拆分下一节与所有预约为双面板",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-27",
       "title": "删除芭蕾重复标题卡",
       "summary": "删除芭蕾内容区重复的 “Ballet Progress / 芭蕾 / 已同步”标题卡，只保留一行低权重数据更新时间。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "修正课程卡预测口径",
-      "summary": "删除没有业务依据的固定“近 28 天节奏”：它会把开卡前日期当成未上课，还会让不同课程卡共享全局上课样本。"
     }
   ]
 };

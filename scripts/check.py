@@ -1063,7 +1063,7 @@ def check_secondary_view_style():
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
-        ".ballet-booking-grid {",
+        ".ballet-primary-grid {",
         ".ballet-next-summary {",
         "#tokens-view {",
         "#dounai-view {",
@@ -1088,10 +1088,11 @@ def check_secondary_view_style():
     ballet_view_markup = dashboard_html.split('id="ballet-view"', 1)[1].split('id="cloud-view"', 1)[0]
     layout_markers = (
         'id="ballet-updated"',
-        'class="ballet-booking-grid"',
+        'class="ballet-primary-grid"',
         'class="panel ballet-next-panel"',
+        'class="panel ballet-week-panel"',
+        'class="panel ballet-membership-card"',
         'class="panel ballet-upcoming-panel"',
-        'class="ballet-decision-grid"',
         'class="panel ballet-training-panel"',
         'class="panel ballet-history-panel"',
         'class="panel ballet-session-card"',
@@ -1114,14 +1115,14 @@ def check_secondary_view_style():
         '<details class="panel ballet-session-card"' not in ballet_view_markup
         or '<summary class="ballet-session-summary">' not in ballet_view_markup
         or '<details class="panel ballet-session-card" open' in ballet_view_markup
-        or ".ballet-decision-grid {" not in dashboard_css
+        or ".ballet-primary-grid {" not in dashboard_css
         or ".ballet-session-summary {" not in dashboard_css
         or ".ballet-session-card[open] .ballet-session-toggle {" not in dashboard_css
     ):
         raise ValueError("secondary views: ballet decision grid or collapsed session details are incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
-    if "styles.css?v=151" not in dashboard_html:
+    if "styles.css?v=152" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
         "\n  }\n\n  .token-usage-head:hover", 1

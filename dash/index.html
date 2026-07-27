@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=151" />
+    <link rel="stylesheet" href="./styles.css?v=152" />
   </head>
   <body>
     <div class="app-shell">
@@ -629,7 +629,7 @@
             </div>
           </div>
 
-          <section class="ballet-booking-grid" aria-label="下一节与所有预约">
+          <section class="ballet-primary-grid" aria-label="下一节预约、本周训练与课程卡">
             <article class="panel ballet-next-panel" aria-labelledby="ballet-next-title">
               <header class="panel-head">
                 <div>
@@ -651,19 +651,6 @@
               </div>
             </article>
 
-            <article class="panel ballet-upcoming-panel" id="ballet-upcoming-panel">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Bookings</p>
-                  <h2>所有预约</h2>
-                </div>
-                <span class="status-pill" id="ballet-upcoming-count">0 节</span>
-              </header>
-              <div class="ballet-upcoming-list" id="ballet-upcoming-list"></div>
-            </article>
-          </section>
-
-          <section class="ballet-decision-grid" aria-label="本周训练与课程卡">
             <article class="panel ballet-week-panel" aria-labelledby="ballet-week-title">
               <header class="panel-head">
                 <div>
@@ -707,6 +694,17 @@
               <div class="ballet-membership-list" id="ballet-membership-list"></div>
             </article>
           </section>
+
+          <article class="panel ballet-upcoming-panel" id="ballet-upcoming-panel">
+            <header class="panel-head">
+              <div>
+                <p class="eyebrow">Bookings</p>
+                <h2>所有预约</h2>
+              </div>
+              <span class="status-pill" id="ballet-upcoming-count">0 节</span>
+            </header>
+            <div class="ballet-upcoming-list" id="ballet-upcoming-list"></div>
+          </article>
 
           <article class="panel ballet-training-panel">
             <header class="panel-head ballet-training-head">
