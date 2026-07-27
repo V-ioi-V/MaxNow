@@ -1089,16 +1089,39 @@ def check_secondary_view_style():
     ballet_intro_markup = ballet_intro[1].split("</section>", 1)[0]
     if 'id="ballet-updated"' not in ballet_intro_markup or '<article class="ballet-head-next"' not in ballet_intro_markup:
         raise ValueError("secondary views: ballet update time and next class must share the compact intro")
+    ballet_view_markup = dashboard_html.split('id="ballet-view"', 1)[1].split('id="cloud-view"', 1)[0]
+    layout_markers = (
+        'class="ballet-page-intro"',
+        'class="ballet-decision-grid"',
+        'class="panel ballet-upcoming-panel"',
+        'class="panel ballet-training-panel"',
+        'class="panel ballet-history-panel"',
+        'class="panel ballet-session-card"',
+    )
+    layout_positions = [ballet_view_markup.find(marker) for marker in layout_markers]
+    if any(position < 0 for position in layout_positions) or layout_positions != sorted(layout_positions):
+        raise ValueError("secondary views: ballet information priority order is invalid")
+    if ballet_view_markup.find("ballet-week-panel") > ballet_view_markup.find("ballet-membership-card"):
+        raise ValueError("secondary views: weekly training must precede the course card")
+    if (
+        '<details class="panel ballet-session-card"' not in ballet_view_markup
+        or '<summary class="ballet-session-summary">' not in ballet_view_markup
+        or '<details class="panel ballet-session-card" open' in ballet_view_markup
+        or ".ballet-decision-grid {" not in dashboard_css
+        or ".ballet-session-summary {" not in dashboard_css
+        or ".ballet-session-card[open] .ballet-session-toggle {" not in dashboard_css
+    ):
+        raise ValueError("secondary views: ballet decision grid or collapsed session details are incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
-    if "styles.css?v=148" not in dashboard_html:
+    if "styles.css?v=149" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
         "\n  }\n\n  .token-usage-head:hover", 1
     )[0]
     if "background: #ffffff;" in shared_hover:
         raise ValueError("secondary views: shared hover must preserve component backgrounds")
-    return "secondary views: shared card shells and compact ballet intro are valid"
+    return "secondary views: shared shells and ballet priority layout are valid"
 
 
 def check_data_health_contract():

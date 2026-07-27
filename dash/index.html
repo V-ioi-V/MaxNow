@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=148" />
+    <link rel="stylesheet" href="./styles.css?v=149" />
   </head>
   <body>
     <div class="app-shell">
@@ -648,94 +648,50 @@
             </div>
           </div>
 
-          <article class="panel ballet-session-card" aria-labelledby="ballet-session-title">
-            <header class="panel-head">
-              <div>
-                <p class="eyebrow">Session Lifetime</p>
-                <h2 id="ballet-session-title">PHPSESSID 活跃实验</h2>
+          <section class="ballet-decision-grid" aria-label="本周训练与课程卡">
+            <article class="panel ballet-week-panel" aria-labelledby="ballet-week-title">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">This Week</p>
+                  <h2 id="ballet-week-title">本周训练</h2>
+                </div>
+                <span class="status-pill" id="ballet-week-range">本周</span>
+              </header>
+              <div class="ballet-week-grid">
+                <section data-tone="green">
+                  <span>已完成</span>
+                  <strong id="ballet-week-completed">0 节</strong>
+                  <small id="ballet-week-completed-time">0 小时</small>
+                </section>
+                <section data-tone="pink">
+                  <span>已预约</span>
+                  <strong id="ballet-week-booked">0 节</strong>
+                  <small id="ballet-week-booked-time">0 小时</small>
+                </section>
+                <section data-tone="orange">
+                  <span>候补</span>
+                  <strong id="ballet-week-waitlist">0 节</strong>
+                  <small id="ballet-week-waitlist-time">0 小时</small>
+                </section>
+                <section data-tone="purple">
+                  <span>预计训练</span>
+                  <strong id="ballet-week-expected">0 节</strong>
+                  <small id="ballet-week-expected-time">0 小时</small>
+                </section>
               </div>
-              <span class="status-pill" id="ballet-session-status" aria-live="polite">等待状态</span>
-            </header>
+            </article>
 
-            <div class="ballet-session-duration">
-              <span>已确认有效</span>
-              <strong id="ballet-session-duration">--</strong>
-              <small>持续时间只计算到最近一次验证成功，不随当前时间外推。</small>
-            </div>
-
-            <dl class="ballet-session-metrics">
-              <div>
-                <dt>实验起始</dt>
-                <dd id="ballet-session-started">--</dd>
-              </div>
-              <div>
-                <dt>最近自动检查</dt>
-                <dd id="ballet-session-last-probe">--</dd>
-              </div>
-              <div>
-                <dt>下次自动检查</dt>
-                <dd id="ballet-session-next-probe">--</dd>
-              </div>
-              <div>
-                <dt>检查间隔</dt>
-                <dd id="ballet-session-interval">--</dd>
-              </div>
-            </dl>
-
-            <p class="ballet-session-note" id="ballet-session-note">
-              这是无副作用的只读探针，不代表 PHPSESSID 已实现自动续期。
-            </p>
-            <div class="ballet-session-evidence" aria-label="实验辅助信息">
-              <span id="ballet-session-phase">阶段起始 --</span>
-              <span id="ballet-session-samples">样本 --</span>
-              <span id="ballet-session-end">计划结束 --</span>
-              <span id="ballet-session-next-plan" hidden>新凭据后计划每 20 分钟</span>
-              <span id="ballet-session-observations">等待观察结果</span>
-            </div>
-          </article>
-
-          <article class="panel ballet-membership-card" aria-labelledby="ballet-membership-title">
-            <header class="panel-head">
-              <div>
-                <p class="eyebrow">Course Card</p>
-                <h2 id="ballet-membership-title">课程卡</h2>
-              </div>
-              <span class="status-pill" id="ballet-membership-status">等待同步</span>
-            </header>
-            <div class="ballet-membership-list" id="ballet-membership-list"></div>
-          </article>
-
-          <article class="panel ballet-week-panel" aria-labelledby="ballet-week-title">
-            <header class="panel-head">
-              <div>
-                <p class="eyebrow">This Week</p>
-                <h2 id="ballet-week-title">本周训练</h2>
-              </div>
-              <span class="status-pill" id="ballet-week-range">本周</span>
-            </header>
-            <div class="ballet-week-grid">
-              <section data-tone="green">
-                <span>已完成</span>
-                <strong id="ballet-week-completed">0 节</strong>
-                <small id="ballet-week-completed-time">0 小时</small>
-              </section>
-              <section data-tone="pink">
-                <span>已预约</span>
-                <strong id="ballet-week-booked">0 节</strong>
-                <small id="ballet-week-booked-time">0 小时</small>
-              </section>
-              <section data-tone="orange">
-                <span>候补</span>
-                <strong id="ballet-week-waitlist">0 节</strong>
-                <small id="ballet-week-waitlist-time">0 小时</small>
-              </section>
-              <section data-tone="purple">
-                <span>预计训练</span>
-                <strong id="ballet-week-expected">0 节</strong>
-                <small id="ballet-week-expected-time">0 小时</small>
-              </section>
-            </div>
-          </article>
+            <article class="panel ballet-membership-card" aria-labelledby="ballet-membership-title">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Course Card</p>
+                  <h2 id="ballet-membership-title">课程卡</h2>
+                </div>
+                <span class="status-pill" id="ballet-membership-status">等待同步</span>
+              </header>
+              <div class="ballet-membership-list" id="ballet-membership-list"></div>
+            </article>
+          </section>
 
           <article class="panel ballet-upcoming-panel" id="ballet-upcoming-panel">
             <header class="panel-head">
@@ -817,6 +773,57 @@
             </header>
             <div class="ballet-history-list" id="ballet-history"></div>
           </article>
+
+          <details class="panel ballet-session-card" aria-labelledby="ballet-session-title">
+            <summary class="ballet-session-summary">
+              <div>
+                <p class="eyebrow">Session Lifetime</p>
+                <h2 id="ballet-session-title">PHPSESSID 实验详情</h2>
+              </div>
+              <div class="ballet-session-summary-meta">
+                <span class="status-pill" id="ballet-session-status" aria-live="polite">等待状态</span>
+                <span class="ballet-session-toggle" aria-hidden="true"></span>
+              </div>
+            </summary>
+
+            <div class="ballet-session-details">
+              <div class="ballet-session-duration">
+                <span>已确认有效</span>
+                <strong id="ballet-session-duration">--</strong>
+                <small>持续时间只计算到最近一次验证成功，不随当前时间外推。</small>
+              </div>
+
+              <dl class="ballet-session-metrics">
+                <div>
+                  <dt>实验起始</dt>
+                  <dd id="ballet-session-started">--</dd>
+                </div>
+                <div>
+                  <dt>最近自动检查</dt>
+                  <dd id="ballet-session-last-probe">--</dd>
+                </div>
+                <div>
+                  <dt>下次自动检查</dt>
+                  <dd id="ballet-session-next-probe">--</dd>
+                </div>
+                <div>
+                  <dt>检查间隔</dt>
+                  <dd id="ballet-session-interval">--</dd>
+                </div>
+              </dl>
+
+              <p class="ballet-session-note" id="ballet-session-note">
+                这是无副作用的只读探针，不代表 PHPSESSID 已实现自动续期。
+              </p>
+              <div class="ballet-session-evidence" aria-label="实验辅助信息">
+                <span id="ballet-session-phase">阶段起始 --</span>
+                <span id="ballet-session-samples">样本 --</span>
+                <span id="ballet-session-end">计划结束 --</span>
+                <span id="ballet-session-next-plan" hidden>新凭据后计划每 20 分钟</span>
+                <span id="ballet-session-observations">等待观察结果</span>
+              </div>
+            </div>
+          </details>
         </section>
 
         <section class="view secondary-view" id="cloud-view" data-view-panel="cloud">

@@ -4393,9 +4393,56 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   --card-color: var(--ballet);
   --card-border: var(--ballet-border);
   min-width: 0;
-  margin-bottom: var(--page-section-gap);
+  margin-bottom: 0;
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--ballet) 7%, #ffffff), #ffffff 58%);
+}
+
+.ballet-session-summary {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.ballet-session-summary::-webkit-details-marker {
+  display: none;
+}
+
+.ballet-session-summary:focus-visible {
+  border-radius: 10px;
+  outline: 2px solid color-mix(in srgb, var(--ballet) 55%, #ffffff);
+  outline-offset: 4px;
+}
+
+.ballet-session-summary-meta {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.ballet-session-toggle {
+  width: 9px;
+  height: 9px;
+  display: block;
+  border-right: 2px solid var(--ballet);
+  border-bottom: 2px solid var(--ballet);
+  transform: rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.ballet-session-card[open] .ballet-session-toggle {
+  transform: rotate(225deg);
+}
+
+.ballet-session-details {
+  margin-top: 18px;
 }
 
 #ballet-view .ballet-session-card[data-state="auth_required"],
@@ -4407,9 +4454,36 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   border-color: var(--orange-border);
 }
 
-.ballet-membership-card,
-.ballet-week-panel {
+.ballet-decision-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.65fr) minmax(600px, 1.35fr);
+  align-items: stretch;
+  gap: var(--page-grid-gap);
   margin-bottom: var(--page-section-gap);
+}
+
+.ballet-decision-grid .ballet-membership-card,
+.ballet-decision-grid .ballet-week-panel {
+  min-width: 0;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+.ballet-decision-grid .ballet-week-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.ballet-decision-grid .ballet-week-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(94px, 1fr);
+  flex: 1;
+}
+
+@media (min-width: 1201px) {
+  .ballet-decision-grid .ballet-membership-metrics strong {
+    font-size: clamp(18px, 1.65vw, 22px);
+  }
 }
 
 .ballet-membership-list {
@@ -5348,6 +5422,17 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   }
 }
 
+@media (max-width: 1200px) {
+  .ballet-decision-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-decision-grid .ballet-week-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: auto;
+  }
+}
+
 @media (max-width: 1100px) {
   .token-detail-grid {
     grid-template-columns: 1fr;
@@ -5418,6 +5503,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   .ballet-session-metrics,
   .ballet-membership-metrics,
   .ballet-week-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ballet-decision-grid .ballet-week-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -5627,6 +5716,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   .ballet-week-grid {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .ballet-decision-grid .ballet-week-grid {
+    grid-template-columns: 1fr;
   }
 
   .ballet-membership-item > header {
