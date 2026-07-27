@@ -1,25 +1,25 @@
 window.MAXNOW_BALLET_DATA = {
   "schemaVersion": 1,
   "timezone": "Asia/Shanghai",
-  "dataAsOf": "2026-07-27T17:00:31+08:00",
+  "dataAsOf": "2026-07-27T17:10:17+08:00",
   "sync": {
     "logicalDate": "2026-07-26",
-    "lastAttemptAt": "2026-07-27T17:00:31+08:00",
-    "lastSuccessAt": "2026-07-27T17:00:31+08:00",
-    "lastDataChangeAt": "2026-07-27T17:00:31+08:00",
+    "lastAttemptAt": "2026-07-27T17:10:17+08:00",
+    "lastSuccessAt": "2026-07-27T17:10:17+08:00",
+    "lastDataChangeAt": "2026-07-27T17:10:17+08:00",
     "lastAttemptStatus": "success",
     "cacheState": "fresh",
     "consecutiveFailures": 0,
     "errorCode": null,
     "errorMessage": null,
     "window": {
-      "mode": "full",
-      "from": "all",
+      "mode": "rolling",
+      "from": "2026-05-28",
       "through": "2026-07-26"
     },
     "sourceRecords": 1,
-    "mergedRecords": 1,
-    "changedRecords": 1
+    "mergedRecords": 2,
+    "changedRecords": 0
   },
   "classification": {
     "version": 1,
@@ -74,9 +74,9 @@ window.MAXNOW_BALLET_DATA = {
   },
   "summary": {
     "period": "all",
-    "classes": 1,
-    "minutes": 90,
-    "hours": 1.5,
+    "classes": 2,
+    "minutes": 150,
+    "hours": 2.5,
     "missingDurationClasses": 0,
     "byCourseType": [
       {
@@ -88,8 +88,8 @@ window.MAXNOW_BALLET_DATA = {
       {
         "key": "soft_open",
         "label": "软开",
-        "classes": 0,
-        "minutes": 0
+        "classes": 1,
+        "minutes": 60
       },
       {
         "key": "conditioning",
@@ -144,8 +144,8 @@ window.MAXNOW_BALLET_DATA = {
       {
         "key": "none",
         "label": "无级别",
-        "classes": 0,
-        "minutes": 0
+        "classes": 1,
+        "minutes": 60
       }
     ]
   },
@@ -163,10 +163,101 @@ window.MAXNOW_BALLET_DATA = {
       "studio": "李俊芭蕾舞蹈工作室",
       "attendanceStatus": "attended",
       "recordOrigin": "wenda"
+    },
+    {
+      "courseName": "软开课",
+      "courseType": "soft_open",
+      "level": "none",
+      "date": "2026-07-25",
+      "startTime": "11:30",
+      "endTime": "12:30",
+      "durationMinutes": 60,
+      "teacher": "李俊",
+      "venue": "",
+      "studio": "",
+      "attendanceStatus": "attended",
+      "recordOrigin": "manual"
     }
   ],
   "aggregates": {
     "daily": [
+      {
+        "period": "2026-07-25",
+        "classes": 1,
+        "minutes": 60,
+        "hours": 1.0,
+        "missingDurationClasses": 0,
+        "byCourseType": [
+          {
+            "key": "ballet",
+            "label": "芭蕾",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "soft_open",
+            "label": "软开",
+            "classes": 1,
+            "minutes": 60
+          },
+          {
+            "key": "conditioning",
+            "label": "肌肉素质",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "technique",
+            "label": "技术技巧",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "other",
+            "label": "其他",
+            "classes": 0,
+            "minutes": 0
+          }
+        ],
+        "byLevel": [
+          {
+            "key": "L1",
+            "label": "L1",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "L1.5",
+            "label": "L1.5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "L2",
+            "label": "L2",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "L3",
+            "label": "L3",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "L4",
+            "label": "L4",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "none",
+            "label": "无级别",
+            "classes": 1,
+            "minutes": 60
+          }
+        ]
+      },
       {
         "period": "2026-07-26",
         "classes": 1,
@@ -248,9 +339,9 @@ window.MAXNOW_BALLET_DATA = {
     "monthly": [
       {
         "period": "2026-07",
-        "classes": 1,
-        "minutes": 90,
-        "hours": 1.5,
+        "classes": 2,
+        "minutes": 150,
+        "hours": 2.5,
         "missingDurationClasses": 0,
         "byCourseType": [
           {
@@ -262,8 +353,8 @@ window.MAXNOW_BALLET_DATA = {
           {
             "key": "soft_open",
             "label": "软开",
-            "classes": 0,
-            "minutes": 0
+            "classes": 1,
+            "minutes": 60
           },
           {
             "key": "conditioning",
@@ -318,8 +409,8 @@ window.MAXNOW_BALLET_DATA = {
           {
             "key": "none",
             "label": "无级别",
-            "classes": 0,
-            "minutes": 0
+            "classes": 1,
+            "minutes": 60
           }
         ]
       }
@@ -327,9 +418,9 @@ window.MAXNOW_BALLET_DATA = {
     "yearly": [
       {
         "period": "2026",
-        "classes": 1,
-        "minutes": 90,
-        "hours": 1.5,
+        "classes": 2,
+        "minutes": 150,
+        "hours": 2.5,
         "missingDurationClasses": 0,
         "byCourseType": [
           {
@@ -341,8 +432,8 @@ window.MAXNOW_BALLET_DATA = {
           {
             "key": "soft_open",
             "label": "软开",
-            "classes": 0,
-            "minutes": 0
+            "classes": 1,
+            "minutes": 60
           },
           {
             "key": "conditioning",
@@ -397,15 +488,15 @@ window.MAXNOW_BALLET_DATA = {
           {
             "key": "none",
             "label": "无级别",
-            "classes": 0,
-            "minutes": 0
+            "classes": 1,
+            "minutes": 60
           }
         ]
       }
     ]
   },
   "upcoming": {
-    "dataAsOf": "2026-07-27T17:00:31+08:00",
+    "dataAsOf": "2026-07-27T17:10:17+08:00",
     "ttlHours": 36,
     "records": [
       {
@@ -493,7 +584,7 @@ window.MAXNOW_BALLET_DATA = {
     "expectedMinutesMax": 330
   },
   "membership": {
-    "dataAsOf": "2026-07-27T17:00:31+08:00",
+    "dataAsOf": "2026-07-27T17:10:17+08:00",
     "cards": [
       {
         "name": "半年卡-40次",
@@ -504,13 +595,13 @@ window.MAXNOW_BALLET_DATA = {
         "usedClasses": 1,
         "pace": {
           "historyWindowDays": 28,
-          "historyClasses": 1,
-          "currentClassesPerWeek": 0.3,
+          "historyClasses": 2,
+          "currentClassesPerWeek": 0.5,
           "remainingDays": 181,
           "remainingWeeks": 25.9,
           "requiredClassesPerWeek": 1.5,
           "recommendedWholeClassesPerWeek": 2,
-          "additionalClassesPerWeek": 1.3,
+          "additionalClassesPerWeek": 1.0,
           "canFinishAtCurrentPace": false
         }
       }
@@ -519,7 +610,7 @@ window.MAXNOW_BALLET_DATA = {
   "learningLogs": [],
   "authHealth": {
     "status": "valid",
-    "checkedAt": "2026-07-27T17:00:31+08:00",
+    "checkedAt": "2026-07-27T17:10:17+08:00",
     "message": null
   },
   "automation": {
