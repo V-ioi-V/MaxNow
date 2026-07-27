@@ -757,7 +757,10 @@ def normalize_upcoming(detail: dict[str, Any]) -> dict[str, Any] | None:
         "排队中": "waitlist",
         "候补中": "waitlist",
     }
-    if raw_status not in statuses:
+    normalized_status = (
+        "waitlist" if raw_status.startswith("等候中") else statuses.get(raw_status)
+    )
+    if normalized_status is None:
         return None
     course_type, level = classify_course(detail["courseName"])
     key = "booking:" + str(detail.get("sourceRecordId") or "")
@@ -774,7 +777,7 @@ def normalize_upcoming(detail: dict[str, Any]) -> dict[str, Any] | None:
         "teacher": normalize_space(detail.get("teacher", "")),
         "venue": normalize_space(detail.get("venue", "")),
         "studio": normalize_space(detail.get("studio", "")),
-        "bookingStatus": statuses[raw_status],
+        "bookingStatus": normalized_status,
         "cancelDeadline": normalize_space(detail.get("cancelDeadline", "")),
     }
 
