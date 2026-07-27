@@ -1406,6 +1406,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 .ballet-stat-card,
 .ballet-bar-item,
 .ballet-history-item,
+.ballet-upcoming-item,
 .ballet-home-next {
   transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
@@ -1448,6 +1449,7 @@ body[data-view="tokens"] .topbar-token-ranges {
     .ballet-stat-card:hover,
     .ballet-bar-item:hover,
     .ballet-history-item:hover,
+    .ballet-upcoming-item:hover,
     .ballet-home-next:hover {
     border-color: var(--card-border);
     background: #ffffff;
@@ -4658,7 +4660,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-bar-list,
-.ballet-history-list {
+.ballet-history-list,
+.ballet-upcoming-list {
   display: grid;
   gap: 10px;
 }
@@ -4779,7 +4782,12 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   padding: 36px 20px;
 }
 
-.ballet-history-item {
+.ballet-upcoming-panel {
+  margin-bottom: var(--page-section-gap);
+}
+
+.ballet-history-item,
+.ballet-upcoming-item {
   --card-color: var(--ballet);
   --card-border: var(--ballet-border);
   min-width: 0;
@@ -4793,23 +4801,27 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   background: #ffffff;
 }
 
-.ballet-history-item time {
+.ballet-history-item time,
+.ballet-upcoming-item time {
   color: var(--ballet);
   font-size: 13px;
   font-weight: 850;
 }
 
-.ballet-history-item > div:nth-child(2) {
+.ballet-history-item > div:nth-child(2),
+.ballet-upcoming-item > div:nth-child(2) {
   min-width: 0;
   display: grid;
   gap: 4px;
 }
 
-.ballet-history-item strong {
+.ballet-history-item strong,
+.ballet-upcoming-item strong {
   overflow-wrap: anywhere;
 }
 
-.ballet-history-item small {
+.ballet-history-item small,
+.ballet-upcoming-item small {
   color: var(--muted);
   overflow-wrap: anywhere;
 }
@@ -5335,7 +5347,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     width: max-content;
   }
 
-  .ballet-history-item {
+  .ballet-history-item,
+  .ballet-upcoming-item {
     grid-template-columns: minmax(82px, 0.2fr) minmax(0, 1fr);
   }
 
@@ -5415,7 +5428,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     padding: 0 9px;
   }
 
-  .ballet-history-item {
+  .ballet-history-item,
+  .ballet-upcoming-item {
     grid-template-columns: 1fr;
     gap: 8px;
   }

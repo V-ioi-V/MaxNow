@@ -2528,7 +2528,11 @@ function getBalletNextClass() {
   if (direct && (!Number.isFinite(directBoundary) || directBoundary >= Date.now())) {
     return direct;
   }
-  const upcoming = [...getBalletUpcomingRecords()]
+  return getBalletFutureClasses()[0] || null;
+}
+
+function getBalletFutureClasses() {
+  return [...getBalletUpcomingRecords()]
     .filter((item) =>
       !["cancelled", "canceled", "已取消"].includes(
         String(item.bookingStatus || item.status || "").toLowerCase(),
@@ -2543,7 +2547,6 @@ function getBalletNextClass() {
       const right = `${balletRecordDate(b)}T${balletStartTime(b) || "00:00"}`;
       return left.localeCompare(right);
     });
-  return upcoming[0] || null;
 }
 
 function getBalletStatusLabel(value) {
@@ -2919,6 +2922,57 @@ function renderBalletHistory() {
   container.append(...records.slice(0, 24).map(createBalletHistoryItem));
 }
 
+function createBalletUpcomingItem(record) {
+  const article = document.createElement("article");
+  article.className = "ballet-upcoming-item";
+  const date = document.createElement("time");
+  const dateText = balletRecordDate(record);
+  const parsedDate = parseLocalDateTime(dateText);
+  date.textContent = dateText
+    ? `${Number(dateText.slice(5, 7))}月${Number(dateText.slice(8, 10))}日`
+    : "--";
+  const main = document.createElement("div");
+  const title = document.createElement("strong");
+  const meta = document.createElement("small");
+  title.textContent = balletCourseName(record);
+  const timeRange = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
+  meta.textContent = [
+    parsedDate ? new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(parsedDate) : "",
+    timeRange,
+    balletTeacher(record),
+  ].filter(Boolean).join(" · ") || "课程详情待补";
+  main.append(title, meta);
+  const tags = document.createElement("div");
+  tags.className = "ballet-history-meta";
+  [
+    getBalletStatusLabel(record.bookingStatus || record.status),
+    record.level ? BALLET_LEVEL_LABELS[String(record.level).toLowerCase()] || record.level : "",
+  ]
+    .filter(Boolean)
+    .forEach((value) => {
+      const span = document.createElement("span");
+      span.textContent = value;
+      tags.appendChild(span);
+    });
+  article.append(date, main, tags);
+  return article;
+}
+
+function renderBalletUpcoming(nextClass) {
+  const panel = qs("#ballet-upcoming-panel");
+  const container = qs("#ballet-upcoming-list");
+  if (!panel || !container) return;
+  const nextKey = nextClass
+    ? [balletRecordDate(nextClass), balletStartTime(nextClass), balletCourseName(nextClass)].join("|")
+    : "";
+  const remaining = getBalletFutureClasses().filter(
+    (item) => [balletRecordDate(item), balletStartTime(item), balletCourseName(item)].join("|") !== nextKey,
+  );
+  panel.hidden = remaining.length === 0;
+  setText("#ballet-upcoming-count", `另有 ${remaining.length} 节`);
+  container.replaceChildren(...remaining.map(createBalletUpcomingItem));
+}
+
 function renderBalletNext(nextClass, state) {
   const status = nextClass ? getBalletStatusLabel(nextClass.bookingStatus || nextClass.status) : state.label;
   setText("#ballet-next-status", status);
@@ -3009,6 +3063,7 @@ function renderBallet() {
   setText("#ballet-month-classes", summary.monthClasses || "0");
   setText("#ballet-month-hours", formatBalletHours(summary.monthMinutes));
   renderBalletNext(nextClass, state);
+  renderBalletUpcoming(nextClass);
 
   const aggregates = balletData.aggregates || {};
   const courseTypes = renderBalletDistribution(

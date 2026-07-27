@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 00:34",
-  "version": "1.0.5.04",
-  "versionLabel": "v1.0.5.04",
-  "branch": "feature/ballet-session-v6",
-  "commit": "e9a03b7",
+  "updatedAt": "2026-07-27 11:18",
+  "version": "1.0.5.05",
+  "versionLabel": "v1.0.5.05",
+  "branch": "feature/ballet-bookings",
+  "commit": "eb5eb3d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-session-v6 · commit e9a03b7 · 有未提交代码改动",
+  "deployNote": "feature/ballet-bookings · commit eb5eb3d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "展示多节未来预约",
+      "summary": "“下一节预约”继续只突出最近一节有效预约；当缓存中还有其他已预约 / 候补课程时，芭蕾页在概览下方新增“后续预约”列表，展示日期、时间、课程、老师、级别和状态，不与实际上课历史混排。"
+    },
     {
       "date": "2026-07-27",
       "title": "刷新闻道会话并启动 v6 每 20 分钟实验",
@@ -28,11 +33,6 @@
       "date": "2026-07-26",
       "title": "完善芭蕾学习模块的缓存、统计与视觉方案",
       "summary": "确认未来导航顺序为 Home → 芭蕾 → 豆奶 → Token → 云服务 → 生活 → 同行记；芭蕾页标题为“芭蕾 / 课程与进度”，使用区别于同行记亮粉的粉玫瑰 + 白卡语义，Home 只保留下一节课、本周进度和同步状态摘要。"
-    },
-    {
-      "date": "2026-07-26",
-      "title": "规划 MaxNow 芭蕾学习模块",
-      "summary": "将原“LIJUN 远端自动约课”方向扩展为“学习记录 + 课程计划 + 受控约课”：未来优先展示下一节课、本周训练、未来预约、独立上课记录、学习进度和课堂笔记，自动约课排在最后阶段。"
     }
   ]
 }
