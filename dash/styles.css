@@ -2800,10 +2800,6 @@ a.last30-item {
   stroke-linejoin: round;
 }
 
-.chart-area {
-  fill: color-mix(in srgb, var(--chart-stroke, var(--accent-strong)) 10%, transparent);
-}
-
 .chart-point {
   fill: #ffffff;
   stroke: var(--chart-stroke, var(--accent-strong));
@@ -4499,7 +4495,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-bookings-panel .ballet-upcoming-list {
   flex: 1;
   display: grid;
-  grid-template-rows: minmax(172px, 1fr);
+  grid-template-rows: minmax(190px, 1fr);
   grid-auto-rows: auto;
   gap: 8px;
 }
@@ -4526,104 +4522,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 @media (min-width: 1201px) {
-  .ballet-primary-grid .ballet-week-grid,
-  .ballet-primary-grid .ballet-membership-metrics {
-    grid-template-columns: minmax(0, 1.08fr) minmax(126px, 0.92fr);
-    grid-template-rows: repeat(3, minmax(58px, 1fr));
-    grid-auto-rows: auto;
-  }
-
-  .ballet-primary-grid .ballet-week-grid section:nth-child(2),
-  .ballet-primary-grid .ballet-membership-metrics section:first-child {
-    grid-column: 1;
-    grid-row: 1 / span 3;
-    align-content: center;
-    justify-items: start;
-    gap: 10px;
-    padding: 20px;
-    text-align: left;
-  }
-
-  .ballet-primary-grid .ballet-week-grid section:nth-child(2) {
-    background: linear-gradient(145deg, #fff4f8, #ffffff 76%);
-  }
-
-  .ballet-primary-grid .ballet-membership-metrics section:first-child {
-    background: linear-gradient(145deg, #f2f8ff, #ffffff 76%);
-  }
-
-  .ballet-primary-grid .ballet-week-grid section:not(:nth-child(2)),
-  .ballet-primary-grid .ballet-membership-metrics section:not(:first-child) {
-    grid-column: 2;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-content: center;
-    align-items: center;
-    justify-items: stretch;
-    gap: 2px 8px;
-    min-height: 0;
-    padding: 10px 12px;
-    text-align: left;
-  }
-
-  .ballet-primary-grid .ballet-week-grid section:not(:nth-child(2)) strong,
-  .ballet-primary-grid .ballet-membership-metrics section:not(:first-child) strong {
-    font-size: clamp(13px, 1.02vw, 16px);
-    text-align: right;
-  }
-
-  .ballet-primary-grid .ballet-week-grid section:not(:nth-child(2)) small {
-    grid-column: 1 / -1;
-  }
-
-  .ballet-primary-grid .ballet-week-grid section:nth-child(2) strong,
-  .ballet-primary-grid .ballet-membership-metrics section:first-child strong {
-    font-size: clamp(29px, 2.5vw, 38px);
-  }
-
-  .ballet-primary-grid .ballet-membership-metrics section:first-child {
-    padding: 16px;
-  }
-
-  .ballet-primary-grid .ballet-membership-metrics section:first-child strong {
-    font-size: clamp(25px, 2vw, 32px);
-    white-space: nowrap;
-  }
-
-  .ballet-primary-grid .ballet-membership-metrics section:not(:first-child) {
-    grid-template-columns: 1fr;
-    justify-items: start;
-    gap: 5px;
-  }
-
-  .ballet-primary-grid .ballet-membership-metrics section:not(:first-child) strong {
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  .ballet-primary-grid .ballet-membership-item {
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    padding: 0;
-    border-color: transparent;
-    background: transparent;
-    transition: none;
-  }
-
-  .ballet-primary-grid .ballet-membership-item:hover {
-    border-color: transparent;
-    box-shadow: none;
-    transform: none;
-  }
-
   .ballet-primary-grid .ballet-membership-metrics strong {
     font-size: clamp(18px, 1.65vw, 22px);
-  }
-
-  .ballet-primary-grid .ballet-membership-metrics section:first-child strong {
-    font-size: clamp(25px, 2vw, 32px);
-  }
-
-  .ballet-primary-grid .ballet-membership-metrics section:not(:first-child) strong {
-    font-size: clamp(13px, 1.02vw, 16px);
   }
 }
 
@@ -4949,12 +4849,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-training-overview {
   display: grid;
   grid-template-columns: minmax(210px, 0.32fr) minmax(0, 1fr);
-  gap: 0;
-  overflow: hidden;
+  gap: var(--page-grid-gap);
   margin-bottom: var(--page-grid-gap);
-  border: 1px solid color-mix(in srgb, var(--ballet) 15%, var(--line));
-  border-radius: var(--radius);
-  background: #ffffff;
 }
 
 .ballet-training-total,
@@ -4962,9 +4858,9 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   --card-color: var(--ballet);
   --card-border: var(--ballet-border);
   min-width: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--ballet) 16%, var(--line));
+  border-radius: var(--radius);
+  background: #ffffff;
 }
 
 .ballet-training-total {
@@ -4972,8 +4868,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   align-content: center;
   justify-items: center;
   gap: 8px;
-  padding: 20px 18px;
-  background: linear-gradient(145deg, #fff6f9, #ffffff 78%);
+  padding: 24px 18px;
   text-align: center;
 }
 
@@ -4994,7 +4889,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-training-total strong {
   color: var(--ballet);
-  font-size: clamp(40px, 4vw, 56px);
+  font-size: clamp(44px, 5vw, 68px);
   line-height: 1;
 }
 
@@ -5008,8 +4903,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   min-width: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
-  border-left: 1px solid color-mix(in srgb, var(--ballet) 12%, var(--line));
+  gap: var(--page-grid-gap);
 }
 
 .ballet-breakdown-section {
@@ -5019,7 +4913,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-breakdown-section:nth-child(2) {
   --card-color: var(--purple);
   --card-border: var(--purple-border);
-  border-left: 1px solid color-mix(in srgb, var(--purple) 12%, var(--line));
+  border-color: color-mix(in srgb, var(--purple) 16%, var(--line));
 }
 
 .ballet-breakdown-section > header,
@@ -5150,14 +5044,13 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-line-chart {
-  min-height: 224px;
-  border-color: color-mix(in srgb, var(--ballet) 13%, var(--line));
-  background: linear-gradient(180deg, #fffafd, #ffffff 72%);
+  min-height: 300px;
+  border-color: #f0d8e1;
+  background: #fffafd;
 }
 
 .ballet-line-chart .line-chart-svg {
-  min-width: 680px;
-  height: 224px;
+  min-width: 720px;
 }
 
 .ballet-line-chart .empty-state {
@@ -5259,7 +5152,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   grid-template-columns: minmax(96px, 0.3fr) minmax(0, 1fr);
   grid-template-rows: 1fr auto;
   gap: 14px 16px;
-  min-height: 172px;
+  min-height: 190px;
   padding: 18px;
   border-color: var(--ballet-border);
   background: linear-gradient(135deg, #fff3f7, #ffffff 72%);
@@ -5307,27 +5200,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-bookings-panel .ballet-upcoming-item.is-featured .ballet-history-meta {
   grid-column: 2;
   justify-content: flex-start;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .ballet-training-overview .ballet-training-total:hover,
-  .ballet-training-overview .ballet-breakdown-section:hover {
-    border-color: transparent;
-    box-shadow: none;
-    transform: none;
-  }
-}
-
-@media (max-width: 860px) {
-  .ballet-breakdown-grid {
-    border-top: 1px solid color-mix(in srgb, var(--ballet) 12%, var(--line));
-    border-left: 0;
-  }
-
-  .ballet-breakdown-section:nth-child(2) {
-    border-top: 1px solid color-mix(in srgb, var(--purple) 12%, var(--line));
-    border-left: 0;
-  }
 }
 
 /* Shared visual shell for every sidebar view except Home. */
