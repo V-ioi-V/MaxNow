@@ -23,6 +23,7 @@ def detail_html(
     time_text: str = "10:00~11:30",
     teacher: str = "测试老师",
     status: str = "已上课",
+    cancel_rule: str = "课前11小时前可取消",
 ) -> str:
     fields = (
         ("课程名称", course),
@@ -32,7 +33,7 @@ def detail_html(
         ("场地名称", "测试教室"),
         ("门店名称", "测试芭蕾工作室"),
         ("预约状态", status),
-        ("取消时间", "课前11小时前可取消"),
+        ("取消时间", cancel_rule),
     )
     cells = "".join(
         (
@@ -65,6 +66,17 @@ def index_html(title: str, rows: list[tuple[str, str, str, str]]) -> str:
     )
 
 
+def membership_html() -> str:
+    return (
+        "<html><title>我的会员卡</title><body>"
+        f'<a href="/gm/weixin/my/mycardone/{ballet.STORE_ID}/90001">'
+        "<strong>半年卡-40次</strong>"
+        "<span>有效期 : 2026-07-26~2027-01-23</span>"
+        "<span>卡内余 : 39 次 / 总40 次</span>"
+        "</a></body></html>"
+    )
+
+
 def write_fixture(root: Path) -> None:
     rows = [
         ("10001", "芭蕾L1.5", "2026-07-26", ""),
@@ -79,6 +91,10 @@ def write_fixture(root: Path) -> None:
             "约课记录",
             [("10003", "芭蕾L2", "2026-08-02", "已预约")],
         ),
+        encoding="utf-8",
+    )
+    (root / "membership.html").write_text(
+        membership_html(),
         encoding="utf-8",
     )
     (root / "details" / "10001.html").write_text(
@@ -118,6 +134,7 @@ class BalletSyncTests(unittest.TestCase):
         accepted = (
             ballet.ATTENDANCE_PATH,
             ballet.BOOKING_PATH,
+            ballet.MEMBERSHIP_PATH,
             f"/gm/weixin/my/bookrecordone/{ballet.STORE_ID}/12345",
         )
         for path in accepted:
@@ -224,6 +241,50 @@ class BalletSyncTests(unittest.TestCase):
         normalized = ballet.normalize_upcoming(detail)
         self.assertIsNotNone(normalized)
         self.assertEqual(normalized["bookingStatus"], "waitlist")
+        self.assertEqual(normalized["waitlistPosition"], 4)
+
+    def test_relative_cancellation_rule_becomes_an_absolute_deadline(self):
+        detail = ballet.parse_detail(
+            detail_html(
+                course="芭蕾L1-入门",
+                day="2026-08-01",
+                time_text="10:00~11:30",
+                status="已预约",
+                cancel_rule="课前11小时前可取消",
+            ),
+            "10005",
+        )
+        normalized = ballet.normalize_upcoming(detail)
+        self.assertEqual(normalized["cancelRuleText"], "课前11小时前可取消")
+        self.assertEqual(normalized["cancelHoursBefore"], 11)
+        self.assertEqual(
+            normalized["cancelDeadlineAt"],
+            "2026-07-31T23:00+08:00",
+        )
+
+        fallback = ballet.parse_cancellation_rule(
+            "请咨询老师",
+            "2026-08-01",
+            "10:00",
+        )
+        self.assertEqual(fallback["cancelRuleText"], "请咨询老师")
+        self.assertIsNone(fallback["cancelDeadlineAt"])
+
+    def test_membership_card_is_parsed_without_private_identifier(self):
+        cards = ballet.parse_membership(membership_html())
+        self.assertEqual(
+            cards,
+            [
+                {
+                    "name": "半年卡-40次",
+                    "validFrom": "2026-07-26",
+                    "validThrough": "2027-01-23",
+                    "remainingClasses": 39,
+                    "totalClasses": 40,
+                    "usedClasses": 1,
+                }
+            ],
+        )
 
     def test_fixture_full_sync_is_idempotent_and_public_data_is_redacted(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -258,6 +319,17 @@ class BalletSyncTests(unittest.TestCase):
             self.assertEqual(
                 model["upcoming"]["records"][0]["bookingStatus"], "booked"
             )
+            self.assertEqual(
+                model["upcoming"]["records"][0]["cancelDeadlineAt"],
+                "2026-08-02T06:30+08:00",
+            )
+            self.assertEqual(model["week"]["bookedClasses"], 1)
+            self.assertEqual(model["week"]["expectedClassesMin"], 1)
+            card = model["membership"]["cards"][0]
+            self.assertEqual(card["remainingClasses"], 39)
+            self.assertEqual(card["pace"]["historyClasses"], 1)
+            self.assertEqual(card["pace"]["currentClassesPerWeek"], 0.3)
+            self.assertGreater(card["pace"]["requiredClassesPerWeek"], 0)
             self.assertTrue(all("id" not in record for record in model["records"]))
             self.assertTrue(
                 all("id" not in record for record in model["upcoming"]["records"])
@@ -266,6 +338,7 @@ class BalletSyncTests(unittest.TestCase):
             self.assertNotIn("10001", serialized)
             self.assertNotIn("10002", serialized)
             self.assertNotIn("10003", serialized)
+            self.assertNotIn("90001", serialized)
             self.assertNotIn("PHPSESSID", serialized)
             self.assertEqual(
                 json.loads(output.with_suffix(".js").read_text(encoding="utf-8").split(" = ", 1)[1][:-2]),

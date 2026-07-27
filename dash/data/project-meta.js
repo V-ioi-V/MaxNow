@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 16:39",
-  "version": "1.0.5.14",
-  "versionLabel": "v1.0.5.14",
-  "branch": "bugfix/card-hover-deploy-record",
-  "commit": "1724fb7",
+  "updatedAt": "2026-07-27 17:07",
+  "version": "1.0.5.15",
+  "versionLabel": "v1.0.5.15",
+  "branch": "feature/ballet-readonly-loop",
+  "commit": "b3060d1",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/card-hover-deploy-record · commit 1724fb7 · 有未提交代码改动",
+  "deployNote": "feature/ballet-readonly-loop · commit b3060d1 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "补齐芭蕾只读训练闭环",
+      "summary": "将“课前 N 小时可取消”按课程开课时间换算成真实绝对截止时间；无法解析时原样显示。候补课程在可用时展示“排队第 N 位”，不再只显示笼统的“排队中”。"
+    },
     {
       "date": "2026-07-27",
       "title": "修复卡片 hover 丢失语义底色",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-27",
       "title": "将芭蕾顶部改为两个独立等宽 tab",
       "summary": "修正此前对“各占一半”的理解：芭蕾标题与“下一节预约”改为两个同级独立 tab，不再把课程模块嵌套在标题卡内部。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "区分预约状态颜色并重排星期",
-      "summary": "“所有预约”中的“已预约”保留粉玫瑰色，“排队中”改用橙色，候补状态不再与正式预约使用相同颜色。"
     }
   ]
 };

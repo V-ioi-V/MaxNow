@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=145" />
+    <link rel="stylesheet" href="./styles.css?v=146" />
   </head>
   <body>
     <div class="app-shell">
@@ -703,6 +703,49 @@
             </div>
           </article>
 
+          <article class="panel ballet-membership-card" aria-labelledby="ballet-membership-title">
+            <header class="panel-head">
+              <div>
+                <p class="eyebrow">Course Card</p>
+                <h2 id="ballet-membership-title">课程卡</h2>
+              </div>
+              <span class="status-pill" id="ballet-membership-status">等待同步</span>
+            </header>
+            <div class="ballet-membership-list" id="ballet-membership-list"></div>
+          </article>
+
+          <article class="panel ballet-week-panel" aria-labelledby="ballet-week-title">
+            <header class="panel-head">
+              <div>
+                <p class="eyebrow">This Week</p>
+                <h2 id="ballet-week-title">本周训练</h2>
+              </div>
+              <span class="status-pill" id="ballet-week-range">本周</span>
+            </header>
+            <div class="ballet-week-grid">
+              <section data-tone="green">
+                <span>已完成</span>
+                <strong id="ballet-week-completed">0 节</strong>
+                <small id="ballet-week-completed-time">0 小时</small>
+              </section>
+              <section data-tone="pink">
+                <span>已预约</span>
+                <strong id="ballet-week-booked">0 节</strong>
+                <small id="ballet-week-booked-time">0 小时</small>
+              </section>
+              <section data-tone="orange">
+                <span>候补</span>
+                <strong id="ballet-week-waitlist">0 节</strong>
+                <small id="ballet-week-waitlist-time">0 小时</small>
+              </section>
+              <section data-tone="purple">
+                <span>预计训练</span>
+                <strong id="ballet-week-expected">0 节</strong>
+                <small id="ballet-week-expected-time">0 小时</small>
+              </section>
+            </div>
+          </article>
+
           <article class="panel ballet-upcoming-panel" id="ballet-upcoming-panel">
             <header class="panel-head">
               <div>
@@ -866,11 +909,11 @@
                   <p class="eyebrow">Daily 00:17 / Monthly 00:47 / Local 5min</p>
                   <h2>芭蕾只读同步</h2>
                 </div>
-                <span class="status-pill">实验运行中</span>
+                <span class="status-pill">只读同步已启用</span>
               </header>
-              <p class="item-copy">v6 新会话探针自 2026-07-27 00:26 起每 20 分钟只读课程列表，首条检查已确认登录有效；生产课程采集仍保持未启用。独立日志转存与状态发布任务每 5 分钟只读服务器本地脱敏日志，不访问闻道。</p>
+              <p class="item-copy">每日只读刷新预约、候补、上课记录与课程卡，每月执行全量校验；登录失效后停止网络请求并保留最后成功缓存。v6 会话探针与本地脱敏状态发布继续独立运行。</p>
               <dl class="cloud-meta">
-                <div><dt>日常</dt><dd>00:17 重扫最近 60 个逻辑日</dd></div>
+                <div><dt>日常</dt><dd>00:17 刷新预约、候补、上课记录和课程卡</dd></div>
                 <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
                 <div><dt>实验请求</dt><dd>每 20 分钟固定只读课程列表 GET</dd></div>
                 <div><dt>本地状态</dt><dd>每 5 分钟转存并发布脱敏 ballet-session.*</dd></div>
@@ -1074,6 +1117,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=121"></script>
+    <script src="./app.js?v=122"></script>
   </body>
 </html>

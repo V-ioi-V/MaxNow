@@ -1450,6 +1450,9 @@ body[data-view="tokens"] .topbar-token-ranges {
     .ballet-training-total:hover,
     .ballet-breakdown-section:hover,
     .ballet-bar-item:hover,
+    .ballet-membership-item:hover,
+    .ballet-membership-metrics section:hover,
+    .ballet-week-grid section:hover,
     .ballet-history-item:hover,
     .ballet-upcoming-item:hover,
     .ballet-head-next:hover,
@@ -4425,6 +4428,117 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   border-color: var(--orange-border);
 }
 
+.ballet-membership-card,
+.ballet-week-panel {
+  margin-bottom: var(--page-section-gap);
+}
+
+.ballet-membership-list {
+  display: grid;
+  gap: 12px;
+}
+
+.ballet-membership-item {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--ballet) 16%, var(--line));
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #fff7fa, #ffffff 62%);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.ballet-membership-item > header {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ballet-membership-item h3 {
+  margin: 3px 0 0;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.ballet-membership-metrics,
+.ballet-week-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ballet-membership-metrics section,
+.ballet-week-grid section {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+  min-height: 94px;
+  padding: 13px 10px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: #ffffff;
+  text-align: center;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.ballet-week-grid section[data-tone="pink"] {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+}
+
+.ballet-membership-metrics span,
+.ballet-week-grid span,
+.ballet-week-grid small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.ballet-membership-metrics strong,
+.ballet-week-grid strong {
+  color: var(--card-color);
+  font-size: clamp(18px, 2vw, 25px);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.ballet-membership-verdict {
+  min-width: 0;
+  padding: 13px 15px;
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius);
+  background: #f3fbf6;
+}
+
+.ballet-membership-verdict[data-state="attention"] {
+  border-color: var(--orange-border);
+  background: #fff8ee;
+}
+
+.ballet-membership-verdict strong {
+  color: var(--ok);
+  font-size: 14px;
+}
+
+.ballet-membership-verdict[data-state="attention"] strong {
+  color: #b85f18;
+}
+
+.ballet-membership-verdict p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
 .ballet-session-duration {
   min-width: 0;
   display: flex;
@@ -5312,7 +5426,9 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     grid-template-columns: 1fr;
   }
 
-  .ballet-session-metrics {
+  .ballet-session-metrics,
+  .ballet-membership-metrics,
+  .ballet-week-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -5517,9 +5633,16 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     text-align: left;
   }
 
-  .ballet-session-metrics {
+  .ballet-session-metrics,
+  .ballet-membership-metrics,
+  .ballet-week-grid {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .ballet-membership-item > header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .ballet-session-evidence {

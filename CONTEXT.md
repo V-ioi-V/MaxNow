@@ -116,7 +116,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ricky.js`：从 `ricky.json` 生成的浏览器 wrapper。
 - `dash/data/life-foods.json`：生活页“吃啥”随机选择器的只读候选数据，由 `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 生成。
 - `dash/data/life-foods.js`：从 `life-foods.json` 生成的浏览器 wrapper。
-- `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录和预约快照，不保存 Cookie、会员标识或原始响应。前端将最近一节有效预约放进“下一节预约”主卡，多出的有效预约放进独立“后续预约”列表。
+- `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要，以及课程卡余次 / 有效期和到期前用完节奏判断；不保存 Cookie、会员卡号、会员标识或原始响应。前端将最近一节有效预约放进“下一节预约”主卡，并在独立“所有预约”列表完整展示未来课程。
 - `dash/data/ballet-session.json`：芭蕾页 PHPSESSID 活跃实验卡的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
 - `dash/data/ballet.js`：从 `ballet.json` 生成的浏览器 wrapper。
 - `dash/login.html` / `dash/login.js`：MaxNow 私人访问入口；只提交用户名和密码到同源 `/auth/login`，不在浏览器保存或读取会话 Cookie。
@@ -125,7 +125,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/sync_wiki_todos.py`：通过本地或服务器 `gh` 登录态刷新 `dash/data/wiki-todos.*`，避免前端暴露 GitHub token。
 - `scripts/sync_ricky_travel.py`：通过本地相邻 personal-wiki checkout 或服务器 `gh` 登录态读取 `wiki/relationships/ricky-travel.json`，刷新 `dash/data/ricky.*`。
 - `scripts/sync_life_foods.py`：通过本地相邻 personal-wiki checkout 或服务器 `gh` 登录态读取 `wiki/life/food-picker.md`，刷新 `dash/data/life-foods.*`。
-- `scripts/sync_ballet.py`：只访问已确认的闻道 GET 页面，从服务器私有 canonical ledger 增量去重并刷新脱敏 `dash/data/ballet.*`；不调用预约、取消、候补或转课写接口。
+- `scripts/sync_ballet.py`：只访问已确认的闻道 GET 页面，从服务器私有 canonical ledger 增量去重并刷新脱敏 `dash/data/ballet.*`；同时读取预约、候补、上课记录和课程卡概览，解析相对取消规则并计算绝对截止时间，不调用预约、取消、候补或转课写接口。
 - `scripts/sync_weather.py`：抓取北京市海淀区天气、温度、当前降水、高低温和天气图标类型，只刷新 dashboard 的 `weather` 字段。
 - `scripts/sync_market_indices.py`：抓取国内外指数行情和 1 日 5 分钟走势，刷新 `dash/data/market-indices.*`；接口失败时保留旧缓存并标记 `stale`。
 - `scripts/sync_ai_last30.py`：抓取免费公开 AI 信号源，按正式发布 / 客户案例等事件类型排序，生成中文事实标题与摘要，并跨“最新 / 本周 / 近 30 天”去重；采集脚本本身不调用模型，不消耗 token。
@@ -223,12 +223,12 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - 独立 `secondary-view` 页面名称“芭蕾”、副标题“课程与进度”，入口位于 Token 与云服务之间；完整顺序为首页 → 豆奶 → Token → 芭蕾 → 云服务 → 生活 → 同行记。页面使用粉玫瑰 + 白卡语义但不另做宣传型视觉；导航图标用舞鞋而非心形。
 - 只读 MVP 的优先级是：下一节课、本周训练、未来预约、真实上课历史、累计节数 / 小时、课型与 L1-L4 级别细分、月 / 年趋势和数据新鲜度；自动约课排在数据可信与学习闭环之后。
 - 芭蕾内容不并入“生活 / 吃啥”。Home 只显示下一节课、本周进度和状态，独立页承载明细与图表，Cloud 只显示采集 / Session / 自动化健康。
-- 服务器私有 canonical ledger 是上课事实唯一机器真相：首次全量回填，日常重扫最近 60 个逻辑日并幂等 upsert，每月 1 日 00:47 全量校验；逻辑日界为北京时间 00:00，生产任务目标为 00:17。同步失败保留上次成功账本与聚合，只更新独立 `sync-state.json`；当前预约另存 36 小时 TTL 的 `booking-snapshot.json`。
+- 服务器私有 canonical ledger 是上课事实唯一机器真相：首次全量回填，日常重扫最近 60 个逻辑日并幂等 upsert，每月 1 日 00:47 全量校验；逻辑日界为北京时间 00:00，生产任务在 00:17 运行。同步失败保留上次成功账本与聚合，只更新独立 `sync-state.json`；当前预约另存 36 小时 TTL 的 `booking-snapshot.json`，课程卡概览另存脱敏 `membership-snapshot.json`。
 - 月、年和全局的节数 / 分钟以及课程分类在同步时预聚合；前端不重复遍历全历史。人类可读文档若需要，只从账本单向生成，不成为第二份可编辑事实源。
 - 固定 25 分钟的旧会话阶段已于 2026-07-26 23:28 返回登录失效并停止，最后认证为 23:03、已确认有效 3 小时 56 分 06 秒。Owner 于 2026-07-27 重新打开闻道并退出微信后，本机提取到不同的新会话；v6 自 00:26:55 起按每 20 分钟独立计时，首条为 HTTP 200 / authenticated。旧三阶段与 v6 属于不同凭据代次，不能合并寿命，也不能据此证明精确空闲寿命或滑动续期；unit、原始日志、凭据挂载和停止方式只在 `SERVER_RUNBOOK.md` 维护。
 - 芭蕾页可展示 `ballet-session.*` 的脱敏实验卡：持续时间只计算到最后一个 `authenticated` 样本，页面每 5 分钟读取静态状态，服务器本地发布器不访问闻道。文案使用“自动检查”，不能将正常样本解释成已证明 Session 自动续期。
 - 状态发布器以专用无登录账号运行；已停止实验的日志 inode 使用 root-owned 只读硬链接保存，当前 v6 活动日志由独立 root oneshot 每 5 分钟原子复制为只读脱敏快照，再由非 root 发布器生成页面状态。两项本地任务都不访问闻道，`/var/lib/private` 继续保持 `0700`。
-- `dash/data/ballet.*` 只能保存脱敏前端读模型与预聚合统计；同步状态同时保存最近尝试、最近成功、数据变更时间、逻辑日期、抓取窗口、连续失败和安全错误码。`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端、仓库、日志或聊天。
+- `dash/data/ballet.*` 只能保存脱敏前端读模型与预聚合统计；同步状态同时保存最近尝试、最近成功、数据变更时间、逻辑日期、抓取窗口、连续失败和安全错误码。课程卡只允许输出名称、有效期、总 / 剩余 / 已用课次和由实际历史推导的周频率。`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、源记录 ID、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端、仓库、日志或聊天。
 - 生产凭据已于 2026-07-27 使用新会话重新密封为 host-bound systemd 加密凭据，通过 `LoadCredentialEncrypted` 注入；页面、同步器和 unit 已部署。Owner 于 12:01 批准并完成一次受控 rolling 只读同步；14:57 复查发现列表页“排队中”在详情页写成“等候中, 排队序号 N”，同步器已将该详情状态补充归一为 `waitlist`。同步后 enable gate 均立即删除，每日 / 每月 timer 仍 disabled。身份失效时采集器保留旧缓存、记录脱敏错误并停止重试，直到检测到非敏感凭据版本变化；Owner 看到的操作提示固定为在电脑微信重新登录后安全刷新凭据，不展示任何 Session 值。
 - 自动化模式固定分为 `off`、`dry-run`、`enabled`。真实提交必须在连续 dry-run、幂等校验、有限重试、失败停止和 Owner 单独批准后启用；默认不自动取消或转课。
 

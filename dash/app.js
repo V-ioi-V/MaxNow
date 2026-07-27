@@ -111,6 +111,8 @@ const fallbackBallet = window.MAXNOW_BALLET_DATA || {
   aggregates: {},
   records: [],
   upcoming: { records: [] },
+  week: {},
+  membership: { cards: [] },
 };
 const fallbackBalletSession = window.MAXNOW_BALLET_SESSION_DATA || {
   schemaVersion: 1,
@@ -2558,6 +2560,34 @@ function getBalletStatusLabel(value) {
   return value ? String(value) : "待确认";
 }
 
+function getBalletBookingStatusLabel(record = {}) {
+  const label = getBalletStatusLabel(record.bookingStatus || record.status);
+  const position = Math.max(0, Math.floor(balletNumber(record.waitlistPosition)));
+  return label === "排队中" && position > 0 ? `排队第 ${position} 位` : label;
+}
+
+function formatBalletDateTime(value) {
+  const parsed = parseLocalDateTime(value);
+  if (!parsed) return "";
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(parsed);
+}
+
+function formatBalletCancellation(record = {}) {
+  const deadline = formatBalletDateTime(record.cancelDeadlineAt);
+  const hours = balletNumber(record.cancelHoursBefore, NaN);
+  if (deadline) {
+    return `最晚 ${deadline} 取消${Number.isFinite(hours) && hours > 0 ? `（课前 ${hours} 小时）` : ""}`;
+  }
+  const raw = String(record.cancelRuleText || "").trim();
+  return raw ? `取消规则：${raw}` : "";
+}
+
 function getBalletUiState() {
   const sync = balletData.sync || {};
   const cacheState = String(sync.cacheState || "").toLowerCase();
@@ -2947,6 +2977,106 @@ function renderBalletTraining() {
   renderBalletTrend();
 }
 
+function createBalletMembershipItem(card = {}) {
+  const article = document.createElement("article");
+  article.className = "ballet-membership-item";
+
+  const header = document.createElement("header");
+  const title = document.createElement("div");
+  const eyebrow = document.createElement("p");
+  const name = document.createElement("h3");
+  eyebrow.className = "eyebrow";
+  eyebrow.textContent = "Active Card";
+  name.textContent = String(card.name || "课程卡");
+  title.append(eyebrow, name);
+  const validity = document.createElement("span");
+  validity.className = "status-pill";
+  validity.textContent = card.validThrough ? `有效至 ${String(card.validThrough).slice(0, 10)}` : "有效期待同步";
+  header.append(title, validity);
+
+  const pace = card.pace || {};
+  const metrics = document.createElement("div");
+  metrics.className = "ballet-membership-metrics";
+  [
+    ["剩余课次", `${Math.max(0, Math.floor(balletNumber(card.remainingClasses)))} / ${Math.max(0, Math.floor(balletNumber(card.totalClasses)))} 节`, "blue"],
+    ["已使用", `${Math.max(0, Math.floor(balletNumber(card.usedClasses)))} 节`, "purple"],
+    ["近 28 天节奏", `${balletNumber(pace.currentClassesPerWeek).toFixed(1)} 节/周`, "cyan"],
+    ["到期前所需", `${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`, "orange"],
+  ].forEach(([label, value, tone]) => {
+    const section = document.createElement("section");
+    section.dataset.tone = tone;
+    const span = document.createElement("span");
+    const strong = document.createElement("strong");
+    span.textContent = label;
+    strong.textContent = value;
+    section.append(span, strong);
+    metrics.appendChild(section);
+  });
+
+  const verdict = document.createElement("div");
+  verdict.className = "ballet-membership-verdict";
+  verdict.dataset.state = pace.canFinishAtCurrentPace ? "success" : "attention";
+  const verdictTitle = document.createElement("strong");
+  const verdictCopy = document.createElement("p");
+  if (pace.canFinishAtCurrentPace) {
+    verdictTitle.textContent = "按当前节奏可以在到期前上完";
+    verdictCopy.textContent = `当前约 ${balletNumber(pace.currentClassesPerWeek).toFixed(1)} 节/周，最低需要 ${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周。`;
+  } else {
+    verdictTitle.textContent = "按当前节奏预计无法在到期前上完";
+    verdictCopy.textContent = `每周还需增加 ${balletNumber(pace.additionalClassesPerWeek).toFixed(1)} 节；建议每周至少安排 ${Math.max(0, Math.floor(balletNumber(pace.recommendedWholeClassesPerWeek)))} 节。`;
+  }
+  verdict.append(verdictTitle, verdictCopy);
+  article.append(header, metrics, verdict);
+  return article;
+}
+
+function renderBalletMembership() {
+  const cards = Array.isArray(balletData.membership?.cards) ? balletData.membership.cards : [];
+  const container = qs("#ballet-membership-list");
+  if (!container) return;
+  setText("#ballet-membership-status", cards.length ? `${cards.length} 张有效卡` : "暂无有效卡");
+  container.replaceChildren();
+  if (!cards.length) {
+    container.appendChild(emptyTemplate.content.cloneNode(true));
+    return;
+  }
+  container.append(...cards.map(createBalletMembershipItem));
+}
+
+function formatBalletCountRange(minimum, maximum, unit) {
+  const min = balletNumber(minimum);
+  const max = balletNumber(maximum);
+  return min === max ? `${min} ${unit}` : `${min}–${max} ${unit}`;
+}
+
+function renderBalletWeek() {
+  const week = balletData.week || {};
+  const start = String(week.weekStart || "");
+  const end = String(week.weekEnd || "");
+  setText(
+    "#ballet-week-range",
+    start && end ? `${Number(start.slice(5, 7))}/${Number(start.slice(8, 10))}–${Number(end.slice(5, 7))}/${Number(end.slice(8, 10))}` : "本周",
+  );
+  setText("#ballet-week-completed", `${balletNumber(week.completedClasses)} 节`);
+  setText("#ballet-week-completed-time", `${formatBalletHours(week.completedMinutes)} 小时`);
+  setText("#ballet-week-booked", `${balletNumber(week.bookedClasses)} 节`);
+  setText("#ballet-week-booked-time", `${formatBalletHours(week.bookedMinutes)} 小时`);
+  setText("#ballet-week-waitlist", `${balletNumber(week.waitlistClasses)} 节`);
+  setText("#ballet-week-waitlist-time", `${formatBalletHours(week.waitlistMinutes)} 小时`);
+  setText(
+    "#ballet-week-expected",
+    formatBalletCountRange(week.expectedClassesMin, week.expectedClassesMax, "节"),
+  );
+  setText(
+    "#ballet-week-expected-time",
+    formatBalletCountRange(
+      Number(week.expectedMinutesMin || 0) / 60,
+      Number(week.expectedMinutesMax || 0) / 60,
+      "小时",
+    ),
+  );
+}
+
 function createBalletHistoryItem(record) {
   const article = document.createElement("article");
   article.className = "ballet-history-item";
@@ -3022,11 +3152,11 @@ function createBalletUpcomingItem(record) {
   main.append(title, meta);
   const tags = document.createElement("div");
   tags.className = "ballet-history-meta";
-  const bookingLabel = getBalletStatusLabel(record.bookingStatus || record.status);
+  const bookingLabel = getBalletBookingStatusLabel(record);
   [
     {
       label: bookingLabel,
-      status: bookingLabel === "排队中" ? "waitlist" : bookingLabel === "已预约" ? "booked" : "",
+      status: bookingLabel.startsWith("排队第") || bookingLabel === "排队中" ? "waitlist" : bookingLabel === "已预约" ? "booked" : "",
     },
     {
       label: record.level ? BALLET_LEVEL_LABELS[String(record.level).toLowerCase()] || record.level : "",
@@ -3060,7 +3190,7 @@ function renderBalletUpcoming() {
 }
 
 function renderBalletNext(nextClass, state) {
-  const status = nextClass ? getBalletStatusLabel(nextClass.bookingStatus || nextClass.status) : state.label;
+  const status = nextClass ? getBalletBookingStatusLabel(nextClass) : state.label;
   setText("#ballet-next-status", status);
   const statusNode = qs("#ballet-next-status");
   if (statusNode) statusNode.dataset.state = state.key;
@@ -3084,10 +3214,10 @@ function renderBalletNext(nextClass, state) {
   setText("#ballet-next-course", balletCourseName(nextClass));
   const timeRange = [balletStartTime(nextClass), balletEndTime(nextClass)].filter(Boolean).join("–") || "时间待确认";
   setText("#ballet-next-time", [timeRange, nextClass.level].filter(Boolean).join(" · "));
-  const cancellation = nextClass.cancelDeadline || nextClass.cancellationDeadline;
+  const cancellation = formatBalletCancellation(nextClass);
   setText(
     "#ballet-next-note",
-    [balletTeacher(nextClass), cancellation ? `可取消至 ${String(cancellation).replace("T", " ").slice(5, 16)}` : ""]
+    [balletTeacher(nextClass), cancellation]
       .filter(Boolean)
       .join(" · ") || "老师与取消截止时间待补",
   );
@@ -3116,7 +3246,7 @@ function renderBalletHome() {
   setText("#home-ballet-next-course", balletCourseName(nextClass));
   setText(
     "#home-ballet-next-meta",
-    [getBalletStatusLabel(nextClass.bookingStatus || nextClass.status), balletTeacher(nextClass)].filter(Boolean).join(" · "),
+    [getBalletBookingStatusLabel(nextClass), balletTeacher(nextClass)].filter(Boolean).join(" · "),
   );
 }
 
@@ -3144,6 +3274,8 @@ function renderBallet() {
 
   renderBalletSessionExperiment();
   renderBalletNext(nextClass, state);
+  renderBalletMembership();
+  renderBalletWeek();
   renderBalletUpcoming();
   renderBalletTraining();
   renderBalletHistory();

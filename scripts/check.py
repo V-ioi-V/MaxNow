@@ -269,7 +269,42 @@ def check_ballet_read_model():
     aggregates = data.get("aggregates") or {}
     if not all(isinstance(aggregates.get(key), list) for key in ("daily", "monthly", "yearly")):
         raise ValueError("ballet: daily/monthly/yearly aggregates are required")
+    upcoming = (data.get("upcoming") or {}).get("records")
+    if not isinstance(upcoming, list):
+        raise ValueError("ballet: upcoming.records must be an array")
+    for record in upcoming:
+        if not {
+            "waitlistPosition",
+            "cancelRuleText",
+            "cancelHoursBefore",
+            "cancelDeadlineAt",
+        }.issubset(record):
+            raise ValueError("ballet: booking decision fields are incomplete")
+    week = data.get("week")
+    if not isinstance(week, dict) or not {
+        "completedClasses",
+        "bookedClasses",
+        "waitlistClasses",
+        "expectedClassesMin",
+        "expectedClassesMax",
+    }.issubset(week):
+        raise ValueError("ballet: weekly training summary is incomplete")
+    membership = data.get("membership")
+    if not isinstance(membership, dict) or not isinstance(membership.get("cards"), list):
+        raise ValueError("ballet: membership cards are missing")
+    for card in membership["cards"]:
+        if not {
+            "name",
+            "validFrom",
+            "validThrough",
+            "remainingClasses",
+            "totalClasses",
+            "usedClasses",
+            "pace",
+        }.issubset(card):
+            raise ValueError("ballet: membership card fields are incomplete")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     if (
         "function balletClassBoundary" not in dashboard_js
@@ -283,7 +318,17 @@ def check_ballet_read_model():
         or '[data-booking-status="waitlist"]' not in dashboard_css
     ):
         raise ValueError("ballet: booking weekday or status color contract is incomplete")
-    return "ballet: read model schema, totals, aggregates, and redaction are valid"
+    if (
+        "function formatBalletCancellation(" not in dashboard_js
+        or "function renderBalletMembership()" not in dashboard_js
+        or "function renderBalletWeek()" not in dashboard_js
+        or 'id="ballet-membership-list"' not in dashboard_html
+        or 'id="ballet-week-completed"' not in dashboard_html
+        or ".ballet-membership-card," not in dashboard_css
+        or ".ballet-week-grid {" not in dashboard_css
+    ):
+        raise ValueError("ballet: membership or weekly frontend contract is incomplete")
+    return "ballet: read model, decisions, totals, aggregates, and redaction are valid"
 
 
 def check_ballet_session_status():
@@ -1027,7 +1072,7 @@ def check_secondary_view_style():
         '<article class="ballet-head-next"'
     ):
         raise ValueError("secondary views: next ballet class is still nested in the title tab")
-    if "styles.css?v=145" not in dashboard_html:
+    if "styles.css?v=146" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
         "\n  }\n\n  .token-usage-head:hover", 1
@@ -1052,7 +1097,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=121" not in dashboard_html:
+    if "app.js?v=122" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

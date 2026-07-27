@@ -190,7 +190,7 @@ python scripts/check.py
 
 `dash/data/ballet.json`：
 
-- 脱敏的实际上课记录、当前预约快照、累计 / 月度 / 年度聚合和同步状态
+- 脱敏的实际上课记录、当前预约 / 候补、取消截止、本周训练摘要、课程卡余次 / 有效期、到期前用完节奏判断、累计 / 月度 / 年度聚合和同步状态
 - 不保存 PHPSESSID、Cookie、OAuth 数据、会员标识、源记录 ID 或原始响应
 - 私有 canonical ledger 只保存在服务器 `/var/lib/maxnow-ballet`
 

@@ -6,6 +6,7 @@ import html
 from html.parser import HTMLParser
 import http.cookies
 import json
+import math
 import os
 import re
 import socket
@@ -30,6 +31,7 @@ BASE_URL = "https://gm.wendaosoft.com"
 HOME_PATH = f"/gm/weixin/home/index/{STORE_ID}"
 ATTENDANCE_PATH = f"/gm/weixin/my/checkrecord/{STORE_ID}"
 BOOKING_PATH = f"/gm/weixin/my/bookrecord/{STORE_ID}"
+MEMBERSHIP_PATH = f"/gm/weixin/my/mycard/{STORE_ID}"
 DETAIL_PATH_PATTERN = re.compile(
     rf"^/gm/weixin/my/bookrecordone/{STORE_ID}/([1-9][0-9]{{0,19}})$"
 )
@@ -97,6 +99,7 @@ class SyncPaths:
     ledger: Path
     sync_state: Path
     booking: Path
+    membership: Path
     output: Path
     wrapper: Path
 
@@ -273,7 +276,7 @@ def auth_retry_is_blocked(path: Path, credential_version: str) -> bool:
 
 
 def validate_read_only_path(path: str) -> str:
-    if path in {ATTENDANCE_PATH, BOOKING_PATH}:
+    if path in {ATTENDANCE_PATH, BOOKING_PATH, MEMBERSHIP_PATH}:
         return path
     if DETAIL_PATH_PATTERN.fullmatch(path):
         return path
@@ -420,6 +423,8 @@ class FixtureSource:
             fixture = self.fixture_dir / "attendance.html"
         elif path == BOOKING_PATH:
             fixture = self.fixture_dir / "booking.html"
+        elif path == MEMBERSHIP_PATH:
+            fixture = self.fixture_dir / "membership.html"
         else:
             match = DETAIL_PATH_PATTERN.fullmatch(path)
             if not match:
@@ -537,6 +542,42 @@ class DetailCellParser(HTMLParser):
             self.current[self.section].append(data)
 
 
+class MembershipCardParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.current_href: str | None = None
+        self.current_parts: list[str] = []
+        self.cards: list[list[str]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
+        if tag != "a":
+            return
+        href = html.unescape(dict(attrs).get("href") or "")
+        path = urlsplit(href).path if href else ""
+        if re.fullmatch(
+            rf"/gm/weixin/my/mycardone/{STORE_ID}/[1-9][0-9]{{0,19}}",
+            path,
+        ):
+            self.current_href = path
+            self.current_parts = []
+
+    def handle_endtag(self, tag: str):
+        if tag == "a" and self.current_href:
+            parts = [
+                normalize_space(value)
+                for value in self.current_parts
+                if normalize_space(value)
+            ]
+            if parts:
+                self.cards.append(parts)
+            self.current_href = None
+            self.current_parts = []
+
+    def handle_data(self, data: str):
+        if self.current_href:
+            self.current_parts.append(data)
+
+
 def parse_index(text: str, kind: str) -> list[dict[str, str]]:
     parser = DetailLinkParser()
     try:
@@ -611,6 +652,86 @@ def parse_detail(text: str, source_record_id: str) -> dict[str, Any]:
         result["startTime"] = ""
         result["endTime"] = ""
         result["durationMinutes"] = None
+    return result
+
+
+def parse_membership(text: str) -> list[dict[str, Any]]:
+    parser = MembershipCardParser()
+    try:
+        parser.feed(text)
+    except Exception:
+        raise SyncFailure("parse_error")
+    cards: list[dict[str, Any]] = []
+    for parts in parser.cards:
+        combined = normalize_space(" ".join(parts))
+        validity = re.search(
+            r"有效期\s*[:：]?\s*(20\d{2}-\d{2}-\d{2})"
+            r"\s*[~～—–]\s*(20\d{2}-\d{2}-\d{2})",
+            combined,
+        )
+        balance = re.search(
+            r"卡内余\s*[:：]?\s*(\d+)\s*次\s*/\s*总\s*(\d+)\s*次",
+            combined,
+        )
+        name = next(
+            (
+                part
+                for part in parts
+                if "有效期" not in part and "卡内余" not in part
+            ),
+            "",
+        )
+        if not name or not validity or not balance:
+            raise SyncFailure("source_changed")
+        valid_from, valid_through = validity.groups()
+        remaining, total = (int(value) for value in balance.groups())
+        try:
+            date.fromisoformat(valid_from)
+            date.fromisoformat(valid_through)
+        except ValueError:
+            raise SyncFailure("parse_error")
+        if valid_through < valid_from or remaining < 0 or total <= 0 or remaining > total:
+            raise SyncFailure("parse_error")
+        cards.append(
+            {
+                "name": name,
+                "validFrom": valid_from,
+                "validThrough": valid_through,
+                "remainingClasses": remaining,
+                "totalClasses": total,
+                "usedClasses": total - remaining,
+            }
+        )
+    return cards
+
+
+def parse_cancellation_rule(
+    raw_value: str,
+    course_date: str,
+    start_time: str,
+) -> dict[str, Any]:
+    rule_text = normalize_space(raw_value)
+    result = {
+        "cancelRuleText": rule_text,
+        "cancelHoursBefore": None,
+        "cancelDeadlineAt": None,
+    }
+    match = re.search(r"课前\s*(\d+)\s*小时(?:前)?可取消", rule_text)
+    if not match or not start_time:
+        return result
+    hours_before = int(match.group(1))
+    if not 0 < hours_before <= 168:
+        return result
+    try:
+        starts_at = datetime.fromisoformat(f"{course_date}T{start_time}").replace(
+            tzinfo=TIMEZONE
+        )
+    except ValueError:
+        return result
+    result["cancelHoursBefore"] = hours_before
+    result["cancelDeadlineAt"] = (
+        starts_at - timedelta(hours=hours_before)
+    ).isoformat(timespec="minutes")
     return result
 
 
@@ -762,6 +883,15 @@ def normalize_upcoming(detail: dict[str, Any]) -> dict[str, Any] | None:
     )
     if normalized_status is None:
         return None
+    queue_match = re.search(
+        r"排队序号\s*(\d+)",
+        raw_status,
+    )
+    cancellation = parse_cancellation_rule(
+        detail.get("cancelDeadline", ""),
+        detail["date"],
+        detail.get("startTime") or "",
+    )
     course_type, level = classify_course(detail["courseName"])
     key = "booking:" + str(detail.get("sourceRecordId") or "")
     return {
@@ -778,7 +908,12 @@ def normalize_upcoming(detail: dict[str, Any]) -> dict[str, Any] | None:
         "venue": normalize_space(detail.get("venue", "")),
         "studio": normalize_space(detail.get("studio", "")),
         "bookingStatus": normalized_status,
-        "cancelDeadline": normalize_space(detail.get("cancelDeadline", "")),
+        "waitlistPosition": (
+            int(queue_match.group(1))
+            if normalized_status == "waitlist" and queue_match
+            else None
+        ),
+        **cancellation,
     }
 
 
@@ -802,6 +937,15 @@ def empty_booking() -> dict[str, Any]:
         "dataAsOf": None,
         "ttlHours": CACHE_TTL_HOURS,
         "records": [],
+    }
+
+
+def empty_membership() -> dict[str, Any]:
+    return {
+        "schemaVersion": SCHEMA_VERSION,
+        "timezone": "Asia/Shanghai",
+        "dataAsOf": None,
+        "cards": [],
     }
 
 
@@ -1019,13 +1163,131 @@ def _public_upcoming(record: dict[str, Any]) -> dict[str, Any]:
         "venue": record["venue"],
         "studio": record["studio"],
         "bookingStatus": record["bookingStatus"],
-        "cancelDeadline": record["cancelDeadline"],
+        "waitlistPosition": record.get("waitlistPosition"),
+        "cancelRuleText": record.get("cancelRuleText") or "",
+        "cancelHoursBefore": record.get("cancelHoursBefore"),
+        "cancelDeadlineAt": record.get("cancelDeadlineAt"),
+    }
+
+
+def compute_week_summary(
+    records: list[dict[str, Any]],
+    upcoming: list[dict[str, Any]],
+    now: datetime,
+) -> dict[str, Any]:
+    today = now.astimezone(TIMEZONE).date()
+    week_start = today - timedelta(days=today.weekday())
+    week_end = week_start + timedelta(days=6)
+
+    def in_week(item: dict[str, Any]) -> bool:
+        try:
+            day = date.fromisoformat(str(item.get("date", "")))
+        except ValueError:
+            return False
+        return week_start <= day <= week_end
+
+    completed = [item for item in records if in_week(item)]
+    booked = [
+        item
+        for item in upcoming
+        if in_week(item) and item.get("bookingStatus") == "booked"
+    ]
+    waitlist = [
+        item
+        for item in upcoming
+        if in_week(item) and item.get("bookingStatus") == "waitlist"
+    ]
+
+    def minutes(items: list[dict[str, Any]]) -> int:
+        return sum(
+            int(item["durationMinutes"])
+            for item in items
+            if item.get("durationMinutes") is not None
+        )
+
+    completed_minutes = minutes(completed)
+    booked_minutes = minutes(booked)
+    waitlist_minutes = minutes(waitlist)
+    return {
+        "weekStart": week_start.isoformat(),
+        "weekEnd": week_end.isoformat(),
+        "completedClasses": len(completed),
+        "completedMinutes": completed_minutes,
+        "bookedClasses": len(booked),
+        "bookedMinutes": booked_minutes,
+        "waitlistClasses": len(waitlist),
+        "waitlistMinutes": waitlist_minutes,
+        "expectedClassesMin": len(completed) + len(booked),
+        "expectedClassesMax": len(completed) + len(booked) + len(waitlist),
+        "expectedMinutesMin": completed_minutes + booked_minutes,
+        "expectedMinutesMax": completed_minutes + booked_minutes + waitlist_minutes,
+    }
+
+
+def _round_pace(value: float) -> float:
+    return round(value + 1e-9, 1)
+
+
+def build_membership_view(
+    membership: dict[str, Any],
+    records: list[dict[str, Any]],
+    now: datetime,
+) -> dict[str, Any]:
+    today = now.astimezone(TIMEZONE).date()
+    recent_start = today - timedelta(days=27)
+    recent_classes = sum(
+        1
+        for item in records
+        if recent_start.isoformat() <= str(item.get("date", "")) <= today.isoformat()
+    )
+    current_weekly_rate = recent_classes / 4
+    cards = []
+    for card in membership.get("cards", []):
+        valid_through = date.fromisoformat(card["validThrough"])
+        remaining_days = max(0, (valid_through - today).days + 1)
+        remaining_weeks = remaining_days / 7
+        remaining_classes = int(card["remainingClasses"])
+        required_rate = (
+            remaining_classes / remaining_weeks
+            if remaining_classes and remaining_weeks > 0
+            else 0
+        )
+        additional_rate = max(0, required_rate - current_weekly_rate)
+        projected_capacity = current_weekly_rate * remaining_weeks
+        cards.append(
+            {
+                **card,
+                "pace": {
+                    "historyWindowDays": 28,
+                    "historyClasses": recent_classes,
+                    "currentClassesPerWeek": _round_pace(current_weekly_rate),
+                    "remainingDays": remaining_days,
+                    "remainingWeeks": _round_pace(remaining_weeks),
+                    "requiredClassesPerWeek": _round_pace(required_rate),
+                    "recommendedWholeClassesPerWeek": (
+                        math.ceil(required_rate) if required_rate > 0 else 0
+                    ),
+                    "additionalClassesPerWeek": _round_pace(additional_rate),
+                    "canFinishAtCurrentPace": (
+                        remaining_classes == 0
+                        or (
+                            remaining_weeks > 0
+                            and projected_capacity + 1e-9 >= remaining_classes
+                        )
+                    ),
+                },
+            }
+        )
+    return {
+        "dataAsOf": membership.get("dataAsOf"),
+        "cards": cards,
     }
 
 
 def build_read_model(
     ledger: dict[str, Any],
     booking: dict[str, Any],
+    membership: dict[str, Any],
     state: dict[str, Any],
     now: datetime,
 ) -> dict[str, Any]:
@@ -1087,6 +1349,8 @@ def build_read_model(
             "ttlHours": booking.get("ttlHours", CACHE_TTL_HOURS),
             "records": [_public_upcoming(item) for item in upcoming],
         },
+        "week": compute_week_summary(records, upcoming, now),
+        "membership": build_membership_view(membership, records, now),
         "learningLogs": [],
         "authHealth": {
             "status": auth_status,
@@ -1121,6 +1385,22 @@ def validate_read_model(model: dict[str, Any]) -> None:
     )
     if summary.get("minutes") != expected_minutes:
         raise SyncFailure("parse_error")
+    week = model.get("week")
+    membership = model.get("membership")
+    if not isinstance(week, dict) or not isinstance(membership, dict):
+        raise SyncFailure("parse_error")
+    cards = membership.get("cards")
+    if not isinstance(cards, list):
+        raise SyncFailure("parse_error")
+    for card in cards:
+        if (
+            not isinstance(card, dict)
+            or not isinstance(card.get("remainingClasses"), int)
+            or not isinstance(card.get("totalClasses"), int)
+            or card["remainingClasses"] > card["totalClasses"]
+            or not isinstance(card.get("pace"), dict)
+        ):
+            raise SyncFailure("parse_error")
     serialized = json.dumps(model, ensure_ascii=False)
     forbidden = (
         "PHPSESSID=",
@@ -1225,6 +1505,7 @@ def synchronize(
 
     ledger = safe_read_json(paths.ledger, empty_ledger())
     booking = safe_read_json(paths.booking, empty_booking())
+    membership = safe_read_json(paths.membership, empty_membership())
     old_state = safe_read_json(paths.sync_state, empty_sync_state())
     validate_ledger(ledger)
     window = _logical_window(now, mode)
@@ -1332,8 +1613,26 @@ def synchronize(
             "records": upcoming,
         }
 
+        membership_html = source.request(MEMBERSHIP_PATH, "我的会员卡")
+        proposed_membership = {
+            "schemaVersion": SCHEMA_VERSION,
+            "timezone": "Asia/Shanghai",
+            "dataAsOf": observed_at,
+            "cards": parse_membership(membership_html),
+        }
+
         last_data_change = old_state.get("lastDataChangeAt")
-        if fingerprint != ledger.get("contentFingerprint"):
+        previous_business = {
+            "attendance": ledger.get("contentFingerprint"),
+            "upcoming": booking.get("records", []),
+            "membership": membership.get("cards", []),
+        }
+        proposed_business = {
+            "attendance": fingerprint,
+            "upcoming": proposed_booking["records"],
+            "membership": proposed_membership["cards"],
+        }
+        if previous_business != proposed_business:
             last_data_change = observed_at
         state = {
             **empty_sync_state(),
@@ -1353,11 +1652,18 @@ def synchronize(
             "sessionRotatedInMemory": source.session_rotated,
             "credentialVersion": credential_version,
         }
-        model = build_read_model(proposed_ledger, proposed_booking, state, now)
+        model = build_read_model(
+            proposed_ledger,
+            proposed_booking,
+            proposed_membership,
+            state,
+            now,
+        )
         validate_read_model(model)
         if not dry_run:
             atomic_write_json(paths.ledger, proposed_ledger, mode=0o600)
             atomic_write_json(paths.booking, proposed_booking, mode=0o600)
+            atomic_write_json(paths.membership, proposed_membership, mode=0o600)
             atomic_write_json(paths.sync_state, state, mode=0o600)
             _write_read_model(paths, model)
         return SyncResult(
@@ -1379,7 +1685,7 @@ def synchronize(
             credential_version,
             len(ledger.get("records", [])),
         )
-        model = build_read_model(ledger, booking, state, now)
+        model = build_read_model(ledger, booking, membership, state, now)
         if not dry_run:
             atomic_write_json(paths.sync_state, state, mode=0o600)
             _write_read_model(paths, model)
@@ -1404,6 +1710,7 @@ def build_paths(state_dir: Path, output: Path) -> SyncPaths:
         ledger=state_dir / "attendance-ledger.json",
         sync_state=state_dir / "sync-state.json",
         booking=state_dir / "booking-snapshot.json",
+        membership=state_dir / "membership-snapshot.json",
         output=output,
         wrapper=output.with_suffix(".js"),
     )
