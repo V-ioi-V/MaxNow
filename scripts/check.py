@@ -1010,7 +1010,7 @@ def check_secondary_view_style():
     )
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
-    if "styles.css?v=140" not in dashboard_html:
+    if "styles.css?v=141" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     return "secondary views: six tabs share clean card shells without top accent bars"
 

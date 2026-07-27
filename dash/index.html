@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=140" />
+    <link rel="stylesheet" href="./styles.css?v=141" />
   </head>
   <body>
     <div class="app-shell">
@@ -620,12 +620,31 @@
 
         <section class="view secondary-view" id="ballet-view" data-view-panel="ballet">
           <header class="token-page-head secondary-page-head ballet-page-head">
-            <div>
+            <div class="ballet-page-copy">
               <p class="eyebrow">Ballet Progress</p>
               <h1>芭蕾</h1>
-              <p id="ballet-updated">课程记录与学习进度 · 等待首次同步</p>
+              <div class="ballet-page-meta">
+                <p id="ballet-updated">课程记录与学习进度 · 等待首次同步</p>
+                <span class="status-pill" id="ballet-sync-status" aria-live="polite">等待同步</span>
+              </div>
             </div>
-            <span class="status-pill" id="ballet-sync-status" aria-live="polite">等待同步</span>
+            <article class="ballet-head-next" aria-label="下一节芭蕾课程">
+              <header class="ballet-head-next-top">
+                <p class="eyebrow">Next Class · 下一节预约</p>
+                <span class="status-pill" id="ballet-next-status">等待同步</span>
+              </header>
+              <div class="ballet-head-next-body">
+                <div class="ballet-next-date">
+                  <strong id="ballet-next-day">--</strong>
+                  <span id="ballet-next-weekday">--</span>
+                </div>
+                <div class="ballet-next-copy">
+                  <h2 id="ballet-next-course">等待课程数据</h2>
+                  <p id="ballet-next-time">--:-- · --</p>
+                  <small id="ballet-next-note">同步完成后显示老师和取消截止时间</small>
+                </div>
+              </div>
+            </article>
           </header>
 
           <div class="ballet-sync-alert" id="ballet-sync-alert" role="status" aria-live="polite" hidden>
@@ -681,27 +700,6 @@
               <span id="ballet-session-observations">等待观察结果</span>
             </div>
           </article>
-
-          <section class="ballet-overview-grid" aria-label="下一节芭蕾课程">
-            <article class="panel ballet-next-card">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Next Class</p>
-                  <h2>下一节预约</h2>
-                </div>
-                <span class="status-pill" id="ballet-next-status">等待同步</span>
-              </header>
-              <div class="ballet-next-date">
-                <strong id="ballet-next-day">--</strong>
-                <span id="ballet-next-weekday">--</span>
-              </div>
-              <div class="ballet-next-copy">
-                <h3 id="ballet-next-course">等待课程数据</h3>
-                <p id="ballet-next-time">--:-- · --</p>
-                <small id="ballet-next-note">同步完成后显示老师和取消截止时间</small>
-              </div>
-            </article>
-          </section>
 
           <article class="panel ballet-upcoming-panel" id="ballet-upcoming-panel">
             <header class="panel-head">
