@@ -1010,7 +1010,7 @@ def check_secondary_view_style():
     )
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
-    if "styles.css?v=139" not in dashboard_html:
+    if "styles.css?v=140" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     return "secondary views: six tabs share clean card shells without top accent bars"
 
@@ -1030,7 +1030,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=119" not in dashboard_html:
+    if "app.js?v=120" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

@@ -1,10 +1,10 @@
 window.MAXNOW_PROJECT_STATUS_DATA = {
   "schemaVersion": 1,
   "source": "ROADMAP.md",
-  "sourceUpdatedAt": "2026-07-27 12:03",
-  "generatedAt": "2026-07-27 12:04",
+  "sourceUpdatedAt": "2026-07-27 14:16",
+  "generatedAt": "2026-07-27 14:17",
   "staleAfterHours": 168,
-  "sourceFingerprint": "60389dcad1d7930e74ccfa0ed84858d4ad3500913b3b4317bec2f8a5a9e7466a",
+  "sourceFingerprint": "89f21a731b721c2685333e76575d1924c707dab27e428f6d885acf9b3783fa00",
   "mainlines": [
     {
       "title": "规划个人博客发布链路",

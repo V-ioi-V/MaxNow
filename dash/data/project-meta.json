@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 12:04",
-  "version": "1.0.5.06",
-  "versionLabel": "v1.0.5.06",
-  "branch": "feature/ballet-bookings-sync-record",
-  "commit": "e5d1025",
+  "updatedAt": "2026-07-27 14:17",
+  "version": "1.0.5.07",
+  "versionLabel": "v1.0.5.07",
+  "branch": "feature/ballet-all-bookings-stats",
+  "commit": "38c6014",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-bookings-sync-record · commit e5d1025 · 有未提交代码改动",
+  "deployNote": "feature/ballet-all-bookings-stats · commit 38c6014 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "重做芭蕾预约与上课统计",
+      "summary": "“后续预约”改为“所有预约”，完整列出所有尚未上课的已预约 / 排队中课程，包括下一节主卡中的课程；已结束或已取消课程不进入该列表。"
+    },
     {
       "date": "2026-07-27",
       "title": "部署多节预约并完成首次真实同步",
@@ -28,11 +33,6 @@
       "date": "2026-07-26",
       "title": "增加 PHPSESSID 活跃实验状态卡并降频至 25 分钟",
       "summary": "芭蕾页新增独立粉白状态卡，展示 PHPSESSID 从原始起点到最后一次认证样本的“已确认有效时长”、实验起始、最近 / 下次自动检查和当前间隔；页面不会按当前时间外推证据，也不会把持续活动仍有效表述为已证明自动续期。"
-    },
-    {
-      "date": "2026-07-26",
-      "title": "上线芭蕾只读学习模块",
-      "summary": "左侧导航顺序调整为首页 → 豆奶 → Token → 芭蕾 → 云服务 → 生活 → 同行记，取代当天较早记录的 Home 下方候选位置；芭蕾页沿用 `secondary-view`，使用粉玫瑰 + 白卡语义，并提供 Home 紧凑摘要。"
     }
   ]
 }

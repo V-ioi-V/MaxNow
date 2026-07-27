@@ -234,6 +234,13 @@ class BalletSyncTests(unittest.TestCase):
             self.assertEqual(model["summary"]["classes"], 2)
             self.assertEqual(model["summary"]["minutes"], 150)
             self.assertEqual(model["summary"]["hours"], 2.5)
+            soft_open = next(
+                item
+                for item in model["summary"]["byCourseType"]
+                if item["key"] == "soft_open"
+            )
+            self.assertEqual(soft_open["classes"], 1)
+            self.assertEqual(soft_open["minutes"], 60)
             self.assertEqual(model["records"][0]["level"], "L1.5")
             self.assertEqual(
                 model["upcoming"]["records"][0]["bookingStatus"], "booked"
@@ -338,6 +345,50 @@ class BalletSyncTests(unittest.TestCase):
                 item for item in ledger["records"] if item["recordState"] == "tombstone"
             ]
             self.assertEqual(len(tombstones), 1)
+
+    def test_manual_attendance_is_public_and_survives_full_sync(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixtures"
+            paths = ballet.build_paths(root / "private", root / "public" / "ballet.json")
+            write_fixture(fixture)
+            ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+
+            ledger = json.loads(paths.ledger.read_text(encoding="utf-8"))
+            manual = ballet.normalize_manual_attendance(
+                {
+                    "courseName": "软开课",
+                    "date": "2026-07-25",
+                    "startTime": "11:30",
+                    "endTime": "12:30",
+                    "teacher": "李俊",
+                },
+                "2026-07-27T12:30:00+08:00",
+            )
+            ledger["records"].append(manual)
+            ledger["contentFingerprint"] = ballet.content_fingerprint(ledger["records"])
+            ballet.validate_ledger(ledger)
+            ballet.atomic_write_json(paths.ledger, ledger, mode=0o600)
+
+            ballet.synchronize(
+                paths,
+                ballet.FixtureSource(fixture),
+                "full",
+                datetime.fromisoformat("2026-08-01T00:47:00+08:00"),
+            )
+            model = json.loads(paths.output.read_text(encoding="utf-8"))
+            manual_public = next(
+                item for item in model["records"] if item["recordOrigin"] == "manual"
+            )
+            self.assertEqual(manual_public["courseName"], "软开课")
+            self.assertEqual(manual_public["durationMinutes"], 60)
+            self.assertEqual(model["summary"]["classes"], 3)
+            self.assertEqual(model["summary"]["minutes"], 210)
+            stored = json.loads(paths.ledger.read_text(encoding="utf-8"))
+            manual_private = next(
+                item for item in stored["records"] if item["keySource"] == "manual"
+            )
+            self.assertEqual(manual_private["recordState"], "active")
 
     def test_fixture_dry_run_writes_nothing(self):
         with tempfile.TemporaryDirectory() as directory:
