@@ -384,6 +384,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 
 2026-07-27 部署主分支 `9a872ee`（版本 `1.0.5.20`），将顶部预约区重新拆为两个同级面板：左侧约 1/3 展示下一节，右侧约 2/3 展示全部预约且包含下一节。部署前页面和整份运行数据备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-ballet-booking-tabs-0oS30D`；服务器运行数据在拉取后原样恢复。1440px 下两面板同顶同底、宽度比约 `1:1.92`；390px 下单列堆叠且无横向溢出。服务器全仓检查与 `nginx -t` 通过，匿名访问边界保持 Dash `302`、`ballet.json` `401`、Blog `200`；每日、月度和 Session 状态三个芭蕾 timer 均保持 `enabled / active`，enable gate 继续存在，部署过程未访问闻道。页面缓存为 `styles.css?v=151` / `app.js?v=126`。
 
+2026-07-27 部署主分支 `187419f`（版本 `1.0.5.21`），将芭蕾页顶部改为“下一节预约 / 本周训练 / 课程卡”三个同级等宽面板，并把“所有预约”下移为独立全宽面板。部署前页面与整份运行数据备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-225549-ballet-top-three-tabs`；服务器运行数据在拉取后原样恢复并重新生成 `project-meta.*`。本地浏览器验证 2048px 下三卡同顶、同底、等高且各宽约 556px，`1200px` 及以下按使用顺序堆叠，`860px` / `390px` 无横向溢出；服务器全仓检查与 `nginx -t` 通过，匿名访问边界保持 Dash `302`、`ballet.json` `401`、Blog `200`。每日、月度和 Session 状态三个芭蕾 timer 均保持 `enabled / active`，enable gate 继续存在，部署过程未访问闻道。页面缓存为 `styles.css?v=152` / `app.js?v=126`。
+
 2026-06-17 晚间已部署参考风格刷新版本：
 
 ```text
