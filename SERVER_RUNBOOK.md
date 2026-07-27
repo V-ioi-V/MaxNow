@@ -348,6 +348,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 
 2026-07-27 15:22 已部署主分支 `921769c4`（版本 `1.0.5.10`）的预约状态颜色与星期排版：`booked` 保持粉玫瑰色，`waitlist` 改为橙色，星期移到日期下方。部署前页面与运行数据备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-booking-status-colors-Z1pKnP`；服务器全仓检查通过，预约缓存仍为 3 条 `booked` + 1 条 `waitlist`。本次部署未访问闻道、未创建 enable gate；每日 / 月度 timer 继续 disabled，v6 20 分钟实验仍 active。
 
+2026-07-27 15:27 已部署主分支 `83bb5aaf`（版本 `1.0.5.11`），将芭蕾标题和下一节预约修正为两个同级独立等宽 tab，不再内嵌。部署前页面与运行数据备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-ballet-sibling-tabs-wEvlvr`；服务器全仓检查通过，预约缓存仍为 3 条 `booked` + 1 条 `waitlist`。本次部署未访问闻道、未创建 enable gate；每日 / 月度 timer 继续 disabled，v6 20 分钟实验仍 active。
+
 身份与错误处理：
 
 - `AUTH_REQUIRED`、`WX_OAUTH_REQUIRED`、`MEMBER_LOGIN_REQUIRED` 立即停止本轮和后续自动重试，保留旧缓存并将 read model 标记为需要重新登录。

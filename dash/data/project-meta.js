@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 15:24",
+  "updatedAt": "2026-07-27 15:27",
   "version": "1.0.5.11",
   "versionLabel": "v1.0.5.11",
-  "branch": "bugfix/ballet-top-tabs-siblings",
-  "commit": "038e3c9",
+  "branch": "bugfix/ballet-sibling-tabs-deploy-record",
+  "commit": "83bb5aa",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-top-tabs-siblings · commit 038e3c9 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-sibling-tabs-deploy-record · commit 83bb5aa · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-27",
