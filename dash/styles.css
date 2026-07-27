@@ -4319,9 +4319,17 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   --card-border: var(--ballet-border);
 }
 
-.ballet-page-head {
+.ballet-top-tabs {
+  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
+  gap: var(--page-grid-gap);
+  margin-bottom: var(--page-section-gap);
+}
+
+.ballet-top-tabs .ballet-page-head {
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 0;
 }
 
 .ballet-page-copy {
@@ -4354,7 +4362,9 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   display: grid;
   align-content: center;
   gap: 7px;
-  padding: 8px 10px;
+  min-height: 124px;
+  height: 100%;
+  padding: 20px 24px;
   border: 1px solid color-mix(in srgb, var(--ballet) 17%, var(--line));
   border-radius: var(--radius);
   background: linear-gradient(135deg, #fff4f8, #ffffff 72%);
@@ -5272,7 +5282,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   .token-page-head,
   .token-usage-head,
   .cloud-page-head,
-  .ballet-page-head,
+  .ballet-top-tabs,
   .life-food-toolbar {
     grid-template-columns: 1fr;
   }
