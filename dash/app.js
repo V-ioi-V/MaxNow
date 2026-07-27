@@ -2999,30 +2999,45 @@ function createBalletUpcomingItem(record) {
   const date = document.createElement("time");
   const dateText = balletRecordDate(record);
   const parsedDate = parseLocalDateTime(dateText);
-  date.textContent = dateText
+  date.className = "ballet-upcoming-date";
+  if (dateText) date.dateTime = dateText;
+  const dateLabel = document.createElement("strong");
+  const weekdayLabel = document.createElement("span");
+  dateLabel.textContent = dateText
     ? `${Number(dateText.slice(5, 7))}月${Number(dateText.slice(8, 10))}日`
     : "--";
+  weekdayLabel.textContent = parsedDate
+    ? new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(parsedDate)
+    : "--";
+  date.append(dateLabel, weekdayLabel);
   const main = document.createElement("div");
   const title = document.createElement("strong");
   const meta = document.createElement("small");
   title.textContent = balletCourseName(record);
   const timeRange = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
   meta.textContent = [
-    parsedDate ? new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(parsedDate) : "",
     timeRange,
     balletTeacher(record),
   ].filter(Boolean).join(" · ") || "课程详情待补";
   main.append(title, meta);
   const tags = document.createElement("div");
   tags.className = "ballet-history-meta";
+  const bookingLabel = getBalletStatusLabel(record.bookingStatus || record.status);
   [
-    getBalletStatusLabel(record.bookingStatus || record.status),
-    record.level ? BALLET_LEVEL_LABELS[String(record.level).toLowerCase()] || record.level : "",
+    {
+      label: bookingLabel,
+      status: bookingLabel === "排队中" ? "waitlist" : bookingLabel === "已预约" ? "booked" : "",
+    },
+    {
+      label: record.level ? BALLET_LEVEL_LABELS[String(record.level).toLowerCase()] || record.level : "",
+      status: "",
+    },
   ]
-    .filter(Boolean)
-    .forEach((value) => {
+    .filter((item) => item.label)
+    .forEach((item) => {
       const span = document.createElement("span");
-      span.textContent = value;
+      span.textContent = item.label;
+      if (item.status) span.dataset.bookingStatus = item.status;
       tags.appendChild(span);
     });
   article.append(date, main, tags);
