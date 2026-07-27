@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 15:43",
+  "updatedAt": "2026-07-27 15:45",
   "version": "1.0.5.12",
   "versionLabel": "v1.0.5.12",
-  "branch": "feature/ballet-next-content-center",
-  "commit": "2c26d0d",
+  "branch": "feature/ballet-center-deploy-record",
+  "commit": "04d6413",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-next-content-center · commit 2c26d0d · 有未提交代码改动",
+  "deployNote": "feature/ballet-center-deploy-record · commit 04d6413 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-27",
