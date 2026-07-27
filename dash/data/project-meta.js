@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 20:34",
+  "updatedAt": "2026-07-27 20:39",
   "version": "1.0.5.19",
   "versionLabel": "v1.0.5.19",
   "branch": "feature/ballet-bookings-merge",
-  "commit": "9c6751e",
+  "commit": "bee3c0a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-bookings-merge · commit 9c6751e · 有未提交代码改动",
+  "deployNote": "feature/ballet-bookings-merge · commit bee3c0a · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-27",
