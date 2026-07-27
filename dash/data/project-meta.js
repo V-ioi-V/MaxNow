@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 14:27",
-  "version": "1.0.5.07",
-  "versionLabel": "v1.0.5.07",
-  "branch": "feature/ballet-all-bookings-stats",
-  "commit": "ff1f988",
+  "updatedAt": "2026-07-27 15:02",
+  "version": "1.0.5.08",
+  "versionLabel": "v1.0.5.08",
+  "branch": "bugfix/waitlist-detail-status",
+  "commit": "5bd67ef",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-all-bookings-stats · commit ff1f988 · 有未提交代码改动",
+  "deployNote": "bugfix/waitlist-detail-status · commit 5bd67ef · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "修复排队课程未进入所有预约",
+      "summary": "实时只读诊断确认闻道约课列表完整返回 3 条“已预约”、1 条“排队中”和 1 条“已上课”；排队课程详情页的状态实际为“等候中, 排队序号 4”，旧归一化因只接受精确的“排队中 / 候补中”而将其过滤。"
+    },
     {
       "date": "2026-07-27",
       "title": "重做芭蕾预约与上课统计",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-27",
       "title": "刷新闻道会话并启动 v6 每 20 分钟实验",
       "summary": "Owner 在微信内重新打开闻道页面并完全退出微信后，本机从最新微信资料目录安全提取新一代 `PHPSESSID`；仅比较脱敏哈希确认它与旧会话不同，未在终端、日志、聊天或 Git 输出 Cookie 值。"
-    },
-    {
-      "date": "2026-07-26",
-      "title": "增加 PHPSESSID 活跃实验状态卡并降频至 25 分钟",
-      "summary": "芭蕾页新增独立粉白状态卡，展示 PHPSESSID 从原始起点到最后一次认证样本的“已确认有效时长”、实验起始、最近 / 下次自动检查和当前间隔；页面不会按当前时间外推证据，也不会把持续活动仍有效表述为已证明自动续期。"
     }
   ]
 };

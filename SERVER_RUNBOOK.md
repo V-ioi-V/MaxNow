@@ -340,6 +340,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 
 2026-07-27 14:23 已部署主分支 `6955c302`（版本 `1.0.5.07`）的“所有预约 + 整体上课统计”页面。部署前 Git 运行数据和 `/var/lib/maxnow-ballet` 私有账本备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-ballet-stats-TqpdiR`；服务器检查通过。随后使用仓库同步模块的本地归一化、校验与原子写入函数补入 Owner 明确提供的 2026-07-25 11:30–12:30 李俊软开课，未访问闻道、未读取 PHPSESSID、未创建 enable gate。手工记录使用 `manual` 稳定键，read model 当前为 2 节 / 150 分钟历史、3 条未来预约和 1 条手工记录；每日 / 月度 timer 继续 disabled，v6 20 分钟探针继续 active。内置浏览器通过临时 SSH loopback 读取服务器静态文件完成真实数据与 390px 几何验收，临时 HTTP 服务和隧道在验收后已停止。
 
+2026-07-27 14:57 临时创建 enable gate 完成一次 Owner 要求的 rolling 只读复查，成功后立即删除 gate；每日 / 月度 timer 继续 disabled。复查缓存仍只有 3 条未来预约，随后用同一 host-bound 凭据在受限 transient unit 中各执行一次约课索引和排队详情 GET，只输出脱敏解析字段：索引实际包含 3 条“已预约”、1 条“排队中”和 1 条“已上课”，排队详情状态为“等候中, 排队序号 4”。根因是同步器只接受精确的“排队中 / 候补中”，已在 `1.0.5.08` 将“等候中”前缀归一为 `waitlist` 并补回归测试。诊断未输出记录 ID、响应正文或凭据，备份位于 `/home/ubuntu/maxnow-deploy-backups/20260727-booking-refresh-rN6L2e`。
+
 身份与错误处理：
 
 - `AUTH_REQUIRED`、`WX_OAUTH_REQUIRED`、`MEMBER_LOGIN_REQUIRED` 立即停止本轮和后续自动重试，保留旧缓存并将 read model 标记为需要重新登录。

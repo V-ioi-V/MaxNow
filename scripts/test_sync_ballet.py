@@ -212,6 +212,19 @@ class BalletSyncTests(unittest.TestCase):
             ("conditioning", "L2"),
         )
 
+    def test_waitlist_detail_status_with_queue_position_is_included(self):
+        detail = ballet.parse_detail(
+            detail_html(
+                course="芭蕾L1-入门",
+                day="2026-08-01",
+                status="等候中, 排队序号 4",
+            ),
+            "10004",
+        )
+        normalized = ballet.normalize_upcoming(detail)
+        self.assertIsNotNone(normalized)
+        self.assertEqual(normalized["bookingStatus"], "waitlist")
+
     def test_fixture_full_sync_is_idempotent_and_public_data_is_redacted(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
