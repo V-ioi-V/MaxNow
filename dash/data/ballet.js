@@ -1,11 +1,11 @@
 window.MAXNOW_BALLET_DATA = {
   "schemaVersion": 1,
   "timezone": "Asia/Shanghai",
-  "dataAsOf": "2026-07-27T17:10:17+08:00",
+  "dataAsOf": "2026-07-27T17:37:29+08:00",
   "sync": {
     "logicalDate": "2026-07-26",
-    "lastAttemptAt": "2026-07-27T17:10:17+08:00",
-    "lastSuccessAt": "2026-07-27T17:10:17+08:00",
+    "lastAttemptAt": "2026-07-27T17:37:29+08:00",
+    "lastSuccessAt": "2026-07-27T17:37:29+08:00",
     "lastDataChangeAt": "2026-07-27T17:10:17+08:00",
     "lastAttemptStatus": "success",
     "cacheState": "fresh",
@@ -496,7 +496,7 @@ window.MAXNOW_BALLET_DATA = {
     ]
   },
   "upcoming": {
-    "dataAsOf": "2026-07-27T17:10:17+08:00",
+    "dataAsOf": "2026-07-27T17:37:29+08:00",
     "ttlHours": 36,
     "records": [
       {
@@ -584,7 +584,7 @@ window.MAXNOW_BALLET_DATA = {
     "expectedMinutesMax": 330
   },
   "membership": {
-    "dataAsOf": "2026-07-27T17:10:17+08:00",
+    "dataAsOf": "2026-07-27T17:37:29+08:00",
     "cards": [
       {
         "name": "半年卡-40次",
@@ -617,7 +617,7 @@ window.MAXNOW_BALLET_DATA = {
   "learningLogs": [],
   "authHealth": {
     "status": "valid",
-    "checkedAt": "2026-07-27T17:10:17+08:00",
+    "checkedAt": "2026-07-27T17:37:29+08:00",
     "message": null
   },
   "automation": {

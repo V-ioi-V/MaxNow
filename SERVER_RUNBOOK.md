@@ -374,6 +374,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 
 2026-07-27 17 时完成芭蕾只读训练闭环的正式验证与 timer 启用。部署前 `dash/data` 和 `/var/lib/maxnow-ballet` 已备份至 `/home/ubuntu/maxnow-deploy-backups/ballet-readonly-loop-cvbcBr`；服务器 14 项同步器测试、全仓检查与一次 production rolling service 均通过。正式 read model 保留 2 条实际上课、3 条正式预约、1 条候补第 4 位；四条未来课程均解析出 2 / 11 小时相对取消规则对应的绝对截止时间；课程卡为 39 / 40 次、有效至 2027-01-23，本周预计 3–4 节、240–330 分钟。read model 无 PHPSESSID、会员卡号、会员 / 源记录标识或原始响应。`/etc/maxnow-ballet/enable-sync` 为 `root:root 0600`；两个 timer 已 `enabled / active / waiting`，下次触发分别为 2026-07-28 00:17 和 2026-08-01 00:47。隔离验证使用的 `/tmp/maxnow-sync-ballet-preview-20260727.py`、`/var/lib/maxnow-ballet-preview-20260727` 及其 private StateDirectory 已删除。
 
+2026-07-27 课程卡预测改为按卡独立计算。部署前 `dash/data` 和 `/var/lib/maxnow-ballet` 已备份至 `/home/ubuntu/maxnow-deploy-backups/ballet-card-forecast-eYFyLE`；服务器 15 项同步器测试、全仓检查和一次 production rolling service 均通过。当前卡明确以 2026-07-26 为开卡日，页面显示第 2 / 182 天、到期前所需 1.5 节 / 周、按每周 2 节预计 2026-12-10 用完，以及每周 1 节时到期约剩 13 节。因为开卡未满 28 天，`observedClassesPerWeek` 和 `observedCanFinish` 均为空，read model 不再包含固定窗口 `historyWindowDays` / `currentClassesPerWeek`。每日和月度 timer 保持 `active`。
+
 2026-06-17 晚间已部署参考风格刷新版本：
 
 ```text
