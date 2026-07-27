@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 14:17",
+  "updatedAt": "2026-07-27 14:27",
   "version": "1.0.5.07",
   "versionLabel": "v1.0.5.07",
   "branch": "feature/ballet-all-bookings-stats",
-  "commit": "38c6014",
+  "commit": "ff1f988",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-all-bookings-stats · commit 38c6014 · 有未提交代码改动",
+  "deployNote": "feature/ballet-all-bookings-stats · commit ff1f988 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-27",
