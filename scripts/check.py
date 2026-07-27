@@ -998,6 +998,7 @@ def check_secondary_view_style():
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
+        ".ballet-top-tabs {",
         "#tokens-view {",
         "#dounai-view {",
         "#ballet-view {",
@@ -1018,7 +1019,15 @@ def check_secondary_view_style():
     )
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
-    if "styles.css?v=141" not in dashboard_html:
+    ballet_tabs = dashboard_html.split('<section class="ballet-top-tabs"', 1)
+    if len(ballet_tabs) != 2:
+        raise ValueError("secondary views: ballet sibling top tabs are missing")
+    ballet_tabs_markup = ballet_tabs[1].split("</section>", 1)[0]
+    if ballet_tabs_markup.find("</header>") > ballet_tabs_markup.find(
+        '<article class="ballet-head-next"'
+    ):
+        raise ValueError("secondary views: next ballet class is still nested in the title tab")
+    if "styles.css?v=142" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     return "secondary views: six tabs share clean card shells without top accent bars"
 

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 15:22",
-  "version": "1.0.5.10",
-  "versionLabel": "v1.0.5.10",
-  "branch": "feature/booking-status-deploy-record",
-  "commit": "921769c",
+  "updatedAt": "2026-07-27 15:24",
+  "version": "1.0.5.11",
+  "versionLabel": "v1.0.5.11",
+  "branch": "bugfix/ballet-top-tabs-siblings",
+  "commit": "038e3c9",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/booking-status-deploy-record · commit 921769c · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-top-tabs-siblings · commit 038e3c9 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "将芭蕾顶部改为两个独立等宽 tab",
+      "summary": "修正此前对“各占一半”的理解：芭蕾标题与“下一节预约”改为两个同级独立 tab，不再把课程模块嵌套在标题卡内部。"
+    },
     {
       "date": "2026-07-27",
       "title": "区分预约状态颜色并重排星期",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-27",
       "title": "重做芭蕾预约与上课统计",
       "summary": "“后续预约”改为“所有预约”，完整列出所有尚未上课的已预约 / 排队中课程，包括下一节主卡中的课程；已结束或已取消课程不进入该列表。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "部署多节预约并完成首次真实同步",
-      "summary": "服务器已快进到 `e5d10258`，上线“下一节预约 + 后续预约”展示；部署前完整备份运行时数据并恢复非项目元信息数据，服务器 Git remote 从失效的 SSH 地址切回与现有 `gh` 登录一致的 HTTPS。"
     }
   ]
 };

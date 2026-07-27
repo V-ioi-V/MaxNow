@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=141" />
+    <link rel="stylesheet" href="./styles.css?v=142" />
   </head>
   <body>
     <div class="app-shell">
@@ -619,15 +619,17 @@
         </section>
 
         <section class="view secondary-view" id="ballet-view" data-view-panel="ballet">
-          <header class="token-page-head secondary-page-head ballet-page-head">
-            <div class="ballet-page-copy">
-              <p class="eyebrow">Ballet Progress</p>
-              <h1>芭蕾</h1>
-              <div class="ballet-page-meta">
-                <p id="ballet-updated">课程记录与学习进度 · 等待首次同步</p>
-                <span class="status-pill" id="ballet-sync-status" aria-live="polite">等待同步</span>
+          <section class="ballet-top-tabs" aria-label="芭蕾概览">
+            <header class="token-page-head secondary-page-head ballet-page-head">
+              <div class="ballet-page-copy">
+                <p class="eyebrow">Ballet Progress</p>
+                <h1>芭蕾</h1>
+                <div class="ballet-page-meta">
+                  <p id="ballet-updated">课程记录与学习进度 · 等待首次同步</p>
+                  <span class="status-pill" id="ballet-sync-status" aria-live="polite">等待同步</span>
+                </div>
               </div>
-            </div>
+            </header>
             <article class="ballet-head-next" aria-label="下一节芭蕾课程">
               <header class="ballet-head-next-top">
                 <p class="eyebrow">Next Class · 下一节预约</p>
@@ -645,7 +647,7 @@
                 </div>
               </div>
             </article>
-          </header>
+          </section>
 
           <div class="ballet-sync-alert" id="ballet-sync-alert" role="status" aria-live="polite" hidden>
             <span class="ballet-sync-alert-icon" aria-hidden="true">!</span>
