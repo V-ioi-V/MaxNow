@@ -309,7 +309,7 @@ credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 credential version -> /etc/maxnow-ballet/credential-version
 enable gate -> /etc/maxnow-ballet/enable-sync
 frontend read model -> /var/www/maxnow-dashboard/dash/data/ballet.json + ballet.js
-current state -> 代码 / page 已部署；2026-07-27 新加密凭据已密封；首次 rolling 同步成功；enable gate 不存在且两个生产 timer 保持 disabled
+current state -> 代码 / page 已部署；首次 rolling 同步成功；2026-07-27 14:23 已补入 1 条 Owner 手工软开课；enable gate 不存在且两个生产 timer 保持 disabled
 experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾执行一次额外预约 / 上课记录只读同步；本地 exporter / status timer 每 5 分钟转存并发布 ballet-session.*，不访问闻道
 ```
 
@@ -337,6 +337,8 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 2026-07-27 00:26 Owner 建立新微信会话后，本机只在内存解密最新 `gm.wendaosoft.com` Cookie 并确认与旧会话不同；新凭据经 SSH 标准输入直接密封为 `/etc/credstore.encrypted/maxnow-wenda-session-v6.cred` 和新的生产 `/etc/credstore.encrypted/maxnow-ballet-wenda.cred`，均为 root `0600`，没有在服务器持久化明文。00:26:55 启动 v6 每 20 分钟 transient 探针，00:26:56 首条为 HTTP 200 / authenticated、`attempts=1`、无 `Set-Cookie` / Session 变化。新增 `maxnow-ballet-session-log-export.timer` 每 5 分钟原子转存活动脱敏日志，随后由非 root 状态发布器生成页面数据；00:29 公开状态为 `running`、间隔 20 分钟、样本 1、下一次 00:46:55。生产每日 / 月度 timer 及 enable gate 继续关闭。
 
 2026-07-27 12:01 已部署主分支 `e5d10258` 的多节预约展示并完成 Owner 批准的首次真实 rolling 同步。部署前运行时数据和 Git 差异备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-bookings-tDzq1X`，服务器 Git remote 从失效的 `ssh.github.com:443` 切回与现有 `gh` 登录一致的 HTTPS。首次启动因非敏感凭据版本包含 `:` / `+` 在网络请求前安全退出；规范化为 `v6-20260727T002655-0800` 后成功，PHPSESSID 加密文件未改动。成功同步发出 7 个 allowlist GET，写入 1 条实际上课记录和 3 条未来正式预约；同步后 gate 已删除，两个生产 timer 仍为 disabled。服务器项目检查和状态发布器 oneshot 均通过。12:01 后的 v6 证据包含这组额外只读请求，不再属于“仅固定课程列表 GET”的纯实验阶段。
+
+2026-07-27 14:23 已部署主分支 `6955c302`（版本 `1.0.5.07`）的“所有预约 + 整体上课统计”页面。部署前 Git 运行数据和 `/var/lib/maxnow-ballet` 私有账本备份在 `/home/ubuntu/maxnow-deploy-backups/20260727-ballet-stats-TqpdiR`；服务器检查通过。随后使用仓库同步模块的本地归一化、校验与原子写入函数补入 Owner 明确提供的 2026-07-25 11:30–12:30 李俊软开课，未访问闻道、未读取 PHPSESSID、未创建 enable gate。手工记录使用 `manual` 稳定键，read model 当前为 2 节 / 150 分钟历史、3 条未来预约和 1 条手工记录；每日 / 月度 timer 继续 disabled，v6 20 分钟探针继续 active。内置浏览器通过临时 SSH loopback 读取服务器静态文件完成真实数据与 390px 几何验收，临时 HTTP 服务和隧道在验收后已停止。
 
 身份与错误处理：
 
