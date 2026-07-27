@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 22:49",
-  "version": "1.0.5.21",
-  "versionLabel": "v1.0.5.21",
-  "branch": "feature/ballet-top-three-tabs",
-  "commit": "54a4669",
+  "updatedAt": "2026-07-27 23:03",
+  "version": "1.0.5.22",
+  "versionLabel": "v1.0.5.22",
+  "branch": "feature/ballet-booking-hierarchy",
+  "commit": "ac959b8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-top-three-tabs · commit 54a4669 · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-hierarchy · commit ac959b8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "合并顶部预约并强化下一节层级",
+      "summary": "删除独立“下一节预约”面板和下方重复的整宽预约面板，将“所有预约”直接放进顶部左卡，与本周训练、课程卡并列。"
+    },
     {
       "date": "2026-07-27",
       "title": "将芭蕾核心三卡置顶",
@@ -28,11 +33,6 @@
       "date": "2026-07-27",
       "title": "按使用优先级重排芭蕾页面",
       "summary": "页面顺序调整为：更新时间与下一节课 → 本周训练 / 课程卡 → 所有预约 → 上课统计 → 上课历史 → PHPSESSID 实验详情。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "删除芭蕾重复标题卡",
-      "summary": "删除芭蕾内容区重复的 “Ballet Progress / 芭蕾 / 已同步”标题卡，只保留一行低权重数据更新时间。"
     }
   ]
 }

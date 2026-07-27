@@ -1064,7 +1064,8 @@ def check_secondary_view_style():
         ".secondary-view {",
         ".secondary-page-head {",
         ".ballet-primary-grid {",
-        ".ballet-next-summary {",
+        ".ballet-bookings-panel {",
+        ".ballet-upcoming-item.is-featured {",
         "#tokens-view {",
         "#dounai-view {",
         "#ballet-view {",
@@ -1089,10 +1090,9 @@ def check_secondary_view_style():
     layout_markers = (
         'id="ballet-updated"',
         'class="ballet-primary-grid"',
-        'class="panel ballet-next-panel"',
+        'class="panel ballet-bookings-panel"',
         'class="panel ballet-week-panel"',
         'class="panel ballet-membership-card"',
-        'class="panel ballet-upcoming-panel"',
         'class="panel ballet-training-panel"',
         'class="panel ballet-history-panel"',
         'class="panel ballet-session-card"',
@@ -1102,15 +1102,16 @@ def check_secondary_view_style():
         raise ValueError("secondary views: ballet information priority order is invalid")
     if ballet_view_markup.find("ballet-week-panel") > ballet_view_markup.find("ballet-membership-card"):
         raise ValueError("secondary views: weekly training must precede the course card")
-    if any(retired in ballet_view_markup for retired in ("ballet-page-intro", "ballet-head-next", "ballet-next-status")):
+    if any(retired in ballet_view_markup for retired in ("ballet-page-intro", "ballet-head-next", "ballet-next-status", "ballet-next-panel")):
         raise ValueError("secondary views: retired next-class layout remains")
     if (
-        "function renderBalletNext(nextClass, state)" not in dashboard_js
-        or "formatBalletCancellation(nextClass)" not in dashboard_js
-        or "container.append(...records.map(createBalletUpcomingItem))" not in dashboard_js
-        or 'id="ballet-next-booking-status"' not in ballet_view_markup
+        "function createBalletUpcomingItem(record, isFeatured = false)" not in dashboard_js
+        or "formatBalletCancellation(record)" not in dashboard_js
+        or "createBalletUpcomingItem(record, index === 0)" not in dashboard_js
+        or 'class="panel ballet-bookings-panel"' not in ballet_view_markup
+        or "ballet-upcoming-priority" not in dashboard_js
     ):
-        raise ValueError("secondary views: split next-class and all-bookings contract is incomplete")
+        raise ValueError("secondary views: featured next booking hierarchy is incomplete")
     if (
         '<details class="panel ballet-session-card"' not in ballet_view_markup
         or '<summary class="ballet-session-summary">' not in ballet_view_markup
@@ -1122,7 +1123,7 @@ def check_secondary_view_style():
         raise ValueError("secondary views: ballet decision grid or collapsed session details are incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
-    if "styles.css?v=152" not in dashboard_html:
+    if "styles.css?v=153" not in dashboard_html or "app.js?v=127" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
         "\n  }\n\n  .token-usage-head:hover", 1
@@ -1147,7 +1148,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=126" not in dashboard_html:
+    if "app.js?v=127" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
