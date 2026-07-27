@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27 16:25",
-  "version": "1.0.5.13",
-  "versionLabel": "v1.0.5.13",
-  "branch": "feature/ballet-adaptive-deploy-record",
-  "commit": "df6fa7e",
+  "updatedAt": "2026-07-27 16:38",
+  "version": "1.0.5.14",
+  "versionLabel": "v1.0.5.14",
+  "branch": "bugfix/preserve-card-hover-background",
+  "commit": "4a215ec",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-adaptive-deploy-record · commit df6fa7e · 有未提交代码改动",
+  "deployNote": "bugfix/preserve-card-hover-background · commit 4a215ec · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-27",
+      "title": "修复卡片 hover 丢失语义底色",
+      "summary": "根因是共享 hover 规则强制写入纯白背景，导致粉白、紫白、青白等轻主题卡在鼠标移入时突然变白；原本就是白底的条目则看不出变化，造成同页反馈不一致。"
+    },
     {
       "date": "2026-07-27",
       "title": "将下一节预约改为自适应信息布局",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-27",
       "title": "区分预约状态颜色并重排星期",
       "summary": "“所有预约”中的“已预约”保留粉玫瑰色，“排队中”改用橙色，候补状态不再与正式预约使用相同颜色。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "压缩下一节预约并移入芭蕾页头",
-      "summary": "将独占整行的“下一节预约”大卡移入芭蕾页头右半区；桌面端标题与课程各占约 1/2，保留日期、时间、课程、老师、级别和预约状态。"
     }
   ]
 };

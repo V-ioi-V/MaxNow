@@ -1027,8 +1027,13 @@ def check_secondary_view_style():
         '<article class="ballet-head-next"'
     ):
         raise ValueError("secondary views: next ballet class is still nested in the title tab")
-    if "styles.css?v=144" not in dashboard_html:
+    if "styles.css?v=145" not in dashboard_html:
         raise ValueError("secondary views: stylesheet cache version is stale")
+    shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
+        "\n  }\n\n  .token-usage-head:hover", 1
+    )[0]
+    if "background: #ffffff;" in shared_hover:
+        raise ValueError("secondary views: shared hover must preserve component backgrounds")
     return "secondary views: six tabs share clean card shells without top accent bars"
 
 
