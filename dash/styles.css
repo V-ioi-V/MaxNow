@@ -3379,15 +3379,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   overflow-y: hidden;
 }
 
-.cloud-page-head {
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px;
-}
-
-.cloud-page-head .status-pill {
-  align-self: start;
-}
-
 .cloud-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -6051,7 +6042,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   .focus-panel,
   .token-page-head,
   .token-usage-head,
-  .cloud-page-head,
   .life-food-toolbar {
     grid-template-columns: 1fr;
   }

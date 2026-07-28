@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 19:27",
-  "version": "1.0.7.04",
-  "versionLabel": "v1.0.7.04",
-  "branch": "bugfix/cloud-session-card-width",
-  "commit": "4794ff8",
+  "updatedAt": "2026-07-28 19:37",
+  "version": "1.0.7.05",
+  "versionLabel": "v1.0.7.05",
+  "branch": "bugfix/remove-cloud-page-head",
+  "commit": "9ed16c8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/cloud-session-card-width · commit 4794ff8 · 有未提交代码改动",
+  "deployNote": "bugfix/remove-cloud-page-head · commit 9ed16c8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "移除 Cloud 重复页头",
+      "summary": "删除 Cloud 内容区重复的“Cloud Services / 云服务 / dash.maxnow.cn”标题卡，进入页面后直接展示“系统与托管”，释放首屏高度；同步清理专用样式和页面协议。样式缓存提升到 `styles.css?v=162`，版本提升到 `1.0.7.05`。"
+    },
     {
       "date": "2026-07-28",
       "title": "收紧 Cloud 芭蕾运维卡布局",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "自动抢课改为逐课独立并增加安全重试",
       "summary": "周日 fast path 将三节目标拆为独立失败域：第一节课程级失败或预约结果未知不会阻止第二、第三节；只有登录失效、配置错误或闻道页面协议变化才全局停止。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "增加周日自动抢课 Fast Path",
-      "summary": "新增服务器本地 `book_ballet_fast.py` 与精确定时 systemd service / timer：周日 14:19:35 预热，14:20:00 按“周六 > 周日 > 周五 > 其他日期”顺序逐课即时校验并提交；关键路径不经过 Codex、Skill 或 SSH。初版未知结果会停止后续，随后同日按上方记录改为逐课独立安全重试。"
     }
   ]
 };
