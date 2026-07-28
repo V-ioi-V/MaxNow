@@ -138,6 +138,38 @@ def safe_diagnostic(
     script_functions = sorted(
         set(re.findall(r"function\s+([A-Za-z_$][\w$]*)\s*\(", script_text))
     )
+    script_signals = {
+        "selectors": sorted(
+            {
+                value
+                for value in re.findall(
+                    r"\$\(\s*[\"']([^\"']+)[\"']\s*\)", script_text
+                )
+                if "book" in value.lower()
+            }
+        ),
+        "attributeNames": sorted(
+            set(re.findall(r"\.attr\(\s*[\"']([^\"']+)[\"']", script_text))
+        ),
+        "requestCalls": sorted(
+            set(re.findall(r"\$\.(post|get|ajax)\s*\(", script_text))
+        ),
+        "pathShapes": sorted(
+            {
+                safe_path_shape(value)
+                for value in re.findall(r"[\"'](/[^\"']+)[\"']", script_text)
+                if "book" in value.lower()
+            }
+        ),
+        "objectKeys": sorted(
+            set(
+                re.findall(
+                    r"(?:^|[,{\s])([A-Za-z_][\w-]*)\s*:",
+                    script_text,
+                )
+            )
+        ),
+    }
     elements = []
     seen = set()
     for item in control["controls"]:
@@ -166,6 +198,7 @@ def safe_diagnostic(
         "inlineFunctions": inline_functions,
         "scriptFunctions": script_functions,
         "scriptSources": sorted({safe_path_shape(item) for item in script_sources}),
+        "scriptSignals": script_signals,
         "elements": elements,
     }
 
