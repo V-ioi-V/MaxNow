@@ -2505,6 +2505,7 @@ function renderBalletSessionExperiment(now = new Date()) {
 const BALLET_BOOKING_FAST_STATUS = {
   waiting: { label: "等待首次执行", tone: "waiting" },
   success: { label: "运行正常", tone: "success" },
+  partial: { label: "部分完成", tone: "stale" },
   completed_unverified: { label: "已提交，待核验", tone: "stale" },
   stopped: { label: "已安全停止", tone: "error" },
   auth_required: { label: "登录已失效", tone: "error" },
@@ -2556,6 +2557,9 @@ function createBalletBookingFastTarget(target = {}, result = null) {
   status.textContent = result
     ? BALLET_BOOKING_RECORD_STATUS[result.status] || "状态待确认"
     : "计划中";
+  if (result && Number(result.attempts) > 1) {
+    status.textContent += ` · ${Number(result.attempts) - 1} 次重试`;
+  }
   article.append(time, main, status);
   return article;
 }

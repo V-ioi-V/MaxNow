@@ -19,16 +19,26 @@ def config():
 
 
 class FakeFastSource:
-    def __init__(self, unknown_on_mutation=0):
+    def __init__(
+        self,
+        unknown_on_mutation=0,
+        timetable_failures=0,
+        notopen_mutations=0,
+    ):
         self.request_count = 0
         self.post_count = 0
         self.mutation_count = 0
         self.active_date = ""
         self.unknown_on_mutation = unknown_on_mutation
+        self.timetable_failures = timetable_failures
+        self.notopen_mutations = notopen_mutations
 
     def request(self, path, marker):
         self.request_count += 1
         if path.startswith(ballet.TIMETABLE_PATH):
+            if self.timetable_failures:
+                self.timetable_failures -= 1
+                raise ballet.SyncFailure("network_error")
             self.active_date = path.rsplit("/", 1)[-1]
             day = datetime.fromisoformat(self.active_date).weekday()
             if day == 5:
@@ -75,6 +85,9 @@ class FakeFastSource:
             self.mutation_count += 1
             if self.mutation_count == self.unknown_on_mutation:
                 return json.dumps({"changed": True})
+            if self.notopen_mutations:
+                self.notopen_mutations -= 1
+                return json.dumps("NOTOPEN")
             return json.dumps(91000 + self.mutation_count)
         raise AssertionError((path, fields, mutation))
 
@@ -118,22 +131,60 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(state["totalRuns"], 1)
         self.assertEqual(result["requestsMade"], 13)
 
-    def test_unknown_result_stops_remaining_courses(self):
-        source = FakeFastSource(unknown_on_mutation=2)
+    def test_unknown_result_does_not_block_remaining_courses(self):
+        source = FakeFastSource(unknown_on_mutation=1)
         result, state = fast.run_fast(
             source,
             config(),
             fast.default_state(),
             self.release,
             execute=True,
+            sleeper=lambda _: None,
         )
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["booked", "unknown_result", "not_attempted"],
+            ["unknown_result", "booked", "booked"],
         )
-        self.assertEqual(source.mutation_count, 2)
-        self.assertEqual(result["status"], "stopped")
-        self.assertEqual(state["totalBooked"], 1)
+        self.assertEqual(source.mutation_count, 3)
+        self.assertEqual(result["records"][0]["attempts"], 1)
+        self.assertEqual(result["status"], "partial")
+        self.assertEqual(state["totalBooked"], 2)
+
+    def test_retries_transient_preflight_three_times_then_books(self):
+        source = FakeFastSource(timetable_failures=3)
+        result, state = fast.run_fast(
+            source,
+            config(),
+            fast.default_state(),
+            self.release,
+            execute=True,
+            sleeper=lambda _: None,
+        )
+        self.assertEqual(
+            [record["status"] for record in result["records"]],
+            ["booked", "booked", "booked"],
+        )
+        self.assertEqual(result["records"][0]["attempts"], 4)
+        self.assertEqual(source.mutation_count, 3)
+        self.assertEqual(state["totalBooked"], 3)
+
+    def test_retries_explicit_notopen_without_blocking_later_courses(self):
+        source = FakeFastSource(notopen_mutations=3)
+        result, state = fast.run_fast(
+            source,
+            config(),
+            fast.default_state(),
+            self.release,
+            execute=True,
+            sleeper=lambda _: None,
+        )
+        self.assertEqual(
+            [record["status"] for record in result["records"]],
+            ["booked", "booked", "booked"],
+        )
+        self.assertEqual(result["records"][0]["attempts"], 4)
+        self.assertEqual(source.mutation_count, 6)
+        self.assertEqual(state["totalBooked"], 3)
 
     def test_dry_run_never_mutates(self):
         source = FakeFastSource()
