@@ -1350,11 +1350,14 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=160" not in dashboard_html
+        "styles.css?v=161" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=135" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
+    cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
+    if "grid-column: auto;" not in cloud_session_rule:
+        raise ValueError("secondary views: Cloud ballet operation cards must share one desktop row")
     polish_rules = (
         "--focus-ring:",
         "font-variant-numeric: tabular-nums;",
