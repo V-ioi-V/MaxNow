@@ -3,11 +3,11 @@ window.MAXNOW_PROJECT_META_DATA = {
   "updatedAt": "2026-07-28 11:11",
   "version": "1.0.5.33",
   "versionLabel": "v1.0.5.33",
-  "branch": "bugfix/ballet-live-timetable-marker",
-  "commit": "6e876c2",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-live-timetable-marker · commit 6e876c2 · 有未提交代码改动",
+  "branch": "main",
+  "commit": "1507bb3",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 1507bb3 · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-28",
