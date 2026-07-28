@@ -112,6 +112,107 @@ def safe_path_shape(value: str) -> str:
     return re.sub(r"(?<=/)\d+(?=/|$)", ":id", path)
 
 
+def balanced_region(text: str, opening: int, opener: str, closer: str) -> str:
+    depth = 0
+    quote = ""
+    escaped = False
+    for index in range(opening, len(text)):
+        char = text[index]
+        if quote:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = ""
+            continue
+        if char in {"'", '"', "`"}:
+            quote = char
+        elif char == opener:
+            depth += 1
+        elif char == closer:
+            depth -= 1
+            if depth == 0:
+                return text[opening : index + 1]
+    return ""
+
+
+def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
+    contracts = []
+    for selector_match in re.finditer(
+        r"\$\(\s*([\"'])\.bookbtn\1\s*\)\s*"
+        r"(?:\.on\(\s*([\"'])click\2\s*,|\.click\()\s*function\s*\([^)]*\)\s*\{",
+        script_text,
+    ):
+        opening = selector_match.end() - 1
+        handler = balanced_region(script_text, opening, "{", "}")
+        if not handler:
+            continue
+        bindings = sorted(
+            {
+                (variable, attribute)
+                for variable, attribute in re.findall(
+                    r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*"
+                    r"\$\(\s*this\s*\)\.attr\(\s*[\"']([^\"']+)[\"']",
+                    handler,
+                )
+            }
+        )
+        requests = []
+        for ajax_match in re.finditer(r"\$\.ajax\s*\(\s*\{", handler):
+            ajax_object = balanced_region(
+                handler, ajax_match.end() - 1, "{", "}"
+            )
+            if not ajax_object:
+                continue
+            method_match = re.search(
+                r"(?:type|method)\s*:\s*[\"']([A-Za-z]+)[\"']",
+                ajax_object,
+            )
+            url_match = re.search(
+                r"url\s*:\s*[\"']([^\"']+)[\"']", ajax_object
+            )
+            data_match = re.search(
+                r"data\s*:\s*\{([^{}]*)\}", ajax_object, re.DOTALL
+            )
+            data_keys = []
+            if data_match:
+                data_keys = sorted(
+                    set(
+                        re.findall(
+                            r"(?:^|,)\s*([A-Za-z_$][\w$]*)\s*:",
+                            data_match.group(1),
+                        )
+                    )
+                )
+            effects = []
+            if re.search(r"\.html\s*\(", ajax_object):
+                effects.append("replace-html")
+            if re.search(r"\.(?:modal|popup|openPopup)\s*\(", ajax_object):
+                effects.append("open-dialog")
+            if re.search(r"(?:window\.)?location(?:\.href)?\s*=", ajax_object):
+                effects.append("navigate")
+            request: dict[str, Any] = {
+                "method": method_match.group(1).upper() if method_match else "",
+                "dataKeys": data_keys,
+                "effects": effects,
+            }
+            if url_match:
+                request["urlShape"] = safe_path_shape(url_match.group(1))
+            requests.append(request)
+        contracts.append(
+            {
+                "selector": ".bookbtn",
+                "attributeBindings": [
+                    {"variable": variable, "attribute": attribute}
+                    for variable, attribute in bindings
+                ],
+                "requests": requests,
+            }
+        )
+    return contracts
+
+
 def safe_diagnostic(
     control: dict[str, Any],
     scripts: list[str],
@@ -169,6 +270,7 @@ def safe_diagnostic(
                 )
             )
         ),
+        "bookingHandlers": safe_ajax_contracts(script_text),
     }
     elements = []
     seen = set()

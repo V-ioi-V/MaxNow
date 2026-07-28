@@ -114,6 +114,33 @@ class BalletBookingTests(unittest.TestCase):
         serialized = json.dumps(caught.exception.diagnostic)
         self.assertNotIn("70001", serialized)
 
+    def test_safe_diagnostic_reports_booking_handler_contract(self):
+        script = """
+        $(".bookbtn").click(function () {
+          var classtableid = $(this).attr("classtableid");
+          var courseid = $(this).attr("courseid");
+          $.ajax({
+            type: "POST",
+            url: "/gm/weixin/classtable/do_addbook/54114",
+            data: { classtableid: classtableid, courseid: courseid },
+            success: function (data) { $("#result").html(data); }
+          });
+        });
+        """
+        contracts = booking.safe_ajax_contracts(script)
+        self.assertEqual(
+            contracts[0]["requests"][0],
+            {
+                "method": "POST",
+                "urlShape": booking.BOOKING_SUBMIT_PATH.replace(
+                    ballet.STORE_ID, ":id"
+                ),
+                "dataKeys": ["classtableid", "courseid"],
+                "effects": ["replace-html"],
+            },
+        )
+        self.assertNotIn("54114", json.dumps(contracts))
+
 
 if __name__ == "__main__":
     unittest.main()
