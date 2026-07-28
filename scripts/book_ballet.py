@@ -138,10 +138,7 @@ def balanced_region(text: str, opening: int, opener: str, closer: str) -> str:
 
 
 def property_expression(text: str, name: str) -> str:
-    match = re.search(
-        rf"(?<![\w$])[\"']?{re.escape(name)}[\"']?\s*:\s*",
-        text,
-    )
+    match = re.search(rf"{re.escape(name)}[\"']?\s*:\s*", text)
     if not match:
         return ""
     start = match.end()
