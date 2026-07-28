@@ -3314,9 +3314,11 @@ function createBalletUpcomingItem(record) {
   const meta = document.createElement("small");
   title.textContent = balletCourseName(record);
   const timeRange = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
+  const venue = String(record.venue || "").trim();
   meta.textContent = [
     timeRange,
     balletTeacher(record),
+    venue,
   ].filter(Boolean).join(" · ") || "课程详情待补";
   const cancellation = document.createElement("small");
   cancellation.className = "ballet-upcoming-note";

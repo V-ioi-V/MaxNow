@@ -535,6 +535,7 @@ def check_ballet_read_model():
     if (
         'date.className = "ballet-upcoming-date"' not in dashboard_js
         or 'weekday: "long"' not in dashboard_js
+        or 'const venue = String(record.venue || "").trim();' not in dashboard_js
         or "span.dataset.bookingStatus = item.status" not in dashboard_js
         or '[data-booking-status="waitlist"]' not in dashboard_css
     ):
@@ -1354,7 +1355,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=162" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=135" not in dashboard_html
+        or "app.js?v=136" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1396,7 +1397,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=135" not in dashboard_html:
+    if "app.js?v=136" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
