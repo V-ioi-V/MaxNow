@@ -123,6 +123,9 @@ def check_required_files():
         "scripts/test_probe_ballet_session.py",
         "scripts/sync_ballet.py",
         "scripts/test_sync_ballet.py",
+        "scripts/query_ballet_live.py",
+        "scripts/run_ballet_live_query.sh",
+        "scripts/test_query_ballet_live.py",
         "scripts/sync_ballet_session_status.py",
         "scripts/test_sync_ballet_session_status.py",
         "scripts/maxnow_auth_service.py",
@@ -139,6 +142,8 @@ def check_required_files():
         "server/maxnow-dashboard.conf",
         "openclaw/maxnow-dashboard/SKILL.md",
         "openclaw/last-30/SKILL.md",
+        "openclaw/maxnow-ballet-live/SKILL.md",
+        "openclaw/maxnow-ballet-live/agents/openai.yaml",
     ]
     missing = [item for item in required if not (ROOT / item).exists()]
     if missing:
@@ -218,6 +223,31 @@ def check_ballet_sync():
     return (
         "ballet sync: read-only allowlist, private ledger, idempotent upsert, "
         "safe auth failure, aggregates, redaction, and dry-run are valid"
+    )
+
+
+def check_ballet_live_query():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(ROOT / "scripts/test_query_ballet_live.py"),
+        ],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "ballet live query: fixture self-test failed: "
+            + result.stdout.strip()
+        )
+    return (
+        "ballet live query: no-cache scopes, date bounds, redaction, "
+        "and fail-closed behavior are valid"
     )
 
 
@@ -1314,6 +1344,7 @@ def main():
     checks.append(check_data_health_contract())
     checks.append(check_ballet_read_model())
     checks.append(check_ballet_sync())
+    checks.append(check_ballet_live_query())
     checks.append(check_ballet_session_probe())
     checks.append(check_ballet_session_status())
     checks.append(check_auth_surface())

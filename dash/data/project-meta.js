@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 10:46",
-  "version": "1.0.5.30",
-  "versionLabel": "v1.0.5.30",
-  "branch": "bugfix/macos-token-report-recovery",
-  "commit": "2513a5b",
+  "updatedAt": "2026-07-28 11:04",
+  "version": "1.0.5.31",
+  "versionLabel": "v1.0.5.31",
+  "branch": "feature/ballet-live-skill",
+  "commit": "d17fa55",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/macos-token-report-recovery · commit 2513a5b · 有未提交代码改动",
+  "deployNote": "feature/ballet-live-skill · commit d17fa55 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "增加芭蕾实时查询 Skill",
+      "summary": "新增 `maxnow-ballet-live` Skill 和服务器实时查询入口；以后对话中询问课表、预约 / 候补、上课记录、老师、余位或课程卡时，固定通过 MaxNow 服务器的当前 PHPSESSID 直接读取闻道，不再用 Dashboard 缓存回答。"
+    },
     {
       "date": "2026-07-28",
       "title": "修复 macOS Codex Token 上报中断死锁",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "统一所有预约行并补齐取消截止",
       "summary": "删除第一条预约的大号主卡和“下一节”特殊标识，让所有未来预约使用同一紧凑行样式；每条预约都在时间与老师下方增加小字号真实最晚取消时间。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "默认展开 PHPSESSID 实验详情",
-      "summary": "芭蕾页底部 `PHPSESSID 实验详情` 改为进入页面时默认展开，同时保留原生折叠箭头和手动收起能力；版本提升到 `1.0.5.26`。"
     }
   ]
 };

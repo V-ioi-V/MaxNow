@@ -373,6 +373,24 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认 rolling timer 同时包含每日 00:00 和周日 14:20，full timer 为每月 1 日 00:47；不要把测试性即时请求算作定时任务证据。
 5. 更新 Cloud 页自动化清单和系统状态来源，并在 `UPDATE_LOG.md` 记录真实启用时间与脱敏结果。
 
+#### 芭蕾对话式实时查询
+
+Owner 在对话中询问芭蕾课表、预约 / 候补、上课记录、老师、余位或课程卡时，使用独立实时查询入口，不读取 `dash/data/ballet.*`、`/var/lib/maxnow-ballet`、浏览器缓存或旧对话结果：
+
+```bash
+cd /var/www/maxnow-dashboard
+scripts/run_ballet_live_query.sh timetable --from-date 2026-07-28 --through-date 2026-08-03
+scripts/run_ballet_live_query.sh bookings
+scripts/run_ballet_live_query.sh attendance --from-date 2026-07-01 --through-date 2026-07-31
+scripts/run_ballet_live_query.sh membership
+```
+
+从 Owner 电脑调用时固定先 SSH 到 `ubuntu@43.160.240.244`，再在仓库根目录运行同一入口。成功结果必须同时包含 `source: wenda-live`、`status: success`、`live: true` 和当前 `fetchedAt`；任何失败都明确表示本次没有实时数据，禁止回退缓存。
+
+运行器为每次查询创建 `--collect` 临时 systemd unit，通过 `LoadCredentialEncrypted` 把 `/etc/credstore.encrypted/maxnow-ballet-wenda.cred` 解密到 unit 专属 `%d` 目录。unit 使用 `DynamicUser`、`ProtectSystem=strict`、`ProtectHome=yes`、`NoNewPrivileges`、空 capability 集和 120 秒运行上限；命令结束后 unit 与解密凭据目录一并清理。查询脚本不接受输出文件或状态目录，不读取 / 写入 Dashboard 缓存和私有账本。
+
+实时入口只允许四种 scope、ISO 日期和既有 GET allowlist；课表单次最多 14 天，预约 / 上课明细最多 200 条。输出不得包含源记录 ID、会员标识、原始 HTML、Cookie、响应正文、凭据路径、unit 名称或内部日志。不要直接解密、打印、复制或散列 PHPSESSID。
+
 2026-07-28 已部署主分支 `93570a7`（版本 `1.0.5.29`）的芭蕾周课表与状态校准。两次部署前的公开运行数据分别备份在 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-timetable-GvlS8U` 和 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-status-fix-scTpbO`，私有账本另存 root-only 备份。生产 rolling 同步成功，当前课表为 2026-07-27 至 2026-08-02 共 7 天、55 节；源站日期选择器可见至 2026-10-31，但实际有课只到 2026-08-02。状态校准后仅 3 节本人已预约使用粉玫瑰高亮、1 节本人候补使用橙色高亮，20 节普通“可排队”课程保留状态但不高亮。`maxnow-ballet-sync.timer` 已安装每日 00:00 与周日 14:20 两个 `OnCalendar`，月度 full 保持每月 1 日 00:47；两个 timer 与 v6 Session 探针均为 active。服务器 18 项同步测试、全仓检查、`systemd-analyze verify`、`nginx -t`、脱敏字段断言和访问边界均通过。
 
 2026-07-27 17 时完成芭蕾只读训练闭环的正式验证与 timer 启用。部署前 `dash/data` 和 `/var/lib/maxnow-ballet` 已备份至 `/home/ubuntu/maxnow-deploy-backups/ballet-readonly-loop-cvbcBr`；服务器 14 项同步器测试、全仓检查与一次 production rolling service 均通过。正式 read model 保留 2 条实际上课、3 条正式预约、1 条候补第 4 位；四条未来课程均解析出 2 / 11 小时相对取消规则对应的绝对截止时间；课程卡为 39 / 40 次、有效至 2027-01-23，本周预计 3–4 节、240–330 分钟。read model 无 PHPSESSID、会员卡号、会员 / 源记录标识或原始响应。`/etc/maxnow-ballet/enable-sync` 为 `root:root 0600`；两个 timer 已 `enabled / active / waiting`，下次触发分别为 2026-07-28 00:17 和 2026-08-01 00:47。隔离验证使用的 `/tmp/maxnow-sync-ballet-preview-20260727.py`、`/var/lib/maxnow-ballet-preview-20260727` 及其 private StateDirectory 已删除。

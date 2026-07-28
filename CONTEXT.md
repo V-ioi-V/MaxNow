@@ -126,6 +126,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/sync_ricky_travel.py`：通过本地相邻 personal-wiki checkout 或服务器 `gh` 登录态读取 `wiki/relationships/ricky-travel.json`，刷新 `dash/data/ricky.*`。
 - `scripts/sync_life_foods.py`：通过本地相邻 personal-wiki checkout 或服务器 `gh` 登录态读取 `wiki/life/food-picker.md`，刷新 `dash/data/life-foods.*`。
 - `scripts/sync_ballet.py`：只访问已确认的闻道 GET 页面，从服务器私有 canonical ledger 增量去重并刷新脱敏 `dash/data/ballet.*`；同时读取预约、候补、上课记录、课程卡概览和严格日期路径的周课表，解析相对取消规则并计算绝对截止时间，不调用预约、取消、候补或转课写接口。
+- `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：面向对话请求的实时只读入口。通过临时 systemd unit 解密服务器 host-bound PHPSESSID，按课表、当前预约、上课记录或课程卡最小范围直接读取闻道并输出脱敏 JSON；不读取或写入 Dashboard 缓存与服务器私有账本。
+- `openclaw/maxnow-ballet-live/SKILL.md`：芭蕾数据询问的强制实时路由。要求结果具备 `source=wenda-live`、`live=true` 和当前 `fetchedAt`；失败时禁止回退 `dash/data/ballet.*`、浏览器存储、快照或旧对话。
 - `scripts/sync_weather.py`：抓取北京市海淀区天气、温度、当前降水、高低温和天气图标类型，只刷新 dashboard 的 `weather` 字段。
 - `scripts/sync_market_indices.py`：抓取国内外指数行情和 1 日 5 分钟走势，刷新 `dash/data/market-indices.*`；接口失败时保留旧缓存并标记 `stale`。
 - `scripts/sync_ai_last30.py`：抓取免费公开 AI 信号源，按正式发布 / 客户案例等事件类型排序，生成中文事实标题与摘要，并跨“最新 / 本周 / 近 30 天”去重；采集脚本本身不调用模型，不消耗 token。
@@ -230,6 +232,7 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - 状态发布器以专用无登录账号运行；已停止实验的日志 inode 使用 root-owned 只读硬链接保存，当前 v6 活动日志由独立 root oneshot 每 5 分钟原子复制为只读脱敏快照，再由非 root 发布器生成页面状态。两项本地任务都不访问闻道，`/var/lib/private` 继续保持 `0700`。
 - `dash/data/ballet.*` 只能保存脱敏前端读模型与预聚合统计；同步状态同时保存最近尝试、最近成功、数据变更时间、逻辑日期、抓取窗口、连续失败和安全错误码。课程卡只允许输出名称、有效期、总 / 剩余 / 已用课次和由该卡自身有效期 / 使用量推导的计划与实际节奏；不同卡不能共享消耗样本，开卡未满 28 天时实际节奏字段保持空值。`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、源记录 ID、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端、仓库、日志或聊天。
 - 生产凭据已于 2026-07-27 使用新会话重新密封为 host-bound systemd 加密凭据，通过 `LoadCredentialEncrypted` 注入。enable gate 已保留；rolling timer 调整为每日 00:00 + 周日 14:20，月度 full 保持每月 1 日 00:47。身份失效时采集器保留旧缓存、记录脱敏错误并停止重试，直到检测到非敏感凭据版本变化。
+- 2026-07-28 新增 `maxnow-ballet-live` Skill 与实时查询 CLI：以后 Owner 在对话中询问芭蕾课程数据时，必须 SSH 到 MaxNow 服务器并用当前 PHPSESSID 查询闻道，不再读取前端缓存。查询只允许既有 GET allowlist，输出无源记录 ID、会员标识、响应正文或凭据痕迹；实时失败即明确失败。
 - 自动化模式固定分为 `off`、`dry-run`、`enabled`。真实提交必须在连续 dry-run、幂等校验、有限重试、失败停止和 Owner 单独批准后启用；默认不自动取消或转课。
 
 ## 上下文更新规则
