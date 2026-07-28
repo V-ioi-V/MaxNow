@@ -2591,6 +2591,7 @@ function renderBalletBookingFast() {
   const targets = Array.isArray(balletBookingFastData?.targets)
     ? balletBookingFastData.targets
     : [];
+  setText("#ballet-booking-target-count", `${targets.length} 节`);
   const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
     ? balletBookingFastData.lastRun.records
     : [];
@@ -2613,6 +2614,8 @@ function renderBalletBookingFast() {
     resultContainer.replaceChildren(...resultNodes);
     resultContainer.hidden = !resultNodes.length;
   }
+  const upcomingCount = getBalletFutureClasses().length;
+  setText("#ballet-course-plan-count", `${upcomingCount + targets.length} 节`);
 }
 
 function balletRecordDate(item = {}) {
@@ -3049,11 +3052,17 @@ function renderBalletTrend() {
     ...entry,
     value: isClasses ? entry.classes : entry.minutes / 60,
   }));
+  const sampleCount = records.reduce((total, entry) => total + balletNumber(entry.classes), 0);
+  const trend = qs("#ballet-training-trend");
+  const placeholder = qs("#ballet-trend-placeholder");
+  const showTrend = sampleCount >= 5;
+  if (trend) trend.hidden = !showTrend;
+  if (placeholder) placeholder.hidden = showTrend;
   const label = isClasses ? "上课节数" : "训练小时";
   setText("#ballet-trend-title", `${title}${label}`);
   setText("#ballet-trend-unit", isClasses ? "节" : "h");
   const chart = qs("#ballet-trend-chart");
-  if (!chart) return;
+  if (!chart || !showTrend) return;
   if (!records.length) {
     chart.innerHTML = `<p class="empty-state">当前时间范围还没有可用统计。</p>`;
     return;
@@ -3126,24 +3135,30 @@ function createBalletMembershipItem(card = {}) {
   const metrics = document.createElement("div");
   metrics.className = "ballet-membership-metrics";
   [
-    ["剩余课次", `${Math.max(0, Math.floor(balletNumber(card.remainingClasses)))} / ${Math.max(0, Math.floor(balletNumber(card.totalClasses)))} 节`, "blue"],
-    ["已使用", `${Math.max(0, Math.floor(balletNumber(card.usedClasses)))} 节`, "purple"],
     [
-      "开卡进度",
+      "课程使用",
+      `已用 ${Math.max(0, Math.floor(balletNumber(card.usedClasses)))} / ${Math.max(0, Math.floor(balletNumber(card.totalClasses)))} 节`,
+      `剩 ${Math.max(0, Math.floor(balletNumber(card.remainingClasses)))} 节`,
+      "blue",
+    ],
+    [
+      "有效进度",
       balletNumber(pace.openDayNumber) > 0
         ? `第 ${Math.floor(balletNumber(pace.openDayNumber))} / ${Math.floor(balletNumber(pace.validityDays))} 天`
         : "尚未开卡",
-      "cyan",
+      `到期前需 ${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`,
+      "orange",
     ],
-    ["到期前所需", `${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`, "orange"],
-  ].forEach(([label, value, tone]) => {
+  ].forEach(([label, value, detail, tone]) => {
     const section = document.createElement("section");
     section.dataset.tone = tone;
     const span = document.createElement("span");
     const strong = document.createElement("strong");
+    const small = document.createElement("small");
     span.textContent = label;
     strong.textContent = value;
-    section.append(span, strong);
+    small.textContent = detail;
+    section.append(span, strong, small);
     metrics.appendChild(section);
   });
 
@@ -3338,6 +3353,20 @@ function renderBalletUpcoming() {
   const records = getBalletFutureClasses();
   panel.hidden = false;
   setText("#ballet-upcoming-count", `${records.length} 节`);
+  const nextContainer = qs("#ballet-next-class");
+  const nextClass = records[0];
+  if (nextContainer) {
+    nextContainer.replaceChildren();
+    if (nextClass) {
+      const item = createBalletUpcomingItem(nextClass);
+      item.classList.add("is-next");
+      nextContainer.appendChild(item);
+      setText("#ballet-next-status", getBalletBookingStatusLabel(nextClass));
+    } else {
+      nextContainer.appendChild(emptyTemplate.content.cloneNode(true));
+      setText("#ballet-next-status", "暂无预约");
+    }
+  }
   container.replaceChildren();
   if (!records.length) {
     container.appendChild(emptyTemplate.content.cloneNode(true));
@@ -3544,6 +3573,9 @@ function renderBallet() {
       ? `数据更新 ${formatBalletUpdatedAt()}`
       : "数据尚未更新",
   );
+  setText("#ballet-connection-status", state.label);
+  const connectionStatus = qs("#ballet-connection-status");
+  if (connectionStatus) connectionStatus.dataset.state = state.key;
 
   const alert = qs("#ballet-sync-alert");
   const shouldShowAlert = ["auth", "error", "stale"].includes(state.key);
@@ -3554,7 +3586,6 @@ function renderBallet() {
     if (alert) alert.dataset.state = state.key;
   }
 
-  renderBalletSessionExperiment();
   renderBalletBookingFast();
   renderBalletMembership();
   renderBalletWeek();
@@ -3644,6 +3675,8 @@ function renderHome() {
   clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
   renderCheckin();
   renderBalletHome();
+  renderBalletBookingFast();
+  renderBalletSessionExperiment();
   renderWikiTodos(openTodos);
   renderLast30Column("today", "#last30-today-list");
   renderLast30Column("week", "#last30-week-list");
@@ -4430,7 +4463,7 @@ function updateClock() {
   setText("#holiday-label", labels.length ? [...new Set(labels)].join(" \u00b7 ") : copy.noHoliday);
   setText("#next-special-label", formatNextSpecialDate(now));
   updateTodayPhase();
-  if (qs("#ballet-view")?.classList.contains("is-active")) {
+  if (qs("#cloud-view")?.classList.contains("is-active")) {
     renderBalletSessionExperiment(now);
   }
 }

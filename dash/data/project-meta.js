@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 17:38",
-  "version": "1.0.7.02",
-  "versionLabel": "v1.0.7.02",
-  "branch": "feature/ballet-share-card-todo",
-  "commit": "1cb3c9b",
+  "updatedAt": "2026-07-28 19:15",
+  "version": "1.0.7.03",
+  "versionLabel": "v1.0.7.03",
+  "branch": "feature/ballet-information-architecture",
+  "commit": "9416545",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-share-card-todo · commit 1cb3c9b · 有未提交代码改动",
+  "deployNote": "feature/ballet-information-architecture · commit 9416545 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "收敛芭蕾模块信息架构",
+      "summary": "芭蕾页按学习决策顺序重排为“下一节 + 本周训练 → 课程计划 → 本周课程表 → 训练记录 → 课程卡”；正式预约 / 候补与周日待抢目标、逐课结果合并进课程计划。"
+    },
     {
       "date": "2026-07-28",
       "title": "记录芭蕾分享图待办",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "增加芭蕾对话式显式预约",
       "summary": "新增精确课程预约脚本与 hardened transient runner；单课或多课先统一实时预检已有预约、余位、唯一课程卡和闻道规则，全部通过后再按输入顺序逐节提交并实时复核。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "记录芭蕾 Apple 日历与多课预约待办",
-      "summary": "芭蕾 Later 新增私有 ICS / `webcal://` 订阅：Apple 设备首次确认后自动刷新预约和候补，链接可撤销且不得暴露 PHPSESSID、会员标识或源记录 ID。"
     }
   ]
 };

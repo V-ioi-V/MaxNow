@@ -117,8 +117,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/life-foods.json`：生活页“吃啥”随机选择器的只读候选数据，由 `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 生成。
 - `dash/data/life-foods.js`：从 `life-foods.json` 生成的浏览器 wrapper。
 - `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要、课程卡预测和周课表。课表通常为本周 7 天；周日 14:20 拿到下周课程后变为本周日 + 下周 7 天。不保存 Cookie、会员卡号、会员标识、源记录 ID 或原始响应。
-- `dash/data/ballet-session.json`：芭蕾页底部 PHPSESSID 折叠实验详情的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
-- `dash/data/ballet-booking-fast.json`：芭蕾页“自动抢课”状态的本地 / Git 安全 fallback；生产状态由周日 fast-path service 写入独立 public 目录，经登录校验和 `no-store` exact alias 提供。只包含启用状态、优先级、脱敏目标、上次 / 下次执行、累计数和逐课结果，不作为课程余位事实源。
+- `dash/data/ballet-session.json`：Cloud 页“芭蕾 Session 实验”折叠详情的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
+- `dash/data/ballet-booking-fast.json`：芭蕾课程计划与 Cloud 自动抢课运维卡共用的安全 fallback；生产状态由周日 fast-path service 写入独立 public 目录，经登录校验和 `no-store` exact alias 提供。芭蕾页只读取脱敏目标和逐课结果，Cloud 读取启用状态、优先级、上次 / 下次执行和累计数；该数据不作为课程余位事实源。
 - `dash/data/ballet.js`：从 `ballet.json` 生成的浏览器 wrapper。
 - `dash/login.html` / `dash/login.js`：MaxNow 私人访问入口；只提交用户名和密码到同源 `/auth/login`，不在浏览器保存或读取会话 Cookie。
 - `scripts/maxnow_auth_service.py`：服务器本机认证服务；读取 htpasswd、签发和校验 7 天 HttpOnly 会话，不读取 Dashboard 数据。
@@ -226,12 +226,12 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - personal-wiki 负责当前级别、阶段目标、课堂笔记、老师纠正、动作标签、练习记录和 Owner 人工判断；MaxNow 只做单向同步与只读展示。
 - 芭蕾数据由服务器隔离采集器生成脱敏 read model，前端不直连闻道、不回写 personal-wiki，也不因打开页面而触发请求或预约。
 - 独立 `secondary-view` 页面名称“芭蕾”、副标题“课程与进度”，入口位于 Token 与云服务之间；完整顺序为首页 → 豆奶 → Token → 芭蕾 → 云服务 → 生活 → 同行记。页面使用粉玫瑰 + 白卡语义但不另做宣传型视觉；导航图标用舞鞋而非心形。
-- 只读 MVP 的优先级是：下一节课、本周训练、未来预约、真实上课历史、累计节数 / 小时、课型与 L1-L4 级别细分、月 / 年趋势和数据新鲜度；自动约课排在数据可信与学习闭环之后。
-- 芭蕾内容不并入“生活 / 吃啥”。Home 只显示下一节课、本周进度和状态，独立页承载明细与图表，Cloud 只显示采集 / Session / 自动化健康。
+- 只读 MVP 的页面顺序是：下一节 + 本周训练 → 课程计划（预约 / 候补 + 周日待抢）→ 本周课程表 → 训练记录（统计 + 历史）→ 紧凑课程卡。训练样本少于 5 节时不撑开大趋势图。
+- 芭蕾内容不并入“生活 / 吃啥”。Home 只显示下一节课、本周进度和状态；芭蕾页承载课程与学习业务；Cloud 承载采集、自动抢课运行态和 Session 实验详情。芭蕾页顶部只保留薄连接状态，课程计划保留自动抢课目标与逐课业务结果。
 - 服务器私有 canonical ledger 是上课事实唯一机器真相：首次全量回填，日常重扫最近 60 个逻辑日并幂等 upsert，每月 1 日 00:47 全量校验；rolling 任务每天 00:00 运行，并在周日 14:20 额外检查下周课表。同步失败保留上次成功账本与聚合，只更新独立 `sync-state.json`；预约、课程卡与课表分别保存脱敏快照。
 - 月、年和全局的节数 / 分钟以及课程分类在同步时预聚合；前端不重复遍历全历史。人类可读文档若需要，只从账本单向生成，不成为第二份可编辑事实源。
 - 固定 25 分钟的旧会话阶段已于 2026-07-26 23:28 返回登录失效并停止，最后认证为 23:03、已确认有效 3 小时 56 分 06 秒。Owner 于 2026-07-27 重新打开闻道并退出微信后，本机提取到不同的新会话；v6 自 00:26:55 起按每 20 分钟独立计时，首条为 HTTP 200 / authenticated。旧三阶段与 v6 属于不同凭据代次，不能合并寿命，也不能据此证明精确空闲寿命或滑动续期；unit、原始日志、凭据挂载和停止方式只在 `SERVER_RUNBOOK.md` 维护。
-- 芭蕾页可展示 `ballet-session.*` 的脱敏实验卡：持续时间只计算到最后一个 `authenticated` 样本，页面每 5 分钟读取静态状态，服务器本地发布器不访问闻道。文案使用“自动检查”，不能将正常样本解释成已证明 Session 自动续期。
+- Cloud 页展示 `ballet-session.*` 的脱敏实验卡：持续时间只计算到最后一个 `authenticated` 样本，页面每 5 分钟读取静态状态，服务器本地发布器不访问闻道。文案使用“自动检查”，不能将正常样本解释成已证明 Session 自动续期。
 - 状态发布器以专用无登录账号运行；已停止实验的日志 inode 使用 root-owned 只读硬链接保存，当前 v6 活动日志由独立 root oneshot 每 5 分钟原子复制为只读脱敏快照，再由非 root 发布器生成页面状态。两项本地任务都不访问闻道，`/var/lib/private` 继续保持 `0700`。
 - `dash/data/ballet.*` 只能保存脱敏前端读模型与预聚合统计；同步状态同时保存最近尝试、最近成功、数据变更时间、逻辑日期、抓取窗口、连续失败和安全错误码。课程卡只允许输出名称、有效期、总 / 剩余 / 已用课次和由该卡自身有效期 / 使用量推导的计划与实际节奏；不同卡不能共享消耗样本，开卡未满 28 天时实际节奏字段保持空值。`PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、源记录 ID、原始响应正文和真实执行参数必须只留在服务器隔离运行态，不能进入前端、仓库、日志或聊天。
 - 生产凭据已于 2026-07-27 使用新会话重新密封为 host-bound systemd 加密凭据，通过 `LoadCredentialEncrypted` 注入。enable gate 已保留；rolling timer 调整为每日 00:00 + 周日 14:20，月度 full 保持每月 1 日 00:47。身份失效时采集器保留旧缓存、记录脱敏错误并停止重试，直到检测到非敏感凭据版本变化。
@@ -279,7 +279,7 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - Dash 左侧导航顺序为首页、豆奶、Token、芭蕾、云服务、生活、同行记。云服务页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作；页面不再保留顶部重复摘要卡，Host 与站点域名归入“系统与托管”模块，后续任务卡自然排列，不再插入独立“定时任务”分组标题。系统与托管模块不展示部署根目录、nginx 配置路径、采集器说明等低频实现细节。
 - Dash 左侧导航已新增“同行记”tab，副标题为“我和 Ricky”。该页用 Leaflet + OpenStreetMap 真实地图和轻量统计承载两人的共同足迹，地点和旅行记录暂时只进入 marker / popup 数据，不单独铺列表；内置 SVG 地图只作为 fallback。
 - Dash 左侧导航已新增“生活”tab，副标题为“吃啥”。该页当前提供“吃啥”随机选择器：默认全选、数量默认 1，可临时取消候选并从勾选项中随机选取一个或多个结果；候选从 personal-wiki `wiki/life/food-picker.md` 同步。
-- 豆奶、Token、芭蕾、云服务、生活和同行记统一使用 `secondary-view` 视觉协议：轻色渐变白底、统一圆角 / 阴影 / hover 与状态 pill；芭蕾顶部栏已有页面名称，因此内容区不再重复标题卡，只保留低权重数据更新时间。芭蕾宽桌面顶部固定为“所有预约 / 本周训练 / 课程卡”三个同级等宽面板；预约第一条为大号“下一节”主卡，其余预约为小行，`1200px` 及以下按使用顺序堆叠。2026-07-11 起所有 Dash tab 卡片统一取消顶部彩色横条，语义色只保留在文字、数值、图标、状态点、pill 和轻背景中。
+- 豆奶、Token、芭蕾、云服务、生活和同行记统一使用 `secondary-view` 视觉协议：轻色渐变白底、统一圆角 / 阴影 / hover 与状态 pill；芭蕾顶部栏已有页面名称，因此内容区不再重复标题卡，只保留低权重数据时间与连接状态。芭蕾宽桌面顶部为“下一节 / 本周训练”双面板，随后依次是课程计划、周课表、训练记录和紧凑课程卡；自动抢课运行态与 Session 详情归 Cloud。2026-07-11 起所有 Dash tab 卡片统一取消顶部彩色横条，语义色只保留在文字、数值、图标、状态点、pill 和轻背景中。
 - 2026-07-27 起 Dash 七个主页面与登录入口共用全局微调基线：系统可变字体回退、等宽数字、轻量分层阴影、统一键盘 focus ring / 按压反馈、可识别空状态和 reduced-motion 兜底。生活页结果台收紧为桌面 `300px` / 窄屏 `240px`；后续新模块优先继承 `STYLE_CONTEXT.md` 的全局规则，不在局部另起相近视觉协议。
 - Home 项目主线和待推进事项由 `python scripts/update_data.py project-status` 从 `ROADMAP.md` 显式刷新到 `dash/data/project-status.*`；ROADMAP Now / Next / Done 变化后校验会要求同步刷新。定时任务只运行 `runtime`，不覆盖项目状态或 `dashboard.today` 的 Owner 人工判断。
 - Home 顶部 Today Status 卡已改为自动推导主状态：今日 Todo 优先，其次参考自动化异常、当前时段、ROADMAP 待推进 / 主线和 Token 活跃生成执行、巡检、复盘、推进、探索等模式。宽桌面使用左文案 / 正中央圆环 / 右信号三列，圆环中心与状态卡内容区中心重合，当前时间用独立 pill 显示在环下方；`自动生成` 新鲜度 pill 位于左侧 eyebrow 旁。右侧四条信号等高排列，彩色节点进入第一行网格并与标签、主值对齐。状态条四张小卡固定为今日执行、数据同步、Token 7 天、系统自动化，不再保留重复的“当前主线 / 待推进”数字卡。`dashboard.json.today` 只作为当天人工 override；旧日期判断会被忽略，不再显示“待刷新 N 天”。

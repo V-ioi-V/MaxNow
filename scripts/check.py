@@ -362,7 +362,8 @@ def check_ballet_booking_fast():
         'const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json"',
         "function renderBalletBookingFast()",
         'id="ballet-booking-fast-next"',
-        ".ballet-booking-fast-panel {",
+        "cloud-ballet-fast-card",
+        'id="ballet-booking-fast-targets"',
         "周六 > 周日 > 周五 > 其他日期",
     )
     combined = "\n".join(
@@ -546,7 +547,7 @@ def check_ballet_read_model():
         or "近 28 天节奏" in dashboard_js
         or 'id="ballet-membership-list"' not in dashboard_html
         or 'id="ballet-week-completed"' not in dashboard_html
-        or ".ballet-membership-card," not in dashboard_css
+        or ".ballet-membership-card {" not in dashboard_css
         or ".ballet-week-grid {" not in dashboard_css
     ):
         raise ValueError("ballet: membership or weekly frontend contract is incomplete")
@@ -1280,8 +1281,9 @@ def check_secondary_view_style():
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
-        ".ballet-primary-grid {",
-        ".ballet-bookings-panel {",
+        ".ballet-overview-grid {",
+        ".ballet-course-plan-grid {",
+        ".ballet-next-class {",
         ".ballet-upcoming-note {",
         "#tokens-view {",
         "#dounai-view {",
@@ -1304,46 +1306,53 @@ def check_secondary_view_style():
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
     ballet_view_markup = dashboard_html.split('id="ballet-view"', 1)[1].split('id="cloud-view"', 1)[0]
+    cloud_view_markup = dashboard_html.split('id="cloud-view"', 1)[1].split('id="dounai-view"', 1)[0]
     layout_markers = (
         'id="ballet-updated"',
-        'class="ballet-primary-grid"',
-        'class="panel ballet-bookings-panel"',
+        'class="ballet-overview-grid"',
+        'class="panel ballet-next-panel"',
         'class="panel ballet-week-panel"',
-        'class="panel ballet-membership-card"',
+        'class="panel ballet-course-plan-panel"',
+        'class="panel ballet-timetable-panel"',
         'class="panel ballet-training-panel"',
-        'class="panel ballet-history-panel"',
-        'class="panel ballet-session-card"',
+        'class="panel ballet-membership-card"',
     )
     layout_positions = [ballet_view_markup.find(marker) for marker in layout_markers]
     if any(position < 0 for position in layout_positions) or layout_positions != sorted(layout_positions):
         raise ValueError("secondary views: ballet information priority order is invalid")
-    if ballet_view_markup.find("ballet-week-panel") > ballet_view_markup.find("ballet-membership-card"):
-        raise ValueError("secondary views: weekly training must precede the course card")
-    if any(retired in ballet_view_markup for retired in ("ballet-page-intro", "ballet-head-next", "ballet-next-status", "ballet-next-panel")):
-        raise ValueError("secondary views: retired next-class layout remains")
+    if any(retired in ballet_view_markup for retired in ("ballet-page-intro", "ballet-head-next", "ballet-page-head")):
+        raise ValueError("secondary views: retired ballet title layout remains")
     if (
         "function createBalletUpcomingItem(record)" not in dashboard_js
         or "formatBalletCancellation(record)" not in dashboard_js
         or "records.map(createBalletUpcomingItem)" not in dashboard_js
-        or 'class="panel ballet-bookings-panel"' not in ballet_view_markup
+        or 'class="panel ballet-course-plan-panel"' not in ballet_view_markup
+        or 'id="ballet-next-class"' not in ballet_view_markup
+        or 'item.classList.add("is-next")' not in dashboard_js
         or 'cancellation.className = "ballet-upcoming-note"' not in dashboard_js
         or "is-featured" in dashboard_js
     ):
-        raise ValueError("secondary views: uniform booking rows or cancellation deadlines are incomplete")
+        raise ValueError("secondary views: next class, course plan, or cancellation deadlines are incomplete")
     if (
-        '<details class="panel ballet-session-card" open' not in ballet_view_markup
-        or '<summary class="ballet-session-summary">' not in ballet_view_markup
-        or ".ballet-primary-grid {" not in dashboard_css
+        "ballet-session-card" in ballet_view_markup
+        or "ballet-booking-fast-status" in ballet_view_markup
+        or '<details class="panel cloud-card ballet-session-card"' not in cloud_view_markup
+        or 'class="panel cloud-card cloud-ballet-fast-card"' not in cloud_view_markup
+        or '<summary class="ballet-session-summary">' not in cloud_view_markup
+        or ".ballet-overview-grid {" not in dashboard_css
+        or ".ballet-course-plan-grid {" not in dashboard_css
         or ".ballet-session-summary {" not in dashboard_css
         or ".ballet-session-card[open] .ballet-session-toggle {" not in dashboard_css
+        or 'id="ballet-trend-placeholder"' not in ballet_view_markup
+        or "const showTrend = sampleCount >= 5;" not in dashboard_js
     ):
-        raise ValueError("secondary views: ballet decision grid or default-open session details are incomplete")
+        raise ValueError("secondary views: ballet learning layout or Cloud operations split is incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=159" not in dashboard_html
+        "styles.css?v=160" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=134" not in dashboard_html
+        or "app.js?v=135" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     polish_rules = (
@@ -1382,7 +1391,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=134" not in dashboard_html:
+    if "app.js?v=135" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
