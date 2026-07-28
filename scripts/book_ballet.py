@@ -41,12 +41,15 @@ class BookingControlParser(HTMLParser):
         self.form: dict[str, Any] | None = None
         self.controls: list[dict[str, Any]] = []
         self.scripts: list[str] = []
+        self.script_sources: list[str] = []
         self.in_script = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
         values = {key: html.unescape(value or "") for key, value in attrs}
         if tag == "script":
             self.in_script = True
+            if values.get("src"):
+                self.script_sources.append(values["src"])
         if tag == "div":
             self.div_depth += 1
             classes = set(values.get("class", "").split())
@@ -110,7 +113,9 @@ def safe_path_shape(value: str) -> str:
 
 
 def safe_diagnostic(
-    control: dict[str, Any], scripts: list[str]
+    control: dict[str, Any],
+    scripts: list[str],
+    script_sources: list[str],
 ) -> dict[str, Any]:
     forms = [
         {
@@ -160,11 +165,14 @@ def safe_diagnostic(
         "forms": forms,
         "inlineFunctions": inline_functions,
         "scriptFunctions": script_functions,
+        "scriptSources": sorted({safe_path_shape(item) for item in script_sources}),
         "elements": elements,
     }
 
 
-def parse_controls(text: str) -> tuple[list[dict[str, Any]], list[str]]:
+def parse_controls(
+    text: str,
+) -> tuple[list[dict[str, Any]], list[str], list[str]]:
     parser = BookingControlParser()
     try:
         parser.feed(text)
@@ -172,7 +180,7 @@ def parse_controls(text: str) -> tuple[list[dict[str, Any]], list[str]]:
         raise
     except Exception:
         raise BookingFailure("parse_error")
-    return parser.controls, parser.scripts
+    return parser.controls, parser.scripts, parser.script_sources
 
 
 def parse_request(text: str, execute: bool) -> list[dict[str, str]]:
@@ -256,7 +264,7 @@ def timetable_candidates(
     path = f"{ballet.TIMETABLE_PATH}/{target['date']}"
     text = source.request(path, "classtable")
     records = ballet.parse_timetable(text, target["date"])["records"]
-    controls, scripts = parse_controls(text)
+    controls, scripts, script_sources = parse_controls(text)
     if len(records) != len(controls):
         raise BookingFailure("source_changed")
     candidates = []
@@ -268,6 +276,7 @@ def timetable_candidates(
                 "record": record,
                 "control": control,
                 "scripts": scripts,
+                "scriptSources": script_sources,
             }
         )
     return candidates
@@ -283,7 +292,11 @@ def booking_form(candidate: dict[str, Any]) -> tuple[str, dict[str, str]]:
     if len(matching) != 1 or not matching[0][1]:
         raise BookingFailure(
             "source_changed",
-            safe_diagnostic(candidate["control"], candidate["scripts"]),
+            safe_diagnostic(
+                candidate["control"],
+                candidate["scripts"],
+                candidate["scriptSources"],
+            ),
         )
     return matching[0]
 
