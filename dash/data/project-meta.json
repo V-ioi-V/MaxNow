@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 20:10",
-  "version": "1.0.7.09",
-  "versionLabel": "v1.0.7.09",
-  "branch": "feature/ballet-timetable-compact-statuses",
-  "commit": "3fd9a03",
+  "updatedAt": "2026-07-28 20:25",
+  "version": "1.0.7.10",
+  "versionLabel": "v1.0.7.10",
+  "branch": "feature/indefinite-ballet-session",
+  "commit": "055f118",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-timetable-compact-statuses · commit 3fd9a03 · 有未提交代码改动",
+  "deployNote": "feature/indefinite-ballet-session · commit 055f118 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "Session 探针改为无限期运行",
+      "summary": "闻道 Session 探针新增 `WENDA_DURATION_SECONDS=0` 无限调度模式；2026-07-28 20:23 在首轮 HTTP 200 / authenticated 验证成功后，从 v6 平滑交接到 v7，移除 systemd 运行时上限和计划结束时间。身份失效或连续 3 次未知 / 网络异常仍安全停止，服务器重启后仍不自动恢复。"
+    },
     {
       "date": "2026-07-28",
       "title": "压缩并下移本周课程表",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "默认展开 Cloud Session 实验",
       "summary": "Cloud 的“芭蕾 Session 实验”改为默认展开，进入页面即可直接看到有效时长、检查时间、间隔和实验状态，不再因同排等高留下空白半卡；仍保留手动收起能力。版本提升到 `1.0.7.06`。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "移除 Cloud 重复页头",
-      "summary": "删除 Cloud 内容区重复的“Cloud Services / 云服务 / dash.maxnow.cn”标题卡，进入页面后直接展示“系统与托管”，释放首屏高度；同步清理专用样式和页面协议。样式缓存提升到 `styles.css?v=162`，版本提升到 `1.0.7.05`。"
     }
   ]
 }

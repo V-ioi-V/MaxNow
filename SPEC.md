@@ -515,7 +515,7 @@ MaxNow 的芭蕾能力定位为 Owner 的个人学习模块，而不是单独的
 只读 MVP 信息结构：
 
 - 页面页头：数据截至时间、最近同步结果和是否需要重新登录；不展示 Cookie、Session 指纹、服务单元名或日志路径。
-- PHPSESSID 活跃实验：完整详情放在 Cloud 的原生折叠卡并默认展开，Owner 仍可通过摘要收起；主值为截至最后一次 `authenticated` 样本的“已确认有效时长”，并展示原始实验起始、最近自动检查、下一次自动检查和当前检查间隔。芭蕾页顶部只保留“已同步 / 数据过期 / 需重新登录”等薄状态与必要告警。详情只能写“自动检查 / 只读探针”，不能称为“自动续期”；失败或停止后必须冻结在最后成功证据，不能按浏览器当前时间继续外推。服务器每 5 分钟发布一次本地脱敏状态；即使 JSON / localStorage 仍可读，只要 `updatedAt` 超过 15 分钟未更新，前端也必须从绿色运行态降级为检查延迟。
+- PHPSESSID 活跃实验：完整详情放在 Cloud 的原生折叠卡并默认展开，Owner 仍可通过摘要收起；主值为截至最后一次 `authenticated` 样本的“已确认有效时长”，并展示原始实验起始、最近自动检查、下一次自动检查和当前检查间隔，不展示计划结束日期。探针按固定间隔持续运行，不设时间截止；身份失效或连续 3 次未知 / 网络异常时仍必须安全停止。芭蕾页顶部只保留“已同步 / 数据过期 / 需重新登录”等薄状态与必要告警。详情只能写“自动检查 / 只读探针”，不能称为“自动续期”；失败或停止后必须冻结在最后成功证据，不能按浏览器当前时间继续外推。服务器每 5 分钟发布一次本地脱敏状态；即使 JSON / localStorage 仍可读，只要 `updatedAt` 超过 15 分钟未更新，前端也必须从绿色运行态降级为检查延迟。
 - 最近一节课：不再单设重复面板；在课程计划的预约列表中，将时间最近的第一条未来预约整行高亮并标记“最近一节”。该行继续展示日期、周几、起止时间、课程、级别、老师、教室、正式预约 / 候补状态和可取消截止时间。源文案为“课前 N 小时可取消”时，必须以开课时间减去 N 小时计算绝对截止时间；无法可靠解析时保留并显示源文案，不能拼出不完整的“可取消至 前可取消”。
 - 本周训练：与课程卡组成页面顶部等分双面板，宽桌面同顶、同底、等高；展示本周已完成、已预约、候补、预计节数和对应时长。预计采用“正式预约”为下限、“正式预约 + 候补”为上限，不能把候补直接算成一定会完成。
 - 课程计划：把当前正式预约 / 候补与周日自动抢课目标、逐课结果合并在同一业务面板中，分组表达“已经确定的课程”和“准备争取的课程”。预约列表首条未来预约使用粉白整行高亮和“最近一节”标记；日期列上下展示日期与真实星期，“已预约”使用粉玫瑰色，“候补”使用橙色并在存在序号时显示“排队第 N 位”。正式预约 / 候补行和目标课都展示日期、时间、课程、老师、教室与结果，不展示 timer、重试、Session 或内部运行路径。`560px` 以下列表行自然堆叠且不得横向溢出。
@@ -546,7 +546,7 @@ MaxNow 的芭蕾能力定位为 Owner 的个人学习模块，而不是单独的
 数据契约与状态：
 
 - `dash/data/ballet.json` / `dash/data/ballet.js` 是脱敏 read model；前端只读取它们，不接触服务器私有账本或闻道身份。
-- `dash/data/ballet-session.json` / `dash/data/ballet-session.js` 是本地与 Git 的安全 fallback；生产同 schema 文件由非 root 发布器写入 `/var/lib/maxnow-ballet-session-status/public`，nginx 仅在已有登录校验后映射到 `/data/ballet-session.*`。它与课程 `ballet.*` 分离，只保存状态、实验 / 阶段起始、最近检查 / 最近认证 / 下次检查、计划截止、间隔、已验证秒数、样本数、是否观察到轮换 / `Set-Cookie` 和受控错误；不得保存 Session 值或指纹、run ID、unit / 日志路径、URL、响应摘要 / 正文或凭据版本。
+- `dash/data/ballet-session.json` / `dash/data/ballet-session.js` 是本地与 Git 的安全 fallback；生产同 schema 文件由非 root 发布器写入 `/var/lib/maxnow-ballet-session-status/public`，nginx 仅在已有登录校验后映射到 `/data/ballet-session.*`。它与课程 `ballet.*` 分离，只保存状态、实验 / 阶段起始、最近检查 / 最近认证 / 下次检查、可空计划截止、间隔、已验证秒数、样本数、是否观察到轮换 / `Set-Cookie` 和受控错误；不得保存 Session 值或指纹、run ID、unit / 日志路径、URL、响应摘要 / 正文或凭据版本。
 - `dash/data/ballet-booking-fast.json` / `.js` 是自动抢课状态的安全 fallback；生产同 schema 文件由 root fast-path service 写入 `/var/lib/maxnow-ballet-booking-fast-public`，nginx 通过已有登录校验的 exact alias 且 `no-store` 提供。它只保存启用状态、固定优先级、脱敏目标、上次 / 下次执行、累计次数和逐课安全结果；不得保存课程 / 会员 / 卡片源 ID、凭据、响应正文、内部路径或 unit 名。
 - read model 至少区分 `schemaVersion`、`timezone`、`dataAsOf`、`sync`、`classification`、`summary`、`week`、`membership`、`timetable`、`records`、`aggregates`、`upcoming`、`learningLogs`、`authHealth` 和 `automation`；预约状态、课程表可约状态和上课状态不得混为一类，`classification` 同时保存 `courseType` 与 `level` 规则版本。
 - `sync` 至少记录 `logicalDate`、`lastAttemptAt`、`lastSuccessAt`、`lastDataChangeAt`、`lastAttemptStatus`、`cacheState`、`consecutiveFailures`、安全的 `errorCode` / `errorMessage`、抓取窗口和本次源记录 / 合并记录数。
@@ -574,7 +574,7 @@ MaxNow 的芭蕾能力定位为 Owner 的个人学习模块，而不是单独的
 - 当前预约与实际上课记录分别与闻道保持一致，无重复、无错课。
 - 相同源数据重复同步后，历史节数、累计分钟和月 / 年聚合完全不变；对最近 60 日的补录或修改能在下一次成功同步后正确 upsert。
 - Owner 可切换任意月份或年份查看实际上课节数、小时和课程分布，折线图不因空月份断裂或产生双轴歧义。
-- Owner 能看到 PHPSESSID 从当前实验起点到最后一次成功样本的已确认有效时长、最近 / 下次自动检查和当前间隔；当前 v6 使用 20 分钟，只读页面不会把“持续活动仍有效”误写成“已经证明滑动续期”。
+- Owner 能看到 PHPSESSID 从当前实验起点到最后一次成功样本的已确认有效时长、最近 / 下次自动检查和当前间隔；当前 v7 按 20 分钟持续运行且不设结束时间，只读页面不会把“持续活动仍有效”误写成“已经证明滑动续期”。
 - 每项数据都有可信更新时间；失败时最后成功数据仍可查看且明确标旧，不会被当作实时数据。
 - 自动化阶段保持零重复预约、零错误课程、零未经确认的取消 / 转课；身份异常时 fail closed。
 

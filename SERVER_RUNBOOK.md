@@ -134,25 +134,26 @@ https://dash.maxnow.cn/data/dashboard.json -> 未登录 401
 噗噗 dedicated session -> 正常回复，不向微信真实通道投递测试消息
 ```
 
-### 闻道 Session 临时生命周期实验（2026-07-26 至 2026-07-27）
+### 闻道 Session 持续生命周期实验（始于 2026-07-26）
 
 Owner 已批准在 MaxNow 服务器上验证闻道 `PHPSESSID` 在持续活动下的最长寿命。该实验只读访问课程表，不具备预约、候补、取消或转课能力：
 
-当前 v6 使用 2026-07-27 在本机微信重新打开闻道页面后提取的新会话，与 v3-v5 的旧会话属于不同凭据代次，寿命必须分别计算：
+当前 v7 沿用 2026-07-27 在本机微信重新打开闻道页面后提取的会话，与 v3-v5 的旧会话属于不同凭据代次，寿命必须分别计算。v7 与 v6 属于同一凭据代次，只是把固定 30 天阶段安全交接为无限期阶段：
 
 ```text
-current unit -> maxnow-wenda-session-lifetime-20260727-v6.service（active / transient）
+current unit -> maxnow-wenda-session-lifetime-20260728-v7.service（active / transient）
 credential -> /etc/credstore.encrypted/maxnow-wenda-session-v6.cred（root:root 0600 / host-bound）
 probe -> /usr/local/lib/maxnow-wenda-session/probe_ballet_session.py（root:root 0555）
-current private log -> /var/lib/maxnow-wenda-session-v6/server-lifetime-20260727-0027-20min.jsonl（0600）
-redacted snapshot -> /var/lib/maxnow-ballet-session-source/v6-20m.jsonl（root:maxnow-ballet-status 0640）
+current private log -> /var/lib/maxnow-wenda-session-v7/server-lifetime-20260728-continuous-20min.jsonl（0600）
+redacted snapshot -> /var/lib/maxnow-ballet-session-source/v7-continuous-20m.jsonl（root:maxnow-ballet-status 0640）
 interval -> 1200 秒
-start -> 2026-07-27 00:26:55 Asia/Shanghai
-scheduled end -> 2026-08-26 00:26:55 Asia/Shanghai
-first sample -> 2026-07-27 00:26:56 / HTTP 200 / authenticated / attempts=1
+credential-generation start -> 2026-07-27 00:26:55 Asia/Shanghai
+v7 phase start -> 2026-07-28 20:23:14 Asia/Shanghai
+scheduled end -> none
+first v7 sample -> 2026-07-28 20:23:17 / HTTP 200 / authenticated / attempts=1
 ```
 
-v6 首条样本没有观察到 `Set-Cookie` 或 Session 变化。这个结果只证明 00:26:56 时该会话有效；后续正常样本也只能扩展“持续活动下已确认有效”的证据，不能单独证明滑动过期、自动续期或空闲寿命。2026-07-27 12:01 起，该 Session 还执行过一次 Owner 批准的预约 / 上课记录只读同步，因此 12:01 后的证据只能称为“持续只读活动寿命”，不能再声称请求来源只有固定课程列表探针。
+v7 首条样本没有观察到 `Set-Cookie` 或 Session 变化。这个结果只证明 20:23:17 时该会话仍有效；后续正常样本也只能扩展“持续活动下已确认有效”的证据，不能单独证明滑动过期、自动续期或空闲寿命。2026-07-27 12:01 起，该 Session 还执行过一次 Owner 批准的预约 / 上课记录只读同步，因此 12:01 后的证据只能称为“持续只读活动寿命”，不能再声称请求来源只有固定课程列表探针。2026-07-28 20:23 的交接先启动 v7 并确认首条 authenticated 样本及公开状态，再停止 v6；v6 的 132 个样本与 v7 按同一凭据代次连续统计。
 
 上一代 v3-v5 已结束，保留为独立历史证据：
 
@@ -178,20 +179,21 @@ v5 原本继承 30 天绝对截止时间，但身份失效优先触发了提前�
 安全边界：
 
 - systemd 使用 `DynamicUser`、`ProtectSystem=strict`、`ProtectHome=yes`、`NoNewPrivileges` 和空 capability 集运行探针。
-- v6 的 `PHPSESSID` 从本机受限快照经 SSH 标准输入直接转换为 host-bound `LoadCredentialEncrypted` 文件，服务器没有持久化明文 Cookie；systemd 只在服务专属 `/run/credentials` 暂时解密，服务退出后自动清理。v4 / v5 的历史交接使用 `LoadCredential` 从上一运行中服务的凭据挂载读取，没有创建上传明文。
+- v7 复用 v6 的 host-bound `LoadCredentialEncrypted` 文件，服务器没有持久化明文 Cookie；systemd 只在服务专属 `/run/credentials` 暂时解密，服务退出后自动清理。该凭据最初从本机受限快照经 SSH 标准输入直接转换；v4 / v5 的历史交接使用 `LoadCredential` 从上一运行中服务的凭据挂载读取，没有创建上传明文。
 - 脚本只允许固定 URL `https://gm.wendaosoft.com/gm/weixin/classtable/simpleclass/54114/430`，拒绝 query、其他租户 / 课表、其他端口和写接口；凭据只接受单一 `PHPSESSID`，请求使用固定 Referer。
-- 代码和 unit 均禁用代理；stdout 设为 `null`，避免脱敏 JSONL 再复制进 journald。日志不保存响应正文、Cookie 或 OAuth 信息，Session 指纹使用仅本次进程可比较的随机 HMAC；v3、v4、v5 与 v6 的 HMAC 密钥各自独立，禁止跨进程或跨凭据代次横向比较指纹值。
+- 代码和 unit 均禁用代理；stdout 设为 `null`，避免脱敏 JSONL 再复制进 journald。日志不保存响应正文、Cookie 或 OAuth 信息，Session 指纹使用仅本次进程可比较的随机 HMAC；v3-v7 的 HMAC 密钥各自独立，禁止跨进程横向比较指纹值。
 - 登录有效必须同时命中 `check_cardtypecourse` 与 `do_addbook` 两个课程页结构标记；普通 200、通用 JSON、OAuth / 登录页和无法判断的响应不会误报 authenticated。
 - 任务收到身份失效即退出；连续 3 次未知 / 网络异常也会退出，避免页面变化或网络故障后无限请求。
+- v7 使用 `WENDA_DURATION_SECONDS=0` 表示不设时间截止，systemd 的 `RuntimeMaxUSec=infinity`；“无限期”只移除计划结束时间，不覆盖上述安全停止条件。
 - 这是 transient unit，没有 enable，也不会在服务器重启后自动恢复；因此不列入 Dash 云服务页的长期自动化清单。
 
-`systemctl cat` 的 v6 去敏审计摘要如下。它是 transient unit，不能依赖 `restart` 自动恢复；若退出，先判断是否身份失效，再由 Owner 重新打开微信页面并建立新凭据代次：
+`systemctl cat` 的 v7 去敏审计摘要如下。它是 transient unit，不能依赖 `restart` 自动恢复；若退出，先判断是否身份失效，再由 Owner 重新打开微信页面并建立新凭据代次：
 
 ```ini
 [Service]
 Type=simple
 DynamicUser=yes
-StateDirectory=maxnow-wenda-session-v6
+StateDirectory=maxnow-wenda-session-v7
 StateDirectoryMode=0700
 UMask=0077
 NoNewPrivileges=yes
@@ -201,32 +203,31 @@ PrivateTmp=yes
 PrivateDevices=yes
 CapabilityBoundingSet=
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
-RuntimeMaxSec=30d 10min
 Restart=no
 StandardOutput=null
 StandardError=journal
 LoadCredentialEncrypted=wenda.json:/etc/credstore.encrypted/maxnow-wenda-session-v6.cred
-Environment=WENDA_INTERVAL_SECONDS=1200 WENDA_DURATION_SECONDS=2592000
+Environment=WENDA_INTERVAL_SECONDS=1200 WENDA_DURATION_SECONDS=0
 ExecStart=/usr/bin/python3 /usr/local/lib/maxnow-wenda-session/probe_ballet_session.py
 ```
 
 最终只读状态检查，不要为了监控额外请求闻道，也不要直接 `tail` 原始 JSONL：
 
 ```bash
-sudo systemctl show maxnow-wenda-session-lifetime-20260727-v6.service \
+sudo systemctl show maxnow-wenda-session-lifetime-20260728-v7.service \
   -p ActiveState -p SubState -p MainPID -p Result -p ExecMainStatus
 python3 -m json.tool /var/lib/maxnow-ballet-session-status/public/ballet-session.json
-sudo systemctl cat maxnow-wenda-session-lifetime-20260727-v6.service
+sudo systemctl cat maxnow-wenda-session-lifetime-20260728-v7.service
 ```
 
 需要人工提前停止时：
 
 ```bash
-sudo systemctl stop maxnow-wenda-session-lifetime-20260727-v6.service
-sudo test ! -e /run/credentials/maxnow-wenda-session-lifetime-20260727-v6.service/wenda.json
+sudo systemctl stop maxnow-wenda-session-lifetime-20260728-v7.service
+sudo test ! -e /run/credentials/maxnow-wenda-session-lifetime-20260728-v7.service/wenda.json
 ```
 
-停止进程和删除本地 / 服务器凭据只能终止后续使用，不能证明闻道服务端 Session 已被吊销；如果没有安全的官方 logout / revoke 接口，结论中必须保留这一残余有效窗口说明。v3-v5 是同一旧会话的连续阶段，可以按绝对时间合并；v6 是新会话，必须从 2026-07-27 00:26:55 重新计时。两代实验验证的都是“持续活动时的寿命”，不能外推静默闲置过期时间，也不能仅凭正常样本宣称已证明自动续期。
+停止进程和删除本地 / 服务器凭据只能终止后续使用，不能证明闻道服务端 Session 已被吊销；如果没有安全的官方 logout / revoke 接口，结论中必须保留这一残余有效窗口说明。v3-v5 是同一旧会话的连续阶段；v6-v7 是另一代会话的连续阶段，必须从 2026-07-27 00:26:55 重新计时。两代实验验证的都是“持续活动时的寿命”，不能外推静默闲置过期时间，也不能仅凭正常样本宣称已证明自动续期。
 
 #### Cloud 页脱敏 Session 状态发布
 
@@ -244,20 +245,20 @@ runtime output -> /var/lib/maxnow-ballet-session-status/public/ballet-session.js
 public URL -> authenticated nginx aliases /data/ballet-session.json + ballet-session.js
 ```
 
-公开字段使用固定 allowlist：状态、实验 / 阶段起始、最近检查 / 最近认证 / 下次检查、计划截止、当前 20 分钟间隔、截至最后认证样本的已验证秒数、阶段 / 总样本数、是否观察到 Session 轮换 / `Set-Cookie`、最近 HTTP / 登录状态和受控错误。禁止输出 Session 值或指纹、run ID、unit / 日志路径、URL、响应摘要 / 正文、凭据版本或会员信息。
+公开字段使用固定 allowlist：状态、实验 / 阶段起始、最近检查 / 最近认证 / 下次检查、可空计划截止、当前 20 分钟间隔、截至最后认证样本的已验证秒数、阶段 / 总样本数、是否观察到 Session 轮换 / `Set-Cookie`、最近 HTTP / 登录状态和受控错误。当前无限期阶段发布 `scheduledEndAt: null`，Cloud 卡不展示计划结束日期。禁止输出 Session 值或指纹、run ID、unit / 日志路径、URL、响应摘要 / 正文、凭据版本或会员信息。
 
-状态发布 oneshot 不能以 root 运行，也不能直接执行 ubuntu / Git 可更新的仓库脚本。专用无登录用户只运行 root-owned `0555` 固定副本；unit 使用空 capability 集，并以 `InaccessiblePaths` 遮蔽 `/run/credentials` 与 `/etc/credstore.encrypted`。已结束的 v3-v5 日志继续使用 root-owned 只读硬链接保留证据。活动中的 v6 日志不能硬链接，因为探针会拒绝 link count 大于 1 的日志；因此新增 root oneshot 每 5 分钟把已经脱敏的 JSONL 原子复制为 `root:maxnow-ballet-status 0640` 快照，发布器随后只读快照。转存 unit 固定读写路径、禁用网络，不能访问凭据；`/var/lib/private` 的 `0700` 边界保持不变。
+状态发布 oneshot 不能以 root 运行，也不能直接执行 ubuntu / Git 可更新的仓库脚本。专用无登录用户只运行 root-owned `0555` 固定副本；unit 使用空 capability 集，并以 `InaccessiblePaths` 遮蔽 `/run/credentials` 与 `/etc/credstore.encrypted`。已结束阶段的日志继续以 root-owned 只读硬链接或快照保留证据。活动中的 v7 日志不能硬链接，因为探针会拒绝 link count 大于 1 的日志；root oneshot 每 5 分钟把已经脱敏的 JSONL 原子复制为 `root:maxnow-ballet-status 0640` 快照，发布器随后只读快照。转存 unit 固定读写路径、禁用网络，不能访问凭据；`/var/lib/private` 的 `0700` 边界保持不变。
 
 安装与检查：
 
-先创建只包含实验拓扑、不包含任何 Session / Cookie 的受限配置。当前 v6 配置如下；新凭据代次必须重新设置 `experimentStartedAt`，不能把旧阶段寿命接在新 Session 上：
+先创建只包含实验拓扑、不包含任何 Session / Cookie 的受限配置。当前 v7 配置如下；新凭据代次必须重新设置 `experimentStartedAt`，不能把旧阶段寿命接在新 Session 上：
 
 ```json
 {
   "schemaVersion": 1,
   "experimentStartedAt": "2026-07-27T00:26:55+08:00",
-  "scheduledEndAt": "2026-08-26T00:26:55+08:00",
-  "currentPhase": "v6-20m",
+  "scheduledEndAt": null,
+  "currentPhase": "v7-continuous-20m",
   "phases": [
     {
       "key": "v6-20m",
@@ -265,23 +266,30 @@ public URL -> authenticated nginx aliases /data/ballet-session.json + ballet-ses
       "log": "/var/lib/maxnow-ballet-session-source/v6-20m.jsonl",
       "intervalSeconds": 1200,
       "handoffValidationSamples": 0
+    },
+    {
+      "key": "v7-continuous-20m",
+      "unit": "maxnow-wenda-session-lifetime-20260728-v7.service",
+      "log": "/var/lib/maxnow-ballet-session-source/v7-continuous-20m.jsonl",
+      "intervalSeconds": 1200,
+      "handoffValidationSamples": 1
     }
   ]
 }
 ```
 
-v6 已在服务器安装活动日志转存 unit。它只能读取固定的 v6 脱敏 JSONL，并用临时文件 + `mv` 原子替换状态源；不要让非 root 状态发布器直接穿过 `/var/lib/private`，也不要为活动日志创建硬链接。常用检查：
+v7 已在服务器安装活动日志转存 unit。它只能读取固定的 v7 脱敏 JSONL，并用临时文件 + `mv` 原子替换状态源；不要让非 root 状态发布器直接穿过 `/var/lib/private`，也不要为活动日志创建硬链接。常用检查：
 
 ```bash
 sudo systemctl cat maxnow-ballet-session-log-export.service \
   maxnow-ballet-session-log-export.timer
 sudo systemctl is-active maxnow-ballet-session-log-export.timer \
   maxnow-ballet-session-status.timer \
-  maxnow-wenda-session-lifetime-20260727-v6.service
+  maxnow-wenda-session-lifetime-20260728-v7.service
 sudo systemctl start maxnow-ballet-session-log-export.service
 sudo systemctl start maxnow-ballet-session-status.service
 python3 -m json.tool /var/lib/maxnow-ballet-session-status/public/ballet-session.json
-sudo test "$(stat -c '%U:%G %a' /var/lib/maxnow-ballet-session-source/v6-20m.jsonl)" \
+sudo test "$(stat -c '%U:%G %a' /var/lib/maxnow-ballet-session-source/v7-continuous-20m.jsonl)" \
   = "root:maxnow-ballet-status 640"
 sudo test "$(stat -c '%U:%G %a' /etc/maxnow-ballet/session-experiment.json)" = "root:maxnow-ballet-status 640"
 sudo test "$(stat -c '%U:%G %a' /var/lib/maxnow-ballet-session-status/public/ballet-session.json)" = "maxnow-ballet-status:maxnow-ballet-status 644"
@@ -310,7 +318,7 @@ credential version -> /etc/maxnow-ballet/credential-version
 enable gate -> /etc/maxnow-ballet/enable-sync
 frontend read model -> /var/www/maxnow-dashboard/dash/data/ballet.json + ballet.js
 current state -> 代码 / page 已部署；2026-07-27 正式 rolling 同步成功；已保留 1 条 Owner 手工软开课；enable gate 存在且两个生产 timer 为 enabled / active / waiting
-experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾执行一次额外预约 / 上课记录只读同步；本地 exporter / status timer 每 5 分钟转存并发布 ballet-session.*，不访问闻道
+experiment status -> v7 每 20 分钟课程列表探针无限期运行；2026-07-27 12:01 曾执行一次额外预约 / 上课记录只读同步；本地 exporter / status timer 每 5 分钟转存并发布 ballet-session.*，不访问闻道
 ```
 
 同步器只允许已确认的闻道只读 GET 页面：

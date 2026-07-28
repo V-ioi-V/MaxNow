@@ -2484,10 +2484,6 @@ function renderBalletSessionExperiment(now = new Date()) {
   const phaseSamples = Math.max(0, Math.floor(balletNumber(balletSessionData?.phaseSamples)));
   const totalSamples = Math.max(0, Math.floor(balletNumber(balletSessionData?.totalSamples)));
   setText("#ballet-session-samples", `本阶段 ${phaseSamples} 次 · 累计 ${totalSamples} 次`);
-  setText(
-    "#ballet-session-end",
-    `计划结束 ${formatBalletSessionTimestamp(balletSessionData?.scheduledEndAt)}`,
-  );
   const sessionChanged =
     typeof balletSessionData?.sessionChangedObserved === "boolean"
       ? `各阶段进程内会话变化：${balletSessionData.sessionChangedObserved ? "已观察到" : "未观察到"}`

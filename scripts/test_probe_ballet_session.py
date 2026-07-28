@@ -32,6 +32,12 @@ def config_for(log_path, *, once=False, duration_seconds=120):
 
 
 class BalletSessionProbeTests(unittest.TestCase):
+    def test_zero_duration_selects_indefinite_mode(self):
+        with mock.patch.dict(
+            os.environ, {"WENDA_DURATION_SECONDS": "0"}, clear=False
+        ):
+            self.assertIsNone(probe.env_duration_seconds())
+
     def test_url_allowlist_is_exact(self):
         probe.validate_read_only_url(probe.ALLOWED_API_URL)
         rejected = (
@@ -193,6 +199,37 @@ class BalletSessionProbeTests(unittest.TestCase):
             )
             self.assertEqual(
                 records[-1]["last_login_state"], "network_error"
+            )
+
+    def test_indefinite_mode_still_stops_after_three_unknown_results(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log_path = Path(directory) / "indefinite.jsonl"
+            snapshot = probe.ResponseSnapshot(
+                None, {}, b"", "TimeoutError", 1
+            )
+            with (
+                mock.patch.object(
+                    probe, "perform_request", return_value=snapshot
+                ),
+                mock.patch.object(probe.time, "sleep"),
+                mock.patch.object(
+                    probe.time,
+                    "monotonic",
+                    side_effect=[0, 0, 0, 60, 60, 120, 120],
+                ),
+            ):
+                result = probe.run(
+                    config_for(log_path, duration_seconds=None),
+                    probe.Credentials(SESSION_A, USER_AGENT),
+                )
+            self.assertEqual(result, 3)
+            records = [
+                json.loads(line)
+                for line in log_path.read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertIsNone(records[0]["duration_seconds"])
+            self.assertEqual(
+                records[-1]["event"], "stopped_consecutive_unknown"
             )
 
     def test_thirty_day_schedule_has_expected_sample_count(self):

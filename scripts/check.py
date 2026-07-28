@@ -625,8 +625,8 @@ def check_ballet_session_status():
         "unknown",
     }:
         raise ValueError("ballet session status: status is invalid")
-    if data.get("refreshIntervalMinutes") != 25:
-        raise ValueError("ballet session status: current probe interval must be 25 minutes")
+    if data.get("refreshIntervalMinutes") != 20:
+        raise ValueError("ballet session status: current probe interval must be 20 minutes")
     if not all(
         isinstance(data.get(key), int)
         and not isinstance(data.get(key), bool)
@@ -656,7 +656,9 @@ def check_ballet_session_status():
     scheduled_end = parse_timestamp("scheduledEndAt")
     parse_timestamp("updatedAt")
     parse_timestamp("phaseStartedAt")
-    if not started or not scheduled_end or scheduled_end <= started:
+    if not started:
+        raise ValueError("ballet session status: experiment start is invalid")
+    if scheduled_end is not None and scheduled_end <= started:
         raise ValueError("ballet session status: experiment time range is invalid")
     if authenticated:
         expected_seconds = max(0, int((authenticated - started).total_seconds()))
@@ -809,7 +811,7 @@ def check_ballet_session_status():
     ):
         raise ValueError("ballet session status: local-only publisher hardening or schedule is incomplete")
     return (
-        "ballet session status: 25-minute evidence, redaction, frozen duration, "
+        "ballet session status: 20-minute indefinite evidence, redaction, frozen duration, "
         "local-only publisher, and frontend card are valid"
     )
 
@@ -1361,7 +1363,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=164" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=138" not in dashboard_html
+        or "app.js?v=139" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1403,7 +1405,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=138" not in dashboard_html:
+    if "app.js?v=139" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

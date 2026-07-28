@@ -99,7 +99,7 @@ class PhaseConfig:
 @dataclass(frozen=True)
 class ExperimentConfig:
     experiment_started_at: datetime
-    scheduled_end_at: datetime
+    scheduled_end_at: datetime | None
     current_phase: str
     phases: tuple[PhaseConfig, ...]
 
@@ -162,10 +162,16 @@ def validate_config(payload: Any) -> ExperimentConfig:
     experiment_started_at = parse_timestamp(
         payload.get("experimentStartedAt"), "experimentStartedAt"
     )
-    scheduled_end_at = parse_timestamp(
-        payload.get("scheduledEndAt"), "scheduledEndAt"
+    raw_scheduled_end_at = payload.get("scheduledEndAt")
+    scheduled_end_at = (
+        None
+        if raw_scheduled_end_at is None
+        else parse_timestamp(raw_scheduled_end_at, "scheduledEndAt")
     )
-    if scheduled_end_at <= experiment_started_at:
+    if (
+        scheduled_end_at is not None
+        and scheduled_end_at <= experiment_started_at
+    ):
         raise StatusPublishError("scheduledEndAt must follow experimentStartedAt")
 
     current_phase = payload.get("currentPhase")
@@ -525,6 +531,7 @@ def build_public_model(
     complete_is_valid = False
     if (
         terminal_event == "complete"
+        and config.scheduled_end_at is not None
         and service_state == "inactive"
         and not invalid_records
         and not interval_mismatch

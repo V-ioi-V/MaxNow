@@ -134,6 +134,20 @@ def write_three_phases(root: Path) -> None:
 
 
 class BalletSessionStatusTests(unittest.TestCase):
+    def test_indefinite_running_model_has_no_scheduled_end(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_three_phases(root)
+            payload = make_config(root)
+            payload["scheduledEndAt"] = None
+            model = status.build_public_model(
+                status.validate_config(payload),
+                now=NOW,
+                service_state="active",
+            )
+            self.assertEqual(model["status"], "running")
+            self.assertIsNone(model["scheduledEndAt"])
+
     def test_three_phase_running_model_is_redacted_and_scheduled(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

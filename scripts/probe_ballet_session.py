@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import hmac
 import http.cookies
+import itertools
 import json
 import os
 import secrets
@@ -81,7 +82,7 @@ class Config:
     credential_file: Path
     log_path: Path
     interval_seconds: int
-    duration_seconds: int
+    duration_seconds: int | None
     timeout_seconds: int
     retries: int
     once: bool
@@ -104,6 +105,21 @@ def env_int(name: str, default: int, minimum: int, maximum: int) -> int:
     value = int(raw)
     if value < minimum or value > maximum:
         raise ValueError(f"{name} must be between {minimum} and {maximum}")
+    return value
+
+
+def env_duration_seconds() -> int | None:
+    raw = os.environ.get("WENDA_DURATION_SECONDS")
+    if raw is None or not raw.strip():
+        return DEFAULT_DURATION_SECONDS
+    value = int(raw)
+    if value == 0:
+        return None
+    if value < 60 or value > MAX_DURATION_SECONDS:
+        raise ValueError(
+            "WENDA_DURATION_SECONDS must be 0 or between 60 and "
+            f"{MAX_DURATION_SECONDS}"
+        )
     return value
 
 
@@ -142,12 +158,7 @@ def load_config(args: argparse.Namespace) -> Config:
         interval_seconds=env_int(
             "WENDA_INTERVAL_SECONDS", DEFAULT_INTERVAL_SECONDS, 60, 86_400
         ),
-        duration_seconds=env_int(
-            "WENDA_DURATION_SECONDS",
-            DEFAULT_DURATION_SECONDS,
-            60,
-            MAX_DURATION_SECONDS,
-        ),
+        duration_seconds=env_duration_seconds(),
         timeout_seconds=env_int(
             "WENDA_TIMEOUT_SECONDS", DEFAULT_TIMEOUT_SECONDS, 3, 120
         ),
@@ -506,12 +517,19 @@ def run(config: Config, credentials: Credentials) -> int:
         )
         return 0
 
-    offsets = [0] if config.once else scheduled_offsets(
-        config.duration_seconds, config.interval_seconds
-    )
+    if config.once:
+        offsets = [0]
+    elif config.duration_seconds is None:
+        offsets = itertools.count(0, config.interval_seconds)
+    else:
+        offsets = scheduled_offsets(
+            config.duration_seconds, config.interval_seconds
+        )
     monotonic_start = time.monotonic()
     consecutive_unknown = 0
+    sample_count = 0
     for sample_index, offset in enumerate(offsets, 1):
+        sample_count = sample_index
         wait_seconds = monotonic_start + offset - time.monotonic()
         if wait_seconds > 0:
             time.sleep(wait_seconds)
@@ -560,7 +578,7 @@ def run(config: Config, credentials: Credentials) -> int:
         {
             "event": "complete",
             "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
-            "samples": len(offsets),
+            "samples": sample_count,
         },
     )
     return 0
