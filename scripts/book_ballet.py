@@ -209,6 +209,38 @@ def expression_contract(expression: str) -> dict[str, Any]:
     return contract
 
 
+def safe_script_skeleton(text: str) -> str:
+    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.DOTALL)
+    text = re.sub(r"//[^\r\n]*", " ", text)
+    allowed_literals = {
+        ".bookbtn",
+        "POST",
+        "bookid",
+        "cardid",
+        "cardstatus",
+        "classtableid",
+        "courseid",
+        "coursetype",
+        "custid",
+        "date",
+    }
+
+    def replace_literal(match: re.Match[str]) -> str:
+        quote = match.group(1)
+        value = match.group(2)
+        if value.startswith("/"):
+            safe_value = f"<path:{safe_path_shape(value)}>"
+        elif value in allowed_literals:
+            safe_value = value
+        else:
+            safe_value = "<string>"
+        return f"{quote}{safe_value}{quote}"
+
+    text = re.sub(r"([\"'])(.*?)(?<!\\)\1", replace_literal, text)
+    text = re.sub(r"\b\d+(?:\.\d+)?\b", "<number>", text)
+    return re.sub(r"\s+", " ", text).strip()[:12_000]
+
+
 def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
     contracts = []
     for selector_match in re.finditer(
@@ -318,6 +350,7 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
                     for variable, attribute in bindings
                 ],
                 "requests": requests,
+                "skeleton": safe_script_skeleton(handler),
             }
         )
     return contracts
