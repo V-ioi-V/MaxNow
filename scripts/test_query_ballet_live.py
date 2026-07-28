@@ -37,7 +37,7 @@ def write_fixture(root: Path) -> None:
     )
     (root / "membership.html").write_text(membership_html(), encoding="utf-8")
     (root / "timetable" / "default.html").write_text(
-        timetable_html(),
+        timetable_html().replace("<title>课程表</title>", "<title>每日课表</title>"),
         encoding="utf-8",
     )
     (root / "details" / "10001.html").write_text(

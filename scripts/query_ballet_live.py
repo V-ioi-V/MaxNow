@@ -77,7 +77,7 @@ def query_timetable(
     days = []
     for course_date in date_range(from_date, through_date):
         day = course_date.isoformat()
-        html = source.request(f"{ballet.TIMETABLE_PATH}/{day}", "课程表")
+        html = source.request(f"{ballet.TIMETABLE_PATH}/{day}", "classtable")
         parsed = ballet.parse_timetable(html, day)
         days.append(
             {
