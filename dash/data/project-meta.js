@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 00:12",
-  "version": "1.0.7.16",
-  "versionLabel": "v1.0.7.16",
-  "branch": "bugfix/ballet-timetable-no-scroll",
-  "commit": "87a1812",
+  "updatedAt": "2026-07-29 00:21",
+  "version": "1.0.7.17",
+  "versionLabel": "v1.0.7.17",
+  "branch": "feature/ballet-summary-thirds",
+  "commit": "6fafbeb",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-no-scroll · commit 87a1812 · 有未提交代码改动",
+  "deployNote": "feature/ballet-summary-thirds · commit 6fafbeb · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "收紧芭蕾顶部双卡宽度",
+      "summary": "`1501px` 以上将“本周训练 / 课程卡”放入三等分栅格的前两格，每张各占内容区三分之一并保持同顶、同底、等高；右侧留出一格呼吸空间。"
+    },
     {
       "date": "2026-07-28",
       "title": "周课表取消内部滚动并完整平铺",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "修正课表宽度、表头与同时间课程布局",
       "summary": "`1501px` 以上把本周课程表收为内容区约三分之二宽，`861px–1500px` 继续使用全宽保证 7 天完整显示，`860px` 以下保持逐日列表。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "错开周日只读同步与自动抢课",
-      "summary": "芭蕾 rolling 只读同步由周日 14:20 调整为 14:30，避开 14:19:35 预热与 14:20:00 自动抢课关键窗口；每日 00:00、每月 1 日 00:47 和自动抢课时间保持不变。"
     }
   ]
 };

@@ -4511,6 +4511,12 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   grid-auto-rows: minmax(84px, 1fr);
 }
 
+@media (min-width: 1501px) {
+  .ballet-overview-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .ballet-course-plan-panel {
   margin-bottom: var(--page-section-gap);
 }

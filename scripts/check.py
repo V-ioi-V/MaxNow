@@ -1369,6 +1369,8 @@ def check_secondary_view_style():
         or 'class="panel cloud-card cloud-ballet-fast-card"' not in cloud_view_markup
         or '<summary class="ballet-session-summary">' not in cloud_view_markup
         or ".ballet-overview-grid {" not in dashboard_css
+        or "@media (min-width: 1501px)" not in dashboard_css
+        or "grid-template-columns: repeat(3, minmax(0, 1fr));" not in dashboard_css
         or ".ballet-course-plan-grid {" not in dashboard_css
         or ".ballet-session-summary {" not in dashboard_css
         or ".ballet-session-card[open] .ballet-session-toggle {" not in dashboard_css
@@ -1379,7 +1381,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=169" not in dashboard_html
+        "styles.css?v=170" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=144" not in dashboard_html
     ):
