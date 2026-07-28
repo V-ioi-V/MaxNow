@@ -233,7 +233,7 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
         }
         direct_bindings = set(
             re.findall(
-                r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*"
+                r"(?:(?:var|let|const)\s+)?([A-Za-z_$][\w$]*)\s*=\s*"
                 r"\$\(\s*(?:this|[A-Za-z_$][\w$]*(?:\.currentTarget|\.target))"
                 r"\s*\)\.attr\(\s*[\"']([^\"']+)[\"']",
                 handler,
@@ -260,6 +260,14 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
                 r"[\"']?(?:type|method)[\"']?\s*:\s*[\"']([A-Za-z]+)[\"']",
                 ajax_object,
             )
+            direct_url_match = re.search(
+                r"url\s*:\s*[\"']([^\"']+)[\"']", ajax_object
+            )
+            direct_data_match = re.search(
+                r"data\s*:\s*([\"'])(.*?)\1",
+                ajax_object,
+                re.DOTALL,
+            )
             url_expression = property_expression(ajax_object, "url")
             data_expression = property_expression(ajax_object, "data")
             data_keys = []
@@ -273,6 +281,17 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
                     )
                 )
             data_contract = expression_contract(data_expression)
+            if direct_data_match:
+                data_contract["fieldNames"] = sorted(
+                    set(data_contract["fieldNames"])
+                    | {
+                        value
+                        for value in re.findall(
+                            r"(?:^|[?&])([A-Za-z_$][\w$]*)=",
+                            direct_data_match.group(2),
+                        )
+                    }
+                )
             data_keys = sorted(set(data_keys) | set(data_contract["fieldNames"]))
             effects = []
             if re.search(r"\.html\s*\(", ajax_object):
@@ -291,6 +310,8 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
             path_shapes = request["urlContract"].get("pathShapes", [])
             if len(path_shapes) == 1:
                 request["urlShape"] = path_shapes[0]
+            elif direct_url_match:
+                request["urlShape"] = safe_path_shape(direct_url_match.group(1))
             requests.append(request)
         contracts.append(
             {
