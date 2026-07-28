@@ -128,16 +128,20 @@ class BalletBookingTests(unittest.TestCase):
         });
         """
         contracts = booking.safe_ajax_contracts(script)
+        request = contracts[0]["requests"][0]
+        self.assertEqual(request["method"], "POST")
         self.assertEqual(
-            contracts[0]["requests"][0],
-            {
-                "method": "POST",
-                "urlShape": booking.BOOKING_SUBMIT_PATH.replace(
-                    ballet.STORE_ID, ":id"
-                ),
-                "dataKeys": ["classtableid", "courseid"],
-                "effects": ["replace-html"],
-            },
+            request["urlShape"],
+            booking.BOOKING_SUBMIT_PATH.replace(ballet.STORE_ID, ":id"),
+        )
+        self.assertEqual(request["dataKeys"], ["classtableid", "courseid"])
+        self.assertEqual(request["effects"], ["replace-html"])
+        self.assertEqual(
+            contracts[0]["attributeBindings"],
+            [
+                {"variable": "classtableid", "attribute": "classtableid"},
+                {"variable": "courseid", "attribute": "courseid"},
+            ],
         )
         self.assertNotIn("54114", json.dumps(contracts))
 

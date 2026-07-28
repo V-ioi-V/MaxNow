@@ -137,6 +137,78 @@ def balanced_region(text: str, opening: int, opener: str, closer: str) -> str:
     return ""
 
 
+def property_expression(text: str, name: str) -> str:
+    match = re.search(rf"(?:^|[,{{\s]){re.escape(name)}\s*:\s*", text)
+    if not match:
+        return ""
+    start = match.end()
+    depths = {"(": 0, "[": 0, "{": 0}
+    pairs = {")": "(", "]": "[", "}": "{"}
+    quote = ""
+    escaped = False
+    for index in range(start, len(text)):
+        char = text[index]
+        if quote:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = ""
+            continue
+        if char in {"'", '"', "`"}:
+            quote = char
+        elif char in depths:
+            depths[char] += 1
+        elif char in pairs:
+            opener = pairs[char]
+            if depths[opener] == 0:
+                return text[start:index].strip()
+            depths[opener] -= 1
+        elif char == "," and not any(depths.values()):
+            return text[start:index].strip()
+    return text[start:].strip()
+
+
+def expression_contract(expression: str) -> dict[str, Any]:
+    literals = re.findall(r"[\"']([^\"']*)[\"']", expression)
+    field_names = sorted(
+        {
+            match
+            for literal in literals
+            for match in re.findall(r"(?:^|[?&])([A-Za-z_$][\w$]*)=", literal)
+        }
+    )
+    path_shapes = sorted(
+        {
+            safe_path_shape(literal)
+            for literal in literals
+            if literal.startswith("/")
+        }
+    )
+    identifiers = sorted(
+        {
+            value
+            for value in re.findall(r"\b([A-Za-z_$][\w$]*)\b", expression)
+            if value
+            not in {
+                "false",
+                "null",
+                "true",
+                "undefined",
+            }
+            and all(value not in literal for literal in literals)
+        }
+    )
+    contract: dict[str, Any] = {
+        "fieldNames": field_names,
+        "identifiers": identifiers,
+    }
+    if path_shapes:
+        contract["pathShapes"] = path_shapes
+    return contract
+
+
 def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
     contracts = []
     for selector_match in re.finditer(
@@ -148,16 +220,32 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
         handler = balanced_region(script_text, opening, "{", "}")
         if not handler:
             continue
-        bindings = sorted(
-            {
-                (variable, attribute)
-                for variable, attribute in re.findall(
-                    r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*"
-                    r"\$\(\s*this\s*\)\.attr\(\s*[\"']([^\"']+)[\"']",
-                    handler,
-                )
-            }
+        jquery_targets = {
+            variable
+            for variable in re.findall(
+                r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*"
+                r"\$\(\s*this\s*\)",
+                handler,
+            )
+        }
+        direct_bindings = set(
+            re.findall(
+                r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*"
+                r"\$\(\s*(?:this|[A-Za-z_$][\w$]*(?:\.currentTarget|\.target))"
+                r"\s*\)\.attr\(\s*[\"']([^\"']+)[\"']",
+                handler,
+            )
         )
+        indirect_bindings = {
+            (variable, attribute)
+            for variable, target, attribute in re.findall(
+                r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*"
+                r"([A-Za-z_$][\w$]*)\.attr\(\s*[\"']([^\"']+)[\"']",
+                handler,
+            )
+            if target in jquery_targets
+        }
+        bindings = sorted(direct_bindings | indirect_bindings)
         requests = []
         for ajax_match in re.finditer(r"\$\.ajax\s*\(\s*\{", handler):
             ajax_object = balanced_region(
@@ -169,22 +257,20 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
                 r"(?:type|method)\s*:\s*[\"']([A-Za-z]+)[\"']",
                 ajax_object,
             )
-            url_match = re.search(
-                r"url\s*:\s*[\"']([^\"']+)[\"']", ajax_object
-            )
-            data_match = re.search(
-                r"data\s*:\s*\{([^{}]*)\}", ajax_object, re.DOTALL
-            )
+            url_expression = property_expression(ajax_object, "url")
+            data_expression = property_expression(ajax_object, "data")
             data_keys = []
-            if data_match:
+            if data_expression.startswith("{") and data_expression.endswith("}"):
                 data_keys = sorted(
                     set(
                         re.findall(
                             r"(?:^|,)\s*([A-Za-z_$][\w$]*)\s*:",
-                            data_match.group(1),
+                            data_expression[1:-1],
                         )
                     )
                 )
+            data_contract = expression_contract(data_expression)
+            data_keys = sorted(set(data_keys) | set(data_contract["fieldNames"]))
             effects = []
             if re.search(r"\.html\s*\(", ajax_object):
                 effects.append("replace-html")
@@ -195,10 +281,13 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
             request: dict[str, Any] = {
                 "method": method_match.group(1).upper() if method_match else "",
                 "dataKeys": data_keys,
+                "urlContract": expression_contract(url_expression),
+                "dataIdentifiers": data_contract["identifiers"],
                 "effects": effects,
             }
-            if url_match:
-                request["urlShape"] = safe_path_shape(url_match.group(1))
+            path_shapes = request["urlContract"].get("pathShapes", [])
+            if len(path_shapes) == 1:
+                request["urlShape"] = path_shapes[0]
             requests.append(request)
         contracts.append(
             {
