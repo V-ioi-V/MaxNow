@@ -1,7 +1,7 @@
 interface:
-  display_name: "MaxNow 芭蕾实时查询"
-  short_description: "通过 MaxNow 服务器实时查询闻道芭蕾课程数据"
-  default_prompt: "Use $maxnow-ballet-live to query my current ballet schedule from the live Wenda source."
+  display_name: "MaxNow 芭蕾实时查询与预约"
+  short_description: "通过 MaxNow 服务器实时查询闻道课程并预约明确确认的课程"
+  default_prompt: "Use $maxnow-ballet-live to query live Wenda ballet data or book the exact classes I explicitly confirm."
 
 policy:
   allow_implicit_invocation: true
