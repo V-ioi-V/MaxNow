@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 19:37",
-  "version": "1.0.7.05",
-  "versionLabel": "v1.0.7.05",
-  "branch": "bugfix/remove-cloud-page-head",
-  "commit": "9ed16c8",
+  "updatedAt": "2026-07-28 19:43",
+  "version": "1.0.7.06",
+  "versionLabel": "v1.0.7.06",
+  "branch": "bugfix/open-cloud-session-by-default",
+  "commit": "9cb8501",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/remove-cloud-page-head · commit 9ed16c8 · 有未提交代码改动",
+  "deployNote": "bugfix/open-cloud-session-by-default · commit 9cb8501 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "默认展开 Cloud Session 实验",
+      "summary": "Cloud 的“芭蕾 Session 实验”改为默认展开，进入页面即可直接看到有效时长、检查时间、间隔和实验状态，不再因同排等高留下空白半卡；仍保留手动收起能力。版本提升到 `1.0.7.06`。"
+    },
     {
       "date": "2026-07-28",
       "title": "移除 Cloud 重复页头",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "记录芭蕾分享图待办",
       "summary": "芭蕾 Later 新增分享图功能：从现有脱敏数据选择下一节、本周训练、阶段节数 / 时长、主要课型和近期记录等关键信息，浏览器本地生成可预览、可下载的图片。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "自动抢课改为逐课独立并增加安全重试",
-      "summary": "周日 fast path 将三节目标拆为独立失败域：第一节课程级失败或预约结果未知不会阻止第二、第三节；只有登录失效、配置错误或闻道页面协议变化才全局停止。"
     }
   ]
 };

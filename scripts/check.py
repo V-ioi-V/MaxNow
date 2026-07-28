@@ -1338,7 +1338,7 @@ def check_secondary_view_style():
     if (
         "ballet-session-card" in ballet_view_markup
         or "ballet-booking-fast-status" in ballet_view_markup
-        or '<details class="panel cloud-card ballet-session-card"' not in cloud_view_markup
+        or '<details class="panel cloud-card ballet-session-card" open ' not in cloud_view_markup
         or 'class="panel cloud-card cloud-ballet-fast-card"' not in cloud_view_markup
         or '<summary class="ballet-session-summary">' not in cloud_view_markup
         or ".ballet-overview-grid {" not in dashboard_css
