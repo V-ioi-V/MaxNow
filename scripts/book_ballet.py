@@ -55,6 +55,12 @@ class BookingControlParser(HTMLParser):
                 self.current = {"forms": [], "controls": []}
         if self.current is None:
             return
+        self.current["controls"].append(
+            {
+                "tag": tag,
+                "attrs": values,
+            }
+        )
         if tag == "form":
             if self.form is not None:
                 raise BookingFailure("source_changed")
@@ -77,17 +83,6 @@ class BookingControlParser(HTMLParser):
                 if name in self.form["fields"]:
                     raise BookingFailure("source_changed")
                 self.form["fields"][name] = values.get("value", "")
-        if tag in {"a", "button", "input"}:
-            self.current["controls"].append(
-                {
-                    "tag": tag,
-                    "attrs": {
-                        key: value
-                        for key, value in values.items()
-                        if key in {"href", "onclick", "name", "type"}
-                    },
-                }
-            )
 
     def handle_endtag(self, tag: str):
         if tag == "script":
@@ -138,10 +133,34 @@ def safe_diagnostic(
     script_functions = sorted(
         set(re.findall(r"function\s+([A-Za-z_$][\w$]*)\s*\(", script_text))
     )
+    elements = []
+    seen = set()
+    for item in control["controls"]:
+        attrs = item["attrs"]
+        safe_item: dict[str, Any] = {
+            "tag": item["tag"],
+            "attributeNames": sorted(attrs),
+        }
+        if attrs.get("class"):
+            safe_item["classes"] = sorted(set(attrs["class"].split()))
+        if attrs.get("href"):
+            safe_item["hrefShape"] = safe_path_shape(attrs["href"])
+        if attrs.get("action"):
+            safe_item["actionShape"] = safe_path_shape(attrs["action"])
+        if attrs.get("onclick"):
+            match = re.match(
+                r"\s*([A-Za-z_$][\w$]*)\s*\(", attrs["onclick"]
+            )
+            safe_item["onclickFunction"] = match.group(1) if match else "inline"
+        signature = json.dumps(safe_item, sort_keys=True, ensure_ascii=False)
+        if signature not in seen:
+            seen.add(signature)
+            elements.append(safe_item)
     return {
         "forms": forms,
         "inlineFunctions": inline_functions,
         "scriptFunctions": script_functions,
+        "elements": elements,
     }
 
 
