@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 21:55",
-  "version": "1.0.7.11",
-  "versionLabel": "v1.0.7.11",
-  "branch": "feature/ballet-compact-timetable",
-  "commit": "10cf517",
+  "updatedAt": "2026-07-28 22:16",
+  "version": "1.0.7.12",
+  "versionLabel": "v1.0.7.12",
+  "branch": "feature/ballet-sync-1430",
+  "commit": "07de3d1",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-compact-timetable · commit 10cf517 · 有未提交代码改动",
+  "deployNote": "feature/ballet-sync-1430 · commit 07de3d1 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "错开周日只读同步与自动抢课",
+      "summary": "芭蕾 rolling 只读同步由周日 14:20 调整为 14:30，避开 14:19:35 预热与 14:20:00 自动抢课关键窗口；每日 00:00、每月 1 日 00:47 和自动抢课时间保持不变。"
+    },
     {
       "date": "2026-07-28",
       "title": "课程表适配约三分之二屏宽",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "重排芭蕾顶部概览并突出最近课程",
       "summary": "删除独立“下一节”面板，顶部改为“本周训练 / 课程卡”左右等分；课程卡从页面底部移入右侧，并改为适合半宽的纵向信息布局。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "预约列表显示教室",
-      "summary": "芭蕾“下一节”和“所有预约”的课程信息行在时间、老师后补充闻道同步的教室，例如“大教室 / 小教室”；源数据缺失时不猜测、不显示空占位。脚本缓存提升到 `app.js?v=136`，版本提升到 `1.0.7.07`。"
     }
   ]
 }

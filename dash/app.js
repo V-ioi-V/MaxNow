@@ -3538,7 +3538,7 @@ function renderBalletTimetable() {
     "#ballet-timetable-note",
     timetable.displayMode === "sunday_plus_next_week"
       ? `已切换为今天（周日）与下周课表 · 课程发布至 ${throughLabel}`
-      : `课程发布至 ${throughLabel} · 每天 00:00 更新，周日 14:20 检查下周课表`,
+      : `课程发布至 ${throughLabel} · 每天 00:00 更新，周日 14:30 检查下周课表`,
   );
 }
 
