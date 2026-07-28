@@ -527,7 +527,7 @@ MaxNow 的芭蕾能力定位为 Owner 的个人学习模块，而不是单独的
 - 学习趋势：一张全宽折线图，提供“月 / 年 / 全部”周期和“节数 / 小时”指标切换，不使用双 Y 轴。月视图按日、年视图按月、全部视图按月或年展示，缺失月份补零，图例和单位随指标切换。
 - 课程分布：在统一上课统计面板中用水平条展示所选时间段内的级别 / 课型分布；切换节数 / 时间时，分类值与条形长度同步切换。浏览器读取预聚合结果，不在每次切换时重新扫描全部历史。
 - 学习记录：阶段目标、课堂重点、老师纠正、动作标签和下次练习事项；身体状态属于可选敏感信息，不进入 Home。
-- 预约自动化：只在页面底部展示 `off` / `dry-run` / `enabled`、下一计划和最近结果的 Owner 可读摘要，完整运维状态留在 Cloud。
+- 预约自动化：只在页面底部展示 `off` / `dry-run` / `enabled`、固定优先级、目标课程、上次 / 下次执行和累计成功数的 Owner 可读摘要，完整运维状态留在 Cloud。
 
 缓存、同步与去重：
 
@@ -548,6 +548,7 @@ MaxNow 的芭蕾能力定位为 Owner 的个人学习模块，而不是单独的
 
 - `dash/data/ballet.json` / `dash/data/ballet.js` 是脱敏 read model；前端只读取它们，不接触服务器私有账本或闻道身份。
 - `dash/data/ballet-session.json` / `dash/data/ballet-session.js` 是本地与 Git 的安全 fallback；生产同 schema 文件由非 root 发布器写入 `/var/lib/maxnow-ballet-session-status/public`，nginx 仅在已有登录校验后映射到 `/data/ballet-session.*`。它与课程 `ballet.*` 分离，只保存状态、实验 / 阶段起始、最近检查 / 最近认证 / 下次检查、计划截止、间隔、已验证秒数、样本数、是否观察到轮换 / `Set-Cookie` 和受控错误；不得保存 Session 值或指纹、run ID、unit / 日志路径、URL、响应摘要 / 正文或凭据版本。
+- `dash/data/ballet-booking-fast.json` / `.js` 是自动抢课状态的安全 fallback；生产同 schema 文件由 root fast-path service 写入 `/var/lib/maxnow-ballet-booking-fast-public`，nginx 通过已有登录校验的 exact alias 且 `no-store` 提供。它只保存启用状态、固定优先级、脱敏目标、上次 / 下次执行、累计次数和逐课安全结果；不得保存课程 / 会员 / 卡片源 ID、凭据、响应正文、内部路径或 unit 名。
 - read model 至少区分 `schemaVersion`、`timezone`、`dataAsOf`、`sync`、`classification`、`summary`、`week`、`membership`、`timetable`、`records`、`aggregates`、`upcoming`、`learningLogs`、`authHealth` 和 `automation`；预约状态、课程表可约状态和上课状态不得混为一类，`classification` 同时保存 `courseType` 与 `level` 规则版本。
 - `sync` 至少记录 `logicalDate`、`lastAttemptAt`、`lastSuccessAt`、`lastDataChangeAt`、`lastAttemptStatus`、`cacheState`、`consecutiveFailures`、安全的 `errorCode` / `errorMessage`、抓取窗口和本次源记录 / 合并记录数。
 - `cacheState` 只描述最后成功缓存的可用性：`fresh`、`stale`、`unavailable`；`lastAttemptStatus` 只描述本次尝试：`success`、`auth_required`、`network_error`、`source_changed`、`parse_error`。页面必须组合表达两者，例如“本次授权失效；仍显示 7 月 25 日缓存”，不能把错误类型和新鲜度混成一个状态；连续 3 次失败再升级为 Cloud / 系统异常。
@@ -556,14 +557,15 @@ MaxNow 的芭蕾能力定位为 Owner 的个人学习模块，而不是单独的
 - 生产凭据使用服务器 host-bound systemd 加密凭据与 `LoadCredentialEncrypted` 注入；`PHPSESSID` 不得进入 Git、日志、前端、聊天、环境变量或命令参数。身份失败后保留最后成功缓存并停止重试，直到检测到安全的凭据版本变化；页面只显示脱敏错误和“请在电脑微信重新登录并刷新凭据”。
 - 对话式实时查询使用独立无缓存 CLI 和临时 systemd unit：按问题选择课表、当前预约、上课记录或课程卡最小范围，直接返回脱敏 JSON，不读取或改写 `dash/data/ballet.*` 与 `/var/lib/maxnow-ballet`。临时 unit 结束后清除解密凭据目录；返回值不得包含源记录 ID、会员标识、原始 HTML、Cookie 或内部路径。
 - 对话式显式预约使用独立 `run_ballet_booking.sh`：只接受日期、起止时间、课程名、老师和教室完全匹配的课程，并要求当前请求中明确确认。单课或多课先统一实时预检已有预约、余位、唯一可用课程卡和闻道规则；全部可执行后才按输入顺序逐节提交，每节最多调用一次 `do_addbook` 并立即从实时预约记录复核。身份失效、页面变化或结果不明确时停止后续课程且禁止盲目重试；不得输出课程 / 会员 / 卡片源 ID。
+- 周日自动抢课使用独立 `book_ballet_fast.py` 与常驻 systemd timer。服务于北京时间周日 14:19:35 启动并只读预热，14:20:00 才开始提交；关键路径不经过 Codex、Skill 或 SSH。每节课程即时完成课表唯一匹配、已有预约 / 余位、课程卡资格和规则校验后，最多提交一次 `do_addbook`；收到明确正整数成功号后立即进入下一节，全部提交结束后再统一查询预约记录核验。未知响应、身份失效或页面结构变化必须停止后续课程且不得重试。
+- 自动抢课的跨日期优先级固定为 `周六 > 周日 > 周五 > 其他日期`；同一日期内按开始时间和配置顺序保持确定性。当前目标依次为周六 11:30–12:30 李俊软开大教室、周五 19:45–21:15 李俊芭蕾 L1 大教室、周二 19:45–21:15 李俊芭蕾 L1 大教室。只预约配置目标；不自动候补、取消、转课、买卡、支付或登录。
 - 前端永远不直接访问闻道，不保存 Cookie，不提供 Session 输入框，也不允许由页面打开、刷新或按钮点击触发真实预约。
 - “维护一个文档”在实现上以单一 JSON 账本为权威，不每天重写一份可手改 Markdown。若以后需要人类可读的芭蕾档案，只允许从账本单向生成 Markdown 摘要，不能形成第二份可编辑事实源。
 
-无人值守自动约课只作为后续受控能力；Owner 在当前对话中明确指定课程的单次预约不等同于自动抢课：
+无人值守自动约课是独立受控能力；Owner 在当前对话中明确指定课程的单次预约不等同于自动抢课：
 
-- 默认模式为 `off`；先实现只读同步，再实现只产生预计动作的 `dry-run`，最后才评估由 Owner 单独批准的 `enabled`。
-- 无人值守规则的 dry-run 至少连续覆盖两次周日课表发布，并与 Owner 的人工选择完全一致后，才允许定时真实提交。
-- 真实提交前必须重新校验课程、会员卡、已有预约、时间冲突、每周上限和候补规则；使用幂等账本与有限重试，禁止无限抢课。
+- 新规则默认先以 `off` / `dry-run` 验证；Owner 也可以对明确列出的课程、顺序和时间单独批准直接进入 `enabled`，但必须在规格、配置和更新记录中留下该次授权边界。2026-07-28 Owner 已明确批准当前三节课与周六 > 周日 > 周五 > 其他日期的长期顺序。
+- 真实提交前必须即时校验课程唯一性、已有预约、余位、会员卡和闻道规则；私有幂等账本防止同一目标重复提交。关键路径不做整批前置详情核验，也不重试 mutation，避免把延迟或未知响应扩大为重复预约。
 - 默认不自动取消、转课、买卡、支付或报名付费活动；遇到验证码、微信重新授权、页面结构变化或无法判断的响应时立即停止。
 - `PHPSESSID`、Cookie、OAuth code、openid、unionid、memberId、手机号、会员卡号、原始响应正文和真实执行参数不得进入 Git、前端、日志、备份或聊天；只能进入服务器隔离凭据和最小权限运行态。
 

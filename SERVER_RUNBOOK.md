@@ -410,6 +410,76 @@ runner 使用与实时查询相同的 host-bound 加密凭据和 hardened transi
 
 2026-07-28 16:44 已部署主分支 `5389624`（版本 `1.0.6.00`）的芭蕾对话式显式预约。部署前公开运行数据与 root-only 芭蕾私有状态备份在 `/home/ubuntu/maxnow-deploy-backups/20260728-1643-ballet-booking`；拉取后恢复服务器运行数据，并保留新版本 `project-meta.*` / `project-status.*`。首次真实单课提交只产生一次 mutation，脚本内验证和独立实时预约查询均为 `booked`；最终代码再次 dry-run 返回 `already_booked` 且 `mutationAttempts=0`。生产 rolling service 随后成功刷新页面脱敏预约快照，目标记录为 `booked`、`dataAsOf=2026-07-28T16:43:38+08:00`。服务器全仓检查与 `nginx -t` 通过，Dash 匿名访问 `302`、Blog `200`。
 
+#### 芭蕾周日自动抢课 Fast Path
+
+Owner 已单独批准当前三节固定课程在北京时间每周日 14:20 无人值守预约。关键路径不经过 Codex、Skill、OpenClaw 或 SSH：
+
+```text
+service -> maxnow-ballet-booking-fast.service
+timer -> maxnow-ballet-booking-fast.timer
+arm -> Sunday 14:19:35 Asia/Shanghai
+submit -> script waits until 14:20:00 Asia/Shanghai
+enable gate -> /etc/maxnow-ballet/enable-fast-booking
+config -> /var/www/maxnow-dashboard/config/ballet-booking-fast.json
+private state -> /var/lib/maxnow-ballet-booking-fast/state.json（root 0600）
+public state -> /var/lib/maxnow-ballet-booking-fast-public/ballet-booking-fast.json + .js
+public URL -> authenticated no-store aliases /data/ballet-booking-fast.json + .js
+credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
+```
+
+固定跨日期优先级为 `周六 > 周日 > 周五 > 其他日期`。当前实际提交顺序：
+
+1. 周六 11:30–12:30，软开，李俊，大教室。
+2. 周五 19:45–21:15，芭蕾 L1，李俊，大教室。
+3. 周二 19:45–21:15，芭蕾 L1，李俊，大教室。
+
+服务在 14:19:35 先用当前日期课表做一次只读会话预热；14:20 后每节依次执行“目标日期课表唯一匹配 → 已预约 / 余位检查 → 唯一课程卡资格 → 闻道规则 → 最多一次 `do_addbook`”。明确正整数成功号即进入下一节，已预约 / 已满 / 未开放等确定状态不会阻止后续目标；身份失效、页面结构变化或未知 mutation 响应会停止剩余课程且禁止重试。全部 mutation 完成后才统一查询实时预约记录，不让每节详情核验阻塞下一节。
+
+私有 occurrence 哈希只用于避免同一周目标重复提交；公开状态不得包含 course / class table / customer / card ID、PHPSESSID、响应正文、凭据路径、unit 名或日志路径。累计成功数以闻道明确成功号为准，统一核验不可用时页面显示“已提交，待核验”，不能重试。
+
+安装与首次启用：
+
+```bash
+cd /var/www/maxnow-dashboard
+sudo install -m 0644 server/maxnow-ballet-booking-fast.service \
+  /etc/systemd/system/maxnow-ballet-booking-fast.service
+sudo install -m 0644 server/maxnow-ballet-booking-fast.timer \
+  /etc/systemd/system/maxnow-ballet-booking-fast.timer
+sudo install -d -m 0700 /var/lib/maxnow-ballet-booking-fast
+sudo install -d -m 0750 -o root -g www-data \
+  /var/lib/maxnow-ballet-booking-fast-public
+sudo touch /etc/maxnow-ballet/enable-fast-booking
+sudo chown root:root /etc/maxnow-ballet/enable-fast-booking
+sudo chmod 0600 /etc/maxnow-ballet/enable-fast-booking
+sudo systemctl daemon-reload
+sudo systemd-analyze verify \
+  /etc/systemd/system/maxnow-ballet-booking-fast.service \
+  /etc/systemd/system/maxnow-ballet-booking-fast.timer
+sudo /usr/bin/python3 -B scripts/book_ballet_fast.py preview
+sudo systemctl enable --now maxnow-ballet-booking-fast.timer
+```
+
+`preview` 只计算下次日期并发布安全计划，不加载凭据、不访问闻道、不增加运行 / 成功计数。不要为验收手动运行 `execute`，也不要手动 `systemctl start maxnow-ballet-booking-fast.service`；真实 mutation 只由周日 timer 在时间窗内触发。自动化状态可用无网络 runner 查询：
+
+```bash
+scripts/run_ballet_booking_fast.sh status
+sudo systemctl is-enabled maxnow-ballet-booking-fast.timer
+sudo systemctl is-active maxnow-ballet-booking-fast.timer
+sudo systemctl list-timers maxnow-ballet-booking-fast.timer --all --no-pager
+sudo systemctl show maxnow-ballet-booking-fast.timer \
+  -p NextElapseUSecRealtime -p LastTriggerUSec
+sudo stat -c '%U:%G %a %n' \
+  /var/lib/maxnow-ballet-booking-fast/state.json \
+  /var/lib/maxnow-ballet-booking-fast-public/ballet-booking-fast.json
+```
+
+如果 Owner 要修改目标或顺序，先改仓库配置与 Skill，补 fixture 测试和页面 fallback，部署后运行 `preview` 刷新状态；不得直接在服务器热改 JSON。暂停自动抢课时删除 enable gate 并 disable timer，不删除私有幂等账本：
+
+```bash
+sudo systemctl disable --now maxnow-ballet-booking-fast.timer
+sudo rm /etc/maxnow-ballet/enable-fast-booking
+```
+
 2026-07-28 已部署主分支 `87bd4aa`（版本 `1.0.5.33`）的芭蕾实时查询 Skill。三轮部署前备份分别位于 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-ef5323`、`/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-fix-RDxVpv` 和 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-marker-pp8CNr`；运行数据按服务器权威来源精确恢复。服务器 OpenClaw Skill 入口已链接到仓库 `openclaw/maxnow-ballet-live`。首次验收依次发现 transient 命令参数不展开 `%d`、课表中文标题不稳定，最终改为读取 `CREDENTIALS_DIRECTORY` 与校验 `classtable` 结构；预约实时查询成功返回 4 条脱敏记录，课表实时查询于 11:12:34 返回当天 7 节课。最终结果为 `source=wenda-live`、`live=true`、单次 1 个 GET；查询前后 `dash/data/ballet.*` 与 `/var/lib/maxnow-ballet` 五个私有状态文件哈希不变，临时 `wenda-session.json` 凭据挂载已清理，服务器全仓检查通过。
 
 2026-07-28 已部署主分支 `93570a7`（版本 `1.0.5.29`）的芭蕾周课表与状态校准。两次部署前的公开运行数据分别备份在 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-timetable-GvlS8U` 和 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-status-fix-scTpbO`，私有账本另存 root-only 备份。生产 rolling 同步成功，当前课表为 2026-07-27 至 2026-08-02 共 7 天、55 节；源站日期选择器可见至 2026-10-31，但实际有课只到 2026-08-02。状态校准后仅 3 节本人已预约使用粉玫瑰高亮、1 节本人候补使用橙色高亮，20 节普通“可排队”课程保留状态但不高亮。`maxnow-ballet-sync.timer` 已安装每日 00:00 与周日 14:20 两个 `OnCalendar`，月度 full 保持每月 1 日 00:47；两个 timer 与 v6 Session 探针均为 active。服务器 18 项同步测试、全仓检查、`systemd-analyze verify`、`nginx -t`、脱敏字段断言和访问边界均通过。

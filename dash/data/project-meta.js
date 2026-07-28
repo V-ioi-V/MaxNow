@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 16:45",
-  "version": "1.0.6.00",
-  "versionLabel": "v1.0.6.00",
-  "branch": "main",
-  "commit": "2e32b8f",
+  "updatedAt": "2026-07-28 17:17",
+  "version": "1.0.7.00",
+  "versionLabel": "v1.0.7.00",
+  "branch": "feature/ballet-booking-fast-path",
+  "commit": "d139dbe",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "main · commit 2e32b8f · 干净",
+  "deployNote": "feature/ballet-booking-fast-path · commit d139dbe · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "增加周日自动抢课 Fast Path",
+      "summary": "新增服务器本地 `book_ballet_fast.py` 与精确定时 systemd service / timer：周日 14:19:35 预热，14:20:00 按“周六 > 周日 > 周五 > 其他日期”顺序逐课即时校验并单次提交；关键路径不经过 Codex、Skill 或 SSH，未知结果停止后续且不重试。"
+    },
     {
       "date": "2026-07-28",
       "title": "增加芭蕾对话式显式预约",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "修复 Token 总账并发拉取漏更",
       "summary": "macOS 源账本已正常上报，但服务器 `11:10` 总账任务与另一条 Git 更新并发，因远端引用锁竞争退出；手动补跑后线上总账更新到 `11:28`，Codex macOS 来源时间更新到 `11:00`。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "增加芭蕾实时查询 Skill",
-      "summary": "新增 `maxnow-ballet-live` Skill 和服务器实时查询入口；以后对话中询问课表、预约 / 候补、上课记录、老师、余位或课程卡时，固定通过 MaxNow 服务器的当前 PHPSESSID 直接读取闻道，不再用 Dashboard 缓存回答。"
     }
   ]
 };

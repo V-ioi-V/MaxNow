@@ -118,6 +118,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/life-foods.js`：从 `life-foods.json` 生成的浏览器 wrapper。
 - `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要、课程卡预测和周课表。课表通常为本周 7 天；周日 14:20 拿到下周课程后变为本周日 + 下周 7 天。不保存 Cookie、会员卡号、会员标识、源记录 ID 或原始响应。
 - `dash/data/ballet-session.json`：芭蕾页底部 PHPSESSID 折叠实验详情的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
+- `dash/data/ballet-booking-fast.json`：芭蕾页“自动抢课”状态的本地 / Git 安全 fallback；生产状态由周日 fast-path service 写入独立 public 目录，经登录校验和 `no-store` exact alias 提供。只包含启用状态、优先级、脱敏目标、上次 / 下次执行、累计数和逐课结果，不作为课程余位事实源。
 - `dash/data/ballet.js`：从 `ballet.json` 生成的浏览器 wrapper。
 - `dash/login.html` / `dash/login.js`：MaxNow 私人访问入口；只提交用户名和密码到同源 `/auth/login`，不在浏览器保存或读取会话 Cookie。
 - `scripts/maxnow_auth_service.py`：服务器本机认证服务；读取 htpasswd、签发和校验 7 天 HttpOnly 会话，不读取 Dashboard 数据。
@@ -128,7 +129,8 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/sync_ballet.py`：只访问已确认的闻道 GET 页面，从服务器私有 canonical ledger 增量去重并刷新脱敏 `dash/data/ballet.*`；同时读取预约、候补、上课记录、课程卡概览和严格日期路径的周课表，解析相对取消规则并计算绝对截止时间，不调用预约、取消、候补或转课写接口。
 - `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：面向对话请求的实时只读入口。通过临时 systemd unit 解密服务器 host-bound PHPSESSID，按课表、当前预约、上课记录或课程卡最小范围直接读取闻道并输出脱敏 JSON；不读取或写入 Dashboard 缓存与服务器私有账本。
 - `scripts/book_ballet.py` / `scripts/run_ballet_booking.sh`：Owner 当前请求中明确指定课程后的实时预约入口。只接受日期、起止时间、课程名、老师和教室精确匹配，统一预检后按输入顺序逐节提交并实时复核；不使用 Dashboard 缓存，不输出源 ID，不盲目重试未知结果。
-- `openclaw/maxnow-ballet-live/SKILL.md`：芭蕾数据询问与显式预约的强制实时路由。要求结果具备 `source=wenda-live`、`live=true` 和当前 `fetchedAt`；失败时禁止回退 `dash/data/ballet.*`、浏览器存储、快照或旧对话。普通查询只 GET，预约仅允许固定资格检查、规则检查和一次 `do_addbook`。
+- `scripts/book_ballet_fast.py` / `server/maxnow-ballet-booking-fast.*`：周日 14:20 无人值守自动抢课关键路径。14:19:35 启动并预热，按周六 > 周日 > 周五 > 其他日期顺序逐课即时校验、单次提交，全部结束后统一核验；私有幂等状态和公开脱敏状态分目录保存。
+- `openclaw/maxnow-ballet-live/SKILL.md`：芭蕾数据询问、显式预约和自动抢课状态的强制路由。课程数据仍要求 `source=wenda-live`、`live=true` 和当前 `fetchedAt`，失败时禁止回退缓存；自动抢课状态只允许回答计划和结果，不得替代实时课程余位。
 - `scripts/sync_weather.py`：抓取北京市海淀区天气、温度、当前降水、高低温和天气图标类型，只刷新 dashboard 的 `weather` 字段。
 - `scripts/sync_market_indices.py`：抓取国内外指数行情和 1 日 5 分钟走势，刷新 `dash/data/market-indices.*`；接口失败时保留旧缓存并标记 `stale`。
 - `scripts/sync_ai_last30.py`：抓取免费公开 AI 信号源，按正式发布 / 客户案例等事件类型排序，生成中文事实标题与摘要，并跨“最新 / 本周 / 近 30 天”去重；采集脚本本身不调用模型，不消耗 token。
@@ -235,8 +237,8 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - 生产凭据已于 2026-07-27 使用新会话重新密封为 host-bound systemd 加密凭据，通过 `LoadCredentialEncrypted` 注入。enable gate 已保留；rolling timer 调整为每日 00:00 + 周日 14:20，月度 full 保持每月 1 日 00:47。身份失效时采集器保留旧缓存、记录脱敏错误并停止重试，直到检测到非敏感凭据版本变化。
 - 2026-07-28 已部署 `maxnow-ballet-live` Skill 与实时查询 CLI：以后 Owner 在对话中询问芭蕾课程数据时，必须 SSH 到 MaxNow 服务器并用当前 PHPSESSID 查询闻道，不再读取前端缓存。服务器 OpenClaw Skill 入口已指向仓库版本；查询只允许既有 GET allowlist，输出无源记录 ID、会员标识、响应正文或凭据痕迹，实时失败即明确失败。Owner 泛问“有什么课程 / 有什么可以约的课”时默认展示全部课型，只有明确要求“只看 / 仅看 / 只想看”某类课程时才筛选；直约课按日期分组并固定展示开始–结束时间、课程名、老师、教室和余位。最终当天课表验收返回 7 节课，且 Dashboard 缓存、私有账本和临时凭据目录均未留下改动。
 - 2026-07-28 新增两个芭蕾 Later 待办：提供私有、可撤销的 ICS / `webcal://` 链接，Owner 首次在 Apple 设备确认订阅后自动同步正式预约与候补；受控约课支持一次提交多节课程，但按“统一预检、逐节幂等提交、逐节返回结果”执行，身份失效或结果不明确时停止剩余课程，不承诺跨课程原子回滚。
-- 2026-07-28 已完成对话式显式预约：单课和多课先统一实时预检，再按输入顺序逐节提交，每节最多一次 `do_addbook` 并即时读取预约记录验证。首次真实单课执行与独立复核均成功；这项能力只响应 Owner 当前请求，不改变无人值守自动抢课仍需连续 dry-run 和单独批准的边界。
-- 自动化模式固定分为 `off`、`dry-run`、`enabled`。真实提交必须在连续 dry-run、幂等校验、有限重试、失败停止和 Owner 单独批准后启用；默认不自动取消或转课。
+- 2026-07-28 已完成对话式显式预约：单课和多课先统一实时预检，再按输入顺序逐节提交，每节最多一次 `do_addbook` 并即时读取预约记录验证。首次真实单课执行与独立复核均成功。
+- 2026-07-28 Owner 明确批准当前三节固定目标的无人值守自动抢课。生产 fast path 周日 14:19:35 启动、14:20:00 提交，固定跨日期优先级为周六 > 周日 > 周五 > 其他日期；当前实际顺序是周六软开、周五 L1、周二 L1。明确成功立即进入下一节，未知响应停止后续，最后统一核验；不自动候补、取消、转课或支付。
 
 ## 上下文更新规则
 

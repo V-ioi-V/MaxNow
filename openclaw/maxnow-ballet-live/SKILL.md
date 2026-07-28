@@ -1,6 +1,6 @@
 ---
 name: maxnow-ballet-live
-description: Query the owner's current ballet timetable, bookings, attendance, course availability, or membership balance, and book explicitly confirmed classes from the live Wenda source through the MaxNow server. Use whenever the owner asks for ballet classes, schedules, booking, waitlists, attendance, teachers, course cards, or remaining-class data. Never answer these requests from MaxNow dashboard caches.
+description: Query the owner's current ballet timetable, bookings, attendance, course availability, membership balance, explicit bookings, and Sunday automatic-booking plan or results through the MaxNow server. Use whenever the owner asks for ballet classes, schedules, booking, automatic booking, grabbing classes, waitlists, attendance, teachers, course cards, or remaining-class data. Never answer course-data requests from MaxNow dashboard caches.
 ---
 
 # MaxNow Ballet Live
@@ -78,7 +78,32 @@ scripts/run_ballet_booking.sh execute
 
 The runner performs a unified live preflight, then books courses sequentially. Before each mutation it rechecks availability, eligible card, and booking rules. It sends at most one `do_addbook` request per course, immediately verifies the result from live bookings, returns one result per course, and stops after an ambiguous or authentication failure. Never retry an ambiguous mutation.
 
+For multiple exact classes without an owner-specified order, sort them by the permanent weekday priority `周六 > 周日 > 周五 > 其他日期`, then keep the original order within the same weekday.
+
 4. Report only the safe per-course result. A course is booked only when its result is `status=booked` and live verification returns `bookingStatus=booked`. If the command returns `card_selection_required`, ask the owner which eligible card to use; never choose a card silently.
+
+## Sunday Automatic Booking
+
+The enabled production fast path runs entirely on the MaxNow server. It arms at Sunday 14:19:35 Beijing time, warms the live session, waits until 14:20:00, and submits configured targets sequentially. It does not invoke Codex, this Skill, or SSH on the timing-critical path.
+
+Current recurring targets are:
+
+- Saturday 11:30–12:30 soft-open, 李俊, 大教室.
+- Friday 19:45–21:15 ballet L1, 李俊, 大教室.
+- Tuesday 19:45–21:15 ballet L1, 李俊, 大教室.
+
+Always preserve the permanent priority `周六 > 周日 > 周五 > 其他日期`. For the current targets, the actual order is Saturday, Friday, Tuesday.
+
+To query the automation plan and safe result ledger, run:
+
+```bash
+ssh -o BatchMode=yes -o ConnectTimeout=10 ubuntu@43.160.240.244 \
+  "cd /var/www/maxnow-dashboard && scripts/run_ballet_booking_fast.sh status"
+```
+
+The automation status ledger is allowed only for plan, last/next run, configured targets, and aggregate result questions. It is not a source for course availability. For any timetable or availability question, use the live query workflow above.
+
+Do not manually start the production service or run `book_ballet_fast.py execute` from a conversation. Changes to automatic targets require a reviewed configuration change, tests, deployment, and a refreshed safe status snapshot.
 
 ## Timetable Answer Contract
 

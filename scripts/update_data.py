@@ -27,6 +27,7 @@ DATASETS = {
     "life-foods": ("dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
     "ballet": ("dash/data/ballet.json", "dash/data/ballet.js", "MAXNOW_BALLET_DATA"),
     "ballet-session": ("dash/data/ballet-session.json", "dash/data/ballet-session.js", "MAXNOW_BALLET_SESSION_DATA"),
+    "ballet-booking-fast": ("dash/data/ballet-booking-fast.json", "dash/data/ballet-booking-fast.js", "MAXNOW_BALLET_BOOKING_FAST_DATA"),
 }
 LOG_DIR = ROOT / "logs"
 

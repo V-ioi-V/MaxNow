@@ -34,6 +34,7 @@ DATASETS = [
     ("life-foods", "dash/data/life-foods.json", "dash/data/life-foods.js", "MAXNOW_LIFE_FOODS_DATA"),
     ("ballet", "dash/data/ballet.json", "dash/data/ballet.js", "MAXNOW_BALLET_DATA"),
     ("ballet-session", "dash/data/ballet-session.json", "dash/data/ballet-session.js", "MAXNOW_BALLET_SESSION_DATA"),
+    ("ballet-booking-fast", "dash/data/ballet-booking-fast.json", "dash/data/ballet-booking-fast.js", "MAXNOW_BALLET_BOOKING_FAST_DATA"),
 ]
 
 
@@ -78,6 +79,8 @@ def check_required_files():
         "dash/data/ballet.js",
         "dash/data/ballet-session.json",
         "dash/data/ballet-session.js",
+        "dash/data/ballet-booking-fast.json",
+        "dash/data/ballet-booking-fast.js",
         "dash/data/market-indices.json",
         "dash/data/market-indices.js",
         "dash/data/project-status.json",
@@ -129,6 +132,10 @@ def check_required_files():
         "scripts/book_ballet.py",
         "scripts/run_ballet_booking.sh",
         "scripts/test_book_ballet.py",
+        "scripts/book_ballet_fast.py",
+        "scripts/run_ballet_booking_fast.sh",
+        "scripts/test_book_ballet_fast.py",
+        "config/ballet-booking-fast.json",
         "scripts/sync_ballet_session_status.py",
         "scripts/test_sync_ballet_session_status.py",
         "scripts/maxnow_auth_service.py",
@@ -140,6 +147,8 @@ def check_required_files():
         "server/maxnow-ballet-session-status.service",
         "server/maxnow-ballet-session-status.timer",
         "server/maxnow-ballet-session-status.sysusers",
+        "server/maxnow-ballet-booking-fast.service",
+        "server/maxnow-ballet-booking-fast.timer",
         "server/maxnow-auth-rate-limit.conf",
         "server/maxnow-auth-locations.conf",
         "server/maxnow-dashboard.conf",
@@ -276,6 +285,94 @@ def check_ballet_booking():
     return (
         "ballet booking: exact matching, unified preflight, explicit "
         "confirmation, sequential execution, verification, and redaction are valid"
+    )
+
+
+def check_ballet_booking_fast():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(ROOT / "scripts/test_book_ballet_fast.py"),
+        ],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "ballet fast booking: fixture self-test failed: "
+            + result.stdout.strip()
+        )
+
+    data = load_json(ROOT / "dash/data/ballet-booking-fast.json")
+    if (
+        data.get("schemaVersion") != 1
+        or data.get("timezone") != "Asia/Shanghai"
+        or data.get("priorityOrder") != ["周六", "周日", "周五", "其他日期"]
+        or [item.get("key") for item in data.get("targets", [])]
+        != [
+            "saturday-soft-open",
+            "friday-ballet-l1",
+            "tuesday-ballet-l1",
+        ]
+    ):
+        raise ValueError("ballet fast booking: public plan or priority is invalid")
+    serialized = json.dumps(data, ensure_ascii=False)
+    forbidden = (
+        "PHPSESSID",
+        "courseId",
+        "classTableId",
+        "customerId",
+        "cardId",
+        "/var/lib/",
+        "/run/credentials/",
+        "gm.wendaosoft.com",
+    )
+    if any(marker in serialized for marker in forbidden):
+        raise ValueError("ballet fast booking: public state exposes internal data")
+
+    service = (
+        ROOT / "server/maxnow-ballet-booking-fast.service"
+    ).read_text(encoding="utf-8")
+    timer = (
+        ROOT / "server/maxnow-ballet-booking-fast.timer"
+    ).read_text(encoding="utf-8")
+    locations = (
+        ROOT / "server/maxnow-auth-locations.conf"
+    ).read_text(encoding="utf-8")
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    skill = (
+        ROOT / "openclaw/maxnow-ballet-live/SKILL.md"
+    ).read_text(encoding="utf-8")
+    required = (
+        "OnCalendar=Sun *-*-* 14:19:35 Asia/Shanghai",
+        "Persistent=false",
+        "AccuracySec=1s",
+        "LoadCredentialEncrypted=wenda-session.json:",
+        "scripts/book_ballet_fast.py execute",
+        "ConditionPathExists=/etc/maxnow-ballet/enable-fast-booking",
+        "location = /data/ballet-booking-fast.json",
+        "alias /var/lib/maxnow-ballet-booking-fast-public/ballet-booking-fast.json;",
+        'const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json"',
+        "function renderBalletBookingFast()",
+        'id="ballet-booking-fast-next"',
+        ".ballet-booking-fast-panel {",
+        "周六 > 周日 > 周五 > 其他日期",
+    )
+    combined = "\n".join(
+        (timer, service, locations, dashboard_js, dashboard_html, dashboard_css, skill)
+    )
+    if any(marker not in combined for marker in required):
+        raise ValueError("ballet fast booking: service, UI, or Skill contract is incomplete")
+    return (
+        "ballet fast booking: Sunday precision timer, sequential fast path, "
+        "priority, redaction, status UI, and fail-closed tests are valid"
     )
 
 
@@ -1244,9 +1341,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=158" not in dashboard_html
+        "styles.css?v=159" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=132" not in dashboard_html
+        or "app.js?v=133" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     polish_rules = (
@@ -1285,7 +1382,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=132" not in dashboard_html:
+    if "app.js?v=133" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
@@ -1374,6 +1471,7 @@ def main():
     checks.append(check_ballet_sync())
     checks.append(check_ballet_live_query())
     checks.append(check_ballet_booking())
+    checks.append(check_ballet_booking_fast())
     checks.append(check_ballet_session_probe())
     checks.append(check_ballet_session_status())
     checks.append(check_auth_surface())

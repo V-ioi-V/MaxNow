@@ -1420,6 +1420,8 @@ body[data-view="tokens"] .topbar-token-ranges {
 .system-item,
 .cloud-meta div,
 .ballet-session-metrics div,
+.ballet-booking-fast-metrics div,
+.ballet-booking-fast-target,
 .ricky-place-item,
 .ricky-record-item,
 .life-food-option,
@@ -1466,6 +1468,8 @@ body[data-view="tokens"] .topbar-token-ranges {
   .system-item:hover,
   .cloud-meta div:hover,
   .ballet-session-metrics div:hover,
+  .ballet-booking-fast-metrics div:hover,
+  .ballet-booking-fast-target:hover,
   .ricky-place-item:hover,
     .ricky-record-item:hover,
     .life-food-option:hover,
@@ -5299,6 +5303,110 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   margin-bottom: var(--page-section-gap);
 }
 
+.ballet-booking-fast-panel {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  margin-bottom: var(--page-section-gap);
+}
+
+.ballet-booking-fast-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ballet-booking-fast-metrics div {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  border: 1px solid color-mix(in srgb, var(--ballet) 15%, var(--line));
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  background: #ffffff;
+}
+
+.ballet-booking-fast-metrics span,
+.ballet-booking-fast-target small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ballet-booking-fast-metrics strong {
+  color: var(--text);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.ballet-booking-fast-priority {
+  margin: 0 0 12px;
+  color: var(--ballet);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ballet-booking-fast-targets,
+.ballet-booking-fast-results {
+  display: grid;
+  gap: 8px;
+}
+
+.ballet-booking-fast-results:not([hidden]) {
+  margin-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--ballet) 14%, var(--line));
+  padding-top: 12px;
+}
+
+.ballet-booking-fast-results:not([hidden])::before {
+  content: "上次执行结果";
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ballet-booking-fast-target {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(210px, 0.5fr) minmax(160px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  background: #ffffff;
+}
+
+.ballet-booking-fast-target time {
+  color: var(--ballet);
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.ballet-booking-fast-target > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.ballet-booking-fast-target strong,
+.ballet-booking-fast-target small {
+  overflow-wrap: anywhere;
+}
+
+.ballet-booking-fast-target[data-state="booked"] .status-pill,
+.ballet-booking-fast-target[data-state="already_booked"] .status-pill {
+  border-color: var(--green-border);
+  background: #effbf4;
+  color: var(--ok);
+}
+
 .ballet-chart-controls {
   display: flex;
   align-items: center;
@@ -6046,6 +6154,18 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     justify-content: flex-start;
   }
 
+  .ballet-booking-fast-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-booking-fast-target {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .ballet-booking-fast-target time {
+    grid-column: 1 / -1;
+  }
+
 }
 
 @media (max-width: 560px) {
@@ -6075,6 +6195,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   }
 
   .ballet-session-metrics,
+  .ballet-booking-fast-metrics,
   .ballet-membership-metrics,
   .ballet-week-grid {
     grid-template-columns: 1fr;
@@ -6111,9 +6232,14 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   }
 
   .ballet-history-item,
-  .ballet-upcoming-item {
+  .ballet-upcoming-item,
+  .ballet-booking-fast-target {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .ballet-booking-fast-target .status-pill {
+    justify-self: start;
   }
 
   .ballet-history-meta {

@@ -11,6 +11,7 @@ const RICKY_URL = "./data/ricky.json";
 const LIFE_FOODS_URL = "./data/life-foods.json";
 const BALLET_URL = "./data/ballet.json";
 const BALLET_SESSION_URL = "./data/ballet-session.json";
+const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json";
 const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
@@ -122,6 +123,14 @@ const fallbackBalletSession = window.MAXNOW_BALLET_SESSION_DATA || {
   status: "unknown",
   refreshIntervalMinutes: 25,
 };
+const fallbackBalletBookingFast =
+  window.MAXNOW_BALLET_BOOKING_FAST_DATA || {
+    schemaVersion: 1,
+    enabled: false,
+    priorityOrder: ["周六", "周日", "周五", "其他日期"],
+    targets: [],
+    lastStatus: "waiting",
+  };
 
 let dashboardData = fallbackData;
 let last30Data = fallbackLast30;
@@ -136,6 +145,7 @@ let rickyData = fallbackRicky;
 let lifeFoodsData = fallbackLifeFoods;
 let balletData = fallbackBallet;
 let balletSessionData = fallbackBalletSession;
+let balletBookingFastData = fallbackBalletBookingFast;
 let wikiTodoError = "";
 let activeTokenRange = "1d";
 let weatherMetaFitFrame = 0;
@@ -2492,6 +2502,115 @@ function renderBalletSessionExperiment(now = new Date()) {
   );
 }
 
+const BALLET_BOOKING_FAST_STATUS = {
+  waiting: { label: "等待首次执行", tone: "waiting" },
+  success: { label: "运行正常", tone: "success" },
+  completed_unverified: { label: "已提交，待核验", tone: "stale" },
+  stopped: { label: "已安全停止", tone: "error" },
+  auth_required: { label: "登录已失效", tone: "error" },
+  outside_window: { label: "未到抢课时间", tone: "waiting" },
+  configuration_error: { label: "配置异常", tone: "error" },
+  source_changed: { label: "页面结构变化", tone: "error" },
+  unknown_result: { label: "结果待确认", tone: "error" },
+};
+
+const BALLET_BOOKING_RECORD_STATUS = {
+  booked: "已抢到",
+  already_booked: "已预约",
+  ready: "可预约",
+  not_available: "不可预约",
+  course_not_unique: "未找到唯一课程",
+  card_not_open: "课程卡未开放",
+  card_selection_required: "需选择课程卡",
+  no_eligible_card: "无可用课程卡",
+  rules_blocked: "规则未通过",
+  full: "已满",
+  stopped: "已停止预约",
+  notopen: "尚未开放",
+  unknown_result: "结果待确认",
+  source_changed: "页面结构变化",
+  auth_required: "登录已失效",
+  not_attempted: "未继续",
+};
+
+function createBalletBookingFastTarget(target = {}, result = null) {
+  const article = document.createElement("article");
+  article.className = "ballet-booking-fast-target";
+  if (result?.status) article.dataset.state = result.status;
+
+  const time = document.createElement("time");
+  const shortDate = String(target.date || "").slice(5).replace("-", "/");
+  time.textContent = [target.weekday, shortDate, `${target.startTime || "--"}–${target.endTime || "--"}`]
+    .filter(Boolean)
+    .join(" · ");
+
+  const main = document.createElement("div");
+  const title = document.createElement("strong");
+  title.textContent = target.course || "未命名课程";
+  const meta = document.createElement("small");
+  meta.textContent = [target.teacher, target.venue].filter(Boolean).join(" · ");
+  main.append(title, meta);
+
+  const status = document.createElement("span");
+  status.className = "status-pill";
+  status.textContent = result
+    ? BALLET_BOOKING_RECORD_STATUS[result.status] || "状态待确认"
+    : "计划中";
+  article.append(time, main, status);
+  return article;
+}
+
+function renderBalletBookingFast() {
+  const statusKey = String(balletBookingFastData?.lastStatus || "waiting");
+  const statusState =
+    BALLET_BOOKING_FAST_STATUS[statusKey] || BALLET_BOOKING_FAST_STATUS.stopped;
+  const statusNode = qs("#ballet-booking-fast-status");
+  setText("#ballet-booking-fast-status", statusState.label);
+  if (statusNode) statusNode.dataset.state = statusState.tone;
+  setText(
+    "#ballet-booking-fast-next",
+    formatBalletSessionTimestamp(balletBookingFastData?.nextRunAt),
+  );
+  setText(
+    "#ballet-booking-fast-last",
+    formatBalletSessionTimestamp(balletBookingFastData?.lastAttemptAt),
+  );
+  setText(
+    "#ballet-booking-fast-total",
+    `${Math.max(0, Math.floor(balletNumber(balletBookingFastData?.totalBooked)))} 节`,
+  );
+  setText(
+    "#ballet-booking-fast-priority",
+    `固定优先级：${(balletBookingFastData?.priorityOrder || []).join(" > ")}`,
+  );
+
+  const targets = Array.isArray(balletBookingFastData?.targets)
+    ? balletBookingFastData.targets
+    : [];
+  const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
+    ? balletBookingFastData.lastRun.records
+    : [];
+  const resultsByKey = new Map(lastRecords.map((record) => [record.key, record]));
+  const targetNodes = targets.map((target) =>
+    createBalletBookingFastTarget(target, null),
+  );
+  const resultNodes = targets
+    .filter((target) => resultsByKey.has(target.key))
+    .map((target) =>
+      createBalletBookingFastTarget(target, resultsByKey.get(target.key)),
+    );
+  const targetContainer = qs("#ballet-booking-fast-targets");
+  const resultContainer = qs("#ballet-booking-fast-results");
+  if (targetContainer) {
+    targetContainer.replaceChildren(...targetNodes);
+    targetContainer.hidden = !targetNodes.length;
+  }
+  if (resultContainer) {
+    resultContainer.replaceChildren(...resultNodes);
+    resultContainer.hidden = !resultNodes.length;
+  }
+}
+
 function balletRecordDate(item = {}) {
   return String(item.date || item.classDate || item.startDate || item.startAt || item.startTime || "").slice(0, 10);
 }
@@ -3432,6 +3551,7 @@ function renderBallet() {
   }
 
   renderBalletSessionExperiment();
+  renderBalletBookingFast();
   renderBalletMembership();
   renderBalletWeek();
   renderBalletUpcoming();
@@ -3826,7 +3946,12 @@ async function loadHomeData({ force = false } = {}) {
       window.MAXNOW_BALLET_SESSION_DATA || fallbackBalletSession,
       "ballet-session",
     ),
-  ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta, projectStatus, ballet, balletSession]) => {
+    readJson(
+      BALLET_BOOKING_FAST_URL,
+      window.MAXNOW_BALLET_BOOKING_FAST_DATA || fallbackBalletBookingFast,
+      "ballet-booking-fast",
+    ),
+  ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta, projectStatus, ballet, balletSession, balletBookingFast]) => {
     dashboardData = dashboard;
     last30Data = last30;
     wikiTodoData = wikiTodo;
@@ -3835,6 +3960,7 @@ async function loadHomeData({ force = false } = {}) {
     projectMetaData = projectMeta;
     balletData = ballet;
     balletSessionData = balletSession;
+    balletBookingFastData = balletBookingFast;
     projectStatusData = projectStatus;
     updateClock();
     renderHome();
