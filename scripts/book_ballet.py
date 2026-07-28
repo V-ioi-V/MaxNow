@@ -690,14 +690,17 @@ def booking_contract(candidate: dict[str, Any]) -> dict[str, Any]:
         if parts.netloc and parts.netloc != urlsplit(ballet.BASE_URL).netloc:
             continue
         paths.add(parts.path)
-    expected_rules_path = CHECK_RULES_PREFIX + customer_id
     expected = {
         CARD_TYPE_PATH,
-        expected_rules_path,
         BOOKING_SUBMIT_PATH,
         GET_USING_CARD_PATH,
     }
-    if not expected.issubset(paths):
+    rules_paths = {
+        path
+        for path in paths
+        if re.fullmatch(re.escape(CHECK_RULES_PREFIX) + r"\d+", path)
+    }
+    if not expected.issubset(paths) or len(rules_paths) != 1:
         raise BookingFailure(
             "source_changed",
             safe_diagnostic(
@@ -711,7 +714,7 @@ def booking_contract(candidate: dict[str, Any]) -> dict[str, Any]:
         "classTableId": class_table_id,
         "customerId": customer_id,
         "cardTypePath": CARD_TYPE_PATH,
-        "rulesPath": expected_rules_path,
+        "rulesPath": next(iter(rules_paths)),
         "bookingPath": BOOKING_SUBMIT_PATH,
     }
 
