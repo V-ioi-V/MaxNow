@@ -62,12 +62,25 @@ log() {
 }
 
 pull_origin_main() {
-  log "pull latest origin/main"
-  if command -v timeout >/dev/null 2>&1; then
-    timeout "${GIT_PULL_TIMEOUT_SECONDS}s" git pull --ff-only origin main
-  else
-    git pull --ff-only origin main
-  fi
+  local attempt=1
+  while [[ "$attempt" -le 3 ]]; do
+    log "pull latest origin/main (attempt $attempt/3)"
+    if command -v timeout >/dev/null 2>&1; then
+      if timeout "${GIT_PULL_TIMEOUT_SECONDS}s" git pull --ff-only origin main; then
+        return
+      fi
+    elif git pull --ff-only origin main; then
+      return
+    fi
+
+    if [[ "$attempt" -eq 3 ]]; then
+      log "pull latest origin/main failed after 3 attempts"
+      return 1
+    fi
+    log "pull failed, possibly due to a concurrent Git update; retrying"
+    sleep "$((attempt * 2))"
+    attempt=$((attempt + 1))
+  done
 }
 
 usage_units() {

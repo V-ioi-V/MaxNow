@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 11:13",
-  "version": "1.0.5.33",
-  "versionLabel": "v1.0.5.33",
-  "branch": "main",
-  "commit": "3fd6c9f",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 3fd6c9f · 干净",
+  "updatedAt": "2026-07-28 11:30",
+  "version": "1.0.5.34",
+  "versionLabel": "v1.0.5.34",
+  "branch": "bugfix/server-token-pull-retry",
+  "commit": "6006669",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/server-token-pull-retry · commit 6006669 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "修复 Token 总账并发拉取漏更",
+      "summary": "macOS 源账本已正常上报，但服务器 `11:10` 总账任务与另一条 Git 更新并发，因远端引用锁竞争退出；手动补跑后线上总账更新到 `11:28`，Codex macOS 来源时间更新到 `11:00`。"
+    },
     {
       "date": "2026-07-28",
       "title": "增加芭蕾实时查询 Skill",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "增加芭蕾周课表与周日发布刷新",
       "summary": "芭蕾页新增包含源站全部课程的粉白周课表，桌面使用时间 × 日期网格，移动端按日期分组；当天高亮、过去日期淡化、未来日期保持普通状态，已预约整卡使用粉玫瑰高亮，排队中整卡使用橙色高亮。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "统一所有预约行并补齐取消截止",
-      "summary": "删除第一条预约的大号主卡和“下一节”特殊标识，让所有未来预约使用同一紧凑行样式；每条预约都在时间与老师下方增加小字号真实最晚取消时间。"
     }
   ]
 }

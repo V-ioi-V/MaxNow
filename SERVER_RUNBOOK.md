@@ -744,7 +744,9 @@ ubuntu crontab 在每小时 `:10` 拉取本机源账本并发布统一 Token 总
 # END MAXNOW-TOKEN-USAGE-REFRESH
 ```
 
-固定周期为 macOS `:00`、Windows `:02`、服务器源采集 `:05`、总账发布 `:10`。总账任务保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage`；`git pull` 默认 120 秒超时。
+固定周期为 macOS `:00`、Windows `:02`、服务器源采集 `:05`、总账发布 `:10`。总账任务保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage`；`git pull` 单次默认 120 秒超时，遇到并发 Git 更新等瞬时失败时最多尝试 3 次。
+
+2026-07-28 11:10 的总账发布曾与另一条 Git 更新并发，`git pull` 因 `cannot lock ref 'refs/remotes/origin/main'` 退出，导致已经上报到 `origin/main` 的 macOS 源账本没有进入线上总账。11:28 使用原 cron 锁手动补跑后，总账更新为 `11:28`，Codex macOS 来源时间更新为 `11:00`；随后为拉取步骤增加有限重试，避免一次引用锁竞争漏掉整小时发布。
 
 2026-07-02 已部署 Token 来源卡范围口径修正：
 
