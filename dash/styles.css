@@ -4405,22 +4405,32 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   --card-border: var(--ballet-border);
 }
 
-.ballet-update-time {
+.ballet-status-line {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
   margin: 0 2px 8px;
+}
+
+.ballet-update-time {
+  min-width: 0;
+  margin: 0;
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
   line-height: 1.4;
-  text-align: right;
+  overflow-wrap: anywhere;
 }
 
-#ballet-view .ballet-session-card {
-  --card-color: var(--ballet);
-  --card-border: var(--ballet-border);
+#cloud-view .ballet-session-card {
+  --card-color: var(--purple);
+  --card-border: var(--purple-border);
   min-width: 0;
-  margin-bottom: 0;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--ballet) 7%, #ffffff), #ffffff 58%);
+    linear-gradient(135deg, color-mix(in srgb, var(--purple) 6%, #ffffff), #ffffff 58%);
+  grid-column: 1 / -1;
 }
 
 .ballet-session-summary {
@@ -4440,7 +4450,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-session-summary:focus-visible {
   border-radius: 10px;
-  outline: 2px solid color-mix(in srgb, var(--ballet) 55%, #ffffff);
+  outline: 2px solid color-mix(in srgb, var(--card-color) 55%, #ffffff);
   outline-offset: 4px;
 }
 
@@ -4456,8 +4466,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   width: 9px;
   height: 9px;
   display: block;
-  border-right: 2px solid var(--ballet);
-  border-bottom: 2px solid var(--ballet);
+  border-right: 2px solid var(--card-color);
+  border-bottom: 2px solid var(--card-color);
   transform: rotate(45deg);
   transition: transform 160ms ease;
 }
@@ -4470,62 +4480,96 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   margin-top: 18px;
 }
 
-#ballet-view .ballet-session-card[data-state="auth_required"],
-#ballet-view .ballet-session-card[data-state="interrupted"] {
+#cloud-view .ballet-session-card[data-state="auth_required"],
+#cloud-view .ballet-session-card[data-state="interrupted"] {
   border-color: var(--red-border);
 }
 
-#ballet-view .ballet-session-card[data-state="delayed"] {
+#cloud-view .ballet-session-card[data-state="delayed"] {
   border-color: var(--orange-border);
 }
 
-.ballet-primary-grid {
+.ballet-overview-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   align-items: stretch;
   gap: var(--page-grid-gap);
   margin-bottom: var(--page-section-gap);
 }
 
-.ballet-primary-grid .ballet-bookings-panel,
-.ballet-primary-grid .ballet-week-panel,
-.ballet-primary-grid .ballet-membership-card {
+.ballet-overview-grid .ballet-next-panel,
+.ballet-overview-grid .ballet-week-panel {
   min-width: 0;
   height: 100%;
   margin-bottom: 0;
 }
 
-.ballet-bookings-panel {
+.ballet-next-panel,
+.ballet-week-panel {
   display: flex;
   flex-direction: column;
 }
 
-.ballet-bookings-panel .ballet-upcoming-list {
+.ballet-next-class,
+.ballet-overview-grid .ballet-week-grid {
   flex: 1;
+}
+
+.ballet-next-class {
   display: grid;
-  grid-auto-rows: auto;
-  gap: 8px;
 }
 
-.ballet-primary-grid .ballet-membership-card,
-.ballet-primary-grid .ballet-week-panel {
-  display: flex;
-  flex-direction: column;
+.ballet-next-class .empty-state {
+  height: 100%;
+  min-height: 128px;
 }
 
-.ballet-primary-grid .ballet-membership-list {
-  flex: 1;
-}
-
-.ballet-primary-grid .ballet-membership-item:only-child {
+.ballet-next-class .ballet-upcoming-item {
   height: 100%;
 }
 
-.ballet-primary-grid .ballet-membership-metrics,
-.ballet-primary-grid .ballet-week-grid {
+.ballet-overview-grid .ballet-week-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: minmax(94px, 1fr);
-  flex: 1;
+  grid-auto-rows: minmax(84px, 1fr);
+}
+
+.ballet-course-plan-panel {
+  margin-bottom: var(--page-section-gap);
+}
+
+.ballet-course-plan-grid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--page-grid-gap);
+}
+
+.ballet-plan-group {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--ballet) 16%, var(--line));
+  border-radius: var(--radius);
+  background: #ffffff;
+}
+
+.ballet-plan-group > header,
+.ballet-history-section > header {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ballet-plan-group h3,
+.ballet-history-section h3 {
+  margin: 3px 0 0;
+  font-size: 16px;
+}
+
+.ballet-plan-group .ballet-upcoming-list {
+  gap: 8px;
 }
 
 .ballet-timetable-panel {
@@ -4831,12 +4875,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   text-align: center;
 }
 
-@media (min-width: 1201px) {
-  .ballet-primary-grid .ballet-membership-metrics strong {
-    font-size: clamp(18px, 1.65vw, 22px);
-  }
-}
-
 .ballet-membership-list {
   display: grid;
   gap: 12px;
@@ -4880,7 +4918,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-membership-metrics,
 .ballet-week-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -4906,6 +4944,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-membership-metrics span,
+.ballet-membership-metrics small,
 .ballet-week-grid span,
 .ballet-week-grid small {
   color: var(--muted);
@@ -4921,8 +4960,40 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   overflow-wrap: anywhere;
 }
 
+.ballet-membership-card {
+  margin-bottom: 0;
+}
+
+.ballet-membership-item {
+  grid-template-columns: minmax(220px, 0.55fr) minmax(280px, 0.8fr) minmax(320px, 1fr);
+  align-items: stretch;
+}
+
+.ballet-membership-item > header {
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ballet-membership-item > header .status-pill {
+  margin-top: 2px;
+}
+
+.ballet-membership-metrics section {
+  min-height: 0;
+  justify-items: start;
+  padding: 13px 14px;
+  text-align: left;
+}
+
+.ballet-membership-metrics strong {
+  font-size: clamp(17px, 1.8vw, 22px);
+}
+
 .ballet-membership-verdict {
   min-width: 0;
+  display: grid;
+  align-content: center;
   padding: 13px 15px;
   border: 1px solid var(--green-border);
   border-radius: var(--radius);
@@ -4968,7 +5039,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   gap: 7px 12px;
   margin: 4px 0 18px;
   padding: 15px 17px;
-  border: 1px solid color-mix(in srgb, var(--ballet) 18%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--card-color) 18%, var(--line));
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.82);
 }
@@ -4981,7 +5052,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-session-duration strong {
   min-width: 0;
-  color: var(--ballet);
+  color: var(--card-color);
   font-size: clamp(27px, 3vw, 40px);
   line-height: 1;
   overflow-wrap: anywhere;
@@ -5005,14 +5076,12 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-session-metrics div {
-  --card-color: var(--ballet);
-  --card-border: var(--ballet-border);
   min-width: 0;
   display: grid;
   align-content: start;
   gap: 7px;
   padding: 12px 13px;
-  border: 1px solid color-mix(in srgb, var(--ballet) 13%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--card-color) 13%, var(--line));
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.88);
 }
@@ -5057,9 +5126,9 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-session-evidence span {
   min-width: 0;
   padding: 5px 9px;
-  border: 1px solid color-mix(in srgb, var(--ballet) 12%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--card-color) 12%, var(--line));
   border-radius: 999px;
-  background: color-mix(in srgb, var(--ballet) 4%, #ffffff);
+  background: color-mix(in srgb, var(--card-color) 4%, #ffffff);
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
@@ -5127,6 +5196,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 #ballet-view .status-pill[data-state="auth"],
 #ballet-view .status-pill[data-state="error"],
+#cloud-view .status-pill[data-state="auth"],
+#cloud-view .status-pill[data-state="error"],
 .ballet-home-card .status-pill[data-state="auth"],
 .ballet-home-card .status-pill[data-state="error"] {
   border-color: var(--red-border);
@@ -5135,6 +5206,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 #ballet-view .status-pill[data-state="stale"],
+#cloud-view .status-pill[data-state="stale"],
 .ballet-home-card .status-pill[data-state="stale"] {
   border-color: var(--orange-border);
   background: #fff7ed;
@@ -5142,6 +5214,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 #ballet-view .status-pill[data-state="success"],
+#cloud-view .status-pill[data-state="success"],
 .ballet-home-card .status-pill[data-state="success"] {
   border-color: var(--green-border);
   background: #effbf4;
@@ -5249,6 +5322,34 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   padding: 0 2px;
 }
 
+.ballet-training-trend[hidden] {
+  display: none;
+}
+
+.ballet-trend-placeholder {
+  margin: 2px 0 0;
+  padding: 16px;
+  border: 1px dashed var(--ballet-border);
+  border-radius: var(--radius);
+  background: #fff8fa;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.ballet-trend-placeholder[hidden] {
+  display: none;
+}
+
+.ballet-history-section {
+  min-width: 0;
+  margin-top: var(--page-grid-gap);
+  padding-top: var(--page-grid-gap);
+  border-top: 1px solid color-mix(in srgb, var(--ballet) 14%, var(--line));
+}
+
 .ballet-bar-list,
 .ballet-history-list,
 .ballet-upcoming-list {
@@ -5299,16 +5400,6 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   background: var(--card-color);
 }
 
-.ballet-history-panel {
-  margin-bottom: var(--page-section-gap);
-}
-
-.ballet-booking-fast-panel {
-  --card-color: var(--ballet);
-  --card-border: var(--ballet-border);
-  margin-bottom: var(--page-section-gap);
-}
-
 .ballet-booking-fast-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -5317,12 +5408,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-booking-fast-metrics div {
-  --card-color: var(--ballet);
-  --card-border: var(--ballet-border);
   min-width: 0;
   display: grid;
   gap: 6px;
-  border: 1px solid color-mix(in srgb, var(--ballet) 15%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--card-color) 15%, var(--line));
   border-radius: var(--radius);
   padding: 12px 14px;
   background: #ffffff;
@@ -5344,9 +5433,16 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-booking-fast-priority {
   margin: 0 0 12px;
-  color: var(--ballet);
+  color: var(--card-color);
   font-size: 13px;
   font-weight: 800;
+}
+
+.cloud-operation-boundary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .ballet-booking-fast-targets,
@@ -5556,15 +5652,25 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   color: #b85f18;
 }
 
-.ballet-bookings-panel .ballet-upcoming-item {
+.ballet-plan-group .ballet-upcoming-item,
+.ballet-next-class .ballet-upcoming-item {
   grid-template-columns: 70px minmax(0, 1fr) auto;
   grid-template-rows: auto auto;
   gap: 10px;
   padding: 9px 11px;
 }
 
-.ballet-bookings-panel .ballet-upcoming-date {
+.ballet-plan-group .ballet-upcoming-date,
+.ballet-next-class .ballet-upcoming-date {
   grid-row: 1 / span 2;
+}
+
+.ballet-next-class .ballet-upcoming-item {
+  grid-template-columns: minmax(86px, 0.2fr) minmax(0, 1fr) auto;
+  align-content: center;
+  padding: 16px;
+  border-color: color-mix(in srgb, var(--ballet) 24%, var(--line));
+  background: linear-gradient(135deg, #fff5f8, #ffffff 64%);
 }
 
 .ballet-upcoming-note {
@@ -5878,14 +5984,12 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 @media (max-width: 1200px) {
-  .ballet-primary-grid {
-    grid-template-columns: 1fr;
+  .ballet-membership-item {
+    grid-template-columns: minmax(220px, 0.55fr) minmax(0, 1fr);
   }
 
-  .ballet-primary-grid .ballet-membership-metrics,
-  .ballet-primary-grid .ballet-week-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-auto-rows: auto;
+  .ballet-membership-verdict {
+    grid-column: 1 / -1;
   }
 }
 
@@ -5962,9 +6066,17 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .ballet-primary-grid .ballet-membership-metrics,
-  .ballet-primary-grid .ballet-week-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .ballet-overview-grid,
+  .ballet-course-plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-membership-item {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-membership-verdict {
+    grid-column: auto;
   }
 
   .home-lane,
@@ -6202,14 +6314,14 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     gap: 10px;
   }
 
-  .ballet-primary-grid .ballet-membership-metrics,
-  .ballet-primary-grid .ballet-week-grid {
-    grid-template-columns: 1fr;
-  }
-
   .ballet-membership-item > header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .ballet-status-line {
+    align-items: flex-start;
+    flex-direction: column-reverse;
   }
 
   .ballet-session-evidence {
@@ -6246,14 +6358,18 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     grid-column: auto;
   }
 
-  .ballet-bookings-panel .ballet-upcoming-item {
+  .ballet-plan-group .ballet-upcoming-item,
+  .ballet-next-class .ballet-upcoming-item {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
   }
 
-  .ballet-bookings-panel .ballet-upcoming-date,
-  .ballet-bookings-panel .ballet-upcoming-note,
-  .ballet-bookings-panel .ballet-upcoming-item .ballet-history-meta {
+  .ballet-plan-group .ballet-upcoming-date,
+  .ballet-plan-group .ballet-upcoming-note,
+  .ballet-plan-group .ballet-upcoming-item .ballet-history-meta,
+  .ballet-next-class .ballet-upcoming-date,
+  .ballet-next-class .ballet-upcoming-note,
+  .ballet-next-class .ballet-upcoming-item .ballet-history-meta {
     grid-column: auto;
     grid-row: auto;
     justify-content: flex-start;
