@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 22:45",
-  "version": "1.0.7.13",
-  "versionLabel": "v1.0.7.13",
-  "branch": "bugfix/ballet-timetable-layout",
-  "commit": "7d8e08a",
+  "updatedAt": "2026-07-28 23:35",
+  "version": "1.0.7.14",
+  "versionLabel": "v1.0.7.14",
+  "branch": "feature/ballet-timetable-transpose",
+  "commit": "2dd7197",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-layout · commit 7d8e08a · 有未提交代码改动",
+  "deployNote": "feature/ballet-timetable-transpose · commit 2dd7197 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "转置并恢复全宽周课表",
+      "summary": "桌面周课表恢复为内容区全宽，横轴改为课程开始时间，纵轴改为星期与日期；时间表头行和星期日期首列保持固定，多时间列只在课表面板内部滚动。"
+    },
     {
       "date": "2026-07-28",
       "title": "修正课表宽度、表头与同时间课程布局",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "Session 探针改为无限期运行",
       "summary": "闻道 Session 探针新增 `WENDA_DURATION_SECONDS=0` 无限调度模式；2026-07-28 20:23 在首轮 HTTP 200 / authenticated 验证成功后，从 v6 平滑交接到 v7，移除 systemd 运行时上限和计划结束时间。身份失效或连续 3 次未知 / 网络异常仍安全停止，服务器重启后仍不自动恢复。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "压缩并下移本周课程表",
-      "summary": "“本周课程表”移到芭蕾页最底部，桌面网格限制在约 `58vh` 内并固定日期行 / 时间列，移动端逐日列表也限制内部高度，减少单个课表撑满整页。"
     }
   ]
 };

@@ -4551,16 +4551,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-timetable-panel {
+  width: 100%;
   margin-bottom: var(--page-section-gap);
   background:
     linear-gradient(145deg, rgba(255, 241, 246, 0.7), #ffffff 34%, rgba(249, 244, 255, 0.68));
-}
-
-@media (min-width: 1501px) {
-  .ballet-timetable-panel {
-    width: 66.6667%;
-    margin-right: auto;
-  }
 }
 
 .ballet-timetable-head {
@@ -4591,17 +4585,21 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-timetable-grid {
-  --ballet-day-count: 7;
-  min-width: max(100%, calc(74px + var(--ballet-day-count) * 138px));
+  --ballet-time-count: 1;
+  --ballet-day-column-width: 94px;
+  --ballet-time-column-width: 128px;
+  min-width: 100%;
   display: grid;
-  grid-template-columns: 66px repeat(var(--ballet-day-count), minmax(132px, 1fr));
+  grid-template-columns:
+    var(--ballet-day-column-width)
+    var(--ballet-time-columns, repeat(var(--ballet-time-count), minmax(var(--ballet-time-column-width), 1fr)));
   gap: 6px;
 }
 
 @media (min-width: 861px) and (max-width: 1500px) {
   .ballet-timetable-grid {
-    min-width: max(100%, calc(58px + var(--ballet-day-count) * 122px));
-    grid-template-columns: 54px repeat(var(--ballet-day-count), minmax(118px, 1fr));
+    --ballet-day-column-width: 76px;
+    --ballet-time-column-width: 118px;
     gap: 4px;
   }
 }
@@ -4636,17 +4634,13 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-timetable-time {
   position: sticky;
-  z-index: 3;
-  left: 0;
-  min-height: 60px;
+  z-index: 6;
+  top: 0;
+  min-height: 46px;
   padding: 7px 5px;
 }
 
 .ballet-timetable-day {
-  position: sticky;
-  z-index: 6;
-  top: 0;
-  min-height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4655,6 +4649,14 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   color: #283447;
   text-align: center;
   transition: border-color 160ms ease, box-shadow 160ms ease, filter 160ms ease, opacity 160ms ease;
+}
+
+.ballet-timetable-grid > .ballet-timetable-day {
+  position: sticky;
+  z-index: 3;
+  left: 0;
+  min-height: 60px;
+  flex-direction: column;
 }
 
 .ballet-timetable-day strong {

@@ -3483,18 +3483,38 @@ function renderBalletTimetable() {
       ),
     ),
   ].sort();
-  grid.style.setProperty("--ballet-day-count", String(days.length));
+  grid.style.setProperty("--ballet-time-count", String(slots.length));
+  const timeColumns = slots
+    .map((slot) => {
+      const maxConcurrent = Math.max(
+        0,
+        ...days.map(
+          (day) =>
+            (Array.isArray(day.records) ? day.records : []).filter(
+              (record) => balletStartTime(record) === slot,
+            ).length,
+        ),
+      );
+      return maxConcurrent > 1
+        ? "minmax(calc(var(--ballet-time-column-width) * 2 + 4px), 2fr)"
+        : "minmax(var(--ballet-time-column-width), 1fr)";
+    })
+    .join(" ");
+  grid.style.setProperty("--ballet-time-columns", timeColumns);
   const corner = document.createElement("div");
   corner.className = "ballet-timetable-corner";
-  corner.textContent = "时间";
-  grid.append(corner, ...days.map(createBalletTimetableDayHeader));
-
-  slots.forEach((slot) => {
+  corner.textContent = "星期";
+  const timeHeaders = slots.map((slot) => {
     const time = document.createElement("div");
     time.className = "ballet-timetable-time";
     time.textContent = slot;
-    grid.appendChild(time);
-    days.forEach((day) => {
+    return time;
+  });
+  grid.append(corner, ...timeHeaders);
+
+  days.forEach((day, index) => {
+    grid.appendChild(createBalletTimetableDayHeader(day, index));
+    slots.forEach((slot) => {
       const cell = document.createElement("div");
       cell.className = "ballet-timetable-cell";
       cell.dataset.dayState = getBalletTimetableDayState(day.date);
