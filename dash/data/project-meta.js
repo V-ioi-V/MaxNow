@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 17:35",
-  "version": "1.0.7.01",
-  "versionLabel": "v1.0.7.01",
-  "branch": "feature/ballet-fast-retry-deploy-record",
-  "commit": "b95a5a1",
+  "updatedAt": "2026-07-28 17:38",
+  "version": "1.0.7.02",
+  "versionLabel": "v1.0.7.02",
+  "branch": "feature/ballet-share-card-todo",
+  "commit": "1cb3c9b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-fast-retry-deploy-record · commit b95a5a1 · 有未提交代码改动",
+  "deployNote": "feature/ballet-share-card-todo · commit 1cb3c9b · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "记录芭蕾分享图待办",
+      "summary": "芭蕾 Later 新增分享图功能：从现有脱敏数据选择下一节、本周训练、阶段节数 / 时长、主要课型和近期记录等关键信息，浏览器本地生成可预览、可下载的图片。"
+    },
     {
       "date": "2026-07-28",
       "title": "自动抢课改为逐课独立并增加安全重试",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "记录芭蕾 Apple 日历与多课预约待办",
       "summary": "芭蕾 Later 新增私有 ICS / `webcal://` 订阅：Apple 设备首次确认后自动刷新预约和候补，链接可撤销且不得暴露 PHPSESSID、会员标识或源记录 ID。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "固定芭蕾实时课表的默认范围与格式",
-      "summary": "Owner 泛问“有什么课程 / 有什么可以约的课”时，默认展示闻道实时返回的全部课型，不再只筛芭蕾；只有明确说“只看 / 仅看 / 只想看”某类课程时才按课型筛选。"
     }
   ]
 };
