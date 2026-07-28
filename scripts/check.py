@@ -1276,8 +1276,8 @@ def check_secondary_view_style():
             raise ValueError(f"secondary views: shared view class is missing on {view_id}")
     if 'class="view secondary-view" id="home-view"' in dashboard_html:
         raise ValueError("secondary views: Home must not inherit the secondary shell")
-    if dashboard_html.count("secondary-page-head") != 5:
-        raise ValueError("secondary views: five detail pages must use the shared page head")
+    if dashboard_html.count("secondary-page-head") != 4:
+        raise ValueError("secondary views: four detail pages must use the shared page head")
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
@@ -1307,6 +1307,8 @@ def check_secondary_view_style():
         raise ValueError("secondary views: retired card-top accent bar remains")
     ballet_view_markup = dashboard_html.split('id="ballet-view"', 1)[1].split('id="cloud-view"', 1)[0]
     cloud_view_markup = dashboard_html.split('id="cloud-view"', 1)[1].split('id="dounai-view"', 1)[0]
+    if "cloud-page-head" in cloud_view_markup or "Cloud Services" in cloud_view_markup:
+        raise ValueError("secondary views: Cloud must not repeat the topbar page title")
     layout_markers = (
         'id="ballet-updated"',
         'class="ballet-overview-grid"',
@@ -1350,7 +1352,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=161" not in dashboard_html
+        "styles.css?v=162" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=135" not in dashboard_html
     ):
