@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 11:07",
+  "updatedAt": "2026-07-28 11:08",
   "version": "1.0.5.32",
   "versionLabel": "v1.0.5.32",
-  "branch": "bugfix/ballet-live-credential-path",
-  "commit": "f689a3e",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-live-credential-path · commit f689a3e · 有未提交代码改动",
+  "branch": "main",
+  "commit": "12bb910",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 12bb910 · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-28",
