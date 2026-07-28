@@ -126,6 +126,9 @@ def check_required_files():
         "scripts/query_ballet_live.py",
         "scripts/run_ballet_live_query.sh",
         "scripts/test_query_ballet_live.py",
+        "scripts/book_ballet.py",
+        "scripts/run_ballet_booking.sh",
+        "scripts/test_book_ballet.py",
         "scripts/sync_ballet_session_status.py",
         "scripts/test_sync_ballet_session_status.py",
         "scripts/maxnow_auth_service.py",
@@ -248,6 +251,31 @@ def check_ballet_live_query():
     return (
         "ballet live query: no-cache scopes, date bounds, redaction, "
         "and fail-closed behavior are valid"
+    )
+
+
+def check_ballet_booking():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(ROOT / "scripts/test_book_ballet.py"),
+        ],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "ballet booking: fixture self-test failed: "
+            + result.stdout.strip()
+        )
+    return (
+        "ballet booking: exact matching, unified preflight, explicit "
+        "confirmation, sequential execution, verification, and redaction are valid"
     )
 
 
@@ -1345,6 +1373,7 @@ def main():
     checks.append(check_ballet_read_model())
     checks.append(check_ballet_sync())
     checks.append(check_ballet_live_query())
+    checks.append(check_ballet_booking())
     checks.append(check_ballet_session_probe())
     checks.append(check_ballet_session_status())
     checks.append(check_auth_surface())

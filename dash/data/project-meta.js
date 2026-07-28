@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 14:14",
-  "version": "1.0.5.36",
-  "versionLabel": "v1.0.5.36",
-  "branch": "feature/ballet-calendar-booking-todo",
-  "commit": "42da95a",
+  "updatedAt": "2026-07-28 16:40",
+  "version": "1.0.6.00",
+  "versionLabel": "v1.0.6.00",
+  "branch": "feature/ballet-booking",
+  "commit": "7e654e2",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-calendar-booking-todo · commit 42da95a · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking · commit 7e654e2 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "增加芭蕾对话式显式预约",
+      "summary": "新增精确课程预约脚本与 hardened transient runner；单课或多课先统一实时预检已有预约、余位、唯一课程卡和闻道规则，全部通过后再按输入顺序逐节提交并实时复核。"
+    },
     {
       "date": "2026-07-28",
       "title": "记录芭蕾 Apple 日历与多课预约待办",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "增加芭蕾实时查询 Skill",
       "summary": "新增 `maxnow-ballet-live` Skill 和服务器实时查询入口；以后对话中询问课表、预约 / 候补、上课记录、老师、余位或课程卡时，固定通过 MaxNow 服务器的当前 PHPSESSID 直接读取闻道，不再用 Dashboard 缓存回答。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "修复 macOS Codex Token 上报中断死锁",
-      "summary": "macOS 专用上报 clone 若在生成 `codex-macos-usage.*` 后、提交前被检查中断，下一轮会先确认没有越界改动，再恢复这两个任务自有生成文件并继续拉取、重新生成和上报。"
     }
   ]
 };

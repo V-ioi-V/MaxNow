@@ -391,6 +391,23 @@ scripts/run_ballet_live_query.sh membership
 
 实时入口只允许四种 scope、ISO 日期和既有 GET allowlist；课表单次最多 14 天，预约 / 上课明细最多 200 条。输出不得包含源记录 ID、会员标识、原始 HTML、Cookie、响应正文、凭据路径、unit 名称或内部日志。不要直接解密、打印、复制或散列 PHPSESSID。
 
+#### 芭蕾对话式显式预约
+
+只在 Owner 当前请求中明确要求预约精确课程时使用。输入最多 10 节，每节必须同时给出日期、开始 / 结束时间、课程名、老师和教室。先以 `confirm:false` 做实时统一预检；全部目标为 `ready` 或 `already_booked` 且 `mutationAttempts=0` 后，再将同一份输入仅改为 `confirm:true` 执行：
+
+```bash
+cd /var/www/maxnow-dashboard
+printf '%s' '{"courses":[{"date":"2026-08-20","startTime":"19:00","endTime":"20:00","courseName":"示例课程","teacher":"示例老师","venue":"示例教室"}],"confirm":false}' \
+  | scripts/run_ballet_booking.sh dry-run
+
+printf '%s' '{"courses":[{"date":"2026-08-20","startTime":"19:00","endTime":"20:00","courseName":"示例课程","teacher":"示例老师","venue":"示例教室"}],"confirm":true}' \
+  | scripts/run_ballet_booking.sh execute
+```
+
+runner 使用与实时查询相同的 host-bound 加密凭据和 hardened transient systemd unit。dry-run 可调用闻道固定的课程卡资格与规则检查 POST，但不会调用 `do_addbook`。execute 在统一预检通过后按输入顺序逐节重检并提交，每节最多一次 `do_addbook`，随后从实时预约记录验证；任何身份失效、规则变化或未知结果都会停止后续课程，未知结果禁止重试。脚本不支持取消、转课、支付、登录、候补写入或任意 POST，也不把多课预约伪装成可回滚事务。
+
+成功后运行 `scripts/run_ballet_live_query.sh bookings` 做独立实时复核，并启动一次 `maxnow-ballet-sync.service` 刷新页面脱敏预约快照。不得在命令、日志或记录中保存 PHPSESSID、卡片 / 会员 / 课程源 ID、原始响应或真实执行参数。
+
 2026-07-28 已部署主分支 `87bd4aa`（版本 `1.0.5.33`）的芭蕾实时查询 Skill。三轮部署前备份分别位于 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-ef5323`、`/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-fix-RDxVpv` 和 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-marker-pp8CNr`；运行数据按服务器权威来源精确恢复。服务器 OpenClaw Skill 入口已链接到仓库 `openclaw/maxnow-ballet-live`。首次验收依次发现 transient 命令参数不展开 `%d`、课表中文标题不稳定，最终改为读取 `CREDENTIALS_DIRECTORY` 与校验 `classtable` 结构；预约实时查询成功返回 4 条脱敏记录，课表实时查询于 11:12:34 返回当天 7 节课。最终结果为 `source=wenda-live`、`live=true`、单次 1 个 GET；查询前后 `dash/data/ballet.*` 与 `/var/lib/maxnow-ballet` 五个私有状态文件哈希不变，临时 `wenda-session.json` 凭据挂载已清理，服务器全仓检查通过。
 
 2026-07-28 已部署主分支 `93570a7`（版本 `1.0.5.29`）的芭蕾周课表与状态校准。两次部署前的公开运行数据分别备份在 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-timetable-GvlS8U` 和 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-status-fix-scTpbO`，私有账本另存 root-only 备份。生产 rolling 同步成功，当前课表为 2026-07-27 至 2026-08-02 共 7 天、55 节；源站日期选择器可见至 2026-10-31，但实际有课只到 2026-08-02。状态校准后仅 3 节本人已预约使用粉玫瑰高亮、1 节本人候补使用橙色高亮，20 节普通“可排队”课程保留状态但不高亮。`maxnow-ballet-sync.timer` 已安装每日 00:00 与周日 14:20 两个 `OnCalendar`，月度 full 保持每月 1 日 00:47；两个 timer 与 v6 Session 探针均为 active。服务器 18 项同步测试、全仓检查、`systemd-analyze verify`、`nginx -t`、脱敏字段断言和访问边界均通过。

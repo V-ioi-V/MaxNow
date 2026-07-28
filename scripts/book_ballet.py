@@ -47,7 +47,6 @@ class BookingControlParser(HTMLParser):
         self.div_depth = 0
         self.root_depth = 0
         self.current: dict[str, Any] | None = None
-        self.form: dict[str, Any] | None = None
         self.controls: list[dict[str, Any]] = []
         self.scripts: list[str] = []
         self.script_sources: list[str] = []
@@ -64,7 +63,7 @@ class BookingControlParser(HTMLParser):
             classes = set(values.get("class", "").split())
             if self.current is None and "classtable" in classes:
                 self.root_depth = self.div_depth
-                self.current = {"forms": [], "controls": []}
+                self.current = {"controls": []}
         if self.current is None:
             return
         self.current["controls"].append(
@@ -73,39 +72,11 @@ class BookingControlParser(HTMLParser):
                 "attrs": values,
             }
         )
-        if tag == "form":
-            if self.form is not None:
-                raise BookingFailure("source_changed")
-            self.form = {
-                "action": values.get("action", ""),
-                "method": values.get("method", "get").lower(),
-                "fields": {},
-            }
-        elif tag == "input" and self.form is not None:
-            name = values.get("name", "")
-            input_type = values.get("type", "text").lower()
-            if name and input_type not in {"submit", "button", "file"}:
-                if name in self.form["fields"]:
-                    raise BookingFailure("source_changed")
-                if input_type not in {"checkbox", "radio"} or "checked" in values:
-                    self.form["fields"][name] = values.get("value", "")
-        elif tag == "button" and self.form is not None:
-            name = values.get("name", "")
-            if name:
-                if name in self.form["fields"]:
-                    raise BookingFailure("source_changed")
-                self.form["fields"][name] = values.get("value", "")
-
     def handle_endtag(self, tag: str):
         if tag == "script":
             self.in_script = False
-        if self.current is not None and tag == "form" and self.form is not None:
-            self.current["forms"].append(self.form)
-            self.form = None
         if tag == "div":
             if self.current is not None and self.div_depth == self.root_depth:
-                if self.form is not None:
-                    raise BookingFailure("source_changed")
                 self.controls.append(self.current)
                 self.current = None
                 self.root_depth = 0
@@ -121,401 +92,34 @@ def safe_path_shape(value: str) -> str:
     return re.sub(r"(?<=/)\d+(?=/|$)", ":id", path)
 
 
-def balanced_region(text: str, opening: int, opener: str, closer: str) -> str:
-    depth = 0
-    quote = ""
-    escaped = False
-    for index in range(opening, len(text)):
-        char = text[index]
-        if quote:
-            if escaped:
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char == quote:
-                quote = ""
-            continue
-        if char in {"'", '"', "`"}:
-            quote = char
-        elif char == opener:
-            depth += 1
-        elif char == closer:
-            depth -= 1
-            if depth == 0:
-                return text[opening : index + 1]
-    return ""
-
-
-def property_expression(text: str, name: str) -> str:
-    match = re.search(rf"{re.escape(name)}[\"']?\s*:\s*", text)
-    if not match:
-        return ""
-    start = match.end()
-    depths = {"(": 0, "[": 0, "{": 0}
-    pairs = {")": "(", "]": "[", "}": "{"}
-    quote = ""
-    escaped = False
-    for index in range(start, len(text)):
-        char = text[index]
-        if quote:
-            if escaped:
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char == quote:
-                quote = ""
-            continue
-        if char in {"'", '"', "`"}:
-            quote = char
-        elif char in depths:
-            depths[char] += 1
-        elif char in pairs:
-            opener = pairs[char]
-            if depths[opener] == 0:
-                return text[start:index].strip()
-            depths[opener] -= 1
-        elif char == "," and not any(depths.values()):
-            return text[start:index].strip()
-    return text[start:].strip()
-
-
-def expression_contract(expression: str) -> dict[str, Any]:
-    literals = re.findall(r"[\"']([^\"']*)[\"']", expression)
-    field_names = sorted(
-        {
-            match
-            for literal in literals
-            for match in re.findall(r"(?:^|[?&])([A-Za-z_$][\w$]*)=", literal)
-        }
-    )
-    path_shapes = sorted(
-        {
-            safe_path_shape(literal)
-            for literal in literals
-            if literal.startswith("/")
-        }
-    )
-    identifiers = sorted(
-        {
-            value
-            for value in re.findall(r"\b([A-Za-z_$][\w$]*)\b", expression)
-            if value
-            not in {
-                "false",
-                "null",
-                "true",
-                "undefined",
-            }
-            and all(value not in literal for literal in literals)
-        }
-    )
-    contract: dict[str, Any] = {
-        "fieldNames": field_names,
-        "identifiers": identifiers,
-    }
-    if path_shapes:
-        contract["pathShapes"] = path_shapes
-    return contract
-
-
-def safe_script_skeleton(text: str) -> str:
-    allowed_literals = {
-        ".bookbtn",
-        "POST",
-        "bookid",
-        "cardid",
-        "cardstatus",
-        "classtableid",
-        "courseid",
-        "coursetype",
-        "custid",
-        "date",
-    }
-
-    def replace_literal(match: re.Match[str]) -> str:
-        quote = match.group(1)
-        value = match.group(2)
-        following = text[match.end() :]
-        is_object_key = bool(re.match(r"\s*:", following))
-        is_bracket_key = bool(
-            re.search(r"\[\s*$", text[: match.start()])
-            and re.match(r"\s*\]", following)
-        )
-        if value.startswith("/") or value.startswith(("http://", "https://")):
-            safe_value = f"<path:{safe_path_shape(value)}>"
-        elif value in allowed_literals or (
-            (is_object_key or is_bracket_key)
-            and re.fullmatch(r"[A-Za-z_$][\w$]*", value)
-        ) or re.fullmatch(
-            r"(?:[A-Z][A-Z_]*|true|false|success|ok)", value
-        ):
-            safe_value = value
-        else:
-            safe_value = "<string>"
-        return f"{quote}{safe_value}{quote}"
-
-    text = re.sub(r"([\"'])(.*?)(?<!\\)\1", replace_literal, text)
-    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.DOTALL)
-    text = re.sub(r"//[^\r\n]*", " ", text)
-    text = re.sub(r"\b\d+(?:\.\d+)?\b", "<number>", text)
-    return re.sub(r"\s+", " ", text).strip()[:12_000]
-
-
-def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
-    contracts = []
-    for selector_match in re.finditer(
-        r"\$\(\s*([\"'])\.bookbtn\1\s*\)\s*"
-        r"(?:\.on\(\s*([\"'])click\2\s*,|\.click\()\s*function\s*\([^)]*\)\s*\{",
-        script_text,
-    ):
-        opening = selector_match.end() - 1
-        handler = balanced_region(script_text, opening, "{", "}")
-        if not handler:
-            continue
-        jquery_targets = {
-            variable
-            for variable in re.findall(
-                r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*"
-                r"\$\(\s*this\s*\)",
-                handler,
-            )
-        }
-        direct_bindings = set(
-            re.findall(
-                r"(?:(?:var|let|const)\s+)?([A-Za-z_$][\w$]*)\s*=\s*"
-                r"\$\(\s*(?:this|[A-Za-z_$][\w$]*(?:\.currentTarget|\.target))"
-                r"\s*\)\.attr\(\s*[\"']([^\"']+)[\"']",
-                handler,
-            )
-        )
-        indirect_bindings = {
-            (variable, attribute)
-            for variable, target, attribute in re.findall(
-                r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*"
-                r"([A-Za-z_$][\w$]*)\.attr\(\s*[\"']([^\"']+)[\"']",
-                handler,
-            )
-            if target in jquery_targets
-        }
-        bindings = sorted(direct_bindings | indirect_bindings)
-        requests = []
-        for ajax_match in re.finditer(r"\$\.ajax\s*\(\s*\{", handler):
-            ajax_object = balanced_region(
-                handler, ajax_match.end() - 1, "{", "}"
-            )
-            if not ajax_object:
-                continue
-            method_match = re.search(
-                r"[\"']?(?:type|method)[\"']?\s*:\s*[\"']([A-Za-z]+)[\"']",
-                ajax_object,
-            )
-            direct_url_match = re.search(
-                r"url\s*:\s*[\"']([^\"']+)[\"']", ajax_object
-            )
-            direct_data_match = re.search(
-                r"data\s*:\s*([\"'])(.*?)\1",
-                ajax_object,
-                re.DOTALL,
-            )
-            url_expression = property_expression(ajax_object, "url")
-            data_expression = property_expression(ajax_object, "data")
-            data_keys = []
-            if data_expression.startswith("{") and data_expression.endswith("}"):
-                data_keys = sorted(
-                    set(
-                        re.findall(
-                            r"(?:^|,)\s*([A-Za-z_$][\w$]*)\s*:",
-                            data_expression[1:-1],
-                        )
-                    )
-                )
-            data_contract = expression_contract(data_expression)
-            if direct_data_match:
-                data_contract["fieldNames"] = sorted(
-                    set(data_contract["fieldNames"])
-                    | {
-                        value
-                        for value in re.findall(
-                            r"(?:^|[?&])([A-Za-z_$][\w$]*)=",
-                            direct_data_match.group(2),
-                        )
-                    }
-                )
-            data_keys = sorted(set(data_keys) | set(data_contract["fieldNames"]))
-            effects = []
-            if re.search(r"\.html\s*\(", ajax_object):
-                effects.append("replace-html")
-            if re.search(r"\.(?:modal|popup|openPopup)\s*\(", ajax_object):
-                effects.append("open-dialog")
-            if re.search(r"(?:window\.)?location(?:\.href)?\s*=", ajax_object):
-                effects.append("navigate")
-            request: dict[str, Any] = {
-                "method": method_match.group(1).upper() if method_match else "",
-                "dataKeys": data_keys,
-                "urlContract": expression_contract(url_expression),
-                "dataIdentifiers": data_contract["identifiers"],
-                "effects": effects,
-            }
-            path_shapes = request["urlContract"].get("pathShapes", [])
-            if len(path_shapes) == 1:
-                request["urlShape"] = path_shapes[0]
-            elif direct_url_match:
-                request["urlShape"] = safe_path_shape(direct_url_match.group(1))
-            requests.append(request)
-        contracts.append(
-            {
-                "selector": ".bookbtn",
-                "attributeBindings": [
-                    {"variable": variable, "attribute": attribute}
-                    for variable, attribute in bindings
-                ],
-                "requests": requests,
-                "skeleton": safe_script_skeleton(handler),
-            }
-        )
-    return contracts
-
-
-def safe_endpoint_roles(
-    script_text: str, control: dict[str, Any]
-) -> dict[str, Any]:
-    customer_ids = set(
-        re.findall(r"\bcustomerid\s*=\s*[\"']?(\d+)[\"']?", script_text)
-    )
-    customer_id = next(iter(customer_ids)) if len(customer_ids) == 1 else ""
-    button_course_ids = {
-        item["attrs"].get("courseid", "")
-        for item in control["controls"]
-        if "bookbtn" in item["attrs"].get("class", "").split()
-    }
-    button_class_table_ids = {
-        item["attrs"].get("classtableid", "")
-        for item in control["controls"]
-        if "bookbtn" in item["attrs"].get("class", "").split()
-    }
-    course_type_ids = {
-        item["attrs"].get("coursetype", "")
-        for item in control["controls"]
-        if item["attrs"].get("coursetype", "")
-    }
-    endpoints: dict[str, list[list[str]]] = {}
-    for name, suffix in re.findall(
-        r"/gm/weixin/classtable/"
-        r"(check_cardtypecourse|check_rules|do_addbook|getusingcard)"
-        r"((?:/\d+)+)",
-        script_text,
-    ):
-        roles = []
-        for value in suffix.strip("/").split("/"):
-            if value == ballet.STORE_ID:
-                roles.append("store")
-            elif customer_id and value == customer_id:
-                roles.append("customer")
-            elif value in button_course_ids:
-                roles.append("course")
-            elif value in button_class_table_ids:
-                roles.append("classTable")
-            elif value in course_type_ids:
-                roles.append("courseType")
-            else:
-                roles.append("other")
-        endpoints.setdefault(name, []).append(roles)
-    return {
-        "customerIdAssignmentCount": len(customer_ids),
-        "endpointSegmentRoles": endpoints,
-    }
-
-
 def safe_diagnostic(
     control: dict[str, Any],
     scripts: list[str],
     script_sources: list[str],
 ) -> dict[str, Any]:
-    forms = [
-        {
-            "method": form["method"],
-            "actionShape": safe_path_shape(form["action"]),
-            "fieldNames": sorted(form["fields"]),
-        }
-        for form in control["forms"]
-    ]
-    inline_functions = sorted(
-        {
-            match.group(1)
-            for item in control["controls"]
-            for value in item["attrs"].values()
-            for match in [re.match(r"\s*([A-Za-z_$][\w$]*)\s*\(", value)]
-            if match
-        }
-    )
     script_text = "\n".join(scripts)
-    script_functions = sorted(
-        set(re.findall(r"function\s+([A-Za-z_$][\w$]*)\s*\(", script_text))
-    )
-    script_signals = {
-        "selectors": sorted(
-            {
-                value
-                for value in re.findall(
-                    r"\$\(\s*[\"']([^\"']+)[\"']\s*\)", script_text
-                )
-                if "book" in value.lower()
-            }
+    buttons = [
+        item
+        for item in control["controls"]
+        if item["tag"] == "button"
+        and "bookbtn" in item["attrs"].get("class", "").split()
+    ]
+    return {
+        "bookingButtonCount": len(buttons),
+        "bookingButtonAttributeNames": sorted(
+            {name for item in buttons for name in item["attrs"]}
         ),
-        "attributeNames": sorted(
-            set(re.findall(r"\.attr\(\s*[\"']([^\"']+)[\"']", script_text))
-        ),
-        "requestCalls": sorted(
-            set(re.findall(r"\$\.(post|get|ajax)\s*\(", script_text))
-        ),
-        "pathShapes": sorted(
+        "scriptSources": sorted({safe_path_shape(item) for item in script_sources}),
+        "bookingPathShapes": sorted(
             {
                 safe_path_shape(value)
-                for value in re.findall(r"[\"'](/[^\"']+)[\"']", script_text)
-                if "book" in value.lower()
-            }
-        ),
-        "objectKeys": sorted(
-            set(
-                re.findall(
-                    r"(?:^|[,{\s])([A-Za-z_][\w-]*)\s*:",
+                for value in re.findall(
+                    r"[\"']((?:https?://[^\"']+)?/gm/weixin/classtable/"
+                    r"[^\"']+)[\"']",
                     script_text,
                 )
-            )
+            }
         ),
-        "bookingHandlers": safe_ajax_contracts(script_text),
-        "bookingContract": safe_endpoint_roles(script_text, control),
-    }
-    elements = []
-    seen = set()
-    for item in control["controls"]:
-        attrs = item["attrs"]
-        safe_item: dict[str, Any] = {
-            "tag": item["tag"],
-            "attributeNames": sorted(attrs),
-        }
-        if attrs.get("class"):
-            safe_item["classes"] = sorted(set(attrs["class"].split()))
-        if attrs.get("href"):
-            safe_item["hrefShape"] = safe_path_shape(attrs["href"])
-        if attrs.get("action"):
-            safe_item["actionShape"] = safe_path_shape(attrs["action"])
-        if attrs.get("onclick"):
-            match = re.match(
-                r"\s*([A-Za-z_$][\w$]*)\s*\(", attrs["onclick"]
-            )
-            safe_item["onclickFunction"] = match.group(1) if match else "inline"
-        signature = json.dumps(safe_item, sort_keys=True, ensure_ascii=False)
-        if signature not in seen:
-            seen.add(signature)
-            elements.append(safe_item)
-    return {
-        "forms": forms,
-        "inlineFunctions": inline_functions,
-        "scriptFunctions": script_functions,
-        "scriptSources": sorted({safe_path_shape(item) for item in script_sources}),
-        "scriptSignals": script_signals,
-        "elements": elements,
     }
 
 
@@ -629,25 +233,6 @@ def timetable_candidates(
             }
         )
     return candidates
-
-
-def booking_form(candidate: dict[str, Any]) -> tuple[str, dict[str, str]]:
-    forms = candidate["control"]["forms"]
-    matching = []
-    for form in forms:
-        action = urlsplit(form["action"]).path
-        if action == BOOKING_SUBMIT_PATH and form["method"] == "post":
-            matching.append((action, form["fields"]))
-    if len(matching) != 1 or not matching[0][1]:
-        raise BookingFailure(
-            "source_changed",
-            safe_diagnostic(
-                candidate["control"],
-                candidate["scripts"],
-                candidate["scriptSources"],
-            ),
-        )
-    return matching[0]
 
 
 def booking_contract(candidate: dict[str, Any]) -> dict[str, Any]:
@@ -856,6 +441,13 @@ class WendaBookingSource:
 
 
 def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, Any]:
+    recoverable_preflight_failures = {
+        "card_not_open",
+        "card_selection_required",
+        "course_not_unique",
+        "no_eligible_card",
+        "rules_blocked",
+    }
     prepared = []
     for target in courses:
         existing = current_booking(source, target)
@@ -870,7 +462,8 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
             continue
         candidates = timetable_candidates(source, target)
         if len(candidates) != 1:
-            raise BookingFailure("course_not_unique")
+            prepared.append({"target": target, "status": "course_not_unique"})
+            continue
         candidate = candidates[0]
         availability = candidate["record"]["availability"]
         if availability != "available":
@@ -882,9 +475,15 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
                 }
             )
             continue
-        contract = booking_contract(candidate)
-        card_id = eligible_card(source, contract)
-        check_rules(source, contract, card_id)
+        try:
+            contract = booking_contract(candidate)
+            card_id = eligible_card(source, contract)
+            check_rules(source, contract, card_id)
+        except BookingFailure as failure:
+            if failure.code not in recoverable_preflight_failures:
+                raise
+            prepared.append({"target": target, "status": failure.code})
+            continue
         prepared.append(
             {
                 "target": target,
@@ -892,75 +491,113 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
             }
         )
 
+    results = [
+        {
+            **public_course(item["target"]),
+            "status": item["status"],
+            **(
+                {"bookingStatus": item["bookingStatus"]}
+                if "bookingStatus" in item
+                else {}
+            ),
+            **(
+                {"availability": item["availability"]}
+                if "availability" in item
+                else {}
+            ),
+        }
+        for item in prepared
+    ]
+    preflight_blocked = any(
+        item["status"] not in {"ready", "already_booked"} for item in prepared
+    )
+    if not execute or preflight_blocked:
+        return {
+            "schemaVersion": 1,
+            "source": "wenda-live",
+            "status": "preflight_failed" if preflight_blocked else "success",
+            "live": True,
+            "mode": "execute" if execute else "dry-run",
+            "mutated": False,
+            "fetchedAt": ballet.iso_now(),
+            "requestsMade": source.request_count,
+            "postsMade": getattr(source, "post_count", 0),
+            "mutationAttempts": getattr(source, "mutation_count", 0),
+            "data": {"records": results},
+        }
+
     results = []
+    stop_reason = ""
     for item in prepared:
         target = item["target"]
-        if item["status"] != "ready":
+        if stop_reason:
+            results.append({**public_course(target), "status": "not_attempted"})
+            continue
+        if item["status"] == "already_booked":
             results.append(
                 {
                     **public_course(target),
-                    "status": item["status"],
-                    **(
-                        {"bookingStatus": item["bookingStatus"]}
-                        if "bookingStatus" in item
-                        else {}
-                    ),
-                    **(
-                        {"availability": item["availability"]}
-                        if "availability" in item
-                        else {}
-                    ),
+                    "status": "already_booked",
+                    "bookingStatus": item["bookingStatus"],
                 }
             )
             continue
-        if not execute:
-            results.append({**public_course(target), "status": "ready"})
-            continue
-        candidate = timetable_candidates(source, target)
-        if len(candidate) != 1 or candidate[0]["record"]["availability"] != "available":
-            results.append({**public_course(target), "status": "not_available"})
-            continue
-        contract = booking_contract(candidate[0])
-        card_id = eligible_card(source, contract)
-        check_rules(source, contract, card_id)
-        mutation_result = response_json(
-            source.post_fields(
-                contract["bookingPath"],
-                {
-                    "classtableid": contract["classTableId"],
-                    "cardid": card_id,
-                },
-                mutation=True,
-            )
-        )
+        mutation_attempts_before = getattr(source, "mutation_count", 0)
         try:
-            verified = current_booking(source, target)
-        except (BookingFailure, ballet.SyncFailure):
-            raise BookingFailure("unknown_result")
-        if not verified:
-            if mutation_result in {"FULL", "STOPPED", "NOTOPEN"}:
-                results.append(
+            candidate = timetable_candidates(source, target)
+            if (
+                len(candidate) != 1
+                or candidate[0]["record"]["availability"] != "available"
+            ):
+                raise BookingFailure("not_available")
+            contract = booking_contract(candidate[0])
+            card_id = eligible_card(source, contract)
+            check_rules(source, contract, card_id)
+            mutation_result = response_json(
+                source.post_fields(
+                    contract["bookingPath"],
                     {
-                        **public_course(target),
-                        "status": "not_available",
-                        "reason": str(mutation_result).lower(),
-                    }
+                        "classtableid": contract["classTableId"],
+                        "cardid": card_id,
+                    },
+                    mutation=True,
                 )
-                continue
-            raise BookingFailure("unknown_result")
-        results.append(
-            {
-                **public_course(target),
-                "status": "booked",
-                "bookingStatus": verified["bookingStatus"],
-            }
-        )
+            )
+            try:
+                verified = current_booking(source, target)
+            except (BookingFailure, ballet.SyncFailure):
+                raise BookingFailure("unknown_result")
+            if not verified:
+                if mutation_result in {"FULL", "STOPPED", "NOTOPEN"}:
+                    raise BookingFailure(str(mutation_result).lower())
+                raise BookingFailure("unknown_result")
+            results.append(
+                {
+                    **public_course(target),
+                    "status": "booked",
+                    "bookingStatus": verified["bookingStatus"],
+                }
+            )
+        except (BookingFailure, ballet.SyncFailure) as failure:
+            mutation_attempted = (
+                getattr(source, "mutation_count", 0) > mutation_attempts_before
+            )
+            failure_code = getattr(failure, "code", "unknown_result")
+            status = (
+                "unknown_result"
+                if mutation_attempted
+                and failure_code
+                not in {"full", "notopen", "stopped"}
+                else failure_code
+            )
+            results.append({**public_course(target), "status": status})
+            stop_reason = status
 
     return {
         "schemaVersion": 1,
         "source": "wenda-live",
-        "status": "success",
-        "live": True,
+        "status": "stopped" if stop_reason else "success",
+        "live": stop_reason != "unknown_result",
         "mode": "execute" if execute else "dry-run",
         "mutated": any(record["status"] == "booked" for record in results),
         "fetchedAt": ballet.iso_now(),
@@ -968,6 +605,7 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
         "postsMade": getattr(source, "post_count", 0),
         "mutationAttempts": getattr(source, "mutation_count", 0),
         "data": {"records": results},
+        **({"stopReason": stop_reason} if stop_reason else {}),
     }
 
 
@@ -1021,14 +659,15 @@ def main() -> int:
         )
         courses = parse_request(request_text, execute)
         source = WendaBookingSource(ballet.load_credentials(credential_path()))
+        result = run(source, courses, execute)
         print(
             json.dumps(
-                run(source, courses, execute),
+                result,
                 ensure_ascii=False,
                 separators=(",", ":"),
             )
         )
-        return 0
+        return 0 if result["status"] == "success" else 4
     except (BookingFailure, ballet.SyncFailure) as failure:
         code = getattr(failure, "code", "unknown_result")
         diagnostic = getattr(failure, "diagnostic", None)
