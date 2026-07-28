@@ -116,7 +116,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ricky.js`：从 `ricky.json` 生成的浏览器 wrapper。
 - `dash/data/life-foods.json`：生活页“吃啥”随机选择器的只读候选数据，由 `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 生成。
 - `dash/data/life-foods.js`：从 `life-foods.json` 生成的浏览器 wrapper。
-- `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要、课程卡预测和周课表。课表通常为本周 7 天；周日 14:30 只读同步拿到下周课程后变为本周日 + 下周 7 天。桌面课表卡占满内容区，横轴为开始时间、纵轴为星期日期；同日同开始时间课程双列并排，sticky 表头与课程卡分层。不保存 Cookie、会员卡号、会员标识、源记录 ID 或原始响应。
+- `dash/data/ballet.json`：芭蕾页面与 Home 摘要读取的脱敏 read model，保存同步状态、累计 / 月度 / 年度聚合、实际上课记录、预约 / 候补与取消截止、本周训练摘要、课程卡预测和周课表。课表通常为本周 7 天；周日 14:30 只读同步拿到下周课程后变为本周日 + 下周 7 天。桌面课表卡占满内容区，横轴按一小时段分列、纵轴为星期日期；同日同小时课程上下排列，整周无课程开始的连续小时压缩成单个时间范围列，sticky 表头与课程卡分层。不保存 Cookie、会员卡号、会员标识、源记录 ID 或原始响应。
 - `dash/data/ballet-session.json`：Cloud 页“芭蕾 Session 实验”折叠详情的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
 - `dash/data/ballet-booking-fast.json`：芭蕾课程计划与 Cloud 自动抢课运维卡共用的安全 fallback；生产状态由周日 fast-path service 写入独立 public 目录，经登录校验和 `no-store` exact alias 提供。芭蕾页只读取脱敏目标和逐课结果，Cloud 读取启用状态、优先级、上次 / 下次执行和累计数；该数据不作为课程余位事实源。
 - `dash/data/ballet.js`：从 `ballet.json` 生成的浏览器 wrapper。

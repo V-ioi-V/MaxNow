@@ -4587,7 +4587,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-timetable-grid {
   --ballet-time-count: 1;
   --ballet-day-column-width: 94px;
-  --ballet-time-column-width: 128px;
+  --ballet-time-column-width: 132px;
+  --ballet-gap-column-width: 76px;
   min-width: 100%;
   display: grid;
   grid-template-columns:
@@ -4599,7 +4600,8 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 @media (min-width: 861px) and (max-width: 1500px) {
   .ballet-timetable-grid {
     --ballet-day-column-width: 76px;
-    --ballet-time-column-width: 118px;
+    --ballet-time-column-width: 124px;
+    --ballet-gap-column-width: 70px;
     gap: 4px;
   }
 }
@@ -4638,6 +4640,21 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   top: 0;
   min-height: 46px;
   padding: 7px 5px;
+}
+
+.ballet-timetable-time[data-column-type="gap"] {
+  border-style: dashed;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      #f7e8f0 0,
+      #f7e8f0 7px,
+      #efd5e4 7px,
+      #efd5e4 9px
+    );
+  color: #8d627d;
+  font-size: 10px;
+  line-height: 1.15;
 }
 
 .ballet-timetable-day {
@@ -4714,23 +4731,20 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   background: #f4e8ef;
 }
 
-.ballet-timetable-cell[data-concurrent="true"] {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.ballet-timetable-cell[data-stacked="true"] {
+  grid-template-columns: minmax(0, 1fr);
 }
 
-.ballet-timetable-cell[data-concurrent="true"] .ballet-timetable-course {
-  height: 100%;
-  padding-inline: 5px;
-}
-
-.ballet-timetable-cell[data-concurrent="true"] .ballet-timetable-course > div {
-  flex-wrap: wrap;
-  row-gap: 3px;
-}
-
-.ballet-timetable-cell[data-concurrent="true"] .ballet-timetable-state {
-  margin-left: auto;
-  padding-inline: 4px;
+.ballet-timetable-cell[data-column-type="gap"] {
+  border-style: dashed;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      #f8f0f4 0,
+      #f8f0f4 9px,
+      #f1e2ea 9px,
+      #f1e2ea 11px
+    );
 }
 
 .ballet-timetable-cell[data-day-state="past"] .ballet-timetable-course:not([data-availability="attended"]),

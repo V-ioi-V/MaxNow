@@ -3448,6 +3448,52 @@ function createBalletTimetableDayHeader(day, index) {
   return header;
 }
 
+function balletTimetableStartHour(record = {}) {
+  const match = balletStartTime(record).match(/^(\d{2}):\d{2}$/);
+  if (!match) return null;
+  const hour = Number(match[1]);
+  return Number.isInteger(hour) && hour >= 0 && hour <= 23 ? hour : null;
+}
+
+function formatBalletTimetableHour(hour) {
+  return `${String(hour).padStart(2, "0")}:00`;
+}
+
+function buildBalletTimetableColumns(days = []) {
+  const occupiedHours = new Set(
+    days.flatMap((day) =>
+      (Array.isArray(day.records) ? day.records : [])
+        .map(balletTimetableStartHour)
+        .filter((hour) => hour !== null),
+    ),
+  );
+  const hours = [...occupiedHours].sort((a, b) => a - b);
+  if (!hours.length) return [];
+
+  const columns = [];
+  for (let hour = hours[0]; hour <= hours.at(-1);) {
+    if (occupiedHours.has(hour)) {
+      columns.push({
+        type: "hour",
+        hour,
+        label: `${formatBalletTimetableHour(hour)}–${formatBalletTimetableHour(hour + 1)}`,
+      });
+      hour += 1;
+      continue;
+    }
+
+    const gapStart = hour;
+    while (hour <= hours.at(-1) && !occupiedHours.has(hour)) hour += 1;
+    columns.push({
+      type: "gap",
+      startHour: gapStart,
+      endHour: hour,
+      label: `${formatBalletTimetableHour(gapStart)}–${formatBalletTimetableHour(hour)}`,
+    });
+  }
+  return columns;
+}
+
 function renderBalletTimetable() {
   const timetable = balletData.timetable || {};
   const days = Array.isArray(timetable.days)
@@ -3474,55 +3520,43 @@ function renderBalletTimetable() {
     return;
   }
 
-  const slots = [
-    ...new Set(
-      days.flatMap((day) =>
-        (Array.isArray(day.records) ? day.records : [])
-          .map((record) => balletStartTime(record))
-          .filter(Boolean),
-      ),
-    ),
-  ].sort();
-  grid.style.setProperty("--ballet-time-count", String(slots.length));
-  const timeColumns = slots
-    .map((slot) => {
-      const maxConcurrent = Math.max(
-        0,
-        ...days.map(
-          (day) =>
-            (Array.isArray(day.records) ? day.records : []).filter(
-              (record) => balletStartTime(record) === slot,
-            ).length,
-        ),
-      );
-      return maxConcurrent > 1
-        ? "minmax(calc(var(--ballet-time-column-width) * 2 + 4px), 2fr)"
-        : "minmax(var(--ballet-time-column-width), 1fr)";
-    })
+  const columns = buildBalletTimetableColumns(days);
+  grid.style.setProperty("--ballet-time-count", String(columns.length));
+  const timeColumns = columns
+    .map((column) =>
+      column.type === "gap"
+        ? "var(--ballet-gap-column-width)"
+        : "minmax(var(--ballet-time-column-width), 1fr)",
+    )
     .join(" ");
   grid.style.setProperty("--ballet-time-columns", timeColumns);
   const corner = document.createElement("div");
   corner.className = "ballet-timetable-corner";
   corner.textContent = "星期";
-  const timeHeaders = slots.map((slot) => {
+  const timeHeaders = columns.map((column) => {
     const time = document.createElement("div");
     time.className = "ballet-timetable-time";
-    time.textContent = slot;
+    time.dataset.columnType = column.type;
+    time.textContent = column.label;
     return time;
   });
   grid.append(corner, ...timeHeaders);
 
   days.forEach((day, index) => {
     grid.appendChild(createBalletTimetableDayHeader(day, index));
-    slots.forEach((slot) => {
+    columns.forEach((column) => {
       const cell = document.createElement("div");
       cell.className = "ballet-timetable-cell";
       cell.dataset.dayState = getBalletTimetableDayState(day.date);
-      const records = (Array.isArray(day.records) ? day.records : []).filter(
-        (record) => balletStartTime(record) === slot,
-      );
+      cell.dataset.columnType = column.type;
+      const records =
+        column.type === "hour"
+          ? (Array.isArray(day.records) ? day.records : []).filter(
+              (record) => balletTimetableStartHour(record) === column.hour,
+            )
+          : [];
       if (records.length) {
-        cell.dataset.concurrent = records.length > 1 ? "true" : "false";
+        cell.dataset.stacked = records.length > 1 ? "true" : "false";
         cell.append(...records.map((record) => createBalletTimetableCourse(record)));
       }
       grid.appendChild(cell);
