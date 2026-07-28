@@ -393,6 +393,11 @@ def safe_endpoint_roles(
         for item in control["controls"]
         if "bookbtn" in item["attrs"].get("class", "").split()
     }
+    course_type_ids = {
+        item["attrs"].get("coursetype", "")
+        for item in control["controls"]
+        if item["attrs"].get("coursetype", "")
+    }
     endpoints: dict[str, list[list[str]]] = {}
     for name, suffix in re.findall(
         r"/gm/weixin/classtable/"
@@ -410,6 +415,8 @@ def safe_endpoint_roles(
                 roles.append("course")
             elif value in button_class_table_ids:
                 roles.append("classTable")
+            elif value in course_type_ids:
+                roles.append("courseType")
             else:
                 roles.append("other")
         endpoints.setdefault(name, []).append(roles)
