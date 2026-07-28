@@ -3525,8 +3525,8 @@ function renderBalletTimetable() {
   const timeColumns = columns
     .map((column) =>
       column.type === "gap"
-        ? "var(--ballet-gap-column-width)"
-        : "minmax(var(--ballet-time-column-width), 1fr)",
+        ? "minmax(24px, 0.42fr)"
+        : "minmax(0, 1fr)",
     )
     .join(" ");
   grid.style.setProperty("--ballet-time-columns", timeColumns);
