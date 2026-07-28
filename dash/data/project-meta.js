@@ -3,11 +3,11 @@ window.MAXNOW_PROJECT_META_DATA = {
   "updatedAt": "2026-07-28 11:13",
   "version": "1.0.5.33",
   "versionLabel": "v1.0.5.33",
-  "branch": "feature/ballet-live-deployment-record",
-  "commit": "87bd4aa",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-live-deployment-record · commit 87bd4aa · 有未提交代码改动",
+  "branch": "main",
+  "commit": "3fd6c9f",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit 3fd6c9f · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-28",
