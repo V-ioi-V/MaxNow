@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 11:11",
+  "updatedAt": "2026-07-28 11:13",
   "version": "1.0.5.33",
   "versionLabel": "v1.0.5.33",
-  "branch": "main",
-  "commit": "1507bb3",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 1507bb3 · 干净",
+  "branch": "feature/ballet-live-deployment-record",
+  "commit": "87bd4aa",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/ballet-live-deployment-record · commit 87bd4aa · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-28",
