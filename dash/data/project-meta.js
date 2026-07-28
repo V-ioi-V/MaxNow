@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 16:41",
+  "updatedAt": "2026-07-28 16:42",
   "version": "1.0.6.00",
   "versionLabel": "v1.0.6.00",
-  "branch": "feature/ballet-booking",
-  "commit": "3db9c0b",
+  "branch": "main",
+  "commit": "2bd75e5",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-booking · commit 3db9c0b · 干净",
+  "deployNote": "main · commit 2bd75e5 · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-28",
