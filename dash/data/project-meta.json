@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 16:42",
+  "updatedAt": "2026-07-28 16:45",
   "version": "1.0.6.00",
   "versionLabel": "v1.0.6.00",
   "branch": "main",
-  "commit": "2bd75e5",
+  "commit": "2e32b8f",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "main · commit 2bd75e5 · 干净",
+  "deployNote": "main · commit 2e32b8f · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-28",
