@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 19:43",
-  "version": "1.0.7.06",
-  "versionLabel": "v1.0.7.06",
-  "branch": "bugfix/open-cloud-session-by-default",
-  "commit": "9cb8501",
+  "updatedAt": "2026-07-28 19:48",
+  "version": "1.0.7.07",
+  "versionLabel": "v1.0.7.07",
+  "branch": "feature/show-ballet-booking-venue",
+  "commit": "11e9ac0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/open-cloud-session-by-default · commit 9cb8501 · 有未提交代码改动",
+  "deployNote": "feature/show-ballet-booking-venue · commit 11e9ac0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "预约列表显示教室",
+      "summary": "芭蕾“下一节”和“所有预约”的课程信息行在时间、老师后补充闻道同步的教室，例如“大教室 / 小教室”；源数据缺失时不猜测、不显示空占位。脚本缓存提升到 `app.js?v=136`，版本提升到 `1.0.7.07`。"
+    },
     {
       "date": "2026-07-28",
       "title": "默认展开 Cloud Session 实验",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "收敛芭蕾模块信息架构",
       "summary": "芭蕾页按学习决策顺序重排为“下一节 + 本周训练 → 课程计划 → 本周课程表 → 训练记录 → 课程卡”；正式预约 / 候补与周日待抢目标、逐课结果合并进课程计划。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "记录芭蕾分享图待办",
-      "summary": "芭蕾 Later 新增分享图功能：从现有脱敏数据选择下一节、本周训练、阶段节数 / 时长、主要课型和近期记录等关键信息，浏览器本地生成可预览、可下载的图片。"
     }
   ]
 }
