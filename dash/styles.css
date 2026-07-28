@@ -4577,6 +4577,14 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   gap: 6px;
 }
 
+@media (min-width: 861px) and (max-width: 1500px) {
+  .ballet-timetable-grid {
+    min-width: max(100%, calc(58px + var(--ballet-day-count) * 122px));
+    grid-template-columns: 54px repeat(var(--ballet-day-count), minmax(118px, 1fr));
+    gap: 4px;
+  }
+}
+
 .ballet-timetable-corner,
 .ballet-timetable-time,
 .ballet-timetable-day,

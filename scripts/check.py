@@ -1361,7 +1361,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=164" not in dashboard_html
+        "styles.css?v=165" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=139" not in dashboard_html
     ):
