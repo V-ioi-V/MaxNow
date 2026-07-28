@@ -14,7 +14,8 @@
 ### 增加芭蕾实时查询 Skill
 
 - 新增 `maxnow-ballet-live` Skill 和服务器实时查询入口；以后对话中询问课表、预约 / 候补、上课记录、老师、余位或课程卡时，固定通过 MaxNow 服务器的当前 PHPSESSID 直接读取闻道，不再用 Dashboard 缓存回答。
-- 查询按问题选择最小只读范围，通过临时 systemd unit 注入 host-bound 加密凭据；返回仅包含脱敏业务字段和实时抓取时间，不读写 `dash/data/ballet.*` 或私有账本。实时失败时明确无结果且禁止缓存回退；版本提升到 `1.0.5.31`。
+- 查询按问题选择最小只读范围，通过临时 systemd unit 注入 host-bound 加密凭据；返回仅包含脱敏业务字段和实时抓取时间，不读写 `dash/data/ballet.*` 或私有账本。实时失败时明确无结果且禁止缓存回退。
+- 首次服务器验收发现 transient `ExecStart` 参数不会展开 `%d`；入口改为读取 systemd 自动提供的 `CREDENTIALS_DIRECTORY` 并拼接固定凭据文件名，避免硬编码运行时 unit 路径。修正后版本提升到 `1.0.5.32`。
 
 ### 修复 macOS Codex Token 上报中断死锁
 

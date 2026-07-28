@@ -50,5 +50,4 @@ exec sudo -n systemd-run \
   --property=CapabilityBoundingSet= \
   --property=SystemCallArchitectures=native \
   --property=RuntimeMaxSec=120 \
-  /usr/bin/python3 -B scripts/query_ballet_live.py "$@" \
-  --credential-file=%d/wenda-session.json
+  /usr/bin/python3 -B scripts/query_ballet_live.py "$@"

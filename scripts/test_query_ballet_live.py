@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from datetime import date, datetime
 from pathlib import Path
+from unittest import mock
 
 import query_ballet_live as live
 import sync_ballet as ballet
@@ -55,6 +56,17 @@ def write_fixture(root: Path) -> None:
 
 
 class BalletLiveQueryTests(unittest.TestCase):
+    def test_systemd_credential_directory_is_used(self):
+        with mock.patch.dict(
+            "os.environ",
+            {"CREDENTIALS_DIRECTORY": "/run/credentials/example.service"},
+            clear=False,
+        ):
+            self.assertEqual(
+                live.credential_path(None),
+                Path("/run/credentials/example.service/wenda-session.json"),
+            )
+
     def test_timetable_is_live_shaped_and_date_bounded(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

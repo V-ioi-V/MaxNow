@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -43,6 +44,15 @@ def parse_date(value: str | None) -> date | None:
         return date.fromisoformat(value)
     except ValueError:
         raise ballet.SyncFailure("configuration_error")
+
+
+def credential_path(provided: Path | None) -> Path:
+    if provided is not None:
+        return provided
+    directory = os.environ.get("CREDENTIALS_DIRECTORY")
+    if not directory:
+        raise ballet.SyncFailure("configuration_error")
+    return Path(directory) / "wenda-session.json"
 
 
 def date_range(from_date: date, through_date: date) -> list[date]:
@@ -249,9 +259,9 @@ def main() -> int:
                 args.fixture_dir
             )
         else:
-            if args.credential_file is None:
-                raise ballet.SyncFailure("configuration_error")
-            source = ballet.WendaSource(ballet.load_credentials(args.credential_file))
+            source = ballet.WendaSource(
+                ballet.load_credentials(credential_path(args.credential_file))
+            )
         result = run_query(source, args.scope, from_date, through_date, now)
         print(json.dumps(result, ensure_ascii=False, separators=(",", ":")))
         return 0

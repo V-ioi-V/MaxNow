@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 11:05",
-  "version": "1.0.5.31",
-  "versionLabel": "v1.0.5.31",
-  "branch": "main",
-  "commit": "c0a266d",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit c0a266d · 干净",
+  "updatedAt": "2026-07-28 11:07",
+  "version": "1.0.5.32",
+  "versionLabel": "v1.0.5.32",
+  "branch": "bugfix/ballet-live-credential-path",
+  "commit": "f689a3e",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-live-credential-path · commit f689a3e · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-28",
