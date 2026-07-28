@@ -3375,17 +3375,31 @@ function getBalletTimetableDayState(dateText) {
   return dateText < today ? "past" : "future";
 }
 
+function isBalletTimetableAttended(record = {}) {
+  const courseName = balletCourseName(record).replace(/\s+/g, "").toLowerCase();
+  return (Array.isArray(balletData.records) ? balletData.records : []).some(
+    (item) =>
+      balletRecordDate(item) === balletRecordDate(record)
+      && balletStartTime(item) === balletStartTime(record)
+      && balletEndTime(item) === balletEndTime(record)
+      && balletCourseName(item).replace(/\s+/g, "").toLowerCase() === courseName,
+  );
+}
+
 function getBalletTimetableStatus(record = {}) {
   const labels = {
     available: "可约",
     booked: "已预约",
+    attended: "已上完",
     waitlist: "排队中",
     queue_available: "可排队",
     full: "已满",
     cancelled: "已取消",
     past: "已过",
   };
-  const key = String(record.availability || "available").toLowerCase();
+  const key = isBalletTimetableAttended(record)
+    ? "attended"
+    : String(record.availability || "available").toLowerCase();
   return {
     key,
     label: labels[key] || "待确认",

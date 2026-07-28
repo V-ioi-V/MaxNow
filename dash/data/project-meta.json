@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 20:01",
-  "version": "1.0.7.08",
-  "versionLabel": "v1.0.7.08",
-  "branch": "feature/ballet-week-card-overview",
-  "commit": "46ace7c",
+  "updatedAt": "2026-07-28 20:10",
+  "version": "1.0.7.09",
+  "versionLabel": "v1.0.7.09",
+  "branch": "feature/ballet-timetable-compact-statuses",
+  "commit": "3fd9a03",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-week-card-overview · commit 46ace7c · 有未提交代码改动",
+  "deployNote": "feature/ballet-timetable-compact-statuses · commit 3fd9a03 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "压缩并下移本周课程表",
+      "summary": "“本周课程表”移到芭蕾页最底部，桌面网格限制在约 `58vh` 内并固定日期行 / 时间列，移动端逐日列表也限制内部高度，减少单个课表撑满整页。"
+    },
     {
       "date": "2026-07-28",
       "title": "重排芭蕾顶部概览并突出最近课程",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "移除 Cloud 重复页头",
       "summary": "删除 Cloud 内容区重复的“Cloud Services / 云服务 / dash.maxnow.cn”标题卡，进入页面后直接展示“系统与托管”，释放首屏高度；同步清理专用样式和页面协议。样式缓存提升到 `styles.css?v=162`，版本提升到 `1.0.7.05`。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "收紧 Cloud 芭蕾运维卡布局",
-      "summary": "“芭蕾自动抢课”与“芭蕾 Session 实验”在宽桌面改为左右各半宽并排；Session 展开后仍留在右侧半列，`1320px` 以下继续自然堆叠。样式缓存提升到 `styles.css?v=161`，版本提升到 `1.0.7.04`。"
     }
   ]
 }
