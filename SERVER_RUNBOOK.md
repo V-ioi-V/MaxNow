@@ -228,9 +228,9 @@ sudo test ! -e /run/credentials/maxnow-wenda-session-lifetime-20260727-v6.servic
 
 停止进程和删除本地 / 服务器凭据只能终止后续使用，不能证明闻道服务端 Session 已被吊销；如果没有安全的官方 logout / revoke 接口，结论中必须保留这一残余有效窗口说明。v3-v5 是同一旧会话的连续阶段，可以按绝对时间合并；v6 是新会话，必须从 2026-07-27 00:26:55 重新计时。两代实验验证的都是“持续活动时的寿命”，不能外推静默闲置过期时间，也不能仅凭正常样本宣称已证明自动续期。
 
-#### 芭蕾页脱敏 Session 状态发布
+#### Cloud 页脱敏 Session 状态发布
 
-芭蕾页使用独立 `dash/data/ballet-session.json` / `.js` 展示实验状态，不能把状态写进课程 `ballet.*`，否则会错误刷新课程 `dataAsOf`。状态发布器只读上述本机 JSONL 与当前 systemd state，不发出任何网络请求：
+Cloud 页使用独立 `dash/data/ballet-session.json` / `.js` 展示实验状态；芭蕾页只保留薄连接状态。不能把实验状态写进课程 `ballet.*`，否则会错误刷新课程 `dataAsOf`。状态发布器只读上述本机 JSONL 与当前 systemd state，不发出任何网络请求：
 
 ```text
 service -> maxnow-ballet-session-status.service
@@ -486,6 +486,8 @@ sudo rm /etc/maxnow-ballet/enable-fast-booking
 2026-07-28 17:20 已部署主分支 `b51295a`（版本 `1.0.7.00`）的周日自动抢课 Fast Path。公开运行数据、root-only 芭蕾私有状态和原 nginx auth location 备份在 `/home/ubuntu/maxnow-deploy-backups/20260728-1720-ballet-fast-path`，运行数据拉取后原样恢复并重新生成 `project-meta.*` / `project-status.*`。新 enable gate 为 `root:root 0600`，私有目录为 `root:root 0700`，公开 JSON 为 `root:www-data 0640`；nginx worker 可读，匿名 `/data/ballet-booking-fast.json` 返回 `401`。`preview` 发布的下一次计划为 2026-08-02 14:20，三项目标日期为 8 月 8 日周六、8 月 7 日周五、8 月 4 日周二，累计运行 / 成功均为 0。随后 isolated live dry-run 只发出 3 个目标日期课表 GET，因下周课尚未发布均为 `course_not_unique`，`mutationAttempts=0`。timer 已 `enabled / active`，首次触发为 2026-08-02 14:19:35；service 保持 `inactive`、`LastTriggerUSec` 为空，部署和验收未调用 `do_addbook`。服务器全仓检查、unit verify 和 `nginx -t` 通过。
 
 2026-07-28 17:33 已部署主分支 `b95a5a13`（版本 `1.0.7.01`）的逐课独立与安全重试。部署备份位于 `/home/ubuntu/maxnow-deploy-backups/20260728-173317-ballet-fast-retry`，服务器运行数据、私有幂等状态和公开状态在拉取前均已备份，运行数据随后原样恢复并刷新 `project-meta.*` / `project-status.*`。本机与服务器 13 项预约测试、全仓检查、unit verify 和 `nginx -t` 均通过；匿名状态接口保持 `401`。生产时区为 `Asia/Shanghai`、NTP 已同步，timer 为 `enabled / active`，精度 `1s`，下次 2026-08-02 14:19:35 启动，service 保持 `inactive / success` 且从未真实触发。隔离 live dry-run 在下周课程尚未发布时让三项目标各完成首次匹配与 3 次重试，共 12 个实时 GET、`mutationAttempts=0`，逐课耗时 4.138 / 4.576 / 5.374 秒，关键路径总耗时 14.087 秒；没有调用 `do_addbook`，累计运行和累计成功仍为 0。
+
+2026-07-28 19:18 已部署主分支 `20e212ba`（版本 `1.0.7.03`）的芭蕾信息架构收敛。芭蕾页顺序调整为下一节 / 本周训练、课程计划、周课表、训练记录和课程卡；自动抢课运维与 Session 实验详情移入 Cloud。服务器运行数据备份位于 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-ia-cdeZmE`，拉取后原样恢复并重新生成 `project-meta.*` / `project-status.*`。本机浏览器验证无横向溢出，顶部双卡同顶同底等高，少于 5 节时趋势正确收起；服务器全仓检查和 `nginx -t` 通过。自动抢课 timer 保持 `active`，下次触发仍为 2026-08-02 14:19:35；本次只部署静态页面，没有访问闻道或触发预约。
 
 2026-07-28 已部署主分支 `87bd4aa`（版本 `1.0.5.33`）的芭蕾实时查询 Skill。三轮部署前备份分别位于 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-ef5323`、`/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-fix-RDxVpv` 和 `/home/ubuntu/maxnow-deploy-backups/20260728-ballet-live-marker-pp8CNr`；运行数据按服务器权威来源精确恢复。服务器 OpenClaw Skill 入口已链接到仓库 `openclaw/maxnow-ballet-live`。首次验收依次发现 transient 命令参数不展开 `%d`、课表中文标题不稳定，最终改为读取 `CREDENTIALS_DIRECTORY` 与校验 `classtable` 结构；预约实时查询成功返回 4 条脱敏记录，课表实时查询于 11:12:34 返回当天 7 节课。最终结果为 `source=wenda-live`、`live=true`、单次 1 个 GET；查询前后 `dash/data/ballet.*` 与 `/var/lib/maxnow-ballet` 五个私有状态文件哈希不变，临时 `wenda-session.json` 凭据挂载已清理，服务器全仓检查通过。
 
