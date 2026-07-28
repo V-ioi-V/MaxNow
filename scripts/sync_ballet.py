@@ -674,8 +674,10 @@ class TimetableParser(HTMLParser):
             availability = "booked"
         elif "过期" in root_text:
             availability = "past"
-        elif "排队" in root_text:
+        elif any(marker in root_text for marker in ("您已排队", "排队中", "等候中")):
             availability = "waitlist"
+        elif "排队" in root_text:
+            availability = "queue_available"
         elif "已满" in root_text:
             availability = "full"
         else:
@@ -1674,6 +1676,7 @@ def validate_read_model(model: dict[str, Any]) -> None:
                     "available",
                     "booked",
                     "waitlist",
+                    "queue_available",
                     "full",
                     "cancelled",
                     "past",
@@ -1788,6 +1791,7 @@ def build_timetable_snapshot(
     source: WendaSource | FixtureSource,
     now: datetime,
     observed_at: str,
+    upcoming: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     today = now.astimezone(TIMEZONE).date()
     week_start = today - timedelta(days=today.weekday())
@@ -1825,6 +1829,29 @@ def build_timetable_snapshot(
         if any(item["records"] for item in next_week_days):
             days = [current_week_days[-1], *next_week_days]
             display_mode = "sunday_plus_next_week"
+
+    booking_states = {
+        (
+            item.get("date"),
+            item.get("startTime"),
+            item.get("endTime"),
+            normalize_course_name(item.get("courseName", "")),
+        ): item.get("bookingStatus")
+        for item in (upcoming or [])
+        if item.get("bookingStatus") in {"booked", "waitlist"}
+    }
+    for day in days:
+        for record in day["records"]:
+            booking_state = booking_states.get(
+                (
+                    record.get("date"),
+                    record.get("startTime"),
+                    record.get("endTime"),
+                    normalize_course_name(record.get("courseName", "")),
+                )
+            )
+            if booking_state:
+                record["availability"] = booking_state
 
     available_dates = [
         item["date"]
@@ -1980,7 +2007,12 @@ def synchronize(
             "dataAsOf": observed_at,
             "cards": parse_membership(membership_html),
         }
-        proposed_timetable = build_timetable_snapshot(source, now, observed_at)
+        proposed_timetable = build_timetable_snapshot(
+            source,
+            now,
+            observed_at,
+            proposed_booking["records"],
+        )
 
         last_data_change = old_state.get("lastDataChangeAt")
         previous_business = {

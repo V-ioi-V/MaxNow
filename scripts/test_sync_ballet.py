@@ -348,7 +348,7 @@ class BalletSyncTests(unittest.TestCase):
                     "venue": "大教室",
                     "bookedCount": 17,
                     "capacity": 10,
-                    "availability": "waitlist",
+                    "availability": "queue_available",
                     "date": "2026-08-01",
                 }
             ],
@@ -367,6 +367,27 @@ class BalletSyncTests(unittest.TestCase):
         self.assertEqual(snapshot["weekStart"], "2026-08-02")
         self.assertEqual(snapshot["weekEnd"], "2026-08-09")
         self.assertEqual(len(snapshot["days"]), 8)
+
+    def test_timetable_booking_snapshot_only_highlights_owner_states(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory)
+            write_fixture(fixture)
+            snapshot = ballet.build_timetable_snapshot(
+                ballet.FixtureSource(fixture),
+                datetime.fromisoformat("2026-07-28T10:00:00+08:00"),
+                "2026-07-28T10:00:00+08:00",
+                [
+                    {
+                        "date": "2026-07-28",
+                        "startTime": "19:45",
+                        "endTime": "21:15",
+                        "courseName": "芭蕾L1-入门",
+                        "bookingStatus": "waitlist",
+                    }
+                ],
+            )
+        course = snapshot["days"][1]["records"][0]
+        self.assertEqual(course["availability"], "waitlist")
 
     def test_membership_forecast_is_isolated_per_card_and_hides_short_samples(self):
         membership = {

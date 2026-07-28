@@ -3233,7 +3233,8 @@ function getBalletTimetableStatus(record = {}) {
   const labels = {
     available: "可约",
     booked: "已预约",
-    waitlist: "可排队",
+    waitlist: "排队中",
+    queue_available: "可排队",
     full: "已满",
     cancelled: "已取消",
     past: "已过",

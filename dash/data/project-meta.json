@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 10:04",
-  "version": "1.0.5.28",
-  "versionLabel": "v1.0.5.28",
-  "branch": "feature/ballet-timetable",
-  "commit": "6911067",
+  "updatedAt": "2026-07-28 10:11",
+  "version": "1.0.5.29",
+  "versionLabel": "v1.0.5.29",
+  "branch": "bugfix/ballet-timetable-status",
+  "commit": "0dce955",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-timetable · commit 6911067 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-timetable-status · commit 0dce955 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "区分课表“可排队”与本人“排队中”",
+      "summary": "修正源站普通“可排队”按钮被误判为本人候补的问题：普通课程保留“可排队”状态但不高亮，只有预约快照确认的本人候补课程才使用橙色整卡高亮；正式预约继续使用粉玫瑰整卡高亮。"
+    },
     {
       "date": "2026-07-28",
       "title": "增加芭蕾周课表与周日发布刷新",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "回退芭蕾核心卡视觉改造",
       "summary": "按 Owner 反馈回退“一主三辅”顶部指标、统一统计信息带和紧凑面积趋势图，恢复到 `1.0.5.23` 的芭蕾页面构图；此前确认的所有预约合并、下一节主次和顶部三栏结构继续保留。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "微调 Dash 全页面视觉与交互",
-      "summary": "对首页、豆奶、Token、芭蕾、云服务、生活、同行记及登录入口做一次不改变信息架构的整体微调：统一系统字体回退与等宽数字、减轻卡片阴影、补齐焦点和按压反馈、规范空状态并增加 reduced-motion 兜底。"
     }
   ]
 }
