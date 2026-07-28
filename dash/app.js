@@ -3502,6 +3502,7 @@ function renderBalletTimetable() {
         (record) => balletStartTime(record) === slot,
       );
       if (records.length) {
+        cell.dataset.concurrent = records.length > 1 ? "true" : "false";
         cell.append(...records.map((record) => createBalletTimetableCourse(record)));
       }
       grid.appendChild(cell);

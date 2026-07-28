@@ -4556,17 +4556,38 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     linear-gradient(145deg, rgba(255, 241, 246, 0.7), #ffffff 34%, rgba(249, 244, 255, 0.68));
 }
 
+@media (min-width: 1501px) {
+  .ballet-timetable-panel {
+    width: 66.6667%;
+    margin-right: auto;
+  }
+}
+
 .ballet-timetable-head {
   align-items: center;
 }
 
 .ballet-timetable-scroll {
+  position: relative;
+  isolation: isolate;
+  contain: paint;
   width: 100%;
   max-height: clamp(320px, 58vh, 500px);
   overflow: auto;
-  padding: 2px 4px 6px 0;
+  padding: 0 4px 6px 0;
   overscroll-behavior: contain;
   scrollbar-color: color-mix(in srgb, var(--ballet) 34%, transparent) transparent;
+}
+
+.ballet-timetable-sticky-mask {
+  position: sticky;
+  z-index: 4;
+  top: 0;
+  width: 100%;
+  height: 46px;
+  margin-bottom: -46px;
+  pointer-events: none;
+  background: #ffffff;
 }
 
 .ballet-timetable-grid {
@@ -4607,7 +4628,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-timetable-corner {
   position: sticky;
-  z-index: 4;
+  z-index: 7;
   top: 0;
   left: 0;
   min-height: 46px;
@@ -4615,7 +4636,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-timetable-time {
   position: sticky;
-  z-index: 2;
+  z-index: 3;
   left: 0;
   min-height: 60px;
   padding: 7px 5px;
@@ -4623,7 +4644,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-timetable-day {
   position: sticky;
-  z-index: 3;
+  z-index: 6;
   top: 0;
   min-height: 46px;
   display: flex;
@@ -4681,12 +4702,33 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-timetable-cell {
+  position: relative;
+  z-index: 0;
   min-height: 60px;
   display: grid;
   align-content: start;
   gap: 4px;
   padding: 4px;
   background: #f4e8ef;
+}
+
+.ballet-timetable-cell[data-concurrent="true"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ballet-timetable-cell[data-concurrent="true"] .ballet-timetable-course {
+  height: 100%;
+  padding-inline: 5px;
+}
+
+.ballet-timetable-cell[data-concurrent="true"] .ballet-timetable-course > div {
+  flex-wrap: wrap;
+  row-gap: 3px;
+}
+
+.ballet-timetable-cell[data-concurrent="true"] .ballet-timetable-state {
+  margin-left: auto;
+  padding-inline: 4px;
 }
 
 .ballet-timetable-cell[data-day-state="past"] .ballet-timetable-course:not([data-availability="attended"]),

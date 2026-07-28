@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 22:16",
-  "version": "1.0.7.12",
-  "versionLabel": "v1.0.7.12",
-  "branch": "feature/ballet-sync-1430",
-  "commit": "07de3d1",
+  "updatedAt": "2026-07-28 22:45",
+  "version": "1.0.7.13",
+  "versionLabel": "v1.0.7.13",
+  "branch": "bugfix/ballet-timetable-layout",
+  "commit": "7d8e08a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-sync-1430 · commit 07de3d1 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-timetable-layout · commit 7d8e08a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "修正课表宽度、表头与同时间课程布局",
+      "summary": "`1501px` 以上把本周课程表收为内容区约三分之二宽，`861px–1500px` 继续使用全宽保证 7 天完整显示，`860px` 以下保持逐日列表。"
+    },
     {
       "date": "2026-07-28",
       "title": "错开周日只读同步与自动抢课",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "压缩并下移本周课程表",
       "summary": "“本周课程表”移到芭蕾页最底部，桌面网格限制在约 `58vh` 内并固定日期行 / 时间列，移动端逐日列表也限制内部高度，减少单个课表撑满整页。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "重排芭蕾顶部概览并突出最近课程",
-      "summary": "删除独立“下一节”面板，顶部改为“本周训练 / 课程卡”左右等分；课程卡从页面底部移入右侧，并改为适合半宽的纵向信息布局。"
     }
   ]
 }
