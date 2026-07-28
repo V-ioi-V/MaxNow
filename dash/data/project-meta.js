@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 19:15",
-  "version": "1.0.7.03",
-  "versionLabel": "v1.0.7.03",
-  "branch": "feature/ballet-information-architecture",
-  "commit": "9416545",
+  "updatedAt": "2026-07-28 19:27",
+  "version": "1.0.7.04",
+  "versionLabel": "v1.0.7.04",
+  "branch": "bugfix/cloud-session-card-width",
+  "commit": "4794ff8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-information-architecture · commit 9416545 · 有未提交代码改动",
+  "deployNote": "bugfix/cloud-session-card-width · commit 4794ff8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "收紧 Cloud 芭蕾运维卡布局",
+      "summary": "“芭蕾自动抢课”与“芭蕾 Session 实验”在宽桌面改为左右各半宽并排；Session 展开后仍留在右侧半列，`1320px` 以下继续自然堆叠。样式缓存提升到 `styles.css?v=161`，版本提升到 `1.0.7.04`。"
+    },
     {
       "date": "2026-07-28",
       "title": "收敛芭蕾模块信息架构",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "增加周日自动抢课 Fast Path",
       "summary": "新增服务器本地 `book_ballet_fast.py` 与精确定时 systemd service / timer：周日 14:19:35 预热，14:20:00 按“周六 > 周日 > 周五 > 其他日期”顺序逐课即时校验并提交；关键路径不经过 Codex、Skill 或 SSH。初版未知结果会停止后续，随后同日按上方记录改为逐课独立安全重试。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "增加芭蕾对话式显式预约",
-      "summary": "新增精确课程预约脚本与 hardened transient runner；单课或多课先统一实时预检已有预约、余位、唯一课程卡和闻道规则，全部通过后再按输入顺序逐节提交并实时复核。"
     }
   ]
 };
