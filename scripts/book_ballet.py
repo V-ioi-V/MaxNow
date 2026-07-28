@@ -376,11 +376,23 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
     return contracts
 
 
-def safe_endpoint_roles(script_text: str) -> dict[str, Any]:
+def safe_endpoint_roles(
+    script_text: str, control: dict[str, Any]
+) -> dict[str, Any]:
     customer_ids = set(
         re.findall(r"\bcustomerid\s*=\s*[\"']?(\d+)[\"']?", script_text)
     )
     customer_id = next(iter(customer_ids)) if len(customer_ids) == 1 else ""
+    button_course_ids = {
+        item["attrs"].get("courseid", "")
+        for item in control["controls"]
+        if "bookbtn" in item["attrs"].get("class", "").split()
+    }
+    button_class_table_ids = {
+        item["attrs"].get("classtableid", "")
+        for item in control["controls"]
+        if "bookbtn" in item["attrs"].get("class", "").split()
+    }
     endpoints: dict[str, list[list[str]]] = {}
     for name, suffix in re.findall(
         r"/gm/weixin/classtable/"
@@ -394,6 +406,10 @@ def safe_endpoint_roles(script_text: str) -> dict[str, Any]:
                 roles.append("store")
             elif customer_id and value == customer_id:
                 roles.append("customer")
+            elif value in button_course_ids:
+                roles.append("course")
+            elif value in button_class_table_ids:
+                roles.append("classTable")
             else:
                 roles.append("other")
         endpoints.setdefault(name, []).append(roles)
@@ -461,7 +477,7 @@ def safe_diagnostic(
             )
         ),
         "bookingHandlers": safe_ajax_contracts(script_text),
-        "bookingContract": safe_endpoint_roles(script_text),
+        "bookingContract": safe_endpoint_roles(script_text, control),
     }
     elements = []
     seen = set()
