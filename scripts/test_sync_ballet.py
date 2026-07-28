@@ -77,12 +77,41 @@ def membership_html() -> str:
     )
 
 
+def timetable_html(
+    *,
+    course: str = "芭蕾L1-入门",
+    time_text: str = "19:45 ~ 21:15",
+    teacher: str = "测试老师",
+    venue: str = "测试教室",
+    status: str = "6 / 12 (满4人开班)",
+) -> str:
+    return (
+        "<html><title>课程表</title><body>"
+        '<div class="swiper-container dateswiper">'
+        '<div class="swiper-slide dateslide" date="2026-07-27">7/27 周一</div>'
+        '<div class="swiper-slide dateslide" date="2026-07-28">7/28 周二</div>'
+        "</div>"
+        '<div class="classtable">'
+        f'<div class="timelinear"><p><b>{time_text}</b></p></div>'
+        f'<div class="coursediv"><p><b>{course}</b></p></div>'
+        f'<div class="row small"><div class="col-12">★ {teacher}'
+        f'<div class="col-12 row3">{status}</div></div></div>'
+        '<div class="card card-body">'
+        '<div class="row form_row small"><div class="col-3">老师/教练</div>'
+        f'<div class="col-9">{teacher}</div></div>'
+        '<div class="row form_row small"><div class="col-3">教室/场地</div>'
+        f'<div class="col-9">{venue}</div></div>'
+        "</div></div></body></html>"
+    )
+
+
 def write_fixture(root: Path) -> None:
     rows = [
         ("10001", "芭蕾L1.5", "2026-07-26", ""),
         ("10002", "软开专项【前后腿】", "2026-06-01", ""),
     ]
     (root / "details").mkdir(parents=True)
+    (root / "timetable").mkdir(parents=True)
     (root / "attendance.html").write_text(
         index_html("上课记录", rows), encoding="utf-8"
     )
@@ -95,6 +124,10 @@ def write_fixture(root: Path) -> None:
     )
     (root / "membership.html").write_text(
         membership_html(),
+        encoding="utf-8",
+    )
+    (root / "timetable" / "default.html").write_text(
+        timetable_html(),
         encoding="utf-8",
     )
     (root / "details" / "10001.html").write_text(
@@ -136,6 +169,7 @@ class BalletSyncTests(unittest.TestCase):
             ballet.BOOKING_PATH,
             ballet.MEMBERSHIP_PATH,
             f"/gm/weixin/my/bookrecordone/{ballet.STORE_ID}/12345",
+            f"{ballet.TIMETABLE_PATH}/2026-07-28",
         )
         for path in accepted:
             self.assertEqual(ballet.validate_read_only_path(path), path)
@@ -145,6 +179,8 @@ class BalletSyncTests(unittest.TestCase):
             ballet.ATTENDANCE_PATH + "?customerid=1",
             f"/gm/weixin/my/bookrecordone/{ballet.STORE_ID}/abc",
             f"/gm/weixin/my/bookrecordone/54115/123",
+            f"{ballet.TIMETABLE_PATH}/2026-7-28",
+            f"{ballet.TIMETABLE_PATH}/2026-07-28?customerid=1",
         )
         for path in rejected:
             with self.subTest(path=path), self.assertRaises(ballet.SyncFailure):
@@ -286,6 +322,52 @@ class BalletSyncTests(unittest.TestCase):
             ],
         )
 
+    def test_timetable_course_is_parsed_into_safe_fields(self):
+        parsed = ballet.parse_timetable(
+            timetable_html(
+                course="软开专项【胯】",
+                time_text="18:45 ~ 19:45",
+                teacher="王老师",
+                venue="大教室",
+                status="17 / 10 (满4人开班) 排队Wait8",
+            ),
+            "2026-08-01",
+        )
+        self.assertEqual(parsed["selectorDates"], ["2026-07-27", "2026-07-28"])
+        self.assertEqual(
+            parsed["records"],
+            [
+                {
+                    "courseName": "软开专项【胯】",
+                    "courseType": "soft_open",
+                    "level": "none",
+                    "startTime": "18:45",
+                    "endTime": "19:45",
+                    "durationMinutes": 60,
+                    "teacher": "王老师",
+                    "venue": "大教室",
+                    "bookedCount": 17,
+                    "capacity": 10,
+                    "availability": "waitlist",
+                    "date": "2026-08-01",
+                }
+            ],
+        )
+
+    def test_sunday_publish_window_keeps_today_and_adds_next_week(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory)
+            write_fixture(fixture)
+            snapshot = ballet.build_timetable_snapshot(
+                ballet.FixtureSource(fixture),
+                datetime.fromisoformat("2026-08-02T14:20:00+08:00"),
+                "2026-08-02T14:20:00+08:00",
+            )
+        self.assertEqual(snapshot["displayMode"], "sunday_plus_next_week")
+        self.assertEqual(snapshot["weekStart"], "2026-08-02")
+        self.assertEqual(snapshot["weekEnd"], "2026-08-09")
+        self.assertEqual(len(snapshot["days"]), 8)
+
     def test_membership_forecast_is_isolated_per_card_and_hides_short_samples(self):
         membership = {
             "dataAsOf": "2026-07-27T00:17:00+08:00",
@@ -378,6 +460,10 @@ class BalletSyncTests(unittest.TestCase):
             )
             self.assertEqual(model["week"]["bookedClasses"], 1)
             self.assertEqual(model["week"]["expectedClassesMin"], 1)
+            self.assertEqual(model["timetable"]["displayMode"], "current_week")
+            self.assertEqual(model["timetable"]["weekStart"], "2026-07-27")
+            self.assertEqual(model["timetable"]["weekEnd"], "2026-08-02")
+            self.assertEqual(len(model["timetable"]["days"]), 7)
             card = model["membership"]["cards"][0]
             self.assertEqual(card["remainingClasses"], 39)
             self.assertEqual(card["pace"]["openDayNumber"], 2)

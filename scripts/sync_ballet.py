@@ -32,8 +32,12 @@ HOME_PATH = f"/gm/weixin/home/index/{STORE_ID}"
 ATTENDANCE_PATH = f"/gm/weixin/my/checkrecord/{STORE_ID}"
 BOOKING_PATH = f"/gm/weixin/my/bookrecord/{STORE_ID}"
 MEMBERSHIP_PATH = f"/gm/weixin/my/mycard/{STORE_ID}"
+TIMETABLE_PATH = f"/gm/weixin/classtable/simpleclass/{STORE_ID}/430"
 DETAIL_PATH_PATTERN = re.compile(
     rf"^/gm/weixin/my/bookrecordone/{STORE_ID}/([1-9][0-9]{{0,19}})$"
+)
+TIMETABLE_PATH_PATTERN = re.compile(
+    rf"^/gm/weixin/classtable/simpleclass/{STORE_ID}/430/(20\d{{2}}-\d{{2}}-\d{{2}})$"
 )
 TIMEZONE = timezone(timedelta(hours=8), "Asia/Shanghai")
 CLASSIFICATION_VERSION = 1
@@ -100,6 +104,7 @@ class SyncPaths:
     sync_state: Path
     booking: Path
     membership: Path
+    timetable: Path
     output: Path
     wrapper: Path
 
@@ -278,7 +283,7 @@ def auth_retry_is_blocked(path: Path, credential_version: str) -> bool:
 def validate_read_only_path(path: str) -> str:
     if path in {ATTENDANCE_PATH, BOOKING_PATH, MEMBERSHIP_PATH}:
         return path
-    if DETAIL_PATH_PATTERN.fullmatch(path):
+    if DETAIL_PATH_PATTERN.fullmatch(path) or TIMETABLE_PATH_PATTERN.fullmatch(path):
         return path
     raise SyncFailure("configuration_error")
 
@@ -425,6 +430,10 @@ class FixtureSource:
             fixture = self.fixture_dir / "booking.html"
         elif path == MEMBERSHIP_PATH:
             fixture = self.fixture_dir / "membership.html"
+        elif timetable_match := TIMETABLE_PATH_PATTERN.fullmatch(path):
+            fixture = self.fixture_dir / "timetable" / f"{timetable_match.group(1)}.html"
+            if not fixture.exists():
+                fixture = self.fixture_dir / "timetable" / "default.html"
         else:
             match = DETAIL_PATH_PATTERN.fullmatch(path)
             if not match:
@@ -578,6 +587,116 @@ class MembershipCardParser(HTMLParser):
             self.current_parts.append(data)
 
 
+class TimetableParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.div_stack: list[dict[str, Any]] = []
+        self.current_nodes: list[dict[str, Any]] | None = None
+        self.courses: list[dict[str, Any]] = []
+        self.selector_dates: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
+        if tag != "div":
+            return
+        values = dict(attrs)
+        classes = set((values.get("class") or "").split())
+        node = {"classes": classes, "parts": []}
+        self.div_stack.append(node)
+        if "dateslide" in classes:
+            raw_date = normalize_space(values.get("date") or "")
+            if re.fullmatch(r"20\d{2}-\d{2}-\d{2}", raw_date):
+                self.selector_dates.append(raw_date)
+        if self.current_nodes is None and "classtable" in classes:
+            self.current_nodes = [node]
+        elif self.current_nodes is not None:
+            self.current_nodes.append(node)
+
+    def handle_endtag(self, tag: str):
+        if tag != "div" or not self.div_stack:
+            return
+        node = self.div_stack.pop()
+        if self.current_nodes is not None and "classtable" in node["classes"]:
+            self.courses.append(self._parse_course(self.current_nodes))
+            self.current_nodes = None
+
+    def handle_data(self, data: str):
+        if self.current_nodes is None:
+            return
+        for node in self.div_stack:
+            node["parts"].append(data)
+
+    @staticmethod
+    def _node_text(node: dict[str, Any]) -> str:
+        return normalize_space("".join(node["parts"]))
+
+    def _parse_course(self, nodes: list[dict[str, Any]]) -> dict[str, Any]:
+        def first_with_class(class_name: str) -> str:
+            return next(
+                (
+                    self._node_text(node)
+                    for node in nodes
+                    if class_name in node["classes"] and self._node_text(node)
+                ),
+                "",
+            )
+
+        root_text = self._node_text(nodes[0])
+        time_text = first_with_class("timelinear")
+        course_name = first_with_class("coursediv")
+        time_match = re.fullmatch(
+            r"([01]\d|2[0-3]):([0-5]\d)\s*[~～—–-]\s*"
+            r"([01]\d|2[0-3]):([0-5]\d)",
+            time_text,
+        )
+        if not course_name or not time_match:
+            raise SyncFailure("parse_error")
+        start_minutes = int(time_match.group(1)) * 60 + int(time_match.group(2))
+        end_minutes = int(time_match.group(3)) * 60 + int(time_match.group(4))
+        if end_minutes < start_minutes:
+            end_minutes += 24 * 60
+        duration = end_minutes - start_minutes
+        if not 0 < duration <= 8 * 60:
+            raise SyncFailure("parse_error")
+
+        fields: dict[str, str] = {}
+        for node in nodes:
+            if not {"form_row", "small"}.issubset(node["classes"]):
+                continue
+            value = self._node_text(node)
+            for label in ("老师/教练", "教室/场地"):
+                if value.startswith(label):
+                    fields[label] = normalize_space(value[len(label) :])
+
+        capacity_match = re.search(r"(?<!\d)(\d+)\s*/\s*(\d+)(?!\d)", root_text)
+        if "未满人数已取消" in root_text or "已取消" in root_text:
+            availability = "cancelled"
+        elif "您已预约" in root_text:
+            availability = "booked"
+        elif "过期" in root_text:
+            availability = "past"
+        elif "排队" in root_text:
+            availability = "waitlist"
+        elif "已满" in root_text:
+            availability = "full"
+        else:
+            availability = "available"
+
+        course_type, level = classify_course(course_name)
+        return {
+            "courseName": course_name,
+            "courseType": course_type,
+            "level": level,
+            "startTime": f"{time_match.group(1)}:{time_match.group(2)}",
+            "endTime": f"{time_match.group(3)}:{time_match.group(4)}",
+            "durationMinutes": duration,
+            "teacher": fields.get("老师/教练", ""),
+            "venue": fields.get("教室/场地", ""),
+            "bookedCount": int(capacity_match.group(1)) if capacity_match else None,
+            "capacity": int(capacity_match.group(2)) if capacity_match else None,
+            "availability": availability,
+        }
+
+
 def parse_index(text: str, kind: str) -> list[dict[str, str]]:
     parser = DetailLinkParser()
     try:
@@ -703,6 +822,42 @@ def parse_membership(text: str) -> list[dict[str, Any]]:
             }
         )
     return cards
+
+
+def parse_timetable(text: str, course_date: str) -> dict[str, Any]:
+    try:
+        parsed_date = date.fromisoformat(course_date)
+    except ValueError:
+        raise SyncFailure("configuration_error")
+    parser = TimetableParser()
+    try:
+        parser.feed(text)
+    except SyncFailure:
+        raise
+    except Exception:
+        raise SyncFailure("parse_error")
+    records = [
+        {
+            **record,
+            "date": parsed_date.isoformat(),
+        }
+        for record in parser.courses
+    ]
+    records.sort(
+        key=lambda item: (
+            item["startTime"],
+            item["endTime"],
+            item["courseName"],
+            item["teacher"],
+            item["venue"],
+        )
+    )
+    selector_dates = sorted(set(parser.selector_dates))
+    return {
+        "date": parsed_date.isoformat(),
+        "records": records,
+        "selectorDates": selector_dates,
+    }
 
 
 def parse_cancellation_rule(
@@ -946,6 +1101,22 @@ def empty_membership() -> dict[str, Any]:
         "timezone": "Asia/Shanghai",
         "dataAsOf": None,
         "cards": [],
+    }
+
+
+def empty_timetable() -> dict[str, Any]:
+    return {
+        "schemaVersion": SCHEMA_VERSION,
+        "timezone": "Asia/Shanghai",
+        "dataAsOf": None,
+        "weekStart": None,
+        "weekEnd": None,
+        "displayMode": "current_week",
+        "selectorFrom": None,
+        "selectorThrough": None,
+        "selectorDays": 0,
+        "availableThrough": None,
+        "days": [],
     }
 
 
@@ -1351,6 +1522,7 @@ def build_read_model(
     ledger: dict[str, Any],
     booking: dict[str, Any],
     membership: dict[str, Any],
+    timetable: dict[str, Any],
     state: dict[str, Any],
     now: datetime,
 ) -> dict[str, Any]:
@@ -1414,6 +1586,7 @@ def build_read_model(
         },
         "week": compute_week_summary(records, upcoming, now),
         "membership": build_membership_view(membership, now),
+        "timetable": timetable,
         "learningLogs": [],
         "authHealth": {
             "status": auth_status,
@@ -1450,7 +1623,12 @@ def validate_read_model(model: dict[str, Any]) -> None:
         raise SyncFailure("parse_error")
     week = model.get("week")
     membership = model.get("membership")
-    if not isinstance(week, dict) or not isinstance(membership, dict):
+    timetable = model.get("timetable")
+    if (
+        not isinstance(week, dict)
+        or not isinstance(membership, dict)
+        or not isinstance(timetable, dict)
+    ):
         raise SyncFailure("parse_error")
     cards = membership.get("cards")
     if not isinstance(cards, list):
@@ -1458,6 +1636,50 @@ def validate_read_model(model: dict[str, Any]) -> None:
     for card in cards:
         if not isinstance(card, dict):
             raise SyncFailure("parse_error")
+    timetable_days = timetable.get("days")
+    if not isinstance(timetable_days, list) or len(timetable_days) > 8:
+        raise SyncFailure("parse_error")
+    display_mode = timetable.get("displayMode")
+    if display_mode not in {"current_week", "sunday_plus_next_week"}:
+        raise SyncFailure("parse_error")
+    if timetable_days and (
+        (display_mode == "current_week" and len(timetable_days) != 7)
+        or (display_mode == "sunday_plus_next_week" and len(timetable_days) != 8)
+        or timetable.get("weekStart") != timetable_days[0].get("date")
+        or timetable.get("weekEnd") != timetable_days[-1].get("date")
+    ):
+        raise SyncFailure("parse_error")
+    previous_date = ""
+    for timetable_day in timetable_days:
+        if not isinstance(timetable_day, dict):
+            raise SyncFailure("parse_error")
+        day_date = timetable_day.get("date")
+        day_records = timetable_day.get("records")
+        try:
+            date.fromisoformat(day_date)
+        except (TypeError, ValueError):
+            raise SyncFailure("parse_error")
+        if day_date <= previous_date or not isinstance(day_records, list):
+            raise SyncFailure("parse_error")
+        previous_date = day_date
+        for record in day_records:
+            if (
+                not isinstance(record, dict)
+                or record.get("date") != day_date
+                or not record.get("courseName")
+                or not re.fullmatch(r"\d{2}:\d{2}", record.get("startTime", ""))
+                or not re.fullmatch(r"\d{2}:\d{2}", record.get("endTime", ""))
+                or record.get("availability")
+                not in {
+                    "available",
+                    "booked",
+                    "waitlist",
+                    "full",
+                    "cancelled",
+                    "past",
+                }
+            ):
+                raise SyncFailure("parse_error")
         pace = card.get("pace")
         if (
             not isinstance(card.get("remainingClasses"), int)
@@ -1562,6 +1784,69 @@ def _make_failure_state(
     return state
 
 
+def build_timetable_snapshot(
+    source: WendaSource | FixtureSource,
+    now: datetime,
+    observed_at: str,
+) -> dict[str, Any]:
+    today = now.astimezone(TIMEZONE).date()
+    week_start = today - timedelta(days=today.weekday())
+    current_week_end = week_start + timedelta(days=6)
+    current_week_days: list[dict[str, Any]] = []
+    selector_dates: set[str] = set()
+
+    def fetch_day(course_date: date) -> dict[str, Any]:
+        path = f"{TIMETABLE_PATH}/{course_date.isoformat()}"
+        html_text = source.request(path, "dateswiper")
+        parsed = parse_timetable(html_text, course_date.isoformat())
+        selector_dates.update(parsed["selectorDates"])
+        return {
+            "date": parsed["date"],
+            "records": parsed["records"],
+        }
+
+    for offset in range(7):
+        current_week_days.append(fetch_day(week_start + timedelta(days=offset)))
+
+    display_mode = "current_week"
+    days = current_week_days
+    sunday_publish_time = now.astimezone(TIMEZONE).replace(
+        hour=14,
+        minute=20,
+        second=0,
+        microsecond=0,
+    )
+    if today.weekday() == 6 and now.astimezone(TIMEZONE) >= sunday_publish_time:
+        next_week_start = current_week_end + timedelta(days=1)
+        next_week_days = [
+            fetch_day(next_week_start + timedelta(days=offset))
+            for offset in range(7)
+        ]
+        if any(item["records"] for item in next_week_days):
+            days = [current_week_days[-1], *next_week_days]
+            display_mode = "sunday_plus_next_week"
+
+    available_dates = [
+        item["date"]
+        for item in days
+        if item["records"]
+    ]
+    sorted_selector = sorted(selector_dates)
+    return {
+        "schemaVersion": SCHEMA_VERSION,
+        "timezone": "Asia/Shanghai",
+        "dataAsOf": observed_at,
+        "weekStart": days[0]["date"],
+        "weekEnd": days[-1]["date"],
+        "displayMode": display_mode,
+        "selectorFrom": sorted_selector[0] if sorted_selector else None,
+        "selectorThrough": sorted_selector[-1] if sorted_selector else None,
+        "selectorDays": len(sorted_selector),
+        "availableThrough": max(available_dates) if available_dates else None,
+        "days": days,
+    }
+
+
 def synchronize(
     paths: SyncPaths,
     source: WendaSource | FixtureSource,
@@ -1580,6 +1865,7 @@ def synchronize(
     ledger = safe_read_json(paths.ledger, empty_ledger())
     booking = safe_read_json(paths.booking, empty_booking())
     membership = safe_read_json(paths.membership, empty_membership())
+    timetable = safe_read_json(paths.timetable, empty_timetable())
     old_state = safe_read_json(paths.sync_state, empty_sync_state())
     validate_ledger(ledger)
     window = _logical_window(now, mode)
@@ -1694,17 +1980,20 @@ def synchronize(
             "dataAsOf": observed_at,
             "cards": parse_membership(membership_html),
         }
+        proposed_timetable = build_timetable_snapshot(source, now, observed_at)
 
         last_data_change = old_state.get("lastDataChangeAt")
         previous_business = {
             "attendance": ledger.get("contentFingerprint"),
             "upcoming": booking.get("records", []),
             "membership": membership.get("cards", []),
+            "timetable": timetable.get("days", []),
         }
         proposed_business = {
             "attendance": fingerprint,
             "upcoming": proposed_booking["records"],
             "membership": proposed_membership["cards"],
+            "timetable": proposed_timetable["days"],
         }
         if previous_business != proposed_business:
             last_data_change = observed_at
@@ -1730,6 +2019,7 @@ def synchronize(
             proposed_ledger,
             proposed_booking,
             proposed_membership,
+            proposed_timetable,
             state,
             now,
         )
@@ -1738,6 +2028,7 @@ def synchronize(
             atomic_write_json(paths.ledger, proposed_ledger, mode=0o600)
             atomic_write_json(paths.booking, proposed_booking, mode=0o600)
             atomic_write_json(paths.membership, proposed_membership, mode=0o600)
+            atomic_write_json(paths.timetable, proposed_timetable, mode=0o600)
             atomic_write_json(paths.sync_state, state, mode=0o600)
             _write_read_model(paths, model)
         return SyncResult(
@@ -1759,7 +2050,7 @@ def synchronize(
             credential_version,
             len(ledger.get("records", [])),
         )
-        model = build_read_model(ledger, booking, membership, state, now)
+        model = build_read_model(ledger, booking, membership, timetable, state, now)
         if not dry_run:
             atomic_write_json(paths.sync_state, state, mode=0o600)
             _write_read_model(paths, model)
@@ -1785,6 +2076,7 @@ def build_paths(state_dir: Path, output: Path) -> SyncPaths:
         sync_state=state_dir / "sync-state.json",
         booking=state_dir / "booking-snapshot.json",
         membership=state_dir / "membership-snapshot.json",
+        timetable=state_dir / "timetable-snapshot.json",
         output=output,
         wrapper=output.with_suffix(".js"),
     )

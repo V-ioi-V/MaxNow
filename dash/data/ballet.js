@@ -614,6 +614,19 @@ window.MAXNOW_BALLET_DATA = {
       }
     ]
   },
+  "timetable": {
+    "schemaVersion": 1,
+    "timezone": "Asia/Shanghai",
+    "dataAsOf": null,
+    "weekStart": null,
+    "weekEnd": null,
+    "displayMode": "current_week",
+    "selectorFrom": null,
+    "selectorThrough": null,
+    "selectorDays": 0,
+    "availableThrough": null,
+    "days": []
+  },
   "learningLogs": [],
   "authHealth": {
     "status": "valid",

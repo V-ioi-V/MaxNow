@@ -320,6 +320,53 @@ def check_ballet_read_model():
             raise ValueError("ballet: retired fixed-window forecast remains")
         if not pace["sampleSufficient"] and pace["observedClassesPerWeek"] is not None:
             raise ValueError("ballet: short-sample observed pace must stay hidden")
+    timetable = data.get("timetable")
+    if not isinstance(timetable, dict) or timetable.get("displayMode") not in {
+        "current_week",
+        "sunday_plus_next_week",
+    }:
+        raise ValueError("ballet: timetable display mode is invalid")
+    timetable_days = timetable.get("days")
+    if not isinstance(timetable_days, list) or len(timetable_days) > 8:
+        raise ValueError("ballet: timetable days are invalid")
+    if timetable_days:
+        expected_days = 8 if timetable["displayMode"] == "sunday_plus_next_week" else 7
+        if len(timetable_days) != expected_days:
+            raise ValueError("ballet: timetable display window is invalid")
+        if (
+            timetable.get("weekStart") != timetable_days[0].get("date")
+            or timetable.get("weekEnd") != timetable_days[-1].get("date")
+        ):
+            raise ValueError("ballet: timetable boundary is invalid")
+    for day in timetable_days:
+        if not isinstance(day, dict) or not isinstance(day.get("records"), list):
+            raise ValueError("ballet: timetable day is invalid")
+        for record in day["records"]:
+            required = {
+                "date",
+                "courseName",
+                "courseType",
+                "level",
+                "startTime",
+                "endTime",
+                "durationMinutes",
+                "teacher",
+                "venue",
+                "bookedCount",
+                "capacity",
+                "availability",
+            }
+            if not isinstance(record, dict) or not required.issubset(record):
+                raise ValueError("ballet: timetable course fields are incomplete")
+            if record["date"] != day.get("date") or record["availability"] not in {
+                "available",
+                "booked",
+                "waitlist",
+                "full",
+                "cancelled",
+                "past",
+            }:
+                raise ValueError("ballet: timetable course state is invalid")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
@@ -347,7 +394,20 @@ def check_ballet_read_model():
         or ".ballet-week-grid {" not in dashboard_css
     ):
         raise ValueError("ballet: membership or weekly frontend contract is incomplete")
-    return "ballet: read model, decisions, totals, aggregates, and redaction are valid"
+    timer = (ROOT / "server/maxnow-ballet-sync.timer").read_text(encoding="utf-8")
+    if (
+        "OnCalendar=*-*-* 00:00:00 Asia/Shanghai" not in timer
+        or "OnCalendar=Sun *-*-* 14:20:00 Asia/Shanghai" not in timer
+        or "function renderBalletTimetable()" not in dashboard_js
+        or 'id="ballet-timetable-grid"' not in dashboard_html
+        or 'id="ballet-timetable-mobile"' not in dashboard_html
+        or '.ballet-timetable-day[data-day-state="today"]' not in dashboard_css
+        or '.ballet-timetable-cell[data-day-state="past"]' not in dashboard_css
+        or '.ballet-timetable-course[data-availability="booked"]' not in dashboard_css
+        or '.ballet-timetable-course[data-availability="waitlist"]' not in dashboard_css
+    ):
+        raise ValueError("ballet: timetable frontend or refresh contract is incomplete")
+    return "ballet: read model, timetable, decisions, totals, aggregates, and redaction are valid"
 
 
 def check_ballet_session_status():
@@ -1125,9 +1185,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=157" not in dashboard_html
+        "styles.css?v=158" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=130" not in dashboard_html
+        or "app.js?v=131" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     polish_rules = (
@@ -1166,7 +1226,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=130" not in dashboard_html:
+    if "app.js?v=131" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

@@ -293,14 +293,14 @@ python3 scripts/check.py
 
 ### 芭蕾生产只读同步（每日 / 月度定时已启用）
 
-芭蕾页面与脱敏缓存已经部署。2026-07-27 已用新会话原子替换生产 host-bound 加密凭据；Owner 已批准启用每日 00:17 rolling 与每月 1 日 00:47 full 只读同步。长期 enable gate 为 root `0600`，两个 timer 均应保持 `enabled / active / waiting`。身份失效时同步器会停止后续网络尝试并保留旧数据，直到非敏感凭据版本变化。
+芭蕾页面与脱敏缓存已经部署。生产 rolling timer 每日 00:00 刷新全部数据，并在周日 14:20 额外读取下周课表；每月 1 日 00:47 继续执行 full 只读同步。长期 enable gate 为 root `0600`，两个 timer 均应保持 `enabled / active / waiting`。身份失效时同步器会停止后续网络尝试并保留旧数据，直到非敏感凭据版本变化。
 
 目标运行边界：
 
 ```text
 service -> maxnow-ballet-sync.service
 timer -> maxnow-ballet-sync.timer
-schedule -> Asia/Shanghai 每日 00:17
+schedule -> Asia/Shanghai 每日 00:00 + 周日 14:20
 monthly service -> maxnow-ballet-full-sync.service
 monthly timer -> maxnow-ballet-full-sync.timer
 monthly schedule -> Asia/Shanghai 每月 1 日 00:47
@@ -318,9 +318,10 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 - 上课记录索引：`/gm/weixin/my/checkrecord/54114`
 - 预约记录索引：`/gm/weixin/my/bookrecord/54114`
 - 课程卡概览：`/gm/weixin/my/mycard/54114`
+- 日期课表：`/gm/weixin/classtable/simpleclass/54114/430/YYYY-MM-DD`
 - 从预约索引发现的同租户数字详情：`/gm/weixin/my/bookrecordone/54114/<digits>`
 
-禁止 POST，禁止调用预约、取消、候补、转课、会员登录、课程卡详情或未知接口。首次成功同步可回填当前源站能返回的历史；后续使用私有 canonical ledger 幂等 upsert、稳定键去重和原子替换。课程卡概览只保留名称、有效期、总 / 剩余 / 已用课次，不输出会员卡号、会员 ID 或源记录 ID。日常任务以北京时间 00:00 为逻辑日界，在 00:17 结算前一日；同步失败只更新安全状态，不清空最后成功的 records、summary、aggregates、预约或课程卡快照。
+禁止 POST，禁止调用预约、取消、候补、转课、会员登录、课程卡详情或未知接口。日期课表路径必须严格匹配 ISO 日期。平时抓取本周 7 天；周日 14:20 后额外抓取下周 7 天，只有下周存在课程时才输出“本周日 + 下周”8 天。同步失败只更新安全状态，不清空最后成功的 records、summary、aggregates、预约、课程卡或课表快照。
 
 生产凭据规则：
 
@@ -369,7 +370,7 @@ experiment status -> v6 每 20 分钟课程列表探针继续运行；12:01 曾�
 1. 先按本节规则写入新的 host-bound 加密凭据，不复用实验 unit 的临时 `/run/credentials` 路径；若重建生命周期探针，按 Owner 最新要求使用 1200 秒（20 分钟），不要改写已结束 v5 的 1500 秒历史配置或日志。
 2. 用本地脱敏样本完成 parser / 去重测试；首次真实同步只允许已确认的 GET 路径。
 3. 检查私有账本 `0600`、read model 无敏感字段、重复同步不增加历史数量、失败时旧缓存仍在。
-4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认下一次触发分别为每日 00:17 和每月 1 日 00:47；不要把测试性即时请求算作定时任务证据。
+4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认 rolling timer 同时包含每日 00:00 和周日 14:20，full timer 为每月 1 日 00:47；不要把测试性即时请求算作定时任务证据。
 5. 更新 Cloud 页自动化清单和系统状态来源，并在 `UPDATE_LOG.md` 记录真实启用时间与脱敏结果。
 
 2026-07-27 17 时完成芭蕾只读训练闭环的正式验证与 timer 启用。部署前 `dash/data` 和 `/var/lib/maxnow-ballet` 已备份至 `/home/ubuntu/maxnow-deploy-backups/ballet-readonly-loop-cvbcBr`；服务器 14 项同步器测试、全仓检查与一次 production rolling service 均通过。正式 read model 保留 2 条实际上课、3 条正式预约、1 条候补第 4 位；四条未来课程均解析出 2 / 11 小时相对取消规则对应的绝对截止时间；课程卡为 39 / 40 次、有效至 2027-01-23，本周预计 3–4 节、240–330 分钟。read model 无 PHPSESSID、会员卡号、会员 / 源记录标识或原始响应。`/etc/maxnow-ballet/enable-sync` 为 `root:root 0600`；两个 timer 已 `enabled / active / waiting`，下次触发分别为 2026-07-28 00:17 和 2026-08-01 00:47。隔离验证使用的 `/tmp/maxnow-sync-ballet-preview-20260727.py`、`/var/lib/maxnow-ballet-preview-20260727` 及其 private StateDirectory 已删除。

@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 00:15",
-  "version": "1.0.5.27",
-  "versionLabel": "v1.0.5.27",
-  "branch": "feature/unify-ballet-bookings",
-  "commit": "1807ca7",
+  "updatedAt": "2026-07-28 10:04",
+  "version": "1.0.5.28",
+  "versionLabel": "v1.0.5.28",
+  "branch": "feature/ballet-timetable",
+  "commit": "6911067",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/unify-ballet-bookings · commit 1807ca7 · 有未提交代码改动",
+  "deployNote": "feature/ballet-timetable · commit 6911067 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "增加芭蕾周课表与周日发布刷新",
+      "summary": "芭蕾页新增包含源站全部课程的粉白周课表，桌面使用时间 × 日期网格，移动端按日期分组；当天高亮、过去日期淡化、未来日期保持普通状态，已预约整卡使用粉玫瑰高亮，排队中整卡使用橙色高亮。"
+    },
     {
       "date": "2026-07-28",
       "title": "统一所有预约行并补齐取消截止",
@@ -28,11 +33,6 @@
       "date": "2026-07-27",
       "title": "微调 Dash 全页面视觉与交互",
       "summary": "对首页、豆奶、Token、芭蕾、云服务、生活、同行记及登录入口做一次不改变信息架构的整体微调：统一系统字体回退与等宽数字、减轻卡片阴影、补齐焦点和按压反馈、规范空状态并增加 reduced-motion 兜底。"
-    },
-    {
-      "date": "2026-07-27",
-      "title": "合并顶部预约并强化下一节层级",
-      "summary": "删除独立“下一节预约”面板和下方重复的整宽预约面板，将“所有预约”直接放进顶部左卡，与本周训练、课程卡并列。"
     }
   ]
 }

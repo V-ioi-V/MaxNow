@@ -88,6 +88,7 @@ const DATA_SOURCE_OPTIONS = {
         Number(data.summary?.classes ?? data.summary?.totalClasses ?? 0) ||
           (data.records || []).length ||
           (Array.isArray(data.upcoming) ? data.upcoming.length : (data.upcoming?.records || []).length) ||
+          (data.timetable?.days || []).some((day) => (day.records || []).length) ||
           data.nextClass ||
           data.summary?.nextClass,
       ),
@@ -111,6 +112,7 @@ const fallbackBallet = window.MAXNOW_BALLET_DATA || {
   aggregates: {},
   records: [],
   upcoming: { records: [] },
+  timetable: { days: [] },
   week: {},
   membership: { cards: [] },
 };
@@ -3221,6 +3223,168 @@ function renderBalletUpcoming() {
   container.append(...records.map(createBalletUpcomingItem));
 }
 
+function getBalletTimetableDayState(dateText) {
+  const today = localDateKey();
+  if (dateText === today) return "today";
+  return dateText < today ? "past" : "future";
+}
+
+function getBalletTimetableStatus(record = {}) {
+  const labels = {
+    available: "可约",
+    booked: "已预约",
+    waitlist: "可排队",
+    full: "已满",
+    cancelled: "已取消",
+    past: "已过",
+  };
+  const key = String(record.availability || "available").toLowerCase();
+  return {
+    key,
+    label: labels[key] || "待确认",
+  };
+}
+
+function createBalletTimetableCourse(record, mobile = false) {
+  const article = document.createElement("article");
+  article.className = mobile ? "ballet-timetable-course is-mobile" : "ballet-timetable-course";
+  article.dataset.courseType = String(record.courseType || "other").toLowerCase();
+  const status = getBalletTimetableStatus(record);
+  article.dataset.availability = status.key;
+
+  const title = document.createElement("strong");
+  title.textContent = balletCourseName(record);
+  const meta = document.createElement("small");
+  meta.textContent = [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补";
+  const foot = document.createElement("div");
+  const time = document.createElement("span");
+  time.textContent = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
+  const state = document.createElement("span");
+  state.className = "ballet-timetable-state";
+  state.textContent = status.label;
+  state.dataset.availability = status.key;
+  foot.append(time, state);
+  article.append(title, meta, foot);
+  return article;
+}
+
+function createBalletTimetableDayHeader(day, index) {
+  const header = document.createElement("div");
+  const dateText = String(day.date || "");
+  const parsed = parseLocalDateTime(dateText);
+  const state = getBalletTimetableDayState(dateText);
+  header.className = "ballet-timetable-day";
+  header.dataset.dayState = state;
+  header.dataset.tone = String(index % 6);
+  const weekday = document.createElement("strong");
+  weekday.textContent =
+    state === "today"
+      ? "今天"
+      : parsed
+        ? new Intl.DateTimeFormat("zh-CN", { weekday: "short" }).format(parsed)
+        : "--";
+  const date = document.createElement("span");
+  date.textContent = dateText
+    ? `${Number(dateText.slice(5, 7))}/${Number(dateText.slice(8, 10))}`
+    : "--";
+  header.append(weekday, date);
+  return header;
+}
+
+function renderBalletTimetable() {
+  const timetable = balletData.timetable || {};
+  const days = Array.isArray(timetable.days)
+    ? timetable.days
+        .filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(String(day?.date || "")))
+        .sort((a, b) => String(a.date).localeCompare(String(b.date)))
+    : [];
+  const grid = qs("#ballet-timetable-grid");
+  const mobile = qs("#ballet-timetable-mobile");
+  if (!grid || !mobile) return;
+
+  const courseCount = days.reduce(
+    (total, day) => total + (Array.isArray(day.records) ? day.records.length : 0),
+    0,
+  );
+  setText("#ballet-timetable-count", days.length ? `${days.length} 天 · ${courseCount} 节` : "等待同步");
+  grid.replaceChildren();
+  mobile.replaceChildren();
+
+  if (!days.length) {
+    grid.appendChild(emptyTemplate.content.cloneNode(true));
+    mobile.appendChild(emptyTemplate.content.cloneNode(true));
+    setText("#ballet-timetable-note", "同步完成后显示本周课程。");
+    return;
+  }
+
+  const slots = [
+    ...new Set(
+      days.flatMap((day) =>
+        (Array.isArray(day.records) ? day.records : [])
+          .map((record) => balletStartTime(record))
+          .filter(Boolean),
+      ),
+    ),
+  ].sort();
+  grid.style.setProperty("--ballet-day-count", String(days.length));
+  const corner = document.createElement("div");
+  corner.className = "ballet-timetable-corner";
+  corner.textContent = "时间";
+  grid.append(corner, ...days.map(createBalletTimetableDayHeader));
+
+  slots.forEach((slot) => {
+    const time = document.createElement("div");
+    time.className = "ballet-timetable-time";
+    time.textContent = slot;
+    grid.appendChild(time);
+    days.forEach((day) => {
+      const cell = document.createElement("div");
+      cell.className = "ballet-timetable-cell";
+      cell.dataset.dayState = getBalletTimetableDayState(day.date);
+      const records = (Array.isArray(day.records) ? day.records : []).filter(
+        (record) => balletStartTime(record) === slot,
+      );
+      if (records.length) {
+        cell.append(...records.map((record) => createBalletTimetableCourse(record)));
+      }
+      grid.appendChild(cell);
+    });
+  });
+
+  days.forEach((day, index) => {
+    const group = document.createElement("section");
+    group.className = "ballet-timetable-mobile-day";
+    group.dataset.dayState = getBalletTimetableDayState(day.date);
+    const header = createBalletTimetableDayHeader(day, index);
+    const records = Array.isArray(day.records) ? day.records : [];
+    const count = document.createElement("span");
+    count.className = "status-pill";
+    count.textContent = `${records.length} 节`;
+    header.appendChild(count);
+    group.appendChild(header);
+    if (records.length) {
+      group.append(...records.map((record) => createBalletTimetableCourse(record, true)));
+    } else {
+      const empty = document.createElement("p");
+      empty.className = "ballet-timetable-empty";
+      empty.textContent = "当天暂无课程";
+      group.appendChild(empty);
+    }
+    mobile.appendChild(group);
+  });
+
+  const through = String(timetable.availableThrough || "");
+  const throughLabel = through
+    ? `${Number(through.slice(5, 7))}月${Number(through.slice(8, 10))}日`
+    : "本周";
+  setText(
+    "#ballet-timetable-note",
+    timetable.displayMode === "sunday_plus_next_week"
+      ? `已切换为今天（周日）与下周课表 · 课程发布至 ${throughLabel}`
+      : `课程发布至 ${throughLabel} · 每天 00:00 更新，周日 14:20 检查下周课表`,
+  );
+}
+
 function renderBalletHome() {
   const state = getBalletUiState();
   const summary = getBalletSummary();
@@ -3270,6 +3434,7 @@ function renderBallet() {
   renderBalletMembership();
   renderBalletWeek();
   renderBalletUpcoming();
+  renderBalletTimetable();
   renderBalletTraining();
   renderBalletHistory();
   renderBalletHome();

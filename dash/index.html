@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=157" />
+    <link rel="stylesheet" href="./styles.css?v=158" />
   </head>
   <body>
     <div class="app-shell">
@@ -685,6 +685,21 @@
             </article>
           </section>
 
+          <article class="panel ballet-timetable-panel" aria-labelledby="ballet-timetable-title">
+            <header class="panel-head ballet-timetable-head">
+              <div>
+                <p class="eyebrow">Weekly Timetable</p>
+                <h2 id="ballet-timetable-title">本周课程表</h2>
+              </div>
+              <span class="status-pill" id="ballet-timetable-count">等待同步</span>
+            </header>
+            <div class="ballet-timetable-scroll" aria-label="本周课程表横向网格">
+              <div class="ballet-timetable-grid" id="ballet-timetable-grid"></div>
+            </div>
+            <div class="ballet-timetable-mobile" id="ballet-timetable-mobile"></div>
+            <p class="ballet-timetable-note" id="ballet-timetable-note">同步完成后显示本周课程。</p>
+          </article>
+
           <article class="panel ballet-training-panel">
             <header class="panel-head ballet-training-head">
               <div>
@@ -885,14 +900,15 @@
             <article class="panel cloud-card" data-tone="purple">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 00:17 / Monthly 00:47 / Local 5min</p>
+                  <p class="eyebrow">Daily 00:00 / Sunday 14:20 / Monthly 00:47</p>
                   <h2>芭蕾只读同步</h2>
                 </div>
                 <span class="status-pill">只读同步已启用</span>
               </header>
-              <p class="item-copy">每日只读刷新预约、候补、上课记录与课程卡，每月执行全量校验；登录失效后停止网络请求并保留最后成功缓存。v6 会话探针与本地脱敏状态发布继续独立运行。</p>
+              <p class="item-copy">每日只读刷新预约、候补、上课记录、课程卡与本周课表；周日 14:20 再检查一次下周课表，每月执行全量校验。登录失效后停止网络请求并保留最后成功缓存。</p>
               <dl class="cloud-meta">
-                <div><dt>日常</dt><dd>00:17 刷新预约、候补、上课记录和课程卡</dd></div>
+                <div><dt>日常</dt><dd>00:00 刷新预约、候补、上课记录、课程卡和本周课表</dd></div>
+                <div><dt>周日</dt><dd>14:20 检查下周课表；拿到后展示本周日 + 下周一周</dd></div>
                 <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
                 <div><dt>实验请求</dt><dd>每 20 分钟固定只读课程列表 GET</dd></div>
                 <div><dt>本地状态</dt><dd>每 5 分钟转存并发布脱敏 ballet-session.*</dd></div>
@@ -1096,6 +1112,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=130"></script>
+    <script src="./app.js?v=131"></script>
   </body>
 </html>
