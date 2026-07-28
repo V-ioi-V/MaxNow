@@ -14,8 +14,8 @@ Environment=PYTHONDONTWRITEBYTECODE=1
 LoadCredentialEncrypted=wenda-session.json:/etc/credstore.encrypted/maxnow-ballet-wenda.cred
 RuntimeDirectory=maxnow-ballet-booking-fast
 RuntimeDirectoryMode=0700
-ExecStartPre=/usr/bin/install -d -m 0700 /var/lib/maxnow-ballet-booking-fast
-ExecStartPre=/usr/bin/install -d -m 0750 -o root -g www-data /var/lib/maxnow-ballet-booking-fast-public
+ExecStartPre=/usr/bin/test -d /var/lib/maxnow-ballet-booking-fast
+ExecStartPre=/usr/bin/test -d /var/lib/maxnow-ballet-booking-fast-public
 ExecStart=/usr/bin/flock --nonblock /run/maxnow-ballet-booking-fast/run.lock /usr/bin/python3 -B scripts/book_ballet_fast.py execute
 TimeoutStartSec=180
 UMask=0027
@@ -41,4 +41,3 @@ RestrictSUIDSGID=true
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 CapabilityBoundingSet=
 SystemCallArchitectures=native
-

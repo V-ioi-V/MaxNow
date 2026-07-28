@@ -455,7 +455,8 @@ sudo systemctl daemon-reload
 sudo systemd-analyze verify \
   /etc/systemd/system/maxnow-ballet-booking-fast.service \
   /etc/systemd/system/maxnow-ballet-booking-fast.timer
-sudo /usr/bin/python3 -B scripts/book_ballet_fast.py preview
+sudo -u root -g www-data /usr/bin/python3 -B \
+  scripts/book_ballet_fast.py preview
 sudo systemctl enable --now maxnow-ballet-booking-fast.timer
 ```
 
