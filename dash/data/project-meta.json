@@ -1,18 +1,23 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 17:21",
-  "version": "1.0.7.00",
-  "versionLabel": "v1.0.7.00",
-  "branch": "main",
-  "commit": "b51295a",
+  "updatedAt": "2026-07-28 17:30",
+  "version": "1.0.7.01",
+  "versionLabel": "v1.0.7.01",
+  "branch": "feature/ballet-fast-retry",
+  "commit": "dc502fc",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "main · commit b51295a · 有未提交代码改动",
+  "deployNote": "feature/ballet-fast-retry · commit dc502fc · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-28",
+      "title": "自动抢课改为逐课独立并增加安全重试",
+      "summary": "周日 fast path 将三节目标拆为独立失败域：第一节课程级失败或预约结果未知不会阻止第二、第三节；只有登录失效、配置错误或闻道页面协议变化才全局停止。"
+    },
+    {
+      "date": "2026-07-28",
       "title": "增加周日自动抢课 Fast Path",
-      "summary": "新增服务器本地 `book_ballet_fast.py` 与精确定时 systemd service / timer：周日 14:19:35 预热，14:20:00 按“周六 > 周日 > 周五 > 其他日期”顺序逐课即时校验并单次提交；关键路径不经过 Codex、Skill 或 SSH，未知结果停止后续且不重试。"
+      "summary": "新增服务器本地 `book_ballet_fast.py` 与精确定时 systemd service / timer：周日 14:19:35 预热，14:20:00 按“周六 > 周日 > 周五 > 其他日期”顺序逐课即时校验并提交；关键路径不经过 Codex、Skill 或 SSH。初版未知结果会停止后续，随后同日按上方记录改为逐课独立安全重试。"
     },
     {
       "date": "2026-07-28",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "固定芭蕾实时课表的默认范围与格式",
       "summary": "Owner 泛问“有什么课程 / 有什么可以约的课”时，默认展示闻道实时返回的全部课型，不再只筛芭蕾；只有明确说“只看 / 仅看 / 只想看”某类课程时才按课型筛选。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "修复 Token 总账并发拉取漏更",
-      "summary": "macOS 源账本已正常上报，但服务器 `11:10` 总账任务与另一条 Git 更新并发，因远端引用锁竞争退出；手动补跑后线上总账更新到 `11:28`，Codex macOS 来源时间更新到 `11:00`。"
     }
   ]
 }

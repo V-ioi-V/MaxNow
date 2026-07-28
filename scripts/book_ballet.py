@@ -365,8 +365,16 @@ def current_booking(source: Any, target: dict[str, str]) -> dict[str, Any] | Non
 
 
 class WendaBookingSource:
-    def __init__(self, credentials: ballet.Credentials):
-        self.reader = ballet.WendaSource(credentials, retries=0)
+    def __init__(
+        self,
+        credentials: ballet.Credentials,
+        timeout_seconds: int = 20,
+    ):
+        self.reader = ballet.WendaSource(
+            credentials,
+            timeout_seconds=timeout_seconds,
+            retries=0,
+        )
         self.post_count = 0
         self.mutation_count = 0
 

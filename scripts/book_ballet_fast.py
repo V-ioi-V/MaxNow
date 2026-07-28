@@ -25,15 +25,21 @@ COURSE_TYPE_LABELS = {
     "technique": "技巧",
     "other": "其他",
 }
-KNOWN_SKIP_CODES = {
+MAX_RETRIES = 3
+RETRY_DELAYS_SECONDS = (0.08, 0.16, 0.32)
+RETRIABLE_PREFLIGHT_CODES = {
     "card_not_open",
-    "card_selection_required",
-    "full",
-    "no_eligible_card",
-    "not_available",
-    "notopen",
+    "course_not_unique",
+    "http_error",
+    "network_error",
     "rules_blocked",
-    "stopped",
+    "unknown_result",
+}
+GLOBAL_STOP_CODES = {
+    "auth_required",
+    "configuration_error",
+    "parse_error",
+    "source_changed",
 }
 PUBLIC_ERROR_LABELS = {
     "auth_required": "闻道登录已失效，未执行预约。",
@@ -41,7 +47,7 @@ PUBLIC_ERROR_LABELS = {
     "network_error": "连接闻道失败，未执行预约。",
     "outside_window": "不在周日抢课时间窗内，未执行预约。",
     "source_changed": "闻道页面结构发生变化，已停止后续课程。",
-    "unknown_result": "预约结果无法安全确认，已停止后续课程。",
+    "unknown_result": "预约结果无法安全确认，未重复提交该课。",
 }
 
 
@@ -276,7 +282,14 @@ def safe_record(target: dict[str, Any], status: str, **extra: Any) -> dict[str, 
     allowed_extra = {
         key: value
         for key, value in extra.items()
-        if key in {"availability", "bookingStatus", "verified"}
+        if key
+        in {
+            "attempts",
+            "availability",
+            "bookingStatus",
+            "elapsedMilliseconds",
+            "verified",
+        }
     }
     return {**public_target(target), "status": status, **allowed_extra}
 
@@ -293,95 +306,224 @@ def run_fast(
     state: dict[str, Any],
     release_at: datetime,
     execute: bool,
+    sleeper: Any = time.sleep,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
+    run_started = time.monotonic()
     targets = materialize_targets(config, release_at)
     booked_occurrences = set(state.get("bookedOccurrences", []))
     records: list[dict[str, Any]] = []
-    mutation_targets: list[tuple[int, dict[str, Any]]] = []
-    stop_reason = ""
+    verification_targets: list[tuple[int, dict[str, Any], bool]] = []
+    newly_booked_occurrences: set[str] = set()
+    global_stop_reason = ""
 
     for target in targets:
-        if stop_reason:
-            records.append(safe_record(target, "not_attempted"))
+        target_started = time.monotonic()
+        if global_stop_reason:
+            records.append(
+                safe_record(
+                    target,
+                    "not_attempted",
+                    attempts=0,
+                    elapsedMilliseconds=0,
+                )
+            )
             continue
         occurrence = occurrence_key(target)
         if occurrence in booked_occurrences:
-            records.append(safe_record(target, "already_booked"))
+            records.append(
+                safe_record(
+                    target,
+                    "already_booked",
+                    attempts=0,
+                    elapsedMilliseconds=0,
+                )
+            )
             continue
-        try:
-            candidates = timetable_candidates(source, target)
-            if len(candidates) != 1:
-                records.append(safe_record(target, "course_not_unique"))
-                continue
-            candidate = candidates[0]
-            availability = candidate["record"]["availability"]
-            if availability == "booked":
-                records.append(safe_record(target, "already_booked"))
-                continue
-            if availability != "available":
+        for attempt in range(1, MAX_RETRIES + 2):
+            mutation_submitted = False
+            try:
+                candidates = timetable_candidates(source, target)
+                if len(candidates) != 1:
+                    raise FastBookingFailure("course_not_unique")
+                candidate = candidates[0]
+                availability = candidate["record"]["availability"]
+                if availability == "booked":
+                    records.append(
+                        safe_record(
+                            target,
+                            "already_booked",
+                            attempts=attempt,
+                            elapsedMilliseconds=round(
+                                (time.monotonic() - target_started) * 1000
+                            ),
+                        )
+                    )
+                    break
+                if availability != "available":
+                    records.append(
+                        safe_record(
+                            target,
+                            "not_available",
+                            attempts=attempt,
+                            availability=availability,
+                            elapsedMilliseconds=round(
+                                (time.monotonic() - target_started) * 1000
+                            ),
+                        )
+                    )
+                    break
+                contract = booking.booking_contract(candidate)
+                card_id = booking.eligible_card(source, contract)
+                booking.check_rules(source, contract, card_id)
+                if not execute:
+                    records.append(
+                        safe_record(
+                            target,
+                            "ready",
+                            attempts=attempt,
+                            elapsedMilliseconds=round(
+                                (time.monotonic() - target_started) * 1000
+                            ),
+                        )
+                    )
+                    break
+                mutation_submitted = True
+                mutation = booking.response_json(
+                    source.post_fields(
+                        contract["bookingPath"],
+                        {
+                            "classtableid": contract["classTableId"],
+                            "cardid": card_id,
+                        },
+                        mutation=True,
+                    )
+                )
+                if (
+                    isinstance(mutation, int)
+                    and not isinstance(mutation, bool)
+                    and mutation > 0
+                ):
+                    records.append(
+                        safe_record(
+                            target,
+                            "booked",
+                            attempts=attempt,
+                            elapsedMilliseconds=round(
+                                (time.monotonic() - target_started) * 1000
+                            ),
+                            verified=False,
+                        )
+                    )
+                    verification_targets.append(
+                        (len(records) - 1, target, True)
+                    )
+                    booked_occurrences.add(occurrence)
+                    newly_booked_occurrences.add(occurrence)
+                    break
+                if isinstance(mutation, str) and mutation in {
+                    "FULL",
+                    "STOPPED",
+                    "NOTOPEN",
+                }:
+                    code = str(mutation).lower()
+                    if code == "notopen" and attempt <= MAX_RETRIES:
+                        sleeper(RETRY_DELAYS_SECONDS[attempt - 1])
+                        continue
+                    records.append(
+                        safe_record(
+                            target,
+                            code,
+                            attempts=attempt,
+                            elapsedMilliseconds=round(
+                                (time.monotonic() - target_started) * 1000
+                            ),
+                        )
+                    )
+                    break
+                raise booking.BookingFailure("unknown_result")
+            except (
+                FastBookingFailure,
+                booking.BookingFailure,
+                ballet.SyncFailure,
+            ) as failure:
+                code = getattr(failure, "code", "unknown_result")
+                if mutation_submitted and code != "auth_required":
+                    code = "unknown_result"
+                if code in GLOBAL_STOP_CODES:
+                    records.append(
+                        safe_record(
+                            target,
+                            code,
+                            attempts=attempt,
+                            elapsedMilliseconds=round(
+                                (time.monotonic() - target_started) * 1000
+                            ),
+                        )
+                    )
+                    global_stop_reason = code
+                    break
+                if (
+                    not mutation_submitted
+                    and code in RETRIABLE_PREFLIGHT_CODES
+                    and attempt <= MAX_RETRIES
+                ):
+                    sleeper(RETRY_DELAYS_SECONDS[attempt - 1])
+                    continue
                 records.append(
                     safe_record(
                         target,
-                        "not_available",
-                        availability=availability,
+                        code,
+                        attempts=attempt,
+                        elapsedMilliseconds=round(
+                            (time.monotonic() - target_started) * 1000
+                        ),
+                        **(
+                            {"verified": False}
+                            if mutation_submitted
+                            else {}
+                        ),
                     )
                 )
-                continue
-            contract = booking.booking_contract(candidate)
-            card_id = booking.eligible_card(source, contract)
-            booking.check_rules(source, contract, card_id)
-            if not execute:
-                records.append(safe_record(target, "ready"))
-                continue
-            mutation = booking.response_json(
-                source.post_fields(
-                    contract["bookingPath"],
-                    {
-                        "classtableid": contract["classTableId"],
-                        "cardid": card_id,
-                    },
-                    mutation=True,
-                )
-            )
-            if isinstance(mutation, int) and not isinstance(mutation, bool) and mutation > 0:
-                records.append(safe_record(target, "booked", verified=False))
-                mutation_targets.append((len(records) - 1, target))
-                booked_occurrences.add(occurrence)
-                continue
-            if isinstance(mutation, str) and mutation in {
-                "FULL",
-                "STOPPED",
-                "NOTOPEN",
-            }:
-                records.append(safe_record(target, str(mutation).lower()))
-                continue
-            raise booking.BookingFailure("unknown_result")
-        except (booking.BookingFailure, ballet.SyncFailure) as failure:
-            code = getattr(failure, "code", "unknown_result")
-            if code in KNOWN_SKIP_CODES:
-                records.append(safe_record(target, code))
-                continue
-            records.append(safe_record(target, code))
-            stop_reason = code
+                if mutation_submitted:
+                    verification_targets.append(
+                        (len(records) - 1, target, False)
+                    )
+                break
 
+    critical_path_milliseconds = round((time.monotonic() - run_started) * 1000)
     verification_error = ""
-    if execute and mutation_targets:
+    if execute and verification_targets:
         try:
             bookings = live.query_bookings(source)["records"]
-            for index, target in mutation_targets:
+            for index, target, acknowledged in verification_targets:
                 verified = existing_booking_matches(bookings, target)
                 records[index]["verified"] = verified
                 if verified:
+                    records[index]["status"] = "booked"
                     records[index]["bookingStatus"] = "booked"
-            if any(not records[index]["verified"] for index, _ in mutation_targets):
+                    occurrence = occurrence_key(target)
+                    booked_occurrences.add(occurrence)
+                    newly_booked_occurrences.add(occurrence)
+                elif not acknowledged:
+                    records[index]["status"] = "unknown_result"
+            if any(
+                not records[index]["verified"]
+                for index, _, _ in verification_targets
+            ):
                 verification_error = "verification_unavailable"
         except (booking.BookingFailure, ballet.SyncFailure):
             verification_error = "verification_unavailable"
 
     now_text = ballet.iso_now()
+    record_failures = any(
+        record["status"] not in {"already_booked", "booked", "ready"}
+        for record in records
+    )
     run_status = (
         "stopped"
-        if stop_reason
+        if global_stop_reason
+        else "partial"
+        if record_failures
         else "completed_unverified"
         if verification_error
         else "success"
@@ -394,7 +536,13 @@ def run_fast(
         "records": records,
         "requestsMade": getattr(source, "request_count", 0),
         "mutationAttempts": getattr(source, "mutation_count", 0),
-        **({"stopReason": stop_reason} if stop_reason else {}),
+        "criticalPathMilliseconds": critical_path_milliseconds,
+        "totalMilliseconds": round((time.monotonic() - run_started) * 1000),
+        **(
+            {"stopReason": global_stop_reason}
+            if global_stop_reason
+            else {}
+        ),
         **({"verification": verification_error} if verification_error else {}),
     }
     if execute:
@@ -403,7 +551,7 @@ def run_fast(
             "schemaVersion": 1,
             "totalRuns": int(state.get("totalRuns", 0)) + 1,
             "totalBooked": int(state.get("totalBooked", 0))
-            + len(mutation_targets),
+            + len(newly_booked_occurrences),
             "lastAttemptAt": now_text,
             "lastSuccessAt": (
                 now_text if run_status in {"success", "completed_unverified"} else state.get("lastSuccessAt")
@@ -443,7 +591,14 @@ def build_public(
         "lastRun": (
             {
                 key: last_run.get(key)
-                for key in ("status", "attemptedAt", "releaseAt", "records")
+                for key in (
+                    "status",
+                    "attemptedAt",
+                    "releaseAt",
+                    "records",
+                    "criticalPathMilliseconds",
+                    "totalMilliseconds",
+                )
             }
             if isinstance(last_run, dict)
             else None
@@ -451,7 +606,14 @@ def build_public(
         "preview": (
             {
                 key: preview_result.get(key)
-                for key in ("status", "attemptedAt", "releaseAt", "records")
+                for key in (
+                    "status",
+                    "attemptedAt",
+                    "releaseAt",
+                    "records",
+                    "criticalPathMilliseconds",
+                    "totalMilliseconds",
+                )
             }
             if isinstance(preview_result, dict)
             else None
@@ -573,7 +735,8 @@ def main() -> int:
             ):
                 raise FastBookingFailure("outside_window")
         source = booking.WendaBookingSource(
-            ballet.load_credentials(credential_path())
+            ballet.load_credentials(credential_path()),
+            timeout_seconds=5,
         )
         if args.mode == "execute":
             source.request(
@@ -602,7 +765,12 @@ def main() -> int:
             public,
         )
         print(json.dumps(result, ensure_ascii=False, separators=(",", ":")))
-        return 0 if result["status"] in {"success", "completed_unverified"} else 4
+        return (
+            0
+            if result["status"]
+            in {"success", "partial", "completed_unverified"}
+            else 4
+        )
     except (FastBookingFailure, booking.BookingFailure, ballet.SyncFailure) as failure:
         code = getattr(failure, "code", "unknown_result")
         if args.mode == "execute":

@@ -86,6 +86,8 @@ For multiple exact classes without an owner-specified order, sort them by the pe
 
 The enabled production fast path runs entirely on the MaxNow server. It arms at Sunday 14:19:35 Beijing time, warms the live session, waits until 14:20:00, and submits configured targets sequentially. It does not invoke Codex, this Skill, or SSH on the timing-critical path.
 
+Each target is an independent failure domain. Match exactly one live course by date, course type/level, start/end time, teacher, and venue. Transient pre-mutation failures and an explicit `NOTOPEN` response may be retried three times with short bounded backoff. A course-level failure or ambiguous mutation must not block later targets. Never retry an ambiguous mutation because Wenda may already have accepted it; include it in the final unified live-bookings verification instead. Stop later targets only for a global safety failure such as expired authentication, invalid configuration, or a changed page/endpoint contract.
+
 Current recurring targets are:
 
 - Saturday 11:30–12:30 soft-open, 李俊, 大教室.
@@ -122,3 +124,4 @@ Do not manually start the production service or run `book_ballet_fast.py execute
 - Never use cancellation, transfer, payment, login, waitlist mutation, or arbitrary POST endpoints.
 - Never expose source record IDs, member identifiers, raw HTML, response bodies, Cookie headers, credential paths, unit names, or internal logs.
 - Treat `auth_required`, `source_changed`, `parse_error`, `unknown_result`, and ambiguous responses as fail-closed. If any mutation was attempted and the result is ambiguous, report that verification is required; never claim failure or retry.
+- For the Sunday automatic fast path only, fail-closed is scoped per course: an ambiguous mutation is never retried, but later configured courses still proceed and all ambiguous/successful submissions are verified together. Authentication, configuration, and source-contract failures remain global stops.
