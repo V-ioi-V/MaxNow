@@ -40,6 +40,14 @@ scripts/run_ballet_live_query.sh membership
    - a current `fetchedAt`
 5. Answer from `data` and state the live query time. If the command fails, report the safe error and say no live data was returned. Do not fall back to cached data.
 
+## Timetable Answer Contract
+
+- Treat generic questions such as “有什么课程” or “有什么可以约的课” as requests for every returned course type. Do not filter `courseType` by default; include ballet, conditioning, soft-open, technique, and any future types returned by the live source.
+- Apply a course-type filter only when the owner explicitly says “只看”, “仅看”, “只想看”, or otherwise clearly limits the answer to named course types. Do not interpret the umbrella phrase “芭蕾课程” by itself as `courseType=ballet`.
+- For availability questions, list future records with `availability=available` as the primary result. State the number of `queue_available` records separately, but do not mix waitlist-only rows into the directly bookable list unless the owner asks to see them.
+- Group rows by date using `**周X M/D**`. Format every directly bookable row as `- HH:MM–HH:MM 课程名｜老师｜教室｜余N`, where `余N` is `capacity - bookedCount`.
+- Include both start and end time on every course row. End with the live query time and state that no cache was used.
+
 ## Safety Boundary
 
 - Use only the repository runner. It creates a read-only transient systemd unit, decrypts the host-bound credential into the unit credential directory, and removes that runtime directory when done.

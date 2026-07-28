@@ -139,6 +139,7 @@
 - 新增 `maxnow-ballet-live` Skill；Owner 询问课表、当前预约 / 候补、上课记录、老师、余位或课程卡时，固定连接 MaxNow 服务器并使用当前 PHPSESSID 实时查询闻道，禁止用 Dashboard 缓存、私有快照或旧对话结果回答。
 - 实时查询按课表、预约、上课记录、课程卡选择最小只读范围，通过临时 systemd unit 注入 host-bound 加密凭据并直接返回脱敏 JSON；不读取或改写 `dash/data/ballet.*` 和 `/var/lib/maxnow-ballet`。
 - 返回结果必须带 `source=wenda-live`、`live=true` 和当前 `fetchedAt`；身份、网络、页面结构或解析失败时 fail closed，不回退缓存。允许路径仍只有既有闻道 GET allowlist，不具备预约、取消、候补、转课、登录或支付写能力。
+- 泛问可约课程时默认展示全部课型，只有 Owner 明确限定“只看 / 仅看 / 只想看”某类课程时才筛选；直约课程固定按日期分组并显示开始–结束时间、课程名、老师、教室和余位。
 
 ### 已完成芭蕾只读训练闭环并启用自动同步
 
