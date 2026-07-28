@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 11:04",
+  "updatedAt": "2026-07-28 11:05",
   "version": "1.0.5.31",
   "versionLabel": "v1.0.5.31",
-  "branch": "feature/ballet-live-skill",
-  "commit": "d17fa55",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-live-skill · commit d17fa55 · 有未提交代码改动",
+  "branch": "main",
+  "commit": "c0a266d",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "main · commit c0a266d · 干净",
   "recentUpdates": [
     {
       "date": "2026-07-28",
