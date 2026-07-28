@@ -695,6 +695,8 @@ bash scripts/install_local_codex_usage_launchd.sh
 
 2026-07-14 起，macOS 上报会在每轮开始 fetch 最新 `origin/main`。如果专用 clone 因上次 push 被并发提交抢占而分叉，脚本只在所有本地独有提交标题均为 `Update macOS Codex token usage`、且只修改 `dash/data/codex-macos-usage.json/.js` 时自动 reset 到最新主线并重新生成；push 冲突同一轮最多重试 3 次。任何人工提交、其他提交标题或越界文件都会阻断自动恢复并写入日志，必须人工检查，禁止直接扩大自动 reset 范围。
 
+2026-07-28 修复 macOS 上报专用 clone 的中断残留死锁：若上一次运行在生成 `dash/data/codex-macos-usage.json/.js` 后、提交前被一致性检查中断，下一轮会先确认没有任何越界改动，再恢复这两个任务自有生成文件并继续 fetch / 重新生成。任何代码、文档或其他数据文件改动仍会阻断自动恢复。该修复用于避免旧主线中的一次 Ballet 自检权限错误留下生成文件后，使任务永远停在“工作区不干净”阶段。
+
 2026-07-07 已将 Owner macOS 的 launchd 任务改为使用专用 clone `/Users/bytedance/.maxnow-token-report`，plist 位于 `~/Library/LaunchAgents/cn.maxnow.local-codex-usage-report.plist`。原先指向 `/Users/bytedance/Desktop/Personal/MaxNow` 时，launchd 被 macOS Desktop 隐私权限拦截，日志出现 `Operation not permitted`，`launchctl print gui/501/cn.maxnow.local-codex-usage-report` 显示 `last exit code = 126`。修复命令为：
 
 ```bash

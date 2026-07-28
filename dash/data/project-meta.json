@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 10:11",
-  "version": "1.0.5.29",
-  "versionLabel": "v1.0.5.29",
-  "branch": "bugfix/ballet-timetable-status",
-  "commit": "0dce955",
+  "updatedAt": "2026-07-28 10:46",
+  "version": "1.0.5.30",
+  "versionLabel": "v1.0.5.30",
+  "branch": "bugfix/macos-token-report-recovery",
+  "commit": "2513a5b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-status · commit 0dce955 · 有未提交代码改动",
+  "deployNote": "bugfix/macos-token-report-recovery · commit 2513a5b · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "修复 macOS Codex Token 上报中断死锁",
+      "summary": "macOS 专用上报 clone 若在生成 `codex-macos-usage.*` 后、提交前被检查中断，下一轮会先确认没有越界改动，再恢复这两个任务自有生成文件并继续拉取、重新生成和上报。"
+    },
     {
       "date": "2026-07-28",
       "title": "区分课表“可排队”与本人“排队中”",
@@ -28,11 +33,6 @@
       "date": "2026-07-28",
       "title": "默认展开 PHPSESSID 实验详情",
       "summary": "芭蕾页底部 `PHPSESSID 实验详情` 改为进入页面时默认展开，同时保留原生折叠箭头和手动收起能力；版本提升到 `1.0.5.26`。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "回退芭蕾核心卡视觉改造",
-      "summary": "按 Owner 反馈回退“一主三辅”顶部指标、统一统计信息带和紧凑面积趋势图，恢复到 `1.0.5.23` 的芭蕾页面构图；此前确认的所有预约合并、下一节主次和顶部三栏结构继续保留。"
     }
   ]
 }

@@ -169,6 +169,22 @@ assert_no_blocking_dirty_files() {
   fi
 }
 
+recover_generated_files_from_interrupted_run() {
+  local status
+  if [[ "$ALLOW_DIRTY" -eq 1 ]]; then
+    return
+  fi
+  status="$(git status --porcelain)"
+  if [[ -z "$status" ]]; then
+    return
+  fi
+
+  assert_no_blocking_dirty_files "before refresh"
+  log "recover generated usage files left by an interrupted run"
+  git restore --staged --worktree -- "${ALLOWED_FILES[@]}"
+  assert_clean_worktree "after generated-file recovery"
+}
+
 run_step() {
   local label="$1"
   shift
@@ -273,7 +289,7 @@ if [[ "$branch" != "main" ]]; then
   fail "expected local reporting worktree to be on main, got '$branch'"
 fi
 
-assert_clean_worktree "before refresh"
+recover_generated_files_from_interrupted_run
 
 if ! [[ "$MAX_PUSH_ATTEMPTS" =~ ^[1-9][0-9]*$ ]]; then
   fail "MAXNOW_CODEX_PUSH_ATTEMPTS must be a positive integer"
