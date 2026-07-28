@@ -228,10 +228,17 @@ def safe_script_skeleton(text: str) -> str:
         value = match.group(2)
         following = text[match.end() :]
         is_object_key = bool(re.match(r"\s*:", following))
+        is_bracket_key = bool(
+            re.search(r"\[\s*$", text[: match.start()])
+            and re.match(r"\s*\]", following)
+        )
         if value.startswith("/") or value.startswith(("http://", "https://")):
             safe_value = f"<path:{safe_path_shape(value)}>"
         elif value in allowed_literals or (
-            is_object_key and re.fullmatch(r"[A-Za-z_$][\w$]*", value)
+            (is_object_key or is_bracket_key)
+            and re.fullmatch(r"[A-Za-z_$][\w$]*", value)
+        ) or re.fullmatch(
+            r"(?:[A-Z][A-Z_]*|true|false|success|ok)", value
         ):
             safe_value = value
         else:
