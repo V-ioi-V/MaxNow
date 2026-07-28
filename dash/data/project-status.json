@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "source": "ROADMAP.md",
-  "sourceUpdatedAt": "2026-07-28 17:28",
-  "generatedAt": "2026-07-28 17:30",
+  "sourceUpdatedAt": "2026-07-28 17:38",
+  "generatedAt": "2026-07-28 17:38",
   "staleAfterHours": 168,
-  "sourceFingerprint": "43fb18690f665afec0d7077a4b23a68979caaf7d0ae9a7e70c611531aeea6046",
+  "sourceFingerprint": "23df5dee474b5e3d6463317bacead9df54765c41b72f14a33c2ca6bf52e3ee3f",
   "mainlines": [
     {
       "title": "规划个人博客发布链路",
