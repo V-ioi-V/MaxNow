@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 11:44",
-  "version": "1.0.5.35",
-  "versionLabel": "v1.0.5.35",
-  "branch": "feature/ballet-course-output",
-  "commit": "7626f3b",
+  "updatedAt": "2026-07-28 14:14",
+  "version": "1.0.5.36",
+  "versionLabel": "v1.0.5.36",
+  "branch": "feature/ballet-calendar-booking-todo",
+  "commit": "42da95a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-course-output · commit 7626f3b · 有未提交代码改动",
+  "deployNote": "feature/ballet-calendar-booking-todo · commit 42da95a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "记录芭蕾 Apple 日历与多课预约待办",
+      "summary": "芭蕾 Later 新增私有 ICS / `webcal://` 订阅：Apple 设备首次确认后自动刷新预约和候补，链接可撤销且不得暴露 PHPSESSID、会员标识或源记录 ID。"
+    },
     {
       "date": "2026-07-28",
       "title": "固定芭蕾实时课表的默认范围与格式",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "修复 macOS Codex Token 上报中断死锁",
       "summary": "macOS 专用上报 clone 若在生成 `codex-macos-usage.*` 后、提交前被检查中断，下一轮会先确认没有越界改动，再恢复这两个任务自有生成文件并继续拉取、重新生成和上报。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "区分课表“可排队”与本人“排队中”",
-      "summary": "修正源站普通“可排队”按钮被误判为本人候补的问题：普通课程保留“可排队”状态但不高亮，只有预约快照确认的本人候补课程才使用橙色整卡高亮；正式预约继续使用粉玫瑰整卡高亮。"
     }
   ]
 };
