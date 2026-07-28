@@ -453,6 +453,7 @@ def safe_error(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=("dry-run", "execute"))
+    parser.add_argument("--request-json")
     return parser.parse_args()
 
 
@@ -460,7 +461,12 @@ def main() -> int:
     args = parse_args()
     execute = args.mode == "execute"
     try:
-        courses = parse_request(sys.stdin.read(20_000), execute)
+        request_text = (
+            args.request_json
+            if args.request_json is not None
+            else sys.stdin.read(20_000)
+        )
+        courses = parse_request(request_text, execute)
         source = WendaBookingSource(ballet.load_credentials(credential_path()))
         print(
             json.dumps(

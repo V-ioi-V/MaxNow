@@ -15,6 +15,12 @@ if [ "$#" -ne 1 ]; then
 fi
 
 PROJECT_DIR=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
+REQUEST_JSON=$(dd bs=20001 count=1 2>/dev/null)
+
+if [ -z "$REQUEST_JSON" ] || [ "${#REQUEST_JSON}" -gt 20000 ]; then
+  echo '{"source":"wenda-live","status":"configuration_error","live":false}' >&2
+  exit 4
+fi
 
 exec sudo -n systemd-run \
   --quiet \
@@ -46,4 +52,4 @@ exec sudo -n systemd-run \
   --property=CapabilityBoundingSet= \
   --property=SystemCallArchitectures=native \
   --property=RuntimeMaxSec=180 \
-  /usr/bin/python3 -B scripts/book_ballet.py "$1"
+  /usr/bin/python3 -B scripts/book_ballet.py "$1" --request-json "$REQUEST_JSON"
