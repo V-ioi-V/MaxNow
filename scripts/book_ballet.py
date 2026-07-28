@@ -210,8 +210,6 @@ def expression_contract(expression: str) -> dict[str, Any]:
 
 
 def safe_script_skeleton(text: str) -> str:
-    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.DOTALL)
-    text = re.sub(r"//[^\r\n]*", " ", text)
     allowed_literals = {
         ".bookbtn",
         "POST",
@@ -228,15 +226,21 @@ def safe_script_skeleton(text: str) -> str:
     def replace_literal(match: re.Match[str]) -> str:
         quote = match.group(1)
         value = match.group(2)
-        if value.startswith("/"):
+        following = text[match.end() :]
+        is_object_key = bool(re.match(r"\s*:", following))
+        if value.startswith("/") or value.startswith(("http://", "https://")):
             safe_value = f"<path:{safe_path_shape(value)}>"
-        elif value in allowed_literals:
+        elif value in allowed_literals or (
+            is_object_key and re.fullmatch(r"[A-Za-z_$][\w$]*", value)
+        ):
             safe_value = value
         else:
             safe_value = "<string>"
         return f"{quote}{safe_value}{quote}"
 
     text = re.sub(r"([\"'])(.*?)(?<!\\)\1", replace_literal, text)
+    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.DOTALL)
+    text = re.sub(r"//[^\r\n]*", " ", text)
     text = re.sub(r"\b\d+(?:\.\d+)?\b", "<number>", text)
     return re.sub(r"\s+", " ", text).strip()[:12_000]
 
