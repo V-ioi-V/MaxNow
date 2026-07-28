@@ -1284,7 +1284,8 @@ def check_secondary_view_style():
         ".secondary-page-head {",
         ".ballet-overview-grid {",
         ".ballet-course-plan-grid {",
-        ".ballet-next-class {",
+        ".ballet-upcoming-item.is-nearest {",
+        ".ballet-upcoming-nearest {",
         ".ballet-upcoming-note {",
         "#tokens-view {",
         "#dounai-view {",
@@ -1313,12 +1314,11 @@ def check_secondary_view_style():
     layout_markers = (
         'id="ballet-updated"',
         'class="ballet-overview-grid"',
-        'class="panel ballet-next-panel"',
         'class="panel ballet-week-panel"',
+        'class="panel ballet-membership-card"',
         'class="panel ballet-course-plan-panel"',
         'class="panel ballet-timetable-panel"',
         'class="panel ballet-training-panel"',
-        'class="panel ballet-membership-card"',
     )
     layout_positions = [ballet_view_markup.find(marker) for marker in layout_markers]
     if any(position < 0 for position in layout_positions) or layout_positions != sorted(layout_positions):
@@ -1328,14 +1328,16 @@ def check_secondary_view_style():
     if (
         "function createBalletUpcomingItem(record)" not in dashboard_js
         or "formatBalletCancellation(record)" not in dashboard_js
-        or "records.map(createBalletUpcomingItem)" not in dashboard_js
+        or "const items = records.map(createBalletUpcomingItem);" not in dashboard_js
         or 'class="panel ballet-course-plan-panel"' not in ballet_view_markup
-        or 'id="ballet-next-class"' not in ballet_view_markup
-        or 'item.classList.add("is-next")' not in dashboard_js
+        or 'items[0].classList.add("is-nearest")' not in dashboard_js
+        or 'nearest.textContent = "最近一节"' not in dashboard_js
         or 'cancellation.className = "ballet-upcoming-note"' not in dashboard_js
         or "is-featured" in dashboard_js
     ):
-        raise ValueError("secondary views: next class, course plan, or cancellation deadlines are incomplete")
+        raise ValueError("secondary views: nearest booking, course plan, or cancellation deadlines are incomplete")
+    if any(retired in ballet_view_markup for retired in ("ballet-next-panel", 'id="ballet-next-class"', 'id="ballet-next-status"')):
+        raise ValueError("secondary views: retired standalone next-class panel remains")
     if (
         "ballet-session-card" in ballet_view_markup
         or "ballet-booking-fast-status" in ballet_view_markup
@@ -1353,9 +1355,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=162" not in dashboard_html
+        "styles.css?v=163" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=136" not in dashboard_html
+        or "app.js?v=137" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1397,7 +1399,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=136" not in dashboard_html:
+    if "app.js?v=137" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

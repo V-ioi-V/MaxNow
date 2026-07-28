@@ -4482,41 +4482,28 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-overview-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
   gap: var(--page-grid-gap);
   margin-bottom: var(--page-section-gap);
 }
 
-.ballet-overview-grid .ballet-next-panel,
-.ballet-overview-grid .ballet-week-panel {
+.ballet-overview-grid .ballet-week-panel,
+.ballet-overview-grid .ballet-membership-card {
   min-width: 0;
   height: 100%;
   margin-bottom: 0;
 }
 
-.ballet-next-panel,
-.ballet-week-panel {
+.ballet-week-panel,
+.ballet-overview-grid .ballet-membership-card {
   display: flex;
   flex-direction: column;
 }
 
-.ballet-next-class,
-.ballet-overview-grid .ballet-week-grid {
+.ballet-overview-grid .ballet-week-grid,
+.ballet-overview-grid .ballet-membership-list {
   flex: 1;
-}
-
-.ballet-next-class {
-  display: grid;
-}
-
-.ballet-next-class .empty-state {
-  height: 100%;
-  min-height: 128px;
-}
-
-.ballet-next-class .ballet-upcoming-item {
-  height: 100%;
 }
 
 .ballet-overview-grid .ballet-week-grid {
@@ -4953,6 +4940,27 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
 .ballet-membership-card {
   margin-bottom: 0;
+}
+
+.ballet-overview-grid .ballet-membership-item {
+  grid-template-columns: 1fr;
+}
+
+.ballet-overview-grid .ballet-membership-item > header {
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.ballet-overview-grid .ballet-membership-metrics section {
+  min-height: 94px;
+  justify-items: center;
+  padding: 13px 10px;
+  text-align: center;
+}
+
+.ballet-overview-grid .ballet-membership-verdict {
+  grid-column: auto;
 }
 
 .ballet-membership-item {
@@ -5643,25 +5651,27 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   color: #b85f18;
 }
 
-.ballet-plan-group .ballet-upcoming-item,
-.ballet-next-class .ballet-upcoming-item {
+.ballet-plan-group .ballet-upcoming-item {
   grid-template-columns: 70px minmax(0, 1fr) auto;
   grid-template-rows: auto auto;
   gap: 10px;
   padding: 9px 11px;
 }
 
-.ballet-plan-group .ballet-upcoming-date,
-.ballet-next-class .ballet-upcoming-date {
+.ballet-plan-group .ballet-upcoming-date {
   grid-row: 1 / span 2;
 }
 
-.ballet-next-class .ballet-upcoming-item {
-  grid-template-columns: minmax(86px, 0.2fr) minmax(0, 1fr) auto;
-  align-content: center;
-  padding: 16px;
-  border-color: color-mix(in srgb, var(--ballet) 24%, var(--line));
-  background: linear-gradient(135deg, #fff5f8, #ffffff 64%);
+.ballet-plan-group .ballet-upcoming-item.is-nearest {
+  border-color: color-mix(in srgb, var(--ballet) 42%, var(--line));
+  background: linear-gradient(135deg, #fff0f5, #ffffff 72%);
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--ballet) 13%, transparent);
+}
+
+.ballet-upcoming-nearest {
+  border-color: var(--ballet) !important;
+  background: var(--ballet) !important;
+  color: #ffffff !important;
 }
 
 .ballet-upcoming-note {
@@ -6348,18 +6358,14 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
     grid-column: auto;
   }
 
-  .ballet-plan-group .ballet-upcoming-item,
-  .ballet-next-class .ballet-upcoming-item {
+  .ballet-plan-group .ballet-upcoming-item {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
   }
 
   .ballet-plan-group .ballet-upcoming-date,
   .ballet-plan-group .ballet-upcoming-note,
-  .ballet-plan-group .ballet-upcoming-item .ballet-history-meta,
-  .ballet-next-class .ballet-upcoming-date,
-  .ballet-next-class .ballet-upcoming-note,
-  .ballet-next-class .ballet-upcoming-item .ballet-history-meta {
+  .ballet-plan-group .ballet-upcoming-item .ballet-history-meta {
     grid-column: auto;
     grid-row: auto;
     justify-content: flex-start;

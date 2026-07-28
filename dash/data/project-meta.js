@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-28 19:48",
-  "version": "1.0.7.07",
-  "versionLabel": "v1.0.7.07",
-  "branch": "feature/show-ballet-booking-venue",
-  "commit": "11e9ac0",
+  "updatedAt": "2026-07-28 20:01",
+  "version": "1.0.7.08",
+  "versionLabel": "v1.0.7.08",
+  "branch": "feature/ballet-week-card-overview",
+  "commit": "46ace7c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/show-ballet-booking-venue · commit 11e9ac0 · 有未提交代码改动",
+  "deployNote": "feature/ballet-week-card-overview · commit 46ace7c · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-28",
+      "title": "重排芭蕾顶部概览并突出最近课程",
+      "summary": "删除独立“下一节”面板，顶部改为“本周训练 / 课程卡”左右等分；课程卡从页面底部移入右侧，并改为适合半宽的纵向信息布局。"
+    },
     {
       "date": "2026-07-28",
       "title": "预约列表显示教室",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-28",
       "title": "收紧 Cloud 芭蕾运维卡布局",
       "summary": "“芭蕾自动抢课”与“芭蕾 Session 实验”在宽桌面改为左右各半宽并排；Session 展开后仍留在右侧半列，`1320px` 以下继续自然堆叠。样式缓存提升到 `styles.css?v=161`，版本提升到 `1.0.7.04`。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "收敛芭蕾模块信息架构",
-      "summary": "芭蕾页按学习决策顺序重排为“下一节 + 本周训练 → 课程计划 → 本周课程表 → 训练记录 → 课程卡”；正式预约 / 候补与周日待抢目标、逐课结果合并进课程计划。"
     }
   ]
 };

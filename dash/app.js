@@ -3355,26 +3355,18 @@ function renderBalletUpcoming() {
   const records = getBalletFutureClasses();
   panel.hidden = false;
   setText("#ballet-upcoming-count", `${records.length} 节`);
-  const nextContainer = qs("#ballet-next-class");
-  const nextClass = records[0];
-  if (nextContainer) {
-    nextContainer.replaceChildren();
-    if (nextClass) {
-      const item = createBalletUpcomingItem(nextClass);
-      item.classList.add("is-next");
-      nextContainer.appendChild(item);
-      setText("#ballet-next-status", getBalletBookingStatusLabel(nextClass));
-    } else {
-      nextContainer.appendChild(emptyTemplate.content.cloneNode(true));
-      setText("#ballet-next-status", "暂无预约");
-    }
-  }
   container.replaceChildren();
   if (!records.length) {
     container.appendChild(emptyTemplate.content.cloneNode(true));
     return;
   }
-  container.append(...records.map(createBalletUpcomingItem));
+  const items = records.map(createBalletUpcomingItem);
+  const nearest = document.createElement("span");
+  nearest.className = "ballet-upcoming-nearest";
+  nearest.textContent = "最近一节";
+  items[0].classList.add("is-nearest");
+  items[0].querySelector(".ballet-history-meta")?.prepend(nearest);
+  container.append(...items);
 }
 
 function getBalletTimetableDayState(dateText) {

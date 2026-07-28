@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=162" />
+    <link rel="stylesheet" href="./styles.css?v=163" />
   </head>
   <body>
     <div class="app-shell">
@@ -632,18 +632,7 @@
             </div>
           </div>
 
-          <section class="ballet-overview-grid" aria-label="下一节课程与本周训练">
-            <article class="panel ballet-next-panel" aria-labelledby="ballet-next-title">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Next Class</p>
-                  <h2 id="ballet-next-title">下一节</h2>
-                </div>
-                <span class="status-pill" id="ballet-next-status">等待课程</span>
-              </header>
-              <div class="ballet-next-class" id="ballet-next-class"></div>
-            </article>
-
+          <section class="ballet-overview-grid" aria-label="本周训练与课程卡">
             <article class="panel ballet-week-panel" aria-labelledby="ballet-week-title">
               <header class="panel-head">
                 <div>
@@ -676,6 +665,16 @@
               </div>
             </article>
 
+            <article class="panel ballet-membership-card" aria-labelledby="ballet-membership-title">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Course Card</p>
+                  <h2 id="ballet-membership-title">课程卡</h2>
+                </div>
+                <span class="status-pill" id="ballet-membership-status">等待同步</span>
+              </header>
+              <div class="ballet-membership-list" id="ballet-membership-list"></div>
+            </article>
           </section>
 
           <article class="panel ballet-course-plan-panel" id="ballet-upcoming-panel" aria-labelledby="ballet-course-plan-title">
@@ -798,16 +797,6 @@
             </section>
           </article>
 
-          <article class="panel ballet-membership-card" aria-labelledby="ballet-membership-title">
-            <header class="panel-head">
-              <div>
-                <p class="eyebrow">Course Card</p>
-                <h2 id="ballet-membership-title">课程卡</h2>
-              </div>
-              <span class="status-pill" id="ballet-membership-status">等待同步</span>
-            </header>
-            <div class="ballet-membership-list" id="ballet-membership-list"></div>
-          </article>
         </section>
 
         <section class="view secondary-view" id="cloud-view" data-view-panel="cloud">
@@ -1168,6 +1157,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=136"></script>
+    <script src="./app.js?v=137"></script>
   </body>
 </html>
