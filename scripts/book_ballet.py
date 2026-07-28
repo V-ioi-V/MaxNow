@@ -138,7 +138,11 @@ def balanced_region(text: str, opening: int, opener: str, closer: str) -> str:
 
 
 def property_expression(text: str, name: str) -> str:
-    match = re.search(rf"(?:^|[,{{\s]){re.escape(name)}\s*:\s*", text)
+    match = re.search(
+        rf"(?:^|[,{{\s])(?P<quote>[\"']?){re.escape(name)}"
+        rf"(?P=quote)\s*:\s*",
+        text,
+    )
     if not match:
         return ""
     start = match.end()
@@ -254,7 +258,7 @@ def safe_ajax_contracts(script_text: str) -> list[dict[str, Any]]:
             if not ajax_object:
                 continue
             method_match = re.search(
-                r"(?:type|method)\s*:\s*[\"']([A-Za-z]+)[\"']",
+                r"[\"']?(?:type|method)[\"']?\s*:\s*[\"']([A-Za-z]+)[\"']",
                 ajax_object,
             )
             url_expression = property_expression(ajax_object, "url")

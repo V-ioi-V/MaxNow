@@ -120,9 +120,9 @@ class BalletBookingTests(unittest.TestCase):
           var classtableid = $(this).attr("classtableid");
           var courseid = $(this).attr("courseid");
           $.ajax({
-            type: "POST",
-            url: "/gm/weixin/classtable/do_addbook/54114",
-            data: { classtableid: classtableid, courseid: courseid },
+            "type": "POST",
+            "url": "/gm/weixin/classtable/do_addbook/54114",
+            "data": { classtableid: classtableid, courseid: courseid },
             success: function (data) { $("#result").html(data); }
           });
         });
