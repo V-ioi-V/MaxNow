@@ -16,7 +16,7 @@ TARGET = {
 }
 
 
-def timetable_with_form() -> str:
+def timetable_with_booking_control() -> str:
     return timetable_html(
         course=TARGET["courseName"],
         time_text=f"{TARGET['startTime']} ~ {TARGET['endTime']}",
@@ -26,12 +26,20 @@ def timetable_with_form() -> str:
     ).replace(
         "</div></div></body>",
         (
-            '<form method="post" '
-            f'action="{booking.BOOKING_SUBMIT_PATH}">'
-            '<input type="hidden" name="classid" value="70001">'
-            '<input type="hidden" name="customerid" value="80001">'
-            '<button type="submit">预约</button></form>'
+            '<button class="bookbtn" courseid="70001" '
+            'classtableid="70002">预约</button>'
             "</div></div></body>"
+        ),
+    ).replace(
+        "</body>",
+        (
+            "<script>"
+            "customerid=80001;"
+            f'var a="{booking.CARD_TYPE_PATH}";'
+            f'var b="{booking.CHECK_RULES_PREFIX}80001";'
+            f'var c="{booking.BOOKING_SUBMIT_PATH}";'
+            f'var d="{booking.GET_USING_CARD_PATH}";'
+            "</script></body>"
         ),
     )
 
@@ -40,12 +48,13 @@ class FakeSource:
     def __init__(self):
         self.request_count = 0
         self.post_count = 0
+        self.mutation_count = 0
         self.posted = False
 
     def request(self, path, expected_marker):
         self.request_count += 1
         if path.startswith(ballet.TIMETABLE_PATH):
-            return timetable_with_form()
+            return timetable_with_booking_control()
         if path == ballet.BOOKING_PATH:
             rows = (
                 [("90001", TARGET["courseName"], TARGET["date"], "已预约")]
@@ -63,10 +72,19 @@ class FakeSource:
             ).replace("测试教室", TARGET["venue"])
         raise AssertionError(path)
 
-    def post_form(self, path, fields, referer):
+    def post_fields(self, path, fields, mutation):
+        self.request_count += 1
         self.post_count += 1
-        self.posted = True
-        self.last_post = (path, dict(fields), referer)
+        if path == booking.CARD_TYPE_PATH:
+            return json.dumps([{"id": 90002, "status": "OPEN"}])
+        if path.startswith(booking.CHECK_RULES_PREFIX):
+            return json.dumps("OK")
+        if path == booking.BOOKING_SUBMIT_PATH and mutation:
+            self.mutation_count += 1
+            self.posted = True
+            self.last_post = (path, dict(fields))
+            return json.dumps(91000)
+        raise AssertionError((path, fields, mutation))
 
 
 class BalletBookingTests(unittest.TestCase):
@@ -74,18 +92,20 @@ class BalletBookingTests(unittest.TestCase):
         source = FakeSource()
         result = booking.run(source, [TARGET], execute=False)
         serialized = json.dumps(result, ensure_ascii=False)
-        self.assertEqual(source.post_count, 0)
+        self.assertEqual(source.mutation_count, 0)
+        self.assertEqual(result["mutationAttempts"], 0)
         self.assertEqual(result["data"]["records"][0]["status"], "ready")
         self.assertNotIn("70001", serialized)
+        self.assertNotIn("70002", serialized)
         self.assertNotIn("80001", serialized)
-        self.assertNotIn("classid", serialized)
-        self.assertNotIn("customerid", serialized)
+        self.assertNotIn("90002", serialized)
 
     def test_execute_posts_once_and_verifies_booking(self):
         source = FakeSource()
         result = booking.run(source, [TARGET], execute=True)
-        self.assertEqual(source.post_count, 1)
-        self.assertEqual(result["postsMade"], 1)
+        self.assertEqual(source.mutation_count, 1)
+        self.assertEqual(result["mutationAttempts"], 1)
+        self.assertEqual(result["postsMade"], 5)
         self.assertEqual(result["data"]["records"][0]["status"], "booked")
         self.assertEqual(
             result["data"]["records"][0]["bookingStatus"], "booked"
@@ -101,13 +121,13 @@ class BalletBookingTests(unittest.TestCase):
         source = FakeSource()
         original = source.request
 
-        def without_form(path, marker):
+        def without_control(path, marker):
             return original(path, marker).replace(
-                f'<form method="post" action="{booking.BOOKING_SUBMIT_PATH}">',
-                '<div onclick="reserve(70001)">',
-            ).replace("</button></form>", "</button></div>")
+                'class="bookbtn"',
+                'class="changedbtn" onclick="reserve(70001)"',
+            )
 
-        source.request = without_form
+        source.request = without_control
         with self.assertRaises(booking.BookingFailure) as caught:
             booking.run(source, [TARGET], execute=False)
         self.assertEqual(caught.exception.code, "source_changed")

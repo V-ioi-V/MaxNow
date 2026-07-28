@@ -1,11 +1,11 @@
 ---
 name: maxnow-ballet-live
-description: Query the owner's current ballet timetable, upcoming bookings and waitlist positions, attendance records, teachers, course availability, or membership balance from the live Wenda source through the MaxNow server. Use whenever the owner asks for ballet class, schedule, booking, waitlist, attendance, teacher, course-card, or remaining-class data. Never answer these requests from MaxNow dashboard caches.
+description: Query the owner's current ballet timetable, bookings, attendance, course availability, or membership balance, and book explicitly confirmed classes from the live Wenda source through the MaxNow server. Use whenever the owner asks for ballet classes, schedules, booking, waitlists, attendance, teachers, course cards, or remaining-class data. Never answer these requests from MaxNow dashboard caches.
 ---
 
 # MaxNow Ballet Live
 
-Always query Wenda live through the MaxNow server. Never read `dash/data/ballet.json`, `ballet.js`, browser storage, private ledgers, snapshots, or prior chat results as the answer.
+Always query Wenda live through the MaxNow server. Never read `dash/data/ballet.json`, `ballet.js`, browser storage, private ledgers, snapshots, or prior chat results as the answer or as a booking input.
 
 ## Workflow
 
@@ -40,6 +40,46 @@ scripts/run_ballet_live_query.sh membership
    - a current `fetchedAt`
 5. Answer from `data` and state the live query time. If the command fails, report the safe error and say no live data was returned. Do not fall back to cached data.
 
+## Booking Workflow
+
+Only book when the owner explicitly asks to book one or more exact classes. An exact class requires date, start time, end time, course name, teacher, and venue. Do not infer a different class when any field does not match.
+
+1. Build this JSON on stdin:
+
+```json
+{
+  "courses": [
+    {
+      "date": "2026-07-30",
+      "startTime": "20:15",
+      "endTime": "21:15",
+      "courseName": "肌肉素质",
+      "teacher": "戴俊瑶",
+      "venue": "小教室"
+    }
+  ],
+  "confirm": false
+}
+```
+
+2. Run a live preflight through the repository runner:
+
+```bash
+scripts/run_ballet_booking.sh dry-run
+```
+
+The preflight may use Wenda's fixed read-only POST checks for eligible cards and booking rules. It must never call `do_addbook`. Require `status=success`, `live=true`, every target record `status=ready` or `already_booked`, and `mutationAttempts=0`.
+
+3. If the owner has explicitly requested those exact classes in the current request, change only `confirm` to `true` and run:
+
+```bash
+scripts/run_ballet_booking.sh execute
+```
+
+The runner performs a unified live preflight, then books courses sequentially. Before each mutation it rechecks availability, eligible card, and booking rules. It sends at most one `do_addbook` request per course, immediately verifies the result from live bookings, returns one result per course, and stops after an ambiguous or authentication failure. Never retry an ambiguous mutation.
+
+4. Report only the safe per-course result. A course is booked only when its result is `status=booked` and live verification returns `bookingStatus=booked`. If the command returns `card_selection_required`, ask the owner which eligible card to use; never choose a card silently.
+
 ## Timetable Answer Contract
 
 - Treat generic questions such as “有什么课程” or “有什么可以约的课” as requests for every returned course type. Do not filter `courseType` by default; include ballet, conditioning, soft-open, technique, and any future types returned by the live source.
@@ -50,9 +90,10 @@ scripts/run_ballet_live_query.sh membership
 
 ## Safety Boundary
 
-- Use only the repository runner. It creates a read-only transient systemd unit, decrypts the host-bound credential into the unit credential directory, and removes that runtime directory when done.
+- Use only the repository runners. They create hardened transient systemd units, decrypt the host-bound credential into the unit credential directory, and remove that runtime directory when done.
 - Allow only the four scopes and ISO date arguments. A timetable request may span at most 14 days.
 - Never print, copy, inspect, hash, summarize, or ask the owner for PHPSESSID. Never read `/etc/credstore.encrypted` directly.
-- Never use POST or any booking, cancellation, transfer, payment, or login endpoint.
+- For ordinary queries, never use POST. For an explicitly confirmed booking, allow only the fixed card-eligibility check, booking-rules check, and one `do_addbook` request per exact course through `run_ballet_booking.sh`.
+- Never use cancellation, transfer, payment, login, waitlist mutation, or arbitrary POST endpoints.
 - Never expose source record IDs, member identifiers, raw HTML, response bodies, Cookie headers, credential paths, unit names, or internal logs.
-- Treat `auth_required`, `source_changed`, `parse_error`, and ambiguous responses as fail-closed.
+- Treat `auth_required`, `source_changed`, `parse_error`, `unknown_result`, and ambiguous responses as fail-closed. If any mutation was attempted and the result is ambiguous, report that verification is required; never claim failure or retry.

@@ -21,6 +21,15 @@ import sync_ballet as ballet
 sys.dont_write_bytecode = True
 
 BOOKING_SUBMIT_PATH = f"/gm/weixin/classtable/do_addbook/{ballet.STORE_ID}"
+CARD_TYPE_PATH = (
+    f"/gm/weixin/classtable/check_cardtypecourse/{ballet.STORE_ID}"
+)
+GET_USING_CARD_PATH = (
+    f"/gm/weixin/classtable/getusingcard/{ballet.STORE_ID}"
+)
+CHECK_RULES_PREFIX = (
+    f"/gm/weixin/classtable/check_rules/{ballet.STORE_ID}/"
+)
 MAX_COURSES = 10
 TIME_PATTERN = re.compile(r"(?:[01]\d|2[0-3]):[0-5]\d")
 
@@ -590,6 +599,124 @@ def booking_form(candidate: dict[str, Any]) -> tuple[str, dict[str, str]]:
     return matching[0]
 
 
+def booking_contract(candidate: dict[str, Any]) -> dict[str, Any]:
+    buttons = []
+    for element in candidate["control"]["controls"]:
+        classes = set(element["attrs"].get("class", "").split())
+        if element["tag"] == "button" and "bookbtn" in classes:
+            buttons.append(element["attrs"])
+    if len(buttons) != 1:
+        raise BookingFailure(
+            "source_changed",
+            safe_diagnostic(
+                candidate["control"],
+                candidate["scripts"],
+                candidate["scriptSources"],
+            ),
+        )
+    course_id = buttons[0].get("courseid", "")
+    class_table_id = buttons[0].get("classtableid", "")
+    if (
+        not re.fullmatch(r"\d+", course_id)
+        or not re.fullmatch(r"\d+", class_table_id)
+    ):
+        raise BookingFailure("source_changed")
+
+    script_text = "\n".join(candidate["scripts"])
+    customer_ids = set(
+        re.findall(r"\bcustomerid\s*=\s*[\"']?(\d+)[\"']?", script_text)
+    )
+    if len(customer_ids) != 1:
+        raise BookingFailure("source_changed")
+    customer_id = next(iter(customer_ids))
+
+    paths = set()
+    for value in re.findall(
+        r"[\"']((?:https?://[^\"']+)?/gm/weixin/classtable/[^\"']+)[\"']",
+        script_text,
+    ):
+        parts = urlsplit(value)
+        if parts.netloc and parts.netloc != urlsplit(ballet.BASE_URL).netloc:
+            continue
+        paths.add(parts.path)
+    expected_rules_path = CHECK_RULES_PREFIX + customer_id
+    expected = {
+        CARD_TYPE_PATH,
+        expected_rules_path,
+        BOOKING_SUBMIT_PATH,
+        GET_USING_CARD_PATH,
+    }
+    if not expected.issubset(paths):
+        raise BookingFailure(
+            "source_changed",
+            safe_diagnostic(
+                candidate["control"],
+                candidate["scripts"],
+                candidate["scriptSources"],
+            ),
+        )
+    return {
+        "courseId": course_id,
+        "classTableId": class_table_id,
+        "customerId": customer_id,
+        "cardTypePath": CARD_TYPE_PATH,
+        "rulesPath": expected_rules_path,
+        "bookingPath": BOOKING_SUBMIT_PATH,
+    }
+
+
+def response_json(text: str) -> Any:
+    try:
+        return json.loads(text)
+    except (json.JSONDecodeError, TypeError):
+        raise BookingFailure("source_changed")
+
+
+def eligible_card(source: Any, contract: dict[str, str]) -> str:
+    cards = response_json(
+        source.post_fields(
+            contract["cardTypePath"],
+            {
+                "courseid": contract["courseId"],
+                "customerid": contract["customerId"],
+                "shopid": ballet.STORE_ID,
+            },
+            mutation=False,
+        )
+    )
+    if not isinstance(cards, list):
+        raise BookingFailure("source_changed")
+    if not cards:
+        raise BookingFailure("no_eligible_card")
+    if len(cards) != 1:
+        raise BookingFailure("card_selection_required")
+    card = cards[0]
+    if not isinstance(card, dict):
+        raise BookingFailure("source_changed")
+    card_id = str(card.get("id", ""))
+    status = str(card.get("status", ""))
+    if not re.fullmatch(r"\d+", card_id):
+        raise BookingFailure("source_changed")
+    if status == "NOTOPEN":
+        raise BookingFailure("card_not_open")
+    return card_id
+
+
+def check_rules(source: Any, contract: dict[str, str], card_id: str) -> None:
+    result = response_json(
+        source.post_fields(
+            contract["rulesPath"],
+            {
+                "classtableid": contract["classTableId"],
+                "cardid": card_id,
+            },
+            mutation=False,
+        )
+    )
+    if result != "OK":
+        raise BookingFailure("rules_blocked")
+
+
 def current_booking(source: Any, target: dict[str, str]) -> dict[str, Any] | None:
     data = live.query_bookings(source)
     matches = [record for record in data["records"] if same_course(record, target)]
@@ -602,18 +729,40 @@ class WendaBookingSource:
     def __init__(self, credentials: ballet.Credentials):
         self.reader = ballet.WendaSource(credentials, retries=0)
         self.post_count = 0
+        self.mutation_count = 0
 
     @property
     def request_count(self) -> int:
-        return self.reader.request_count
+        return self.reader.request_count + self.post_count
 
     def request(self, path: str, expected_marker: str) -> str:
         return self.reader.request(path, expected_marker)
 
-    def post_form(self, path: str, fields: dict[str, str], referer: str) -> None:
-        if path != BOOKING_SUBMIT_PATH or not fields:
+    def post_fields(
+        self,
+        path: str,
+        fields: dict[str, str],
+        mutation: bool,
+    ) -> str:
+        allowed = {
+            CARD_TYPE_PATH,
+            GET_USING_CARD_PATH,
+            BOOKING_SUBMIT_PATH,
+        }
+        if path.startswith(CHECK_RULES_PREFIX):
+            suffix = path.removeprefix(CHECK_RULES_PREFIX)
+            path_allowed = bool(re.fullmatch(r"\d+", suffix))
+        else:
+            path_allowed = path in allowed
+        if (
+            not path_allowed
+            or not fields
+            or mutation != (path == BOOKING_SUBMIT_PATH)
+        ):
             raise BookingFailure("configuration_error")
         self.post_count += 1
+        if mutation:
+            self.mutation_count += 1
         request = urllib.request.Request(
             ballet.BASE_URL + path,
             data=urllib.parse.urlencode(fields).encode("utf-8"),
@@ -621,7 +770,7 @@ class WendaBookingSource:
                 **self.reader._headers(path),
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Origin": ballet.BASE_URL,
-                "Referer": ballet.BASE_URL + referer,
+                "Referer": ballet.BASE_URL + ballet.TIMETABLE_PATH,
             },
             method="POST",
         )
@@ -649,6 +798,7 @@ class WendaBookingSource:
             parts = urlsplit(location)
             if parts.netloc and parts.netloc != urlsplit(ballet.BASE_URL).netloc:
                 raise BookingFailure("unknown_result")
+        return text
 
 
 def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, Any]:
@@ -678,13 +828,13 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
                 }
             )
             continue
-        action, fields = booking_form(candidate)
+        contract = booking_contract(candidate)
+        card_id = eligible_card(source, contract)
+        check_rules(source, contract, card_id)
         prepared.append(
             {
                 "target": target,
                 "status": "ready",
-                "action": action,
-                "fields": fields,
             }
         )
 
@@ -716,14 +866,33 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
         if len(candidate) != 1 or candidate[0]["record"]["availability"] != "available":
             results.append({**public_course(target), "status": "not_available"})
             continue
-        action, fields = booking_form(candidate[0])
-        source.post_form(
-            action,
-            fields,
-            f"{ballet.TIMETABLE_PATH}/{target['date']}",
+        contract = booking_contract(candidate[0])
+        card_id = eligible_card(source, contract)
+        check_rules(source, contract, card_id)
+        mutation_result = response_json(
+            source.post_fields(
+                contract["bookingPath"],
+                {
+                    "classtableid": contract["classTableId"],
+                    "cardid": card_id,
+                },
+                mutation=True,
+            )
         )
-        verified = current_booking(source, target)
+        try:
+            verified = current_booking(source, target)
+        except (BookingFailure, ballet.SyncFailure):
+            raise BookingFailure("unknown_result")
         if not verified:
+            if mutation_result in {"FULL", "STOPPED", "NOTOPEN"}:
+                results.append(
+                    {
+                        **public_course(target),
+                        "status": "not_available",
+                        "reason": str(mutation_result).lower(),
+                    }
+                )
+                continue
             raise BookingFailure("unknown_result")
         results.append(
             {
@@ -739,10 +908,11 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
         "status": "success",
         "live": True,
         "mode": "execute" if execute else "dry-run",
-        "mutated": bool(execute and getattr(source, "post_count", 0)),
+        "mutated": any(record["status"] == "booked" for record in results),
         "fetchedAt": ballet.iso_now(),
         "requestsMade": source.request_count,
         "postsMade": getattr(source, "post_count", 0),
+        "mutationAttempts": getattr(source, "mutation_count", 0),
         "data": {"records": results},
     }
 
@@ -755,16 +925,23 @@ def credential_path() -> Path:
 
 
 def safe_error(
-    code: str, execute: bool, diagnostic: dict[str, Any] | None = None
+    code: str,
+    execute: bool,
+    diagnostic: dict[str, Any] | None = None,
+    source: Any | None = None,
 ) -> dict[str, Any]:
+    mutation_attempts = getattr(source, "mutation_count", 0)
     result = {
         "schemaVersion": 1,
         "source": "wenda-live",
         "status": code,
         "live": False,
         "mode": "execute" if execute else "dry-run",
-        "mutated": False,
+        "mutated": None if mutation_attempts else False,
         "fetchedAt": ballet.iso_now(),
+        "requestsMade": getattr(source, "request_count", 0),
+        "postsMade": getattr(source, "post_count", 0),
+        "mutationAttempts": mutation_attempts,
     }
     if diagnostic:
         result["diagnostic"] = diagnostic
@@ -781,6 +958,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     execute = args.mode == "execute"
+    source = None
     try:
         request_text = (
             args.request_json
@@ -802,7 +980,7 @@ def main() -> int:
         diagnostic = getattr(failure, "diagnostic", None)
         print(
             json.dumps(
-                safe_error(code, execute, diagnostic),
+                safe_error(code, execute, diagnostic, source),
                 ensure_ascii=False,
                 separators=(",", ":"),
             )
