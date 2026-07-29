@@ -3868,11 +3868,19 @@ function renderBalletTimetable() {
     dayHeader.style.gridRow = `${nextRow} / span ${recordLayout.laneCount}`;
     grid.appendChild(dayHeader);
 
-    layoutColumns.forEach((column) => {
+    layoutColumns.forEach((column, columnIndex) => {
       const cell = document.createElement("div");
       cell.className = "ballet-timetable-cell";
       cell.dataset.dayState = dayState;
       cell.dataset.columnType = column.type;
+      cell.dataset.columnEdge =
+        layoutColumns.length === 1
+          ? "both"
+          : columnIndex === 0
+            ? "start"
+            : columnIndex === layoutColumns.length - 1
+              ? "end"
+              : "middle";
       cell.style.gridColumn = `${column.startLine} / ${column.endLine}`;
       cell.style.gridRow = `${nextRow} / span ${recordLayout.laneCount}`;
       grid.appendChild(cell);

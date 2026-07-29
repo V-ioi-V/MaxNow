@@ -4739,8 +4739,28 @@ body[data-view="ballet"] .topbar-ballet-status {
   display: grid;
   align-content: start;
   gap: 4px;
+  margin-inline: 0;
   padding: 4px;
+  border-left: 0;
+  border-radius: 0;
   background: #f4e8ef;
+}
+
+.ballet-timetable-cell[data-column-edge="start"],
+.ballet-timetable-cell[data-column-edge="both"] {
+  margin-left: 3px;
+  border-left: 1px solid #efdce4;
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.ballet-timetable-cell[data-column-edge="end"],
+.ballet-timetable-cell[data-column-edge="both"] {
+  margin-right: 3px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.ballet-timetable-cell[data-column-edge="both"] {
+  border-radius: var(--radius);
 }
 
 .ballet-timetable-grid > .ballet-timetable-course {
@@ -4752,14 +4772,13 @@ body[data-view="ballet"] .topbar-ballet-status {
 }
 
 .ballet-timetable-cell[data-column-type="gap"] {
-  border-style: dashed;
   background:
     repeating-linear-gradient(
       135deg,
-      #f8f0f4 0,
-      #f8f0f4 9px,
-      #f1e2ea 9px,
-      #f1e2ea 11px
+      #f7edf2 0,
+      #f7edf2 10px,
+      #f2e5eb 10px,
+      #f2e5eb 11px
     );
 }
 

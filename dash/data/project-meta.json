@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 10:07",
-  "version": "1.0.7.23",
-  "versionLabel": "v1.0.7.23",
-  "branch": "feature/ballet-growth-scoring-guide",
-  "commit": "187c39f",
+  "updatedAt": "2026-07-29 10:38",
+  "version": "1.0.7.24",
+  "versionLabel": "v1.0.7.24",
+  "branch": "bugfix/ballet-timetable-grid",
+  "commit": "6ac3ca9",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-growth-scoring-guide · commit 187c39f · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-timetable-grid · commit 6ac3ca9 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "将芭蕾周课表改为连续时间底板",
+      "summary": "桌面周课表不再把每个小时画成彼此分离的圆角槽卡；同一天的时间区合并为一块连续底板，只用细竖线标示整点。"
+    },
     {
       "date": "2026-07-29",
       "title": "拆出独立芭蕾成长评分文档",
@@ -28,11 +33,6 @@
       "date": "2026-07-29",
       "title": "周课表按实际时长伸展课程卡",
       "summary": "桌面课表由“课程只落在开始小时”改为按实际起止分钟定位；半点对齐小时中线，跨小时课程覆盖完整实际时段，`11:00–12:30` 不再与一小时课程显示成相同宽度。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "对齐芭蕾上课历史课程列",
-      "summary": "将上课历史的日期列改为统一的响应式固定轨道，右侧课程标签数量不再反向挤压中间课程信息列；同一视口下课程名与老师 / 时间保持相同水平起点。"
     }
   ]
 }
