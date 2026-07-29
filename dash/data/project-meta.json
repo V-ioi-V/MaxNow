@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 09:42",
-  "version": "1.0.7.21",
-  "versionLabel": "v1.0.7.21",
-  "branch": "bugfix/ballet-header-spacing",
-  "commit": "ab28b1a",
+  "updatedAt": "2026-07-29 09:58",
+  "version": "1.0.7.22",
+  "versionLabel": "v1.0.7.22",
+  "branch": "feature/ballet-growth-scoring-docs",
+  "commit": "26a7e89",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-header-spacing · commit ab28b1a · 有未提交代码改动",
+  "deployNote": "feature/ballet-growth-scoring-docs · commit 26a7e89 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "固化芭蕾成长评分协议与文档同步检查",
+      "summary": "在 `SPEC.md` 补齐升班分输入、公式、规律 / 间歇判定、L1–L5 课次和基础月份参数、全部 XP 课型权重、六级 XP 阈值与效果，明确运行数值不写死、100 分只提示老师测评。"
+    },
     {
       "date": "2026-07-29",
       "title": "将芭蕾刷新状态收进顶部栏",
@@ -28,11 +33,6 @@
       "date": "2026-07-29",
       "title": "增加芭蕾成长评分与经验等级",
       "summary": "在芭蕾页顶部第三格新增“成长进度”卡，展示当前课程路径、100 分升班参考、课次 / 基础月份与经验等级；`1501px` 以上三张概览卡同顶、同底、等高，中等宽度成长卡独占下一行，窄屏全部单列。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "收紧芭蕾顶部双卡宽度",
-      "summary": "`1501px` 以上将“本周训练 / 课程卡”放入三等分栅格的前两格，每张各占内容区三分之一并保持同顶、同底、等高；右侧留出一格呼吸空间。"
     }
   ]
 }

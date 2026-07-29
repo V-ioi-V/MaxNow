@@ -1424,6 +1424,119 @@ def check_secondary_view_style():
     return "secondary views: shared shells, interaction polish, and ballet priority layout are valid"
 
 
+def check_ballet_growth_contract():
+    dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
+    specification = (ROOT / "SPEC.md").read_text(encoding="utf-8")
+    start_marker = "<!-- BALLET_GROWTH_CONTRACT_START -->"
+    end_marker = "<!-- BALLET_GROWTH_CONTRACT_END -->"
+    if start_marker not in specification or end_marker not in specification:
+        raise ValueError("ballet growth contract: SPEC markers are missing")
+    contract = specification.split(start_marker, 1)[1].split(end_marker, 1)[0]
+
+    promotion_match = re.search(
+        r"const BALLET_PROMOTION_RULES = \{\n(?P<body>.*?)\n\};",
+        dashboard_js,
+        re.DOTALL,
+    )
+    if not promotion_match:
+        raise ValueError("ballet growth contract: promotion rules are missing from app.js")
+    promotion_code = {}
+    promotion_pattern = re.compile(
+        r'^\s*(?:"(?P<quoted>[^"]+)"|(?P<bare>[A-Za-z0-9.]+)):\s*'
+        r'\{\s*next:\s*(?:"(?P<next>[^"]+)"|(?P<none>null)),\s*'
+        r"regular:\s*(?P<regular>\d+),\s*intermittent:\s*(?P<intermittent>\d+),\s*"
+        r"foundationMonths:\s*(?P<foundation>null|\d+)\s*\},$",
+        re.MULTILINE,
+    )
+    for match in promotion_pattern.finditer(promotion_match.group("body")):
+        level = match.group("quoted") or match.group("bare")
+        promotion_code[level] = (
+            match.group("next") or None,
+            int(match.group("regular")),
+            int(match.group("intermittent")),
+            None if match.group("foundation") == "null" else int(match.group("foundation")),
+        )
+    promotion_docs = {}
+    for match in re.finditer(
+        r"^\| (L(?:1(?:\.5)?|2|3|4|5)) \| ([^|]+) \| (\d+) \| (\d+) \| ([^|]+) \|$",
+        contract,
+        re.MULTILINE,
+    ):
+        level, next_level, regular, intermittent, foundation = (
+            value.strip() for value in match.groups()
+        )
+        promotion_docs[level] = (
+            None if next_level == "—" else next_level,
+            int(regular),
+            int(intermittent),
+            None if foundation == "—" else int(foundation),
+        )
+    if promotion_code != promotion_docs:
+        raise ValueError("ballet growth contract: promotion table does not match app.js")
+
+    xp_weight_match = re.search(
+        r"const BALLET_XP_BY_COURSE_TYPE = \{\n(?P<body>.*?)\n\};",
+        dashboard_js,
+        re.DOTALL,
+    )
+    if not xp_weight_match:
+        raise ValueError("ballet growth contract: XP course weights are missing from app.js")
+    xp_weight_code = {
+        key: int(value)
+        for key, value in re.findall(
+            r"^\s*([a-z_]+):\s*(\d+),$",
+            xp_weight_match.group("body"),
+            re.MULTILINE,
+        )
+    }
+    xp_weight_docs = {
+        key: int(value)
+        for key, value in re.findall(
+            r"^\| ([a-z_]+) \| [^|]+ \| (\d+) \|$",
+            contract,
+            re.MULTILINE,
+        )
+    }
+    if xp_weight_code != xp_weight_docs:
+        raise ValueError("ballet growth contract: XP course table does not match app.js")
+
+    xp_level_match = re.search(
+        r"const BALLET_XP_LEVELS = \[\n(?P<body>.*?)\n\];",
+        dashboard_js,
+        re.DOTALL,
+    )
+    if not xp_level_match:
+        raise ValueError("ballet growth contract: XP levels are missing from app.js")
+    xp_level_code = [
+        (int(level), int(threshold), title.strip(), effect.strip())
+        for level, threshold, title, effect in re.findall(
+            r'\{\s*level:\s*(\d+),\s*threshold:\s*(\d+),\s*title:\s*"([^"]+)",\s*effect:\s*"([^"]+)"\s*\}',
+            xp_level_match.group("body"),
+        )
+    ]
+    xp_level_docs = [
+        (int(level), int(threshold), title.strip(), effect.strip())
+        for level, threshold, title, effect in re.findall(
+            r"^\| (\d+) \| (\d+) \| ([^|]+) \| ([^|]+) \|$",
+            contract,
+            re.MULTILINE,
+        )
+    ]
+    if xp_level_code != xp_level_docs:
+        raise ValueError("ballet growth contract: XP level table does not match app.js")
+
+    synchronized_behavior = (
+        ("const sampleSufficient = observationDays >= 21;", "至少覆盖 21 天"),
+        ("const isRegular = sampleSufficient && weeklyRate >= 2;", "达到每周 2 节"),
+        ("const classWeight = hasFoundationTarget ? 70 : 100;", "× 70"),
+        (") * 30", "× 30"),
+        ('promotion.score >= 100', "只能显示“可咨询老师进行下一等级测评”"),
+    )
+    if any(code not in dashboard_js or prose not in contract for code, prose in synchronized_behavior):
+        raise ValueError("ballet growth contract: scoring behavior and SPEC prose are out of sync")
+    return "ballet growth contract: promotion, XP, thresholds, effects, and SPEC sync are valid"
+
+
 def check_data_health_contract():
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
@@ -1523,6 +1636,7 @@ def main():
     checks.append(check_ai_frontier_brief())
     checks.append(check_today_progress_ring())
     checks.append(check_secondary_view_style())
+    checks.append(check_ballet_growth_contract())
     checks.append(check_data_health_contract())
     checks.append(check_ballet_read_model())
     checks.append(check_ballet_sync())
