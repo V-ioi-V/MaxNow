@@ -669,6 +669,7 @@ class TimetableParser(HTMLParser):
                     fields[label] = normalize_space(value[len(label) :])
 
         capacity_match = re.search(r"(?<!\d)(\d+)\s*/\s*(\d+)(?!\d)", root_text)
+        waitlist_match = re.search(r"(?:排队\s*)?Wait\s*(\d+)", root_text, re.IGNORECASE)
         if "未满人数已取消" in root_text or "已取消" in root_text:
             availability = "cancelled"
         elif "您已预约" in root_text:
@@ -696,6 +697,7 @@ class TimetableParser(HTMLParser):
             "venue": fields.get("教室/场地", ""),
             "bookedCount": int(capacity_match.group(1)) if capacity_match else None,
             "capacity": int(capacity_match.group(2)) if capacity_match else None,
+            "waitlistCount": int(waitlist_match.group(1)) if waitlist_match else None,
             "availability": availability,
         }
 
@@ -1682,6 +1684,16 @@ def validate_read_model(model: dict[str, Any]) -> None:
                     "cancelled",
                     "past",
                 }
+            ):
+                raise SyncFailure("parse_error")
+            waitlist_count = record.get("waitlistCount")
+            if (
+                waitlist_count is not None
+                and (
+                    isinstance(waitlist_count, bool)
+                    or not isinstance(waitlist_count, int)
+                    or waitlist_count < 0
+                )
             ):
                 raise SyncFailure("parse_error")
         pace = card.get("pace")

@@ -352,6 +352,7 @@ class BalletSyncTests(unittest.TestCase):
                     "venue": "大教室",
                     "bookedCount": 17,
                     "capacity": 10,
+                    "waitlistCount": 8,
                     "availability": "queue_available",
                     "date": "2026-08-01",
                 }

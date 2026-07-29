@@ -3638,6 +3638,25 @@ function getBalletTimetableStatus(record = {}) {
   };
 }
 
+function getBalletTimetableCounts(record = {}) {
+  const bookedCount = Number(record.bookedCount);
+  const capacity = Number(record.capacity);
+  if (
+    !Number.isInteger(bookedCount)
+    || bookedCount < 0
+    || !Number.isInteger(capacity)
+    || capacity <= 0
+  ) {
+    return null;
+  }
+  const waitlistCount = Number(record.waitlistCount);
+  const hasWaitlistCount = Number.isInteger(waitlistCount) && waitlistCount >= 0;
+  return {
+    compact: `${bookedCount}/${capacity}人${hasWaitlistCount ? ` · 排${waitlistCount}` : ""}`,
+    accessible: `报名 ${bookedCount}/${capacity} 人${hasWaitlistCount ? `，排队 ${waitlistCount} 人` : ""}`,
+  };
+}
+
 function createBalletTimetableCourse(record, mobile = false) {
   const article = document.createElement("article");
   article.className = mobile ? "ballet-timetable-course is-mobile" : "ballet-timetable-course";
@@ -3648,9 +3667,22 @@ function createBalletTimetableCourse(record, mobile = false) {
   const title = document.createElement("strong");
   title.textContent = balletCourseName(record);
   const meta = document.createElement("small");
-  meta.textContent = mobile
+  meta.className = "ballet-timetable-meta";
+  const detailText = mobile
     ? [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补"
     : balletTeacher(record) || "老师待确认";
+  const counts = getBalletTimetableCounts(record);
+  if (counts) {
+    const capacity = document.createElement("span");
+    capacity.className = "ballet-timetable-capacity";
+    capacity.textContent = counts.compact;
+    const detail = document.createElement("span");
+    detail.className = "ballet-timetable-meta-detail";
+    detail.textContent = detailText;
+    meta.append(capacity, detail);
+  } else {
+    meta.textContent = detailText;
+  }
   const foot = document.createElement("div");
   const time = document.createElement("span");
   time.textContent = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
@@ -3665,6 +3697,7 @@ function createBalletTimetableCourse(record, mobile = false) {
     [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–"),
     balletTeacher(record),
     record.venue,
+    counts?.accessible,
     status.label,
   ].filter(Boolean).join(" · ");
   return article;

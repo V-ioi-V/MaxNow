@@ -525,6 +525,16 @@ def check_ballet_read_model():
                 "past",
             }:
                 raise ValueError("ballet: timetable course state is invalid")
+            waitlist_count = record.get("waitlistCount")
+            if (
+                waitlist_count is not None
+                and (
+                    isinstance(waitlist_count, bool)
+                    or not isinstance(waitlist_count, int)
+                    or waitlist_count < 0
+                )
+            ):
+                raise ValueError("ballet: timetable waitlist count is invalid")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
@@ -602,6 +612,8 @@ def check_ballet_read_model():
         or ".ballet-timetable-mobile-room {" not in dashboard_css
         or "var(--ballet-time-rows, repeat(60, var(--ballet-minute-height)))" not in dashboard_css
         or "@media (min-width: 861px) and (max-width: 1200px)" not in dashboard_css
+        or "--ballet-minute-height: clamp(1.28px, calc(2.14px - 0.04vw), 1.48px);" not in dashboard_css
+        or "--ballet-minute-height: clamp(1.65px, calc(3.26px - 0.1vw), 2.02px);" not in dashboard_css
         or '? "30px"' not in dashboard_js
         or ': "repeat(60, var(--ballet-minute-height))"' not in dashboard_js
         or "width: 66.6667%;" in dashboard_css
@@ -613,6 +625,9 @@ def check_ballet_read_model():
         or '.ballet-timetable-state[data-availability="full"]' not in dashboard_css
         or '.ballet-timetable-state[data-availability="cancelled"]' not in dashboard_css
         or "function isBalletTimetableAttended(record = {})" not in dashboard_js
+        or "function getBalletTimetableCounts(record = {})" not in dashboard_js
+        or 'capacity.className = "ballet-timetable-capacity"' not in dashboard_js
+        or ".ballet-timetable-capacity {" not in dashboard_css
         or 'attended: "已上完"' not in dashboard_js
         or "max-height: clamp(320px, 58vh, 500px);" in dashboard_css
         or "max-height: min(68vh, 560px);" in dashboard_css
@@ -1451,9 +1466,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=184" not in dashboard_html
+        "styles.css?v=185" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=155" not in dashboard_html
+        or "app.js?v=156" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1627,7 +1642,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=155" not in dashboard_html:
+    if "app.js?v=156" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

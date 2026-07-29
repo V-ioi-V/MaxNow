@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 21:57",
-  "version": "1.0.7.32",
-  "versionLabel": "v1.0.7.32",
-  "branch": "bugfix/ballet-day-divider-soft",
-  "commit": "4a17c8a",
+  "updatedAt": "2026-07-29 22:16",
+  "version": "1.0.7.33",
+  "versionLabel": "v1.0.7.33",
+  "branch": "feature/ballet-class-counts",
+  "commit": "af83a79",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-day-divider-soft · commit 4a17c8a · 有未提交代码改动",
+  "deployNote": "feature/ballet-class-counts · commit af83a79 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "课表显示报名与排队人数",
+      "summary": "闻道课表解析增加独立 `waitlistCount` 脱敏字段，与现有报名数 / 容量一起进入只读快照；排队人数只读取源站 `Wait` 数字，不再用报名数减容量推断。"
+    },
     {
       "date": "2026-07-29",
       "title": "柔化课表日期分界",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "课表增加教室分栏，升班进度只保留课次数量",
       "summary": "桌面周课表在每个日期下固定增加“大教室 / 小教室”两列，课程按场地进入对应列；同教室重叠课程只在自己的列内继续分轨。`1200px` 以下按日期、再按教室分组展示。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "对齐芭蕾课表时间轴并统一普通课程边框",
-      "summary": "将每个整点文字从小时格内部移到对应横向分界线上，时间标签与课程分钟定位共用同一网格坐标。"
     }
   ]
 };
