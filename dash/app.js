@@ -2249,12 +2249,12 @@ const BALLET_LEVEL_LABELS = {
 // personal-wiki/raw/relationship-ricky/docs/2026-07-20-lijun-ballet-course-guide.md
 // XP weights are MaxNow game points, not claims from the source guide.
 const BALLET_PROMOTION_RULES = {
-  L1: { next: "L1.5", regular: 8, intermittent: 15, foundationMonths: 1 },
-  "L1.5": { next: "L2", regular: 15, intermittent: 25, foundationMonths: 3 },
-  L2: { next: "L3", regular: 20, intermittent: 30, foundationMonths: 5 },
-  L3: { next: "L4", regular: 30, intermittent: 40, foundationMonths: null },
-  L4: { next: "L5", regular: 30, intermittent: 40, foundationMonths: null },
-  L5: { next: null, regular: 30, intermittent: 40, foundationMonths: null },
+  L1: { next: "L1.5", regular: 8, intermittent: 15 },
+  "L1.5": { next: "L2", regular: 15, intermittent: 25 },
+  L2: { next: "L3", regular: 20, intermittent: 30 },
+  L3: { next: "L4", regular: 30, intermittent: 40 },
+  L4: { next: "L5", regular: 30, intermittent: 40 },
+  L5: { next: null, regular: 30, intermittent: 40 },
 };
 
 const BALLET_LEVEL_ORDER = ["L1", "L1.5", "L2", "L3", "L4", "L5"];
@@ -3352,10 +3352,6 @@ function getBalletPromotionState(records) {
     balletData.dataAsOf || balletData.sync?.lastSuccessAt || new Date().toISOString(),
   ).slice(0, 10);
   const anchor = Date.parse(`${anchorValue}T23:59:59+08:00`);
-  const allDatedBalletRecords = balletRecords
-    .map((record) => Date.parse(`${balletRecordDate(record)}T12:00:00+08:00`))
-    .filter(Number.isFinite)
-    .sort((a, b) => a - b);
   const datedRecords = levelRecords
     .map((record) => Date.parse(`${balletRecordDate(record)}T12:00:00+08:00`))
     .filter(Number.isFinite)
@@ -3372,20 +3368,6 @@ function getBalletPromotionState(records) {
   const sampleSufficient = observationDays >= 21;
   const isRegular = sampleSufficient && weeklyRate >= 2;
   const target = isRegular ? rule.regular : rule.intermittent;
-  const firstBalletAt = allDatedBalletRecords[0];
-  const foundationMonths =
-    Number.isFinite(firstBalletAt) && Number.isFinite(anchor)
-      ? Math.max(0, (anchor - firstBalletAt) / (86400000 * 30.4375))
-      : 0;
-  const hasFoundationTarget =
-    rule.foundationMonths !== null &&
-    Number.isFinite(Number(rule.foundationMonths));
-  const classWeight = hasFoundationTarget ? 70 : 100;
-  const classScore = Math.min(1, completed / Math.max(1, target)) * classWeight;
-  const foundationScore = hasFoundationTarget
-    ? Math.min(1, foundationMonths / Math.max(0.1, Number(rule.foundationMonths))) * 30
-    : 0;
-  const score = rule.next ? Math.round(classScore + foundationScore) : 100;
   return {
     currentLevel,
     nextLevel: rule.next,
@@ -3394,10 +3376,6 @@ function getBalletPromotionState(records) {
     remaining: Math.max(0, target - completed),
     regularTarget: rule.regular,
     intermittentTarget: rule.intermittent,
-    foundationMonths,
-    foundationTargetMonths: rule.foundationMonths,
-    hasFoundationTarget,
-    score,
     sampleSufficient,
     isRegular,
     isFinal: !rule.next,
@@ -3436,10 +3414,6 @@ function renderBalletGrowth() {
   const records = getBalletGrowthRecords();
   const promotion = getBalletPromotionState(records);
   const xp = getBalletXpState(records);
-  const foundationLabel =
-    promotion.foundationMonths > 0 && promotion.foundationMonths < 0.1
-      ? "不足 0.1"
-      : promotion.foundationMonths.toFixed(1);
 
   setText("#ballet-growth-level", `Lv.${xp.current.level}`);
   setText(
@@ -3450,20 +3424,22 @@ function renderBalletGrowth() {
   );
   setText(
     "#ballet-promotion-count",
-    `${promotion.score} / 100 分`,
+    promotion.isFinal
+      ? `${promotion.completed} 节`
+      : `${promotion.completed} / ${promotion.target} 节`,
   );
   setText(
     "#ballet-promotion-rhythm",
-    promotion.hasFoundationTarget
-      ? `课次 ${promotion.completed}/${promotion.target} · 基础 ${foundationLabel}/${promotion.foundationTargetMonths} 月`
-      : `课次 ${promotion.completed}/${promotion.target} · ${promotion.isRegular ? "规律" : "间歇"}口径`,
+    promotion.isFinal
+      ? "当前等级累计课次"
+      : `还需 ${promotion.remaining} 节 · ${promotion.isRegular ? "规律" : "保守"}课次标准`,
   );
   setText(
     "#ballet-promotion-note",
     promotion.isFinal
       ? "课程指南最高为 L5；继续积累控制、完整性与动作连接。"
-      : promotion.score >= 100
-        ? `课次与基础参考均已达到，可咨询老师进行 ${promotion.nextLevel} 测评。`
+      : promotion.completed >= promotion.target
+        ? `目标课次已达到，可咨询老师进行 ${promotion.nextLevel} 测评。`
         : promotion.isRegular
           ? `还需 ${promotion.remaining} 节；当前满足每周至少 2 节的规律课次口径。`
           : promotion.sampleSufficient
@@ -3473,8 +3449,8 @@ function renderBalletGrowth() {
   updateBalletGrowthProgress(
     "#ballet-promotion-progress",
     "#ballet-promotion-progress-fill",
-    promotion.score,
-    100,
+    promotion.isFinal ? Math.max(1, promotion.completed) : promotion.completed,
+    promotion.isFinal ? Math.max(1, promotion.completed) : promotion.target,
   );
 
   setText(
@@ -3672,7 +3648,9 @@ function createBalletTimetableCourse(record, mobile = false) {
   const title = document.createElement("strong");
   title.textContent = balletCourseName(record);
   const meta = document.createElement("small");
-  meta.textContent = [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补";
+  meta.textContent = mobile
+    ? [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补"
+    : balletTeacher(record) || "老师待确认";
   const foot = document.createElement("div");
   const time = document.createElement("span");
   time.textContent = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
@@ -3690,6 +3668,27 @@ function createBalletTimetableCourse(record, mobile = false) {
     status.label,
   ].filter(Boolean).join(" · ");
   return article;
+}
+
+const BALLET_TIMETABLE_ROOMS = [
+  { key: "large", label: "大教室" },
+  { key: "small", label: "小教室" },
+];
+
+function balletTimetableRoomKey(record = {}) {
+  const venue = String(record.venue || "").replace(/\s+/g, "");
+  if (venue.includes("大教室")) return "large";
+  if (venue.includes("小教室")) return "small";
+  return "unknown";
+}
+
+function createBalletTimetableRoomHeader(room, dayState) {
+  const header = document.createElement("div");
+  header.className = "ballet-timetable-room";
+  header.dataset.room = room.key;
+  header.dataset.dayState = dayState;
+  header.textContent = room.label;
+  return header;
 }
 
 function createBalletTimetableDayHeader(day, index) {
@@ -3883,7 +3882,7 @@ function renderBalletTimetable() {
     )
     .join(" ");
   grid.style.setProperty("--ballet-time-rows", timeRows);
-  let nextGridLine = 2;
+  let nextGridLine = 3;
   const minuteGridLines = new Map();
   const layoutRows = rows.map((row) => {
     const startLine = nextGridLine;
@@ -3904,12 +3903,21 @@ function renderBalletTimetable() {
   corner.className = "ballet-timetable-corner";
   corner.textContent = "时间";
   corner.style.gridColumn = "1";
-  corner.style.gridRow = "1";
+  corner.style.gridRow = "1 / 3";
   const dayHeaders = days.map((day, index) => {
     const header = createBalletTimetableDayHeader(day, index);
-    header.style.gridColumn = String(index + 2);
+    header.style.gridColumn = `${index * 2 + 2} / span 2`;
     header.style.gridRow = "1";
     return header;
+  });
+  const roomHeaders = days.flatMap((day, index) => {
+    const dayState = getBalletTimetableDayState(day.date);
+    return BALLET_TIMETABLE_ROOMS.map((room, roomIndex) => {
+      const header = createBalletTimetableRoomHeader(room, dayState);
+      header.style.gridColumn = String(index * 2 + roomIndex + 2);
+      header.style.gridRow = "2";
+      return header;
+    });
   });
   const timeHeaders = layoutRows.map((row, index) => {
     const time = document.createElement("div");
@@ -3931,43 +3939,58 @@ function renderBalletTimetable() {
     time.style.gridRow = `${row.startLine} / ${row.endLine}`;
     return time;
   });
-  grid.append(corner, ...dayHeaders, ...timeHeaders);
+  grid.append(corner, ...dayHeaders, ...roomHeaders, ...timeHeaders);
 
   days.forEach((day, index) => {
     const records = Array.isArray(day.records) ? day.records : [];
-    const recordLayout = layoutBalletTimetableRecords(records);
     const dayState = getBalletTimetableDayState(day.date);
-    layoutRows.forEach((row, rowIndex) => {
-      const cell = document.createElement("div");
-      cell.className = "ballet-timetable-cell";
-      cell.dataset.dayState = dayState;
-      cell.dataset.rowType = row.type;
-      cell.dataset.rowEdge =
-        layoutRows.length === 1
-          ? "both"
-          : rowIndex === 0
-            ? "start"
-            : rowIndex === layoutRows.length - 1
-              ? "end"
-              : "middle";
-      cell.style.gridColumn = String(index + 2);
-      cell.style.gridRow = `${row.startLine} / ${row.endLine}`;
-      grid.appendChild(cell);
+    const dayStartColumn = index * 2 + 2;
+    BALLET_TIMETABLE_ROOMS.forEach((room, roomIndex) => {
+      layoutRows.forEach((row, rowIndex) => {
+        const cell = document.createElement("div");
+        cell.className = "ballet-timetable-cell";
+        cell.dataset.dayState = dayState;
+        cell.dataset.room = room.key;
+        cell.dataset.rowType = row.type;
+        cell.dataset.rowEdge =
+          layoutRows.length === 1
+            ? "both"
+            : rowIndex === 0
+              ? "start"
+              : rowIndex === layoutRows.length - 1
+                ? "end"
+                : "middle";
+        cell.style.gridColumn = String(dayStartColumn + roomIndex);
+        cell.style.gridRow = `${row.startLine} / ${row.endLine}`;
+        grid.appendChild(cell);
+      });
     });
 
-    recordLayout.items.forEach(({ record, interval, lane, laneCount }) => {
-      const startLine = minuteGridLines.get(interval.start);
-      const endLine = minuteGridLines.get(interval.end);
-      if (!startLine || !endLine || endLine <= startLine) return;
-      const course = createBalletTimetableCourse(record);
-      course.dataset.dayState = dayState;
-      course.dataset.overlap = laneCount > 1 ? "true" : "false";
-      course.style.gridColumn = String(index + 2);
-      course.style.gridRow = `${startLine} / ${endLine}`;
-      course.style.setProperty("--ballet-lane-left", `${(lane * 100) / laneCount}%`);
-      course.style.setProperty("--ballet-lane-width", `${100 / laneCount}%`);
-      grid.appendChild(course);
-    });
+    [...BALLET_TIMETABLE_ROOMS, { key: "unknown", label: "未标注教室" }].forEach(
+      (room, roomIndex) => {
+        const roomRecords = records.filter(
+          (record) => balletTimetableRoomKey(record) === room.key,
+        );
+        const recordLayout = layoutBalletTimetableRecords(roomRecords);
+        recordLayout.items.forEach(({ record, interval, lane, laneCount }) => {
+          const startLine = minuteGridLines.get(interval.start);
+          const endLine = minuteGridLines.get(interval.end);
+          if (!startLine || !endLine || endLine <= startLine) return;
+          const course = createBalletTimetableCourse(record);
+          course.dataset.dayState = dayState;
+          course.dataset.room = room.key;
+          course.dataset.overlap = laneCount > 1 ? "true" : "false";
+          course.style.gridColumn =
+            room.key === "unknown"
+              ? `${dayStartColumn} / span 2`
+              : String(dayStartColumn + roomIndex);
+          course.style.gridRow = `${startLine} / ${endLine}`;
+          course.style.setProperty("--ballet-lane-left", `${(lane * 100) / laneCount}%`);
+          course.style.setProperty("--ballet-lane-width", `${100 / laneCount}%`);
+          grid.appendChild(course);
+        });
+      },
+    );
   });
 
   const todayIndex = days.findIndex((day) => String(day.date) === localDateKey());
@@ -3997,7 +4020,32 @@ function renderBalletTimetable() {
     header.appendChild(count);
     group.appendChild(header);
     if (records.length) {
-      group.append(...records.map((record) => createBalletTimetableCourse(record, true)));
+      [...BALLET_TIMETABLE_ROOMS, { key: "unknown", label: "未标注教室" }].forEach(
+        (room) => {
+          const roomRecords = records
+            .filter((record) => balletTimetableRoomKey(record) === room.key)
+            .sort(
+              (left, right) =>
+                String(balletStartTime(left)).localeCompare(String(balletStartTime(right))),
+            );
+          if (!roomRecords.length) return;
+          const roomGroup = document.createElement("div");
+          roomGroup.className = "ballet-timetable-mobile-room";
+          roomGroup.dataset.room = room.key;
+          const roomHeader = document.createElement("div");
+          roomHeader.className = "ballet-timetable-mobile-room-head";
+          const roomName = document.createElement("strong");
+          roomName.textContent = room.label;
+          const roomCount = document.createElement("span");
+          roomCount.textContent = `${roomRecords.length} 节`;
+          roomHeader.append(roomName, roomCount);
+          roomGroup.append(
+            roomHeader,
+            ...roomRecords.map((record) => createBalletTimetableCourse(record, true)),
+          );
+          group.appendChild(roomGroup);
+        },
+      );
     } else {
       const empty = document.createElement("p");
       empty.className = "ballet-timetable-empty";

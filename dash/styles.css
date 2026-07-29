@@ -4614,9 +4614,10 @@ body[data-view="ricky"] .topbar-ricky-status {
   display: grid;
   grid-template-columns:
     clamp(48px, 4vw, 62px)
-    repeat(var(--ballet-day-count), minmax(0, 1fr));
+    repeat(var(--ballet-day-count), minmax(0, 1fr) minmax(0, 1fr));
   grid-template-rows:
     50px
+    24px
     var(--ballet-time-rows, repeat(60, var(--ballet-minute-height)));
   column-gap: 0;
   row-gap: 0;
@@ -4635,11 +4636,16 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-timetable-course {
     padding-inline: 5px;
   }
+
+  .ballet-timetable-grid > .ballet-timetable-course small {
+    display: none;
+  }
 }
 
 .ballet-timetable-corner,
 .ballet-timetable-time,
 .ballet-timetable-day,
+.ballet-timetable-room,
 .ballet-timetable-cell {
   min-width: 0;
   border: 0;
@@ -4727,6 +4733,38 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-timetable-grid > .ballet-timetable-day {
   min-height: 50px;
+}
+
+.ballet-timetable-room {
+  display: grid;
+  place-items: center;
+  border-left: 1px solid #f0e6eb;
+  border-bottom: 1px solid #eadfe4;
+  background: #fbf8fa;
+  color: #8b7580;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.ballet-timetable-room[data-room="large"] {
+  background: #fff7fa;
+  color: #a14569;
+}
+
+.ballet-timetable-room[data-room="small"] {
+  background: #f7fafc;
+  color: #65758a;
+}
+
+.ballet-timetable-room[data-day-state="today"] {
+  background: #ffedf4;
+}
+
+.ballet-timetable-room[data-day-state="past"] {
+  opacity: 0.62;
+  filter: saturate(0.74);
 }
 
 .ballet-timetable-day strong {
@@ -5047,6 +5085,38 @@ body[data-view="ricky"] .topbar-ricky-status {
   border-color: #e9b8cc;
   background: rgba(255, 255, 255, 0.82);
   color: #9e315d;
+}
+
+.ballet-timetable-mobile-room {
+  display: grid;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(196, 71, 120, 0.12);
+}
+
+.ballet-timetable-mobile-room-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px;
+  color: #6e5964;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.ballet-timetable-mobile-room-head strong {
+  color: #8f3b5d;
+  font-size: 11px;
+}
+
+.ballet-timetable-mobile-room-head span {
+  color: #9b8490;
+  font-weight: 750;
+}
+
+.ballet-timetable-mobile-room[data-room="small"] .ballet-timetable-mobile-room-head strong {
+  color: #5f7186;
 }
 
 @media (min-width: 861px) and (max-width: 1200px) {

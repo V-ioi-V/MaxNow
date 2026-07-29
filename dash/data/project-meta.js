@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 20:06",
-  "version": "1.0.7.28",
-  "versionLabel": "v1.0.7.28",
-  "branch": "bugfix/ballet-timetable-grid-alignment",
-  "commit": "7c928a7",
+  "updatedAt": "2026-07-29 20:20",
+  "version": "1.0.7.29",
+  "versionLabel": "v1.0.7.29",
+  "branch": "feature/ballet-room-lanes-course-count",
+  "commit": "a345680",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-grid-alignment · commit 7c928a7 · 有未提交代码改动",
+  "deployNote": "feature/ballet-room-lanes-course-count · commit a345680 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "课表增加教室分栏，升班进度只保留课次数量",
+      "summary": "桌面周课表在每个日期下固定增加“大教室 / 小教室”两列，课程按场地进入对应列；同教室重叠课程只在自己的列内继续分轨。`1200px` 以下按日期、再按教室分组展示。"
+    },
     {
       "date": "2026-07-29",
       "title": "对齐芭蕾课表时间轴并统一普通课程边框",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "将 Token、生活与同行记状态收进顶部栏",
       "summary": "删除 Token、生活与同行记内容区重复的页面标题卡，统一把页面名、短更新时间与同步状态放进全局顶部栏；Token 的范围切换继续保留在顶部栏右侧。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "将芭蕾周课表改为连续时间底板",
-      "summary": "桌面周课表不再把每个小时画成彼此分离的圆角槽卡；同一天的时间区合并为一块连续底板，只用细竖线标示整点。"
     }
   ]
 };

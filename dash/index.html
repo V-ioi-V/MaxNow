@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=180" />
+    <link rel="stylesheet" href="./styles.css?v=181" />
   </head>
   <body>
     <div class="app-shell">
@@ -679,17 +679,17 @@
                   <div
                     class="ballet-growth-track"
                     role="progressbar"
-                    aria-label="升班参考评分"
+                    aria-label="升班课次进度"
                     aria-valuemin="0"
-                    aria-valuemax="100"
+                    aria-valuemax="15"
                     aria-valuenow="0"
                     id="ballet-promotion-progress"
                   >
                     <span id="ballet-promotion-progress-fill"></span>
                   </div>
                   <div class="ballet-growth-meta">
-                    <strong id="ballet-promotion-count">0 / 100 分</strong>
-                    <small id="ballet-promotion-rhythm">课次 0 / 15</small>
+                    <strong id="ballet-promotion-count">0 / 15 节</strong>
+                    <small id="ballet-promotion-rhythm">还需 15 节 · 保守课次标准</small>
                   </div>
                   <p id="ballet-promotion-note">上课记录同步后计算升班参考。</p>
                 </section>
@@ -834,7 +834,7 @@
               </div>
               <span class="status-pill" id="ballet-timetable-count">等待同步</span>
             </header>
-            <div class="ballet-timetable-scroll" aria-label="横轴为日期、纵轴为时间的本周课程表">
+            <div class="ballet-timetable-scroll" aria-label="横轴为日期和教室、纵轴为时间的本周课程表">
               <div class="ballet-timetable-grid" id="ballet-timetable-grid"></div>
             </div>
             <div class="ballet-timetable-mobile" id="ballet-timetable-mobile"></div>
@@ -1200,6 +1200,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=153"></script>
+    <script src="./app.js?v=154"></script>
   </body>
 </html>
