@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 19:22",
-  "version": "1.0.7.27",
-  "versionLabel": "v1.0.7.27",
-  "branch": "bugfix/ballet-timetable-minimal",
-  "commit": "d7e4163",
+  "updatedAt": "2026-07-29 19:58",
+  "version": "1.0.7.28",
+  "versionLabel": "v1.0.7.28",
+  "branch": "bugfix/ballet-timetable-grid-alignment",
+  "commit": "3c2e912",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-minimal · commit d7e4163 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-timetable-grid-alignment · commit 3c2e912 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "对齐芭蕾课表时间轴并统一普通课程边框",
+      "summary": "将每个整点文字从小时格内部移到对应横向分界线上，时间标签与课程分钟定位共用同一网格坐标。"
+    },
     {
       "date": "2026-07-29",
       "title": "将芭蕾周课表改为留白日历布局",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "将芭蕾周课表改为连续时间底板",
       "summary": "桌面周课表不再把每个小时画成彼此分离的圆角槽卡；同一天的时间区合并为一块连续底板，只用细竖线标示整点。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "拆出独立芭蕾成长评分文档",
-      "summary": "新增根目录 `BALLET_GROWTH_SCORING.md`，单独集中记录有效数据、当前级别判断、规律 / 间歇口径、升班公式、L1–L5 参数、XP、六级效果和修改检查清单。"
     }
   ]
 };

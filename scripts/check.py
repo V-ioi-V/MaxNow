@@ -572,6 +572,7 @@ def check_ballet_read_model():
         or 'corner.textContent = "时间"' not in dashboard_js
         or 'marker.className = "ballet-timetable-now-line"' not in dashboard_js
         or 'course.dataset.overlap = laneCount > 1 ? "true" : "false"' not in dashboard_js
+        or 'timeLabel.className = "ballet-timetable-time-label"' not in dashboard_js
         or 'article.title = [' not in dashboard_js
         or 'aria-label="横轴为日期、纵轴为时间的本周课程表"' not in dashboard_html
         or '.ballet-timetable-day[data-day-state="today"]' not in dashboard_css
@@ -579,6 +580,9 @@ def check_ballet_read_model():
         or '.ballet-timetable-grid > .ballet-timetable-course[data-overlap="true"]' not in dashboard_css
         or '.ballet-timetable-cell[data-row-type="gap"]' not in dashboard_css
         or '.ballet-timetable-time[data-row-type="gap"]' not in dashboard_css
+        or ".ballet-timetable-time-label {" not in dashboard_css
+        or "border: 1px solid var(--card-border);" not in dashboard_css
+        or "border-left: 3px solid var(--card-color);" in dashboard_css
         or "repeat(var(--ballet-day-count), minmax(0, 1fr))" not in dashboard_css
         or "var(--ballet-time-rows, repeat(60, var(--ballet-minute-height)))" not in dashboard_css
         or "@media (min-width: 861px) and (max-width: 1200px)" not in dashboard_css
@@ -1427,9 +1431,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=179" not in dashboard_html
+        "styles.css?v=180" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=152" not in dashboard_html
+        or "app.js?v=153" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1599,7 +1603,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=152" not in dashboard_html:
+    if "app.js?v=153" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

@@ -3923,7 +3923,10 @@ function renderBalletTimetable() {
           : index === layoutRows.length - 1
             ? "end"
             : "middle";
-    time.textContent = row.label;
+    const timeLabel = document.createElement("span");
+    timeLabel.className = "ballet-timetable-time-label";
+    timeLabel.textContent = row.label;
+    time.appendChild(timeLabel);
     time.style.gridColumn = "1";
     time.style.gridRow = `${row.startLine} / ${row.endLine}`;
     return time;
