@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 23:02",
+  "updatedAt": "2026-07-29 23:11",
   "version": "1.0.7.35",
   "versionLabel": "v1.0.7.35",
   "branch": "bugfix/ballet-waitlist-position-teacher",
-  "commit": "ace8ddd",
+  "commit": "6c982a6",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-waitlist-position-teacher · commit ace8ddd · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-waitlist-position-teacher · commit 6c982a6 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-29",
