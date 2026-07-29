@@ -2683,6 +2683,29 @@ function getBalletUpcomingRecords() {
   return Array.isArray(balletData.upcoming?.records) ? balletData.upcoming.records : [];
 }
 
+function balletTimetableCourseKey(record = {}) {
+  const courseName = balletCourseName(record).replace(/\s+/g, "").toLowerCase();
+  return [
+    balletRecordDate(record),
+    balletStartTime(record),
+    balletEndTime(record),
+    courseName,
+  ].join("|");
+}
+
+function getBalletTimetableWaitlistPosition(record = {}) {
+  const directPosition = Number(record.waitlistPosition);
+  if (Number.isInteger(directPosition) && directPosition > 0) return directPosition;
+  const courseKey = balletTimetableCourseKey(record);
+  const booking = getBalletUpcomingRecords().find(
+    (item) =>
+      balletTimetableCourseKey(item) === courseKey
+      && String(item.bookingStatus || item.status || "").toLowerCase() === "waitlist",
+  );
+  const matchedPosition = Number(booking?.waitlistPosition);
+  return Number.isInteger(matchedPosition) && matchedPosition > 0 ? matchedPosition : null;
+}
+
 function balletClassBoundary(item = {}) {
   const date = balletRecordDate(item);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return Number.NaN;
@@ -3632,9 +3655,12 @@ function getBalletTimetableStatus(record = {}) {
   const key = isBalletTimetableAttended(record)
     ? "attended"
     : String(record.availability || "available").toLowerCase();
+  const waitlistPosition = key === "waitlist"
+    ? getBalletTimetableWaitlistPosition(record)
+    : null;
   return {
     key,
-    label: labels[key] || "待确认",
+    label: waitlistPosition ? `排队中 ${waitlistPosition}` : labels[key] || "待确认",
   };
 }
 

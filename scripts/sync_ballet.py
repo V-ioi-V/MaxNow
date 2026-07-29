@@ -1849,7 +1849,10 @@ def build_timetable_snapshot(
             item.get("startTime"),
             item.get("endTime"),
             normalize_course_name(item.get("courseName", "")),
-        ): item.get("bookingStatus")
+        ): {
+            "bookingStatus": item.get("bookingStatus"),
+            "waitlistPosition": item.get("waitlistPosition"),
+        }
         for item in (upcoming or [])
         if item.get("bookingStatus") in {"booked", "waitlist"}
     }
@@ -1864,7 +1867,13 @@ def build_timetable_snapshot(
                 )
             )
             if booking_state:
-                record["availability"] = booking_state
+                record["availability"] = booking_state["bookingStatus"]
+                if (
+                    booking_state["bookingStatus"] == "waitlist"
+                    and isinstance(booking_state.get("waitlistPosition"), int)
+                    and booking_state["waitlistPosition"] > 0
+                ):
+                    record["waitlistPosition"] = booking_state["waitlistPosition"]
 
     available_dates = [
         item["date"]

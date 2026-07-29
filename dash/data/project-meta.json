@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 22:47",
-  "version": "1.0.7.34",
-  "versionLabel": "v1.0.7.34",
-  "branch": "bugfix/ballet-card-information-layout",
-  "commit": "ccadb21",
+  "updatedAt": "2026-07-29 23:02",
+  "version": "1.0.7.35",
+  "versionLabel": "v1.0.7.35",
+  "branch": "bugfix/ballet-waitlist-position-teacher",
+  "commit": "ace8ddd",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-card-information-layout · commit ccadb21 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-waitlist-position-teacher · commit ace8ddd · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "补齐本人候补位次与紧凑课程老师",
+      "summary": "周课表把预约快照中的本人候补序号匹配回对应课程，状态由笼统的 `排队中` 改为 `排队中 N`；该数字只表示 Owner 本人的候补位次，与人数行的全班 `Wait` 排队数保持独立。"
+    },
     {
       "date": "2026-07-29",
       "title": "疏开课表课程卡信息",
@@ -28,11 +33,6 @@
       "date": "2026-07-29",
       "title": "加强课表每天之间的分界",
       "summary": "桌面周课表把每天开始位置的竖向分界线加深并增为 `2px`；同一天大教室 / 小教室之间继续使用浅色 `1px` 细线，日期和教室形成明确的两级分组。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "补齐课表结束整点并增强课程状态对比",
-      "summary": "桌面周课表在最后一小时底部补齐结束整点；当前数据范围明确显示 `22:00`，与课程分钟定位和最后一条横线共用同一坐标。"
     }
   ]
 }

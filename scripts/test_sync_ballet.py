@@ -388,11 +388,13 @@ class BalletSyncTests(unittest.TestCase):
                         "endTime": "21:15",
                         "courseName": "芭蕾L1-入门",
                         "bookingStatus": "waitlist",
+                        "waitlistPosition": 5,
                     }
                 ],
             )
         course = snapshot["days"][1]["records"][0]
         self.assertEqual(course["availability"], "waitlist")
+        self.assertEqual(course["waitlistPosition"], 5)
 
     def test_membership_forecast_is_isolated_per_card_and_hides_short_samples(self):
         membership = {
