@@ -1304,8 +1304,8 @@ def check_secondary_view_style():
             raise ValueError(f"secondary views: shared view class is missing on {view_id}")
     if 'class="view secondary-view" id="home-view"' in dashboard_html:
         raise ValueError("secondary views: Home must not inherit the secondary shell")
-    if dashboard_html.count("secondary-page-head") != 4:
-        raise ValueError("secondary views: four detail pages must use the shared page head")
+    if dashboard_html.count("secondary-page-head") != 1:
+        raise ValueError("secondary views: only Dounai may keep the shared page head")
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
@@ -1335,12 +1335,15 @@ def check_secondary_view_style():
     if any(rule in dashboard_css for rule in retired_top_bars):
         raise ValueError("secondary views: retired card-top accent bar remains")
     ballet_view_markup = dashboard_html.split('id="ballet-view"', 1)[1].split('id="cloud-view"', 1)[0]
+    token_view_markup = dashboard_html.split('id="tokens-view"', 1)[1].split('id="ballet-view"', 1)[0]
+    life_view_markup = dashboard_html.split('id="life-view"', 1)[1].split('id="tokens-view"', 1)[0]
+    ricky_view_markup = dashboard_html.split('id="ricky-view"', 1)[1].split('id="life-view"', 1)[0]
     cloud_view_markup = dashboard_html.split('id="cloud-view"', 1)[1].split('id="dounai-view"', 1)[0]
     if "cloud-page-head" in cloud_view_markup or "Cloud Services" in cloud_view_markup:
         raise ValueError("secondary views: Cloud must not repeat the topbar page title")
     topbar_markup = dashboard_html.split('<header class="topbar"', 1)[1].split("</header>", 1)[0]
     if (
-        'class="ballet-status-line topbar-ballet-status"' not in topbar_markup
+        'class="topbar-data-status topbar-ballet-status"' not in topbar_markup
         or 'id="ballet-updated"' not in topbar_markup
         or 'id="ballet-connection-status"' not in topbar_markup
         or 'id="ballet-updated"' in ballet_view_markup
@@ -1348,6 +1351,28 @@ def check_secondary_view_style():
         or "function formatBalletUpdatedAtCompact()" not in dashboard_js
     ):
         raise ValueError("secondary views: ballet update status must stay in the global topbar")
+    topbar_status_contracts = (
+        ("token", "tokens", token_view_markup),
+        ("life", "life", life_view_markup),
+        ("ricky", "ricky", ricky_view_markup),
+    )
+    for status_key, view_key, view_markup in topbar_status_contracts:
+        if (
+            f'class="topbar-data-status topbar-{status_key}-status"' not in topbar_markup
+            or f'id="{status_key}-updated"' not in topbar_markup
+            or f'id="{status_key}-connection-status"' not in topbar_markup
+            or f'id="{status_key}-updated"' in view_markup
+            or f'body[data-view="{view_key}"] .topbar-{status_key}-status' not in dashboard_css
+        ):
+            raise ValueError(f"secondary views: {status_key} update status must stay in the global topbar")
+    if (
+        "function renderTopbarDataStatus(" not in dashboard_js
+        or "token-main-tab" in dashboard_html
+        or "token-usage-head" in dashboard_html
+        or "ricky-page-head" in dashboard_html
+        or "life-page-head" in dashboard_html
+    ):
+        raise ValueError("secondary views: repeated Token, Life, or Ricky title cards remain")
     layout_markers = (
         'class="ballet-overview-grid"',
         'class="panel ballet-week-panel"',
@@ -1396,9 +1421,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=175" not in dashboard_html
+        "styles.css?v=176" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=148" not in dashboard_html
+        or "app.js?v=149" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1418,7 +1443,7 @@ def check_secondary_view_style():
     if ".side-nav {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }" not in mobile_rules:
         raise ValueError("secondary views: mobile navigation must remain a two-column grid")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
-        "\n  }\n\n  .token-usage-head:hover", 1
+        "\n  }\n\n  .dounai-page-head:hover", 1
     )[0]
     if "background: #ffffff;" in shared_hover:
         raise ValueError("secondary views: shared hover must preserve component backgrounds")
@@ -1568,7 +1593,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=148" not in dashboard_html:
+    if "app.js?v=149" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

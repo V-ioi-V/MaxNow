@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=175" />
+    <link rel="stylesheet" href="./styles.css?v=176" />
   </head>
   <body>
     <div class="app-shell">
@@ -89,9 +89,21 @@
         <header class="topbar" aria-label="Site status">
           <div class="topbar-heading">
             <strong id="view-title">&#20170;&#22825;</strong>
-            <div class="ballet-status-line topbar-ballet-status" aria-label="芭蕾数据状态">
-              <time class="ballet-update-time" id="ballet-updated" aria-live="polite">尚未更新</time>
+            <div class="topbar-data-status topbar-ballet-status" aria-label="芭蕾数据状态">
+              <time class="topbar-update-time" id="ballet-updated" aria-live="polite">尚未更新</time>
               <span class="status-pill" id="ballet-connection-status" aria-live="polite">等待连接</span>
+            </div>
+            <div class="topbar-data-status topbar-token-status" aria-label="Token 数据状态">
+              <time class="topbar-update-time" id="token-updated" aria-live="polite">尚未更新</time>
+              <span class="status-pill" id="token-connection-status" aria-live="polite">等待同步</span>
+            </div>
+            <div class="topbar-data-status topbar-life-status" aria-label="生活数据状态">
+              <time class="topbar-update-time" id="life-updated" aria-live="polite">尚未更新</time>
+              <span class="status-pill" id="life-connection-status" aria-live="polite">等待同步</span>
+            </div>
+            <div class="topbar-data-status topbar-ricky-status" aria-label="同行记数据状态">
+              <time class="topbar-update-time" id="ricky-updated" aria-live="polite">尚未更新</time>
+              <span class="status-pill" id="ricky-connection-status" aria-live="polite">等待同步</span>
             </div>
           </div>
 
@@ -453,15 +465,6 @@
         </section>
 
         <section class="view secondary-view" id="ricky-view" data-view-panel="ricky">
-          <header class="token-page-head secondary-page-head ricky-page-head">
-            <div>
-              <p class="eyebrow">Together</p>
-              <h1 id="ricky-title">我和 Ricky</h1>
-              <p id="ricky-summary">等待旅行记录写入。</p>
-            </div>
-            <span class="status-pill" id="ricky-updated">等待同步</span>
-          </header>
-
           <section class="ricky-stats" id="ricky-stats" aria-label="我和 Ricky 统计"></section>
 
           <article class="panel ricky-map-panel">
@@ -490,15 +493,6 @@
         </section>
 
         <section class="view secondary-view" id="life-view" data-view-panel="life">
-          <header class="token-page-head secondary-page-head life-page-head">
-            <div>
-              <p class="eyebrow">Life</p>
-              <h1>生活</h1>
-              <p id="life-summary">从候选清单里随机决定今天吃什么。</p>
-            </div>
-            <span class="status-pill" id="life-updated">等待同步</span>
-          </header>
-
           <article class="panel life-food-panel">
             <header class="panel-head">
               <div>
@@ -535,18 +529,6 @@
         </section>
 
         <section class="view secondary-view" id="tokens-view" data-view-panel="tokens">
-          <header class="token-page-head secondary-page-head token-usage-head">
-            <div class="token-head-card token-main-tab">
-              <p class="eyebrow">Token Usage</p>
-              <h1>Token &#29992;&#37327;</h1>
-              <p class="token-updated" id="token-updated">&#31561;&#24453;&#21516;&#27493;</p>
-            </div>
-            <div class="token-head-card token-source-sync" aria-label="Token source update times">
-              <span>&#21508;&#26469;&#28304;&#25968;&#25454;&#25130;&#33267;</span>
-              <div class="token-source-updates" id="token-source-updates"></div>
-            </div>
-          </header>
-
           <section class="token-summary" aria-label="Current token summary">
             <article>
               <span>&#24635;&#37327;</span>
@@ -577,6 +559,11 @@
               <strong id="token-active-time">--</strong>
             </article>
           </section>
+
+          <aside class="token-head-card token-source-sync" aria-label="Token source update times">
+            <span>&#21508;&#26469;&#28304;&#25968;&#25454;&#25130;&#33267;</span>
+            <div class="token-source-updates" id="token-source-updates"></div>
+          </aside>
 
           <section class="token-detail-grid">
             <article class="panel">
@@ -1213,6 +1200,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=148"></script>
+    <script src="./app.js?v=149"></script>
   </body>
 </html>

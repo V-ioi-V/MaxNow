@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 10:38",
-  "version": "1.0.7.24",
-  "versionLabel": "v1.0.7.24",
-  "branch": "bugfix/ballet-timetable-grid",
-  "commit": "6ac3ca9",
+  "updatedAt": "2026-07-29 10:48",
+  "version": "1.0.7.25",
+  "versionLabel": "v1.0.7.25",
+  "branch": "feature/secondary-topbar-status",
+  "commit": "bba52f5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-grid · commit 6ac3ca9 · 有未提交代码改动",
+  "deployNote": "feature/secondary-topbar-status · commit bba52f5 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "将 Token、生活与同行记状态收进顶部栏",
+      "summary": "删除 Token、生活与同行记内容区重复的页面标题卡，统一把页面名、短更新时间与同步状态放进全局顶部栏；Token 的范围切换继续保留在顶部栏右侧。"
+    },
     {
       "date": "2026-07-29",
       "title": "将芭蕾周课表改为连续时间底板",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "将芭蕾刷新状态收进顶部栏",
       "summary": "将“更新 7/29 00:00 · 已同步”移到顶部栏“芭蕾”标题旁，完整年月日时间保留在悬停提示；正常状态不再在内容区独占一整行，三张概览卡直接贴近顶部开始。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "周课表按实际时长伸展课程卡",
-      "summary": "桌面课表由“课程只落在开始小时”改为按实际起止分钟定位；半点对齐小时中线，跨小时课程覆盖完整实际时段，`11:00–12:30` 不再与一小时课程显示成相同宽度。"
     }
   ]
 };

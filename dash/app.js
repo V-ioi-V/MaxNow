@@ -1371,9 +1371,13 @@ function renderRicky() {
   const records = Array.isArray(rickyData.records) ? rickyData.records : [];
   const pins = qs("#ricky-map-pins");
 
-  setText("#ricky-title", rickyData.title || copy.rickyTitle);
-  setText("#ricky-summary", rickyData.summary || rickyData.subtitle || "");
-  setText("#ricky-updated", rickyData.updated_at ? `更新 ${rickyData.updated_at}` : copy.syncWaiting);
+  renderTopbarDataStatus(
+    "ricky",
+    rickyData,
+    rickyData.synced_at || rickyData.updated_at,
+    "#ricky-updated",
+    "#ricky-connection-status",
+  );
   setText("#ricky-map-count", `${places.length} 个地点`);
   clearAndFill(qs("#ricky-stats"), createRickyStatItem, stats);
 
@@ -1641,8 +1645,13 @@ function renderLife() {
   const options = qs("#life-food-options");
   const countInput = qs("#life-food-count-input");
 
-  setText("#life-summary", section.summary || "\u4ece\u5019\u9009\u6e05\u5355\u91cc\u968f\u673a\u51b3\u5b9a\u4eca\u5929\u5403\u4ec0\u4e48\u3002");
-  setText("#life-updated", lifeFoodsData.synced_at ? `\u540c\u6b65 ${lifeFoodsData.synced_at}` : copy.syncWaiting);
+  renderTopbarDataStatus(
+    "life",
+    lifeFoodsData,
+    lifeFoodsData.synced_at || lifeFoodsData.updated_at,
+    "#life-updated",
+    "#life-connection-status",
+  );
   setText("#life-food-count", `${items.length} \u4e2a\u5019\u9009`);
   if (countInput) {
     countInput.max = String(Math.max(items.length, 1));
@@ -2834,11 +2843,34 @@ function formatBalletUpdatedAt() {
 
 function formatBalletUpdatedAtCompact() {
   const value = balletData.dataAsOf || balletData.sync?.lastSuccessAt || "";
+  return formatTopbarUpdatedAtCompact(value);
+}
+
+function formatTopbarUpdatedAtCompact(value) {
   const text = normalizeSourceUpdatedAt(value);
-  const match = text.match(/^\d{4}-(\d{2})-(\d{2})\s+(\d{2}:\d{2})$/);
+  const match = text.match(/^\d{4}-(\d{2})-(\d{2})(?:\s+(\d{2}:\d{2}))?$/);
   return match
-    ? `${Number(match[1])}/${Number(match[2])} ${match[3]}`
+    ? `${Number(match[1])}/${Number(match[2])}${match[3] ? ` ${match[3]}` : ""}`
     : text || "尚未同步";
+}
+
+function renderTopbarDataStatus(key, data, updatedAt, updatedSelector, statusSelector) {
+  const options = DATA_SOURCE_OPTIONS[key];
+  const health = browserDataHealth.get(key) || dataHealthStatus(options, data);
+  const updatedNode = qs(updatedSelector);
+  setText(
+    updatedSelector,
+    updatedAt ? `更新 ${formatTopbarUpdatedAtCompact(updatedAt)}` : "数据尚未更新",
+  );
+  if (updatedNode) {
+    updatedNode.title = updatedAt ? `完整更新时间：${formatSourceUpdatedAt(updatedAt)}` : "数据尚未更新";
+    if (updatedAt) updatedNode.setAttribute("datetime", updatedAt);
+    else updatedNode.removeAttribute("datetime");
+  }
+
+  setText(statusSelector, health.statusLabel);
+  const statusNode = qs(statusSelector);
+  if (statusNode) statusNode.dataset.state = health.status;
 }
 
 function getBalletSummary() {
@@ -4104,6 +4136,13 @@ function renderTokens() {
   const ranges = usage.ranges || [];
   const range = getTokenRange();
 
+  renderTopbarDataStatus(
+    "token",
+    tokenUsageData,
+    usage.updatedAt,
+    "#token-updated",
+    "#token-connection-status",
+  );
   const rangeTabs = qs("#token-ranges");
   if (rangeTabs && shouldRenderRangeTabs(rangeTabs, ranges)) {
     rangeTabs.replaceChildren(...ranges.map(createRangeButton));
@@ -4116,7 +4155,6 @@ function renderTokens() {
     updateSidebarTokenSummary(range.key);
   }
 
-  setText("#token-updated", usage.updatedAt ? `${copy.ledgerMergedAt} ${usage.updatedAt}` : copy.sync);
   renderSourceUpdates(usage.sourceUpdates || []);
   setText("#token-total", formatToken(range.total));
   setText("#token-input", formatToken(range.input));
