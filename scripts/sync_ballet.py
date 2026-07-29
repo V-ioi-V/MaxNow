@@ -40,7 +40,7 @@ TIMETABLE_PATH_PATTERN = re.compile(
     rf"^/gm/weixin/classtable/simpleclass/{STORE_ID}/430/(20\d{{2}}-\d{{2}}-\d{{2}})$"
 )
 TIMEZONE = timezone(timedelta(hours=8), "Asia/Shanghai")
-CLASSIFICATION_VERSION = 1
+CLASSIFICATION_VERSION = 2
 SCHEMA_VERSION = 1
 DEFAULT_STATE_DIR = Path("/var/lib/maxnow-ballet")
 DEFAULT_OUTPUT = ROOT / "dash" / "data" / "ballet.json"
@@ -63,13 +63,14 @@ COURSE_TYPE_LABELS = {
     "technique": "技术技巧",
     "other": "其他",
 }
-LEVEL_ORDER = ("L1", "L1.5", "L2", "L3", "L4", "none")
+LEVEL_ORDER = ("L1", "L1.5", "L2", "L3", "L4", "L5", "none")
 LEVEL_LABELS = {
     "L1": "L1",
     "L1.5": "L1.5",
     "L2": "L2",
     "L3": "L3",
     "L4": "L4",
+    "L5": "L5",
     "none": "无级别",
 }
 
@@ -912,7 +913,7 @@ def classify_course(course_name: str) -> tuple[str, str]:
     if re.search(r"L1[.]5(?!\d)", compact):
         level = "L1.5"
     else:
-        level_match = re.search(r"L([1-4])(?![.\d])", compact)
+        level_match = re.search(r"L([1-5])(?![.\d])", compact)
         level = f"L{level_match.group(1)}" if level_match else "none"
     return course_type, level
 

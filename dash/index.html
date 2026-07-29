@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=170" />
+    <link rel="stylesheet" href="./styles.css?v=173" />
   </head>
   <body>
     <div class="app-shell">
@@ -632,7 +632,7 @@
             </div>
           </div>
 
-          <section class="ballet-overview-grid" aria-label="本周训练与课程卡">
+          <section class="ballet-overview-grid" aria-label="本周训练、课程卡与成长进度">
             <article class="panel ballet-week-panel" aria-labelledby="ballet-week-title">
               <header class="panel-head">
                 <div>
@@ -674,6 +674,64 @@
                 <span class="status-pill" id="ballet-membership-status">等待同步</span>
               </header>
               <div class="ballet-membership-list" id="ballet-membership-list"></div>
+            </article>
+
+            <article class="panel ballet-growth-panel" aria-labelledby="ballet-growth-title">
+              <header class="panel-head">
+                <div>
+                  <p class="eyebrow">Growth</p>
+                  <h2 id="ballet-growth-title">成长进度</h2>
+                </div>
+                <span class="status-pill" id="ballet-growth-level">Lv.1</span>
+              </header>
+              <div class="ballet-growth-stack">
+                <section class="ballet-growth-block" data-tone="blue" aria-labelledby="ballet-promotion-title">
+                  <div class="ballet-growth-block-head">
+                    <span>升班进度</span>
+                    <strong id="ballet-promotion-title">L1 → L2</strong>
+                  </div>
+                  <div
+                    class="ballet-growth-track"
+                    role="progressbar"
+                    aria-label="升班参考评分"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="0"
+                    id="ballet-promotion-progress"
+                  >
+                    <span id="ballet-promotion-progress-fill"></span>
+                  </div>
+                  <div class="ballet-growth-meta">
+                    <strong id="ballet-promotion-count">0 / 100 分</strong>
+                    <small id="ballet-promotion-rhythm">课次 0 / 15</small>
+                  </div>
+                  <p id="ballet-promotion-note">上课记录同步后计算升班参考。</p>
+                </section>
+
+                <section class="ballet-growth-block" data-tone="purple" aria-labelledby="ballet-xp-title">
+                  <div class="ballet-growth-block-head">
+                    <span>经验等级</span>
+                    <strong id="ballet-xp-title">Lv.1 初见芭蕾</strong>
+                  </div>
+                  <div
+                    class="ballet-growth-track"
+                    role="progressbar"
+                    aria-label="芭蕾经验值"
+                    aria-valuemin="0"
+                    aria-valuemax="300"
+                    aria-valuenow="0"
+                    id="ballet-xp-progress"
+                  >
+                    <span id="ballet-xp-progress-fill"></span>
+                  </div>
+                  <div class="ballet-growth-meta">
+                    <strong id="ballet-xp-count">0 / 300 XP</strong>
+                    <small id="ballet-xp-next">下一级：单一元素</small>
+                  </div>
+                  <p id="ballet-xp-effect">当前效果：正确发力方向 · 正课 100 / 辅助课 50–80 XP</p>
+                </section>
+              </div>
+              <p class="ballet-growth-disclaimer">规则源：personal-wiki 课程指南；个人参考，升班仍以老师测评与身体感受为准。</p>
             </article>
           </section>
 
@@ -1156,6 +1214,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=144"></script>
+    <script src="./app.js?v=146"></script>
   </body>
 </html>

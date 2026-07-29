@@ -264,6 +264,10 @@ class BalletSyncTests(unittest.TestCase):
             ballet.classify_course("肌肉素质 L2"),
             ("conditioning", "L2"),
         )
+        self.assertEqual(
+            ballet.classify_course("芭蕾 L5 进阶"),
+            ("ballet", "L5"),
+        )
 
     def test_waitlist_detail_status_with_queue_position_is_included(self):
         detail = ballet.parse_detail(

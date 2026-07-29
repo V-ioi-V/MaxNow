@@ -1480,6 +1480,7 @@ body[data-view="tokens"] .topbar-token-ranges {
     .ballet-membership-item:hover,
     .ballet-membership-metrics section:hover,
     .ballet-week-grid section:hover,
+    .ballet-growth-block:hover,
     .ballet-history-item:hover,
     .ballet-upcoming-item:hover,
     .ballet-timetable-course:hover,
@@ -4489,20 +4490,23 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-overview-grid .ballet-week-panel,
-.ballet-overview-grid .ballet-membership-card {
+.ballet-overview-grid .ballet-membership-card,
+.ballet-overview-grid .ballet-growth-panel {
   min-width: 0;
   height: 100%;
   margin-bottom: 0;
 }
 
 .ballet-week-panel,
-.ballet-overview-grid .ballet-membership-card {
+.ballet-overview-grid .ballet-membership-card,
+.ballet-overview-grid .ballet-growth-panel {
   display: flex;
   flex-direction: column;
 }
 
 .ballet-overview-grid .ballet-week-grid,
-.ballet-overview-grid .ballet-membership-list {
+.ballet-overview-grid .ballet-membership-list,
+.ballet-overview-grid .ballet-growth-stack {
   flex: 1;
 }
 
@@ -4514,6 +4518,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 @media (min-width: 1501px) {
   .ballet-overview-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ballet-growth-panel {
+    grid-column: auto;
   }
 }
 
@@ -4584,13 +4592,15 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   grid-template-columns:
     var(--ballet-day-column-width)
     var(--ballet-time-columns, repeat(var(--ballet-time-count), minmax(0, 1fr)));
-  gap: 6px;
+  grid-auto-rows: minmax(60px, auto);
+  column-gap: 0;
+  row-gap: 6px;
 }
 
 @media (min-width: 1101px) and (max-width: 1500px) {
   .ballet-timetable-grid {
     --ballet-day-column-width: clamp(58px, 6vw, 76px);
-    gap: 4px;
+    row-gap: 4px;
   }
 
   .ballet-timetable-course {
@@ -4603,6 +4613,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 .ballet-timetable-day,
 .ballet-timetable-cell {
   min-width: 0;
+  margin-inline: 3px;
   border: 1px solid #efdce4;
   border-radius: var(--radius);
 }
@@ -4713,8 +4724,12 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   background: #f4e8ef;
 }
 
-.ballet-timetable-cell[data-stacked="true"] {
-  grid-template-columns: minmax(0, 1fr);
+.ballet-timetable-grid > .ballet-timetable-course {
+  position: relative;
+  z-index: 1;
+  min-height: 52px;
+  margin: 4px 0;
+  align-self: stretch;
 }
 
 .ballet-timetable-cell[data-column-type="gap"] {
@@ -4730,6 +4745,7 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 }
 
 .ballet-timetable-cell[data-day-state="past"] .ballet-timetable-course:not([data-availability="attended"]),
+.ballet-timetable-grid > .ballet-timetable-course[data-day-state="past"]:not([data-availability="attended"]),
 .ballet-timetable-mobile-day[data-day-state="past"] .ballet-timetable-course:not([data-availability="attended"]) {
   opacity: 0.48;
   filter: saturate(0.55);
@@ -5140,6 +5156,110 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   font-size: 12px;
   line-height: 1.55;
   overflow-wrap: anywhere;
+}
+
+.ballet-growth-panel {
+  grid-column: 1 / -1;
+}
+
+.ballet-growth-stack {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ballet-growth-block {
+  --growth-color: #287fc5;
+  --growth-border: #b9dcfa;
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 9px;
+  padding: 14px;
+  border: 1px solid var(--growth-border);
+  border-radius: var(--radius);
+  background: #f6fbff;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.ballet-growth-block[data-tone="purple"] {
+  --growth-color: #7a55c7;
+  --growth-border: #dfd2fb;
+  background: #faf7ff;
+}
+
+.ballet-growth-block-head,
+.ballet-growth-meta {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ballet-growth-block-head span,
+.ballet-growth-meta small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.ballet-growth-block-head strong {
+  color: var(--growth-color);
+  font-size: 16px;
+  line-height: 1.2;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.ballet-growth-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--growth-color) 12%, #ffffff);
+}
+
+.ballet-growth-track > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--growth-color);
+  transition: width 240ms ease;
+}
+
+.ballet-growth-meta strong {
+  color: var(--growth-color);
+  font-size: 13px;
+}
+
+.ballet-growth-block p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ballet-growth-disclaimer {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (min-width: 1501px) {
+  .ballet-growth-panel {
+    grid-column: auto;
+  }
+
+  .ballet-growth-stack {
+    grid-template-columns: 1fr;
+  }
 }
 
 .ballet-session-duration {
@@ -5693,6 +5813,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   background: #ffffff;
 }
 
+.ballet-history-item {
+  grid-template-columns: clamp(104px, 14vw, 254px) minmax(0, 1fr) minmax(180px, auto);
+}
+
 .ballet-history-item time,
 .ballet-upcoming-item time {
   color: var(--ballet);
@@ -6114,6 +6238,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   .ballet-overview-grid {
     grid-template-columns: 1fr;
   }
+
+  .ballet-growth-panel {
+    grid-column: auto;
+  }
 }
 
 @media (min-width: 1500px) {
@@ -6180,6 +6308,10 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
 
   .ballet-overview-grid,
   .ballet-course-plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-growth-stack {
     grid-template-columns: 1fr;
   }
 
@@ -6425,6 +6557,17 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   .ballet-week-grid {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .ballet-growth-block-head,
+  .ballet-growth-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ballet-growth-block-head strong {
+    text-align: left;
   }
 
   .ballet-membership-item > header {

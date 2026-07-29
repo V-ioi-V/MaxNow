@@ -563,18 +563,20 @@ def check_ballet_read_model():
         or 'id="ballet-timetable-mobile"' not in dashboard_html
         or 'class="ballet-timetable-sticky-mask"' in dashboard_html
         or "function buildBalletTimetableColumns(days = [])" not in dashboard_js
-        or 'cell.dataset.stacked = records.length > 1 ? "true" : "false";' not in dashboard_js
+        or "function balletTimetableInterval(record = {})" not in dashboard_js
+        or "function layoutBalletTimetableRecords(records = [])" not in dashboard_js
+        or "minuteGridLines.get(interval.start)" not in dashboard_js
         or 'grid.style.setProperty("--ballet-time-count"' not in dashboard_js
         or 'grid.style.setProperty("--ballet-time-columns"' not in dashboard_js
         or 'corner.textContent = "星期"' not in dashboard_js
         or '.ballet-timetable-day[data-day-state="today"]' not in dashboard_css
         or '.ballet-timetable-cell[data-day-state="past"]' not in dashboard_css
-        or '.ballet-timetable-cell[data-stacked="true"]' not in dashboard_css
+        or ".ballet-timetable-grid > .ballet-timetable-course" not in dashboard_css
         or '.ballet-timetable-cell[data-column-type="gap"]' not in dashboard_css
         or '.ballet-timetable-time[data-column-type="gap"]' not in dashboard_css
         or "var(--ballet-time-columns, repeat(var(--ballet-time-count), minmax(0, 1fr)))" not in dashboard_css
         or '? "minmax(24px, 0.42fr)"' not in dashboard_js
-        or ': "minmax(0, 1fr)"' not in dashboard_js
+        or ': "repeat(60, minmax(0, 1fr))"' not in dashboard_js
         or "width: 66.6667%;" in dashboard_css
         or '.ballet-timetable-course[data-availability="booked"]' not in dashboard_css
         or '.ballet-timetable-course[data-availability="attended"]' not in dashboard_css
@@ -1369,21 +1371,24 @@ def check_secondary_view_style():
         or 'class="panel cloud-card cloud-ballet-fast-card"' not in cloud_view_markup
         or '<summary class="ballet-session-summary">' not in cloud_view_markup
         or ".ballet-overview-grid {" not in dashboard_css
+        or 'class="panel ballet-growth-panel"' not in ballet_view_markup
         or "@media (min-width: 1501px)" not in dashboard_css
         or "grid-template-columns: repeat(3, minmax(0, 1fr));" not in dashboard_css
+        or ".ballet-growth-block:hover" not in dashboard_css
         or ".ballet-course-plan-grid {" not in dashboard_css
         or ".ballet-session-summary {" not in dashboard_css
         or ".ballet-session-card[open] .ballet-session-toggle {" not in dashboard_css
         or 'id="ballet-trend-placeholder"' not in ballet_view_markup
         or "const showTrend = sampleCount >= 5;" not in dashboard_js
+        or "function renderBalletGrowth()" not in dashboard_js
     ):
         raise ValueError("secondary views: ballet learning layout or Cloud operations split is incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=170" not in dashboard_html
+        "styles.css?v=173" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=144" not in dashboard_html
+        or "app.js?v=146" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1425,7 +1430,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=144" not in dashboard_html:
+    if "app.js?v=146" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
