@@ -226,6 +226,7 @@ OpenClaw 日常任务只维护数据文件，不维护页面代码和文档。
 - `CONTEXT.md`：给 Codex / 代理接力用的项目上下文。
 - `ROADMAP.md`：当前待做、下一步、长期方向和阻塞项。
 - `SPEC.md`：已确定的产品规格。
+- `BALLET_GROWTH_SCORING.md`：芭蕾成长进度卡的独立计算标准。
 - `IDEAS.md`：尚未确定的想法。
 - `UPDATE_LOG.md`：重要更新记录。
 - `DEPLOY.md`：部署说明。

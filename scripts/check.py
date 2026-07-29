@@ -101,6 +101,7 @@ def check_required_files():
         "AGENTS.md",
         "CONTEXT.md",
         "SPEC.md",
+        "BALLET_GROWTH_SCORING.md",
         "IDEAS.md",
         "UPDATE_LOG.md",
         "VERSION",
@@ -1427,11 +1428,18 @@ def check_secondary_view_style():
 def check_ballet_growth_contract():
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     specification = (ROOT / "SPEC.md").read_text(encoding="utf-8")
+    growth_standard = (ROOT / "BALLET_GROWTH_SCORING.md").read_text(encoding="utf-8")
     start_marker = "<!-- BALLET_GROWTH_CONTRACT_START -->"
     end_marker = "<!-- BALLET_GROWTH_CONTRACT_END -->"
-    if start_marker not in specification or end_marker not in specification:
-        raise ValueError("ballet growth contract: SPEC markers are missing")
-    contract = specification.split(start_marker, 1)[1].split(end_marker, 1)[0]
+    if start_marker not in growth_standard or end_marker not in growth_standard:
+        raise ValueError("ballet growth contract: standalone document markers are missing")
+    if (
+        "BALLET_GROWTH_SCORING.md" not in specification
+        or start_marker in specification
+        or end_marker in specification
+    ):
+        raise ValueError("ballet growth contract: SPEC must point to the standalone document without duplicating it")
+    contract = growth_standard.split(start_marker, 1)[1].split(end_marker, 1)[0]
 
     promotion_match = re.search(
         r"const BALLET_PROMOTION_RULES = \{\n(?P<body>.*?)\n\};",
@@ -1527,14 +1535,22 @@ def check_ballet_growth_contract():
 
     synchronized_behavior = (
         ("const sampleSufficient = observationDays >= 21;", "至少覆盖 21 天"),
-        ("const isRegular = sampleSufficient && weeklyRate >= 2;", "达到每周 2 节"),
+        ("const isRegular = sampleSufficient && weeklyRate >= 2;", "平均每周至少 2 节"),
         ("const classWeight = hasFoundationTarget ? 70 : 100;", "× 70"),
         (") * 30", "× 30"),
         ('promotion.score >= 100', "只能显示“可咨询老师进行下一等级测评”"),
     )
-    if any(code not in dashboard_js or prose not in contract for code, prose in synchronized_behavior):
-        raise ValueError("ballet growth contract: scoring behavior and SPEC prose are out of sync")
-    return "ballet growth contract: promotion, XP, thresholds, effects, and SPEC sync are valid"
+    missing_behavior = [
+        code
+        for code, prose in synchronized_behavior
+        if code not in dashboard_js or prose not in contract
+    ]
+    if missing_behavior:
+        raise ValueError(
+            "ballet growth contract: scoring behavior and standalone document are out of sync: "
+            + ", ".join(missing_behavior)
+        )
+    return "ballet growth contract: promotion, XP, thresholds, effects, and standalone document sync are valid"
 
 
 def check_data_health_contract():

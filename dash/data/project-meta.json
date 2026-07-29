@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 09:58",
-  "version": "1.0.7.22",
-  "versionLabel": "v1.0.7.22",
-  "branch": "feature/ballet-growth-scoring-docs",
-  "commit": "26a7e89",
+  "updatedAt": "2026-07-29 10:07",
+  "version": "1.0.7.23",
+  "versionLabel": "v1.0.7.23",
+  "branch": "feature/ballet-growth-scoring-guide",
+  "commit": "187c39f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-growth-scoring-docs · commit 26a7e89 · 有未提交代码改动",
+  "deployNote": "feature/ballet-growth-scoring-guide · commit 187c39f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "拆出独立芭蕾成长评分文档",
+      "summary": "新增根目录 `BALLET_GROWTH_SCORING.md`，单独集中记录有效数据、当前级别判断、规律 / 间歇口径、升班公式、L1–L5 参数、XP、六级效果和修改检查清单。"
+    },
     {
       "date": "2026-07-29",
       "title": "固化芭蕾成长评分协议与文档同步检查",
@@ -28,11 +33,6 @@
       "date": "2026-07-29",
       "title": "对齐芭蕾上课历史课程列",
       "summary": "将上课历史的日期列改为统一的响应式固定轨道，右侧课程标签数量不再反向挤压中间课程信息列；同一视口下课程名与老师 / 时间保持相同水平起点。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "增加芭蕾成长评分与经验等级",
-      "summary": "在芭蕾页顶部第三格新增“成长进度”卡，展示当前课程路径、100 分升班参考、课次 / 基础月份与经验等级；`1501px` 以上三张概览卡同顶、同底、等高，中等宽度成长卡独占下一行，窄屏全部单列。"
     }
   ]
 }
