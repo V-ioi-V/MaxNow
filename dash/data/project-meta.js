@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 21:01",
-  "version": "1.0.7.30",
-  "versionLabel": "v1.0.7.30",
-  "branch": "bugfix/ballet-end-time-status-contrast",
-  "commit": "3ee4b27",
+  "updatedAt": "2026-07-29 21:09",
+  "version": "1.0.7.31",
+  "versionLabel": "v1.0.7.31",
+  "branch": "bugfix/ballet-day-separators",
+  "commit": "2e77dce",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-end-time-status-contrast · commit 3ee4b27 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-day-separators · commit 2e77dce · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "加强课表每天之间的分界",
+      "summary": "桌面周课表把每天开始位置的竖向分界线加深并增为 `2px`；同一天大教室 / 小教室之间继续使用浅色 `1px` 细线，日期和教室形成明确的两级分组。"
+    },
     {
       "date": "2026-07-29",
       "title": "补齐课表结束整点并增强课程状态对比",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "将芭蕾周课表改为留白日历布局",
       "summary": "桌面周课表改为日期横排、时间纵排的标准周日历，以白底、淡网格和低饱和课程卡降低 55 节课程同时展示时的视觉噪音；当前日期使用轻粉列，当前时间只保留一条细玫瑰线。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "收敛芭蕾周课表配色并加强粉色氛围",
-      "summary": "将桌面时间刻度合并为连续粉色带，日期栏统一为浅粉，今天使用深玫瑰强调；移除原先每个日期互不相关的彩色底。"
     }
   ]
 };

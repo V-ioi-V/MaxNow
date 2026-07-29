@@ -595,6 +595,9 @@ def check_ballet_read_model():
         or "border-left: 3px solid var(--card-color);" in dashboard_css
         or "repeat(var(--ballet-day-count), minmax(0, 1fr) minmax(0, 1fr))" not in dashboard_css
         or ".ballet-timetable-room {" not in dashboard_css
+        or "--ballet-day-divider: #d4adbe;" not in dashboard_css
+        or '.ballet-timetable-room[data-room="large"] {' not in dashboard_css
+        or '.ballet-timetable-cell[data-room="large"] {' not in dashboard_css
         or ".ballet-timetable-mobile-room {" not in dashboard_css
         or "var(--ballet-time-rows, repeat(60, var(--ballet-minute-height)))" not in dashboard_css
         or "@media (min-width: 861px) and (max-width: 1200px)" not in dashboard_css
@@ -1447,7 +1450,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=182" not in dashboard_html
+        "styles.css?v=183" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=155" not in dashboard_html
     ):
