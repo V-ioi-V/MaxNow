@@ -2832,6 +2832,15 @@ function formatBalletUpdatedAt() {
   return value ? formatSourceUpdatedAt(value) : "尚未同步";
 }
 
+function formatBalletUpdatedAtCompact() {
+  const value = balletData.dataAsOf || balletData.sync?.lastSuccessAt || "";
+  const text = normalizeSourceUpdatedAt(value);
+  const match = text.match(/^\d{4}-(\d{2})-(\d{2})\s+(\d{2}:\d{2})$/);
+  return match
+    ? `${Number(match[1])}/${Number(match[2])} ${match[3]}`
+    : text || "尚未同步";
+}
+
 function getBalletSummary() {
   const summary = balletData.summary || {};
   const anchor = String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || new Date().toISOString());
@@ -3945,12 +3954,19 @@ function renderBalletHome() {
 
 function renderBallet() {
   const state = getBalletUiState();
+  const updatedValue = balletData.dataAsOf || balletData.sync?.lastSuccessAt || "";
   setText(
     "#ballet-updated",
-    balletData.dataAsOf || balletData.sync?.lastSuccessAt
-      ? `数据更新 ${formatBalletUpdatedAt()}`
+    updatedValue
+      ? `更新 ${formatBalletUpdatedAtCompact()}`
       : "数据尚未更新",
   );
+  const updatedNode = qs("#ballet-updated");
+  if (updatedNode) {
+    updatedNode.title = updatedValue ? `完整更新时间：${formatBalletUpdatedAt()}` : "数据尚未更新";
+    if (updatedValue) updatedNode.setAttribute("datetime", updatedValue);
+    else updatedNode.removeAttribute("datetime");
+  }
   setText("#ballet-connection-status", state.label);
   const connectionStatus = qs("#ballet-connection-status");
   if (connectionStatus) connectionStatus.dataset.state = state.key;

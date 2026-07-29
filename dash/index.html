@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=173" />
+    <link rel="stylesheet" href="./styles.css?v=174" />
   </head>
   <body>
     <div class="app-shell">
@@ -87,8 +87,12 @@
 
       <main class="workspace">
         <header class="topbar" aria-label="Site status">
-          <div>
+          <div class="topbar-heading">
             <strong id="view-title">&#20170;&#22825;</strong>
+            <div class="ballet-status-line topbar-ballet-status" aria-label="芭蕾数据状态">
+              <time class="ballet-update-time" id="ballet-updated" aria-live="polite">尚未更新</time>
+              <span class="status-pill" id="ballet-connection-status" aria-live="polite">等待连接</span>
+            </div>
           </div>
 
           <div class="topbar-actions">
@@ -619,11 +623,6 @@
         </section>
 
         <section class="view secondary-view" id="ballet-view" data-view-panel="ballet">
-          <div class="ballet-status-line">
-            <p class="ballet-update-time" id="ballet-updated" aria-live="polite">数据尚未更新</p>
-            <span class="status-pill" id="ballet-connection-status" aria-live="polite">等待连接</span>
-          </div>
-
           <div class="ballet-sync-alert" id="ballet-sync-alert" role="status" aria-live="polite" hidden>
             <span class="ballet-sync-alert-icon" aria-hidden="true">!</span>
             <div>
@@ -1214,6 +1213,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=146"></script>
+    <script src="./app.js?v=147"></script>
   </body>
 </html>

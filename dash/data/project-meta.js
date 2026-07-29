@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 09:23",
-  "version": "1.0.7.20",
-  "versionLabel": "v1.0.7.20",
-  "branch": "feature/ballet-growth-score",
-  "commit": "89ff7e1",
+  "updatedAt": "2026-07-29 09:42",
+  "version": "1.0.7.21",
+  "versionLabel": "v1.0.7.21",
+  "branch": "bugfix/ballet-header-spacing",
+  "commit": "ab28b1a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-growth-score · commit 89ff7e1 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-header-spacing · commit ab28b1a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "将芭蕾刷新状态收进顶部栏",
+      "summary": "将“更新 7/29 00:00 · 已同步”移到顶部栏“芭蕾”标题旁，完整年月日时间保留在悬停提示；正常状态不再在内容区独占一整行，三张概览卡直接贴近顶部开始。"
+    },
     {
       "date": "2026-07-29",
       "title": "周课表按实际时长伸展课程卡",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "收紧芭蕾顶部双卡宽度",
       "summary": "`1501px` 以上将“本周训练 / 课程卡”放入三等分栅格的前两格，每张各占内容区三分之一并保持同顶、同底、等高；右侧留出一格呼吸空间。"
-    },
-    {
-      "date": "2026-07-28",
-      "title": "周课表取消内部滚动并完整平铺",
-      "summary": "桌面周课表取消固定高度、sticky 表头和内部横纵滚动，全部小时列按内容区可用宽度弹性收缩，7 天课程直接平铺并让面板随内容自然增高。"
     }
   ]
 };
