@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 10:48",
-  "version": "1.0.7.25",
-  "versionLabel": "v1.0.7.25",
-  "branch": "feature/secondary-topbar-status",
-  "commit": "bba52f5",
+  "updatedAt": "2026-07-29 14:30",
+  "version": "1.0.7.26",
+  "versionLabel": "v1.0.7.26",
+  "branch": "feature/ballet-timetable-polish",
+  "commit": "f851439",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/secondary-topbar-status · commit bba52f5 · 有未提交代码改动",
+  "deployNote": "feature/ballet-timetable-polish · commit f851439 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "收敛芭蕾周课表配色并加强粉色氛围",
+      "summary": "将桌面时间刻度合并为连续粉色带，日期栏统一为浅粉，今天使用深玫瑰强调；移除原先每个日期互不相关的彩色底。"
+    },
     {
       "date": "2026-07-29",
       "title": "将 Token、生活与同行记状态收进顶部栏",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "固化芭蕾成长评分协议与文档同步检查",
       "summary": "在 `SPEC.md` 补齐升班分输入、公式、规律 / 间歇判定、L1–L5 课次和基础月份参数、全部 XP 课型权重、六级 XP 阈值与效果，明确运行数值不写死、100 分只提示老师测评。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "将芭蕾刷新状态收进顶部栏",
-      "summary": "将“更新 7/29 00:00 · 已同步”移到顶部栏“芭蕾”标题旁，完整年月日时间保留在悬停提示；正常状态不再在内容区独占一整行，三张概览卡直接贴近顶部开始。"
     }
   ]
 };

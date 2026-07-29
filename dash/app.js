@@ -3879,10 +3879,18 @@ function renderBalletTimetable() {
   corner.textContent = "星期";
   corner.style.gridColumn = "1";
   corner.style.gridRow = "1";
-  const timeHeaders = layoutColumns.map((column) => {
+  const timeHeaders = layoutColumns.map((column, index) => {
     const time = document.createElement("div");
     time.className = "ballet-timetable-time";
     time.dataset.columnType = column.type;
+    time.dataset.columnEdge =
+      layoutColumns.length === 1
+        ? "both"
+        : index === 0
+          ? "start"
+          : index === layoutColumns.length - 1
+            ? "end"
+            : "middle";
     time.textContent = column.label;
     time.style.gridColumn = `${column.startLine} / ${column.endLine}`;
     time.style.gridRow = "1";
