@@ -2245,9 +2245,9 @@ const BALLET_LEVEL_LABELS = {
   unknown: "无级别",
 };
 
-// Course path and stage effects follow:
+// Course path follows:
 // personal-wiki/raw/relationship-ricky/docs/2026-07-20-lijun-ballet-course-guide.md
-// XP weights are MaxNow game points, not claims from the source guide.
+// Growth levels are MaxNow class-count milestones, not technical assessments.
 const BALLET_PROMOTION_RULES = {
   L1: { next: "L1.5", regular: 8, intermittent: 15 },
   "L1.5": { next: "L2", regular: 15, intermittent: 25 },
@@ -2259,23 +2259,17 @@ const BALLET_PROMOTION_RULES = {
 
 const BALLET_LEVEL_ORDER = ["L1", "L1.5", "L2", "L3", "L4", "L5"];
 
-const BALLET_XP_BY_COURSE_TYPE = {
-  ballet: 100,
-  technique: 80,
-  conditioning: 60,
-  muscle: 60,
-  soft_open: 50,
-  flexibility: 50,
-  other: 70,
-};
-
-const BALLET_XP_LEVELS = [
-  { level: 1, threshold: 0, title: "发力启蒙", effect: "正确发力方向" },
-  { level: 2, threshold: 300, title: "单一元素", effect: "动作标准 +1" },
-  { level: 3, threshold: 800, title: "枢纽建立", effect: "重心与骨盆 +1" },
-  { level: 4, threshold: 1500, title: "协调开范", effect: "四肢协调 +1" },
-  { level: 5, threshold: 2500, title: "组合流畅", effect: "舒展与标准 +1" },
-  { level: 6, threshold: 4000, title: "认知串联", effect: "控制与完整 +1" },
+const BALLET_GROWTH_LEVELS = [
+  { level: 1, threshold: 0 },
+  { level: 2, threshold: 10 },
+  { level: 3, threshold: 25 },
+  { level: 4, threshold: 45 },
+  { level: 5, threshold: 70 },
+  { level: 6, threshold: 95 },
+  { level: 7, threshold: 120 },
+  { level: 8, threshold: 145 },
+  { level: 9, threshold: 170 },
+  { level: 10, threshold: 200 },
 ];
 
 function balletNumber(value, fallback = 0) {
@@ -3354,18 +3348,7 @@ function getBalletGrowthRecords() {
   return (Array.isArray(balletData.records) ? balletData.records : []).filter(isBalletCompletedRecord);
 }
 
-function getBalletPromotionState(records) {
-  const balletRecords = records.filter(
-    (record) =>
-      String(record.courseType || "").toLowerCase() === "ballet" &&
-      BALLET_PROMOTION_RULES[normalizeBalletLevel(record.level)],
-  );
-  const currentLevel = balletRecords.reduce((highest, record) => {
-    const level = normalizeBalletLevel(record.level);
-    return BALLET_LEVEL_ORDER.indexOf(level) > BALLET_LEVEL_ORDER.indexOf(highest)
-      ? level
-      : highest;
-  }, "L1");
+function getBalletPromotionLevelState(balletRecords, currentLevel) {
   const levelRecords = balletRecords.filter(
     (record) => normalizeBalletLevel(record.level) === currentLevel,
   );
@@ -3389,7 +3372,22 @@ function getBalletPromotionState(records) {
   ).length;
   const weeklyRate = observationDays > 0 ? (recentClasses / observationDays) * 7 : 0;
   const sampleSufficient = observationDays >= 21;
-  const isRegular = sampleSufficient && weeklyRate >= 2;
+  const hasMetRegularTarget = datedRecords.some((timestamp, index, allDates) => {
+    if (index + 1 < rule.regular) return false;
+    const historicalFirstAt = allDates[0];
+    const historicalObservationDays = Math.min(
+      28,
+      Math.max(1, Math.floor((timestamp - historicalFirstAt) / 86400000) + 1),
+    );
+    if (historicalObservationDays < 21) return false;
+    const historicalRecentStart = timestamp - 27 * 86400000;
+    const historicalRecentClasses = allDates
+      .slice(0, index + 1)
+      .filter((historicalTimestamp) => historicalTimestamp >= historicalRecentStart)
+      .length;
+    return (historicalRecentClasses / historicalObservationDays) * 7 >= 2;
+  });
+  const isRegular = hasMetRegularTarget || (sampleSufficient && weeklyRate >= 2);
   const target = isRegular ? rule.regular : rule.intermittent;
   return {
     currentLevel,
@@ -3405,20 +3403,65 @@ function getBalletPromotionState(records) {
   };
 }
 
-function getBalletXpState(records) {
-  const xp = records.reduce((total, record) => {
-    const courseType = String(record.courseType || "other").toLowerCase();
-    return total + (BALLET_XP_BY_COURSE_TYPE[courseType] || BALLET_XP_BY_COURSE_TYPE.other);
-  }, 0);
+function getBalletPromotionState(records) {
+  const balletRecords = records.filter(
+    (record) =>
+      String(record.courseType || "").toLowerCase() === "ballet" &&
+      BALLET_PROMOTION_RULES[normalizeBalletLevel(record.level)],
+  );
+  const recordedLevel = balletRecords.reduce((highest, record) => {
+    const level = normalizeBalletLevel(record.level);
+    return BALLET_LEVEL_ORDER.indexOf(level) > BALLET_LEVEL_ORDER.indexOf(highest)
+      ? level
+      : highest;
+  }, "L1");
+  let promotion = getBalletPromotionLevelState(balletRecords, recordedLevel);
+  const promotedLevels = [];
+  while (!promotion.isFinal && promotion.completed >= promotion.target) {
+    promotedLevels.push(promotion.currentLevel);
+    promotion = getBalletPromotionLevelState(balletRecords, promotion.nextLevel);
+  }
+  return {
+    ...promotion,
+    recordedLevel,
+    promotedLevels,
+    autoPromoted: promotedLevels.length > 0,
+  };
+}
+
+function getBalletGrowthLevelState(records) {
+  const completed = records.length;
   const current =
-    [...BALLET_XP_LEVELS].reverse().find((level) => xp >= level.threshold) ||
-    BALLET_XP_LEVELS[0];
-  const currentIndex = BALLET_XP_LEVELS.indexOf(current);
-  const next = BALLET_XP_LEVELS[currentIndex + 1] || null;
+    [...BALLET_GROWTH_LEVELS].reverse().find((level) => completed >= level.threshold) ||
+    BALLET_GROWTH_LEVELS[0];
+  const currentIndex = BALLET_GROWTH_LEVELS.indexOf(current);
+  const next = BALLET_GROWTH_LEVELS[currentIndex + 1] || null;
   const progress = next
-    ? ((xp - current.threshold) / Math.max(1, next.threshold - current.threshold)) * 100
+    ? ((completed - current.threshold) / Math.max(1, next.threshold - current.threshold)) * 100
     : 100;
-  return { xp, current, next, progress: Math.max(0, Math.min(100, progress)) };
+  return {
+    completed,
+    current,
+    next,
+    remaining: next ? Math.max(0, next.threshold - completed) : 0,
+    progress: Math.max(0, Math.min(100, progress)),
+  };
+}
+
+function renderBalletSwanLevel(level) {
+  const stage = qs("#ballet-swan-stage");
+  if (!stage) return;
+  const safeLevel = Math.max(1, Math.min(10, Math.floor(balletNumber(level, 1))));
+  stage.dataset.level = String(safeLevel);
+  stage.setAttribute("aria-label", `小天鹅成长等级 ${safeLevel}，共 10 级`);
+  stage.style.setProperty("--swan-scale", String(0.82 + (safeLevel - 1) * 0.02));
+  stage.querySelectorAll("[data-swan-unlock]").forEach((element) => {
+    element.hidden = balletNumber(element.dataset.swanUnlock, 1) > safeLevel;
+  });
+  stage.querySelectorAll(".ballet-swan-step").forEach((step, index) => {
+    step.classList.toggle("is-reached", index < safeLevel);
+    step.classList.toggle("is-current", index === safeLevel - 1);
+  });
 }
 
 function updateBalletGrowthProgress(selector, fillSelector, value, maximum) {
@@ -3436,9 +3479,9 @@ function updateBalletGrowthProgress(selector, fillSelector, value, maximum) {
 function renderBalletGrowth() {
   const records = getBalletGrowthRecords();
   const promotion = getBalletPromotionState(records);
-  const xp = getBalletXpState(records);
+  const growth = getBalletGrowthLevelState(records);
 
-  setText("#ballet-growth-level", `Lv.${xp.current.level}`);
+  setText("#ballet-growth-level", `Lv.${growth.current.level}`);
   setText(
     "#ballet-promotion-title",
     promotion.isFinal
@@ -3460,14 +3503,14 @@ function renderBalletGrowth() {
   setText(
     "#ballet-promotion-note",
     promotion.isFinal
-      ? "课程指南最高为 L5；继续积累控制、完整性与动作连接。"
-      : promotion.completed >= promotion.target
-        ? `目标课次已达到，可咨询老师进行 ${promotion.nextLevel} 测评。`
+      ? "课程路径已到 L5；后续课次继续累计在当前等级。"
+      : promotion.autoPromoted
+        ? `已按课次自动进入 ${promotion.currentLevel}；现在开始累计本级课程。`
         : promotion.isRegular
-          ? `还需 ${promotion.remaining} 节；当前满足每周至少 2 节的规律课次口径。`
+          ? `达到 ${promotion.target} 节后自动进入 ${promotion.nextLevel}；当前采用规律课次标准。`
           : promotion.sampleSufficient
-            ? `还需 ${promotion.remaining} 节；恢复每周至少 2 节后，可按 ${promotion.regularTarget} 节参考。`
-            : `先按 ${promotion.intermittentTarget} 节保守参考；连续 3 周达到每周至少 2 节后改用 ${promotion.regularTarget} 节标准。`,
+            ? `达到 ${promotion.target} 节后自动进入 ${promotion.nextLevel}；恢复规律训练后目标可降至 ${promotion.regularTarget} 节。`
+            : `达到 ${promotion.target} 节后自动进入 ${promotion.nextLevel}；连续 3 周每周至少 2 节后改用 ${promotion.regularTarget} 节标准。`,
   );
   updateBalletGrowthProgress(
     "#ballet-promotion-progress",
@@ -3476,29 +3519,32 @@ function renderBalletGrowth() {
     promotion.isFinal ? Math.max(1, promotion.completed) : promotion.target,
   );
 
+  setText("#ballet-level-title", `Lv.${growth.current.level}`);
   setText(
-    "#ballet-xp-title",
-    `Lv.${xp.current.level} ${xp.current.title}`,
+    "#ballet-growth-class-count",
+    growth.next ? `${growth.completed} / ${growth.next.threshold} 节` : `${growth.completed} / 200 节`,
   );
   setText(
-    "#ballet-xp-count",
-    xp.next ? `${xp.xp} / ${xp.next.threshold} XP` : `${xp.xp} XP`,
+    "#ballet-level-next",
+    growth.next ? `还需 ${growth.remaining} 节 · 下一级 Lv.${growth.next.level}` : "200 节达成 · 已满级",
   );
   setText(
-    "#ballet-xp-next",
-    xp.next ? `下一级：${xp.next.title}` : "已到当前最高等级",
+    "#ballet-level-note",
+    growth.next
+      ? "每一节实际上课都会推进成长等级，不区分课程类型。"
+      : "Lv.10 已达成；之后的实际上课节数仍会继续累计。",
   );
-  setText(
-    "#ballet-xp-effect",
-    `当前效果：${xp.current.effect} · 正课 100 / 辅助课 50–80 XP`,
-  );
-  const xpProgress = qs("#ballet-xp-progress");
-  if (xpProgress) {
-    xpProgress.setAttribute("aria-valuemax", String(xp.next?.threshold || Math.max(1, xp.xp)));
-    xpProgress.setAttribute("aria-valuenow", String(xp.xp));
+  const levelProgress = qs("#ballet-level-progress");
+  if (levelProgress) {
+    levelProgress.setAttribute(
+      "aria-valuemax",
+      String(growth.next?.threshold || Math.max(200, growth.completed)),
+    );
+    levelProgress.setAttribute("aria-valuenow", String(Math.min(growth.completed, 200)));
   }
-  const xpFill = qs("#ballet-xp-progress-fill");
-  if (xpFill) xpFill.style.width = `${xp.progress}%`;
+  const levelFill = qs("#ballet-level-progress-fill");
+  if (levelFill) levelFill.style.width = `${growth.progress}%`;
+  renderBalletSwanLevel(growth.current.level);
 }
 
 function createBalletHistoryItem(record) {

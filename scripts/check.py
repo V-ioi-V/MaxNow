@@ -1476,9 +1476,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=193" not in dashboard_html
+        "styles.css?v=194" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=160" not in dashboard_html
+        or "app.js?v=161" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1559,65 +1559,49 @@ def check_ballet_growth_contract():
     if promotion_code != promotion_docs:
         raise ValueError("ballet growth contract: promotion table does not match app.js")
 
-    xp_weight_match = re.search(
-        r"const BALLET_XP_BY_COURSE_TYPE = \{\n(?P<body>.*?)\n\};",
+    growth_level_match = re.search(
+        r"const BALLET_GROWTH_LEVELS = \[\n(?P<body>.*?)\n\];",
         dashboard_js,
         re.DOTALL,
     )
-    if not xp_weight_match:
-        raise ValueError("ballet growth contract: XP course weights are missing from app.js")
-    xp_weight_code = {
-        key: int(value)
-        for key, value in re.findall(
-            r"^\s*([a-z_]+):\s*(\d+),$",
-            xp_weight_match.group("body"),
-            re.MULTILINE,
-        )
-    }
-    xp_weight_docs = {
-        key: int(value)
-        for key, value in re.findall(
-            r"^\| ([a-z_]+) \| [^|]+ \| (\d+) \|$",
-            contract,
-            re.MULTILINE,
-        )
-    }
-    if xp_weight_code != xp_weight_docs:
-        raise ValueError("ballet growth contract: XP course table does not match app.js")
-
-    xp_level_match = re.search(
-        r"const BALLET_XP_LEVELS = \[\n(?P<body>.*?)\n\];",
-        dashboard_js,
-        re.DOTALL,
-    )
-    if not xp_level_match:
-        raise ValueError("ballet growth contract: XP levels are missing from app.js")
-    xp_level_code = [
-        (int(level), int(threshold), title.strip(), effect.strip())
-        for level, threshold, title, effect in re.findall(
-            r'\{\s*level:\s*(\d+),\s*threshold:\s*(\d+),\s*title:\s*"([^"]+)",\s*effect:\s*"([^"]+)"\s*\}',
-            xp_level_match.group("body"),
+    if not growth_level_match:
+        raise ValueError("ballet growth contract: class-count levels are missing from app.js")
+    growth_level_code = [
+        (int(level), int(threshold))
+        for level, threshold in re.findall(
+            r"\{\s*level:\s*(\d+),\s*threshold:\s*(\d+)\s*\}",
+            growth_level_match.group("body"),
         )
     ]
-    xp_level_docs = [
-        (int(level), int(threshold), title.strip(), effect.strip())
-        for level, threshold, title, effect in re.findall(
-            r"^\| (\d+) \| (\d+) \| ([^|]+) \| ([^|]+) \|$",
+    growth_level_docs = [
+        (int(level), int(threshold))
+        for level, threshold in re.findall(
+            r"^\| (\d+) \| (\d+) \|$",
             contract,
             re.MULTILINE,
         )
     ]
-    if xp_level_code != xp_level_docs:
-        raise ValueError("ballet growth contract: XP level table does not match app.js")
+    if growth_level_code != growth_level_docs:
+        raise ValueError("ballet growth contract: class-count level table does not match app.js")
+    if len(growth_level_code) != 10 or growth_level_code[-1] != (10, 200):
+        raise ValueError("ballet growth contract: growth must contain 10 levels and reach Lv.10 at 200 classes")
 
     synchronized_behavior = (
         ("const sampleSufficient = observationDays >= 21;", "至少覆盖 21 天"),
-        ("const isRegular = sampleSufficient && weeklyRate >= 2;", "平均每周至少 2 节"),
-        ("promotion.completed >= promotion.target", "达到目标课次只能显示"),
+        (
+            "const isRegular = hasMetRegularTarget || (sampleSufficient && weeklyRate >= 2);",
+            "不得把已经自动进入的等级回退",
+        ),
+        (
+            "while (!promotion.isFinal && promotion.completed >= promotion.target)",
+            "达到目标课次后自动进入下一等级",
+        ),
         (
             "promotion.isFinal ? Math.max(1, promotion.completed) : promotion.completed",
-            "百分比只用于进度条宽度",
+            "升班进度 =",
         ),
+        ("const completed = records.length;", "每节课固定计 1 节"),
+        ("renderBalletSwanLevel(growth.current.level);", "十级 SVG 进化状态"),
     )
     missing_behavior = [
         code
@@ -1631,10 +1615,17 @@ def check_ballet_growth_contract():
         )
     if any(
         retired in dashboard_js
-        for retired in ("foundationMonths", "promotion.score", "hasFoundationTarget")
+        for retired in (
+            "foundationMonths",
+            "promotion.score",
+            "hasFoundationTarget",
+            "BALLET_XP_BY_COURSE_TYPE",
+            "BALLET_XP_LEVELS",
+            "getBalletXpState",
+        )
     ):
-        raise ValueError("ballet growth contract: retired month or score logic remains")
-    return "ballet growth contract: promotion, XP, thresholds, effects, and standalone document sync are valid"
+        raise ValueError("ballet growth contract: retired month, score, or XP logic remains")
+    return "ballet growth contract: automatic promotion, 10 class-count levels, swan stages, and standalone document sync are valid"
 
 
 def check_data_health_contract():
@@ -1652,7 +1643,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=160" not in dashboard_html:
+    if "app.js?v=161" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

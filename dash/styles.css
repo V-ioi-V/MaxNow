@@ -5600,6 +5600,117 @@ body[data-view="ricky"] .topbar-ricky-status {
   transition: width 240ms ease;
 }
 
+.ballet-level-layout {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.ballet-level-progress {
+  min-width: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.ballet-swan-stage {
+  --swan-scale: 0.82;
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  place-items: center;
+  color: var(--growth-color);
+}
+
+.ballet-swan-icon {
+  display: block;
+  width: 82px;
+  height: 68px;
+  overflow: visible;
+}
+
+.ballet-swan-bird {
+  transform: scale(var(--swan-scale));
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 240ms ease;
+}
+
+.ballet-swan-halo {
+  fill: color-mix(in srgb, var(--growth-color) 9%, transparent);
+  stroke: color-mix(in srgb, var(--growth-color) 22%, transparent);
+  stroke-width: 1;
+}
+
+.ballet-swan-body,
+.ballet-swan-head {
+  fill: #fffdfd;
+  stroke: color-mix(in srgb, var(--growth-color) 68%, #ffffff);
+  stroke-width: 2.2;
+}
+
+.ballet-swan-neck {
+  fill: none;
+  stroke: color-mix(in srgb, var(--growth-color) 68%, #ffffff);
+  stroke-linecap: round;
+  stroke-width: 7;
+}
+
+.ballet-swan-wing {
+  fill: color-mix(in srgb, var(--growth-color) 8%, #ffffff);
+  stroke: color-mix(in srgb, var(--growth-color) 56%, #ffffff);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.ballet-swan-feather,
+.ballet-swan-ripple,
+.ballet-swan-sparkles path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--growth-color) 58%, #ffffff);
+  stroke-linecap: round;
+  stroke-width: 1.7;
+}
+
+.ballet-swan-ripple-soft {
+  opacity: 0.58;
+}
+
+.ballet-swan-eye {
+  fill: #45364e;
+}
+
+.ballet-swan-beak {
+  fill: #d99771;
+}
+
+.ballet-swan-sparkles circle {
+  fill: color-mix(in srgb, var(--growth-color) 70%, #ffffff);
+}
+
+.ballet-swan-steps {
+  width: 82px;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.ballet-swan-step {
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--growth-color) 13%, #ffffff);
+}
+
+.ballet-swan-step.is-reached {
+  background: color-mix(in srgb, var(--growth-color) 58%, #ffffff);
+}
+
+.ballet-swan-step.is-current {
+  background: var(--growth-color);
+}
+
 .ballet-growth-meta strong {
   color: var(--growth-color);
   font-size: 13px;
@@ -6908,6 +7019,20 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .ballet-growth-block-head strong {
     text-align: left;
+  }
+
+  .ballet-level-layout {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .ballet-swan-icon,
+  .ballet-swan-steps {
+    width: 70px;
+  }
+
+  .ballet-swan-icon {
+    height: 60px;
   }
 
   .ballet-membership-item > header {

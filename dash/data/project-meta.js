@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 23:11",
-  "version": "1.0.7.35",
-  "versionLabel": "v1.0.7.35",
-  "branch": "bugfix/ballet-waitlist-position-teacher",
-  "commit": "6c982a6",
+  "updatedAt": "2026-07-29 23:56",
+  "version": "1.0.7.36",
+  "versionLabel": "v1.0.7.36",
+  "branch": "feature/ballet-auto-level-swan",
+  "commit": "699d95f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-waitlist-position-teacher · commit 6c982a6 · 有未提交代码改动",
+  "deployNote": "feature/ballet-auto-level-swan · commit 699d95f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "升班按课次自动升级，成长改为十级小天鹅",
+      "summary": "升班进度达到当前规律 / 间歇课次目标后，MaxNow 自动从 `L1 → L1.5 → L2 → L3 → L4 → L5` 进入下一课程级别，不再停在“等待老师测评”的提示状态；已经达成的规律升级不会因之后训练频率下降而回退。自动升级只改变页面进度显示，不写入闻道或机构学籍。"
+    },
     {
       "date": "2026-07-29",
       "title": "补齐本人候补位次与紧凑课程老师",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "柔化课表日期分界",
       "summary": "撤销贯穿课表全高的 `2px` 玫瑰粗线；日期边界和教室边界统一回到 `1px`，仅用暖灰粉深浅区分两级分组，让课表更接近日历而不是表格。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "加强课表每天之间的分界",
-      "summary": "桌面周课表把每天开始位置的竖向分界线加深并增为 `2px`；同一天大教室 / 小教室之间继续使用浅色 `1px` 细线，日期和教室形成明确的两级分组。"
     }
   ]
 };
