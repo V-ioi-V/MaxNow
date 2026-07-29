@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 21:13",
-  "version": "1.0.7.31",
-  "versionLabel": "v1.0.7.31",
-  "branch": "bugfix/ballet-day-separators",
-  "commit": "541b850",
+  "updatedAt": "2026-07-29 21:53",
+  "version": "1.0.7.32",
+  "versionLabel": "v1.0.7.32",
+  "branch": "bugfix/ballet-day-divider-soft",
+  "commit": "df4a126",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-day-separators · commit 541b850 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-day-divider-soft · commit df4a126 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "柔化课表日期分界",
+      "summary": "撤销贯穿课表全高的 `2px` 玫瑰粗线；日期边界和教室边界统一回到 `1px`，仅用暖灰粉深浅区分两级分组，让课表更接近日历而不是表格。"
+    },
     {
       "date": "2026-07-29",
       "title": "加强课表每天之间的分界",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "对齐芭蕾课表时间轴并统一普通课程边框",
       "summary": "将每个整点文字从小时格内部移到对应横向分界线上，时间标签与课程分钟定位共用同一网格坐标。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "将芭蕾周课表改为留白日历布局",
-      "summary": "桌面周课表改为日期横排、时间纵排的标准周日历，以白底、淡网格和低饱和课程卡降低 55 节课程同时展示时的视觉噪音；当前日期使用轻粉列，当前时间只保留一条细玫瑰线。"
     }
   ]
 };

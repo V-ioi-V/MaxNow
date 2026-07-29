@@ -4642,8 +4642,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-timetable-grid {
   --ballet-day-count: 7;
   --ballet-minute-height: 1.28px;
-  --ballet-day-divider: #d4adbe;
-  --ballet-room-divider: #f0e7eb;
+  --ballet-day-divider: #dfccd4;
+  --ballet-room-divider: #f4eef1;
   width: 100%;
   min-width: 100%;
   display: grid;
@@ -4776,7 +4776,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   flex-direction: column;
   gap: 2px;
   padding: 7px 4px 6px;
-  border-left: 2px solid var(--ballet-day-divider);
+  border-left: 1px solid var(--ballet-day-divider);
   border-bottom: 1px solid #e8dce2;
   background: rgba(255, 255, 255, 0.96);
   color: #584952;
@@ -4802,7 +4802,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-room[data-room="large"] {
-  border-left: 2px solid var(--ballet-day-divider);
+  border-left: 1px solid var(--ballet-day-divider);
   background: #fff7fa;
   color: #a14569;
 }
@@ -4857,7 +4857,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-cell[data-room="large"] {
-  border-left: 2px solid var(--ballet-day-divider);
+  border-left: 1px solid var(--ballet-day-divider);
 }
 
 .ballet-timetable-grid > .ballet-timetable-course {
