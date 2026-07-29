@@ -3939,7 +3939,33 @@ function renderBalletTimetable() {
     time.style.gridRow = `${row.startLine} / ${row.endLine}`;
     return time;
   });
-  grid.append(corner, ...dayHeaders, ...roomHeaders, ...timeHeaders);
+  const finalRow = layoutRows[layoutRows.length - 1];
+  const terminalItems = [];
+  if (finalRow) {
+    const finalHour =
+      finalRow.type === "gap" ? finalRow.endHour : Number(finalRow.hour) + 1;
+    const endTime = document.createElement("div");
+    endTime.className = "ballet-timetable-time ballet-timetable-end-time";
+    endTime.dataset.rowType = "end";
+    endTime.style.gridColumn = "1";
+    endTime.style.gridRow = `${nextGridLine} / span 1`;
+    const endTimeLabel = document.createElement("span");
+    endTimeLabel.className = "ballet-timetable-time-label";
+    endTimeLabel.textContent = formatBalletTimetableHour(finalHour);
+    endTime.appendChild(endTimeLabel);
+    const endSpacer = document.createElement("div");
+    endSpacer.className = "ballet-timetable-end-spacer";
+    endSpacer.style.gridColumn = "2 / -1";
+    endSpacer.style.gridRow = `${nextGridLine} / span 1`;
+    terminalItems.push(endTime, endSpacer);
+  }
+  grid.append(
+    corner,
+    ...dayHeaders,
+    ...roomHeaders,
+    ...timeHeaders,
+    ...terminalItems,
+  );
 
   days.forEach((day, index) => {
     const records = Array.isArray(day.records) ? day.records : [];

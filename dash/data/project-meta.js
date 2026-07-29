@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 20:27",
-  "version": "1.0.7.29",
-  "versionLabel": "v1.0.7.29",
-  "branch": "feature/ballet-room-lanes-course-count",
-  "commit": "fbb15ae",
+  "updatedAt": "2026-07-29 20:53",
+  "version": "1.0.7.30",
+  "versionLabel": "v1.0.7.30",
+  "branch": "bugfix/ballet-end-time-status-contrast",
+  "commit": "c25ee69",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-room-lanes-course-count · commit fbb15ae · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-end-time-status-contrast · commit c25ee69 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "补齐课表结束整点并增强课程状态对比",
+      "summary": "桌面周课表在最后一小时底部补齐结束整点；当前数据范围明确显示 `22:00`，与课程分钟定位和最后一条横线共用同一坐标。"
+    },
     {
       "date": "2026-07-29",
       "title": "课表增加教室分栏，升班进度只保留课次数量",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "收敛芭蕾周课表配色并加强粉色氛围",
       "summary": "将桌面时间刻度合并为连续粉色带，日期栏统一为浅粉，今天使用深玫瑰强调；移除原先每个日期互不相关的彩色底。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "将 Token、生活与同行记状态收进顶部栏",
-      "summary": "删除 Token、生活与同行记内容区重复的页面标题卡，统一把页面名、短更新时间与同步状态放进全局顶部栏；Token 的范围切换继续保留在顶部栏右侧。"
     }
   ]
 };

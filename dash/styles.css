@@ -4588,6 +4588,39 @@ body[data-view="ricky"] .topbar-ricky-status {
   align-items: center;
 }
 
+.ballet-timetable-head-meta,
+.ballet-timetable-legend {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ballet-timetable-head-meta {
+  justify-content: flex-end;
+  gap: 8px 12px;
+}
+
+.ballet-timetable-legend {
+  gap: 5px;
+}
+
+.ballet-timetable-legend span {
+  min-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--availability-color);
+  border-radius: 999px;
+  padding: 1px 7px;
+  background: var(--availability-color);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--availability-color) 18%, transparent);
+}
+
 .ballet-timetable-head h2 {
   color: #76304e;
 }
@@ -4619,6 +4652,7 @@ body[data-view="ricky"] .topbar-ricky-status {
     50px
     24px
     var(--ballet-time-rows, repeat(60, var(--ballet-minute-height)));
+  grid-auto-rows: 14px;
   column-gap: 0;
   row-gap: 0;
   overflow: clip;
@@ -4714,6 +4748,23 @@ body[data-view="ricky"] .topbar-ricky-status {
   padding: 0;
   background: transparent;
   transform: none;
+}
+
+.ballet-timetable-end-time {
+  z-index: 2;
+  min-height: 14px;
+  border-right: 1px solid #eadfe4;
+  background: #fffdfd;
+}
+
+.ballet-timetable-end-time .ballet-timetable-time-label {
+  top: 0;
+  transform: translateY(-50%);
+}
+
+.ballet-timetable-end-spacer {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .ballet-timetable-day {
@@ -4925,9 +4976,28 @@ body[data-view="ricky"] .topbar-ricky-status {
   --card-border: #687487;
 }
 
-.ballet-timetable-course[data-availability="cancelled"],
 .ballet-timetable-course[data-availability="past"] {
   opacity: 0.68;
+}
+
+.ballet-timetable-course[data-availability="available"] {
+  background: #f3fbf7;
+  box-shadow: 0 3px 10px rgba(24, 121, 78, 0.08);
+}
+
+.ballet-timetable-course[data-availability="queue_available"] {
+  background: #fff8ec;
+  box-shadow: 0 3px 10px rgba(184, 94, 19, 0.09);
+}
+
+.ballet-timetable-course[data-availability="full"] {
+  background: #f4f2f6;
+  box-shadow: 0 3px 10px rgba(91, 84, 103, 0.08);
+}
+
+.ballet-timetable-course[data-availability="cancelled"] {
+  background: #fff2f5;
+  box-shadow: 0 3px 10px rgba(180, 35, 69, 0.08);
 }
 
 .ballet-timetable-course[data-availability="booked"] {
@@ -4988,8 +5058,34 @@ body[data-view="ricky"] .topbar-ricky-status {
   align-items: center;
   border: 1px solid color-mix(in srgb, var(--card-color) 28%, #ffffff);
   border-radius: 999px;
-  padding: 0 4px;
+  padding: 0 5px;
   background: rgba(255, 255, 255, 0.68);
+  font-weight: 850;
+  letter-spacing: 0.01em;
+}
+
+.ballet-timetable-legend [data-availability="available"],
+.ballet-timetable-state[data-availability="available"] {
+  --availability-color: #18794e;
+  border-color: var(--availability-color);
+  background: var(--availability-color);
+  color: #ffffff;
+}
+
+.ballet-timetable-legend [data-availability="queue_available"],
+.ballet-timetable-state[data-availability="queue_available"] {
+  --availability-color: #b85e13;
+  border-color: var(--availability-color);
+  background: var(--availability-color);
+  color: #ffffff;
+}
+
+.ballet-timetable-legend [data-availability="full"],
+.ballet-timetable-state[data-availability="full"] {
+  --availability-color: #5b5467;
+  border-color: var(--availability-color);
+  background: var(--availability-color);
+  color: #ffffff;
 }
 
 .ballet-timetable-state[data-availability="booked"] {
@@ -5010,10 +5106,18 @@ body[data-view="ricky"] .topbar-ricky-status {
   color: #ffffff;
 }
 
+.ballet-timetable-legend [data-availability="cancelled"],
 .ballet-timetable-state[data-availability="cancelled"] {
-  border-color: var(--red-border);
-  background: #fff4f4;
-  color: var(--danger);
+  --availability-color: #b42345;
+  border-color: var(--availability-color);
+  background: var(--availability-color);
+  color: #ffffff;
+}
+
+.ballet-timetable-state[data-availability="past"] {
+  border-color: #9b94a4;
+  background: #8b8494;
+  color: #ffffff;
 }
 
 .ballet-timetable-course:is(
@@ -5128,6 +5232,16 @@ body[data-view="ricky"] .topbar-ricky-status {
     display: grid;
     gap: 8px;
     overflow: visible;
+  }
+
+  .ballet-timetable-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ballet-timetable-head-meta {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .ballet-timetable-note {
