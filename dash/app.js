@@ -3649,10 +3649,16 @@ function getBalletTimetableCounts(record = {}) {
   ) {
     return null;
   }
-  const waitlistCount = Number(record.waitlistCount);
-  const hasWaitlistCount = Number.isInteger(waitlistCount) && waitlistCount >= 0;
+  const rawWaitlistCount = record.waitlistCount;
+  const waitlistCount = Number(rawWaitlistCount);
+  const hasWaitlistCount = rawWaitlistCount !== null
+    && rawWaitlistCount !== undefined
+    && rawWaitlistCount !== ""
+    && Number.isInteger(waitlistCount)
+    && waitlistCount >= 0;
   return {
-    compact: `${bookedCount}/${capacity}人${hasWaitlistCount ? ` · 排${waitlistCount}` : ""}`,
+    capacity: `${bookedCount}/${capacity} 人`,
+    waitlist: hasWaitlistCount ? `排队 ${waitlistCount}` : "",
     accessible: `报名 ${bookedCount}/${capacity} 人${hasWaitlistCount ? `，排队 ${waitlistCount} 人` : ""}`,
   };
 }
@@ -3661,6 +3667,7 @@ function createBalletTimetableCourse(record, mobile = false) {
   const article = document.createElement("article");
   article.className = mobile ? "ballet-timetable-course is-mobile" : "ballet-timetable-course";
   article.dataset.courseType = String(record.courseType || "other").toLowerCase();
+  article.dataset.compact = Number(record.durationMinutes) <= 60 ? "true" : "false";
   const status = getBalletTimetableStatus(record);
   article.dataset.availability = status.key;
 
@@ -3668,20 +3675,24 @@ function createBalletTimetableCourse(record, mobile = false) {
   title.textContent = balletCourseName(record);
   const meta = document.createElement("small");
   meta.className = "ballet-timetable-meta";
+  const detail = document.createElement("small");
+  detail.className = "ballet-timetable-meta-detail";
   const detailText = mobile
     ? [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补"
     : balletTeacher(record) || "老师待确认";
+  detail.textContent = detailText;
   const counts = getBalletTimetableCounts(record);
   if (counts) {
     const capacity = document.createElement("span");
     capacity.className = "ballet-timetable-capacity";
-    capacity.textContent = counts.compact;
-    const detail = document.createElement("span");
-    detail.className = "ballet-timetable-meta-detail";
-    detail.textContent = detailText;
-    meta.append(capacity, detail);
-  } else {
-    meta.textContent = detailText;
+    capacity.textContent = counts.capacity;
+    meta.append(capacity);
+    if (counts.waitlist) {
+      const waitlist = document.createElement("span");
+      waitlist.className = "ballet-timetable-waitlist";
+      waitlist.textContent = counts.waitlist;
+      meta.append(waitlist);
+    }
   }
   const foot = document.createElement("div");
   const time = document.createElement("span");
@@ -3691,7 +3702,11 @@ function createBalletTimetableCourse(record, mobile = false) {
   state.textContent = status.label;
   state.dataset.availability = status.key;
   foot.append(time, state);
-  article.append(title, meta, foot);
+  article.append(title);
+  if (counts) {
+    article.append(meta);
+  }
+  article.append(detail, foot);
   article.title = [
     balletCourseName(record),
     [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–"),

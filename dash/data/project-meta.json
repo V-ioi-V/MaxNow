@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 22:21",
-  "version": "1.0.7.33",
-  "versionLabel": "v1.0.7.33",
-  "branch": "feature/ballet-class-counts",
-  "commit": "ae9e4bf",
+  "updatedAt": "2026-07-29 22:44",
+  "version": "1.0.7.34",
+  "versionLabel": "v1.0.7.34",
+  "branch": "bugfix/ballet-card-information-layout",
+  "commit": "1adb9fd",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-class-counts · commit ae9e4bf · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-card-information-layout · commit 1adb9fd · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "疏开课表课程卡信息",
+      "summary": "课程卡改为“课程名 → 人数 → 老师 → 时间 / 状态”四层结构；报名 / 容量和排队数使用独立人数行，老师另起弱信息行，时间与状态保留在底部，不再把人数、排队和老师挤成一串。"
+    },
     {
       "date": "2026-07-29",
       "title": "课表显示报名与排队人数",
@@ -28,11 +33,6 @@
       "date": "2026-07-29",
       "title": "补齐课表结束整点并增强课程状态对比",
       "summary": "桌面周课表在最后一小时底部补齐结束整点；当前数据范围明确显示 `22:00`，与课程分钟定位和最后一条横线共用同一坐标。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "课表增加教室分栏，升班进度只保留课次数量",
-      "summary": "桌面周课表在每个日期下固定增加“大教室 / 小教室”两列，课程按场地进入对应列；同教室重叠课程只在自己的列内继续分轨。`1200px` 以下按日期、再按教室分组展示。"
     }
   ]
 }
