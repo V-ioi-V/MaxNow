@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 20:20",
+  "updatedAt": "2026-07-29 20:27",
   "version": "1.0.7.29",
   "versionLabel": "v1.0.7.29",
   "branch": "feature/ballet-room-lanes-course-count",
-  "commit": "a345680",
+  "commit": "fbb15ae",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-room-lanes-course-count · commit a345680 · 有未提交代码改动",
+  "deployNote": "feature/ballet-room-lanes-course-count · commit fbb15ae · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-29",
