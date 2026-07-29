@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 22:16",
+  "updatedAt": "2026-07-29 22:21",
   "version": "1.0.7.33",
   "versionLabel": "v1.0.7.33",
   "branch": "feature/ballet-class-counts",
-  "commit": "af83a79",
+  "commit": "ae9e4bf",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-class-counts · commit af83a79 · 有未提交代码改动",
+  "deployNote": "feature/ballet-class-counts · commit ae9e4bf · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-29",
