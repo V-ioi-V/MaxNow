@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 14:30",
-  "version": "1.0.7.26",
-  "versionLabel": "v1.0.7.26",
-  "branch": "feature/ballet-timetable-polish",
-  "commit": "f851439",
+  "updatedAt": "2026-07-29 19:16",
+  "version": "1.0.7.27",
+  "versionLabel": "v1.0.7.27",
+  "branch": "bugfix/ballet-timetable-minimal",
+  "commit": "4c3faf7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-timetable-polish · commit f851439 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-timetable-minimal · commit 4c3faf7 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-29",
+      "title": "将芭蕾周课表改为留白日历布局",
+      "summary": "桌面周课表改为日期横排、时间纵排的标准周日历，以白底、淡网格和低饱和课程卡降低 55 节课程同时展示时的视觉噪音；当前日期使用轻粉列，当前时间只保留一条细玫瑰线。"
+    },
     {
       "date": "2026-07-29",
       "title": "收敛芭蕾周课表配色并加强粉色氛围",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "拆出独立芭蕾成长评分文档",
       "summary": "新增根目录 `BALLET_GROWTH_SCORING.md`，单独集中记录有效数据、当前级别判断、规律 / 间歇口径、升班公式、L1–L5 参数、XP、六级效果和修改检查清单。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "固化芭蕾成长评分协议与文档同步检查",
-      "summary": "在 `SPEC.md` 补齐升班分输入、公式、规律 / 间歇判定、L1–L5 课次和基础月份参数、全部 XP 课型权重、六级 XP 阈值与效果，明确运行数值不写死、100 分只提示老师测评。"
     }
   ]
 };

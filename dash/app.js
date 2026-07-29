@@ -3682,6 +3682,13 @@ function createBalletTimetableCourse(record, mobile = false) {
   state.dataset.availability = status.key;
   foot.append(time, state);
   article.append(title, meta, foot);
+  article.title = [
+    balletCourseName(record),
+    [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–"),
+    balletTeacher(record),
+    record.venue,
+    status.label,
+  ].filter(Boolean).join(" · ");
   return article;
 }
 
@@ -3745,7 +3752,6 @@ function balletTimetableInterval(record = {}) {
 }
 
 function layoutBalletTimetableRecords(records = []) {
-  const laneEnds = [];
   const items = records
     .map((record) => ({ record, interval: balletTimetableInterval(record) }))
     .filter((item) => item.interval)
@@ -3755,20 +3761,40 @@ function layoutBalletTimetableRecords(records = []) {
         left.interval.end - right.interval.end,
     );
 
+  const groups = [];
+  let group = [];
+  let groupEnd = -1;
   items.forEach((item) => {
-    let lane = laneEnds.findIndex((end) => end <= item.interval.start);
-    if (lane === -1) {
-      lane = laneEnds.length;
-      laneEnds.push(item.interval.end);
-    } else {
-      laneEnds[lane] = item.interval.end;
+    if (group.length && item.interval.start >= groupEnd) {
+      groups.push(group);
+      group = [];
+      groupEnd = -1;
     }
-    item.lane = lane;
+    group.push(item);
+    groupEnd = Math.max(groupEnd, item.interval.end);
+  });
+  if (group.length) groups.push(group);
+
+  groups.forEach((overlapGroup) => {
+    const laneEnds = [];
+    overlapGroup.forEach((item) => {
+      let lane = laneEnds.findIndex((end) => end <= item.interval.start);
+      if (lane === -1) {
+        lane = laneEnds.length;
+        laneEnds.push(item.interval.end);
+      } else {
+        laneEnds[lane] = item.interval.end;
+      }
+      item.lane = lane;
+    });
+    overlapGroup.forEach((item) => {
+      item.laneCount = Math.max(1, laneEnds.length);
+    });
   });
 
   return {
     items,
-    laneCount: Math.max(1, laneEnds.length),
+    laneCount: Math.max(1, ...items.map((item) => item.laneCount || 1)),
   };
 }
 
@@ -3776,7 +3802,7 @@ function formatBalletTimetableHour(hour) {
   return `${String(hour).padStart(2, "0")}:00`;
 }
 
-function buildBalletTimetableColumns(days = []) {
+function buildBalletTimetableRows(days = []) {
   const intervals = days.flatMap((day) =>
     (Array.isArray(day.records) ? day.records : [])
       .map(balletTimetableInterval)
@@ -3795,14 +3821,14 @@ function buildBalletTimetableColumns(days = []) {
     }
   }
 
-  const columns = [];
+  const rows = [];
   for (let hour = firstHour; hour < lastHour;) {
     if (occupiedHours.has(hour)) {
-      columns.push({
+      rows.push({
         type: "hour",
         hour,
         trackCount: 60,
-        label: `${formatBalletTimetableHour(hour)}–${formatBalletTimetableHour(hour + 1)}`,
+        label: formatBalletTimetableHour(hour),
       });
       hour += 1;
       continue;
@@ -3810,7 +3836,7 @@ function buildBalletTimetableColumns(days = []) {
 
     const gapStart = hour;
     while (hour < lastHour && !occupiedHours.has(hour)) hour += 1;
-    columns.push({
+    rows.push({
       type: "gap",
       trackCount: 1,
       startHour: gapStart,
@@ -3818,7 +3844,7 @@ function buildBalletTimetableColumns(days = []) {
       label: `${formatBalletTimetableHour(gapStart)}–${formatBalletTimetableHour(hour)}`,
     });
   }
-  return columns;
+  return rows;
 }
 
 function renderBalletTimetable() {
@@ -3847,97 +3873,114 @@ function renderBalletTimetable() {
     return;
   }
 
-  const columns = buildBalletTimetableColumns(days);
-  grid.style.setProperty("--ballet-time-count", String(columns.length));
-  const timeColumns = columns
-    .map((column) =>
-      column.type === "gap"
-        ? "minmax(24px, 0.42fr)"
-        : "repeat(60, minmax(0, 1fr))",
+  const rows = buildBalletTimetableRows(days);
+  grid.style.setProperty("--ballet-day-count", String(days.length));
+  const timeRows = rows
+    .map((row) =>
+      row.type === "gap"
+        ? "30px"
+        : "repeat(60, var(--ballet-minute-height))",
     )
     .join(" ");
-  grid.style.setProperty("--ballet-time-columns", timeColumns);
+  grid.style.setProperty("--ballet-time-rows", timeRows);
   let nextGridLine = 2;
   const minuteGridLines = new Map();
-  const layoutColumns = columns.map((column) => {
+  const layoutRows = rows.map((row) => {
     const startLine = nextGridLine;
-    const endLine = startLine + column.trackCount;
+    const endLine = startLine + row.trackCount;
     nextGridLine = endLine;
-    if (column.type === "hour") {
+    if (row.type === "hour") {
       for (let minute = 0; minute <= 60; minute += 1) {
-        minuteGridLines.set(column.hour * 60 + minute, startLine + minute);
+        minuteGridLines.set(row.hour * 60 + minute, startLine + minute);
       }
     } else {
-      minuteGridLines.set(column.startHour * 60, startLine);
-      minuteGridLines.set(column.endHour * 60, endLine);
+      minuteGridLines.set(row.startHour * 60, startLine);
+      minuteGridLines.set(row.endHour * 60, endLine);
     }
-    return { ...column, startLine, endLine };
+    return { ...row, startLine, endLine };
   });
 
   const corner = document.createElement("div");
   corner.className = "ballet-timetable-corner";
-  corner.textContent = "星期";
+  corner.textContent = "时间";
   corner.style.gridColumn = "1";
   corner.style.gridRow = "1";
-  const timeHeaders = layoutColumns.map((column, index) => {
+  const dayHeaders = days.map((day, index) => {
+    const header = createBalletTimetableDayHeader(day, index);
+    header.style.gridColumn = String(index + 2);
+    header.style.gridRow = "1";
+    return header;
+  });
+  const timeHeaders = layoutRows.map((row, index) => {
     const time = document.createElement("div");
     time.className = "ballet-timetable-time";
-    time.dataset.columnType = column.type;
-    time.dataset.columnEdge =
-      layoutColumns.length === 1
+    time.dataset.rowType = row.type;
+    time.dataset.rowEdge =
+      layoutRows.length === 1
         ? "both"
         : index === 0
           ? "start"
-          : index === layoutColumns.length - 1
+          : index === layoutRows.length - 1
             ? "end"
             : "middle";
-    time.textContent = column.label;
-    time.style.gridColumn = `${column.startLine} / ${column.endLine}`;
-    time.style.gridRow = "1";
+    time.textContent = row.label;
+    time.style.gridColumn = "1";
+    time.style.gridRow = `${row.startLine} / ${row.endLine}`;
     return time;
   });
-  grid.append(corner, ...timeHeaders);
+  grid.append(corner, ...dayHeaders, ...timeHeaders);
 
-  let nextRow = 2;
   days.forEach((day, index) => {
     const records = Array.isArray(day.records) ? day.records : [];
     const recordLayout = layoutBalletTimetableRecords(records);
     const dayState = getBalletTimetableDayState(day.date);
-    const dayHeader = createBalletTimetableDayHeader(day, index);
-    dayHeader.style.gridColumn = "1";
-    dayHeader.style.gridRow = `${nextRow} / span ${recordLayout.laneCount}`;
-    grid.appendChild(dayHeader);
-
-    layoutColumns.forEach((column, columnIndex) => {
+    layoutRows.forEach((row, rowIndex) => {
       const cell = document.createElement("div");
       cell.className = "ballet-timetable-cell";
       cell.dataset.dayState = dayState;
-      cell.dataset.columnType = column.type;
-      cell.dataset.columnEdge =
-        layoutColumns.length === 1
+      cell.dataset.rowType = row.type;
+      cell.dataset.rowEdge =
+        layoutRows.length === 1
           ? "both"
-          : columnIndex === 0
+          : rowIndex === 0
             ? "start"
-            : columnIndex === layoutColumns.length - 1
+            : rowIndex === layoutRows.length - 1
               ? "end"
               : "middle";
-      cell.style.gridColumn = `${column.startLine} / ${column.endLine}`;
-      cell.style.gridRow = `${nextRow} / span ${recordLayout.laneCount}`;
+      cell.style.gridColumn = String(index + 2);
+      cell.style.gridRow = `${row.startLine} / ${row.endLine}`;
       grid.appendChild(cell);
     });
 
-    recordLayout.items.forEach(({ record, interval, lane }) => {
+    recordLayout.items.forEach(({ record, interval, lane, laneCount }) => {
       const startLine = minuteGridLines.get(interval.start);
       const endLine = minuteGridLines.get(interval.end);
       if (!startLine || !endLine || endLine <= startLine) return;
       const course = createBalletTimetableCourse(record);
       course.dataset.dayState = dayState;
-      course.style.gridColumn = `${startLine} / ${endLine}`;
-      course.style.gridRow = String(nextRow + lane);
+      course.dataset.overlap = laneCount > 1 ? "true" : "false";
+      course.style.gridColumn = String(index + 2);
+      course.style.gridRow = `${startLine} / ${endLine}`;
+      course.style.setProperty("--ballet-lane-left", `${(lane * 100) / laneCount}%`);
+      course.style.setProperty("--ballet-lane-width", `${100 / laneCount}%`);
       grid.appendChild(course);
     });
-    nextRow += recordLayout.laneCount;
   });
+
+  const todayIndex = days.findIndex((day) => String(day.date) === localDateKey());
+  const now = new Date();
+  const nowLine = minuteGridLines.get(now.getHours() * 60 + now.getMinutes());
+  if (todayIndex >= 0 && nowLine) {
+    const marker = document.createElement("div");
+    marker.className = "ballet-timetable-now-line";
+    marker.style.gridColumn = "2 / -1";
+    marker.style.gridRow = `${nowLine} / span 1`;
+    marker.setAttribute("aria-hidden", "true");
+    const label = document.createElement("span");
+    label.textContent = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    marker.appendChild(label);
+    grid.appendChild(marker);
+  }
 
   days.forEach((day, index) => {
     const group = document.createElement("section");
