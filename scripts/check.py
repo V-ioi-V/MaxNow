@@ -1478,7 +1478,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=198" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=164" not in dashboard_html
+        or "app.js?v=165" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1603,10 +1603,11 @@ def check_ballet_growth_contract():
         or "transform: translateY(-6px);" not in dashboard_css
         or 'id="ballet-level-progress"' not in dashboard_html
         or 'id="ballet-level-progress-fill"' not in dashboard_html
-        or "const stageCompleted = next ? Math.max(0, completed - current.threshold) : 1;" not in dashboard_js
-        or "const stageTarget = next ? Math.max(1, next.threshold - current.threshold) : 1;" not in dashboard_js
-        or "还差 ${growth.remaining} 节进入第 ${growth.next.level} 阶段" not in dashboard_js
-        or "只显示当前阶段到下一阶段" not in contract
+        or "const levelCompleted = next ? Math.max(0, completed - current.threshold) : 1;" not in dashboard_js
+        or "const levelTarget = next ? Math.max(1, next.threshold - current.threshold) : 1;" not in dashboard_js
+        or "setText(\"#ballet-level-title\", `Lv.${growth.current.level}`);" not in dashboard_js
+        or "还差 ${growth.remaining} 节升级到 Lv.${growth.next.level}" not in dashboard_js
+        or "页面标题只显示当前成长等级 `Lv.N`" not in contract
     ):
         raise ValueError("ballet growth contract: current-to-next swan progress rendering is incomplete")
     if (
@@ -1660,7 +1661,7 @@ def check_ballet_growth_contract():
         )
     ):
         raise ValueError("ballet growth contract: retired month, score, or XP logic remains")
-    return "ballet growth contract: automatic promotion, current-to-next growth display, approved swan assets, and standalone document sync are valid"
+    return "ballet growth contract: automatic promotion, current level and next-distance display, approved swan assets, and standalone document sync are valid"
 
 
 def check_data_health_contract():
@@ -1678,7 +1679,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=164" not in dashboard_html:
+    if "app.js?v=165" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

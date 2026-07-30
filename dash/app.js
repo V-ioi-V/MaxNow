@@ -3436,14 +3436,14 @@ function getBalletGrowthLevelState(records) {
     BALLET_GROWTH_LEVELS[0];
   const currentIndex = BALLET_GROWTH_LEVELS.indexOf(current);
   const next = BALLET_GROWTH_LEVELS[currentIndex + 1] || null;
-  const stageCompleted = next ? Math.max(0, completed - current.threshold) : 1;
-  const stageTarget = next ? Math.max(1, next.threshold - current.threshold) : 1;
+  const levelCompleted = next ? Math.max(0, completed - current.threshold) : 1;
+  const levelTarget = next ? Math.max(1, next.threshold - current.threshold) : 1;
   return {
     completed,
     current,
     next,
-    stageCompleted,
-    stageTarget,
+    levelCompleted,
+    levelTarget,
     remaining: next ? Math.max(0, next.threshold - completed) : 0,
   };
 }
@@ -3454,7 +3454,7 @@ function renderBalletSwanLevel(level) {
   const safeLevel = Math.max(1, Math.min(10, Math.floor(balletNumber(level, 1))));
   const icon = qs("#ballet-swan-icon");
   stage.dataset.level = String(safeLevel);
-  stage.setAttribute("aria-label", `小天鹅当前成长阶段 ${safeLevel}`);
+  stage.setAttribute("aria-label", `小天鹅成长等级 Lv.${safeLevel}`);
   if (icon) icon.src = `./assets/ballet/swan-lv${safeLevel}.png`;
 }
 
@@ -3512,27 +3512,22 @@ function renderBalletGrowth() {
     promotion.isFinal ? Math.max(1, promotion.completed) : promotion.target,
   );
 
-  setText(
-    "#ballet-level-title",
-    growth.next
-      ? `第 ${growth.current.level} 阶段 → 第 ${growth.next.level} 阶段`
-      : "第 10 阶段 · 已满级",
-  );
+  setText("#ballet-level-title", `Lv.${growth.current.level}`);
   setText(
     "#ballet-growth-class-count",
     growth.next
-      ? `本阶段 ${growth.stageCompleted} / ${growth.stageTarget} 节`
+      ? `本级 ${growth.levelCompleted} / ${growth.levelTarget} 节`
       : `已累计 ${growth.completed} 节`,
   );
   setText(
     "#ballet-level-next",
-    growth.next ? `还差 ${growth.remaining} 节进入第 ${growth.next.level} 阶段` : "成长等级已到最高级",
+    growth.next ? `还差 ${growth.remaining} 节升级到 Lv.${growth.next.level}` : "已满级",
   );
   updateBalletGrowthProgress(
     "#ballet-level-progress",
     "#ballet-level-progress-fill",
-    growth.stageCompleted,
-    growth.stageTarget,
+    growth.levelCompleted,
+    growth.levelTarget,
   );
   renderBalletSwanLevel(growth.current.level);
 }
