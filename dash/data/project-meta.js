@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 21:38",
-  "version": "1.0.7.54",
-  "versionLabel": "v1.0.7.54",
-  "branch": "feature/ballet-membership-card-design",
-  "commit": "2069d51",
+  "updatedAt": "2026-07-30 21:57",
+  "version": "1.0.7.55",
+  "versionLabel": "v1.0.7.55",
+  "branch": "bugfix/ballet-membership-artwork-visibility",
+  "commit": "0efe94d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-membership-card-design · commit 2069d51 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-membership-artwork-visibility · commit 0efe94d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "修复课程卡芭蕾舞者被裁切和遮淡",
+      "summary": "课程卡插画从放大铺满改为完整缩放，修正人物层被近乎不透明票券底色遮住的问题；舞者现在从手尖到足尖完整可辨，不再只剩躯干或腿部的淡影。"
+    },
     {
       "date": "2026-07-30",
       "title": "将课程卡升级为暖象牙芭蕾票券",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "手动补录 7 月 30 日软开课",
       "summary": "按 Owner 提供的课表截图，手动补录 `2026-07-30 18:45–19:45` 李俊老师大教室“软开课”，记录状态为已上课，并使用 `manual` 稳定键保存在服务器私有上课台账中。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "按视觉中心对齐等级与小天鹅",
-      "summary": "修正上一版只对齐可见主体顶部仍会让较高小天鹅视觉重心下沉的问题；`Lv.N` 与小天鹅舞台改为中心线排列，十张素材再按各自透明像素可见中心做百分比位移。"
     }
   ]
 };
