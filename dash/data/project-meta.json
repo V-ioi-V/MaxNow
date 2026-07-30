@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 23:33",
-  "version": "1.0.7.60",
-  "versionLabel": "v1.0.7.60",
-  "branch": "bugfix/membership-ring-scale",
-  "commit": "15e1688",
+  "updatedAt": "2026-07-30 23:41",
+  "version": "1.0.7.61",
+  "versionLabel": "v1.0.7.61",
+  "branch": "bugfix/membership-ring-inline",
+  "commit": "dd973f4",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/membership-ring-scale · commit 15e1688 · 有未提交代码改动",
+  "deployNote": "bugfix/membership-ring-inline · commit dd973f4 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "将有效期圆环数字改为单行",
+      "summary": "圆环内当前天数与总天数从上下两行改为横向单行 `N /总天数`，两段使用 `2px` 间距并整体居中；总天数下移 `1px` 做光学对齐。"
+    },
     {
       "date": "2026-07-30",
       "title": "放大课程卡有效期圆环并收小正文",
@@ -28,11 +33,6 @@
       "date": "2026-07-30",
       "title": "修正课程票券色差、插画和圆环细节",
       "summary": "票券底色精确匹配舞者插画的暖象牙纸色，并取消会加深图片区域的混合模式，消除左上矩形色差；宽卡遮罩延后到横向脚尖之后，抬手、横向脚尖和支撑腿足尖保持完整。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "课程卡取消外框并扩展票券内容",
-      "summary": "移除课程卡外围普通白色面板，只保留暖象牙票券作为唯一卡片；“Course Card / 课程卡 / 有效卡数量”并入票券顶部，减少重复边框和留白。"
     }
   ]
 }

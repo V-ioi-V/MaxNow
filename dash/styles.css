@@ -6009,8 +6009,8 @@ body[data-view="ricky"] .topbar-ricky-status {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  gap: 1px;
+  flex-direction: row;
+  gap: 2px;
   padding: 0;
   border-radius: 50%;
   background:
@@ -6039,6 +6039,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   color: var(--membership-muted);
   font-size: 8px;
   line-height: 1.05;
+  transform: translateY(1px);
 }
 
 .ballet-overview-grid .ballet-membership-verdict {
