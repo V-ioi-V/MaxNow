@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 11:25",
+  "updatedAt": "2026-07-30 11:43",
   "version": "1.0.7.38",
   "versionLabel": "v1.0.7.38",
   "branch": "bugfix/ballet-swan-vertical-align",
-  "commit": "1aba155",
+  "commit": "1e544b6",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-swan-vertical-align · commit 1aba155 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-swan-vertical-align · commit 1e544b6 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-30",
