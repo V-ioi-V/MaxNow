@@ -1482,10 +1482,18 @@ def check_secondary_view_style():
         or 'class="panel cloud-card cloud-ballet-fast-card"' not in cloud_view_markup
         or '<summary class="ballet-session-summary">' not in cloud_view_markup
         or ".ballet-overview-grid {" not in dashboard_css
-        or 'class="panel ballet-growth-panel"' not in ballet_view_markup
+        or 'class="ballet-growth-modules" aria-label="成长等级与课程等级"' not in ballet_view_markup
+        or ballet_view_markup.count('class="panel ballet-growth-module"') != 2
+        or 'data-tone="purple" aria-labelledby="ballet-growth-level-title"' not in ballet_view_markup
+        or 'data-tone="blue" aria-labelledby="ballet-course-level-title"' not in ballet_view_markup
+        or ballet_view_markup.find('data-tone="purple" aria-labelledby="ballet-growth-level-title"')
+        > ballet_view_markup.find('data-tone="blue" aria-labelledby="ballet-course-level-title"')
         or "@media (min-width: 1501px)" not in dashboard_css
         or "grid-template-columns: repeat(3, minmax(0, 1fr));" not in dashboard_css
-        or ".ballet-growth-block:hover" not in dashboard_css
+        or ".ballet-growth-modules {\n    grid-column: auto;\n    grid-template-rows: repeat(2, minmax(0, 1fr));\n  }"
+        not in dashboard_css
+        or ".ballet-growth-module {" not in dashboard_css
+        or "--card-color: var(--growth-color);" not in dashboard_css
         or ".ballet-course-plan-grid {" not in dashboard_css
         or ".ballet-session-summary {" not in dashboard_css
         or ".ballet-session-card[open] .ballet-session-toggle {" not in dashboard_css
@@ -1497,7 +1505,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=201" not in dashboard_html
+        "styles.css?v=202" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=167" not in dashboard_html
     ):
@@ -1615,8 +1623,15 @@ def check_ballet_growth_contract():
     ]
     if any(not asset.exists() or asset.stat().st_size < 1024 for asset in swan_assets):
         raise ValueError("ballet growth contract: approved swan source or one of the 10 level assets is missing")
+    growth_module_match = re.search(
+        r'class="panel ballet-growth-module" data-tone="purple".*?</article>',
+        dashboard_html,
+        re.DOTALL,
+    )
+    growth_module_markup = growth_module_match.group(0) if growth_module_match else ""
     if (
-        'id="ballet-swan-icon"' not in dashboard_html
+        not growth_module_markup
+        or 'id="ballet-swan-icon"' not in dashboard_html
         or 'src="./assets/ballet/swan-lv1.png"' not in dashboard_html
         or 'icon.src = `./assets/ballet/swan-lv${safeLevel}.png`;' not in dashboard_js
         or "object-fit: contain;" not in dashboard_css
@@ -1624,13 +1639,12 @@ def check_ballet_growth_contract():
         or "transform: translateY(-6px);" not in dashboard_css
         or 'id="ballet-level-progress"' not in dashboard_html
         or 'id="ballet-level-progress-fill"' not in dashboard_html
-        or ".ballet-level-progress {\n  min-width: 0;\n  width: 100%;" not in dashboard_css
-        or not re.search(
-            r'class="ballet-level-progress">\s*<div\s+class="ballet-growth-track".*?'
-            r'id="ballet-level-progress".*?<div class="ballet-level-layout">',
-            dashboard_html,
-            re.DOTALL,
-        )
+        or ".ballet-growth-level-summary {" not in dashboard_css
+        or ".ballet-growth-module-body {" not in dashboard_css
+        or 'id="ballet-swan-stage"' not in growth_module_markup
+        or 'id="ballet-level-progress"' not in growth_module_markup
+        or growth_module_markup.find('id="ballet-swan-stage"')
+        > growth_module_markup.find('id="ballet-level-progress"')
         or "const levelCompleted = next ? Math.max(0, completed - current.threshold) : 1;" not in dashboard_js
         or "const levelTarget = next ? Math.max(1, next.threshold - current.threshold) : 1;" not in dashboard_js
         or "setText(\"#ballet-level-title\", `Lv.${growth.current.level}`);" not in dashboard_js

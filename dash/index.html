@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=201" />
+    <link rel="stylesheet" href="./styles.css?v=202" />
   </head>
   <body>
     <div class="app-shell">
@@ -618,7 +618,7 @@
             </div>
           </div>
 
-          <section class="ballet-overview-grid" aria-label="本周训练、课程卡与成长进度">
+          <section class="ballet-overview-grid" aria-label="本周训练、课程卡、成长等级与课程等级">
             <article class="panel ballet-week-panel" aria-labelledby="ballet-week-title">
               <header class="panel-head">
                 <div>
@@ -686,19 +686,56 @@
               <div class="ballet-membership-list" id="ballet-membership-list"></div>
             </article>
 
-            <article class="panel ballet-growth-panel" aria-labelledby="ballet-growth-title">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Growth</p>
-                  <h2 id="ballet-growth-title">成长进度</h2>
-                </div>
-              </header>
-              <div class="ballet-growth-stack">
-                <section class="ballet-growth-block" data-tone="blue" aria-labelledby="ballet-promotion-title">
-                  <div class="ballet-growth-block-head">
-                    <span>课程等级</span>
-                    <strong id="ballet-promotion-title">L1 → L1.5</strong>
+            <div class="ballet-growth-modules" aria-label="成长等级与课程等级">
+              <article class="panel ballet-growth-module" data-tone="purple" aria-labelledby="ballet-growth-level-title">
+                <header class="panel-head ballet-growth-module-head">
+                  <div>
+                    <p class="eyebrow">Growth Level</p>
+                    <h2 id="ballet-growth-level-title">成长等级</h2>
                   </div>
+                  <div class="ballet-growth-level-summary">
+                    <strong class="ballet-growth-module-value" id="ballet-level-title">Lv.1</strong>
+                    <div class="ballet-swan-stage" id="ballet-swan-stage" data-level="1" role="img" aria-label="小天鹅成长等级 Lv.1">
+                      <img
+                        class="ballet-swan-icon"
+                        id="ballet-swan-icon"
+                        src="./assets/ballet/swan-lv1.png"
+                        alt=""
+                        width="512"
+                        height="512"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+                </header>
+                <div class="ballet-growth-module-body">
+                  <div
+                    class="ballet-growth-track"
+                    role="progressbar"
+                    aria-label="当前成长等级课次进度"
+                    aria-valuemin="0"
+                    aria-valuemax="10"
+                    aria-valuenow="0"
+                    id="ballet-level-progress"
+                  >
+                    <span id="ballet-level-progress-fill"></span>
+                  </div>
+                  <div class="ballet-growth-meta">
+                    <strong id="ballet-growth-class-count">本级 0 / 10 节</strong>
+                    <small id="ballet-level-next">还差 10 节升级到 Lv.2</small>
+                  </div>
+                </div>
+              </article>
+
+              <article class="panel ballet-growth-module" data-tone="blue" aria-labelledby="ballet-course-level-title">
+                <header class="panel-head ballet-growth-module-head">
+                  <div>
+                    <p class="eyebrow">Course Level</p>
+                    <h2 id="ballet-course-level-title">课程等级</h2>
+                  </div>
+                  <strong class="ballet-growth-module-value" id="ballet-promotion-title">L1 → L1.5</strong>
+                </header>
+                <div class="ballet-growth-module-body">
                   <div
                     class="ballet-growth-track"
                     role="progressbar"
@@ -715,46 +752,9 @@
                     <small id="ballet-promotion-rhythm">再上 15 节升级到 L1.5</small>
                   </div>
                   <p id="ballet-promotion-note">当前采用保守课次标准。</p>
-                </section>
-
-                <section class="ballet-growth-block" data-tone="purple" aria-labelledby="ballet-level-title">
-                  <div class="ballet-growth-block-head">
-                    <span>成长等级</span>
-                    <strong id="ballet-level-title">Lv.1</strong>
-                  </div>
-                  <div class="ballet-level-progress">
-                    <div
-                      class="ballet-growth-track"
-                      role="progressbar"
-                      aria-label="当前成长等级课次进度"
-                      aria-valuemin="0"
-                      aria-valuemax="10"
-                      aria-valuenow="0"
-                      id="ballet-level-progress"
-                    >
-                      <span id="ballet-level-progress-fill"></span>
-                    </div>
-                    <div class="ballet-level-layout">
-                      <div class="ballet-swan-stage" id="ballet-swan-stage" data-level="1" role="img" aria-label="小天鹅成长等级 Lv.1">
-                        <img
-                          class="ballet-swan-icon"
-                          id="ballet-swan-icon"
-                          src="./assets/ballet/swan-lv1.png"
-                          alt=""
-                          width="512"
-                          height="512"
-                          decoding="async"
-                        />
-                      </div>
-                      <div class="ballet-growth-meta">
-                        <strong id="ballet-growth-class-count">本级 0 / 10 节</strong>
-                        <small id="ballet-level-next">还差 10 节升级到 Lv.2</small>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              </div>
-            </article>
+                </div>
+              </article>
+            </div>
           </section>
 
           <article class="panel ballet-course-plan-panel" id="ballet-upcoming-panel" aria-labelledby="ballet-course-plan-title">

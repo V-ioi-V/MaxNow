@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 15:59",
-  "version": "1.0.7.44",
-  "versionLabel": "v1.0.7.44",
-  "branch": "feature/ballet-week-course-types",
-  "commit": "1f770e3",
+  "updatedAt": "2026-07-30 16:09",
+  "version": "1.0.7.45",
+  "versionLabel": "v1.0.7.45",
+  "branch": "feature/ballet-growth-modules",
+  "commit": "b4ff0d4",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-week-course-types · commit 1f770e3 · 有未提交代码改动",
+  "deployNote": "feature/ballet-growth-modules · commit b4ff0d4 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "拆分成长等级与课程等级模块",
+      "summary": "删除“成长进度”总卡，把紫色“成长等级”和蓝色“课程等级”改为两张各自拥有完整边框、阴影与 hover 反馈的独立面板；成长等级固定在上，课程等级固定在下。"
+    },
     {
       "date": "2026-07-30",
       "title": "本周训练改为当前时长与课程类型",
@@ -28,11 +33,6 @@
       "date": "2026-07-30",
       "title": "成长等级标题只显示当前 Lv",
       "summary": "紫色“成长等级”标题从“第 N 阶段 → 第 M 阶段”改为只显示当前 `Lv.N`；下方改为“本级 N / M 节”，下一等级仅在“还差 N 节升级到 Lv.M”中出现。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "成长等级只保留到下一阶段的距离",
-      "summary": "紫色“成长等级”移除 `1–10` 全量编号，只展示“当前阶段 → 下一阶段”、本阶段已上 / 目标课次和还差多少节，保留当前阶段的小天鹅图像。"
     }
   ]
 }
