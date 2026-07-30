@@ -650,6 +650,7 @@ def check_ballet_read_model():
         or "waitlistPosition ? `排队中 ${waitlistPosition}`" not in dashboard_js
         or "rawWaitlistCount !== null" not in dashboard_js
         or 'article.dataset.compact = Number(record.durationMinutes) <= 60 ? "true" : "false";' not in dashboard_js
+        or 'article.dataset.level = String(record.level || "none").toLowerCase();' not in dashboard_js
         or 'capacity.className = "ballet-timetable-capacity"' not in dashboard_js
         or 'waitlist.className = "ballet-timetable-waitlist"' not in dashboard_js
         or "article.append(detail, foot);" not in dashboard_js
@@ -664,6 +665,13 @@ def check_ballet_read_model():
         or "max-height: min(68vh, 560px);" in dashboard_css
         or ".ballet-timetable-sticky-mask" in dashboard_css
         or "overflow: visible;" not in dashboard_css
+        or '--course-fill-waitlist: #d3dbe3;' not in dashboard_css
+        or '--course-fill-booked: #aebccc;' not in dashboard_css
+        or '.ballet-timetable-course[data-course-type="ballet"][data-level="l1.5"]' not in dashboard_css
+        or '.ballet-timetable-course[data-course-type="ballet"][data-level="l4"]' not in dashboard_css
+        or 'background: var(--course-fill-waitlist);' not in dashboard_css
+        or 'background: var(--course-fill-booked);' not in dashboard_css
+        or '.ballet-timetable-state[data-availability] {' not in dashboard_css
     ):
         raise ValueError("ballet: timetable frontend or refresh contract is incomplete")
     return "ballet: read model, timetable, decisions, totals, aggregates, and redaction are valid"
@@ -1505,9 +1513,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=202" not in dashboard_html
+        "styles.css?v=203" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=167" not in dashboard_html
+        or "app.js?v=168" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1721,7 +1729,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=167" not in dashboard_html:
+    if "app.js?v=168" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

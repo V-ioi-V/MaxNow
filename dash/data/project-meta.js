@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 16:17",
-  "version": "1.0.7.45",
-  "versionLabel": "v1.0.7.45",
-  "branch": "feature/ballet-growth-modules",
-  "commit": "f049424",
+  "updatedAt": "2026-07-30 19:02",
+  "version": "1.0.7.46",
+  "versionLabel": "v1.0.7.46",
+  "branch": "feature/ballet-timetable-colors",
+  "commit": "7ab3254",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-growth-modules · commit f049424 · 有未提交代码改动",
+  "deployNote": "feature/ballet-timetable-colors · commit 7ab3254 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "课表改为课程色与预约深浅",
+      "summary": "周课表按课程类型与芭蕾级别使用固定柔和色：L1 / L1.5 绿色、L2 蓝色、L3 杏桃色、L4 紫色、L5 玫瑰色，软开灰米、肌肉素质浅黄、技巧课柔粉；所有课程卡改为无渐变的实心底。"
+    },
     {
       "date": "2026-07-30",
       "title": "拆分成长等级与课程等级模块",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "对齐成长卡上下两根进度条",
       "summary": "紫色成长进度条移出“小天鹅 + 文字”两列布局，改为占满内层卡片内容宽度；它与上方蓝色课程进度条保持相同的左右起止点。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "成长等级标题只显示当前 Lv",
-      "summary": "紫色“成长等级”标题从“第 N 阶段 → 第 M 阶段”改为只显示当前 `Lv.N`；下方改为“本级 N / M 节”，下一等级仅在“还差 N 节升级到 Lv.M”中出现。"
     }
   ]
 };
