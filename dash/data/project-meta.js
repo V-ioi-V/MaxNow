@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 19:02",
-  "version": "1.0.7.46",
-  "versionLabel": "v1.0.7.46",
-  "branch": "feature/ballet-timetable-colors",
-  "commit": "7ab3254",
+  "updatedAt": "2026-07-30 19:11",
+  "version": "1.0.7.47",
+  "versionLabel": "v1.0.7.47",
+  "branch": "bugfix/ballet-swan-alignment",
+  "commit": "9161113",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-timetable-colors · commit 7ab3254 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-swan-alignment · commit 9161113 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "按可见主体对齐十级小天鹅",
+      "summary": "成长等级右上角不再对十张透明 PNG 的完整画布做统一像素位移，改为按每张素材的透明上边界设置百分比光学上提。"
+    },
     {
       "date": "2026-07-30",
       "title": "课表改为课程色与预约深浅",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "补充本周老师、完成率与过去课程层级",
       "summary": "“本周训练”扩展为六项同族指标：新增按本周实际上完课程统计的“最喜欢的老师”，以及按已完成 /（已完成 + 已预约）计算的低饱和圆形“已上完占比”；候补不进入已确认训练分母。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "对齐成长卡上下两根进度条",
-      "summary": "紫色成长进度条移出“小天鹅 + 文字”两列布局，改为占满内层卡片内容宽度；它与上方蓝色课程进度条保持相同的左右起止点。"
     }
   ]
 };

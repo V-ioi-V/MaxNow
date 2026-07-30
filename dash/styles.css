@@ -5788,13 +5788,54 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-swan-stage {
+  --swan-lift: 0%;
   flex: 0 0 68px;
   width: 68px;
   height: 68px;
   display: grid;
   place-items: center;
+  overflow: visible;
   color: var(--growth-color);
-  transform: translateY(-10px);
+}
+
+.ballet-swan-stage[data-level="1"] {
+  --swan-lift: -47.1%;
+}
+
+.ballet-swan-stage[data-level="2"] {
+  --swan-lift: -39.3%;
+}
+
+.ballet-swan-stage[data-level="3"] {
+  --swan-lift: -34.8%;
+}
+
+.ballet-swan-stage[data-level="4"] {
+  --swan-lift: -29.1%;
+}
+
+.ballet-swan-stage[data-level="5"] {
+  --swan-lift: -24.8%;
+}
+
+.ballet-swan-stage[data-level="6"] {
+  --swan-lift: -23.4%;
+}
+
+.ballet-swan-stage[data-level="7"] {
+  --swan-lift: -17.8%;
+}
+
+.ballet-swan-stage[data-level="8"] {
+  --swan-lift: -14.1%;
+}
+
+.ballet-swan-stage[data-level="9"] {
+  --swan-lift: -10.5%;
+}
+
+.ballet-swan-stage[data-level="10"] {
+  --swan-lift: -7%;
 }
 
 .ballet-swan-icon {
@@ -5803,6 +5844,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   height: 68px;
   object-fit: contain;
   filter: drop-shadow(0 4px 7px color-mix(in srgb, var(--growth-color) 12%, transparent));
+  transform: translateY(var(--swan-lift));
 }
 
 .ballet-growth-meta strong {
@@ -7137,10 +7179,6 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .ballet-swan-stage {
     flex-basis: 58px;
-  }
-
-  .ballet-swan-stage {
-    transform: translateY(-6px);
   }
 
   .ballet-membership-item > header {
