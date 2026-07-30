@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 15:03",
+  "updatedAt": "2026-07-30 15:14",
   "version": "1.0.7.42",
   "versionLabel": "v1.0.7.42",
   "branch": "bugfix/ballet-growth-bar-alignment",
-  "commit": "819ceda",
+  "commit": "b258a12",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-growth-bar-alignment · commit 819ceda · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-growth-bar-alignment · commit b258a12 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-30",
