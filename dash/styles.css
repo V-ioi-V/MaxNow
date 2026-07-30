@@ -5999,14 +5999,14 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-membership-day-ring strong {
   color: var(--membership-ink);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 650;
   line-height: 1;
 }
 
 .ballet-membership-day-ring small {
   color: var(--membership-muted);
-  font-size: 10px;
+  font-size: 9px;
   line-height: 1.05;
 }
 
@@ -6066,9 +6066,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 @container (min-width: 330px) and (max-width: 649px) {
   .ballet-membership-artwork {
-    width: 55%;
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 92%, transparent 100%);
-    mask-image: linear-gradient(90deg, #000 0%, #000 92%, transparent 100%);
+    width: 44%;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .ballet-membership-artwork img {
@@ -6078,7 +6078,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-overview-grid .ballet-membership-item > header,
   .ballet-overview-grid .ballet-membership-metrics,
   .ballet-overview-grid .ballet-membership-verdict {
-    margin-left: 35%;
+    margin-left: 45%;
   }
 
   .ballet-overview-grid .ballet-membership-item > header {
@@ -6108,9 +6108,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 @container (min-width: 650px) {
   .ballet-membership-artwork {
-    width: 38%;
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 96%, transparent 100%);
-    mask-image: linear-gradient(90deg, #000 0%, #000 96%, transparent 100%);
+    width: 40%;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .ballet-membership-artwork img {
@@ -6120,7 +6120,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-overview-grid .ballet-membership-item > header,
   .ballet-overview-grid .ballet-membership-metrics,
   .ballet-overview-grid .ballet-membership-verdict {
-    margin-left: 31%;
+    margin-left: 42%;
   }
 
   .ballet-overview-grid .ballet-membership-item > header {
