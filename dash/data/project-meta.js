@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 12:39",
+  "updatedAt": "2026-07-30 12:49",
   "version": "1.0.7.39",
   "versionLabel": "v1.0.7.39",
   "branch": "feature/ballet-growth-clarity",
-  "commit": "0ce13d7",
+  "commit": "dea362b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-growth-clarity · commit 0ce13d7 · 有未提交代码改动",
+  "deployNote": "feature/ballet-growth-clarity · commit dea362b · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-30",
