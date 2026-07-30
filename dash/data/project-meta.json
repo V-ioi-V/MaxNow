@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29 23:56",
-  "version": "1.0.7.36",
-  "versionLabel": "v1.0.7.36",
-  "branch": "feature/ballet-auto-level-swan",
-  "commit": "699d95f",
+  "updatedAt": "2026-07-30 10:35",
+  "version": "1.0.7.37",
+  "versionLabel": "v1.0.7.37",
+  "branch": "feature/ballet-swan-growth-assets",
+  "commit": "f2e1017",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-auto-level-swan · commit 699d95f · 有未提交代码改动",
+  "deployNote": "feature/ballet-swan-growth-assets · commit f2e1017 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "小天鹅改为十阶段自然成长图像",
+      "summary": "用 Owner 确认的二维粉嫩小天鹅成长图替换代码内 SVG：Lv.1–Lv.3 为灰色绒毛雏鹅，Lv.4–Lv.6 逐步灰白换羽，Lv.7–Lv.9 形成白色成熟体态，Lv.10 为带克制光环与星点的成年天鹅。"
+    },
     {
       "date": "2026-07-29",
       "title": "升班按课次自动升级，成长改为十级小天鹅",
@@ -28,11 +33,6 @@
       "date": "2026-07-29",
       "title": "课表显示报名与排队人数",
       "summary": "闻道课表解析增加独立 `waitlistCount` 脱敏字段，与现有报名数 / 容量一起进入只读快照；排队人数只读取源站 `Wait` 数字，不再用报名数减容量推断。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "柔化课表日期分界",
-      "summary": "撤销贯穿课表全高的 `2px` 玫瑰粗线；日期边界和教室边界统一回到 `1px`，仅用暖灰粉深浅区分两级分组，让课表更接近日历而不是表格。"
     }
   ]
 }

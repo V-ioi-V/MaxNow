@@ -5615,7 +5615,6 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-swan-stage {
-  --swan-scale: 0.82;
   min-width: 0;
   display: grid;
   gap: 6px;
@@ -5626,68 +5625,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-swan-icon {
   display: block;
   width: 82px;
-  height: 68px;
-  overflow: visible;
-}
-
-.ballet-swan-bird {
-  transform: scale(var(--swan-scale));
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform 240ms ease;
-}
-
-.ballet-swan-halo {
-  fill: color-mix(in srgb, var(--growth-color) 9%, transparent);
-  stroke: color-mix(in srgb, var(--growth-color) 22%, transparent);
-  stroke-width: 1;
-}
-
-.ballet-swan-body,
-.ballet-swan-head {
-  fill: #fffdfd;
-  stroke: color-mix(in srgb, var(--growth-color) 68%, #ffffff);
-  stroke-width: 2.2;
-}
-
-.ballet-swan-neck {
-  fill: none;
-  stroke: color-mix(in srgb, var(--growth-color) 68%, #ffffff);
-  stroke-linecap: round;
-  stroke-width: 7;
-}
-
-.ballet-swan-wing {
-  fill: color-mix(in srgb, var(--growth-color) 8%, #ffffff);
-  stroke: color-mix(in srgb, var(--growth-color) 56%, #ffffff);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
-}
-
-.ballet-swan-feather,
-.ballet-swan-ripple,
-.ballet-swan-sparkles path {
-  fill: none;
-  stroke: color-mix(in srgb, var(--growth-color) 58%, #ffffff);
-  stroke-linecap: round;
-  stroke-width: 1.7;
-}
-
-.ballet-swan-ripple-soft {
-  opacity: 0.58;
-}
-
-.ballet-swan-eye {
-  fill: #45364e;
-}
-
-.ballet-swan-beak {
-  fill: #d99771;
-}
-
-.ballet-swan-sparkles circle {
-  fill: color-mix(in srgb, var(--growth-color) 70%, #ffffff);
+  height: 82px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 7px color-mix(in srgb, var(--growth-color) 12%, transparent));
 }
 
 .ballet-swan-steps {
@@ -7032,7 +6972,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   }
 
   .ballet-swan-icon {
-    height: 60px;
+    height: 70px;
   }
 
   .ballet-membership-item > header {

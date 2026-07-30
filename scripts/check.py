@@ -1476,9 +1476,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=194" not in dashboard_html
+        "styles.css?v=195" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=161" not in dashboard_html
+        or "app.js?v=162" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1506,6 +1506,8 @@ def check_secondary_view_style():
 
 
 def check_ballet_growth_contract():
+    dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
+    dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     specification = (ROOT / "SPEC.md").read_text(encoding="utf-8")
     growth_standard = (ROOT / "BALLET_GROWTH_SCORING.md").read_text(encoding="utf-8")
@@ -1586,6 +1588,22 @@ def check_ballet_growth_contract():
     if len(growth_level_code) != 10 or growth_level_code[-1] != (10, 200):
         raise ValueError("ballet growth contract: growth must contain 10 levels and reach Lv.10 at 200 classes")
 
+    swan_assets = [
+        ROOT / "dash/assets/ballet/swan-growth-sheet.png",
+        *(ROOT / f"dash/assets/ballet/swan-lv{level}.png" for level in range(1, 11)),
+    ]
+    if any(not asset.exists() or asset.stat().st_size < 1024 for asset in swan_assets):
+        raise ValueError("ballet growth contract: approved swan source or one of the 10 level assets is missing")
+    if (
+        'id="ballet-swan-icon"' not in dashboard_html
+        or 'src="./assets/ballet/swan-lv1.png"' not in dashboard_html
+        or 'icon.src = `./assets/ballet/swan-lv${safeLevel}.png`;' not in dashboard_js
+        or "object-fit: contain;" not in dashboard_css
+    ):
+        raise ValueError("ballet growth contract: 10-stage swan image rendering is incomplete")
+    if 'class="ballet-swan-icon" viewBox=' in dashboard_html or "data-swan-unlock" in dashboard_html:
+        raise ValueError("ballet growth contract: retired SVG swan stages remain")
+
     synchronized_behavior = (
         ("const sampleSufficient = observationDays >= 21;", "至少覆盖 21 天"),
         (
@@ -1601,7 +1619,7 @@ def check_ballet_growth_contract():
             "升班进度 =",
         ),
         ("const completed = records.length;", "每节课固定计 1 节"),
-        ("renderBalletSwanLevel(growth.current.level);", "十级 SVG 进化状态"),
+        ("renderBalletSwanLevel(growth.current.level);", "十张本地透明 PNG"),
     )
     missing_behavior = [
         code
@@ -1625,7 +1643,7 @@ def check_ballet_growth_contract():
         )
     ):
         raise ValueError("ballet growth contract: retired month, score, or XP logic remains")
-    return "ballet growth contract: automatic promotion, 10 class-count levels, swan stages, and standalone document sync are valid"
+    return "ballet growth contract: automatic promotion, 10 class-count levels, approved swan growth assets, and standalone document sync are valid"
 
 
 def check_data_health_contract():
@@ -1643,7 +1661,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=161" not in dashboard_html:
+    if "app.js?v=162" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

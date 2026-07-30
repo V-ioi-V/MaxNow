@@ -3452,12 +3452,10 @@ function renderBalletSwanLevel(level) {
   const stage = qs("#ballet-swan-stage");
   if (!stage) return;
   const safeLevel = Math.max(1, Math.min(10, Math.floor(balletNumber(level, 1))));
+  const icon = qs("#ballet-swan-icon");
   stage.dataset.level = String(safeLevel);
   stage.setAttribute("aria-label", `小天鹅成长等级 ${safeLevel}，共 10 级`);
-  stage.style.setProperty("--swan-scale", String(0.82 + (safeLevel - 1) * 0.02));
-  stage.querySelectorAll("[data-swan-unlock]").forEach((element) => {
-    element.hidden = balletNumber(element.dataset.swanUnlock, 1) > safeLevel;
-  });
+  if (icon) icon.src = `./assets/ballet/swan-lv${safeLevel}.png`;
   stage.querySelectorAll(".ballet-swan-step").forEach((step, index) => {
     step.classList.toggle("is-reached", index < safeLevel);
     step.classList.toggle("is-current", index === safeLevel - 1);

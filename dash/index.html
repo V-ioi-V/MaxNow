@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=194" />
+    <link rel="stylesheet" href="./styles.css?v=195" />
   </head>
   <body>
     <div class="app-shell">
@@ -701,29 +701,15 @@
                   </div>
                   <div class="ballet-level-layout">
                     <div class="ballet-swan-stage" id="ballet-swan-stage" data-level="1" role="img" aria-label="小天鹅成长等级 1，共 10 级">
-                      <svg class="ballet-swan-icon" viewBox="0 0 120 96" aria-hidden="true">
-                        <circle class="ballet-swan-halo" cx="60" cy="43" r="34" data-swan-unlock="9" hidden></circle>
-                        <g class="ballet-swan-bird">
-                          <path class="ballet-swan-ripple" d="M20 78 C35 73 49 83 64 78 C79 73 91 82 103 78"></path>
-                          <path class="ballet-swan-ripple ballet-swan-ripple-soft" d="M31 87 C43 83 55 90 68 86 C80 82 89 88 97 85" data-swan-unlock="8" hidden></path>
-                          <path class="ballet-swan-body" d="M24 58 C32 47 49 43 67 48 C80 52 88 62 84 70 C78 82 51 84 34 75 C27 71 22 65 24 58 Z"></path>
-                          <path class="ballet-swan-neck" d="M70 58 C84 51 76 38 78 28 C80 18 87 13 95 17 C100 20 100 27 96 31"></path>
-                          <circle class="ballet-swan-head" cx="95" cy="22" r="7"></circle>
-                          <circle class="ballet-swan-eye" cx="98" cy="20" r="1.4"></circle>
-                          <path class="ballet-swan-beak" d="M101 23 L112 27 L101 29 Z"></path>
-                          <path class="ballet-swan-wing" d="M37 61 C48 49 68 51 77 64 C65 59 55 70 39 70" data-swan-unlock="2" hidden></path>
-                          <path class="ballet-swan-feather" d="M45 61 C51 57 57 57 62 59" data-swan-unlock="3" hidden></path>
-                          <path class="ballet-swan-feather" d="M43 65 C51 61 59 62 66 65" data-swan-unlock="4" hidden></path>
-                          <path class="ballet-swan-feather" d="M47 69 C55 66 63 67 70 70" data-swan-unlock="5" hidden></path>
-                          <path class="ballet-swan-feather" d="M55 56 C60 54 66 55 71 58" data-swan-unlock="6" hidden></path>
-                          <path class="ballet-swan-feather" d="M59 72 C66 69 72 69 77 70" data-swan-unlock="7" hidden></path>
-                          <g class="ballet-swan-sparkles" data-swan-unlock="10" hidden>
-                            <path d="M23 25 V35 M18 30 H28"></path>
-                            <path d="M109 43 V51 M105 47 H113"></path>
-                            <circle cx="31" cy="17" r="2"></circle>
-                          </g>
-                        </g>
-                      </svg>
+                      <img
+                        class="ballet-swan-icon"
+                        id="ballet-swan-icon"
+                        src="./assets/ballet/swan-lv1.png"
+                        alt=""
+                        width="512"
+                        height="512"
+                        decoding="async"
+                      />
                       <div class="ballet-swan-steps" aria-hidden="true">
                         <span class="ballet-swan-step is-reached is-current"></span>
                         <span class="ballet-swan-step"></span>
@@ -1249,6 +1235,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=161"></script>
+    <script src="./app.js?v=162"></script>
   </body>
 </html>
