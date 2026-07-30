@@ -1790,3 +1790,16 @@ local visual verification: 2048×1200、1600×1000、1280×900、390×844 下均
 server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=211 200、受保护 app.js?v=171 未认证 302、芭蕾插画 200、Blog 200；nginx 与 rolling / full / Session 状态 / 自动抢课 timer 均 active
 safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
 ```
+
+2026-07-30 已修正课程票券色差、插画、圆环和内框：
+
+```text
+deployed commit: 53ee68f Polish ballet membership ticket
+version: 1.0.7.57
+changes: 票券底色改为与插画纸色一致的 #fefaf4 并取消图片混合模式；宽卡遮罩延后到横向脚尖之后；有效卡标签改为玫瑰金；圆环两行数字改为 flex 纵向居中；删除顶部内分隔线和右侧票根虚线
+asset cache: styles.css?v=212；app.js?v=172
+runtime data backup: /var/backups/maxnow-dashboard-predeploy-53ee68f-20260730-2300.tgz（部署前完整备份 dash/data）
+local visual verification: 3840×1400、2048×1200、1600×1000、390×844 均无整页或课程卡内容溢出；2048px / 1600px 三个概览格同顶同底等高；圆环当前天数与总天数保持 1px 间隔；内框线节点为 0；控制台无 warning / error
+server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=212 200、受保护 app.js?v=172 未认证 302、芭蕾插画 200、Blog 200；nginx、maxnow-auth 与四个芭蕾 timer 均 active
+safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
+```
