@@ -1803,3 +1803,16 @@ local visual verification: 3840×1400、2048×1200、1600×1000、390×844 均�
 server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=212 200、受保护 app.js?v=172 未认证 302、芭蕾插画 200、Blog 200；nginx、maxnow-auth 与四个芭蕾 timer 均 active
 safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
 ```
+
+2026-07-30 已分离课程票券舞者与事实区并缩小圆环数字：
+
+```text
+deployed commit: a7ac5bd Separate membership artwork and facts
+version: 1.0.7.58
+changes: 330px 以上课程票券取消舞者右侧遮罩，改为互不重叠的左右物理分区；中等卡使用 44% 舞者宽度与 45% 事实区起点，宽卡使用 40% 舞者宽度与 42% 事实区起点，标题、日期和指标从横向脚尖之后开始；有效天数圆环当前天数从 24px 缩至 18px，总天数为 9px
+asset cache: styles.css?v=213；app.js?v=172
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260730-membership-foot-ring-a7ac5bd/dash-data.tgz（部署前完整备份 dash/data）
+local visual verification: 3840×1400 宽卡的舞者区域与事实区保持 25.89px 正向间距；2048×1200 与 1600×1000 三个概览格同顶、同底、等高，事实区与舞者区分别保持 7.35px / 5.95px 间距；390×844 无整页横向溢出；圆环数字为 18px / 9px 并保持 1px 纵向间距
+server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=213 200、受保护 app.js?v=172 未认证 302、芭蕾插画 200、Blog 200；nginx、maxnow-auth 与四个芭蕾 timer 均 active，rolling / full / 自动抢课 service 均 inactive
+safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
+```
