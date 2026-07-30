@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 14:38",
-  "version": "1.0.7.41",
-  "versionLabel": "v1.0.7.41",
-  "branch": "feature/ballet-growth-next-step",
-  "commit": "784dbde",
+  "updatedAt": "2026-07-30 15:03",
+  "version": "1.0.7.42",
+  "versionLabel": "v1.0.7.42",
+  "branch": "bugfix/ballet-growth-bar-alignment",
+  "commit": "819ceda",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-growth-next-step · commit 784dbde · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-growth-bar-alignment · commit 819ceda · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "对齐成长卡上下两根进度条",
+      "summary": "紫色成长进度条移出“小天鹅 + 文字”两列布局，改为占满内层卡片内容宽度；它与上方蓝色课程进度条保持相同的左右起止点。"
+    },
     {
       "date": "2026-07-30",
       "title": "成长等级标题只显示当前 Lv",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "上提小天鹅成长图视觉重心",
       "summary": "成长等级块把“小天鹅 + 十段进度”作为一组在桌面端光学上提 `10px`、窄屏上提 `6px`，补偿低等级透明 PNG 上方留白偏多造成的视觉下沉；十张素材的尺寸、成长比例和切换逻辑保持不变。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "小天鹅改为十阶段自然成长图像",
-      "summary": "用 Owner 确认的二维粉嫩小天鹅成长图替换代码内 SVG：Lv.1–Lv.3 为灰色绒毛雏鹅，Lv.4–Lv.6 逐步灰白换羽，Lv.7–Lv.9 形成白色成熟体态，Lv.10 为带克制光环与星点的成年天鹅。"
     }
   ]
 };

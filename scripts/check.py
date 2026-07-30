@@ -1476,7 +1476,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=198" not in dashboard_html
+        "styles.css?v=199" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=165" not in dashboard_html
     ):
@@ -1603,6 +1603,13 @@ def check_ballet_growth_contract():
         or "transform: translateY(-6px);" not in dashboard_css
         or 'id="ballet-level-progress"' not in dashboard_html
         or 'id="ballet-level-progress-fill"' not in dashboard_html
+        or ".ballet-level-progress {\n  min-width: 0;\n  width: 100%;" not in dashboard_css
+        or not re.search(
+            r'class="ballet-level-progress">\s*<div\s+class="ballet-growth-track".*?'
+            r'id="ballet-level-progress".*?<div class="ballet-level-layout">',
+            dashboard_html,
+            re.DOTALL,
+        )
         or "const levelCompleted = next ? Math.max(0, completed - current.threshold) : 1;" not in dashboard_js
         or "const levelTarget = next ? Math.max(1, next.threshold - current.threshold) : 1;" not in dashboard_js
         or "setText(\"#ballet-level-title\", `Lv.${growth.current.level}`);" not in dashboard_js

@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=198" />
+    <link rel="stylesheet" href="./styles.css?v=199" />
   </head>
   <body>
     <div class="app-shell">
@@ -698,29 +698,29 @@
                     <span>成长等级</span>
                     <strong id="ballet-level-title">Lv.1</strong>
                   </div>
-                  <div class="ballet-level-layout">
-                    <div class="ballet-swan-stage" id="ballet-swan-stage" data-level="1" role="img" aria-label="小天鹅成长等级 Lv.1">
-                      <img
-                        class="ballet-swan-icon"
-                        id="ballet-swan-icon"
-                        src="./assets/ballet/swan-lv1.png"
-                        alt=""
-                        width="512"
-                        height="512"
-                        decoding="async"
-                      />
+                  <div class="ballet-level-progress">
+                    <div
+                      class="ballet-growth-track"
+                      role="progressbar"
+                      aria-label="当前成长等级课次进度"
+                      aria-valuemin="0"
+                      aria-valuemax="10"
+                      aria-valuenow="0"
+                      id="ballet-level-progress"
+                    >
+                      <span id="ballet-level-progress-fill"></span>
                     </div>
-                    <div class="ballet-level-progress">
-                      <div
-                        class="ballet-growth-track"
-                        role="progressbar"
-                        aria-label="当前成长等级课次进度"
-                        aria-valuemin="0"
-                        aria-valuemax="10"
-                        aria-valuenow="0"
-                        id="ballet-level-progress"
-                      >
-                        <span id="ballet-level-progress-fill"></span>
+                    <div class="ballet-level-layout">
+                      <div class="ballet-swan-stage" id="ballet-swan-stage" data-level="1" role="img" aria-label="小天鹅成长等级 Lv.1">
+                        <img
+                          class="ballet-swan-icon"
+                          id="ballet-swan-icon"
+                          src="./assets/ballet/swan-lv1.png"
+                          alt=""
+                          width="512"
+                          height="512"
+                          decoding="async"
+                        />
                       </div>
                       <div class="ballet-growth-meta">
                         <strong id="ballet-growth-class-count">本级 0 / 10 节</strong>
