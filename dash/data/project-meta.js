@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 20:12",
-  "version": "1.0.7.50",
-  "versionLabel": "v1.0.7.50",
-  "branch": "bugfix/ballet-swan-center-alignment",
-  "commit": "6b1e608",
+  "updatedAt": "2026-07-30 20:22",
+  "version": "1.0.7.51",
+  "versionLabel": "v1.0.7.51",
+  "branch": "feature/ballet-manual-attendance-20260730",
+  "commit": "bcb343b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-swan-center-alignment · commit 6b1e608 · 有未提交代码改动",
+  "deployNote": "feature/ballet-manual-attendance-20260730 · commit bcb343b · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "手动补录 7 月 30 日软开课",
+      "summary": "按 Owner 提供的课表截图，手动补录 `2026-07-30 18:45–19:45` 李俊老师大教室“软开课”，记录状态为已上课，并使用 `manual` 稳定键保存在服务器私有上课台账中。"
+    },
     {
       "date": "2026-07-30",
       "title": "按视觉中心对齐等级与小天鹅",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "按可见主体对齐十级小天鹅",
       "summary": "成长等级右上角不再对十张透明 PNG 的完整画布做统一像素位移，改为按每张素材的透明上边界设置百分比光学上提。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "课表改为课程色与预约深浅",
-      "summary": "周课表按课程类型与芭蕾级别使用固定柔和色：L1 / L1.5 绿色、L2 蓝色、L3 杏桃色、L4 紫色、L5 玫瑰色，软开灰米、肌肉素质浅黄、技巧课柔粉；所有课程卡改为无渐变的实心底。"
     }
   ]
 };

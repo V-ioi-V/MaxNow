@@ -1718,3 +1718,5 @@ runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260710-before-cma-weat
 runtime data stash: before-cma-weather-runtime-data
 verification: 默认模型 14:45 返回阴、0mm；CMA 15:00 返回阵雨、1.7mm；服务器 weather 刷新后 code=80、icon=rain、temp=28°C、今日摘要雷阵雨
 ```
+
+2026-07-30 20:21 使用仓库 `scripts/sync_ballet.py` 的本地归一化、ledger 校验、read model 校验和原子写入函数，手动补入 Owner 确认的 `2026-07-30 18:45–19:45` 李俊大教室软开课。写入前确认目标不存在，并把私有 `attendance-ledger.json` 与公开 `ballet.*` 备份到 `/home/ubuntu/maxnow-deploy-backups/20260730-manual-attendance-UvM4Jf`；记录使用 `manual` 稳定键，公开数据校验为累计 `4 节 / 300 分钟`、本周完成 `2 节 / 150 分钟`、2 条手工记录，课表目标课程可匹配为“已上完”，成长进度为 `4 / 10`。第一次输入因 Windows 管道编码把中文变为问号，校验发现课程类型误判后立即从上述备份完整回滚；随后改用 Unicode 转义重新写入并复验正确，错误记录未保留。全过程未读取 PHPSESSID、未访问闻道、未触发同步，也没有提交预约、排队、取消或转课。
