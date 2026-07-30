@@ -1842,3 +1842,16 @@ local visual verification: 3840×1400、2048×1200、1600×1000、390×844 下�
 server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；styles.css?v=215 200、首页 302、登录页 200、未认证 ballet 数据 401、Blog 200；nginx、maxnow-auth 与四个芭蕾 timer 均 active，rolling / full / 自动抢课 service 均 inactive
 safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
 ```
+
+2026-07-30 已将课程票券圆环比例改为单行：
+
+```text
+deployed commit: d913c74 Align membership ring ratio inline
+version: 1.0.7.61
+changes: 圆环内当前天数与总天数从上下两行改为单行横排 N /总天数；两段间距 2px，总天数下移 1px 做光学对齐
+asset cache: styles.css?v=216；app.js?v=172
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260730-membership-ring-inline-d913c74/dash-data.tgz（部署前完整备份 dash/data）
+local visual verification: 2048×1200、1600×1000、390×844 下当前天数与总天数保持同一行，两段中心高度差不超过 1px，组合中心与圆心误差小于 0.01px；卡内和整页横向溢出为 0
+server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；styles.css?v=216 200、首页 302、登录页 200、未认证 ballet 数据 401、Blog 200
+safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
+```
