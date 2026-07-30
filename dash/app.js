@@ -3275,9 +3275,50 @@ function renderBalletTraining() {
   renderBalletTrend();
 }
 
+function createBalletCalendarIcon(className = "") {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  svg.classList.add("ballet-membership-calendar-icon");
+  if (className) svg.classList.add(className);
+  [
+    ["rect", { x: "3.5", y: "5.5", width: "17", height: "15", rx: "3" }],
+    ["path", { d: "M7.5 3.5v4M16.5 3.5v4M3.5 10h17" }],
+    ["path", { d: "M8 14h2M14 14h2M8 17h2M14 17h2" }],
+  ].forEach(([tag, attributes]) => {
+    const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+    svg.appendChild(node);
+  });
+  return svg;
+}
+
+function balletMembershipDisplayName(card = {}) {
+  const rawName = String(card.name || "课程卡").trim();
+  const formatted = rawName.replace(/\s*-\s*(?=\d+\s*次$)/, " · ");
+  return /^芭蕾/.test(formatted) ? formatted : `芭蕾${formatted}`;
+}
+
 function createBalletMembershipItem(card = {}) {
   const article = document.createElement("article");
   article.className = "ballet-membership-item";
+
+  const artwork = document.createElement("div");
+  artwork.className = "ballet-membership-artwork";
+  artwork.setAttribute("aria-hidden", "true");
+  const artworkImage = document.createElement("img");
+  artworkImage.src = "./assets/ballet/membership-ballerina.webp";
+  artworkImage.alt = "";
+  artwork.appendChild(artworkImage);
+  const seam = document.createElement("span");
+  seam.className = "ballet-membership-seam";
+  seam.setAttribute("aria-hidden", "true");
+  const notchStart = document.createElement("span");
+  notchStart.className = "ballet-membership-notch is-start";
+  notchStart.setAttribute("aria-hidden", "true");
+  const notchEnd = document.createElement("span");
+  notchEnd.className = "ballet-membership-notch is-end";
+  notchEnd.setAttribute("aria-hidden", "true");
 
   const header = document.createElement("header");
   const title = document.createElement("div");
@@ -3286,51 +3327,110 @@ function createBalletMembershipItem(card = {}) {
   const period = document.createElement("small");
   eyebrow.className = "eyebrow";
   eyebrow.textContent = "Active Card";
-  name.textContent = String(card.name || "课程卡");
+  name.textContent = balletMembershipDisplayName(card);
   period.className = "ballet-membership-period";
   period.textContent = card.validFrom ? `${formatDateOnly(card.validFrom)} 开卡` : "开卡日期待同步";
   title.append(eyebrow, name, period);
   const validity = document.createElement("span");
-  validity.className = "status-pill";
-  validity.textContent = card.validThrough ? `有效至 ${String(card.validThrough).slice(0, 10)}` : "有效期待同步";
+  validity.className = "ballet-membership-validity";
+  validity.append(
+    createBalletCalendarIcon(),
+    document.createTextNode(
+      card.validThrough ? `有效至 ${String(card.validThrough).slice(0, 10)}` : "有效期待同步",
+    ),
+  );
   header.append(title, validity);
 
   const pace = card.pace || {};
+  const usedClasses = Math.max(0, Math.floor(balletNumber(card.usedClasses)));
+  const totalClasses = Math.max(0, Math.floor(balletNumber(card.totalClasses)));
+  const remainingClasses = Math.max(0, Math.floor(balletNumber(card.remainingClasses)));
+  const openDayNumber = Math.max(0, Math.floor(balletNumber(pace.openDayNumber)));
+  const validityDays = Math.max(0, Math.floor(balletNumber(pace.validityDays)));
+  const usageProgress = totalClasses > 0 ? Math.min(100, (usedClasses / totalClasses) * 100) : 0;
+  const validityProgress = validityDays > 0 ? Math.min(100, (openDayNumber / validityDays) * 100) : 0;
   const metrics = document.createElement("div");
   metrics.className = "ballet-membership-metrics";
-  [
-    [
-      "课程使用",
-      `已用 ${Math.max(0, Math.floor(balletNumber(card.usedClasses)))} / ${Math.max(0, Math.floor(balletNumber(card.totalClasses)))} 节`,
-      `剩 ${Math.max(0, Math.floor(balletNumber(card.remainingClasses)))} 节`,
-      "blue",
-    ],
-    [
-      "有效进度",
-      balletNumber(pace.openDayNumber) > 0
-        ? `第 ${Math.floor(balletNumber(pace.openDayNumber))} / ${Math.floor(balletNumber(pace.validityDays))} 天`
-        : "尚未开卡",
-      `到期前需 ${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`,
-      "orange",
-    ],
-  ].forEach(([label, value, detail, tone]) => {
-    const section = document.createElement("section");
-    section.dataset.tone = tone;
-    const span = document.createElement("span");
-    const strong = document.createElement("strong");
-    const small = document.createElement("small");
-    span.textContent = label;
-    strong.textContent = value;
-    small.textContent = detail;
-    section.append(span, strong, small);
-    metrics.appendChild(section);
-  });
+
+  const usage = document.createElement("section");
+  usage.className = "ballet-membership-usage";
+  usage.dataset.tone = "rose";
+  const usageLabel = document.createElement("span");
+  usageLabel.textContent = "课程使用";
+  const usageValue = document.createElement("div");
+  usageValue.className = "ballet-membership-usage-value";
+  usageValue.setAttribute("aria-label", `已用 ${usedClasses} / ${totalClasses} 节`);
+  const usagePrefix = document.createElement("b");
+  usagePrefix.textContent = "已用";
+  const usageCurrent = document.createElement("strong");
+  usageCurrent.textContent = String(usedClasses);
+  const usageTotal = document.createElement("b");
+  usageTotal.textContent = `/ ${totalClasses} 节`;
+  usageValue.append(usagePrefix, usageCurrent, usageTotal);
+  const usageTrack = document.createElement("div");
+  usageTrack.className = "ballet-membership-usage-track";
+  usageTrack.setAttribute("role", "progressbar");
+  usageTrack.setAttribute("aria-label", "课程卡已使用课次");
+  usageTrack.setAttribute("aria-valuemin", "0");
+  usageTrack.setAttribute("aria-valuemax", String(totalClasses));
+  usageTrack.setAttribute("aria-valuenow", String(usedClasses));
+  const usageFill = document.createElement("span");
+  usageFill.style.width = `${usageProgress}%`;
+  usageFill.style.minWidth = usageProgress > 0 ? "8px" : "0";
+  usageTrack.appendChild(usageFill);
+  const usageDetail = document.createElement("small");
+  usageDetail.textContent = `剩余 ${remainingClasses} 节`;
+  usage.append(usageLabel, usageValue, usageTrack, usageDetail);
+
+  const validityMetric = document.createElement("section");
+  validityMetric.className = "ballet-membership-validity-metric";
+  validityMetric.dataset.tone = "rose";
+  const validityCopy = document.createElement("div");
+  validityCopy.className = "ballet-membership-validity-copy";
+  const validityLabel = document.createElement("span");
+  validityLabel.textContent = "有效进度";
+  const validityValue = document.createElement("div");
+  validityValue.className = "ballet-membership-day-value";
+  if (openDayNumber > 0) {
+    const dayPrefix = document.createElement("b");
+    dayPrefix.textContent = "第";
+    const dayCurrent = document.createElement("strong");
+    dayCurrent.className = "ballet-membership-day-current";
+    dayCurrent.textContent = String(openDayNumber);
+    const dayTotal = document.createElement("b");
+    dayTotal.className = "ballet-membership-day-total";
+    dayTotal.textContent = `/ ${validityDays} 天`;
+    validityValue.append(dayPrefix, dayCurrent, dayTotal);
+  } else {
+    const unopened = document.createElement("b");
+    unopened.textContent = "尚未开卡";
+    validityValue.appendChild(unopened);
+  }
+  const validityDetail = document.createElement("small");
+  validityDetail.textContent = `到期前需 ${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`;
+  validityCopy.append(validityLabel, validityValue, validityDetail);
+  const validityRing = document.createElement("div");
+  validityRing.className = "ballet-membership-day-ring";
+  validityRing.style.setProperty("--membership-day-progress", `${validityProgress}%`);
+  validityRing.setAttribute("role", "img");
+  validityRing.setAttribute("aria-label", `课程卡有效期第 ${openDayNumber} / ${validityDays} 天`);
+  const ringCurrent = document.createElement("strong");
+  ringCurrent.textContent = String(openDayNumber);
+  const ringTotal = document.createElement("small");
+  ringTotal.textContent = `/${validityDays}`;
+  validityRing.append(ringCurrent, ringTotal);
+  validityMetric.append(validityCopy, validityRing);
+  metrics.append(usage, validityMetric);
 
   const verdict = document.createElement("div");
   verdict.className = "ballet-membership-verdict";
+  const verdictIcon = document.createElement("span");
+  verdictIcon.className = "ballet-membership-verdict-icon";
+  verdictIcon.appendChild(createBalletCalendarIcon());
+  const verdictBody = document.createElement("div");
+  verdictBody.className = "ballet-membership-verdict-body";
   const verdictTitle = document.createElement("strong");
   const verdictCopy = document.createElement("p");
-  const remainingClasses = Math.max(0, Math.floor(balletNumber(card.remainingClasses)));
   const plannedRate = Math.max(0, Math.floor(balletNumber(pace.recommendedWholeClassesPerWeek)));
   if (!remainingClasses) {
     verdict.dataset.state = "success";
@@ -3343,23 +3443,22 @@ function createBalletMembershipItem(card = {}) {
   } else {
     verdict.dataset.state = "plan";
     verdictTitle.textContent = `按每周 ${plannedRate} 节，预计 ${formatDateOnly(pace.plannedFinishDate)} 用完`;
-    const scenario = balletNumber(pace.oneClassPerWeekProjectedRemaining) > 0
-      ? `若每周 1 节，到期约剩 ${Math.floor(balletNumber(pace.oneClassPerWeekProjectedRemaining))} 节。`
-      : "若每周 1 节，也可在有效期内用完。";
-    verdictCopy.textContent = `预计比到期早 ${Math.floor(balletNumber(pace.plannedBufferDays))} 天；${scenario}`;
+    verdictCopy.textContent = `预计比到期早 ${Math.floor(balletNumber(pace.plannedBufferDays))} 天`;
     if (pace.sampleSufficient && Number.isFinite(Number(pace.observedClassesPerWeek))) {
       const observed = document.createElement("p");
       const observedRate = balletNumber(pace.observedClassesPerWeek).toFixed(1);
       observed.textContent = pace.observedCanFinish
         ? `开卡后实际 ${observedRate} 节/周，按此预计 ${formatDateOnly(pace.observedFinishDate)} 用完。`
         : `开卡后实际 ${observedRate} 节/周，到期预计约剩 ${Math.floor(balletNumber(pace.observedProjectedRemainingAtExpiry))} 节。`;
-      verdict.append(verdictTitle, verdictCopy, observed);
-      article.append(header, metrics, verdict);
+      verdictBody.append(verdictTitle, verdictCopy, observed);
+      verdict.append(verdictIcon, verdictBody);
+      article.append(artwork, seam, notchStart, notchEnd, header, metrics, verdict);
       return article;
     }
   }
-  verdict.append(verdictTitle, verdictCopy);
-  article.append(header, metrics, verdict);
+  verdictBody.append(verdictTitle, verdictCopy);
+  verdict.append(verdictIcon, verdictBody);
+  article.append(artwork, seam, notchStart, notchEnd, header, metrics, verdict);
   return article;
 }
 

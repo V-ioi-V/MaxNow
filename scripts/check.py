@@ -553,6 +553,9 @@ def check_ballet_read_model():
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    membership_art = ROOT / "dash/assets/ballet/membership-ballerina.webp"
+    if not membership_art.exists() or membership_art.stat().st_size <= 0:
+        raise ValueError("ballet: membership ballerina artwork is missing")
     if (
         "function balletClassBoundary" not in dashboard_js
         or "boundary >= Date.now()" not in dashboard_js
@@ -594,6 +597,12 @@ def check_ballet_read_model():
         or ".ballet-week-grid .ballet-week-bottom {" not in dashboard_css
         or ".ballet-week-type-track {" not in dashboard_css
         or ".ballet-membership-card {" not in dashboard_css
+        or "function createBalletCalendarIcon(" not in dashboard_js
+        or "function balletMembershipDisplayName(" not in dashboard_js
+        or "./assets/ballet/membership-ballerina.webp" not in dashboard_js
+        or ".ballet-membership-artwork {" not in dashboard_css
+        or ".ballet-membership-day-ring {" not in dashboard_css
+        or "@container (max-width: 360px)" not in dashboard_css
         or ".ballet-week-grid {" not in dashboard_css
     ):
         raise ValueError("ballet: membership or weekly frontend contract is incomplete")
@@ -1545,9 +1554,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=208" not in dashboard_html
+        "styles.css?v=209" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=169" not in dashboard_html
+        or "app.js?v=170" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1765,7 +1774,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=169" not in dashboard_html:
+    if "app.js?v=170" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

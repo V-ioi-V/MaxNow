@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 20:55",
-  "version": "1.0.7.53",
-  "versionLabel": "v1.0.7.53",
-  "branch": "feature/ballet-training-breakdowns",
-  "commit": "b4e9d8a",
+  "updatedAt": "2026-07-30 21:38",
+  "version": "1.0.7.54",
+  "versionLabel": "v1.0.7.54",
+  "branch": "feature/ballet-membership-card-design",
+  "commit": "2069d51",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-training-breakdowns · commit b4e9d8a · 有未提交代码改动",
+  "deployNote": "feature/ballet-membership-card-design · commit 2069d51 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "将课程卡升级为暖象牙芭蕾票券",
+      "summary": "课程卡沿用现有脱敏课程卡数据，重构为暖象牙票券：加入淡香槟金描边、侧边缺口、票根虚线、芭蕾线稿背景和编辑感标题，不把任何动态文字或数字写进图片。"
+    },
     {
       "date": "2026-07-30",
       "title": "训练记录增加老师分布并调整页面顺序",
@@ -28,11 +33,6 @@
       "date": "2026-07-30",
       "title": "按视觉中心对齐等级与小天鹅",
       "summary": "修正上一版只对齐可见主体顶部仍会让较高小天鹅视觉重心下沉的问题；`Lv.N` 与小天鹅舞台改为中心线排列，十张素材再按各自透明像素可见中心做百分比位移。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "将成长卡对齐与课表深色状态发布到生产",
-      "summary": "生产服务器从仍使用统一像素位移与旧课表色阶的 `1.0.7.46 / styles.css?v=203`，升级到按十张小天鹅素材透明边界对齐并使用明显排队 / 预约深浅的 `styles.css?v=205`。"
     }
   ]
 }

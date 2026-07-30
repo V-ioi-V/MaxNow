@@ -5698,6 +5698,400 @@ body[data-view="ricky"] .topbar-ricky-status {
   overflow-wrap: anywhere;
 }
 
+.ballet-membership-card {
+  --membership-ivory: #fffaf5;
+  --membership-ink: #482637;
+  --membership-rose: #c45e73;
+  --membership-rose-deep: #a8485f;
+  --membership-gold: #d7b06f;
+  --membership-line: #e6c99f;
+  --membership-muted: #85777a;
+  container-type: inline-size;
+}
+
+.ballet-overview-grid .ballet-membership-list {
+  min-height: 0;
+}
+
+.ballet-overview-grid .ballet-membership-item {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100%;
+  align-content: center;
+  gap: 12px;
+  padding: 18px 20px 20px;
+  border: 1px solid var(--membership-gold);
+  border-radius: 28px 28px 22px 22px;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(225, 173, 179, 0.1), transparent 34%),
+    radial-gradient(circle at 78% 78%, rgba(219, 181, 115, 0.08), transparent 30%),
+    linear-gradient(145deg, rgba(255, 250, 245, 0.98), rgba(255, 253, 250, 0.98));
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 255, 255, 0.72),
+    inset 0 0 0 4px rgba(215, 176, 111, 0.08),
+    0 15px 30px rgba(115, 71, 66, 0.12);
+}
+
+.ballet-membership-artwork {
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto 0 0;
+  width: 52%;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 58%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 58%, transparent 100%);
+}
+
+.ballet-membership-artwork img {
+  width: 152%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 43% 48%;
+  opacity: 0.5;
+  filter: saturate(0.72) contrast(0.9);
+  mix-blend-mode: multiply;
+}
+
+.ballet-membership-seam {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 17px;
+  bottom: 14px;
+  border-left: 1px dashed rgba(188, 137, 81, 0.28);
+  pointer-events: none;
+}
+
+.ballet-membership-notch {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  width: 12px;
+  height: 38px;
+  border: 1px solid var(--membership-gold);
+  background: #f8fbfe;
+  pointer-events: none;
+}
+
+.ballet-membership-notch.is-start {
+  left: 0;
+  border-left: 0;
+  border-radius: 0 999px 999px 0;
+  transform: translateY(-50%);
+}
+
+.ballet-membership-notch.is-end {
+  right: 0;
+  border-right: 0;
+  border-radius: 999px 0 0 999px;
+  transform: translateY(-50%);
+}
+
+.ballet-overview-grid .ballet-membership-item > header {
+  position: relative;
+  z-index: 1;
+  min-height: 100px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+  padding: 3px 14px 0 clamp(86px, 27%, 122px);
+}
+
+.ballet-membership-item > header > div {
+  min-width: 0;
+}
+
+.ballet-membership-item > header .eyebrow {
+  margin: 0;
+  color: var(--membership-rose-deep);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+}
+
+.ballet-membership-item h3 {
+  margin: 8px 0 0;
+  color: var(--membership-ink);
+  font-family: Georgia, "Songti SC", "STSong", "SimSun", serif;
+  font-size: clamp(19px, 1.6vw, 25px);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  line-height: 1.18;
+  text-wrap: balance;
+}
+
+.ballet-membership-period {
+  position: relative;
+  display: block;
+  margin-top: 17px;
+  color: var(--membership-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.ballet-membership-period::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 0;
+  width: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--membership-gold) 0 75%, transparent 75%);
+}
+
+.ballet-membership-validity {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-right: 4px;
+  padding: 0 11px;
+  border: 1px solid color-mix(in srgb, var(--membership-gold) 74%, #ffffff);
+  border-radius: 999px;
+  background: rgba(255, 249, 246, 0.88);
+  color: var(--membership-rose-deep);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.ballet-membership-calendar-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.ballet-overview-grid .ballet-membership-metrics {
+  position: relative;
+  z-index: 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ballet-overview-grid .ballet-membership-metrics section {
+  min-height: 126px;
+  align-content: center;
+  justify-items: stretch;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--membership-gold) 55%, #f4e6d3);
+  border-radius: 16px;
+  background: rgba(255, 253, 250, 0.86);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    0 7px 18px rgba(129, 82, 72, 0.05);
+  backdrop-filter: blur(2px);
+  text-align: left;
+}
+
+.ballet-membership-metrics section > span,
+.ballet-membership-validity-copy > span {
+  color: var(--membership-rose-deep);
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.ballet-membership-usage-value,
+.ballet-membership-day-value {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  color: var(--membership-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ballet-membership-usage-value b,
+.ballet-membership-day-value b {
+  color: var(--membership-ink);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.ballet-membership-usage-value strong,
+.ballet-membership-day-value strong {
+  color: var(--membership-rose);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(26px, 2.3vw, 38px);
+  font-weight: 650;
+  line-height: 0.9;
+}
+
+.ballet-membership-usage-track {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f1dfdd, #f7ebe7);
+  box-shadow: inset 0 1px 2px rgba(122, 75, 71, 0.08);
+}
+
+.ballet-membership-usage-track > span {
+  min-width: 8px;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--membership-rose), #d7818e);
+  box-shadow: 0 2px 5px rgba(171, 70, 92, 0.2);
+}
+
+.ballet-membership-metrics section > small,
+.ballet-membership-validity-copy > small {
+  color: var(--membership-muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.ballet-overview-grid .ballet-membership-validity-metric {
+  grid-template-columns: minmax(0, 1fr) 62px;
+  align-items: center;
+  column-gap: 9px;
+}
+
+.ballet-membership-validity-copy {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.ballet-membership-day-ring {
+  --membership-day-progress: 0%;
+  width: 62px;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: end center;
+  align-content: center;
+  padding: 10px 0 9px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #fffaf6 58%, transparent 60%),
+    conic-gradient(
+      from -18deg,
+      var(--membership-rose) var(--membership-day-progress),
+      #efdedb 0
+    );
+  color: var(--membership-ink);
+  box-shadow:
+    inset 0 0 0 1px rgba(200, 145, 126, 0.14),
+    0 5px 12px rgba(130, 82, 70, 0.07);
+  font-variant-numeric: tabular-nums;
+}
+
+.ballet-membership-day-ring strong {
+  align-self: end;
+  color: var(--membership-ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 0.9;
+}
+
+.ballet-membership-day-ring small {
+  align-self: start;
+  color: var(--membership-muted);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.ballet-overview-grid .ballet-membership-verdict {
+  position: relative;
+  z-index: 1;
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border: 1px solid color-mix(in srgb, var(--membership-rose) 35%, #f0d7d1);
+  border-radius: 17px;
+  background: linear-gradient(100deg, rgba(248, 229, 229, 0.92), rgba(255, 248, 246, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.ballet-membership-verdict-icon {
+  width: 40px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(190, 101, 118, 0.18);
+  border-radius: 50%;
+  background: rgba(232, 179, 184, 0.28);
+  color: var(--membership-rose-deep);
+}
+
+.ballet-membership-verdict-icon .ballet-membership-calendar-icon {
+  width: 20px;
+  height: 20px;
+  flex-basis: 20px;
+}
+
+.ballet-membership-verdict-body {
+  min-width: 0;
+}
+
+.ballet-membership-verdict strong,
+.ballet-membership-verdict[data-state="attention"] strong,
+.ballet-membership-verdict[data-state="plan"] strong {
+  color: var(--membership-ink);
+  font-family: Georgia, "Songti SC", "STSong", "SimSun", serif;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.ballet-membership-verdict p {
+  margin: 3px 0 0;
+  color: var(--membership-muted);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+@container (max-width: 520px) {
+  .ballet-overview-grid .ballet-membership-item > header {
+    min-height: 138px;
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-membership-validity {
+    justify-self: end;
+  }
+
+  .ballet-membership-day-total {
+    display: none;
+  }
+
+  .ballet-membership-day-current::after {
+    content: " 天";
+    color: var(--membership-ink);
+    font-family: inherit;
+    font-size: 12px;
+  }
+}
+
+@container (max-width: 360px) {
+  .ballet-overview-grid .ballet-membership-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-overview-grid .ballet-membership-metrics section {
+    min-height: 112px;
+  }
+}
+
 .ballet-growth-modules {
   min-width: 0;
   grid-column: 1 / -1;
@@ -7197,6 +7591,42 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-membership-item > header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .ballet-overview-grid .ballet-membership-item {
+    gap: 10px;
+    padding: 16px;
+    border-radius: 24px 24px 19px 19px;
+  }
+
+  .ballet-membership-artwork {
+    width: 68%;
+  }
+
+  .ballet-membership-artwork img {
+    width: 138%;
+    object-position: 43% 42%;
+    opacity: 0.42;
+  }
+
+  .ballet-overview-grid .ballet-membership-item > header {
+    min-height: 148px;
+    grid-template-columns: 1fr;
+    align-content: start;
+    padding: 4px 10px 0 88px;
+  }
+
+  .ballet-membership-validity {
+    justify-self: start;
+    margin-right: 0;
+  }
+
+  .ballet-overview-grid .ballet-membership-metrics section {
+    min-height: 116px;
+  }
+
+  .ballet-membership-seam {
+    right: 12px;
   }
 
   .topbar-heading {
