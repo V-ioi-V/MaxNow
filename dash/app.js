@@ -3436,10 +3436,14 @@ function getBalletGrowthLevelState(records) {
     BALLET_GROWTH_LEVELS[0];
   const currentIndex = BALLET_GROWTH_LEVELS.indexOf(current);
   const next = BALLET_GROWTH_LEVELS[currentIndex + 1] || null;
+  const stageCompleted = next ? Math.max(0, completed - current.threshold) : 1;
+  const stageTarget = next ? Math.max(1, next.threshold - current.threshold) : 1;
   return {
     completed,
     current,
     next,
+    stageCompleted,
+    stageTarget,
     remaining: next ? Math.max(0, next.threshold - completed) : 0,
   };
 }
@@ -3449,17 +3453,9 @@ function renderBalletSwanLevel(level) {
   if (!stage) return;
   const safeLevel = Math.max(1, Math.min(10, Math.floor(balletNumber(level, 1))));
   const icon = qs("#ballet-swan-icon");
-  const stages = qs("#ballet-growth-stages");
   stage.dataset.level = String(safeLevel);
-  stage.setAttribute("aria-label", `小天鹅成长等级 ${safeLevel}，共 10 级`);
+  stage.setAttribute("aria-label", `小天鹅当前成长阶段 ${safeLevel}`);
   if (icon) icon.src = `./assets/ballet/swan-lv${safeLevel}.png`;
-  stages?.querySelectorAll(".ballet-growth-stage").forEach((step, index) => {
-    const isCurrent = index === safeLevel - 1;
-    step.classList.toggle("is-reached", index < safeLevel);
-    step.classList.toggle("is-current", isCurrent);
-    if (isCurrent) step.setAttribute("aria-current", "step");
-    else step.removeAttribute("aria-current");
-  });
 }
 
 function updateBalletGrowthProgress(selector, fillSelector, value, maximum) {
@@ -3516,20 +3512,27 @@ function renderBalletGrowth() {
     promotion.isFinal ? Math.max(1, promotion.completed) : promotion.target,
   );
 
-  setText("#ballet-level-title", `第 ${growth.current.level} 阶段`);
+  setText(
+    "#ballet-level-title",
+    growth.next
+      ? `第 ${growth.current.level} 阶段 → 第 ${growth.next.level} 阶段`
+      : "第 10 阶段 · 已满级",
+  );
   setText(
     "#ballet-growth-class-count",
-    `已累计 ${growth.completed} 节`,
+    growth.next
+      ? `本阶段 ${growth.stageCompleted} / ${growth.stageTarget} 节`
+      : `已累计 ${growth.completed} 节`,
   );
   setText(
     "#ballet-level-next",
-    growth.next ? `再上 ${growth.remaining} 节进入第 ${growth.next.level} 阶段` : "第 10 阶段 · 已满级",
+    growth.next ? `还差 ${growth.remaining} 节进入第 ${growth.next.level} 阶段` : "成长等级已到最高级",
   );
-  setText(
-    "#ballet-level-note",
-    growth.next
-      ? "每节实际上课都会推动小天鹅长大。"
-      : "已完成十阶段成长，之后的实际上课节数仍会继续累计。",
+  updateBalletGrowthProgress(
+    "#ballet-level-progress",
+    "#ballet-level-progress-fill",
+    growth.stageCompleted,
+    growth.stageTarget,
   );
   renderBalletSwanLevel(growth.current.level);
 }

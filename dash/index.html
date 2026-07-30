@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=197" />
+    <link rel="stylesheet" href="./styles.css?v=198" />
   </head>
   <body>
     <div class="app-shell">
@@ -696,10 +696,10 @@
                 <section class="ballet-growth-block" data-tone="purple" aria-labelledby="ballet-level-title">
                   <div class="ballet-growth-block-head">
                     <span>成长等级</span>
-                    <strong id="ballet-level-title">第 1 阶段</strong>
+                    <strong id="ballet-level-title">第 1 阶段 → 第 2 阶段</strong>
                   </div>
                   <div class="ballet-level-layout">
-                    <div class="ballet-swan-stage" id="ballet-swan-stage" data-level="1" role="img" aria-label="小天鹅成长等级 1，共 10 级">
+                    <div class="ballet-swan-stage" id="ballet-swan-stage" data-level="1" role="img" aria-label="小天鹅当前成长阶段 1">
                       <img
                         class="ballet-swan-icon"
                         id="ballet-swan-icon"
@@ -711,28 +711,25 @@
                       />
                     </div>
                     <div class="ballet-level-progress">
-                      <ol class="ballet-growth-stages" id="ballet-growth-stages" aria-label="成长等级十阶段">
-                        <li class="ballet-growth-stage is-reached is-current" aria-current="step"><span>1</span></li>
-                        <li class="ballet-growth-stage"><span>2</span></li>
-                        <li class="ballet-growth-stage"><span>3</span></li>
-                        <li class="ballet-growth-stage"><span>4</span></li>
-                        <li class="ballet-growth-stage"><span>5</span></li>
-                        <li class="ballet-growth-stage"><span>6</span></li>
-                        <li class="ballet-growth-stage"><span>7</span></li>
-                        <li class="ballet-growth-stage"><span>8</span></li>
-                        <li class="ballet-growth-stage"><span>9</span></li>
-                        <li class="ballet-growth-stage"><span>10</span></li>
-                      </ol>
-                      <div class="ballet-growth-meta">
-                        <strong id="ballet-growth-class-count">已累计 0 节</strong>
-                        <small id="ballet-level-next">再上 10 节进入第 2 阶段</small>
+                      <div
+                        class="ballet-growth-track"
+                        role="progressbar"
+                        aria-label="当前成长阶段课次进度"
+                        aria-valuemin="0"
+                        aria-valuemax="10"
+                        aria-valuenow="0"
+                        id="ballet-level-progress"
+                      >
+                        <span id="ballet-level-progress-fill"></span>
                       </div>
-                      <p id="ballet-level-note">每节实际上课都会推动小天鹅长大。</p>
+                      <div class="ballet-growth-meta">
+                        <strong id="ballet-growth-class-count">本阶段 0 / 10 节</strong>
+                        <small id="ballet-level-next">还差 10 节进入第 2 阶段</small>
+                      </div>
                     </div>
                   </div>
                 </section>
               </div>
-              <p class="ballet-growth-disclaimer">均按实际上课记录计算，数据同步后自动更新。</p>
             </article>
           </section>
 
@@ -1223,6 +1220,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=163"></script>
+    <script src="./app.js?v=164"></script>
   </body>
 </html>

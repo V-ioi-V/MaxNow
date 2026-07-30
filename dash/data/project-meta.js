@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 12:49",
-  "version": "1.0.7.39",
-  "versionLabel": "v1.0.7.39",
-  "branch": "feature/ballet-growth-clarity",
-  "commit": "dea362b",
+  "updatedAt": "2026-07-30 14:09",
+  "version": "1.0.7.40",
+  "versionLabel": "v1.0.7.40",
+  "branch": "feature/ballet-growth-next-step",
+  "commit": "8856d5c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-growth-clarity · commit dea362b · 有未提交代码改动",
+  "deployNote": "feature/ballet-growth-next-step · commit 8856d5c · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "成长等级只保留到下一阶段的距离",
+      "summary": "紫色“成长等级”移除 `1–10` 全量编号，只展示“当前阶段 → 下一阶段”、本阶段已上 / 目标课次和还差多少节，保留当前阶段的小天鹅图像。"
+    },
     {
       "date": "2026-07-30",
       "title": "区分课程等级与小天鹅成长阶段",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "升班按课次自动升级，成长改为十级小天鹅",
       "summary": "升班进度达到当前规律 / 间歇课次目标后，MaxNow 自动从 `L1 → L1.5 → L2 → L3 → L4 → L5` 进入下一课程级别，不再停在“等待老师测评”的提示状态；已经达成的规律升级不会因之后训练频率下降而回退。自动升级只改变页面进度显示，不写入闻道或机构学籍。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "补齐本人候补位次与紧凑课程老师",
-      "summary": "周课表把预约快照中的本人候补序号匹配回对应课程，状态由笼统的 `排队中` 改为 `排队中 N`；该数字只表示 Owner 本人的候补位次，与人数行的全班 `Wait` 排队数保持独立。"
     }
   ]
 };
