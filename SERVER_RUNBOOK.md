@@ -1816,3 +1816,16 @@ local visual verification: 3840×1400 宽卡的舞者区域与事实区保持 25
 server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=213 200、受保护 app.js?v=172 未认证 302、芭蕾插画 200、Blog 200；nginx、maxnow-auth 与四个芭蕾 timer 均 active，rolling / full / 自动抢课 service 均 inactive
 safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
 ```
+
+2026-07-30 已拆开课程票券有效进度文字与圆环：
+
+```text
+deployed commit: e860e36 Separate membership progress ring layout
+version: 1.0.7.59
+changes: 有效进度卡改为三行网格，首行仅放标签和右上 50px 小圆环，主比例与到期说明分别独占后两行；圆环内当前天数从 18px 缩至 15px，总天数从 9px 缩至 8px
+asset cache: styles.css?v=214；app.js?v=172
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260730-membership-ring-layout-e860e36/dash-data.tgz（部署前完整备份 dash/data）
+local visual verification: 3840×1400、2048×1200、1600×1000、390×844 下主比例位于圆环下方并保持至少 8px 间距；到期说明均保持单行；卡内和整页横向溢出为 0；2048px / 1600px 三个概览格同顶、同底、同高
+server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=214 200、Blog 200；nginx、maxnow-auth 与四个芭蕾 timer 均 active，rolling / full / 自动抢课 service 均 inactive
+safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
+```
