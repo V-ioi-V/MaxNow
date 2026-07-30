@@ -1733,3 +1733,17 @@ local visual verification: 2048×1200 与 390×844 下共检查 55 张课程卡�
 server verification: scripts/check.py 全部通过；scripts/test_sync_ballet.py 18 项通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=207 200、Blog 200
 safety: 仅修改静态样式、契约文档与版本记录；未读取 PHPSESSID、未访问闻道，也未提交预约、排队、取消或转课
 ```
+
+2026-07-30 已部署训练记录分类与页面顺序调整：
+
+```text
+deployed commit: b8f7df7 Refine ballet training breakdowns
+version: 1.0.7.53
+changes: 无等级课程在展示级别中改用软开 / 肌肉素质 / 技术技巧等真实课型；新增授课老师分布并共用本月 / 今年 / 全部与节数 / 时间切换；本周课程表移到倒数第二，训练记录移到最后
+asset cache: styles.css?v=208；app.js?v=169
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260730-210136-ballet-training-breakdowns
+runtime data stash: predeploy-ballet-training-breakdowns-20260730-210136（部署后保留，运行时数据已恢复为未暂存改动）
+local visual verification: 1585px 宽桌面下三张分布卡同顶、同底、同高且无溢出；375px 实际内容宽下三卡单列、课程表在训练记录之前、页面无横向溢出；节数与时间切换分别验证为 L1 2 节 / 3 小时、软开 2 节 / 2 小时、李俊 3 节 / 3.5 小时、王嘉豪 1 节 / 1.5 小时
+server verification: scripts/check.py 全部通过；scripts/test_sync_ballet.py 18 项通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=208 200、受保护 app.js?v=169 未认证 302、Blog 200；nginx 与 maxnow-auth 均 active
+safety: 仅部署静态页面、脱敏聚合和文档；未读取 PHPSESSID、未访问闻道，也未提交预约、排队、取消或转课
+```
