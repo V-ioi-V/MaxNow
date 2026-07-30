@@ -5934,6 +5934,19 @@ body[data-view="ricky"] .topbar-ricky-status {
   line-height: 0.9;
 }
 
+.ballet-membership-day-value {
+  gap: 4px;
+}
+
+.ballet-membership-day-value b {
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.ballet-membership-day-value strong {
+  font-size: clamp(22px, 1.7vw, 30px);
+}
+
 .ballet-membership-usage-track {
   width: 100%;
   height: 8px;
@@ -5960,7 +5973,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-overview-grid .ballet-membership-validity-metric {
-  grid-template-columns: minmax(0, 1fr) 50px;
+  grid-template-columns: minmax(0, 1fr) 66px;
   grid-template-areas:
     "validity-label validity-ring"
     "validity-value validity-value"
@@ -5984,12 +5997,14 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-membership-validity-copy > small {
   grid-area: validity-detail;
+  font-size: 10px;
+  font-weight: 630;
 }
 
 .ballet-membership-day-ring {
   --membership-day-progress: 0%;
   grid-area: validity-ring;
-  width: 50px;
+  width: 66px;
   aspect-ratio: 1;
   display: flex;
   align-items: center;

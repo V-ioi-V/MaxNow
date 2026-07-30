@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 23:07",
-  "version": "1.0.7.59",
-  "versionLabel": "v1.0.7.59",
-  "branch": "bugfix/membership-ring-layout",
-  "commit": "c538386",
+  "updatedAt": "2026-07-30 23:33",
+  "version": "1.0.7.60",
+  "versionLabel": "v1.0.7.60",
+  "branch": "bugfix/membership-ring-scale",
+  "commit": "15e1688",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/membership-ring-layout · commit c538386 · 有未提交代码改动",
+  "deployNote": "bugfix/membership-ring-scale · commit 15e1688 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "放大课程卡有效期圆环并收小正文",
+      "summary": "有效期圆环从 `50px` 放大到 `66px`，环内当前天数与总天数继续保持 `15px / 8px`，增加留白而不放大环内文字。"
+    },
     {
       "date": "2026-07-30",
       "title": "拆开课程卡有效进度文字与圆环",
@@ -28,11 +33,6 @@
       "date": "2026-07-30",
       "title": "课程卡取消外框并扩展票券内容",
       "summary": "移除课程卡外围普通白色面板，只保留暖象牙票券作为唯一卡片；“Course Card / 课程卡 / 有效卡数量”并入票券顶部，减少重复边框和留白。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "修复课程卡芭蕾舞者被裁切和遮淡",
-      "summary": "课程卡插画从放大铺满改为完整缩放，修正人物层被近乎不透明票券底色遮住的问题；舞者现在从手尖到足尖完整可辨，不再只剩躯干或腿部的淡影。"
     }
   ]
 }
