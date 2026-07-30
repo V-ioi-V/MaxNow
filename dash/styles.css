@@ -5724,10 +5724,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   padding: 18px 18px 20px;
   border: 1px solid var(--membership-gold);
   border-radius: 28px 28px 22px 22px;
-  background:
-    radial-gradient(circle at 18% 20%, rgba(225, 173, 179, 0.1), transparent 34%),
-    radial-gradient(circle at 78% 78%, rgba(219, 181, 115, 0.08), transparent 30%),
-    linear-gradient(145deg, rgba(255, 250, 245, 0.98), rgba(255, 253, 250, 0.98));
+  background: #fefaf4;
   box-shadow:
     inset 0 0 0 3px rgba(255, 255, 255, 0.72),
     inset 0 0 0 4px rgba(215, 176, 111, 0.08),
@@ -5744,7 +5741,6 @@ body[data-view="ricky"] .topbar-ricky-status {
   justify-content: space-between;
   gap: 14px;
   padding: 2px 5px 8px;
-  border-bottom: 1px solid rgba(215, 176, 111, 0.22);
 }
 
 .ballet-membership-ticket-head > div {
@@ -5770,6 +5766,12 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-membership-ticket-head .status-pill {
   flex: 0 0 auto;
+  border-color: color-mix(in srgb, var(--membership-gold) 58%, #f3d8d4);
+  background: rgba(255, 244, 242, 0.94);
+  color: var(--membership-rose-deep);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.64),
+    0 4px 10px rgba(157, 82, 98, 0.06);
 }
 
 .ballet-membership-artwork {
@@ -5790,18 +5792,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   object-fit: contain;
   object-position: left bottom;
   opacity: 0.74;
-  filter: saturate(0.84) contrast(1.03);
-  mix-blend-mode: multiply;
-}
-
-.ballet-membership-seam {
-  position: absolute;
-  z-index: 2;
-  top: 14px;
-  right: 17px;
-  bottom: 14px;
-  border-left: 1px dashed rgba(188, 137, 81, 0.28);
-  pointer-events: none;
+  filter: saturate(0.84);
 }
 
 .ballet-overview-grid .ballet-membership-item > header {
@@ -5984,11 +5975,12 @@ body[data-view="ricky"] .topbar-ricky-status {
   --membership-day-progress: 0%;
   width: 62px;
   aspect-ratio: 1;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  place-items: end center;
-  align-content: center;
-  padding: 10px 0 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0;
   border-radius: 50%;
   background:
     radial-gradient(circle, #fffaf6 58%, transparent 60%),
@@ -6005,19 +5997,17 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-membership-day-ring strong {
-  align-self: end;
   color: var(--membership-ink);
   font-family: Georgia, "Times New Roman", serif;
   font-size: 24px;
   font-weight: 650;
-  line-height: 0.9;
+  line-height: 1;
 }
 
 .ballet-membership-day-ring small {
-  align-self: start;
   color: var(--membership-muted);
   font-size: 10px;
-  line-height: 1;
+  line-height: 1.05;
 }
 
 .ballet-overview-grid .ballet-membership-verdict {
@@ -6077,8 +6067,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 @container (min-width: 330px) and (max-width: 649px) {
   .ballet-membership-artwork {
     width: 55%;
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 70%, transparent 100%);
-    mask-image: linear-gradient(90deg, #000 0%, #000 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 92%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0%, #000 92%, transparent 100%);
   }
 
   .ballet-membership-artwork img {
@@ -6119,8 +6109,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 @container (min-width: 650px) {
   .ballet-membership-artwork {
     width: 38%;
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 84%, transparent 100%);
-    mask-image: linear-gradient(90deg, #000 0%, #000 84%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 96%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0%, #000 96%, transparent 100%);
   }
 
   .ballet-membership-artwork img {
@@ -7712,10 +7702,6 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .ballet-overview-grid .ballet-membership-metrics section {
     min-height: 116px;
-  }
-
-  .ballet-membership-seam {
-    right: 12px;
   }
 
   .topbar-heading {

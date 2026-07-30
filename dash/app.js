@@ -3324,9 +3324,6 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   artworkImage.src = "./assets/ballet/membership-ballerina.webp";
   artworkImage.alt = "";
   artwork.appendChild(artworkImage);
-  const seam = document.createElement("span");
-  seam.className = "ballet-membership-seam";
-  seam.setAttribute("aria-hidden", "true");
   const header = document.createElement("header");
   const title = document.createElement("div");
   const eyebrow = document.createElement("p");
@@ -3459,13 +3456,13 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
         : `开卡后实际 ${observedRate} 节/周，到期预计约剩 ${Math.floor(balletNumber(pace.observedProjectedRemainingAtExpiry))} 节。`;
       verdictBody.append(verdictTitle, verdictCopy, observed);
       verdict.append(verdictIcon, verdictBody);
-      article.append(artwork, seam, ticketHead, header, metrics, verdict);
+      article.append(artwork, ticketHead, header, metrics, verdict);
       return article;
     }
   }
   verdictBody.append(verdictTitle, verdictCopy);
   verdict.append(verdictIcon, verdictBody);
-  article.append(artwork, seam, ticketHead, header, metrics, verdict);
+  article.append(artwork, ticketHead, header, metrics, verdict);
   return article;
 }
 

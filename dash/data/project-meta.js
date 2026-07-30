@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 22:11",
-  "version": "1.0.7.56",
-  "versionLabel": "v1.0.7.56",
-  "branch": "bugfix/expand-membership-card",
-  "commit": "7a5fcee",
+  "updatedAt": "2026-07-30 22:36",
+  "version": "1.0.7.57",
+  "versionLabel": "v1.0.7.57",
+  "branch": "bugfix/membership-ticket-polish",
+  "commit": "7c7c0dd",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/expand-membership-card · commit 7a5fcee · 有未提交代码改动",
+  "deployNote": "bugfix/membership-ticket-polish · commit 7c7c0dd · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "修正课程票券色差、插画和圆环细节",
+      "summary": "票券底色精确匹配舞者插画的暖象牙纸色，并取消会加深图片区域的混合模式，消除左上矩形色差；宽卡遮罩延后到横向脚尖之后，抬手、横向脚尖和支撑腿足尖保持完整。"
+    },
     {
       "date": "2026-07-30",
       "title": "课程卡取消外框并扩展票券内容",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "训练记录增加老师分布并调整页面顺序",
       "summary": "训练记录的“课程级别”不再展示“无级别”：有等级的课程继续显示 L1 / L1.5 等等级，没有等级的课程改为显示软开、肌肉素质、技术技巧等真实课型；上课历史和课程计划标签采用同一规则。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "再次拉开课表三档色阶并暖化软开课",
-      "summary": "普通课程继续使用课型最浅底色；Owner 排队课程提高到浅底与描边色 `24:76` 的中深档，已预约与已上完课程改为课型描边色 `72%` 与暖深灰 `28%` 的重色档，并使用暖白文字，三档不看徽标也能明显区分。"
     }
   ]
 };
