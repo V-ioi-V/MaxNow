@@ -4961,10 +4961,12 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-timetable-course {
   --course-fill: #e9edf1;
   --course-border: #8392a5;
-  --course-fill-waitlist: color-mix(in srgb, var(--course-fill) 56%, var(--course-border) 44%);
-  --course-fill-booked: color-mix(in srgb, var(--course-fill) 18%, var(--course-border) 82%);
+  --course-fill-waitlist: color-mix(in srgb, var(--course-fill) 24%, var(--course-border) 76%);
+  --course-fill-booked: color-mix(in srgb, var(--course-border) 72%, #27303b 28%);
+  --course-border-state: color-mix(in srgb, var(--course-border) 72%, #27303b 28%);
   --course-ink: #111827;
   --course-muted: #111827;
+  --course-detail: #566273;
   --card-color: var(--course-border);
   --card-border: var(--course-border);
   min-width: 0;
@@ -5014,8 +5016,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-course[data-course-type="soft_open"] {
-  --course-fill: #ececea;
-  --course-border: #85837c;
+  --course-fill: #f5e7d8;
+  --course-border: #a96e48;
 }
 
 .ballet-timetable-course[data-course-type="conditioning"] {
@@ -5054,18 +5056,27 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-course[data-availability="booked"] {
+  --course-ink: #fffdf9;
+  --course-muted: #fffdf9;
+  --course-detail: rgba(255, 253, 249, 0.84);
+  --card-border: var(--course-border-state);
   background: var(--course-fill-booked);
-  box-shadow: 0 7px 18px color-mix(in srgb, var(--card-color) 16%, transparent);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--card-color) 24%, transparent);
 }
 
 .ballet-timetable-course[data-availability="waitlist"] {
+  --card-border: var(--course-border-state);
   background: var(--course-fill-waitlist);
-  box-shadow: 0 6px 15px color-mix(in srgb, var(--card-color) 13%, transparent);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--card-color) 18%, transparent);
 }
 
 .ballet-timetable-course[data-availability="attended"] {
+  --course-ink: #fffdf9;
+  --course-muted: #fffdf9;
+  --course-detail: rgba(255, 253, 249, 0.84);
+  --card-border: var(--course-border-state);
   background: var(--course-fill-booked);
-  box-shadow: 0 7px 18px color-mix(in srgb, var(--card-color) 14%, transparent);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--card-color) 22%, transparent);
 }
 
 .ballet-timetable-course strong {
@@ -5112,7 +5123,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-width: 0;
   display: block;
   overflow: hidden;
-  color: #7a8494;
+  color: var(--course-detail);
   font-weight: 650;
   text-overflow: ellipsis;
   white-space: nowrap;

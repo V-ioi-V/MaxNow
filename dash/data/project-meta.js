@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 20:22",
-  "version": "1.0.7.51",
-  "versionLabel": "v1.0.7.51",
-  "branch": "feature/ballet-manual-attendance-20260730",
-  "commit": "bcb343b",
+  "updatedAt": "2026-07-30 20:32",
+  "version": "1.0.7.52",
+  "versionLabel": "v1.0.7.52",
+  "branch": "bugfix/ballet-timetable-contrast-warm",
+  "commit": "3635cda",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-manual-attendance-20260730 · commit bcb343b · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-timetable-contrast-warm · commit 3635cda · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "再次拉开课表三档色阶并暖化软开课",
+      "summary": "普通课程继续使用课型最浅底色；Owner 排队课程提高到浅底与描边色 `24:76` 的中深档，已预约与已上完课程改为课型描边色 `72%` 与暖深灰 `28%` 的重色档，并使用暖白文字，三档不看徽标也能明显区分。"
+    },
     {
       "date": "2026-07-30",
       "title": "手动补录 7 月 30 日软开课",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "拉开课表排队与预约色阶",
       "summary": "保留课程类型与级别决定色相的规则，把 Owner 排队课程统一改为由浅底色与课型描边色按 `56:44` 混合出的中深实心底，把已预约与已上完课程改为按 `18:82` 混合出的明显深色实心底。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "按可见主体对齐十级小天鹅",
-      "summary": "成长等级右上角不再对十张透明 PNG 的完整画布做统一像素位移，改为按每张素材的透明上边界设置百分比光学上提。"
     }
   ]
 };
