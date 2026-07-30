@@ -4524,7 +4524,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-overview-grid .ballet-week-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: minmax(84px, 1fr);
+  grid-template-rows: repeat(2, minmax(84px, 1fr)) auto;
+  grid-auto-rows: auto;
 }
 
 @media (min-width: 1501px) {
@@ -5420,8 +5421,119 @@ body[data-view="ricky"] .topbar-ricky-status {
   --card-border: var(--ballet-border);
 }
 
+.ballet-week-grid .ballet-week-bottom {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 108px;
+  align-items: stretch;
+  justify-items: stretch;
+  gap: 12px;
+  min-height: 0;
+  padding: 12px;
+  text-align: left;
+}
+
+.ballet-week-course-types {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.ballet-week-course-types > header,
+.ballet-week-type-item > div:first-child {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ballet-week-course-types > header > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.ballet-week-grid .ballet-week-course-types > header > div > span {
+  color: var(--ballet);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ballet-week-grid .ballet-week-course-types > header > div > strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.ballet-week-grid .ballet-week-course-types .status-pill {
+  min-height: 26px;
+  padding: 0 9px;
+  color: var(--blue);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.ballet-week-type-list {
+  display: grid;
+  gap: 7px;
+}
+
+.ballet-week-type-item {
+  display: grid;
+  gap: 5px;
+}
+
+.ballet-week-type-item > div:first-child {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.ballet-week-grid .ballet-week-type-item strong {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.ballet-week-grid .ballet-week-type-item span {
+  font-size: 11px;
+}
+
+.ballet-week-type-track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ballet) 12%, #ffffff);
+}
+
+.ballet-week-type-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ballet);
+}
+
+.ballet-week-type-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .ballet-week-completion {
+  min-width: 0;
+  display: grid;
   grid-template-rows: auto 1fr auto;
+  align-items: center;
+  justify-items: center;
+  gap: 6px;
+  padding-left: 12px;
+  border-left: 1px solid color-mix(in srgb, var(--card-color) 16%, var(--line));
+  text-align: center;
 }
 
 .ballet-week-completion-ring {
@@ -6948,6 +7060,28 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-overview-grid .ballet-week-grid {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .ballet-overview-grid .ballet-week-grid {
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+  }
+
+  .ballet-overview-grid .ballet-week-grid .ballet-week-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-week-course-types {
+    grid-row: 2;
+  }
+
+  .ballet-week-completion {
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-rows: none;
+    padding: 0 0 12px;
+    border-left: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--card-color) 16%, var(--line));
   }
 
   .ballet-growth-block-head,

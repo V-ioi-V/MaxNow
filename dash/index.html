@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=200" />
+    <link rel="stylesheet" href="./styles.css?v=201" />
   </head>
   <body>
     <div class="app-shell">
@@ -646,24 +646,31 @@
                 <section data-tone="purple">
                   <span>训练时长</span>
                   <strong id="ballet-week-training-time">0 小时</strong>
-                  <small id="ballet-week-training-classes">预计 0 节</small>
+                  <small id="ballet-week-training-classes">已确定 0 节</small>
                 </section>
-                <section data-tone="blue">
-                  <span>最喜欢的老师</span>
-                  <strong id="ballet-week-favorite-teacher">暂无</strong>
-                  <small id="ballet-week-favorite-teacher-meta">本周暂无已上课程</small>
-                </section>
-                <section class="ballet-week-completion" data-tone="cyan">
-                  <span>已上完占比</span>
-                  <div
-                    class="ballet-week-completion-ring"
-                    id="ballet-week-completion-ring"
-                    role="img"
-                    aria-label="本周已上完课程占已确认训练的 0%"
-                  >
-                    <strong id="ballet-week-completion-rate">0%</strong>
+                <section class="ballet-week-bottom" data-tone="cyan">
+                  <div class="ballet-week-course-types">
+                    <header>
+                      <div>
+                        <span>Course Type</span>
+                        <strong>课程类型</strong>
+                      </div>
+                      <small class="status-pill" id="ballet-week-course-type-count">0 类</small>
+                    </header>
+                    <div class="ballet-week-type-list" id="ballet-week-course-types"></div>
                   </div>
-                  <small id="ballet-week-completion-meta">已上 0 / 0 节</small>
+                  <div class="ballet-week-completion">
+                    <span>已上完占比</span>
+                    <div
+                      class="ballet-week-completion-ring"
+                      id="ballet-week-completion-ring"
+                      role="img"
+                      aria-label="本周已上完课程占已确认训练的 0%"
+                    >
+                      <strong id="ballet-week-completion-rate">0%</strong>
+                    </div>
+                    <small id="ballet-week-completion-meta">已上 0 / 0 节</small>
+                  </div>
                 </section>
               </div>
             </article>
@@ -1237,6 +1244,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=166"></script>
+    <script src="./app.js?v=167"></script>
   </body>
 </html>

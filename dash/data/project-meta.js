@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 15:40",
-  "version": "1.0.7.43",
-  "versionLabel": "v1.0.7.43",
-  "branch": "feature/ballet-week-insights",
-  "commit": "708a888",
+  "updatedAt": "2026-07-30 15:47",
+  "version": "1.0.7.44",
+  "versionLabel": "v1.0.7.44",
+  "branch": "feature/ballet-week-course-types",
+  "commit": "fdb94d0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-week-insights · commit 708a888 · 有未提交代码改动",
+  "deployNote": "feature/ballet-week-course-types · commit fdb94d0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "本周训练改为当前时长与课程类型",
+      "summary": "“训练时长”改为本周已完成分钟加已预约分钟的当前确定时长，副说明同步显示已确定节数；不再展示包含候补的预计小时区间。"
+    },
     {
       "date": "2026-07-30",
       "title": "补充本周老师、完成率与过去课程层级",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "成长等级只保留到下一阶段的距离",
       "summary": "紫色“成长等级”移除 `1–10` 全量编号，只展示“当前阶段 → 下一阶段”、本阶段已上 / 目标课次和还差多少节，保留当前阶段的小天鹅图像。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "区分课程等级与小天鹅成长阶段",
-      "summary": "成长卡移除顶部重复的 `Lv.N`；蓝色块改名“课程等级”，直接显示已上课次和“再上 N 节升级到下一课程等级”，保留规律 / 保守课次口径。"
     }
   ]
 };
