@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 15:31",
+  "updatedAt": "2026-07-30 15:40",
   "version": "1.0.7.43",
   "versionLabel": "v1.0.7.43",
   "branch": "feature/ballet-week-insights",
-  "commit": "ab1e6c7",
+  "commit": "708a888",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-week-insights · commit ab1e6c7 · 有未提交代码改动",
+  "deployNote": "feature/ballet-week-insights · commit 708a888 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-30",
