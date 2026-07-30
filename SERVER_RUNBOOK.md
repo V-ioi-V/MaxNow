@@ -1777,3 +1777,16 @@ local visual verification: 2560×1440 宽卡按参考方向呈现左侧完整舞
 server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=210 200、芭蕾插画 200、Blog 200；nginx、maxnow-auth 与三个芭蕾 timer 均 active，rolling / full / 自动抢课 service 均 inactive
 safety: 仅部署静态样式、响应式契约和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
 ```
+
+2026-07-30 已取消课程卡外层面板并扩展票券内容：
+
+```text
+deployed commit: a78bff3 Simplify ballet membership ticket
+version: 1.0.7.56
+changes: 删除课程卡外围普通白色 panel；Course Card / 课程卡 / 有效卡数量并入暖象牙票券顶部；删除左右半圆缺口；事实区向左扩展；手机端重置事实区偏移，修复 20px 横向溢出
+asset cache: styles.css?v=211；app.js?v=171
+runtime data backup: /var/backups/maxnow-dashboard-predeploy-a78bff3-20260730-2215.tgz（部署前完整备份 dash/data）
+local visual verification: 2048×1200、1600×1000、1280×900、390×844 下均无整页横向溢出；2048px / 1600px 三个概览格同顶、同底、同高；课程卡内部无内容溢出、半圆缺口节点为 0、浏览器控制台无 warning / error
+server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=211 200、受保护 app.js?v=171 未认证 302、芭蕾插画 200、Blog 200；nginx 与 rolling / full / Session 状态 / 自动抢课 timer 均 active
+safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
+```
