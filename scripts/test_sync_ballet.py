@@ -478,6 +478,20 @@ class BalletSyncTests(unittest.TestCase):
             )
             self.assertEqual(soft_open["classes"], 1)
             self.assertEqual(soft_open["minutes"], 60)
+            soft_open_level_display = next(
+                item
+                for item in model["summary"]["byLevelDisplay"]
+                if item["key"] == "courseType:soft_open"
+            )
+            self.assertEqual(soft_open_level_display["classes"], 1)
+            self.assertEqual(soft_open_level_display["minutes"], 60)
+            self.assertEqual(
+                sum(item["classes"] for item in model["summary"]["byTeacher"]),
+                2,
+            )
+            self.assertTrue(
+                all(item["label"] != "无级别" for item in model["summary"]["byLevelDisplay"])
+            )
             self.assertEqual(model["records"][0]["level"], "L1.5")
             self.assertEqual(
                 model["upcoming"]["records"][0]["bookingStatus"], "booked"

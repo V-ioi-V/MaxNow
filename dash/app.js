@@ -2245,6 +2245,8 @@ const BALLET_LEVEL_LABELS = {
   unknown: "无级别",
 };
 
+const BALLET_NO_LEVEL_KEYS = new Set(["", "none", "no_level", "unknown"]);
+
 // Course path follows:
 // personal-wiki/raw/relationship-ricky/docs/2026-07-20-lijun-ballet-course-guide.md
 // Growth levels are MaxNow class-count milestones, not technical assessments.
@@ -2930,7 +2932,12 @@ function normalizeBalletDistribution(source, kind) {
           value && typeof value === "object" ? { key, ...value } : { key, classes: value },
         )
       : [];
-  const labels = kind === "level" ? BALLET_LEVEL_LABELS : BALLET_COURSE_TYPE_LABELS;
+  const labels =
+    kind === "level"
+      ? BALLET_LEVEL_LABELS
+      : kind === "courseType"
+        ? BALLET_COURSE_TYPE_LABELS
+        : {};
   const normalized = items
     .map((item) => {
       const key = String(item.key || item.id || item.courseType || item.level || item.label || "").toLowerCase();
@@ -2943,11 +2950,67 @@ function normalizeBalletDistribution(source, kind) {
     })
     .filter((item) => item.classes > 0 || Number(item.minutes) > 0);
 
-  if (kind !== "level") return normalized.sort((a, b) => b.classes - a.classes || a.label.localeCompare(b.label, "zh-CN"));
-  const order = new Map(["L1", "L1.5", "L2", "L3", "L4", "无级别"].map((label, index) => [label, index]));
+  if (kind !== "level" && kind !== "levelDisplay") {
+    return normalized.sort((a, b) => b.classes - a.classes || a.label.localeCompare(b.label, "zh-CN"));
+  }
+  const order = new Map(
+    ["L1", "L1.5", "L2", "L3", "L4", "L5", "芭蕾", "软开", "肌肉素质", "技术技巧", "其他"]
+      .map((label, index) => [label, index]),
+  );
   return normalized.sort(
     (a, b) => (order.get(a.label) ?? 99) - (order.get(b.label) ?? 99) || b.classes - a.classes,
   );
+}
+
+function balletTrainingLevelLabel(record = {}) {
+  const levelKey = String(record.level || "").trim().toLowerCase();
+  if (!BALLET_NO_LEVEL_KEYS.has(levelKey)) {
+    return BALLET_LEVEL_LABELS[levelKey] || String(record.level || "").trim();
+  }
+  const courseTypeKey = String(record.courseType || "").trim().toLowerCase();
+  return BALLET_COURSE_TYPE_LABELS[courseTypeKey] || balletCourseName(record) || "其他";
+}
+
+function getBalletBreakdownRecords(aggregate = {}) {
+  const period = String(aggregate.period || "");
+  return (Array.isArray(balletData.records) ? balletData.records : []).filter((record) => {
+    if (!isBalletCompletedRecord(record)) return false;
+    const date = balletRecordDate(record);
+    if (activeBalletPeriod === "all") return true;
+    return Boolean(period && date.startsWith(period));
+  });
+}
+
+function aggregateBalletBreakdown(records, kind) {
+  const buckets = new Map();
+  records.forEach((record) => {
+    const label =
+      kind === "teacher"
+        ? balletTeacher(record) || "老师待确认"
+        : balletTrainingLevelLabel(record);
+    const item = buckets.get(label) || {
+      key: `${kind}:${label}`,
+      label,
+      classes: 0,
+      minutes: 0,
+    };
+    item.classes += 1;
+    item.minutes += balletMinutes(record) || 0;
+    buckets.set(label, item);
+  });
+  return [...buckets.values()];
+}
+
+function getBalletTrainingBreakdowns(aggregate = {}) {
+  const records = getBalletBreakdownRecords(aggregate);
+  return {
+    levels: Array.isArray(aggregate.byLevelDisplay)
+      ? aggregate.byLevelDisplay
+      : aggregateBalletBreakdown(records, "levelDisplay"),
+    teachers: Array.isArray(aggregate.byTeacher)
+      ? aggregate.byTeacher
+      : aggregateBalletBreakdown(records, "teacher"),
+  };
 }
 
 function createBalletBarItem(item, maxValue) {
@@ -2999,6 +3062,8 @@ function getBalletSelectedAggregate() {
       minutes: 0,
       byCourseType: [],
       byLevel: [],
+      byLevelDisplay: [],
+      byTeacher: [],
     };
   }
   if (activeBalletPeriod === "year") {
@@ -3008,6 +3073,8 @@ function getBalletSelectedAggregate() {
       minutes: 0,
       byCourseType: [],
       byLevel: [],
+      byLevelDisplay: [],
+      byTeacher: [],
     };
   }
   return balletData.summary || {
@@ -3016,6 +3083,8 @@ function getBalletSelectedAggregate() {
     minutes: 0,
     byCourseType: [],
     byLevel: [],
+    byLevelDisplay: [],
+    byTeacher: [],
   };
 }
 
@@ -3172,6 +3241,7 @@ function renderBalletTrend() {
 
 function renderBalletTraining() {
   const aggregate = getBalletSelectedAggregate();
+  const breakdowns = getBalletTrainingBreakdowns(aggregate);
   const periodLabel = {
     month: "本月",
     year: "今年",
@@ -3191,11 +3261,17 @@ function renderBalletTraining() {
   );
   const levels = renderBalletDistribution(
     "#ballet-levels",
-    aggregate.byLevel,
-    "level",
+    breakdowns.levels,
+    "levelDisplay",
+  );
+  const teachers = renderBalletDistribution(
+    "#ballet-teachers",
+    breakdowns.teachers,
+    "teacher",
   );
   setText("#ballet-course-type-count", `${courseTypes.length} 类`);
-  setText("#ballet-level-count", `${levels.length} 级`);
+  setText("#ballet-level-count", `${levels.length} 项`);
+  setText("#ballet-teacher-count", `${teachers.length} 位`);
   renderBalletTrend();
 }
 
@@ -3669,11 +3745,11 @@ function createBalletHistoryItem(record) {
   const tags = document.createElement("div");
   tags.className = "ballet-history-meta";
   const courseType = record.courseType ? BALLET_COURSE_TYPE_LABELS[String(record.courseType).toLowerCase()] || record.courseType : "";
-  const level = record.level ? BALLET_LEVEL_LABELS[String(record.level).toLowerCase()] || record.level : "";
+  const level = balletTrainingLevelLabel(record);
   const duration = balletMinutes(record);
   [
     courseType,
-    level,
+    level !== courseType ? level : "",
     Number.isFinite(duration) ? `${formatBalletHours(duration)}h` : "时长待补",
     record.recordOrigin === "manual" ? "手动添加" : "",
   ]
@@ -3741,7 +3817,7 @@ function createBalletUpcomingItem(record) {
       status: bookingLabel.startsWith("排队第") || bookingLabel === "排队中" ? "waitlist" : bookingLabel === "已预约" ? "booked" : "",
     },
     {
-      label: record.level ? BALLET_LEVEL_LABELS[String(record.level).toLowerCase()] || record.level : "",
+      label: balletTrainingLevelLabel(record),
       status: "",
     },
   ]

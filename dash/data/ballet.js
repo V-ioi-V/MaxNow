@@ -157,6 +157,88 @@ window.MAXNOW_BALLET_DATA = {
         "classes": 2,
         "minutes": 120
       }
+    ],
+    "byLevelDisplay": [
+      {
+        "key": "level:L1",
+        "label": "L1",
+        "classes": 2,
+        "minutes": 180
+      },
+      {
+        "key": "level:L1.5",
+        "label": "L1.5",
+        "classes": 0,
+        "minutes": 0
+      },
+      {
+        "key": "level:L2",
+        "label": "L2",
+        "classes": 0,
+        "minutes": 0
+      },
+      {
+        "key": "level:L3",
+        "label": "L3",
+        "classes": 0,
+        "minutes": 0
+      },
+      {
+        "key": "level:L4",
+        "label": "L4",
+        "classes": 0,
+        "minutes": 0
+      },
+      {
+        "key": "level:L5",
+        "label": "L5",
+        "classes": 0,
+        "minutes": 0
+      },
+      {
+        "key": "courseType:ballet",
+        "label": "芭蕾",
+        "classes": 0,
+        "minutes": 0
+      },
+      {
+        "key": "courseType:soft_open",
+        "label": "软开",
+        "classes": 2,
+        "minutes": 120
+      },
+      {
+        "key": "courseType:conditioning",
+        "label": "肌肉素质",
+        "classes": 0,
+        "minutes": 0
+      },
+      {
+        "key": "courseType:technique",
+        "label": "技术技巧",
+        "classes": 0,
+        "minutes": 0
+      },
+      {
+        "key": "courseType:other",
+        "label": "其他",
+        "classes": 0,
+        "minutes": 0
+      }
+    ],
+    "byTeacher": [
+      {
+        "key": "李俊",
+        "label": "李俊",
+        "classes": 3,
+        "minutes": 210
+      },
+      {
+        "key": "王嘉豪",
+        "label": "王嘉豪",
+        "classes": 1,
+        "minutes": 90
+      }
     ]
   },
   "records": [
@@ -300,6 +382,82 @@ window.MAXNOW_BALLET_DATA = {
             "classes": 1,
             "minutes": 60
           }
+        ],
+        "byLevelDisplay": [
+          {
+            "key": "level:L1",
+            "label": "L1",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L1.5",
+            "label": "L1.5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L2",
+            "label": "L2",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L3",
+            "label": "L3",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L4",
+            "label": "L4",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L5",
+            "label": "L5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:ballet",
+            "label": "芭蕾",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:soft_open",
+            "label": "软开",
+            "classes": 1,
+            "minutes": 60
+          },
+          {
+            "key": "courseType:conditioning",
+            "label": "肌肉素质",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:technique",
+            "label": "技术技巧",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:other",
+            "label": "其他",
+            "classes": 0,
+            "minutes": 0
+          }
+        ],
+        "byTeacher": [
+          {
+            "key": "李俊",
+            "label": "李俊",
+            "classes": 1,
+            "minutes": 60
+          }
         ]
       },
       {
@@ -382,6 +540,82 @@ window.MAXNOW_BALLET_DATA = {
             "label": "无级别",
             "classes": 0,
             "minutes": 0
+          }
+        ],
+        "byLevelDisplay": [
+          {
+            "key": "level:L1",
+            "label": "L1",
+            "classes": 1,
+            "minutes": 90
+          },
+          {
+            "key": "level:L1.5",
+            "label": "L1.5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L2",
+            "label": "L2",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L3",
+            "label": "L3",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L4",
+            "label": "L4",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L5",
+            "label": "L5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:ballet",
+            "label": "芭蕾",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:soft_open",
+            "label": "软开",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:conditioning",
+            "label": "肌肉素质",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:technique",
+            "label": "技术技巧",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:other",
+            "label": "其他",
+            "classes": 0,
+            "minutes": 0
+          }
+        ],
+        "byTeacher": [
+          {
+            "key": "李俊",
+            "label": "李俊",
+            "classes": 1,
+            "minutes": 90
           }
         ]
       },
@@ -466,6 +700,82 @@ window.MAXNOW_BALLET_DATA = {
             "classes": 0,
             "minutes": 0
           }
+        ],
+        "byLevelDisplay": [
+          {
+            "key": "level:L1",
+            "label": "L1",
+            "classes": 1,
+            "minutes": 90
+          },
+          {
+            "key": "level:L1.5",
+            "label": "L1.5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L2",
+            "label": "L2",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L3",
+            "label": "L3",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L4",
+            "label": "L4",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L5",
+            "label": "L5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:ballet",
+            "label": "芭蕾",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:soft_open",
+            "label": "软开",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:conditioning",
+            "label": "肌肉素质",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:technique",
+            "label": "技术技巧",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:other",
+            "label": "其他",
+            "classes": 0,
+            "minutes": 0
+          }
+        ],
+        "byTeacher": [
+          {
+            "key": "王嘉豪",
+            "label": "王嘉豪",
+            "classes": 1,
+            "minutes": 90
+          }
         ]
       },
       {
@@ -546,6 +856,82 @@ window.MAXNOW_BALLET_DATA = {
           {
             "key": "none",
             "label": "无级别",
+            "classes": 1,
+            "minutes": 60
+          }
+        ],
+        "byLevelDisplay": [
+          {
+            "key": "level:L1",
+            "label": "L1",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L1.5",
+            "label": "L1.5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L2",
+            "label": "L2",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L3",
+            "label": "L3",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L4",
+            "label": "L4",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L5",
+            "label": "L5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:ballet",
+            "label": "芭蕾",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:soft_open",
+            "label": "软开",
+            "classes": 1,
+            "minutes": 60
+          },
+          {
+            "key": "courseType:conditioning",
+            "label": "肌肉素质",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:technique",
+            "label": "技术技巧",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:other",
+            "label": "其他",
+            "classes": 0,
+            "minutes": 0
+          }
+        ],
+        "byTeacher": [
+          {
+            "key": "李俊",
+            "label": "李俊",
             "classes": 1,
             "minutes": 60
           }
@@ -634,6 +1020,88 @@ window.MAXNOW_BALLET_DATA = {
             "classes": 2,
             "minutes": 120
           }
+        ],
+        "byLevelDisplay": [
+          {
+            "key": "level:L1",
+            "label": "L1",
+            "classes": 2,
+            "minutes": 180
+          },
+          {
+            "key": "level:L1.5",
+            "label": "L1.5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L2",
+            "label": "L2",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L3",
+            "label": "L3",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L4",
+            "label": "L4",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L5",
+            "label": "L5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:ballet",
+            "label": "芭蕾",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:soft_open",
+            "label": "软开",
+            "classes": 2,
+            "minutes": 120
+          },
+          {
+            "key": "courseType:conditioning",
+            "label": "肌肉素质",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:technique",
+            "label": "技术技巧",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:other",
+            "label": "其他",
+            "classes": 0,
+            "minutes": 0
+          }
+        ],
+        "byTeacher": [
+          {
+            "key": "李俊",
+            "label": "李俊",
+            "classes": 3,
+            "minutes": 210
+          },
+          {
+            "key": "王嘉豪",
+            "label": "王嘉豪",
+            "classes": 1,
+            "minutes": 90
+          }
         ]
       }
     ],
@@ -718,6 +1186,88 @@ window.MAXNOW_BALLET_DATA = {
             "label": "无级别",
             "classes": 2,
             "minutes": 120
+          }
+        ],
+        "byLevelDisplay": [
+          {
+            "key": "level:L1",
+            "label": "L1",
+            "classes": 2,
+            "minutes": 180
+          },
+          {
+            "key": "level:L1.5",
+            "label": "L1.5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L2",
+            "label": "L2",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L3",
+            "label": "L3",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L4",
+            "label": "L4",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "level:L5",
+            "label": "L5",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:ballet",
+            "label": "芭蕾",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:soft_open",
+            "label": "软开",
+            "classes": 2,
+            "minutes": 120
+          },
+          {
+            "key": "courseType:conditioning",
+            "label": "肌肉素质",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:technique",
+            "label": "技术技巧",
+            "classes": 0,
+            "minutes": 0
+          },
+          {
+            "key": "courseType:other",
+            "label": "其他",
+            "classes": 0,
+            "minutes": 0
+          }
+        ],
+        "byTeacher": [
+          {
+            "key": "李俊",
+            "label": "李俊",
+            "classes": 3,
+            "minutes": 210
+          },
+          {
+            "key": "王嘉豪",
+            "label": "王嘉豪",
+            "classes": 1,
+            "minutes": 90
           }
         ]
       }

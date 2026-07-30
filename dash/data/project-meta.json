@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 20:32",
-  "version": "1.0.7.52",
-  "versionLabel": "v1.0.7.52",
-  "branch": "bugfix/ballet-timetable-contrast-warm",
-  "commit": "3635cda",
+  "updatedAt": "2026-07-30 20:55",
+  "version": "1.0.7.53",
+  "versionLabel": "v1.0.7.53",
+  "branch": "feature/ballet-training-breakdowns",
+  "commit": "b4e9d8a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-contrast-warm · commit 3635cda · 有未提交代码改动",
+  "deployNote": "feature/ballet-training-breakdowns · commit b4e9d8a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "训练记录增加老师分布并调整页面顺序",
+      "summary": "训练记录的“课程级别”不再展示“无级别”：有等级的课程继续显示 L1 / L1.5 等等级，没有等级的课程改为显示软开、肌肉素质、技术技巧等真实课型；上课历史和课程计划标签采用同一规则。"
+    },
     {
       "date": "2026-07-30",
       "title": "再次拉开课表三档色阶并暖化软开课",
@@ -28,11 +33,6 @@
       "date": "2026-07-30",
       "title": "将成长卡对齐与课表深色状态发布到生产",
       "summary": "生产服务器从仍使用统一像素位移与旧课表色阶的 `1.0.7.46 / styles.css?v=203`，升级到按十张小天鹅素材透明边界对齐并使用明显排队 / 预约深浅的 `styles.css?v=205`。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "拉开课表排队与预约色阶",
-      "summary": "保留课程类型与级别决定色相的规则，把 Owner 排队课程统一改为由浅底色与课型描边色按 `56:44` 混合出的中深实心底，把已预约与已上完课程改为按 `18:82` 混合出的明显深色实心底。"
     }
   ]
 }

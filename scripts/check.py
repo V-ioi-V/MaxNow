@@ -426,6 +426,21 @@ def check_ballet_read_model():
     aggregates = data.get("aggregates") or {}
     if not all(isinstance(aggregates.get(key), list) for key in ("daily", "monthly", "yearly")):
         raise ValueError("ballet: daily/monthly/yearly aggregates are required")
+    aggregate_buckets = [summary]
+    for key in ("daily", "monthly", "yearly"):
+        aggregate_buckets.extend(aggregates[key])
+    if any(
+        not isinstance(bucket.get("byLevelDisplay"), list)
+        or not isinstance(bucket.get("byTeacher"), list)
+        for bucket in aggregate_buckets
+    ):
+        raise ValueError("ballet: level-display and teacher aggregates are required")
+    if any(
+        item.get("label") == "无级别"
+        for bucket in aggregate_buckets
+        for item in bucket["byLevelDisplay"]
+    ):
+        raise ValueError("ballet: display level must replace no-level with course type")
     upcoming = (data.get("upcoming") or {}).get("records")
     if not isinstance(upcoming, list):
         raise ValueError("ballet: upcoming.records must be an array")
@@ -582,6 +597,18 @@ def check_ballet_read_model():
         or ".ballet-week-grid {" not in dashboard_css
     ):
         raise ValueError("ballet: membership or weekly frontend contract is incomplete")
+    if (
+        "function balletTrainingLevelLabel(record = {})" not in dashboard_js
+        or "function getBalletTrainingBreakdowns(aggregate = {})" not in dashboard_js
+        or "aggregate.byLevelDisplay" not in dashboard_js
+        or "aggregate.byTeacher" not in dashboard_js
+        or 'id="ballet-teacher-count"' not in dashboard_html
+        or 'id="ballet-teachers"' not in dashboard_html
+        or "grid-template-columns: repeat(3, minmax(0, 1fr));" not in dashboard_css
+        or "#ballet-view > .ballet-timetable-panel" not in dashboard_css
+        or "#ballet-view > .ballet-training-panel" not in dashboard_css
+    ):
+        raise ValueError("ballet: training level, teacher, or section-order contract is incomplete")
     timer = (ROOT / "server/maxnow-ballet-sync.timer").read_text(encoding="utf-8")
     if (
         "OnCalendar=*-*-* 00:00:00 Asia/Shanghai" not in timer
@@ -1518,9 +1545,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=207" not in dashboard_html
+        "styles.css?v=208" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=168" not in dashboard_html
+        or "app.js?v=169" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1738,7 +1765,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=168" not in dashboard_html:
+    if "app.js?v=169" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

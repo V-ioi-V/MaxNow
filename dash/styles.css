@@ -4359,6 +4359,19 @@ body[data-view="tokens"] .range-tabs.topbar-token-ranges {
   --card-border: var(--ballet-border);
 }
 
+#ballet-view.view.is-active {
+  display: flex;
+  flex-direction: column;
+}
+
+#ballet-view > .ballet-timetable-panel {
+  order: 1;
+}
+
+#ballet-view > .ballet-training-panel {
+  order: 2;
+}
+
 .topbar-data-status {
   --status-accent: var(--accent-strong);
   min-width: 0;
@@ -6111,7 +6124,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-breakdown-grid {
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--page-grid-gap);
 }
 
@@ -6123,6 +6136,12 @@ body[data-view="ricky"] .topbar-ricky-status {
   --card-color: var(--purple);
   --card-border: var(--purple-border);
   border-color: color-mix(in srgb, var(--purple) 16%, var(--line));
+}
+
+.ballet-breakdown-section:nth-child(3) {
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
+  border-color: color-mix(in srgb, var(--accent-strong) 16%, var(--line));
 }
 
 .ballet-breakdown-section > header,
@@ -6197,6 +6216,11 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-breakdown-section:nth-child(2) .ballet-bar-item {
   --card-color: var(--purple);
   --card-border: var(--purple-border);
+}
+
+.ballet-breakdown-section:nth-child(3) .ballet-bar-item {
+  --card-color: var(--accent-strong);
+  --card-border: var(--blue-border);
 }
 
 .ballet-bar-item > div:first-child {

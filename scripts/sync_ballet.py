@@ -73,6 +73,21 @@ LEVEL_LABELS = {
     "L5": "L5",
     "none": "无级别",
 }
+LEVEL_DISPLAY_ORDER = tuple(
+    [f"level:{key}" for key in LEVEL_ORDER if key != "none"]
+    + [f"courseType:{key}" for key in COURSE_TYPE_ORDER]
+)
+LEVEL_DISPLAY_LABELS = {
+    **{
+        f"level:{key}": LEVEL_LABELS[key]
+        for key in LEVEL_ORDER
+        if key != "none"
+    },
+    **{
+        f"courseType:{key}": COURSE_TYPE_LABELS[key]
+        for key in COURSE_TYPE_ORDER
+    },
+}
 
 SAFE_ERROR_MESSAGES = {
     "auth_required": "微信授权或闻道会话已失效，请在电脑微信重新登录并打开约课页面后更新服务器凭据。",
@@ -1201,7 +1216,26 @@ def _period_bucket() -> dict[str, Any]:
             key: {"classes": 0, "minutes": 0} for key in COURSE_TYPE_ORDER
         },
         "byLevel": {key: {"classes": 0, "minutes": 0} for key in LEVEL_ORDER},
+        "byLevelDisplay": {
+            key: {"classes": 0, "minutes": 0} for key in LEVEL_DISPLAY_ORDER
+        },
+        "byTeacher": {},
     }
+
+
+def _increment_breakdown(
+    breakdown: dict[str, dict[str, Any]],
+    key: str,
+    label: str,
+    duration: int | None,
+) -> None:
+    item = breakdown.setdefault(
+        key,
+        {"label": label, "classes": 0, "minutes": 0},
+    )
+    item["classes"] += 1
+    if duration is not None:
+        item["minutes"] += duration
 
 
 def _add_to_bucket(bucket: dict[str, Any], record: dict[str, Any]) -> None:
@@ -1213,6 +1247,19 @@ def _add_to_bucket(bucket: dict[str, Any], record: dict[str, Any]) -> None:
         bucket["minutes"] += duration
     bucket["byCourseType"][record["courseType"]]["classes"] += 1
     bucket["byLevel"][record["level"]]["classes"] += 1
+    level_display_key = (
+        f"level:{record['level']}"
+        if record["level"] != "none"
+        else f"courseType:{record['courseType']}"
+    )
+    _increment_breakdown(
+        bucket["byLevelDisplay"],
+        level_display_key,
+        LEVEL_DISPLAY_LABELS[level_display_key],
+        duration,
+    )
+    teacher = normalize_space(str(record.get("teacher", ""))) or "老师待确认"
+    _increment_breakdown(bucket["byTeacher"], teacher, teacher, duration)
     if duration is not None:
         bucket["byCourseType"][record["courseType"]]["minutes"] += duration
         bucket["byLevel"][record["level"]]["minutes"] += duration
@@ -1240,6 +1287,27 @@ def _display_bucket(period: str, bucket: dict[str, Any]) -> dict[str, Any]:
                 **bucket["byLevel"][key],
             }
             for key in LEVEL_ORDER
+        ],
+        "byLevelDisplay": [
+            {
+                "key": key,
+                "label": LEVEL_DISPLAY_LABELS[key],
+                **bucket["byLevelDisplay"][key],
+            }
+            for key in LEVEL_DISPLAY_ORDER
+        ],
+        "byTeacher": [
+            {
+                "key": key,
+                **value,
+            }
+            for key, value in sorted(
+                bucket["byTeacher"].items(),
+                key=lambda item: (
+                    -item[1]["classes"],
+                    item[1]["label"],
+                ),
+            )
         ],
     }
 
