@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 11:06",
-  "version": "1.0.7.37",
-  "versionLabel": "v1.0.7.37",
-  "branch": "feature/ballet-swan-growth-assets",
-  "commit": "8618631",
+  "updatedAt": "2026-07-30 11:25",
+  "version": "1.0.7.38",
+  "versionLabel": "v1.0.7.38",
+  "branch": "bugfix/ballet-swan-vertical-align",
+  "commit": "1aba155",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-swan-growth-assets · commit 8618631 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-swan-vertical-align · commit 1aba155 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "上提小天鹅成长图视觉重心",
+      "summary": "成长等级块把“小天鹅 + 十段进度”作为一组在桌面端光学上提 `10px`、窄屏上提 `6px`，补偿低等级透明 PNG 上方留白偏多造成的视觉下沉；十张素材的尺寸、成长比例和切换逻辑保持不变。"
+    },
     {
       "date": "2026-07-30",
       "title": "小天鹅改为十阶段自然成长图像",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "疏开课表课程卡信息",
       "summary": "课程卡改为“课程名 → 人数 → 老师 → 时间 / 状态”四层结构；报名 / 容量和排队数使用独立人数行，老师另起弱信息行，时间与状态保留在底部，不再把人数、排队和老师挤成一串。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "课表显示报名与排队人数",
-      "summary": "闻道课表解析增加独立 `waitlistCount` 脱敏字段，与现有报名数 / 容量一起进入只读快照；排队人数只读取源站 `Wait` 数字，不再用报名数减容量推断。"
     }
   ]
 };

@@ -5620,6 +5620,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   gap: 6px;
   place-items: center;
   color: var(--growth-color);
+  transform: translateY(-10px);
 }
 
 .ballet-swan-icon {
@@ -6973,6 +6974,10 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .ballet-swan-icon {
     height: 70px;
+  }
+
+  .ballet-swan-stage {
+    transform: translateY(-6px);
   }
 
   .ballet-membership-item > header {
