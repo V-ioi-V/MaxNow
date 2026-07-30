@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 21:57",
+  "updatedAt": "2026-07-30 22:02",
   "version": "1.0.7.55",
   "versionLabel": "v1.0.7.55",
   "branch": "bugfix/ballet-membership-artwork-visibility",
-  "commit": "0efe94d",
+  "commit": "f1041fa",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-membership-artwork-visibility · commit 0efe94d · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-membership-artwork-visibility · commit f1041fa · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-30",

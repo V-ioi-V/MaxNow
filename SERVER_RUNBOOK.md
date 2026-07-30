@@ -1762,3 +1762,18 @@ local visual verification: 1585px 与 1265px 实际内容宽下课程卡和本�
 server verification: scripts/check.py 全部通过；scripts/test_sync_ballet.py 18 项通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=209 200、受保护 app.js?v=170 未认证 302、芭蕾插画 200、Blog 200；nginx 与 maxnow-auth 均 active
 safety: 仅部署静态页面、脱敏课程卡展示和本地装饰素材；未读取 PHPSESSID、未访问闻道，也未提交预约、排队、取消或转课
 ```
+
+2026-07-30 已修复芭蕾票券人物被裁切和遮淡：
+
+```text
+deployed commit: f1041fa Align membership artwork and responsive checks
+version: 1.0.7.55
+changes: 插画层移到票券底色之上并改用 contain 完整缩放；宽卡左图右信息且两项指标并排，中等卡宽在舞者右侧纵排指标，手机端将完整人物缩入标题左侧
+asset cache: styles.css?v=210；app.js?v=170
+art asset: dash/assets/ballet/membership-ballerina.webp（720×1080 WebP，26,934 bytes；从手尖到足尖完整显示）
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260730-215915-membership-artwork
+runtime data stash: 0d6b9a5ed088d79e20f04df4a838d45023d738ab（部署后保留，除 project-meta.* 外的服务器运行时数据已按原路径恢复）
+local visual verification: 2560×1440 宽卡按参考方向呈现左侧完整舞者与右侧双指标；2048×1200、1600×1000、1280×900 中等卡宽显示完整舞者并在右侧纵排指标；390×844 将完整舞者缩入标题左侧；桌面概览卡同顶、同底、等高，全部尺寸无横向溢出且浏览器控制台无 warning / error
+server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=210 200、芭蕾插画 200、Blog 200；nginx、maxnow-auth 与三个芭蕾 timer 均 active，rolling / full / 自动抢课 service 均 inactive
+safety: 仅部署静态样式、响应式契约和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
+```
