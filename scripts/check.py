@@ -1514,7 +1514,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=205" not in dashboard_html
+        "styles.css?v=206" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=168" not in dashboard_html
     ):
@@ -1645,10 +1645,11 @@ def check_ballet_growth_contract():
         or 'icon.src = `./assets/ballet/swan-lv${safeLevel}.png`;' not in dashboard_js
         or "object-fit: contain;" not in dashboard_css
         or '.ballet-swan-stage[data-level="1"] {' not in dashboard_css
-        or "--swan-lift: -47.1%;" not in dashboard_css
+        or "--swan-lift: -21%;" not in dashboard_css
         or '.ballet-swan-stage[data-level="10"] {' not in dashboard_css
-        or "--swan-lift: -7%;" not in dashboard_css
+        or "--swan-lift: -1%;" not in dashboard_css
         or "transform: translateY(var(--swan-lift));" not in dashboard_css
+        or "align-items: center;" not in dashboard_css.split(".ballet-growth-level-summary {", 1)[1].split("}", 1)[0]
         or 'id="ballet-level-progress"' not in dashboard_html
         or 'id="ballet-level-progress-fill"' not in dashboard_html
         or ".ballet-growth-level-summary {" not in dashboard_css

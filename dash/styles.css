@@ -5760,7 +5760,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-growth-level-summary {
   min-width: 94px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-end;
   gap: 8px;
 }
@@ -5777,43 +5777,43 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-swan-stage[data-level="1"] {
-  --swan-lift: -47.1%;
+  --swan-lift: -21%;
 }
 
 .ballet-swan-stage[data-level="2"] {
-  --swan-lift: -39.3%;
+  --swan-lift: -17.1%;
 }
 
 .ballet-swan-stage[data-level="3"] {
-  --swan-lift: -34.8%;
+  --swan-lift: -14.8%;
 }
 
 .ballet-swan-stage[data-level="4"] {
-  --swan-lift: -29.1%;
+  --swan-lift: -12%;
 }
 
 .ballet-swan-stage[data-level="5"] {
-  --swan-lift: -24.8%;
+  --swan-lift: -9.9%;
 }
 
 .ballet-swan-stage[data-level="6"] {
-  --swan-lift: -23.4%;
+  --swan-lift: -9.2%;
 }
 
 .ballet-swan-stage[data-level="7"] {
-  --swan-lift: -17.8%;
+  --swan-lift: -6.3%;
 }
 
 .ballet-swan-stage[data-level="8"] {
-  --swan-lift: -14.1%;
+  --swan-lift: -4.5%;
 }
 
 .ballet-swan-stage[data-level="9"] {
-  --swan-lift: -10.5%;
+  --swan-lift: -2.7%;
 }
 
 .ballet-swan-stage[data-level="10"] {
-  --swan-lift: -7%;
+  --swan-lift: -1%;
 }
 
 .ballet-swan-icon {
