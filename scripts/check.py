@@ -665,8 +665,9 @@ def check_ballet_read_model():
         or "max-height: min(68vh, 560px);" in dashboard_css
         or ".ballet-timetable-sticky-mask" in dashboard_css
         or "overflow: visible;" not in dashboard_css
-        or '--course-fill-waitlist: #d3dbe3;' not in dashboard_css
-        or '--course-fill-booked: #aebccc;' not in dashboard_css
+        or '--course-fill-waitlist: color-mix(in srgb, var(--course-fill) 56%, var(--course-border) 44%);' not in dashboard_css
+        or '--course-fill-booked: color-mix(in srgb, var(--course-fill) 18%, var(--course-border) 82%);' not in dashboard_css
+        or "--course-ink: #111827;" not in dashboard_css
         or '.ballet-timetable-course[data-course-type="ballet"][data-level="l1.5"]' not in dashboard_css
         or '.ballet-timetable-course[data-course-type="ballet"][data-level="l4"]' not in dashboard_css
         or 'background: var(--course-fill-waitlist);' not in dashboard_css
@@ -1513,7 +1514,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=204" not in dashboard_html
+        "styles.css?v=205" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=168" not in dashboard_html
     ):

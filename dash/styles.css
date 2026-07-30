@@ -4960,11 +4960,11 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-timetable-course {
   --course-fill: #e9edf1;
-  --course-fill-waitlist: #d3dbe3;
-  --course-fill-booked: #aebccc;
   --course-border: #8392a5;
-  --course-ink: #273247;
-  --course-muted: #5f6978;
+  --course-fill-waitlist: color-mix(in srgb, var(--course-fill) 56%, var(--course-border) 44%);
+  --course-fill-booked: color-mix(in srgb, var(--course-fill) 18%, var(--course-border) 82%);
+  --course-ink: #111827;
+  --course-muted: #111827;
   --card-color: var(--course-border);
   --card-border: var(--course-border);
   min-width: 0;
@@ -4980,78 +4980,56 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-timetable-course[data-course-type="ballet"] {
   --course-fill: #f7e4ed;
-  --course-fill-waitlist: #edbdd1;
-  --course-fill-booked: #df8fb2;
   --course-border: #bd5f87;
 }
 
 .ballet-timetable-course[data-course-type="ballet"][data-level="l1"] {
   --course-fill: #e5f4df;
-  --course-fill-waitlist: #c4e5b7;
-  --course-fill-booked: #95cf82;
   --course-border: #659d52;
 }
 
 .ballet-timetable-course[data-course-type="ballet"][data-level="l1.5"] {
   --course-fill: #ddf3e7;
-  --course-fill-waitlist: #b9e3cd;
-  --course-fill-booked: #80c8a3;
   --course-border: #4d9873;
 }
 
 .ballet-timetable-course[data-course-type="ballet"][data-level="l2"] {
   --course-fill: #e2eff9;
-  --course-fill-waitlist: #bad9ef;
-  --course-fill-booked: #83bee5;
   --course-border: #4e8db7;
 }
 
 .ballet-timetable-course[data-course-type="ballet"][data-level="l3"] {
   --course-fill: #fbe9df;
-  --course-fill-waitlist: #f4cdb8;
-  --course-fill-booked: #e9a882;
   --course-border: #b97853;
 }
 
 .ballet-timetable-course[data-course-type="ballet"][data-level="l4"] {
   --course-fill: #eee5f7;
-  --course-fill-waitlist: #d8c3ec;
-  --course-fill-booked: #b88fd9;
   --course-border: #855cad;
 }
 
 .ballet-timetable-course[data-course-type="ballet"][data-level="l5"] {
   --course-fill: #f8e4ed;
-  --course-fill-waitlist: #edbdd1;
-  --course-fill-booked: #df8fb2;
   --course-border: #ad587d;
 }
 
 .ballet-timetable-course[data-course-type="soft_open"] {
   --course-fill: #ececea;
-  --course-fill-waitlist: #d7d6d2;
-  --course-fill-booked: #b8b6af;
   --course-border: #85837c;
 }
 
 .ballet-timetable-course[data-course-type="conditioning"] {
   --course-fill: #fbf2d7;
-  --course-fill-waitlist: #f2dfa7;
-  --course-fill-booked: #e6c768;
   --course-border: #a8872b;
 }
 
 .ballet-timetable-course[data-course-type="technique"] {
   --course-fill: #f7e4ea;
-  --course-fill-waitlist: #edc1d0;
-  --course-fill-booked: #dc8faa;
   --course-border: #a95573;
 }
 
 .ballet-timetable-course[data-course-type="other"] {
   --course-fill: #e9edf1;
-  --course-fill-waitlist: #d3dbe3;
-  --course-fill-booked: #aebccc;
   --course-border: #687487;
 }
 
@@ -5110,7 +5088,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   align-items: center;
   flex-wrap: wrap;
   gap: 1px 7px;
-  color: #566174;
+  color: var(--course-ink);
   line-height: 1.15;
 }
 

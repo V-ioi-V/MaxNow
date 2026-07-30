@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 19:11",
-  "version": "1.0.7.47",
-  "versionLabel": "v1.0.7.47",
-  "branch": "bugfix/ballet-swan-alignment",
-  "commit": "9161113",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-swan-alignment · commit 9161113 · 有未提交代码改动",
+  "updatedAt": "2026-07-30 20:02",
+  "version": "1.0.7.48",
+  "versionLabel": "v1.0.7.48",
+  "branch": "bugfix/ballet-booking-contrast",
+  "commit": "70aee5d",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-booking-contrast · commit 70aee5d · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "拉开课表排队与预约色阶",
+      "summary": "保留课程类型与级别决定色相的规则，把 Owner 排队课程统一改为由浅底色与课型描边色按 `56:44` 混合出的中深实心底，把已预约与已上完课程改为按 `18:82` 混合出的明显深色实心底。"
+    },
     {
       "date": "2026-07-30",
       "title": "按可见主体对齐十级小天鹅",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "本周训练改为当前时长与课程类型",
       "summary": "“训练时长”改为本周已完成分钟加已预约分钟的当前确定时长，副说明同步显示已确定节数；不再展示包含候补的预计小时区间。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "补充本周老师、完成率与过去课程层级",
-      "summary": "“本周训练”扩展为六项同族指标：新增按本周实际上完课程统计的“最喜欢的老师”，以及按已完成 /（已完成 + 已预约）计算的低饱和圆形“已上完占比”；候补不进入已确认训练分母。"
     }
   ]
 };
