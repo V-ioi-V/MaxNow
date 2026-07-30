@@ -1829,3 +1829,16 @@ local visual verification: 3840×1400、2048×1200、1600×1000、390×844 下�
 server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=214 200、Blog 200；nginx、maxnow-auth 与四个芭蕾 timer 均 active，rolling / full / 自动抢课 service 均 inactive
 safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
 ```
+
+2026-07-30 已放大课程票券有效期圆环并收小正文：
+
+```text
+deployed commit: 7623f43 Rebalance membership progress scale
+version: 1.0.7.60
+changes: 有效期圆环从 50px 放大至 66px，环内数字继续保持 15px / 8px；正文主数字从最高 38px 收至最高 30px，前后文字为 12px，到期说明为 10px
+asset cache: styles.css?v=215；app.js?v=172
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260730-membership-ring-scale-7623f43/dash-data.tgz（部署前完整备份 dash/data）
+local visual verification: 3840×1400、2048×1200、1600×1000、390×844 下圆环与标签保持 8–10px 间距，正文位于圆环下方；卡内和整页横向溢出为 0；2048px / 1600px 三个概览格同顶、同底、同高
+server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；styles.css?v=215 200、首页 302、登录页 200、未认证 ballet 数据 401、Blog 200；nginx、maxnow-auth 与四个芭蕾 timer 均 active，rolling / full / 自动抢课 service 均 inactive
+safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
+```
