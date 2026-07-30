@@ -602,7 +602,7 @@ def check_ballet_read_model():
         or "./assets/ballet/membership-ballerina.webp" not in dashboard_js
         or ".ballet-membership-artwork {" not in dashboard_css
         or ".ballet-membership-day-ring {" not in dashboard_css
-        or "@container (max-width: 360px)" not in dashboard_css
+        or "@container (max-width: 399px)" not in dashboard_css
         or ".ballet-week-grid {" not in dashboard_css
     ):
         raise ValueError("ballet: membership or weekly frontend contract is incomplete")
