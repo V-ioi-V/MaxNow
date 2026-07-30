@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 22:51",
-  "version": "1.0.7.58",
-  "versionLabel": "v1.0.7.58",
-  "branch": "bugfix/membership-foot-ring",
-  "commit": "2caf9c8",
+  "updatedAt": "2026-07-30 23:07",
+  "version": "1.0.7.59",
+  "versionLabel": "v1.0.7.59",
+  "branch": "bugfix/membership-ring-layout",
+  "commit": "c538386",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/membership-foot-ring · commit 2caf9c8 · 有未提交代码改动",
+  "deployNote": "bugfix/membership-ring-layout · commit c538386 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "拆开课程卡有效进度文字与圆环",
+      "summary": "有效进度卡改为三行网格：首行仅放“有效进度”和右上 `50px` 小圆环，“第 N / 总天数”与到期节奏说明分别独占后两行，不再把完整文字组和圆环挤在同一横行。"
+    },
     {
       "date": "2026-07-30",
       "title": "分离课程卡舞者与事实区并缩小圆环数字",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "修复课程卡芭蕾舞者被裁切和遮淡",
       "summary": "课程卡插画从放大铺满改为完整缩放，修正人物层被近乎不透明票券底色遮住的问题；舞者现在从手尖到足尖完整可辨，不再只剩躯干或腿部的淡影。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "将课程卡升级为暖象牙芭蕾票券",
-      "summary": "课程卡沿用现有脱敏课程卡数据，重构为暖象牙票券：加入淡香槟金描边、侧边缺口、票根虚线、芭蕾线稿背景和编辑感标题，不把任何动态文字或数字写进图片。"
     }
   ]
 };

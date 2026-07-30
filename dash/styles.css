@@ -5960,20 +5960,36 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-overview-grid .ballet-membership-validity-metric {
-  grid-template-columns: minmax(0, 1fr) 62px;
+  grid-template-columns: minmax(0, 1fr) 50px;
+  grid-template-areas:
+    "validity-label validity-ring"
+    "validity-value validity-value"
+    "validity-detail validity-detail";
   align-items: center;
-  column-gap: 9px;
+  column-gap: 12px;
+  row-gap: 6px;
 }
 
 .ballet-membership-validity-copy {
-  min-width: 0;
-  display: grid;
-  gap: 10px;
+  display: contents;
+}
+
+.ballet-membership-validity-copy > span {
+  grid-area: validity-label;
+}
+
+.ballet-membership-validity-copy > .ballet-membership-day-value {
+  grid-area: validity-value;
+}
+
+.ballet-membership-validity-copy > small {
+  grid-area: validity-detail;
 }
 
 .ballet-membership-day-ring {
   --membership-day-progress: 0%;
-  width: 62px;
+  grid-area: validity-ring;
+  width: 50px;
   aspect-ratio: 1;
   display: flex;
   align-items: center;
@@ -5999,14 +6015,14 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-membership-day-ring strong {
   color: var(--membership-ink);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 650;
   line-height: 1;
 }
 
 .ballet-membership-day-ring small {
   color: var(--membership-muted);
-  font-size: 9px;
+  font-size: 8px;
   line-height: 1.05;
 }
 
