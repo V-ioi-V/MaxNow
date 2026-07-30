@@ -3299,9 +3299,23 @@ function balletMembershipDisplayName(card = {}) {
   return /^芭蕾/.test(formatted) ? formatted : `芭蕾${formatted}`;
 }
 
-function createBalletMembershipItem(card = {}) {
+function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   const article = document.createElement("article");
   article.className = "ballet-membership-item";
+
+  const ticketHead = document.createElement("div");
+  ticketHead.className = "ballet-membership-ticket-head";
+  const ticketTitle = document.createElement("div");
+  const ticketEyebrow = document.createElement("p");
+  ticketEyebrow.className = "eyebrow";
+  ticketEyebrow.textContent = "Course Card";
+  const ticketHeading = document.createElement("h2");
+  ticketHeading.textContent = "课程卡";
+  ticketTitle.append(ticketEyebrow, ticketHeading);
+  const ticketStatus = document.createElement("span");
+  ticketStatus.className = "status-pill";
+  ticketStatus.textContent = `${activeCardCount} 张有效卡`;
+  ticketHead.append(ticketTitle, ticketStatus);
 
   const artwork = document.createElement("div");
   artwork.className = "ballet-membership-artwork";
@@ -3313,13 +3327,6 @@ function createBalletMembershipItem(card = {}) {
   const seam = document.createElement("span");
   seam.className = "ballet-membership-seam";
   seam.setAttribute("aria-hidden", "true");
-  const notchStart = document.createElement("span");
-  notchStart.className = "ballet-membership-notch is-start";
-  notchStart.setAttribute("aria-hidden", "true");
-  const notchEnd = document.createElement("span");
-  notchEnd.className = "ballet-membership-notch is-end";
-  notchEnd.setAttribute("aria-hidden", "true");
-
   const header = document.createElement("header");
   const title = document.createElement("div");
   const eyebrow = document.createElement("p");
@@ -3452,13 +3459,13 @@ function createBalletMembershipItem(card = {}) {
         : `开卡后实际 ${observedRate} 节/周，到期预计约剩 ${Math.floor(balletNumber(pace.observedProjectedRemainingAtExpiry))} 节。`;
       verdictBody.append(verdictTitle, verdictCopy, observed);
       verdict.append(verdictIcon, verdictBody);
-      article.append(artwork, seam, notchStart, notchEnd, header, metrics, verdict);
+      article.append(artwork, seam, ticketHead, header, metrics, verdict);
       return article;
     }
   }
   verdictBody.append(verdictTitle, verdictCopy);
   verdict.append(verdictIcon, verdictBody);
-  article.append(artwork, seam, notchStart, notchEnd, header, metrics, verdict);
+  article.append(artwork, seam, ticketHead, header, metrics, verdict);
   return article;
 }
 
@@ -3466,13 +3473,12 @@ function renderBalletMembership() {
   const cards = Array.isArray(balletData.membership?.cards) ? balletData.membership.cards : [];
   const container = qs("#ballet-membership-list");
   if (!container) return;
-  setText("#ballet-membership-status", cards.length ? `${cards.length} 张有效卡` : "暂无有效卡");
   container.replaceChildren();
   if (!cards.length) {
     container.appendChild(emptyTemplate.content.cloneNode(true));
     return;
   }
-  container.append(...cards.map(createBalletMembershipItem));
+  container.append(...cards.map((card) => createBalletMembershipItem(card, cards.length)));
 }
 
 function getBalletWeekCompletedRecords(week = {}, records = getBalletGrowthRecords()) {

@@ -5707,6 +5707,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   --membership-line: #e6c99f;
   --membership-muted: #85777a;
   container-type: inline-size;
+  background: transparent;
 }
 
 .ballet-overview-grid .ballet-membership-list {
@@ -5720,7 +5721,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-height: 100%;
   align-content: center;
   gap: 12px;
-  padding: 18px 20px 20px;
+  padding: 18px 18px 20px;
   border: 1px solid var(--membership-gold);
   border-radius: 28px 28px 22px 22px;
   background:
@@ -5731,6 +5732,44 @@ body[data-view="ricky"] .topbar-ricky-status {
     inset 0 0 0 3px rgba(255, 255, 255, 0.72),
     inset 0 0 0 4px rgba(215, 176, 111, 0.08),
     0 15px 30px rgba(115, 71, 66, 0.12);
+}
+
+.ballet-membership-ticket-head {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  min-height: 58px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 2px 5px 8px;
+  border-bottom: 1px solid rgba(215, 176, 111, 0.22);
+}
+
+.ballet-membership-ticket-head > div {
+  min-width: 0;
+}
+
+.ballet-membership-ticket-head .eyebrow {
+  margin: 0;
+  color: var(--membership-rose-deep);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ballet-membership-ticket-head h2 {
+  margin: 4px 0 0;
+  color: var(--membership-ink);
+  font-size: 20px;
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+}
+
+.ballet-membership-ticket-head .status-pill {
+  flex: 0 0 auto;
 }
 
 .ballet-membership-artwork {
@@ -5763,31 +5802,6 @@ body[data-view="ricky"] .topbar-ricky-status {
   bottom: 14px;
   border-left: 1px dashed rgba(188, 137, 81, 0.28);
   pointer-events: none;
-}
-
-.ballet-membership-notch {
-  position: absolute;
-  z-index: 3;
-  top: 50%;
-  width: 12px;
-  height: 38px;
-  border: 1px solid var(--membership-gold);
-  background: #f8fbfe;
-  pointer-events: none;
-}
-
-.ballet-membership-notch.is-start {
-  left: 0;
-  border-left: 0;
-  border-radius: 0 999px 999px 0;
-  transform: translateY(-50%);
-}
-
-.ballet-membership-notch.is-end {
-  right: 0;
-  border-right: 0;
-  border-radius: 999px 0 0 999px;
-  transform: translateY(-50%);
 }
 
 .ballet-overview-grid .ballet-membership-item > header {
@@ -6074,7 +6088,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-overview-grid .ballet-membership-item > header,
   .ballet-overview-grid .ballet-membership-metrics,
   .ballet-overview-grid .ballet-membership-verdict {
-    margin-left: 38%;
+    margin-left: 35%;
   }
 
   .ballet-overview-grid .ballet-membership-item > header {
@@ -6116,7 +6130,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-overview-grid .ballet-membership-item > header,
   .ballet-overview-grid .ballet-membership-metrics,
   .ballet-overview-grid .ballet-membership-verdict {
-    margin-left: 34%;
+    margin-left: 31%;
   }
 
   .ballet-overview-grid .ballet-membership-item > header {
@@ -7655,6 +7669,12 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-membership-item > header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .ballet-overview-grid .ballet-membership-item > header,
+  .ballet-overview-grid .ballet-membership-metrics,
+  .ballet-overview-grid .ballet-membership-verdict {
+    margin-left: 0;
   }
 
   .ballet-overview-grid .ballet-membership-item {

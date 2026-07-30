@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 22:02",
-  "version": "1.0.7.55",
-  "versionLabel": "v1.0.7.55",
-  "branch": "bugfix/ballet-membership-artwork-visibility",
-  "commit": "f1041fa",
+  "updatedAt": "2026-07-30 22:11",
+  "version": "1.0.7.56",
+  "versionLabel": "v1.0.7.56",
+  "branch": "bugfix/expand-membership-card",
+  "commit": "7a5fcee",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-membership-artwork-visibility · commit f1041fa · 有未提交代码改动",
+  "deployNote": "bugfix/expand-membership-card · commit 7a5fcee · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "课程卡取消外框并扩展票券内容",
+      "summary": "移除课程卡外围普通白色面板，只保留暖象牙票券作为唯一卡片；“Course Card / 课程卡 / 有效卡数量”并入票券顶部，减少重复边框和留白。"
+    },
     {
       "date": "2026-07-30",
       "title": "修复课程卡芭蕾舞者被裁切和遮淡",
@@ -28,11 +33,6 @@
       "date": "2026-07-30",
       "title": "再次拉开课表三档色阶并暖化软开课",
       "summary": "普通课程继续使用课型最浅底色；Owner 排队课程提高到浅底与描边色 `24:76` 的中深档，已预约与已上完课程改为课型描边色 `72%` 与暖深灰 `28%` 的重色档，并使用暖白文字，三档不看徽标也能明显区分。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "手动补录 7 月 30 日软开课",
-      "summary": "按 Owner 提供的课表截图，手动补录 `2026-07-30 18:45–19:45` 李俊老师大教室“软开课”，记录状态为已上课，并使用 `manual` 稳定键保存在服务器私有上课台账中。"
     }
   ]
 }
