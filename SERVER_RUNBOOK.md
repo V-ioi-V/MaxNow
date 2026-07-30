@@ -1747,3 +1747,18 @@ local visual verification: 1585px 宽桌面下三张分布卡同顶、同底、�
 server verification: scripts/check.py 全部通过；scripts/test_sync_ballet.py 18 项通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=208 200、受保护 app.js?v=169 未认证 302、Blog 200；nginx 与 maxnow-auth 均 active
 safety: 仅部署静态页面、脱敏聚合和文档；未读取 PHPSESSID、未访问闻道，也未提交预约、排队、取消或转课
 ```
+
+2026-07-30 已部署暖象牙芭蕾票券课程卡：
+
+```text
+deployed commit: ccbc136 Redesign ballet membership card
+version: 1.0.7.54
+changes: 课程卡升级为暖象牙票券、淡香槟金描边、侧边缺口和低透明芭蕾线稿；课程使用改为动态水平进度，有效天数改为动态环形进度，计划结论收敛为建议周课次、预计用完日期和预计提前天数
+asset cache: styles.css?v=209；app.js?v=170
+art asset: dash/assets/ballet/membership-ballerina.webp（720×1080 WebP，26,934 bytes；纯装饰，不承载动态文字或数据）
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260730-214043-ballet-membership-ticket
+runtime data stash: predeploy-ballet-membership-ticket-20260730-214043（部署后保留，运行时数据已恢复为未暂存改动）
+local visual verification: 1585px 与 1265px 实际内容宽下课程卡和本周训练卡同顶、同底、同高；1085px 下概览正常单列；375px 实际内容宽下两项指标改为单列；各尺寸页面与课程卡均无横向溢出，浏览器控制台无 warning / error
+server verification: scripts/check.py 全部通过；scripts/test_sync_ballet.py 18 项通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=209 200、受保护 app.js?v=170 未认证 302、芭蕾插画 200、Blog 200；nginx 与 maxnow-auth 均 active
+safety: 仅部署静态页面、脱敏课程卡展示和本地装饰素材；未读取 PHPSESSID、未访问闻道，也未提交预约、排队、取消或转课
+```
