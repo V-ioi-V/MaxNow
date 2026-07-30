@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 11:43",
-  "version": "1.0.7.38",
-  "versionLabel": "v1.0.7.38",
-  "branch": "bugfix/ballet-swan-vertical-align",
-  "commit": "1e544b6",
+  "updatedAt": "2026-07-30 12:39",
+  "version": "1.0.7.39",
+  "versionLabel": "v1.0.7.39",
+  "branch": "feature/ballet-growth-clarity",
+  "commit": "0ce13d7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-swan-vertical-align · commit 1e544b6 · 有未提交代码改动",
+  "deployNote": "feature/ballet-growth-clarity · commit 0ce13d7 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "区分课程等级与小天鹅成长阶段",
+      "summary": "成长卡移除顶部重复的 `Lv.N`；蓝色块改名“课程等级”，直接显示已上课次和“再上 N 节升级到下一课程等级”，保留规律 / 保守课次口径。"
+    },
     {
       "date": "2026-07-30",
       "title": "上提小天鹅成长图视觉重心",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-29",
       "title": "补齐本人候补位次与紧凑课程老师",
       "summary": "周课表把预约快照中的本人候补序号匹配回对应课程，状态由笼统的 `排队中` 改为 `排队中 N`；该数字只表示 Owner 本人的候补位次，与人数行的全班 `Wait` 排队数保持独立。"
-    },
-    {
-      "date": "2026-07-29",
-      "title": "疏开课表课程卡信息",
-      "summary": "课程卡改为“课程名 → 人数 → 老师 → 时间 / 状态”四层结构；报名 / 容量和排队数使用独立人数行，老师另起弱信息行，时间与状态保留在底部，不再把人数、排队和老师挤成一串。"
     }
   ]
 };

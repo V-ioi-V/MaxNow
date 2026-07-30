@@ -3436,15 +3436,11 @@ function getBalletGrowthLevelState(records) {
     BALLET_GROWTH_LEVELS[0];
   const currentIndex = BALLET_GROWTH_LEVELS.indexOf(current);
   const next = BALLET_GROWTH_LEVELS[currentIndex + 1] || null;
-  const progress = next
-    ? ((completed - current.threshold) / Math.max(1, next.threshold - current.threshold)) * 100
-    : 100;
   return {
     completed,
     current,
     next,
     remaining: next ? Math.max(0, next.threshold - completed) : 0,
-    progress: Math.max(0, Math.min(100, progress)),
   };
 }
 
@@ -3453,12 +3449,16 @@ function renderBalletSwanLevel(level) {
   if (!stage) return;
   const safeLevel = Math.max(1, Math.min(10, Math.floor(balletNumber(level, 1))));
   const icon = qs("#ballet-swan-icon");
+  const stages = qs("#ballet-growth-stages");
   stage.dataset.level = String(safeLevel);
   stage.setAttribute("aria-label", `小天鹅成长等级 ${safeLevel}，共 10 级`);
   if (icon) icon.src = `./assets/ballet/swan-lv${safeLevel}.png`;
-  stage.querySelectorAll(".ballet-swan-step").forEach((step, index) => {
+  stages?.querySelectorAll(".ballet-growth-stage").forEach((step, index) => {
+    const isCurrent = index === safeLevel - 1;
     step.classList.toggle("is-reached", index < safeLevel);
-    step.classList.toggle("is-current", index === safeLevel - 1);
+    step.classList.toggle("is-current", isCurrent);
+    if (isCurrent) step.setAttribute("aria-current", "step");
+    else step.removeAttribute("aria-current");
   });
 }
 
@@ -3479,36 +3479,35 @@ function renderBalletGrowth() {
   const promotion = getBalletPromotionState(records);
   const growth = getBalletGrowthLevelState(records);
 
-  setText("#ballet-growth-level", `Lv.${growth.current.level}`);
   setText(
     "#ballet-promotion-title",
     promotion.isFinal
-      ? `${promotion.currentLevel} · 继续巩固`
+      ? `${promotion.currentLevel} · 已满级`
       : `${promotion.currentLevel} → ${promotion.nextLevel}`,
   );
   setText(
     "#ballet-promotion-count",
     promotion.isFinal
-      ? `${promotion.completed} 节`
-      : `${promotion.completed} / ${promotion.target} 节`,
+      ? `本级已上 ${promotion.completed} 节`
+      : `已上 ${promotion.completed} / ${promotion.target} 节`,
   );
   setText(
     "#ballet-promotion-rhythm",
     promotion.isFinal
-      ? "当前等级累计课次"
-      : `还需 ${promotion.remaining} 节 · ${promotion.isRegular ? "规律" : "保守"}课次标准`,
+      ? "课程等级已到最高级"
+      : `再上 ${promotion.remaining} 节升级到 ${promotion.nextLevel}`,
   );
   setText(
     "#ballet-promotion-note",
     promotion.isFinal
-      ? "课程路径已到 L5；后续课次继续累计在当前等级。"
+      ? "后续课次继续累计，页面不会回退课程等级。"
       : promotion.autoPromoted
-        ? `已按课次自动进入 ${promotion.currentLevel}；现在开始累计本级课程。`
+        ? `已自动进入 ${promotion.currentLevel}，本级课次重新累计。`
         : promotion.isRegular
-          ? `达到 ${promotion.target} 节后自动进入 ${promotion.nextLevel}；当前采用规律课次标准。`
+          ? "当前采用规律课次标准。"
           : promotion.sampleSufficient
-            ? `达到 ${promotion.target} 节后自动进入 ${promotion.nextLevel}；恢复规律训练后目标可降至 ${promotion.regularTarget} 节。`
-            : `达到 ${promotion.target} 节后自动进入 ${promotion.nextLevel}；连续 3 周每周至少 2 节后改用 ${promotion.regularTarget} 节标准。`,
+            ? `当前采用保守课次标准；恢复规律训练后目标可降至 ${promotion.regularTarget} 节。`
+            : `当前采用保守课次标准；连续 3 周每周至少 2 节后改用 ${promotion.regularTarget} 节标准。`,
   );
   updateBalletGrowthProgress(
     "#ballet-promotion-progress",
@@ -3517,31 +3516,21 @@ function renderBalletGrowth() {
     promotion.isFinal ? Math.max(1, promotion.completed) : promotion.target,
   );
 
-  setText("#ballet-level-title", `Lv.${growth.current.level}`);
+  setText("#ballet-level-title", `第 ${growth.current.level} 阶段`);
   setText(
     "#ballet-growth-class-count",
-    growth.next ? `${growth.completed} / ${growth.next.threshold} 节` : `${growth.completed} / 200 节`,
+    `已累计 ${growth.completed} 节`,
   );
   setText(
     "#ballet-level-next",
-    growth.next ? `还需 ${growth.remaining} 节 · 下一级 Lv.${growth.next.level}` : "200 节达成 · 已满级",
+    growth.next ? `再上 ${growth.remaining} 节进入第 ${growth.next.level} 阶段` : "第 10 阶段 · 已满级",
   );
   setText(
     "#ballet-level-note",
     growth.next
-      ? "每一节实际上课都会推进成长等级，不区分课程类型。"
-      : "Lv.10 已达成；之后的实际上课节数仍会继续累计。",
+      ? "每节实际上课都会推动小天鹅长大。"
+      : "已完成十阶段成长，之后的实际上课节数仍会继续累计。",
   );
-  const levelProgress = qs("#ballet-level-progress");
-  if (levelProgress) {
-    levelProgress.setAttribute(
-      "aria-valuemax",
-      String(growth.next?.threshold || Math.max(200, growth.completed)),
-    );
-    levelProgress.setAttribute("aria-valuenow", String(Math.min(growth.completed, 200)));
-  }
-  const levelFill = qs("#ballet-level-progress-fill");
-  if (levelFill) levelFill.style.width = `${growth.progress}%`;
   renderBalletSwanLevel(growth.current.level);
 }
 

@@ -5631,25 +5631,72 @@ body[data-view="ricky"] .topbar-ricky-status {
   filter: drop-shadow(0 4px 7px color-mix(in srgb, var(--growth-color) 12%, transparent));
 }
 
-.ballet-swan-steps {
-  width: 82px;
+.ballet-growth-stages {
+  min-width: 0;
+  margin: 0;
+  padding: 2px;
+  list-style: none;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 3px;
+  align-items: center;
 }
 
-.ballet-swan-step {
-  height: 3px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--growth-color) 13%, #ffffff);
+.ballet-growth-stage {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  color: color-mix(in srgb, var(--growth-color) 52%, #8792a5);
+  font-size: 9px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
-.ballet-swan-step.is-reached {
+.ballet-growth-stage::before {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: 50%;
+  width: 100%;
+  height: 2px;
+  content: "";
+  background: color-mix(in srgb, var(--growth-color) 14%, #ffffff);
+  transform: translateY(-50%);
+}
+
+.ballet-growth-stage:first-child::before {
+  display: none;
+}
+
+.ballet-growth-stage > span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--growth-color) 24%, #ffffff);
+  border-radius: 50%;
+  background: #ffffff;
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.ballet-growth-stage.is-reached::before {
   background: color-mix(in srgb, var(--growth-color) 58%, #ffffff);
 }
 
-.ballet-swan-step.is-current {
+.ballet-growth-stage.is-reached > span {
+  border-color: color-mix(in srgb, var(--growth-color) 58%, #ffffff);
+  background: color-mix(in srgb, var(--growth-color) 10%, #ffffff);
+  color: var(--growth-color);
+}
+
+.ballet-growth-stage.is-current > span {
+  border-color: var(--growth-color);
   background: var(--growth-color);
+  color: #ffffff;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--growth-color) 14%, transparent);
+  transform: scale(1.08);
 }
 
 .ballet-growth-meta strong {
@@ -6967,13 +7014,21 @@ body[data-view="ricky"] .topbar-ricky-status {
     gap: 10px;
   }
 
-  .ballet-swan-icon,
-  .ballet-swan-steps {
+  .ballet-swan-icon {
     width: 70px;
   }
 
   .ballet-swan-icon {
     height: 70px;
+  }
+
+  .ballet-growth-stage {
+    font-size: 8px;
+  }
+
+  .ballet-growth-stage > span {
+    width: 18px;
+    height: 18px;
   }
 
   .ballet-swan-stage {
