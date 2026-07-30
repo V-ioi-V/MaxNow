@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 15:47",
+  "updatedAt": "2026-07-30 15:59",
   "version": "1.0.7.44",
   "versionLabel": "v1.0.7.44",
   "branch": "feature/ballet-week-course-types",
-  "commit": "fdb94d0",
+  "commit": "1f770e3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-week-course-types · commit fdb94d0 · 有未提交代码改动",
+  "deployNote": "feature/ballet-week-course-types · commit 1f770e3 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-30",
