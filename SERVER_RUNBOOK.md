@@ -1720,3 +1720,16 @@ verification: 默认模型 14:45 返回阴、0mm；CMA 15:00 返回阵雨、1.7m
 ```
 
 2026-07-30 20:21 使用仓库 `scripts/sync_ballet.py` 的本地归一化、ledger 校验、read model 校验和原子写入函数，手动补入 Owner 确认的 `2026-07-30 18:45–19:45` 李俊大教室软开课。写入前确认目标不存在，并把私有 `attendance-ledger.json` 与公开 `ballet.*` 备份到 `/home/ubuntu/maxnow-deploy-backups/20260730-manual-attendance-UvM4Jf`；记录使用 `manual` 稳定键，公开数据校验为累计 `4 节 / 300 分钟`、本周完成 `2 节 / 150 分钟`、2 条手工记录，课表目标课程可匹配为“已上完”，成长进度为 `4 / 10`。第一次输入因 Windows 管道编码把中文变为问号，校验发现课程类型误判后立即从上述备份完整回滚；随后改用 Unicode 转义重新写入并复验正确，错误记录未保留。全过程未读取 PHPSESSID、未访问闻道、未触发同步，也没有提交预约、排队、取消或转课。
+
+2026-07-30 已部署课表三档高对比色阶与暖色软开课：
+
+```text
+deployed commit: d2f9600 Increase ballet timetable color contrast
+version: 1.0.7.52
+changes: 普通课程保持浅色；排队态改为 24% 基色 + 76% 边框色的中深实心；已预约 / 已上完改为 72% 边框色 + 28% 暖深灰的深色实心并使用暖白文字；软开课由冷灰改为浅奶咖 / 深暖棕
+asset cache: styles.css?v=207
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260730-ballet-contrast-warm-UJ4rGq
+local visual verification: 2048×1200 与 390×844 下共检查 55 张课程卡；页面和卡片内容均无横向溢出；排队示例文字对比度 7.25，深色已预约 / 已上完示例 5.70
+server verification: scripts/check.py 全部通过；scripts/test_sync_ballet.py 18 项通过；nginx -t 通过；首页 302、登录页 200、未认证 ballet 数据 401、styles.css?v=207 200、Blog 200
+safety: 仅修改静态样式、契约文档与版本记录；未读取 PHPSESSID、未访问闻道，也未提交预约、排队、取消或转课
+```
