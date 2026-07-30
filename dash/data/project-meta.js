@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 20:02",
-  "version": "1.0.7.48",
-  "versionLabel": "v1.0.7.48",
-  "branch": "bugfix/ballet-booking-contrast",
-  "commit": "70aee5d",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-booking-contrast · commit 70aee5d · 干净",
+  "updatedAt": "2026-07-30 20:06",
+  "version": "1.0.7.49",
+  "versionLabel": "v1.0.7.49",
+  "branch": "bugfix/deploy-swan-alignment",
+  "commit": "1143cef",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/deploy-swan-alignment · commit 1143cef · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "将成长卡对齐与课表深色状态发布到生产",
+      "summary": "生产服务器从仍使用统一像素位移与旧课表色阶的 `1.0.7.46 / styles.css?v=203`，升级到按十张小天鹅素材透明边界对齐并使用明显排队 / 预约深浅的 `styles.css?v=205`。"
+    },
     {
       "date": "2026-07-30",
       "title": "拉开课表排队与预约色阶",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "拆分成长等级与课程等级模块",
       "summary": "删除“成长进度”总卡，把紫色“成长等级”和蓝色“课程等级”改为两张各自拥有完整边框、阴影与 hover 反馈的独立面板；成长等级固定在上，课程等级固定在下。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "本周训练改为当前时长与课程类型",
-      "summary": "“训练时长”改为本周已完成分钟加已预约分钟的当前确定时长，副说明同步显示已确定节数；不再展示包含候补的预计小时区间。"
     }
   ]
 };
