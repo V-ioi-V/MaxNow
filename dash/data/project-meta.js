@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 10:35",
+  "updatedAt": "2026-07-30 11:06",
   "version": "1.0.7.37",
   "versionLabel": "v1.0.7.37",
   "branch": "feature/ballet-swan-growth-assets",
-  "commit": "f2e1017",
+  "commit": "8618631",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-swan-growth-assets · commit f2e1017 · 有未提交代码改动",
+  "deployNote": "feature/ballet-swan-growth-assets · commit 8618631 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-07-30",
