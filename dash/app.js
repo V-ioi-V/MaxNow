@@ -3306,6 +3306,53 @@ function formatBalletCountRange(minimum, maximum, unit) {
   return min === max ? `${min} ${unit}` : `${min}–${max} ${unit}`;
 }
 
+function getBalletWeekCompletedRecords(week = {}, records = getBalletGrowthRecords()) {
+  const start = String(week.weekStart || "");
+  const end = String(week.weekEnd || "");
+  if (!start || !end) return [];
+  return records.filter((record) => {
+    const date = balletRecordDate(record);
+    return date >= start && date <= end;
+  });
+}
+
+function getBalletWeekFavoriteTeacher(week = {}, records = getBalletGrowthRecords()) {
+  const teachers = new Map();
+  getBalletWeekCompletedRecords(week, records).forEach((record) => {
+    const teacher = balletTeacher(record).trim();
+    if (!teacher) return;
+    const current = teachers.get(teacher) || {
+      name: teacher,
+      classes: 0,
+      minutes: 0,
+      latestDate: "",
+    };
+    current.classes += 1;
+    current.minutes += Math.max(0, balletNumber(record.durationMinutes));
+    current.latestDate = [current.latestDate, balletRecordDate(record)].sort().at(-1) || "";
+    teachers.set(teacher, current);
+  });
+  return [...teachers.values()].sort(
+    (left, right) =>
+      right.classes - left.classes
+      || right.minutes - left.minutes
+      || String(right.latestDate).localeCompare(String(left.latestDate))
+      || left.name.localeCompare(right.name, "zh-CN"),
+  )[0] || null;
+}
+
+function getBalletWeekCompletionState(week = {}) {
+  const completedClasses = Math.max(0, balletNumber(week.completedClasses));
+  const confirmedClasses = completedClasses + Math.max(0, balletNumber(week.bookedClasses));
+  return {
+    completedClasses,
+    confirmedClasses,
+    completionRate: confirmedClasses
+      ? Math.min(100, Math.round((completedClasses / confirmedClasses) * 100))
+      : 0,
+  };
+}
+
 function renderBalletWeek() {
   const week = balletData.week || {};
   const start = String(week.weekStart || "");
@@ -3321,16 +3368,42 @@ function renderBalletWeek() {
   setText("#ballet-week-waitlist", `${balletNumber(week.waitlistClasses)} 节`);
   setText("#ballet-week-waitlist-time", `${formatBalletHours(week.waitlistMinutes)} 小时`);
   setText(
-    "#ballet-week-expected",
-    formatBalletCountRange(week.expectedClassesMin, week.expectedClassesMax, "节"),
-  );
-  setText(
-    "#ballet-week-expected-time",
+    "#ballet-week-training-time",
     formatBalletCountRange(
       Number(week.expectedMinutesMin || 0) / 60,
       Number(week.expectedMinutesMax || 0) / 60,
       "小时",
     ),
+  );
+  setText(
+    "#ballet-week-training-classes",
+    `预计 ${formatBalletCountRange(week.expectedClassesMin, week.expectedClassesMax, "节")}`,
+  );
+  const favoriteTeacher = getBalletWeekFavoriteTeacher(week);
+  setText("#ballet-week-favorite-teacher", favoriteTeacher?.name || "暂无");
+  setText(
+    "#ballet-week-favorite-teacher-meta",
+    favoriteTeacher
+      ? `${favoriteTeacher.classes} 节 · ${formatBalletHours(favoriteTeacher.minutes)} 小时`
+      : "本周暂无已上课程",
+  );
+  const {
+    completedClasses,
+    confirmedClasses,
+    completionRate,
+  } = getBalletWeekCompletionState(week);
+  const completionRing = qs("#ballet-week-completion-ring");
+  if (completionRing) {
+    completionRing.style.setProperty("--ballet-week-completion", `${completionRate}%`);
+    completionRing.setAttribute(
+      "aria-label",
+      `本周已上完课程占已确认训练的 ${completionRate}%`,
+    );
+  }
+  setText("#ballet-week-completion-rate", `${completionRate}%`);
+  setText(
+    "#ballet-week-completion-meta",
+    confirmedClasses ? `已上 ${completedClasses} / ${confirmedClasses} 节` : "暂无已确认训练",
   );
 }
 

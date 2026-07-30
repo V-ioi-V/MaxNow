@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 15:14",
-  "version": "1.0.7.42",
-  "versionLabel": "v1.0.7.42",
-  "branch": "bugfix/ballet-growth-bar-alignment",
-  "commit": "b258a12",
+  "updatedAt": "2026-07-30 15:31",
+  "version": "1.0.7.43",
+  "versionLabel": "v1.0.7.43",
+  "branch": "feature/ballet-week-insights",
+  "commit": "ab1e6c7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-growth-bar-alignment · commit b258a12 · 有未提交代码改动",
+  "deployNote": "feature/ballet-week-insights · commit ab1e6c7 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-30",
+      "title": "补充本周老师、完成率与过去课程层级",
+      "summary": "“本周训练”扩展为六项同族指标：新增按本周实际上完课程统计的“最喜欢的老师”，以及按已完成 /（已完成 + 已预约）计算的低饱和圆形“已上完占比”；候补不进入已确认训练分母。"
+    },
     {
       "date": "2026-07-30",
       "title": "对齐成长卡上下两根进度条",
@@ -28,11 +33,6 @@
       "date": "2026-07-30",
       "title": "区分课程等级与小天鹅成长阶段",
       "summary": "成长卡移除顶部重复的 `Lv.N`；蓝色块改名“课程等级”，直接显示已上课次和“再上 N 节升级到下一课程等级”，保留规律 / 保守课次口径。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "上提小天鹅成长图视觉重心",
-      "summary": "成长等级块把“小天鹅 + 十段进度”作为一组在桌面端光学上提 `10px`、窄屏上提 `6px`，补偿低等级透明 PNG 上方留白偏多造成的视觉下沉；十张素材的尺寸、成长比例和切换逻辑保持不变。"
     }
   ]
 }
