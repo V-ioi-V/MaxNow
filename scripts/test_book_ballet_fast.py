@@ -1,3 +1,4 @@
+import copy
 import json
 import tempfile
 import unittest
@@ -7,7 +8,7 @@ from pathlib import Path
 import book_ballet as booking
 import book_ballet_fast as fast
 import sync_ballet as ballet
-from test_sync_ballet import index_html, timetable_html
+from test_sync_ballet import detail_html, index_html, timetable_html
 
 
 def config():
@@ -24,6 +25,7 @@ class FakeFastSource:
         unknown_on_mutation=0,
         timetable_failures=0,
         notopen_mutations=0,
+        queue_target_keys=None,
     ):
         self.request_count = 0
         self.post_count = 0
@@ -32,6 +34,9 @@ class FakeFastSource:
         self.unknown_on_mutation = unknown_on_mutation
         self.timetable_failures = timetable_failures
         self.notopen_mutations = notopen_mutations
+        self.queue_target_keys = set(queue_target_keys or [])
+        self.course_by_class_table_id = {}
+        self.waitlisted_records = []
 
     def request(self, path, marker):
         self.request_count += 1
@@ -46,18 +51,33 @@ class FakeFastSource:
                 courses.append(("芭蕾 L1", "19:45", "21:15", "王嘉豪"))
             pages = []
             for index, (course, start, end, teacher) in enumerate(courses, start=1):
+                target_key = (
+                    f"{'tuesday' if day == 1 else 'thursday' if day == 3 else 'friday'}-"
+                    f"{'ballet-l1' if course.startswith('芭蕾') else 'soft-open'}"
+                )
+                class_table_id = f"71{day}{index:02d}"
+                self.course_by_class_table_id[class_table_id] = {
+                    "key": target_key,
+                    "course": course,
+                    "date": self.active_date,
+                    "start": start,
+                    "end": end,
+                    "teacher": teacher,
+                }
+                is_queue = target_key in self.queue_target_keys
                 pages.append(
                     timetable_html(
                         course=course,
                         time_text=f"{start} ~ {end}",
                         teacher=teacher,
                         venue="大教室",
-                        status="4 / 10",
+                        status="4 / 10 可排队" if is_queue else "4 / 10",
                     ).replace(
                         "</div></div></body>",
                         (
                             f'<button class="bookbtn" courseid="7000{index}" '
-                            f'classtableid="7100{index}">预约</button>'
+                            f'classtableid="{class_table_id}">'
+                            f'{"排队" if is_queue else "预约"}</button>'
                             "</div></div></body>"
                         ),
                     )
@@ -75,7 +95,26 @@ class FakeFastSource:
                 ),
             )
         if path == ballet.BOOKING_PATH:
-            return index_html("约课记录", [])
+            return index_html(
+                "约课记录",
+                [
+                    (record["id"], record["course"], record["date"], "排队中")
+                    for record in self.waitlisted_records
+                ],
+            )
+        detail_prefix = f"/gm/weixin/my/bookrecordone/{ballet.STORE_ID}/"
+        if path.startswith(detail_prefix):
+            record_id = path.rsplit("/", 1)[-1]
+            record = next(
+                item for item in self.waitlisted_records if item["id"] == record_id
+            )
+            return detail_html(
+                course=record["course"],
+                day=record["date"],
+                time_text=f'{record["start"]}~{record["end"]}',
+                teacher=record["teacher"],
+                status="等候中, 排队序号 3",
+            ).replace("测试教室", "大教室")
         raise AssertionError(path)
 
     def post_fields(self, path, fields, mutation):
@@ -92,6 +131,11 @@ class FakeFastSource:
             if self.notopen_mutations:
                 self.notopen_mutations -= 1
                 return json.dumps("NOTOPEN")
+            selected = self.course_by_class_table_id[str(fields["classtableid"])]
+            if selected["key"] in self.queue_target_keys:
+                self.waitlisted_records.append(
+                    {**selected, "id": str(92000 + self.mutation_count)}
+                )
             return json.dumps(91000 + self.mutation_count)
         raise AssertionError((path, fields, mutation))
 
@@ -220,6 +264,54 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(state["totalRuns"], 0)
 
+    def test_queue_available_target_joins_waitlist_and_verifies_position(self):
+        source = FakeFastSource(queue_target_keys={"friday-soft-open"})
+        result, state = fast.run_fast(
+            source,
+            config(),
+            fast.default_state(),
+            self.release,
+            execute=True,
+        )
+        self.assertEqual(source.mutation_count, 5)
+        self.assertEqual(result["records"][0]["status"], "waitlisted")
+        self.assertEqual(result["records"][0]["bookingStatus"], "waitlist")
+        self.assertEqual(result["records"][0]["waitlistPosition"], 3)
+        self.assertTrue(result["records"][0]["verified"])
+        self.assertEqual(state["totalBooked"], 4)
+        self.assertEqual(state["totalWaitlisted"], 1)
+
+    def test_queue_available_target_is_ready_in_dry_run(self):
+        source = FakeFastSource(queue_target_keys={"friday-soft-open"})
+        result, state = fast.run_fast(
+            source,
+            config(),
+            fast.default_state(),
+            self.release,
+            execute=False,
+        )
+        self.assertEqual(source.mutation_count, 0)
+        self.assertEqual(result["records"][0]["status"], "ready_waitlist")
+        self.assertEqual(result["records"][0]["availability"], "queue_available")
+        self.assertEqual(state["totalRuns"], 0)
+
+    def test_queue_available_target_is_not_mutated_when_disabled(self):
+        disabled = copy.deepcopy(config())
+        disabled["allowWaitlist"] = False
+        source = FakeFastSource(queue_target_keys={"friday-soft-open"})
+        result, state = fast.run_fast(
+            source,
+            disabled,
+            fast.default_state(),
+            self.release,
+            execute=True,
+        )
+        self.assertEqual(source.mutation_count, 4)
+        self.assertEqual(result["records"][0]["status"], "not_available")
+        self.assertEqual(result["records"][0]["availability"], "queue_available")
+        self.assertEqual(state["totalBooked"], 4)
+        self.assertEqual(state["totalWaitlisted"], 0)
+
     def test_public_output_exposes_no_booking_identifiers(self):
         public = fast.build_public(
             config(),
@@ -228,6 +320,8 @@ class FastBookingTests(unittest.TestCase):
         )
         serialized = json.dumps(public, ensure_ascii=False)
         self.assertEqual(public["nextRunAt"], "2026-08-02T14:20:00+08:00")
+        self.assertTrue(public["waitlistEnabled"])
+        self.assertEqual(public["totalWaitlisted"], 0)
         for marker in (
             "courseId",
             "classTableId",

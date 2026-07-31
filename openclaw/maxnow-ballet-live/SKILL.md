@@ -88,6 +88,8 @@ The enabled production fast path runs entirely on the MaxNow server. It arms at 
 
 Each target is an independent failure domain. Match exactly one live course by date, course type/level, start/end time, teacher, and venue. Transient pre-mutation failures and an explicit `NOTOPEN` response may be retried three times with short bounded backoff. A course-level failure or ambiguous mutation must not block later targets. Never retry an ambiguous mutation because Wenda may already have accepted it; include it in the final unified live-bookings verification instead. Stop later targets only for a global safety failure such as expired authentication, invalid configuration, or a changed page/endpoint contract.
 
+For these configured recurring targets only, `allowWaitlist=true` authorizes the same exact-course fast path to join the waitlist when live availability is `queue_available`. If availability is `available`, book normally. If it is already `booked` or `waitlist`, do not submit again. Final verification must preserve Wenda's actual `bookingStatus` (`booked` or `waitlist`) and a safe positive `waitlistPosition` when present. This authorization does not extend to conversational bookings or any unconfigured class.
+
 Current recurring targets are:
 
 - Friday 18:45–19:45 soft-open, 李俊, 大教室.
@@ -123,7 +125,7 @@ Do not manually start the production service or run `book_ballet_fast.py execute
 - Allow only the four scopes and ISO date arguments. A timetable request may span at most 14 days.
 - Never print, copy, inspect, hash, summarize, or ask the owner for PHPSESSID. Never read `/etc/credstore.encrypted` directly.
 - For ordinary queries, never use POST. For an explicitly confirmed booking, allow only the fixed card-eligibility check, booking-rules check, and one `do_addbook` request per exact course through `run_ballet_booking.sh`.
-- Never use cancellation, transfer, payment, login, waitlist mutation, or arbitrary POST endpoints.
+- Never use cancellation, transfer, payment, login, or arbitrary POST endpoints. Waitlist mutation is forbidden for ordinary queries and conversational booking; it is allowed only inside the enabled Sunday fast path for an exact configured target with `allowWaitlist=true`.
 - Never expose source record IDs, member identifiers, raw HTML, response bodies, Cookie headers, credential paths, unit names, or internal logs.
 - Treat `auth_required`, `source_changed`, `parse_error`, `unknown_result`, and ambiguous responses as fail-closed. If any mutation was attempted and the result is ambiguous, report that verification is required; never claim failure or retry.
 - For the Sunday automatic fast path only, fail-closed is scoped per course: an ambiguous mutation is never retried, but later configured courses still proceed and all ambiguous/successful submissions are verified together. Authentication, configuration, and source-contract failures remain global stops.

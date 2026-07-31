@@ -6847,6 +6847,14 @@ body[data-view="ricky"] .topbar-ricky-status {
   color: var(--ok);
 }
 
+.ballet-booking-fast-target[data-state="waitlisted"] .status-pill,
+.ballet-booking-fast-target[data-state="already_waitlisted"] .status-pill,
+.ballet-booking-fast-target[data-state="ready_waitlist"] .status-pill {
+  border-color: var(--orange-border);
+  background: #fff8ee;
+  color: var(--orange);
+}
+
 .ballet-chart-controls {
   display: flex;
   align-items: center;

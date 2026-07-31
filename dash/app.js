@@ -2553,7 +2553,10 @@ const BALLET_BOOKING_FAST_STATUS = {
 const BALLET_BOOKING_RECORD_STATUS = {
   booked: "已抢到",
   already_booked: "已预约",
+  waitlisted: "已排队",
+  already_waitlisted: "已在排队",
   ready: "可预约",
+  ready_waitlist: "可排队",
   not_available: "不可预约",
   course_not_unique: "未找到唯一课程",
   card_not_open: "课程卡未开放",
@@ -2595,6 +2598,9 @@ function createBalletBookingFastTarget(target = {}, result = null) {
   if (result && Number(result.attempts) > 1) {
     status.textContent += ` · ${Number(result.attempts) - 1} 次重试`;
   }
+  if (result && Number.isInteger(result.waitlistPosition) && result.waitlistPosition > 0) {
+    status.textContent += ` · 第 ${result.waitlistPosition} 位`;
+  }
   article.append(time, main, status);
   return article;
 }
@@ -2616,7 +2622,7 @@ function renderBalletBookingFast() {
   );
   setText(
     "#ballet-booking-fast-total",
-    `${Math.max(0, Math.floor(balletNumber(balletBookingFastData?.totalBooked)))} 节`,
+    `${Math.max(0, Math.floor(balletNumber(balletBookingFastData?.totalBooked)))} 约 · ${Math.max(0, Math.floor(balletNumber(balletBookingFastData?.totalWaitlisted)))} 候`,
   );
   setText(
     "#ballet-booking-fast-priority",

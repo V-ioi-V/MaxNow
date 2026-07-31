@@ -78,6 +78,7 @@ def load_config(path: Path) -> dict[str, Any]:
         or data.get("schemaVersion") != 1
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
+        or not isinstance(data.get("allowWaitlist"), bool)
         or not isinstance(data.get("release"), dict)
         or data["release"].get("weekday") != 6
         or not isinstance(data.get("priorityWeekdays"), list)
@@ -255,9 +256,11 @@ def default_state() -> dict[str, Any]:
         "schemaVersion": 1,
         "totalRuns": 0,
         "totalBooked": 0,
+        "totalWaitlisted": 0,
         "lastAttemptAt": None,
         "lastSuccessAt": None,
         "bookedOccurrences": [],
+        "terminalOutcomes": {},
         "lastRun": None,
     }
 
@@ -273,6 +276,7 @@ def load_state(path: Path) -> dict[str, Any]:
         not isinstance(state, dict)
         or state.get("schemaVersion") != 1
         or not isinstance(state.get("bookedOccurrences"), list)
+        or not isinstance(state.get("terminalOutcomes", {}), dict)
     ):
         raise FastBookingFailure("configuration_error")
     return {**default_state(), **state}
@@ -287,6 +291,7 @@ def safe_record(target: dict[str, Any], status: str, **extra: Any) -> dict[str, 
             "attempts",
             "availability",
             "bookingStatus",
+            "waitlistPosition",
             "elapsedMilliseconds",
             "verified",
         }
@@ -296,8 +301,11 @@ def safe_record(target: dict[str, Any], status: str, **extra: Any) -> dict[str, 
 
 def existing_booking_matches(
     records: list[dict[str, Any]], target: dict[str, Any]
-) -> bool:
-    return any(record_matches(record, target) for record in records)
+) -> dict[str, Any] | None:
+    return next(
+        (record for record in records if record_matches(record, target)),
+        None,
+    )
 
 
 def run_fast(
@@ -311,9 +319,11 @@ def run_fast(
     run_started = time.monotonic()
     targets = materialize_targets(config, release_at)
     booked_occurrences = set(state.get("bookedOccurrences", []))
+    terminal_outcomes = dict(state.get("terminalOutcomes", {}))
     records: list[dict[str, Any]] = []
-    verification_targets: list[tuple[int, dict[str, Any], bool]] = []
+    verification_targets: list[tuple[int, dict[str, Any], bool, str]] = []
     newly_booked_occurrences: set[str] = set()
+    newly_waitlisted_occurrences: set[str] = set()
     global_stop_reason = ""
 
     for target in targets:
@@ -330,10 +340,15 @@ def run_fast(
             continue
         occurrence = occurrence_key(target)
         if occurrence in booked_occurrences:
+            outcome = terminal_outcomes.get(occurrence, "booked")
             records.append(
                 safe_record(
                     target,
-                    "already_booked",
+                    (
+                        "already_waitlisted"
+                        if outcome == "waitlisted"
+                        else "already_booked"
+                    ),
                     attempts=0,
                     elapsedMilliseconds=0,
                 )
@@ -359,7 +374,34 @@ def run_fast(
                         )
                     )
                     break
-                if availability != "available":
+                if availability == "waitlist":
+                    records.append(
+                        safe_record(
+                            target,
+                            "already_waitlisted",
+                            attempts=attempt,
+                            availability=availability,
+                            **(
+                                {
+                                    "waitlistPosition": candidate["record"][
+                                        "waitlistPosition"
+                                    ]
+                                }
+                                if isinstance(
+                                    candidate["record"].get("waitlistPosition"), int
+                                )
+                                else {}
+                            ),
+                            elapsedMilliseconds=round(
+                                (time.monotonic() - target_started) * 1000
+                            ),
+                        )
+                    )
+                    break
+                is_waitlist_action = (
+                    availability == "queue_available" and config["allowWaitlist"]
+                )
+                if availability != "available" and not is_waitlist_action:
                     records.append(
                         safe_record(
                             target,
@@ -379,7 +421,8 @@ def run_fast(
                     records.append(
                         safe_record(
                             target,
-                            "ready",
+                            "ready_waitlist" if is_waitlist_action else "ready",
+                            availability=availability,
                             attempts=attempt,
                             elapsedMilliseconds=round(
                                 (time.monotonic() - target_started) * 1000
@@ -403,10 +446,14 @@ def run_fast(
                     and not isinstance(mutation, bool)
                     and mutation > 0
                 ):
+                    intended_outcome = (
+                        "waitlisted" if is_waitlist_action else "booked"
+                    )
                     records.append(
                         safe_record(
                             target,
-                            "booked",
+                            intended_outcome,
+                            availability=availability,
                             attempts=attempt,
                             elapsedMilliseconds=round(
                                 (time.monotonic() - target_started) * 1000
@@ -415,10 +462,19 @@ def run_fast(
                         )
                     )
                     verification_targets.append(
-                        (len(records) - 1, target, True)
+                        (
+                            len(records) - 1,
+                            target,
+                            True,
+                            intended_outcome,
+                        )
                     )
                     booked_occurrences.add(occurrence)
-                    newly_booked_occurrences.add(occurrence)
+                    terminal_outcomes[occurrence] = intended_outcome
+                    if intended_outcome == "waitlisted":
+                        newly_waitlisted_occurrences.add(occurrence)
+                    else:
+                        newly_booked_occurrences.add(occurrence)
                     break
                 if isinstance(mutation, str) and mutation in {
                     "FULL",
@@ -486,7 +542,12 @@ def run_fast(
                 )
                 if mutation_submitted:
                     verification_targets.append(
-                        (len(records) - 1, target, False)
+                        (
+                            len(records) - 1,
+                            target,
+                            False,
+                            "waitlisted" if is_waitlist_action else "booked",
+                        )
                     )
                 break
 
@@ -495,20 +556,36 @@ def run_fast(
     if execute and verification_targets:
         try:
             bookings = live.query_bookings(source)["records"]
-            for index, target, acknowledged in verification_targets:
-                verified = existing_booking_matches(bookings, target)
+            for index, target, acknowledged, intended_outcome in verification_targets:
+                matched = existing_booking_matches(bookings, target)
+                verified = matched is not None
                 records[index]["verified"] = verified
-                if verified:
-                    records[index]["status"] = "booked"
-                    records[index]["bookingStatus"] = "booked"
+                if matched is not None:
+                    booking_status = matched.get("bookingStatus")
+                    final_outcome = (
+                        "waitlisted" if booking_status == "waitlist" else "booked"
+                    )
+                    records[index]["status"] = final_outcome
+                    records[index]["bookingStatus"] = booking_status
+                    if (
+                        final_outcome == "waitlisted"
+                        and isinstance(matched.get("waitlistPosition"), int)
+                    ):
+                        records[index]["waitlistPosition"] = matched["waitlistPosition"]
                     occurrence = occurrence_key(target)
                     booked_occurrences.add(occurrence)
-                    newly_booked_occurrences.add(occurrence)
+                    terminal_outcomes[occurrence] = final_outcome
+                    if final_outcome == "waitlisted":
+                        newly_booked_occurrences.discard(occurrence)
+                        newly_waitlisted_occurrences.add(occurrence)
+                    else:
+                        newly_waitlisted_occurrences.discard(occurrence)
+                        newly_booked_occurrences.add(occurrence)
                 elif not acknowledged:
                     records[index]["status"] = "unknown_result"
             if any(
                 not records[index]["verified"]
-                for index, _, _ in verification_targets
+                for index, _, _, _ in verification_targets
             ):
                 verification_error = "verification_unavailable"
         except (booking.BookingFailure, ballet.SyncFailure):
@@ -516,7 +593,15 @@ def run_fast(
 
     now_text = ballet.iso_now()
     record_failures = any(
-        record["status"] not in {"already_booked", "booked", "ready"}
+        record["status"]
+        not in {
+            "already_booked",
+            "already_waitlisted",
+            "booked",
+            "waitlisted",
+            "ready",
+            "ready_waitlist",
+        }
         for record in records
     )
     run_status = (
@@ -552,11 +637,16 @@ def run_fast(
             "totalRuns": int(state.get("totalRuns", 0)) + 1,
             "totalBooked": int(state.get("totalBooked", 0))
             + len(newly_booked_occurrences),
+            "totalWaitlisted": int(state.get("totalWaitlisted", 0))
+            + len(newly_waitlisted_occurrences),
             "lastAttemptAt": now_text,
             "lastSuccessAt": (
-                now_text if run_status in {"success", "completed_unverified"} else state.get("lastSuccessAt")
+                now_text
+                if run_status in {"success", "completed_unverified"}
+                else state.get("lastSuccessAt")
             ),
             "bookedOccurrences": sorted(booked_occurrences),
+            "terminalOutcomes": terminal_outcomes,
             "lastRun": result,
         }
     return result, state
@@ -575,6 +665,7 @@ def build_public(
         "schemaVersion": 1,
         "timezone": "Asia/Shanghai",
         "enabled": config["enabled"],
+        "waitlistEnabled": config["allowWaitlist"],
         "schedule": "每周日 14:20（北京时间）",
         "priorityOrder": ["周六", "周日", "周五", "其他日期"],
         "lastAttemptAt": state.get("lastAttemptAt"),
@@ -582,6 +673,7 @@ def build_public(
         "nextRunAt": next_run.isoformat(timespec="seconds"),
         "totalRuns": int(state.get("totalRuns", 0)),
         "totalBooked": int(state.get("totalBooked", 0)),
+        "totalWaitlisted": int(state.get("totalWaitlisted", 0)),
         "lastStatus": (
             last_run.get("status")
             if isinstance(last_run, dict)

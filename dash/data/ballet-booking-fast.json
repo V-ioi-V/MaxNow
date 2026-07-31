@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "timezone": "Asia/Shanghai",
   "enabled": true,
+  "waitlistEnabled": true,
   "schedule": "每周日 14:20（北京时间）",
   "priorityOrder": [
     "周六",
@@ -14,6 +15,7 @@
   "nextRunAt": "2026-08-02T14:20:00+08:00",
   "totalRuns": 0,
   "totalBooked": 0,
+  "totalWaitlisted": 0,
   "lastStatus": "waiting",
   "targets": [
     {
@@ -69,5 +71,5 @@
   ],
   "lastRun": null,
   "preview": null,
-  "generatedAt": "2026-07-31T21:49:43+08:00"
+  "generatedAt": "2026-07-31T22:30:00+08:00"
 }

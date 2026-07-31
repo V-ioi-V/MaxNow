@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=216" />
+    <link rel="stylesheet" href="./styles.css?v=217" />
   </head>
   <body>
     <div class="app-shell">
@@ -981,7 +981,7 @@
                 </div>
                 <span class="status-pill" id="ballet-booking-fast-status" aria-live="polite">等待首次执行</span>
               </header>
-              <p class="item-copy">周日 14:19:35 预热，14:20:00 按固定优先级顺序提交；逐课独立，安全失败最多重试 3 次，单课失败不阻断后续课程。</p>
+              <p class="item-copy">周日 14:19:35 预热，14:20:00 按固定优先级顺序提交；可预约则预约，仅可排队则候补。逐课独立，安全失败最多重试 3 次，单课失败不阻断后续课程。</p>
               <div class="ballet-booking-fast-metrics">
                 <div>
                   <span>下次抢课</span>
@@ -992,14 +992,14 @@
                   <strong id="ballet-booking-fast-last">--</strong>
                 </div>
                 <div>
-                  <span>累计抢到</span>
-                  <strong id="ballet-booking-fast-total">0 节</strong>
+                  <span>累计结果</span>
+                  <strong id="ballet-booking-fast-total">0 约 · 0 候</strong>
                 </div>
               </div>
               <p class="ballet-booking-fast-priority" id="ballet-booking-fast-priority">
                 固定优先级：周六 &gt; 周日 &gt; 周五 &gt; 其他日期
               </p>
-              <p class="cloud-operation-boundary">边界：只预约课程计划中的目标；不取消、不候补、不转课。</p>
+              <p class="cloud-operation-boundary">边界：只处理课程计划中的精确目标；可预约则预约，可排队则候补；不取消、不转课、不付费。</p>
             </article>
 
             <details class="panel cloud-card ballet-session-card" open data-tone="purple" aria-labelledby="ballet-session-title">
@@ -1247,6 +1247,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=172"></script>
+    <script src="./app.js?v=173"></script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "enabled": true,
+  "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
   "release": {
     "weekday": 6,

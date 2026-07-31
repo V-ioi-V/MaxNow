@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-31 21:49",
-  "version": "1.0.7.62",
-  "versionLabel": "v1.0.7.62",
-  "branch": "feature/update-ballet-booking-targets",
-  "commit": "97fc6f0",
+  "updatedAt": "2026-07-31 22:10",
+  "version": "1.0.8.00",
+  "versionLabel": "v1.0.8.00",
+  "branch": "feature/auto-ballet-waitlist",
+  "commit": "1272f4d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/update-ballet-booking-targets · commit 97fc6f0 · 有未提交代码改动",
+  "deployNote": "feature/auto-ballet-waitlist · commit 1272f4d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-31",
+      "title": "自动抢课支持目标课候补",
+      "summary": "Owner 授权周日自动任务在 5 个精确配置目标仅可排队时自动候补；目标可预约时仍正常预约，已预约 / 已排队时不重复提交，普通实时查询和对话式预约仍不允许候补写入。"
+    },
     {
       "date": "2026-07-31",
       "title": "更新周日自动抢课目标",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "拆开课程卡有效进度文字与圆环",
       "summary": "有效进度卡改为三行网格：首行仅放“有效进度”和右上 `50px` 小圆环，“第 N / 总天数”与到期节奏说明分别独占后两行，不再把完整文字组和圆环挤在同一横行。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "分离课程卡舞者与事实区并缩小圆环数字",
-      "summary": "中等及宽课程卡取消舞者插画右侧遮罩，改为互不重叠的左右分区：`330px–649px` 使用 `44% / 45%` 的舞者宽度与事实区起点，`650px` 以上使用 `40% / 42%`，日期、标题和指标卡从横向脚尖之后开始，完整保留抬手、横向脚尖和支撑腿足尖。"
     }
   ]
 };
