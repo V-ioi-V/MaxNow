@@ -90,11 +90,13 @@ Each target is an independent failure domain. Match exactly one live course by d
 
 Current recurring targets are:
 
-- Saturday 11:30–12:30 soft-open, 李俊, 大教室.
-- Friday 19:45–21:15 ballet L1, 李俊, 大教室.
-- Tuesday 19:45–21:15 ballet L1, 李俊, 大教室.
+- Friday 18:45–19:45 soft-open, 李俊, 大教室.
+- Friday 19:45–21:15 ballet L1, 王嘉豪, 大教室.
+- Tuesday 18:45–19:45 soft-open, 王嘉豪, 大教室.
+- Tuesday 19:45–21:15 ballet L1, 王嘉豪, 大教室.
+- Thursday 18:45–19:45 soft-open, 李俊, 大教室.
 
-Always preserve the permanent priority `周六 > 周日 > 周五 > 其他日期`. For the current targets, the actual order is Saturday, Friday, Tuesday.
+Always preserve the permanent priority `周六 > 周日 > 周五 > 其他日期`. For the current targets, the actual order is Friday soft-open, Friday ballet L1, Tuesday soft-open, Tuesday ballet L1, Thursday soft-open.
 
 To query the automation plan and safe result ledger, run:
 

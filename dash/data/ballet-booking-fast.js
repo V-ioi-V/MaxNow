@@ -17,11 +17,11 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
   "lastStatus": "waiting",
   "targets": [
     {
-      "key": "saturday-soft-open",
-      "weekday": "周六",
-      "date": "2026-08-08",
-      "startTime": "11:30",
-      "endTime": "12:30",
+      "key": "friday-soft-open",
+      "weekday": "周五",
+      "date": "2026-08-07",
+      "startTime": "18:45",
+      "endTime": "19:45",
       "course": "软开",
       "teacher": "李俊",
       "venue": "大教室"
@@ -33,7 +33,17 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "startTime": "19:45",
       "endTime": "21:15",
       "course": "芭蕾 L1",
-      "teacher": "李俊",
+      "teacher": "王嘉豪",
+      "venue": "大教室"
+    },
+    {
+      "key": "tuesday-soft-open",
+      "weekday": "周二",
+      "date": "2026-08-04",
+      "startTime": "18:45",
+      "endTime": "19:45",
+      "course": "软开",
+      "teacher": "王嘉豪",
       "venue": "大教室"
     },
     {
@@ -43,11 +53,21 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "startTime": "19:45",
       "endTime": "21:15",
       "course": "芭蕾 L1",
+      "teacher": "王嘉豪",
+      "venue": "大教室"
+    },
+    {
+      "key": "thursday-soft-open",
+      "weekday": "周四",
+      "date": "2026-08-06",
+      "startTime": "18:45",
+      "endTime": "19:45",
+      "course": "软开",
       "teacher": "李俊",
       "venue": "大教室"
     }
   ],
   "lastRun": null,
   "preview": null,
-  "generatedAt": "2026-07-28T12:00:00+08:00"
+  "generatedAt": "2026-07-31T21:49:43+08:00"
 };

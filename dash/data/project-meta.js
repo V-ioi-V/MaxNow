@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-30 23:41",
-  "version": "1.0.7.61",
-  "versionLabel": "v1.0.7.61",
-  "branch": "bugfix/membership-ring-inline",
-  "commit": "dd973f4",
+  "updatedAt": "2026-07-31 21:49",
+  "version": "1.0.7.62",
+  "versionLabel": "v1.0.7.62",
+  "branch": "feature/update-ballet-booking-targets",
+  "commit": "97fc6f0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/membership-ring-inline · commit dd973f4 · 有未提交代码改动",
+  "deployNote": "feature/update-ballet-booking-targets · commit 97fc6f0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-07-31",
+      "title": "更新周日自动抢课目标",
+      "summary": "根据 Owner 标注的周课表，将周日 14:20 自动抢课目标替换为 5 节：周二王嘉豪软开 + 芭蕾 L1、周四李俊软开、周五李俊软开 + 王嘉豪芭蕾 L1，均为大教室晚间课；原周六 11:30 软开不再自动预约。"
+    },
     {
       "date": "2026-07-30",
       "title": "将有效期圆环数字改为单行",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "分离课程卡舞者与事实区并缩小圆环数字",
       "summary": "中等及宽课程卡取消舞者插画右侧遮罩，改为互不重叠的左右分区：`330px–649px` 使用 `44% / 45%` 的舞者宽度与事实区起点，`650px` 以上使用 `40% / 42%`，日期、标题和指标卡从横向脚尖之后开始，完整保留抬手、横向脚尖和支撑腿足尖。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "修正课程票券色差、插画和圆环细节",
-      "summary": "票券底色精确匹配舞者插画的暖象牙纸色，并取消会加深图片区域的混合模式，消除左上矩形色差；宽卡遮罩延后到横向脚尖之后，抬手、横向脚尖和支撑腿足尖保持完整。"
     }
   ]
 };

@@ -316,9 +316,11 @@ def check_ballet_booking_fast():
         or data.get("priorityOrder") != ["周六", "周日", "周五", "其他日期"]
         or [item.get("key") for item in data.get("targets", [])]
         != [
-            "saturday-soft-open",
+            "friday-soft-open",
             "friday-ballet-l1",
+            "tuesday-soft-open",
             "tuesday-ballet-l1",
+            "thursday-soft-open",
         ]
     ):
         raise ValueError("ballet fast booking: public plan or priority is invalid")

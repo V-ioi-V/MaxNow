@@ -41,24 +41,28 @@ class FakeFastSource:
                 raise ballet.SyncFailure("network_error")
             self.active_date = path.rsplit("/", 1)[-1]
             day = datetime.fromisoformat(self.active_date).weekday()
-            if day == 5:
-                course, start, end = "软开", "11:30", "12:30"
-            else:
-                course, start, end = "芭蕾 L1", "19:45", "21:15"
-            return timetable_html(
-                course=course,
-                time_text=f"{start} ~ {end}",
-                teacher="李俊",
-                venue="大教室",
-                status="4 / 10",
-            ).replace(
-                "</div></div></body>",
-                (
-                    '<button class="bookbtn" courseid="70001" '
-                    'classtableid="70002">预约</button>'
-                    "</div></div></body>"
-                ),
-            ).replace(
+            courses = [("软开", "18:45", "19:45", "王嘉豪" if day == 1 else "李俊")]
+            if day in {1, 4}:
+                courses.append(("芭蕾 L1", "19:45", "21:15", "王嘉豪"))
+            pages = []
+            for index, (course, start, end, teacher) in enumerate(courses, start=1):
+                pages.append(
+                    timetable_html(
+                        course=course,
+                        time_text=f"{start} ~ {end}",
+                        teacher=teacher,
+                        venue="大教室",
+                        status="4 / 10",
+                    ).replace(
+                        "</div></div></body>",
+                        (
+                            f'<button class="bookbtn" courseid="7000{index}" '
+                            f'classtableid="7100{index}">预约</button>'
+                            "</div></div></body>"
+                        ),
+                    )
+                )
+            return "".join(pages).replace(
                 "</body>",
                 (
                     "<script>"
@@ -103,14 +107,22 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(
             [target["key"] for target in targets],
             [
-                "saturday-soft-open",
+                "friday-soft-open",
                 "friday-ballet-l1",
+                "tuesday-soft-open",
                 "tuesday-ballet-l1",
+                "thursday-soft-open",
             ],
         )
         self.assertEqual(
             [target["date"] for target in targets],
-            ["2026-08-08", "2026-08-07", "2026-08-04"],
+            [
+                "2026-08-07",
+                "2026-08-07",
+                "2026-08-04",
+                "2026-08-04",
+                "2026-08-06",
+            ],
         )
 
     def test_fast_path_mutates_sequentially_then_verifies_once(self):
@@ -122,14 +134,14 @@ class FastBookingTests(unittest.TestCase):
             self.release,
             execute=True,
         )
-        self.assertEqual(source.mutation_count, 3)
+        self.assertEqual(source.mutation_count, 5)
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["booked", "booked", "booked"],
+            ["booked", "booked", "booked", "booked", "booked"],
         )
-        self.assertEqual(state["totalBooked"], 3)
+        self.assertEqual(state["totalBooked"], 5)
         self.assertEqual(state["totalRuns"], 1)
-        self.assertEqual(result["requestsMade"], 13)
+        self.assertEqual(result["requestsMade"], 21)
 
     def test_unknown_result_does_not_block_remaining_courses(self):
         source = FakeFastSource(unknown_on_mutation=1)
@@ -143,12 +155,18 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["unknown_result", "booked", "booked"],
+            [
+                "unknown_result",
+                "booked",
+                "booked",
+                "booked",
+                "booked",
+            ],
         )
-        self.assertEqual(source.mutation_count, 3)
+        self.assertEqual(source.mutation_count, 5)
         self.assertEqual(result["records"][0]["attempts"], 1)
         self.assertEqual(result["status"], "partial")
-        self.assertEqual(state["totalBooked"], 2)
+        self.assertEqual(state["totalBooked"], 4)
 
     def test_retries_transient_preflight_three_times_then_books(self):
         source = FakeFastSource(timetable_failures=3)
@@ -162,11 +180,11 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["booked", "booked", "booked"],
+            ["booked", "booked", "booked", "booked", "booked"],
         )
         self.assertEqual(result["records"][0]["attempts"], 4)
-        self.assertEqual(source.mutation_count, 3)
-        self.assertEqual(state["totalBooked"], 3)
+        self.assertEqual(source.mutation_count, 5)
+        self.assertEqual(state["totalBooked"], 5)
 
     def test_retries_explicit_notopen_without_blocking_later_courses(self):
         source = FakeFastSource(notopen_mutations=3)
@@ -180,11 +198,11 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["booked", "booked", "booked"],
+            ["booked", "booked", "booked", "booked", "booked"],
         )
         self.assertEqual(result["records"][0]["attempts"], 4)
-        self.assertEqual(source.mutation_count, 6)
-        self.assertEqual(state["totalBooked"], 3)
+        self.assertEqual(source.mutation_count, 8)
+        self.assertEqual(state["totalBooked"], 5)
 
     def test_dry_run_never_mutates(self):
         source = FakeFastSource()
@@ -198,7 +216,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(source.mutation_count, 0)
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["ready", "ready", "ready"],
+            ["ready", "ready", "ready", "ready", "ready"],
         )
         self.assertEqual(state["totalRuns"], 0)
 

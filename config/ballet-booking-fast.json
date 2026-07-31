@@ -13,12 +13,45 @@
   ],
   "targets": [
     {
-      "key": "saturday-soft-open",
-      "weekday": 5,
+      "key": "tuesday-soft-open",
+      "weekday": 1,
       "courseType": "soft_open",
       "level": "none",
-      "startTime": "11:30",
-      "endTime": "12:30",
+      "startTime": "18:45",
+      "endTime": "19:45",
+      "teacher": "王嘉豪",
+      "allowBlankTeacher": true,
+      "venue": "大教室"
+    },
+    {
+      "key": "tuesday-ballet-l1",
+      "weekday": 1,
+      "courseType": "ballet",
+      "level": "L1",
+      "startTime": "19:45",
+      "endTime": "21:15",
+      "teacher": "王嘉豪",
+      "allowBlankTeacher": true,
+      "venue": "大教室"
+    },
+    {
+      "key": "thursday-soft-open",
+      "weekday": 3,
+      "courseType": "soft_open",
+      "level": "none",
+      "startTime": "18:45",
+      "endTime": "19:45",
+      "teacher": "李俊",
+      "allowBlankTeacher": true,
+      "venue": "大教室"
+    },
+    {
+      "key": "friday-soft-open",
+      "weekday": 4,
+      "courseType": "soft_open",
+      "level": "none",
+      "startTime": "18:45",
+      "endTime": "19:45",
       "teacher": "李俊",
       "allowBlankTeacher": true,
       "venue": "大教室"
@@ -30,18 +63,7 @@
       "level": "L1",
       "startTime": "19:45",
       "endTime": "21:15",
-      "teacher": "李俊",
-      "allowBlankTeacher": true,
-      "venue": "大教室"
-    },
-    {
-      "key": "tuesday-ballet-l1",
-      "weekday": 1,
-      "courseType": "ballet",
-      "level": "L1",
-      "startTime": "19:45",
-      "endTime": "21:15",
-      "teacher": "李俊",
+      "teacher": "王嘉豪",
       "allowBlankTeacher": true,
       "venue": "大教室"
     }
