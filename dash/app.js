@@ -2814,26 +2814,26 @@ function getBalletUiState() {
     };
   }
 
+  if (attempt && !["success", "ok", "waiting", "pending", "idle"].includes(attempt)) {
+    const sourceChanged = attempt.includes("source") || attempt.includes("parse") || errorCode.includes("source") || errorCode.includes("parse");
+    const networkError = attempt.includes("network") || errorCode.includes("network") || errorCode.includes("timeout");
+    return {
+      key: "error",
+      label: "同步失败",
+      title: sourceChanged ? "闻道数据结构发生变化" : networkError ? "服务器连接闻道失败" : "课程数据更新失败",
+      message: hasCachedData
+        ? "已停止覆盖并保留最后一次成功缓存，凭据和原始响应不会显示在页面中。"
+        : "当前没有可用缓存，凭据和原始响应不会显示在页面中。",
+      hasCachedData,
+    };
+  }
+
   if (browserHealth?.status === "failed") {
     return {
       key: "error",
       label: "读取失败",
       title: "暂时无法读取最新芭蕾数据",
       message: hasCachedData ? "仍显示浏览器中的最后一次成功缓存。" : "当前没有可用缓存，请稍后重新刷新 MaxNow。",
-      hasCachedData,
-    };
-  }
-
-  if (attempt && !["success", "ok", "waiting", "pending", "idle"].includes(attempt)) {
-    const sourceChanged = attempt.includes("source") || attempt.includes("parse") || errorCode.includes("source") || errorCode.includes("parse");
-    const networkError = attempt.includes("network") || errorCode.includes("network") || errorCode.includes("timeout");
-    return {
-      key: "error",
-      label: "更新失败",
-      title: sourceChanged ? "闻道数据结构发生变化" : networkError ? "服务器连接闻道失败" : "课程数据更新失败",
-      message: hasCachedData
-        ? "已停止覆盖并保留最后一次成功缓存，凭据和原始响应不会显示在页面中。"
-        : "当前没有可用缓存，凭据和原始响应不会显示在页面中。",
       hasCachedData,
     };
   }

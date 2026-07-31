@@ -317,7 +317,7 @@ credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 credential version -> /etc/maxnow-ballet/credential-version
 enable gate -> /etc/maxnow-ballet/enable-sync
 frontend read model -> /var/www/maxnow-dashboard/dash/data/ballet.json + ballet.js
-current state -> 代码 / page 已部署；2026-07-27 正式 rolling 同步成功；已保留 1 条 Owner 手工软开课；enable gate 存在且两个生产 timer 为 enabled / active / waiting
+current state -> 代码 / page 已部署；已保留 2 条 Owner 手工软开课；enable gate 存在且两个生产 timer 为 enabled / active / waiting；2026-08-01 00:40 修复账本属主后 rolling 同步成功
 experiment status -> v7 每 20 分钟课程列表探针无限期运行；2026-07-27 12:01 曾执行一次额外预约 / 上课记录只读同步；本地 exporter / status timer 每 5 分钟转存并发布 ballet-session.*，不访问闻道
 ```
 
@@ -337,6 +337,32 @@ experiment status -> v7 每 20 分钟课程列表探针无限期运行；2026-07
 - 创建或刷新凭据时，应从受控输入流直接交给 `systemd-creds encrypt --with-key=host`，写入临时文件后以 root `0600` 原子替换 `/etc/credstore.encrypted/maxnow-ballet-wenda.cred`。不要 `echo`、`cat`、打印或复制明文值，也不要把值留进 shell history。
 - 只允许记录非敏感的 `credentialVersion`（例如加密文件版本 / 修改代次）；不得记录 Session 原文、可逆摘要或跨系统可关联指纹。
 - Owner 刷新流程是：在电脑微信重新登录并打开闻道页面，使用本地受控提取流程取得新会话，再通过不回显的加密输入流更新服务器凭据。任何文档、日志和聊天只记录“凭据已更新”和安全版本，不记录值。
+
+私有账本手工维护规则：
+
+- `/var/lib/maxnow-ballet/*.json` 的生产写入身份固定为 `ubuntu:www-data`；私有账本和状态快照固定 `0600`。手工补录优先使用 `sudo -u ubuntu -g www-data` 运行仓库内归一化、校验和原子写入逻辑，禁止直接用 `sudo python3` 写完后只以 root 复验。
+- `scripts/sync_ballet.py` 的原子写入会在 root 替换已有普通单链接文件时继承原 uid / gid，避免临时文件替换把属主改成 root；这只是防误操作兜底，不能替代写后检查。
+- 每次手工维护完成后固定执行下面的属主、服务用户读取和 schema 校验。任一项失败就停止，不启动同步，也不能宣称维护完成：
+
+```bash
+sudo test "$(stat -c '%U:%G %a' /var/lib/maxnow-ballet/attendance-ledger.json)" = "ubuntu:www-data 600"
+sudo -u ubuntu test -r /var/lib/maxnow-ballet/attendance-ledger.json
+cd /var/www/maxnow-dashboard
+sudo -u ubuntu python3 -B - <<'PY'
+from pathlib import Path
+from scripts import sync_ballet as ballet
+ledger = ballet.safe_read_json(
+    Path("/var/lib/maxnow-ballet/attendance-ledger.json"),
+    ballet.empty_ledger(),
+)
+ballet.validate_ledger(ledger)
+print("service-user-ledger-read=ok")
+PY
+```
+
+- 最近一次同步失败时，先看 `systemctl show` 的 `Result / ExecMainStatus` 和脱敏 `ballet-sync.log`，再检查上述属主与服务用户读取。同步器必须保留最后成功课程数据，并尽力把安全错误状态发布到 `ballet.*`；芭蕾页顶部应显示红色“同步失败”，不能继续显示“已同步”。
+
+2026-08-01 00:00 rolling 同步曾因 2026-07-30 手工补录通过 root 原子替换 `attendance-ledger.json`、留下 `root:root 0600` 而以 `parse_error / exit 4` 失败。00:39 将该文件恢复为 `ubuntu:www-data 0600`，以 `ubuntu` 完成 JSON 与 ledger 校验后，于 00:40 手动启动既有 rolling 只读同步；结果为 `success / exit 0`，`dataAsOf=2026-08-01T00:39:46+08:00`、4 条上课记录、3 条未来预约和 7 天课表，未提交预约、候补、取消或转课。后续代码补上 root 原子写属主继承、预检失败公开状态和页面“同步失败”标识。
 
 2026-07-26 21:23 已在服务器内部把 v4 生命周期实验当前的临时 systemd credential 密封为上述 host-bound 加密凭据，并用只写临时输出的解密自检确认可用后立即删除临时明文；全过程没有把值输出、下载或写入仓库。加密文件为 root `0600`。本机没有完整 TPM 保护，systemd host key 位于服务器 root 管理的 `/var/lib/systemd/credential.secret`；因此它能防止普通文件读取和误入 Git / 日志，但拥有服务器 root 权限的人仍可解密，不能把它描述成硬件不可导出密钥。生产同步仍未发起任何请求。
 

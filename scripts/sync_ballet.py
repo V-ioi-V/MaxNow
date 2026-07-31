@@ -181,13 +181,33 @@ def _fsync_directory(path: Path) -> None:
         os.close(descriptor)
 
 
+def _existing_owner_for_root_write(path: Path) -> tuple[int, int] | None:
+    if (
+        os.name == "nt"
+        or not hasattr(os, "geteuid")
+        or not hasattr(os, "fchown")
+        or os.geteuid() != 0
+    ):
+        return None
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return None
+    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+        raise OSError("refusing to replace a non-regular or multiply-linked file")
+    return info.st_uid, info.st_gid
+
+
 def atomic_write_text(path: Path, text: str, mode: int = 0o644) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    existing_owner = _existing_owner_for_root_write(path)
     descriptor, temporary_name = tempfile.mkstemp(
         prefix=f".{path.name}.", dir=path.parent
     )
     temporary = Path(temporary_name)
     try:
+        if existing_owner is not None:
+            os.fchown(descriptor, *existing_owner)
         if os.name != "nt":
             os.fchmod(descriptor, mode)
         with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
@@ -2278,12 +2298,74 @@ def _safe_stdout(result: SyncResult, dry_run: bool) -> None:
     )
 
 
+def publish_preflight_failure(
+    paths: SyncPaths,
+    failure: SyncFailure,
+    now: datetime,
+    mode: str,
+    credential_version: str | None = None,
+) -> None:
+    window = _logical_window(now, mode)
+    existing_model = safe_read_json(paths.output, None)
+    if not isinstance(existing_model, dict):
+        return
+
+    existing_sync = existing_model.get("sync") or {}
+    last_success = existing_sync.get("lastSuccessAt") or existing_model.get("dataAsOf")
+    failure_count = int(existing_sync.get("consecutiveFailures", 0)) + 1
+    safe_message = SAFE_ERROR_MESSAGES.get(failure.code, "芭蕾数据同步失败。")
+    merged_records = len(existing_model.get("records") or [])
+
+    try:
+        old_state = safe_read_json(paths.sync_state, empty_sync_state())
+        state = _make_failure_state(
+            old_state,
+            now,
+            window,
+            failure,
+            0,
+            False,
+            credential_version,
+            merged_records,
+        )
+        atomic_write_json(paths.sync_state, state, mode=0o600)
+        failure_count = state["consecutiveFailures"]
+    except (OSError, SyncFailure):
+        pass
+
+    existing_model["sync"] = {
+        **existing_sync,
+        "logicalDate": (now.astimezone(TIMEZONE).date() - timedelta(days=1)).isoformat(),
+        "lastAttemptAt": iso_now(now),
+        "lastSuccessAt": last_success,
+        "lastAttemptStatus": failure.code,
+        "cacheState": _cache_state(last_success, now),
+        "consecutiveFailures": failure_count,
+        "errorCode": failure.code,
+        "errorMessage": safe_message,
+        "window": window,
+        "sourceRecords": 0,
+        "mergedRecords": merged_records,
+        "changedRecords": 0,
+    }
+    existing_model["authHealth"] = {
+        **(existing_model.get("authHealth") or {}),
+        "status": "needs_login" if failure.code == "auth_required" else "unknown",
+        "checkedAt": iso_now(now),
+        "message": safe_message if failure.code == "auth_required" else None,
+    }
+    validate_read_model(existing_model)
+    _write_read_model(paths, existing_model)
+
+
 def main() -> int:
     args = parse_args()
+    now: datetime | None = None
+    paths: SyncPaths | None = None
+    credential_version: str | None = None
     try:
         now = parse_now(args.now)
         paths = build_paths(args.state_dir, args.output)
-        credential_version: str | None = None
         if args.fixture_dir:
             source: WendaSource | FixtureSource = FixtureSource(args.fixture_dir)
         elif args.dry_run:
@@ -2322,10 +2404,22 @@ def main() -> int:
         _safe_stdout(result, dry_run=args.dry_run)
         return result.exit_code
     except SyncFailure as failure:
+        reported_failure = failure
+        if not args.dry_run and paths is not None and now is not None:
+            try:
+                publish_preflight_failure(
+                    paths,
+                    failure,
+                    now,
+                    args.mode,
+                    credential_version,
+                )
+            except Exception:
+                reported_failure = SyncFailure("write_error")
         _safe_stdout(
             SyncResult(
                 4,
-                failure.code,
+                reported_failure.code,
                 0,
                 0,
                 0,
@@ -2335,6 +2429,18 @@ def main() -> int:
         )
         return 4
     except Exception:
+        failure = SyncFailure("write_error")
+        if not args.dry_run and paths is not None and now is not None:
+            try:
+                publish_preflight_failure(
+                    paths,
+                    failure,
+                    now,
+                    args.mode,
+                    credential_version,
+                )
+            except Exception:
+                pass
         _safe_stdout(
             SyncResult(4, "write_error", 0, 0, 0, False),
             dry_run=bool(args.dry_run),

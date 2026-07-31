@@ -560,6 +560,7 @@ def check_ballet_read_model():
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    sync_script = (ROOT / "scripts/sync_ballet.py").read_text(encoding="utf-8")
     membership_art = ROOT / "dash/assets/ballet/membership-ballerina.webp"
     if not membership_art.exists() or membership_art.stat().st_size <= 0:
         raise ValueError("ballet: membership ballerina artwork is missing")
@@ -625,6 +626,15 @@ def check_ballet_read_model():
         or "#ballet-view > .ballet-training-panel" not in dashboard_css
     ):
         raise ValueError("ballet: training level, teacher, or section-order contract is incomplete")
+    if (
+        "def _existing_owner_for_root_write(" not in sync_script
+        or "os.fchown(descriptor, *existing_owner)" not in sync_script
+        or "def publish_preflight_failure(" not in sync_script
+        or '"lastAttemptStatus": failure.code' not in sync_script
+        or 'label: "同步失败"' not in dashboard_js
+        or '.topbar-data-status .status-pill:is([data-state="failed"], [data-state="error"])' not in dashboard_css
+    ):
+        raise ValueError("ballet: runtime ownership and visible sync-failure contract is incomplete")
     timer = (ROOT / "server/maxnow-ballet-sync.timer").read_text(encoding="utf-8")
     if (
         "OnCalendar=*-*-* 00:00:00 Asia/Shanghai" not in timer
@@ -1563,7 +1573,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=217" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=173" not in dashboard_html
+        or "app.js?v=174" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1781,7 +1791,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=173" not in dashboard_html:
+    if "app.js?v=174" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

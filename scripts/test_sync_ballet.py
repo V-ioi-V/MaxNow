@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from datetime import datetime
 from pathlib import Path
 
@@ -575,6 +576,72 @@ class BalletSyncTests(unittest.TestCase):
             self.assertEqual(model["authHealth"]["status"], "needs_login")
             self.assertIn("重新登录", model["sync"]["errorMessage"])
             self.assertNotIn(SESSION, paths.output.read_text(encoding="utf-8"))
+
+    def test_preflight_failure_keeps_last_good_data_and_updates_public_status(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixtures"
+            paths = ballet.build_paths(root / "private", root / "public" / "ballet.json")
+            write_fixture(fixture)
+            ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+            good_model = json.loads(paths.output.read_text(encoding="utf-8"))
+            paths.ledger.write_text("{broken", encoding="utf-8")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    str(Path(__file__).with_name("sync_ballet.py")),
+                    "--fixture-dir",
+                    str(fixture),
+                    "--state-dir",
+                    str(paths.state_dir),
+                    "--output",
+                    str(paths.output),
+                    "--mode",
+                    "rolling",
+                    "--now",
+                    "2026-07-28T00:17:00+08:00",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 4, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["status"], "parse_error")
+            failed_model = json.loads(paths.output.read_text(encoding="utf-8"))
+            self.assertEqual(failed_model["dataAsOf"], good_model["dataAsOf"])
+            self.assertEqual(failed_model["summary"], good_model["summary"])
+            self.assertEqual(failed_model["records"], good_model["records"])
+            self.assertEqual(failed_model["sync"]["lastAttemptStatus"], "parse_error")
+            self.assertEqual(failed_model["sync"]["errorCode"], "parse_error")
+            self.assertEqual(failed_model["sync"]["lastSuccessAt"], good_model["sync"]["lastSuccessAt"])
+            self.assertEqual(failed_model["sync"]["consecutiveFailures"], 1)
+            self.assertIn("无法安全解析", failed_model["sync"]["errorMessage"])
+            wrapped = json.loads(
+                paths.wrapper.read_text(encoding="utf-8").split(" = ", 1)[1][:-2]
+            )
+            self.assertEqual(wrapped, failed_model)
+
+    def test_root_atomic_write_preserves_existing_owner(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "ledger.json"
+            path.write_text("old\n", encoding="utf-8")
+            owner = (path.lstat().st_uid, path.lstat().st_gid)
+            with (
+                mock.patch.object(
+                    ballet,
+                    "_existing_owner_for_root_write",
+                    return_value=owner,
+                ),
+                mock.patch.object(ballet.os, "fchown", create=True) as fchown,
+            ):
+                ballet.atomic_write_text(path, "new\n", mode=0o600)
+            fchown.assert_called_once_with(mock.ANY, *owner)
+            self.assertEqual(path.read_text(encoding="utf-8"), "new\n")
 
     def test_two_successful_full_misses_tombstone_instead_of_deleting(self):
         with tempfile.TemporaryDirectory() as directory:
