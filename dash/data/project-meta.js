@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-01 00:48",
-  "version": "1.0.8.01",
-  "versionLabel": "v1.0.8.01",
-  "branch": "bugfix/ballet-sync-failure-status",
-  "commit": "2b6bd31",
+  "updatedAt": "2026-08-01 01:10",
+  "version": "1.0.8.02",
+  "versionLabel": "v1.0.8.02",
+  "branch": "feature/dynamic-ballet-booking-config",
+  "commit": "30189fd",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-sync-failure-status · commit 2b6bd31 · 有未提交代码改动",
+  "deployNote": "feature/dynamic-ballet-booking-config · commit 30189fd · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-01",
+      "title": "记录自动抢课动态配置待办",
+      "summary": "`ROADMAP.md` Next 新增自动抢课动态配置任务：后续把稳定抢课引擎与目标课程分开，由服务器版本化配置作为唯一可编辑来源，并在 MaxNow 提供增删目标、优先级、逐课候补、单周覆盖和暂停能力。"
+    },
     {
       "date": "2026-08-01",
       "title": "修复芭蕾同步账本权限并补齐失败可见性",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-07-30",
       "title": "将有效期圆环数字改为单行",
       "summary": "圆环内当前天数与总天数从上下两行改为横向单行 `N /总天数`，两段使用 `2px` 间距并整体居中；总天数下移 `1px` 做光学对齐。"
-    },
-    {
-      "date": "2026-07-30",
-      "title": "放大课程卡有效期圆环并收小正文",
-      "summary": "有效期圆环从 `50px` 放大到 `66px`，环内当前天数与总天数继续保持 `15px / 8px`，增加留白而不放大环内文字。"
     }
   ]
 };

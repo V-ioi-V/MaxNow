@@ -1,10 +1,10 @@
 window.MAXNOW_PROJECT_STATUS_DATA = {
   "schemaVersion": 1,
   "source": "ROADMAP.md",
-  "sourceUpdatedAt": "2026-07-30 16:04",
-  "generatedAt": "2026-07-30 16:07",
+  "sourceUpdatedAt": "2026-08-01 01:10",
+  "generatedAt": "2026-08-01 01:10",
   "staleAfterHours": 168,
-  "sourceFingerprint": "ae897a3db76abb1f00e85ad6b4263a1fc8aab8a5438023b008dd8754e7371e86",
+  "sourceFingerprint": "7e1a1fa15e7309bcc86c10117faaa1e52d9af1e64cae6dfaf995f078d4c4ce42",
   "mainlines": [
     {
       "title": "规划个人博客发布链路",
@@ -16,6 +16,13 @@ window.MAXNOW_PROJECT_STATUS_DATA = {
   ],
   "actions": [
     {
+      "title": "让芭蕾自动抢课支持动态配置",
+      "note": "来源：2026-08-01 Owner 希望以后改课不再由 Codex 修改脚本，而是在 MaxNow 中动态调整抢课方式。",
+      "label": "Next",
+      "status": "waiting",
+      "sourceArea": "Next"
+    },
+    {
       "title": "补齐前端自动测试、无障碍与移动端验证",
       "note": "来源：2026-07-10 MaxNow 整体体检。",
       "label": "Next",
@@ -25,13 +32,6 @@ window.MAXNOW_PROJECT_STATUS_DATA = {
     {
       "title": "收紧外部依赖和链接安全",
       "note": "来源：2026-07-10 MaxNow 整体体检。",
-      "label": "Next",
-      "status": "waiting",
-      "sourceArea": "Next"
-    },
-    {
-      "title": "让 Last-30 免费 AI 信号稳定运行",
-      "note": "中文 AI 前沿简报、正式发布优先排序、三栏主题去重和无用客户案例过滤已经落地；服务器 `MAXNOW-AI-LAST30-SYNC` 继续每天 00:00 自动刷新。",
       "label": "Next",
       "status": "waiting",
       "sourceArea": "Next"
