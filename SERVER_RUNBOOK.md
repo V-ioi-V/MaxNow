@@ -1870,3 +1870,16 @@ live verification: 2026-07-31 21:48 北京时间通过 wenda-live 只读核对�
 server verification: scripts/check.py 全部通过；nginx -t 通过；安全 preview 发布 8 月 2 日 14:20 计划且 totalRuns / totalBooked 仍为 0；timer enabled / active / waiting，service inactive，LastTriggerUSec 为空；首页 / 登录页 / 未认证自动抢课状态 / Blog 为 302 / 200 / 401 / 200
 safety: 仅执行闻道课表 GET 与本地无网络 preview；未手动启动自动抢课 service，未提交预约、候补、取消或转课
 ```
+
+2026-07-31 已部署精确目标自动候补：
+
+```text
+deployed commit: ab6d02d feat: auto-waitlist configured ballet targets
+version: 1.0.8.00
+changes: 五个固定目标命中 available 时预约、命中 queue_available 时候补；已预约 / 已排队不重复提交，统一实时核验区分 booked / waitlist 并保留安全候补位次；Cloud 分开展示累计预约与候补
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260731-auto-waitlist-ab6d02d（完整 dash/data、变更前配置、自动抢课私有状态与公开状态）
+runtime data stash: predeploy-auto-waitlist-20260731（部署后保留；服务器运行数据已恢复，project-meta.* 已按新版本重新生成）
+local verification: 11 项 fast-path fixture 测试与 scripts/check.py 全部通过；1600×900 和 390×844 下 Cloud 卡、三项指标与“0 约 · 0 候”无卡内或整页横向溢出
+server verification: 11 项 fast-path fixture 测试、scripts/check.py 与 nginx -t 全部通过；无网络 preview 发布 waitlistEnabled=true、五个目标与 8 月 2 日 14:20 计划，totalRuns / totalBooked / totalWaitlisted 均为 0；私有状态 0600、公开状态 root:www-data 0640；timer enabled / active / waiting，service inactive，LastTriggerUSec 为空；首页 / 登录页 / 未认证自动抢课状态 / Blog 为 302 / 200 / 401 / 200
+safety: 未手动运行 execute、未启动自动抢课 service、未读取凭据、未访问闻道；部署与验收没有提交预约、候补、取消或转课，真实 mutation 仍只允许由周日 timer 处理精确配置目标
+```
