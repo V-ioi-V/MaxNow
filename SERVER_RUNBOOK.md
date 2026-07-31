@@ -1857,3 +1857,16 @@ local visual verification: 2048×1200、1600×1000、390×844 下当前天数与
 server verification: 61 项芭蕾测试和 scripts/check.py 全部通过；nginx -t 通过；styles.css?v=216 200、首页 302、登录页 200、未认证 ballet 数据 401、Blog 200
 safety: 仅部署静态页面、脱敏课程卡展示和文档；未读取 PHPSESSID、未访问闻道，也未触发同步、预约、候补、取消或转课
 ```
+
+2026-07-31 已部署周日自动抢课五节目标：
+
+```text
+deployed commit: 417c83c Update Sunday ballet booking targets
+version: 1.0.7.62
+changes: 自动抢课目标替换为周五李俊软开、周五王嘉豪 L1、周二王嘉豪软开、周二王嘉豪 L1、周四李俊软开，均为大教室晚间课；当前实际顺序为周五两节、周二两节、周四一节
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260731-ballet-booking-targets-417c83c（完整 dash/data、变更前配置、私有状态与公开状态）
+runtime data stash: predeploy-ballet-booking-targets-20260731（部署后保留；除 project-meta.* 与自动抢课 fallback 外的服务器运行数据已恢复）
+live verification: 2026-07-31 21:48 北京时间通过 wenda-live 只读核对截图周二 / 周四 / 周五五节的时间、老师和教室；8 月 4–7 日下周目标课当时尚未发布
+server verification: scripts/check.py 全部通过；nginx -t 通过；安全 preview 发布 8 月 2 日 14:20 计划且 totalRuns / totalBooked 仍为 0；timer enabled / active / waiting，service inactive，LastTriggerUSec 为空；首页 / 登录页 / 未认证自动抢课状态 / Blog 为 302 / 200 / 401 / 200
+safety: 仅执行闻道课表 GET 与本地无网络 preview；未手动启动自动抢课 service，未提交预约、候补、取消或转课
+```
