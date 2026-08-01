@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-01 10:41",
-  "version": "1.0.8.03",
-  "versionLabel": "v1.0.8.03",
-  "branch": "feature/ballet-refresh-schedule",
-  "commit": "6491a96",
+  "updatedAt": "2026-08-01 22:21",
+  "version": "1.0.8.04",
+  "versionLabel": "v1.0.8.04",
+  "branch": "feature/ballet-training-chart-ranges",
+  "commit": "529568b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-refresh-schedule · commit 6491a96 · 有未提交代码改动",
+  "deployNote": "feature/ballet-training-chart-ranges · commit 529568b · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-01",
+      "title": "固定训练记录三档图表粒度",
+      "summary": "“本月”从每日折线改为周一至周日排布的月度热力图，按节数 / 时间切换色阶与格内数值；最近成功同步之后的日期使用斜纹虚线状态，不伪装成 0。"
+    },
     {
       "date": "2026-08-01",
       "title": "将芭蕾页面整体刷新调整为每天五次",
@@ -28,11 +33,6 @@
       "date": "2026-07-31",
       "title": "自动抢课支持目标课候补",
       "summary": "Owner 授权周日自动任务在 5 个精确配置目标仅可排队时自动候补；目标可预约时仍正常预约，已预约 / 已排队时不重复提交，普通实时查询和对话式预约仍不允许候补写入。"
-    },
-    {
-      "date": "2026-07-31",
-      "title": "更新周日自动抢课目标",
-      "summary": "根据 Owner 标注的周课表，将周日 14:20 自动抢课目标替换为 5 节：周二王嘉豪软开 + 芭蕾 L1、周四李俊软开、周五李俊软开 + 王嘉豪芭蕾 L1，均为大教室晚间课；原周六 11:30 软开不再自动预约。"
     }
   ]
 }

@@ -1868,7 +1868,9 @@ function createLineChart(records, options) {
   const yScale = options.integerYScale ? getIntegerChartScale(values) : getChartScale(values);
   const yRange = yScale.max - yScale.min || 1;
   const points = records.map((record, index) => {
-    const x = padding.left + (records.length <= 1 ? 0 : (index / (records.length - 1)) * chartWidth);
+    const x = records.length <= 1
+      ? padding.left + chartWidth / 2
+      : padding.left + (index / (records.length - 1)) * chartWidth;
     const y = padding.top + chartHeight - (((Number(record[key]) || 0) - yScale.min) / yRange) * chartHeight;
     return { record, value: Number(record[key]) || 0, x, y };
   });
@@ -3143,58 +3145,90 @@ function fillBalletDays(entries, month) {
   });
 }
 
-function fillBalletAllMonths(entries) {
-  if (!entries.length) return entries;
-  const first = entries[0].date.match(/^(\d{4})-(\d{2})/);
-  const last = entries.at(-1).date.match(/^(\d{4})-(\d{2})/);
-  if (!first || !last) return entries;
-  const start = Number(first[1]) * 12 + Number(first[2]) - 1;
-  const end = Number(last[1]) * 12 + Number(last[2]) - 1;
-  if (end - start > 72) return entries;
-  const byDate = new Map(entries.map((entry) => [entry.date, entry]));
-  return Array.from({ length: end - start + 1 }, (_, index) => {
-    const value = start + index;
-    const date = `${Math.floor(value / 12)}-${String((value % 12) + 1).padStart(2, "0")}`;
-    return byDate.get(date) || { date, classes: 0, minutes: 0 };
-  });
-}
-
 function getBalletTrend() {
   const aggregates = balletData.aggregates || {};
-  const anchor = String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || new Date().toISOString());
-  const year = anchor.slice(0, 4) || String(new Date().getFullYear());
-  const month = anchor.slice(0, 7) || `${year}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+  const today = localDateKey();
+  const year = today.slice(0, 4);
+  const month = today.slice(0, 7);
+  const coverageDate = String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || today).slice(0, 10);
   let entries = [];
   let title = "";
   let xFormatter = (record) => record.date;
+  let chartType = "line";
 
   if (activeBalletPeriod === "month") {
     const daily = normalizeBalletTrendEntries(aggregates.daily, "day");
     entries = daily.length ? daily.filter((entry) => entry.date.startsWith(month)) : aggregateBalletRecords("day").filter((entry) => entry.date.startsWith(month));
-    if (entries.length) entries = fillBalletDays(entries, month);
+    entries = fillBalletDays(entries, month);
     title = `${Number(month.slice(5, 7))} 月`;
     xFormatter = (record) => record.date.slice(8);
+    chartType = "heatmap";
   } else if (activeBalletPeriod === "year") {
     const monthly = normalizeBalletTrendEntries(aggregates.monthly, "month");
     entries = monthly.length ? monthly.filter((entry) => entry.date.startsWith(year)) : aggregateBalletRecords("month").filter((entry) => entry.date.startsWith(year));
-    if (entries.length) entries = fillBalletMonths(entries, year);
+    entries = fillBalletMonths(entries, year);
     title = `${year} 年`;
     xFormatter = (record) => `${Number(record.date.slice(5, 7))}月`;
   } else {
-    const monthly = normalizeBalletTrendEntries(aggregates.monthly, "month");
-    entries = monthly.length ? monthly : aggregateBalletRecords("month");
-    entries = fillBalletAllMonths(entries);
-    if (entries.length > 48) {
-      const yearly = normalizeBalletTrendEntries(aggregates.yearly, "year");
-      entries = yearly.length ? yearly : aggregateBalletRecords("year");
-      xFormatter = (record) => record.date;
-    } else {
-      xFormatter = (record) => record.date;
-    }
-    title = "全部";
+    const yearly = normalizeBalletTrendEntries(aggregates.yearly, "year");
+    entries = (yearly.length ? yearly : aggregateBalletRecords("year"))
+      .filter((entry) => entry.classes > 0 || entry.minutes > 0);
+    xFormatter = (record) => record.date;
+    title = "历年";
   }
 
-  return { entries, title, xFormatter };
+  return { entries, title, xFormatter, chartType, coverageDate, month };
+}
+
+function balletHeatmapLevel(value, maxValue) {
+  if (!value || value <= 0 || maxValue <= 0) return 0;
+  return Math.max(1, Math.min(5, Math.ceil((value / maxValue) * 5)));
+}
+
+function createBalletMonthHeatmap(records, options = {}) {
+  const weekdays = ["一", "二", "三", "四", "五", "六", "日"];
+  const firstDate = records[0]?.date || `${options.month}-01`;
+  const firstDay = new Date(`${firstDate}T12:00:00`).getDay();
+  const leadingBlanks = (firstDay + 6) % 7;
+  const maxValue = Math.max(...records.map((record) => Number(record.value) || 0), 0);
+  const isClasses = options.metric === "classes";
+  const cellValue = (record) => isClasses
+    ? `${Math.round(record.value)} 节`
+    : `${record.value.toFixed(record.value >= 10 ? 1 : 2).replace(/\.?0+$/, "")} h`;
+  const cells = [
+    ...Array.from({ length: leadingBlanks }, () => '<span class="ballet-heatmap-cell is-blank" aria-hidden="true"></span>'),
+    ...records.map((record) => {
+      const uncovered = /^\d{4}-\d{2}-\d{2}$/.test(options.coverageDate)
+        && record.date > options.coverageDate
+        && record.classes <= 0;
+      const level = uncovered ? 0 : balletHeatmapLevel(record.value, maxValue);
+      const day = Number(record.date.slice(8, 10));
+      const title = uncovered
+        ? `${record.date} 尚未纳入同步`
+        : `${record.date} ${cellValue(record)}`;
+      return `
+        <span class="ballet-heatmap-cell" data-level="${level}"${uncovered ? ' data-uncovered="true"' : ""} title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}">
+          <span class="ballet-heatmap-day">${day}</span>
+          <strong>${uncovered ? "—" : escapeHtml(cellValue(record))}</strong>
+        </span>
+      `;
+    }),
+  ];
+
+  return `
+    <div class="ballet-month-heatmap" role="img" aria-label="${escapeHtml(options.title)}">
+      <div class="ballet-heatmap-weekdays" aria-hidden="true">
+        ${weekdays.map((weekday) => `<span>周${weekday}</span>`).join("")}
+      </div>
+      <div class="ballet-heatmap-grid">${cells.join("")}</div>
+      <div class="ballet-heatmap-legend" aria-hidden="true">
+        <span>少</span>
+        ${Array.from({ length: 5 }, (_, index) => `<i data-level="${index + 1}"></i>`).join("")}
+        <span>多</span>
+        <em><i data-uncovered="true"></i>尚未纳入同步</em>
+      </div>
+    </div>
+  `;
 }
 
 function renderBalletTrend() {
@@ -3209,31 +3243,49 @@ function renderBalletTrend() {
     button.setAttribute("aria-pressed", String(active));
   });
 
-  const { entries, title, xFormatter } = getBalletTrend();
+  const { entries, title, xFormatter, chartType, coverageDate, month } = getBalletTrend();
   const isClasses = activeBalletMetric === "classes";
   const records = entries.map((entry) => ({
     ...entry,
     value: isClasses ? entry.classes : entry.minutes / 60,
   }));
   const sampleCount = records.reduce((total, entry) => total + balletNumber(entry.classes), 0);
+  const hasTrainingRecords = balletNumber(balletData.summary?.classes) > 0
+    || aggregateBalletRecords("day").length > 0;
   const trend = qs("#ballet-training-trend");
   const placeholder = qs("#ballet-trend-placeholder");
-  const showTrend = sampleCount >= 5;
+  const showTrend = chartType === "heatmap" ? hasTrainingRecords : sampleCount > 0;
   if (trend) trend.hidden = !showTrend;
-  if (placeholder) placeholder.hidden = showTrend;
+  if (placeholder) {
+    placeholder.hidden = showTrend;
+    placeholder.textContent = chartType === "heatmap"
+      ? "当前还没有可用于月度热力图的上课记录。"
+      : "当前时间范围还没有可用于曲线图的上课记录。";
+  }
   const label = isClasses ? "上课节数" : "训练小时";
-  setText("#ballet-trend-title", `${title}${label}`);
+  const chartTitle = `${title}${label}${chartType === "heatmap" ? "热力图" : ""}`;
+  setText("#ballet-trend-title", chartTitle);
   setText("#ballet-trend-unit", isClasses ? "节" : "h");
   const chart = qs("#ballet-trend-chart");
   if (!chart || !showTrend) return;
+  chart.classList.toggle("is-heatmap", chartType === "heatmap");
   if (!records.length) {
     chart.innerHTML = `<p class="empty-state">当前时间范围还没有可用统计。</p>`;
+    return;
+  }
+  if (chartType === "heatmap") {
+    chart.innerHTML = createBalletMonthHeatmap(records, {
+      title: chartTitle,
+      month,
+      coverageDate,
+      metric: activeBalletMetric,
+    });
     return;
   }
   const labelInterval = activeBalletPeriod === "month" ? 5 : entries.length > 24 ? 6 : 1;
   chart.innerHTML = createLineChart(records, {
     key: "value",
-    title: `${title}${label}`,
+    title: chartTitle,
     unit: isClasses ? "节" : "h",
     formatter: (value) => (isClasses ? `${Math.round(value)}` : value.toFixed(value >= 10 ? 1 : 2).replace(/\.?0+$/, "")),
     yFormatter: (value) => (isClasses ? `${Math.round(value)}` : value.toFixed(1).replace(/\.0$/, "")),
