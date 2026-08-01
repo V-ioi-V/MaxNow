@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-01 22:21",
-  "version": "1.0.8.04",
-  "versionLabel": "v1.0.8.04",
-  "branch": "feature/ballet-training-chart-ranges",
-  "commit": "529568b",
+  "updatedAt": "2026-08-01 22:26",
+  "version": "1.0.8.05",
+  "versionLabel": "v1.0.8.05",
+  "branch": "feature/ballet-completed-training-time",
+  "commit": "85f9fea",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-training-chart-ranges · commit 529568b · 有未提交代码改动",
+  "deployNote": "feature/ballet-completed-training-time · commit 85f9fea · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-01",
+      "title": "本周训练时长改为仅统计已完成课程",
+      "summary": "本周训练右下“训练时长”不再把已预约课程计入主数字，只显示本周已完成课程的累计小时；副说明同步从“已确定 N 节”改为“已完成 N 节”。已预约与候补时长仍保留在各自指标卡，课程类型和已上完占比口径不变。脚本缓存提升到 `app.js?v=177`，版本提升到 `1.0.8.05`。"
+    },
     {
       "date": "2026-08-01",
       "title": "固定训练记录三档图表粒度",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-01",
       "title": "修复芭蕾同步账本权限并补齐失败可见性",
       "summary": "修复 7 月 30 日手工补录后私有 `attendance-ledger.json` 被 root 原子替换为 `root:root 0600` 的问题；恢复 `ubuntu:www-data 0600` 并以真实服务用户完成 JSON / ledger 校验后，手动执行一次 rolling 只读同步成功，数据更新到 `2026-08-01 00:39:46`，保留 4 条上课记录、3 条未来预约和 7 天课表。"
-    },
-    {
-      "date": "2026-07-31",
-      "title": "自动抢课支持目标课候补",
-      "summary": "Owner 授权周日自动任务在 5 个精确配置目标仅可排队时自动候补；目标可预约时仍正常预约，已预约 / 已排队时不重复提交，普通实时查询和对话式预约仍不允许候补写入。"
     }
   ]
 };

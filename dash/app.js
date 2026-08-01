@@ -3655,19 +3655,15 @@ function renderBalletWeek() {
   setText("#ballet-week-booked-time", `${formatBalletHours(week.bookedMinutes)} 小时`);
   setText("#ballet-week-waitlist", `${balletNumber(week.waitlistClasses)} 节`);
   setText("#ballet-week-waitlist-time", `${formatBalletHours(week.waitlistMinutes)} 小时`);
-  const confirmedClasses =
-    Math.max(0, balletNumber(week.completedClasses))
-    + Math.max(0, balletNumber(week.bookedClasses));
-  const confirmedMinutes =
-    Math.max(0, balletNumber(week.completedMinutes))
-    + Math.max(0, balletNumber(week.bookedMinutes));
+  const completedTrainingClasses = Math.max(0, balletNumber(week.completedClasses));
+  const completedTrainingMinutes = Math.max(0, balletNumber(week.completedMinutes));
   setText(
     "#ballet-week-training-time",
-    `${formatBalletHours(confirmedMinutes)} 小时`,
+    `${formatBalletHours(completedTrainingMinutes)} 小时`,
   );
   setText(
     "#ballet-week-training-classes",
-    `已确定 ${confirmedClasses} 节`,
+    `已完成 ${completedTrainingClasses} 节`,
   );
   renderBalletWeekCourseTypes(week);
   const {
