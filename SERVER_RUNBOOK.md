@@ -301,14 +301,14 @@ python3 scripts/check.py
 
 ### 芭蕾生产只读同步（每日 / 月度定时已启用）
 
-芭蕾页面与脱敏缓存已经部署。生产 rolling timer 每日 00:00 刷新全部数据，并在周日 14:30 额外读取下周课表，与 14:20 自动抢课关键窗口错开；每月 1 日 00:47 继续执行 full 只读同步。长期 enable gate 为 root `0600`，两个 timer 均应保持 `enabled / active / waiting`。身份失效时同步器会停止后续网络尝试并保留旧数据，直到非敏感凭据版本变化。
+芭蕾页面与脱敏缓存已经部署。生产 rolling timer 每天 09:00、12:00、15:00、18:00、22:00 刷新全部数据，并在周日 14:30 额外读取抢课后发布的下周课表，与 14:20 自动抢课关键窗口错开；原每日 00:00 触发已移除。每月 1 日 00:47 继续执行 full 只读同步。长期 enable gate 为 root `0600`，两个 timer 均应保持 `enabled / active / waiting`。身份失效时同步器会停止后续网络尝试并保留旧数据，直到非敏感凭据版本变化。
 
 目标运行边界：
 
 ```text
 service -> maxnow-ballet-sync.service
 timer -> maxnow-ballet-sync.timer
-schedule -> Asia/Shanghai 每日 00:00 + 周日 14:30
+schedule -> Asia/Shanghai 每天 09:00 / 12:00 / 15:00 / 18:00 / 22:00 + 周日 14:30
 monthly service -> maxnow-ballet-full-sync.service
 monthly timer -> maxnow-ballet-full-sync.timer
 monthly schedule -> Asia/Shanghai 每月 1 日 00:47
@@ -364,6 +364,8 @@ PY
 
 2026-08-01 00:00 rolling 同步曾因 2026-07-30 手工补录通过 root 原子替换 `attendance-ledger.json`、留下 `root:root 0600` 而以 `parse_error / exit 4` 失败。00:39 将该文件恢复为 `ubuntu:www-data 0600`，以 `ubuntu` 完成 JSON 与 ledger 校验后，于 00:40 手动启动既有 rolling 只读同步；结果为 `success / exit 0`，`dataAsOf=2026-08-01T00:39:46+08:00`、4 条上课记录、3 条未来预约和 7 天课表，未提交预约、候补、取消或转课。后续代码补上 root 原子写属主继承、预检失败公开状态和页面“同步失败”标识。
 
+2026-08-01 Owner 将 rolling 整体刷新日程调整为每天 09:00、12:00、15:00、18:00、22:00，并明确保留周日 14:30 抢课后刷新；每日 00:00 触发删除。月度 full、20 分钟 Session 探针和 14:20 自动抢课均不变。部署时只安装并重载 timer，不手动启动 `maxnow-ballet-sync.service`；验收必须确认六个 `OnCalendar`、下一次触发时间和 rolling service 未因部署被启动。
+
 2026-07-26 21:23 已在服务器内部把 v4 生命周期实验当前的临时 systemd credential 密封为上述 host-bound 加密凭据，并用只写临时输出的解密自检确认可用后立即删除临时明文；全过程没有把值输出、下载或写入仓库。加密文件为 root `0600`。本机没有完整 TPM 保护，systemd host key 位于服务器 root 管理的 `/var/lib/systemd/credential.secret`；因此它能防止普通文件读取和误入 Git / 日志，但拥有服务器 root 权限的人仍可解密，不能把它描述成硬件不可导出密钥。生产同步仍未发起任何请求。
 
 2026-07-26 22:12 已部署主分支 `7a57225`（版本 `1.0.5.00`），安装四个生产 unit 模板并完成 `systemd-analyze verify`、Linux fixture tests、`scripts/check.py`、`nginx -t` 与前端 read model 脱敏校验。两个 timer 均为 `disabled / inactive`，两个 service 均为 `inactive`，enable gate 不存在；部署过程没有启动同步器，也没有向闻道增加请求。部署前服务器运行数据备份保留在 `/home/ubuntu/maxnow-deploy-backups/20260726-220836-before-ballet-module`，原有 runtime 数据已恢复。部署完成时 v4 实验仍为 active，权威日志更新时间在一个 20 分钟周期内。
@@ -404,7 +406,7 @@ PY
 1. 先按本节规则写入新的 host-bound 加密凭据，不复用实验 unit 的临时 `/run/credentials` 路径；若重建生命周期探针，按 Owner 最新要求使用 1200 秒（20 分钟），不要改写已结束 v5 的 1500 秒历史配置或日志。
 2. 用本地脱敏样本完成 parser / 去重测试；首次真实同步只允许已确认的 GET 路径。
 3. 检查私有账本 `0600`、read model 无敏感字段、重复同步不增加历史数量、失败时旧缓存仍在。
-4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认 rolling timer 同时包含每日 00:00 和周日 14:30，full timer 为每月 1 日 00:47；不要把测试性即时请求算作定时任务证据。
+4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认 rolling timer 包含每天 09:00、12:00、15:00、18:00、22:00 和周日额外 14:30，且不再包含每日 00:00；full timer 为每月 1 日 00:47。不要把测试性即时请求算作定时任务证据。
 5. 更新 Cloud 页自动化清单和系统状态来源，并在 `UPDATE_LOG.md` 记录真实启用时间与脱敏结果。
 
 #### 芭蕾对话式实时查询
