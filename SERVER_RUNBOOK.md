@@ -364,7 +364,7 @@ PY
 
 2026-08-01 00:00 rolling 同步曾因 2026-07-30 手工补录通过 root 原子替换 `attendance-ledger.json`、留下 `root:root 0600` 而以 `parse_error / exit 4` 失败。00:39 将该文件恢复为 `ubuntu:www-data 0600`，以 `ubuntu` 完成 JSON 与 ledger 校验后，于 00:40 手动启动既有 rolling 只读同步；结果为 `success / exit 0`，`dataAsOf=2026-08-01T00:39:46+08:00`、4 条上课记录、3 条未来预约和 7 天课表，未提交预约、候补、取消或转课。后续代码补上 root 原子写属主继承、预检失败公开状态和页面“同步失败”标识。
 
-2026-08-01 Owner 将 rolling 整体刷新日程调整为每天 09:00、12:00、15:00、18:00、22:00，并明确保留周日 14:30 抢课后刷新；每日 00:00 触发删除。月度 full、20 分钟 Session 探针和 14:20 自动抢课均不变。部署时只安装并重载 timer，不手动启动 `maxnow-ballet-sync.service`；验收必须确认六个 `OnCalendar`、下一次触发时间和 rolling service 未因部署被启动。
+2026-08-01 Owner 将 rolling 整体刷新日程调整为每天 09:00、12:00、15:00、18:00、22:00，并明确保留周日 14:30 抢课后刷新；每日 00:00 触发删除。月度 full、20 分钟 Session 探针和 14:20 自动抢课均不变。主分支 `6491a96` 通过 Git bundle 快进部署，备份位于 `/home/ubuntu/maxnow-deploy-backups/20260801-103950-ballet-refresh-schedule`，运行态 project meta / status 的部署 stash 为 `159313f124754113baa447215e0e1a44c7468590`。切换 timer 时虽然没有手动启动 service，但 `Persistent=true` 仍将当天已错过的 09:00 判定为待补跑，于 10:40:13 自动执行一次 rolling 只读同步，10:40:28 以 `success / exit 0` 结束并将 `dataAsOf` 更新为 10:40:13；没有提交预约、候补、取消或转课。后续下一次触发为 12:00，六个 `OnCalendar` 均正确。以后在白天调整 persistent timer 且不希望补跑时，必须先停止旧 timer，再更新 stamp、安装 unit、`daemon-reload` 并重新启动 timer；不能在旧 timer 仍 active 时只触碰 stamp。
 
 2026-07-26 21:23 已在服务器内部把 v4 生命周期实验当前的临时 systemd credential 密封为上述 host-bound 加密凭据，并用只写临时输出的解密自检确认可用后立即删除临时明文；全过程没有把值输出、下载或写入仓库。加密文件为 root `0600`。本机没有完整 TPM 保护，systemd host key 位于服务器 root 管理的 `/var/lib/systemd/credential.secret`；因此它能防止普通文件读取和误入 Git / 日志，但拥有服务器 root 权限的人仍可解密，不能把它描述成硬件不可导出密钥。生产同步仍未发起任何请求。
 

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-01 10:32",
+  "updatedAt": "2026-08-01 10:41",
   "version": "1.0.8.03",
   "versionLabel": "v1.0.8.03",
   "branch": "feature/ballet-refresh-schedule",
-  "commit": "6105704",
+  "commit": "6491a96",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-refresh-schedule · commit 6105704 · 有未提交代码改动",
+  "deployNote": "feature/ballet-refresh-schedule · commit 6491a96 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-01",
