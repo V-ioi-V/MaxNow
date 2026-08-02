@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 16:35",
+  "updatedAt": "2026-08-02 16:37",
   "version": "1.0.8.14",
   "versionLabel": "v1.0.8.14",
   "branch": "bugfix/ballet-waitlist-summary",
-  "commit": "4936766",
+  "commit": "11ad94b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-waitlist-summary · commit 4936766 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-waitlist-summary · commit 11ad94b · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",

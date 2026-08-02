@@ -1992,3 +1992,16 @@ local visual verification: 2048px 下本月 / 今年 / 全部图表宽度分别�
 server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=223 / Blog 为 302 / 200 / 401 / 200 / 200；课程同步与自动抢课 service 均 inactive，自动抢课 timer active、下次 2026-08-09 14:19:35
 safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署抢课摘要累计候补口径修复：
+
+```text
+deployed commit: 11ad94b fix: show cumulative ballet waitlist total
+version: 1.0.8.14
+changes: 抢课中间摘要卡从当前未来预约 / 候补列表数量改为自动抢课累计 totalWaitlisted；线上显示累计抢到 4 节、累计候补 1 节
+asset cache: styles.css?v=223；app.js?v=184
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-163704-ballet-waitlist-summary/dash-data.tgz
+local visual verification: 2048px 与 390px 下“累计抢到 / 累计候补 / 上次抢课耗时”三张摘要卡同顶同底等宽，摘要区与整页横向溢出均为 0
+server verification: 17 项自动抢课测试、20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；权威脱敏状态 totalBooked=4 / totalWaitlisted=1；未登录 Dash / 登录页 / 自动抢课状态 / Blog 为 302 / 200 / 401 / 200；课程同步与自动抢课 service inactive，自动抢课 timer active、下次 2026-08-09 14:19:35
+safety: 仅部署静态页面、脱敏状态展示和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
