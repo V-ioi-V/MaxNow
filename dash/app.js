@@ -3327,8 +3327,12 @@ function renderBalletTrend() {
   const label = isClasses ? "上课节数" : "训练小时";
   const chartTitle = `${title}${label}${chartType === "heatmap" ? "热力图" : ""}`;
   setText("#ballet-trend-title", chartTitle);
-  setText("#ballet-trend-unit", isClasses ? "节" : "h");
   const chart = qs("#ballet-trend-chart");
+  const detailGrid = qs(".ballet-training-detail-grid");
+  const compactChartWidth = chartType === "heatmap"
+    ? 840
+    : Math.min(840, Math.max(420, records.length * 84 + 104));
+  detailGrid?.style.setProperty("--ballet-training-chart-column-width", `${compactChartWidth}px`);
   if (!chart || !showTrend) return;
   chart.classList.toggle("is-heatmap", chartType === "heatmap");
   chart.classList.toggle("is-compact-line", chartType !== "heatmap");
@@ -3346,7 +3350,6 @@ function renderBalletTrend() {
     });
     return;
   }
-  const compactChartWidth = Math.min(840, Math.max(420, records.length * 84 + 104));
   chart.style.setProperty("--ballet-trend-chart-width", `${compactChartWidth}px`);
   const labelInterval = activeBalletPeriod === "month" ? 5 : entries.length > 24 ? 6 : 1;
   chart.innerHTML = createLineChart(records, {
@@ -4033,6 +4036,7 @@ function createBalletHistoryPreviewItem(record) {
 function renderBalletHistory() {
   const records = getBalletHistoryRecords();
   const periodLabel = getBalletHistoryPeriodLabel();
+  const previewLimit = window.matchMedia("(max-width: 560px)").matches ? 3 : 8;
   setText("#ballet-history-count", `共 ${records.length} 节`);
   setText("#ballet-history-drawer-summary", `${periodLabel} · 共 ${records.length} 节`);
 
@@ -4045,12 +4049,16 @@ function renderBalletHistory() {
       empty.textContent = `${periodLabel}暂无上课记录`;
       preview.appendChild(empty);
     } else {
-      preview.append(...records.slice(0, 5).map(createBalletHistoryPreviewItem));
+      preview.append(...records.slice(0, previewLimit).map(createBalletHistoryPreviewItem));
     }
   }
 
   const openButton = qs("#ballet-history-open");
-  if (openButton) openButton.disabled = !records.length;
+  if (openButton) {
+    const hasMore = records.length > previewLimit;
+    openButton.hidden = !hasMore;
+    openButton.disabled = !hasMore;
+  }
 
   const container = qs("#ballet-history");
   if (!container) return;
@@ -5745,7 +5753,10 @@ window.addEventListener("resize", () => {
     scheduleWeatherMetaFit();
     if (qs("#dounai-view")?.classList.contains("is-active")) renderDounai();
     if (qs("#tokens-view")?.classList.contains("is-active")) renderTokens();
-    if (qs("#ballet-view")?.classList.contains("is-active")) renderBalletTrend();
+    if (qs("#ballet-view")?.classList.contains("is-active")) {
+      renderBalletTrend();
+      renderBalletHistory();
+    }
   }, 120);
 });
 

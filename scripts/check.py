@@ -1656,7 +1656,10 @@ def check_secondary_view_style():
         or ".ballet-line-chart.is-compact-line {" not in dashboard_css
         or "width: min(100%, var(--ballet-trend-chart-width, 840px));" not in dashboard_css
         or 'chart.classList.toggle("is-compact-line", chartType !== "heatmap");' not in dashboard_js
-        or "const compactChartWidth = Math.min(840, Math.max(420, records.length * 84 + 104));" not in dashboard_js
+        or 'const compactChartWidth = chartType === "heatmap"' not in dashboard_js
+        or '? 840' not in dashboard_js
+        or ': Math.min(840, Math.max(420, records.length * 84 + 104));' not in dashboard_js
+        or 'detailGrid?.style.setProperty("--ballet-training-chart-column-width", `${compactChartWidth}px`);' not in dashboard_js
         or "width: compactChartWidth," not in dashboard_js
         or ".ballet-heatmap-grid {" not in dashboard_css
         or '.ballet-heatmap-cell[data-uncovered="true"] {' not in dashboard_css
@@ -1665,13 +1668,18 @@ def check_secondary_view_style():
         or 'class="ballet-history-preview-slot"' not in ballet_view_markup
         or 'id="ballet-history-preview"' not in ballet_view_markup
         or 'id="ballet-history-drawer"' not in ballet_view_markup
-        or 'id="ballet-history-open"' not in ballet_view_markup
+        or 'id="ballet-history-open" type="button" hidden' not in ballet_view_markup
+        or 'id="ballet-trend-unit"' in ballet_view_markup
         or '.ballet-history-preview-slot {' not in dashboard_css
         or 'position: absolute;' not in dashboard_css
-        or 'grid-template-rows: repeat(5, minmax(0, 1fr));' not in dashboard_css
-        or '.ballet-history-preview-item:nth-child(n + 4)' not in dashboard_css
+        or 'grid-template-columns: minmax(0, var(--ballet-training-chart-column-width)) minmax(0, 1fr);' not in dashboard_css
+        or '@media (max-width: 1500px)' not in dashboard_css
+        or 'grid-template-columns: repeat(2, minmax(0, 1fr));' not in dashboard_css
+        or '.ballet-history-open[hidden] {' not in dashboard_css
         or 'function getBalletHistoryRecords()' not in dashboard_js
-        or 'records.slice(0, 5).map(createBalletHistoryPreviewItem)' not in dashboard_js
+        or 'const previewLimit = window.matchMedia("(max-width: 560px)").matches ? 3 : 8;' not in dashboard_js
+        or 'records.slice(0, previewLimit).map(createBalletHistoryPreviewItem)' not in dashboard_js
+        or 'openButton.hidden = !hasMore;' not in dashboard_js
         or 'balletHistoryDrawer.showModal()' not in dashboard_js
         or 'renderBalletHistory();' not in dashboard_js.split('qsa("[data-ballet-period]")', 1)[1]
         or "function renderBalletGrowth()" not in dashboard_js
@@ -1680,9 +1688,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=227" not in dashboard_html
+        "styles.css?v=229" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=187" not in dashboard_html
+        or "app.js?v=188" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1900,7 +1908,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=187" not in dashboard_html:
+    if "app.js?v=188" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

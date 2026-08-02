@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 17:36",
-  "version": "1.0.8.18",
-  "versionLabel": "v1.0.8.18",
-  "branch": "feature/ballet-booking-tab-panels",
-  "commit": "3f60fe5",
+  "updatedAt": "2026-08-02 17:48",
+  "version": "1.0.8.19",
+  "versionLabel": "v1.0.8.19",
+  "branch": "feature/ballet-history-grid",
+  "commit": "a7e1472",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-tab-panels · commit 3f60fe5 · 有未提交代码改动",
+  "deployNote": "feature/ballet-history-grid · commit a7e1472 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "训练图表与历史消除中间空列",
+      "summary": "图表列改为按热力图或折线的实际宽度收敛，上课历史直接接在右侧并占满剩余空间；删除图表标题右侧重复的“节 / h”单位徽标。"
+    },
     {
       "date": "2026-08-02",
       "title": "抢课双列表明确为双 Tab 面板",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "代抢与上次结果改为并列展示",
       "summary": "抢课区去掉“代抢 / 上次抢课结果”的点击切换 Tab，改为两个始终同时渲染的独立列表；桌面空间足够时左右等分并列，容器变窄时自动上下排列，不隐藏任一组内容。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "抢课摘要改为累计候补口径",
-      "summary": "抢课区中间摘要卡从“当前已预约”改为“累计候补”，直接读取自动抢课公开状态的 `totalWaitlisted`；生产权威状态为累计抢到 `4` 节、累计候补 `1` 节，不再把当前未来预约与候补共 `5` 条误显示成累计值。"
     }
   ]
 };
