@@ -4803,6 +4803,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] > div {
     margin-top: 0;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0;
   }
 }
 
@@ -5041,12 +5044,14 @@ body[data-view="ricky"] .topbar-ricky-status {
   flex: 0 0 auto;
   flex-wrap: nowrap;
   gap: 2px;
+  font-size: 8px;
 }
 
-.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] > div > span:first-child {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-time-range {
+  min-width: max-content;
+  flex: 0 0 auto;
+  overflow: visible;
+  text-overflow: clip;
   white-space: nowrap;
 }
 
@@ -5316,6 +5321,10 @@ body[data-view="ricky"] .topbar-ricky-status {
   font-size: 9px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+
+.ballet-timetable-time-range {
+  white-space: nowrap;
 }
 
 .ballet-timetable-state {

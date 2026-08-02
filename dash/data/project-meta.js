@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 16:53",
-  "version": "1.0.8.15",
-  "versionLabel": "v1.0.8.15",
-  "branch": "feature/ballet-booking-parallel-results",
-  "commit": "9dfe541",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-parallel-results · commit 9dfe541 · 有未提交代码改动",
+  "updatedAt": "2026-08-02 17:01",
+  "version": "1.0.8.16",
+  "versionLabel": "v1.0.8.16",
+  "branch": "bugfix/ballet-timetable-time-visible",
+  "commit": "5f38858",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-timetable-time-visible · commit 5f38858 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "课表紧凑卡完整显示起止时间",
+      "summary": "修复 60 分钟已预约 / 候补课程底部时间被状态徽标挤成 `18:45–1…` 的问题；完整起止时间改为不可收缩事实，宽卡与状态同排，中等桌面窄卡把状态放到时间下一行。"
+    },
     {
       "date": "2026-08-02",
       "title": "代抢与上次结果改为并列展示",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "课表紧凑卡始终显示老师",
       "summary": "修复 60 分钟软开课在同时展示人数、排队、时间和“已预约”时，老师行被底部换行与弹性压缩挤掉的问题；老师姓名调整为课程名后的必保留独立行，中等桌面和重叠窄卡也不再隐藏。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "抢课摘要改为三等分并校准耗时口径",
-      "summary": "抢课区顶部拆为“累计抢到 / 当前已预约 / 上次抢课耗时”三张等宽摘要卡，桌面与手机端都保持三等分；最后一张显示上次关键路径总耗时，`66,107 ms` 改为易读的 `66.1 s`，副说明保留有效目标数和逐目标平均耗时，不再只显示容易误解的 `13,221 ms` 平均值。"
     }
   ]
 };

@@ -4174,6 +4174,7 @@ function createBalletTimetableCourse(record, mobile = false) {
   }
   const foot = document.createElement("div");
   const time = document.createElement("span");
+  time.className = "ballet-timetable-time-range";
   time.textContent = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
   const state = document.createElement("span");
   state.className = "ballet-timetable-state";
