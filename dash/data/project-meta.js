@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 16:20",
+  "updatedAt": "2026-08-02 16:24",
   "version": "1.0.8.13",
   "versionLabel": "v1.0.8.13",
   "branch": "bugfix/ballet-training-chart-compact",
-  "commit": "35977a3",
+  "commit": "9174284",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-training-chart-compact · commit 35977a3 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-training-chart-compact · commit 9174284 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",
