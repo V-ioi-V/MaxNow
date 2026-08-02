@@ -11,6 +11,14 @@
 
 ## 2026-08-02
 
+### 修复 Windows Codex 用量上报假成功
+
+- 修复 `scripts/report_codex_usage.ps1` 未检查 Git / Python 原生命令退出码的问题；fetch、生成、检查、暂存和提交任一步骤失败都会让计划任务返回非零，不再把 push 拒绝记录成成功。
+- Windows 专用上报 clone 现在只在本地独有提交全部属于 `Update local Codex token usage`、且逐提交只修改 `codex-usage.*` 时自动回到最新 `origin/main` 并重新生成；push 并发冲突同一轮最多重试 3 次。
+- 增加中断残留恢复：仅有任务自有的未提交 `codex-usage.*` 时可安全恢复，人工提交或其他文件改动仍然 fail closed；GitHub transport 改用 SSH 443。
+- 计划任务运行时会补入 Git for Windows 自带的 OpenSSL 工具目录，确保最新主线的认证服务自检在隐藏任务环境中可执行。
+- 版本提升到 `1.0.8.23`。
+
 ### 训练趋势卡与历史卡统一样式
 
 - “8 月上课节数热力图”标题移入左侧卡片内，并增加 `Training trend` 眉题；左侧趋势卡与右侧上课历史卡同顶同底、共用边框和背景。

@@ -905,16 +905,16 @@ python scripts/check.py
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local_codex_usage_task.ps1
 ```
 
-默认任务名为 `MaxNow-Local-Codex-Usage-Report`，固定每小时 `:02` 静默运行。安装脚本会注册 hidden task，最长运行 10 分钟。Owner Windows 机器上当前使用专用 clone `D:\Personal\MaxNow-token-report`；Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow-token-report\scripts\report_codex_usage_hidden.vbs"`，VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`。该任务要求运行目录在 `main` 且无无关脏文件，只提交 `dash/data/codex-usage.*` 源账本并推送到 `origin/main`。不要在服务器运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器 `.codex` 覆盖 Windows 账本。
+默认任务名为 `MaxNow-Local-Codex-Usage-Report`，固定每小时 `:02` 静默运行。安装脚本会注册 hidden task，最长运行 10 分钟。Owner Windows 机器上当前使用专用 clone `D:\Personal\MaxNow-token-report`；Task Scheduler action 使用 `wscript.exe "D:\Personal\MaxNow-token-report\scripts\report_codex_usage_hidden.vbs"`，VBS launcher 再以 window style 0 启动 `scripts/report_codex_usage.ps1`。该任务要求运行目录在 `main` 且无无关脏文件，只提交 `dash/data/codex-usage.*` 源账本并推送到 `origin/main`。该 clone 的 GitHub remote 使用 `ssh://git@ssh.github.com:443/V-ioi-V/MaxNow.git`。不要在服务器运行 `python3 scripts/update_data.py codex-usage`，否则会用服务器 `.codex` 覆盖 Windows 账本。
 
-2026-07-06 修复过一次 Windows 专用 clone 上报卡住：主工作区 `D:\Personal\MaxNow` 配有 repo-local GitHub 代理，但 `D:\Personal\MaxNow-token-report` 缺少同样配置，导致计划任务在 `git pull --ff-only origin main` 处卡住或报 `Recv failure: Connection was reset`。当前该 clone 已设置：
+2026-07-06 修复过一次 Windows 专用 clone 上报卡住：主工作区 `D:\Personal\MaxNow` 配有 repo-local GitHub 代理，但 `D:\Personal\MaxNow-token-report` 缺少同样配置，导致计划任务在 `git pull --ff-only origin main` 处卡住或报 `Recv failure: Connection was reset`。当时的 HTTPS remote 使用过以下 repo-local 代理；2026-08-02 改用 GitHub SSH 443 后，这组配置不再是当前传输路径：
 
 ```powershell
 git -C D:\Personal\MaxNow-token-report config http.proxy http://127.0.0.1:7897
 git -C D:\Personal\MaxNow-token-report config https.proxy http://127.0.0.1:7897
 ```
 
-如果任务显示长时间 `Running` 且日志停在 `pull latest origin/main`，先检查 `git-remote-https` 是否卡住，再确认上述 proxy 仍存在。若专用 clone 因未推送生成物提交出现 `[origin/main: ahead ..., behind ...]`，先给当前 HEAD 建本地备份分支，再让 `main` 回到 `origin/main`，最后重新运行计划任务，由当前 `.codex/sessions` 重新生成 `codex-usage.*` 和 `token-usage.*`。2026-07-06 22:18 手动验证成功，`LastTaskResult=0`，线上 `Codex Windows` 来源更新时间为 `2026-07-06 22:18`。
+如果任务显示长时间 `Running` 且日志停在 `fetch latest origin/main`，先检查 SSH 443 连通性与 host-key 校验。2026-08-02 起，Windows 上报与 macOS 使用相同的生成提交恢复边界：每轮先 fetch；若本地独有提交的标题全部为 `Update local Codex token usage`，且每个提交只改 `dash/data/codex-usage.json/.js`，脚本可自动 reset 到最新 `origin/main`、重新生成，并在 push 并发冲突时最多重试 3 次。上次中断若只留下这两份未提交生成文件，也可在确认无越界改动后恢复；任何人工提交或其他文件改动都必须停止并人工检查。Git / Python 任一步骤非零都会让任务失败，不再出现 push 被拒绝但 `LastTaskResult=0` 的假成功。人工处理既有分叉时仍应先为当前 HEAD 建本地备份分支，再运行加固后的任务。
 
 本机 macOS 可直接在仓库目录运行：
 
