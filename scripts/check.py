@@ -1634,15 +1634,17 @@ def check_secondary_view_style():
         or "fillBalletMonths(entries, year, Number(month.slice(5, 7)))" not in dashboard_js
         or 'const showTrend = chartType === "heatmap" ? hasTrainingRecords : sampleCount > 0;' not in dashboard_js
         or ".ballet-line-chart.is-heatmap {" not in dashboard_css
+        or "width: min(100%, 840px);" not in dashboard_css
         or ".ballet-heatmap-grid {" not in dashboard_css
         or '.ballet-heatmap-cell[data-uncovered="true"] {' not in dashboard_css
+        or '.ballet-heatmap-cell[data-uncovered="true"] strong {' not in dashboard_css
         or "function renderBalletGrowth()" not in dashboard_js
     ):
         raise ValueError("secondary views: ballet learning layout or Cloud operations split is incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=219" not in dashboard_html
+        "styles.css?v=220" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=180" not in dashboard_html
     ):

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 15:19",
-  "version": "1.0.8.09",
-  "versionLabel": "v1.0.8.09",
-  "branch": "feature/ballet-booking-tabs",
-  "commit": "6acd378",
+  "updatedAt": "2026-08-02 15:25",
+  "version": "1.0.8.10",
+  "versionLabel": "v1.0.8.10",
+  "branch": "bugfix/ballet-heatmap-compact",
+  "commit": "d321cd0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-tabs · commit 6acd378 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-heatmap-compact · commit d321cd0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "收紧本月训练热力图",
+      "summary": "本月训练热力图不再把粉色图表外框撑满整行，桌面最大宽度收敛为七列日历实际所需的 `840px` 并左对齐；格子高度、间距和外框内边距同步压缩，内容较少时不再保留大块空白。"
+    },
     {
       "date": "2026-08-02",
       "title": "课程计划拆分预约与抢课工作区",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "今年训练曲线隐藏未来月份",
       "summary": "“今年”按月曲线只展示 1 月至浏览器当前月；当前为 8 月时不再绘制 9–12 月，也不把未来月份表达成 0。已经过去但没有训练记录的月份继续补 0，“全部”仍只按实际有记录的年份汇总。脚本缓存提升到 `app.js?v=178`，版本提升到 `1.0.8.06`。"
-    },
-    {
-      "date": "2026-08-01",
-      "title": "本周训练时长改为仅统计已完成课程",
-      "summary": "本周训练右下“训练时长”不再把已预约课程计入主数字，只显示本周已完成课程的累计小时；副说明同步从“已确定 N 节”改为“已完成 N 节”。已预约与候补时长仍保留在各自指标卡，课程类型和已上完占比口径不变。脚本缓存提升到 `app.js?v=177`，版本提升到 `1.0.8.05`。"
     }
   ]
 };

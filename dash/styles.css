@@ -7055,22 +7055,24 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-line-chart.is-heatmap {
+  width: min(100%, 840px);
   min-height: 0;
   overflow: hidden;
-  padding: clamp(14px, 2vw, 24px);
+  margin-right: auto;
+  padding: clamp(14px, 1.6vw, 18px);
   background: #fffafd;
 }
 
 .ballet-month-heatmap {
-  width: min(100%, 920px);
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 
 .ballet-heatmap-weekdays,
 .ballet-heatmap-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: clamp(5px, 0.7vw, 9px);
+  gap: clamp(5px, 0.55vw, 7px);
 }
 
 .ballet-heatmap-weekdays {
@@ -7086,7 +7088,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-heatmap-cell {
   min-width: 0;
-  min-height: clamp(48px, 5vw, 68px);
+  min-height: clamp(46px, 3.8vw, 56px);
   display: grid;
   align-content: space-between;
   gap: 8px;
@@ -7122,10 +7124,14 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-heatmap-cell[data-uncovered="true"] {
+  border-color: #eee3e8;
   border-style: dashed;
-  background:
-    repeating-linear-gradient(-45deg, #fbf8fa 0 6px, #f4edf1 6px 12px);
-  color: #ab9ca4;
+  background: #faf7f9;
+  color: #b3a6ad;
+}
+
+.ballet-heatmap-cell[data-uncovered="true"] strong {
+  visibility: hidden;
 }
 
 .ballet-heatmap-cell.is-blank {
@@ -7152,7 +7158,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   align-items: center;
   justify-content: flex-end;
   gap: 5px;
-  margin-top: 12px;
+  margin-top: 10px;
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
@@ -7196,9 +7202,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-heatmap-legend i[data-uncovered="true"] {
+  border-color: #eee3e8;
   border-style: dashed;
-  background:
-    repeating-linear-gradient(-45deg, #fbf8fa 0 3px, #f4edf1 3px 6px);
+  background: #faf7f9;
 }
 
 @media (hover: hover) and (pointer: fine) {
