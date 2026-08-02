@@ -4627,10 +4627,14 @@ function renderBalletTimetable() {
     marker.style.gridColumn = "2 / -1";
     marker.style.gridRow = `${nowLine} / span 1`;
     marker.setAttribute("aria-hidden", "true");
-    const label = document.createElement("span");
+    const label = document.createElement("time");
+    label.className = "ballet-timetable-now-label";
+    label.dateTime = now.toISOString();
     label.textContent = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-    marker.appendChild(label);
-    grid.appendChild(marker);
+    label.style.gridColumn = "1";
+    label.style.gridRow = `${nowLine} / span 1`;
+    label.setAttribute("aria-hidden", "true");
+    grid.append(marker, label);
   }
 
   days.forEach((day, index) => {

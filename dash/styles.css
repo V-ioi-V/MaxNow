@@ -5150,10 +5150,12 @@ body[data-view="ricky"] .topbar-ricky-status {
   background: #d04f7f;
 }
 
-.ballet-timetable-now-line span {
-  position: absolute;
-  top: -9px;
-  left: 4px;
+.ballet-timetable-now-label {
+  position: relative;
+  z-index: 5;
+  align-self: start;
+  justify-self: end;
+  margin-right: 7px;
   padding: 1px 4px;
   border-radius: 5px;
   background: #ffffff;
@@ -5161,6 +5163,9 @@ body[data-view="ricky"] .topbar-ricky-status {
   font-size: 9px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateY(-50%);
 }
 
 .ballet-timetable-course {

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 17:51",
-  "version": "1.0.8.19",
-  "versionLabel": "v1.0.8.19",
-  "branch": "feature/ballet-history-grid",
-  "commit": "33c7912",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-history-grid · commit 33c7912 · 有未提交代码改动",
+  "updatedAt": "2026-08-02 18:01",
+  "version": "1.0.8.20",
+  "versionLabel": "v1.0.8.20",
+  "branch": "bugfix/ballet-now-label",
+  "commit": "895cb87",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-now-label · commit 895cb87 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "课表当前时间标签不再遮挡课程",
+      "summary": "当前时间数字从课程区时间线内部拆出，固定放入最左侧时间轴列；细玫瑰线继续横穿课程区，但文字不再进入任何课程卡。"
+    },
     {
       "date": "2026-08-02",
       "title": "训练图表与历史消除中间空列",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "课表紧凑卡完整显示起止时间",
       "summary": "修复 60 分钟已预约 / 候补课程底部时间被状态徽标挤成 `18:45–1…` 的问题；完整起止时间改为不可收缩事实，宽卡与状态同排，中等桌面窄卡把状态放到时间下一行。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "代抢与上次结果改为并列展示",
-      "summary": "抢课区去掉“代抢 / 上次抢课结果”的点击切换 Tab，改为两个始终同时渲染的独立列表；桌面空间足够时左右等分并列，容器变窄时自动上下排列，不隐藏任一组内容。"
     }
   ]
 };
