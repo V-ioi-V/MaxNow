@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 23:07",
+  "updatedAt": "2026-08-02 23:21",
   "version": "1.0.8.27",
   "versionLabel": "v1.0.8.27",
   "branch": "feature/ballet-training-stats",
-  "commit": "282c6c6",
+  "commit": "3ec80c0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-training-stats · commit 282c6c6 · 有未提交代码改动",
+  "deployNote": "feature/ballet-training-stats · commit 3ec80c0 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",

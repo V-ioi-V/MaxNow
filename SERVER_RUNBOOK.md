@@ -2147,3 +2147,18 @@ local visual verification: 1280×720 与 390×844 下 week 2 均位于“已同�
 server verification: scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=234 / Blog 为 302 / 200 / 401 / 200 / 200；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
 safety: 仅部署静态页面、样式、浏览器本地拼图逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署训练概览刷新截止口径：
+
+```text
+deployed source commit: 3ec80c0 feat: refresh ballet training summary
+version: 1.0.8.27
+changes: 芭蕾顶部训练概览改为本周训练次数 / 时长 / 最喜欢的课和总训练次数 / 时长 / 全部时间最喜欢的课；所有统计只纳入状态明确、存在结束时间且结束时间不晚于 dataAsOf 刷新时间的已完成课程
+asset cache: styles.css?v=235；app.js?v=193
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-232052-ballet-training-summary/dash-data.tgz
+runtime data stash: 9ef0e168870d7b0dec97e3f90a5390a61bd79b57（部署后保留；服务器原有 dash/data 已从备份恢复，project-meta.* / project-status.* / token-usage.* 按新版本重新生成）
+deployment path: 本地 origin/main 推送到 3ec80c0 后，通过校验过的 Git bundle 将服务器 main 从 4ed5792 快进；未覆盖或刷新课程数据
+local visual verification: 刷新时间 2026-07-30 19:06 的样例中，19:45 才结束的课程被排除；1600px 三张顶部卡同顶同底等高，1280px 正常换行，390px 六项统计单列且无横向溢出
+server verification: scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=235 / app.js?v=193 / Blog 为 302 / 200 / 401 / 200 / 302 / 200；nginx 与 maxnow-auth active，课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
+safety: 仅部署静态页面、样式、浏览器端脱敏统计逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
