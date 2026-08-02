@@ -1674,12 +1674,14 @@ def check_secondary_view_style():
         or '.ballet-heatmap-cell[data-uncovered="true"] {' not in dashboard_css
         or '.ballet-heatmap-cell[data-uncovered="true"] strong {' not in dashboard_css
         or 'class="ballet-training-detail-grid"' not in ballet_view_markup
+        or '<p class="eyebrow">Training trend</p>' not in ballet_view_markup
         or 'class="ballet-history-preview-slot"' not in ballet_view_markup
         or 'id="ballet-history-preview"' not in ballet_view_markup
         or 'id="ballet-history-drawer"' not in ballet_view_markup
         or 'id="ballet-history-open" type="button" hidden' not in ballet_view_markup
         or 'id="ballet-trend-unit"' in ballet_view_markup
         or '.ballet-history-preview-slot {' not in dashboard_css
+        or '.ballet-training-trend .ballet-line-chart,' not in dashboard_css
         or 'position: absolute;' not in dashboard_css
         or 'grid-template-columns: minmax(0, var(--ballet-training-chart-column-width)) minmax(0, 1fr);' not in dashboard_css
         or '@media (max-width: 1500px)' not in dashboard_css
@@ -1697,7 +1699,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=231" not in dashboard_html
+        "styles.css?v=232" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=190" not in dashboard_html
     ):

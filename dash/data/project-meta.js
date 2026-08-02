@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 18:14",
-  "version": "1.0.8.21",
-  "versionLabel": "v1.0.8.21",
-  "branch": "bugfix/ballet-booking-headings",
-  "commit": "f088f2d",
+  "updatedAt": "2026-08-02 18:21",
+  "version": "1.0.8.22",
+  "versionLabel": "v1.0.8.22",
+  "branch": "bugfix/ballet-training-card-heading",
+  "commit": "392ad51",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-booking-headings · commit f088f2d · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-training-card-heading · commit 392ad51 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "训练趋势卡与历史卡统一样式",
+      "summary": "“8 月上课节数热力图”标题移入左侧卡片内，并增加 `Training trend` 眉题；左侧趋势卡与右侧上课历史卡同顶同底、共用边框和背景。"
+    },
     {
       "date": "2026-08-02",
       "title": "代抢改为普通内容标题",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "抢课双列表明确为双 Tab 面板",
       "summary": "“代抢”和“上次抢课结果”继续同时展示，但各自增加完整面板边界，让标题与列表明确属于同一块；“代抢”固定作为左侧标题，不承担点击切换功能。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "训练趋势与上课历史改为同高并排",
-      "summary": "训练记录详情区改为桌面左侧趋势图、右侧紧凑历史：左侧图表独立决定整行高度，右侧预览脱离网格行高计算并始终铺满同高区域，只展示最近 5 节，记录增长不再拉长主页面。"
     }
   ]
 };

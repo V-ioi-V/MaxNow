@@ -1427,6 +1427,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 .ballet-training-total,
 .ballet-breakdown-section,
 .ballet-bar-item,
+.ballet-training-trend,
 .ballet-history-preview,
 .ballet-history-preview-item,
 .ballet-history-item,
@@ -1478,6 +1479,7 @@ body[data-view="tokens"] .topbar-token-ranges {
     .ballet-training-total:hover,
     .ballet-breakdown-section:hover,
     .ballet-bar-item:hover,
+    .ballet-training-trend:hover,
     .ballet-history-preview:hover,
     .ballet-history-preview-item:hover,
     .ballet-membership-item:hover,
@@ -6848,11 +6850,30 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-training-trend {
-  padding-top: 2px;
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ballet) 18%, var(--line));
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, #fffafd, #ffffff 56%);
 }
 
 .ballet-training-trend > header {
-  padding: 0 2px;
+  margin-bottom: 0;
+  padding: 14px 14px 10px;
+}
+
+.ballet-training-trend .ballet-line-chart,
+.ballet-training-trend .ballet-line-chart:hover {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
 .ballet-training-trend[hidden] {
