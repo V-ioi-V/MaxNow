@@ -2059,3 +2059,18 @@ local visual verification: 2048px 下双面板同顶同底、各占一半且高�
 server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上双面板与 styles.css?v=227 标记存在；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=227 为 302 / 200 / 401 / 200；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active，自动抢课下次 2026-08-09 14:19:35
 safety: 仅部署静态页面、样式和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署训练历史两列条件预览：
+
+```text
+deployed commit: 33c7912 fix: compact ballet history preview
+version: 1.0.8.19
+changes: 1501px 以上图表轨道按热力图 / 折线实际宽度收敛，历史紧接右侧；删除重复“节 / h”单位徽标；历史桌面两列最多 8 条、手机单列最多 3 条，只有超量时显示“查看更多”
+asset cache: styles.css?v=229；app.js?v=188
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-175003-history-grid/dash-data.tgz；并额外保留 post-fast-forward-data.tgz
+runtime data stashes: 0b31102e8361af6002ea58f831e79a93b0f376b9（部署前完整数据）；1a9de77bd65730ff82ce97f0e2eeec7e124c0bc7（部署中途定时刷新数据）
+runtime recovery: 首次恢复数据时撞上 Dashboard / 行情 / Ricky 定时刷新并安全停止；随后应用部署前完整 stash，再从中途 stash 精确恢复较新的 dashboard.*、market-indices.*、ricky.*，project-meta.* 按新版本重新生成
+local visual verification: 2048px 下热力图宽 840px、历史紧邻且占满剩余 799px，中间仅保留 16px 正常间距；4 条历史为两行两列且不显示入口；390px 下 4 条记录只预览 3 条并显示“查看更多”；1500px 上下排列，全部场景横向溢出为 0且控制台无错误
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=229 / app.js?v=188 为 302 / 200 / 401 / 200 / 302；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
+safety: 仅部署静态页面、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
