@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "color": "#6e2638",
+  "height": 456,
+  "baseline": 424,
+  "sidePadding": 24,
+  "digits": {
+    "0": { "file": "digit-0.png", "width": 320 },
+    "1": { "file": "digit-1.png", "width": 210 },
+    "2": { "file": "digit-2.png", "width": 368 },
+    "3": { "file": "digit-3.png", "width": 319 },
+    "4": { "file": "digit-4.png", "width": 308 },
+    "5": { "file": "digit-5.png", "width": 368 },
+    "6": { "file": "digit-6.png", "width": 291 },
+    "7": { "file": "digit-7.png", "width": 315 },
+    "8": { "file": "digit-8.png", "width": 267 },
+    "9": { "file": "digit-9.png", "width": 249 }
+  }
+}
