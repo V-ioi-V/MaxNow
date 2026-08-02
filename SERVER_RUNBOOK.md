@@ -1924,3 +1924,17 @@ local verification: 22 项预约测试与 scripts/check.py 全部通过；1600px
 server verification: 22 项预约测试、scripts/check.py、systemd-analyze verify 与 nginx -t 全部通过；无网络 preview 保留 totalRuns=1 / totalBooked=4 / totalWaitlisted=1 / lastStatus=success，发布下一次 2026-08-09 14:20 计划和新顺序；私有状态 root:www-data 0600、公开状态 root:www-data 0640；timer enabled / active，下次 14:19:35，service inactive；未认证状态接口 401
 safety: 部署与验收只运行无网络 preview；未手动运行 execute、未启动自动抢课 service、未读取凭据、未访问闻道，也没有提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署芭蕾课程预约 / 抢课双工作区：
+
+```text
+deployed commit: 6acd378 feat: split ballet booking workspace into tabs
+version: 1.0.8.09
+changes: 课程计划左侧改为课程预约；右侧抢课新增累计已抢到、当前已预约、上次平均耗时两张摘要卡，以及代抢 / 上次抢课结果两个互斥 Tab；上次结果直接读取执行记录自身课程日期
+asset cache: styles.css?v=219；app.js?v=180
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-151842-ballet-booking-tabs/dash-data.tgz
+runtime data stash: e4c69791b53d727bd3e62152a91267e0f7204602（部署后保留；服务器权威运行数据已恢复，project-meta.* / project-status.* 按新版本重新生成）
+local visual verification: 1600×1000 下课程预约 / 抢课两栏同顶同底，双摘要卡同高；390×844 下课程区与摘要卡单列、两个内容 Tab 仍并排，课程行与整页无横向溢出；Tab 切换、空结果与控制台均正常
+server verification: scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 自动抢课状态 / styles.css?v=219 / Blog 为 302 / 200 / 401 / 200 / 200；nginx 与 maxnow-auth active，自动抢课 timer enabled / active、下次 2026-08-09 14:19:35，service inactive
+safety: 仅部署静态页面、脱敏状态展示和文档；未运行 preview / execute、未启动自动抢课 service、未读取凭据、未访问闻道，也未提交预约、候补、取消或转课
+```
