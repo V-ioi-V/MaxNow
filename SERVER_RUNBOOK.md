@@ -1966,3 +1966,16 @@ local visual verification: 1600×1000 下三张摘要卡同顶、同底、等宽
 server verification: scripts/check.py 与 nginx -t 全部通过；权威公开状态保留 totalBooked=4 / totalWaitlisted=1 / criticalPathMilliseconds=66107 / 5 records；未登录 Dash / 登录页 / 自动抢课状态 / styles.css?v=221 / app.js?v=181 / Blog 为 302 / 200 / 401 / 200 / 302 / 200；nginx 与 maxnow-auth active，自动抢课 timer active、下次 2026-08-09 14:19:35，service inactive
 safety: 仅部署静态页面、脱敏状态展示和文档；未运行 preview / execute、未启动自动抢课 service、未读取凭据、未访问闻道，也未提交预约、候补、取消、转课或课程同步
 ```
+
+2026-08-02 已部署课表紧凑卡老师姓名保留修复：
+
+```text
+deployed commit: 107b0b8 fix: keep timetable teachers visible
+version: 1.0.8.12
+changes: 课程卡顺序调整为课程名 / 老师 / 人数与排队 / 时间与状态；移除 1101px–1500px 和重叠窄卡隐藏老师的规则；60 分钟卡的人数与底部事实分别固定单行，空间不足只压缩次级人数文字
+asset cache: styles.css?v=222；app.js?v=182
+deployment path: 主分支推送后服务器已自动更新到相同提交；服务器原有 dash/data 运行时改动保持存在，本次未手动 stash、覆盖或刷新课表数据
+local visual verification: 2048px 下 60 分钟已预约软开卡同时显示王嘉豪、15/12 人、排队 4、19:00–20:00 和已预约且卡内无溢出；1280px 老师行继续显示；390px 下 23 张紧凑卡老师全部可见，整页横向溢出为 0
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=222 / app.js?v=182 / Blog 为 302 / 200 / 401 / 200 / 302 / 200；课程同步和自动抢课 service inactive，自动抢课 timer active
+safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```

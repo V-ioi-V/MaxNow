@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 16:08",
+  "updatedAt": "2026-08-02 16:10",
   "version": "1.0.8.12",
   "versionLabel": "v1.0.8.12",
   "branch": "bugfix/ballet-timetable-teacher-visibility",
-  "commit": "d59a28e",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-timetable-teacher-visibility · commit d59a28e · 干净",
+  "commit": "107b0b8",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-timetable-teacher-visibility · commit 107b0b8 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",
