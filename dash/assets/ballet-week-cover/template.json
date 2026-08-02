@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "templateVersion": "v1",
+  "templateFile": "template-v1.png",
+  "width": 1280,
+  "height": 1710,
+  "timezone": "Asia/Shanghai",
+  "anchorMonday": "2026-07-27",
+  "anchorWeek": 2,
+  "numberCenterX": 815,
+  "numberBaselineY": 1146,
+  "digitScale": 0.4,
+  "digitGap": 0,
+  "digitsManifest": "digits/manifest.json"
+}

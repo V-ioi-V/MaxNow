@@ -1698,10 +1698,65 @@ def check_secondary_view_style():
         raise ValueError("secondary views: ballet learning layout or Cloud operations split is incomplete")
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
+    weekly_cover_markup = (
+        'id="ballet-week-trigger"',
+        'id="ballet-week-dialog"',
+        'id="ballet-week-canvas"',
+        'id="ballet-week-copy"',
+        'id="ballet-week-download"',
+    )
+    weekly_cover_css = (
+        ".ballet-week-trigger {",
+        ".ballet-week-dialog {",
+        ".ballet-week-canvas {",
+    )
+    weekly_cover_js = (
+        "const BALLET_WEEK_TEMPLATE_URL",
+        "function getBalletWeekInfo(",
+        "async function renderBalletWeekCover()",
+        '"ClipboardItem" in window',
+        'anchorMonday: "2026-07-27"',
+        "anchorWeek: 2",
+    )
     if (
-        "styles.css?v=232" not in dashboard_html
+        any(marker not in dashboard_html for marker in weekly_cover_markup)
+        or any(rule not in dashboard_css for rule in weekly_cover_css)
+        or any(marker not in dashboard_js for marker in weekly_cover_js)
+    ):
+        raise ValueError("secondary views: ballet weekly cover controls or browser composition are incomplete")
+
+    cover_root = ROOT / "dash/assets/ballet-week-cover"
+    cover_config = json.loads((cover_root / "template.json").read_text(encoding="utf-8"))
+    if (
+        cover_config.get("width") != 1280
+        or cover_config.get("height") != 1710
+        or cover_config.get("timezone") != "Asia/Shanghai"
+        or cover_config.get("anchorMonday") != "2026-07-27"
+        or cover_config.get("anchorWeek") != 2
+    ):
+        raise ValueError("secondary views: ballet weekly cover dimensions or week anchor are invalid")
+    template_path = cover_root / cover_config["templateFile"]
+    digits_manifest_path = cover_root / cover_config["digitsManifest"]
+    if not template_path.is_file() or not digits_manifest_path.is_file():
+        raise ValueError("secondary views: ballet weekly cover template or digit manifest is missing")
+    template_header = template_path.read_bytes()[:24]
+    if template_header[:8] != b"\x89PNG\r\n\x1a\n":
+        raise ValueError("secondary views: ballet weekly cover template is not PNG")
+    template_width = int.from_bytes(template_header[16:20], "big")
+    template_height = int.from_bytes(template_header[20:24], "big")
+    if (template_width, template_height) != (1280, 1710):
+        raise ValueError("secondary views: ballet weekly cover PNG must be 1280x1710")
+    digits_manifest = json.loads(digits_manifest_path.read_text(encoding="utf-8"))
+    digits = digits_manifest.get("digits", {})
+    if set(digits) != set("0123456789"):
+        raise ValueError("secondary views: ballet weekly cover digit set must contain 0-9")
+    digits_root = digits_manifest_path.parent
+    if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
+        raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
+    if (
+        "styles.css?v=233" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=190" not in dashboard_html
+        or "app.js?v=191" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1919,7 +1974,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=190" not in dashboard_html:
+    if "app.js?v=191" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

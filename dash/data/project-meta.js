@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 19:04",
-  "version": "1.0.8.24",
-  "versionLabel": "v1.0.8.24",
+  "updatedAt": "2026-08-02 20:13",
+  "version": "1.0.8.25",
+  "versionLabel": "v1.0.8.25",
   "branch": "feature/ballet-week-digits",
-  "commit": "a48c239",
+  "commit": "db538cf",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-week-digits · commit a48c239 · 有未提交代码改动",
+  "deployNote": "feature/ballet-week-digits · commit db538cf · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "完成芭蕾周记录封面",
+      "summary": "芭蕾页顶部标题左侧新增 `week N` 入口；点击后以固定粉色手作底图和透明手绘数字在浏览器本地生成 `1280×1710` PNG，支持预览、下载和剪贴板复制。"
+    },
     {
       "date": "2026-08-02",
       "title": "建立芭蕾周记录手绘数字素材库",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "代抢改为普通内容标题",
       "summary": "“代抢 / 上次抢课结果”继续双栏并列，但移除居中粉色胶囊式伪 Tab；改用与“抢课”一致的英文眉题、左对齐中文标题和右侧节数状态。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "课表当前时间标签不再遮挡课程",
-      "summary": "当前时间数字从课程区时间线内部拆出，固定放入最左侧时间轴列；细玫瑰线继续横穿课程区，但文字不再进入任何课程卡。"
     }
   ]
 };

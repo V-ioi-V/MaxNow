@@ -12,6 +12,13 @@ const LIFE_FOODS_URL = "./data/life-foods.json";
 const BALLET_URL = "./data/ballet.json";
 const BALLET_SESSION_URL = "./data/ballet-session.json";
 const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json";
+const BALLET_WEEK_TEMPLATE_URL = "./assets/ballet-week-cover/template.json";
+const BALLET_WEEK_FALLBACK_CONFIG = {
+  templateVersion: "v1",
+  timezone: "Asia/Shanghai",
+  anchorMonday: "2026-07-27",
+  anchorWeek: 2,
+};
 const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
@@ -160,6 +167,8 @@ let tokenDataPromise = null;
 let rickyDataPromise = null;
 let lifeDataPromise = null;
 let leafletPromise = null;
+let balletWeekConfigPromise = null;
+let balletWeekCoverCache = null;
 const browserDataHealth = new Map();
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
@@ -172,6 +181,176 @@ const qsa = (selector) => [...document.querySelectorAll(selector)];
 const emptyTemplate = qs("#empty-template");
 const refreshButton = qs("#refresh-button");
 const viewTitle = qs("#view-title");
+
+function dateKeyInTimeZone(date = new Date(), timeZone = "Asia/Shanghai") {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+
+function utcDayFromDateKey(dateKey = "") {
+  const match = String(dateKey).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return Number.NaN;
+  return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+}
+
+function dateKeyFromUtcDay(utcDay) {
+  const date = new Date(utcDay);
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+}
+
+function formatBalletWeekDate(dateKey = "") {
+  const match = String(dateKey).match(/^\d{4}-(\d{2})-(\d{2})$/);
+  return match ? `${Number(match[1])}月${Number(match[2])}日` : dateKey;
+}
+
+function getBalletWeekInfo(config = BALLET_WEEK_FALLBACK_CONFIG, date = new Date()) {
+  const timezone = config.timezone || BALLET_WEEK_FALLBACK_CONFIG.timezone;
+  const currentUtcDay = utcDayFromDateKey(dateKeyInTimeZone(date, timezone));
+  const anchorUtcDay = utcDayFromDateKey(config.anchorMonday || BALLET_WEEK_FALLBACK_CONFIG.anchorMonday);
+  const weekOffset = Math.floor((currentUtcDay - anchorUtcDay) / (7 * 86400000));
+  const week = Math.max(1, Number(config.anchorWeek || BALLET_WEEK_FALLBACK_CONFIG.anchorWeek) + weekOffset);
+  const mondayUtcDay = anchorUtcDay + weekOffset * 7 * 86400000;
+  return {
+    week,
+    monday: dateKeyFromUtcDay(mondayUtcDay),
+    sunday: dateKeyFromUtcDay(mondayUtcDay + 6 * 86400000),
+  };
+}
+
+function updateBalletWeekTrigger(config = BALLET_WEEK_FALLBACK_CONFIG) {
+  const info = getBalletWeekInfo(config);
+  if (balletWeekCoverCache && balletWeekCoverCache.week !== info.week) balletWeekCoverCache = null;
+  setText("#ballet-week-trigger-number", info.week);
+  setText("#ballet-week-dialog-number", info.week);
+  setText("#ballet-week-dialog-range", `${formatBalletWeekDate(info.monday)}–${formatBalletWeekDate(info.sunday)} · 周一至周日`);
+  const trigger = qs("#ballet-week-trigger");
+  if (trigger) trigger.setAttribute("aria-label", `打开芭蕾周记录 week ${info.week} 封面`);
+  return info;
+}
+
+async function loadBalletWeekConfig({ force = false } = {}) {
+  if (force) balletWeekConfigPromise = null;
+  if (balletWeekConfigPromise) return balletWeekConfigPromise;
+  balletWeekConfigPromise = fetch(BALLET_WEEK_TEMPLATE_URL, { cache: "no-cache" })
+    .then((response) => {
+      if (!response.ok) throw new Error(`模板配置请求失败 (${response.status})`);
+      return response.json();
+    })
+    .then((config) => {
+      if (!config.templateFile || !config.digitsManifest || !Number(config.width) || !Number(config.height)) {
+        throw new Error("模板配置不完整");
+      }
+      updateBalletWeekTrigger(config);
+      return config;
+    })
+    .catch((error) => {
+      balletWeekConfigPromise = null;
+      throw error;
+    });
+  return balletWeekConfigPromise;
+}
+
+function loadBalletWeekImage(url) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`图片素材加载失败：${url.pathname.split("/").pop()}`));
+    image.src = url.href;
+  });
+}
+
+function canvasToPngBlob(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob);
+      else reject(new Error("PNG 生成失败"));
+    }, "image/png");
+  });
+}
+
+function setBalletWeekActionsDisabled(disabled) {
+  [qs("#ballet-week-copy"), qs("#ballet-week-download")].forEach((button) => {
+    if (button) button.disabled = disabled;
+  });
+}
+
+async function renderBalletWeekCover() {
+  const canvas = qs("#ballet-week-canvas");
+  const status = qs("#ballet-week-status");
+  if (!canvas) return null;
+  setBalletWeekActionsDisabled(true);
+  if (status) status.textContent = "正在拼合本周封面…";
+
+  try {
+    const config = await loadBalletWeekConfig({ force: true });
+    const info = updateBalletWeekTrigger(config);
+    const cacheKey = `${config.templateVersion}:${info.week}`;
+    if (balletWeekCoverCache?.key === cacheKey) {
+      if (status) status.textContent = "已从本页缓存读取 · 1280 × 1710 PNG";
+      setBalletWeekActionsDisabled(false);
+      return balletWeekCoverCache;
+    }
+
+    const configUrl = new URL(BALLET_WEEK_TEMPLATE_URL, window.location.href);
+    const templateUrl = new URL(config.templateFile, configUrl);
+    const digitsManifestUrl = new URL(config.digitsManifest, configUrl);
+    const [templateImage, digitsResponse] = await Promise.all([
+      loadBalletWeekImage(templateUrl),
+      fetch(digitsManifestUrl, { cache: "force-cache" }),
+    ]);
+    if (!digitsResponse.ok) throw new Error(`手绘数字配置请求失败 (${digitsResponse.status})`);
+    const digitsManifest = await digitsResponse.json();
+    const digitText = String(info.week);
+    const digitImages = await Promise.all(
+      [...digitText].map((digit) => {
+        const asset = digitsManifest.digits?.[digit];
+        if (!asset?.file) throw new Error(`缺少手绘数字 ${digit}`);
+        return loadBalletWeekImage(new URL(asset.file, digitsManifestUrl));
+      }),
+    );
+
+    canvas.width = Number(config.width);
+    canvas.height = Number(config.height);
+    const context = canvas.getContext("2d", { alpha: false });
+    if (!context) throw new Error("浏览器不支持图片合成");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(templateImage, 0, 0, canvas.width, canvas.height);
+
+    const scale = Number(config.digitScale || 0.4);
+    const gap = Number(config.digitGap || 0);
+    const widths = digitImages.map((image) => image.naturalWidth * scale);
+    const totalWidth = widths.reduce((sum, width) => sum + width, 0) + Math.max(0, digitImages.length - 1) * gap;
+    let x = Number(config.numberCenterX) - totalWidth / 2;
+    const y = Number(config.numberBaselineY) - Number(digitsManifest.baseline) * scale;
+    digitImages.forEach((image, index) => {
+      context.drawImage(image, x, y, image.naturalWidth * scale, image.naturalHeight * scale);
+      x += widths[index] + gap;
+    });
+
+    const blob = await canvasToPngBlob(canvas);
+    balletWeekCoverCache = {
+      key: cacheKey,
+      blob,
+      week: info.week,
+      filename: `芭蕾周记录-week-${info.week}.png`,
+    };
+    if (status) status.textContent = "已生成 · 1280 × 1710 PNG · 本周结果仅在当前页面缓存";
+    setBalletWeekActionsDisabled(false);
+    return balletWeekCoverCache;
+  } catch (error) {
+    balletWeekCoverCache = null;
+    if (status) status.textContent = `生成失败：${error.message || error}`;
+    setBalletWeekActionsDisabled(false);
+    return null;
+  }
+}
 
 const weatherIcons = {
   sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>',
@@ -5634,6 +5813,7 @@ function updateClock() {
   const labels = [...getHolidayLabels(now), ...getSpecialDateLabels(now)];
   setText("#holiday-label", labels.length ? [...new Set(labels)].join(" \u00b7 ") : copy.noHoliday);
   setText("#next-special-label", formatNextSpecialDate(now));
+  updateBalletWeekTrigger();
   updateTodayPhase();
   if (qs("#cloud-view")?.classList.contains("is-active")) {
     renderBalletSessionExperiment(now);
@@ -5737,6 +5917,56 @@ balletHistoryDrawer?.addEventListener("click", (event) => {
   else balletHistoryDrawer.removeAttribute("open");
 });
 
+const balletWeekDialog = qs("#ballet-week-dialog");
+
+qs("#ballet-week-trigger")?.addEventListener("click", () => {
+  if (!balletWeekDialog) return;
+  if (typeof balletWeekDialog.showModal === "function") balletWeekDialog.showModal();
+  else balletWeekDialog.setAttribute("open", "");
+  renderBalletWeekCover();
+});
+
+qs("#ballet-week-close")?.addEventListener("click", () => {
+  if (!balletWeekDialog) return;
+  if (typeof balletWeekDialog.close === "function") balletWeekDialog.close();
+  else balletWeekDialog.removeAttribute("open");
+});
+
+balletWeekDialog?.addEventListener("click", (event) => {
+  if (event.target !== balletWeekDialog) return;
+  if (typeof balletWeekDialog.close === "function") balletWeekDialog.close();
+  else balletWeekDialog.removeAttribute("open");
+});
+
+qs("#ballet-week-copy")?.addEventListener("click", async () => {
+  const cover = balletWeekCoverCache || (await renderBalletWeekCover());
+  const status = qs("#ballet-week-status");
+  if (!cover) return;
+  if (!("ClipboardItem" in window) || !navigator.clipboard?.write) {
+    if (status) status.textContent = "当前浏览器不支持直接复制图片，请使用下载 PNG";
+    return;
+  }
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": cover.blob })]);
+    if (status) status.textContent = "已复制图片，可以直接粘贴转发";
+  } catch (error) {
+    if (status) status.textContent = "复制失败，请使用下载 PNG";
+  }
+});
+
+qs("#ballet-week-download")?.addEventListener("click", async () => {
+  const cover = balletWeekCoverCache || (await renderBalletWeekCover());
+  if (!cover) return;
+  const url = URL.createObjectURL(cover.blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = cover.filename;
+  anchor.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const status = qs("#ballet-week-status");
+  if (status) status.textContent = `已下载 ${cover.filename}`;
+});
+
 refreshButton?.addEventListener("click", async () => {
   refreshButton.disabled = true;
   refreshButton.dataset.state = "loading";
@@ -5748,6 +5978,11 @@ refreshButton?.addEventListener("click", async () => {
 
 window.addEventListener("hashchange", () => {
   setView(location.hash.replace("#", ""));
+});
+
+window.addEventListener("focus", () => updateBalletWeekTrigger());
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) updateBalletWeekTrigger();
 });
 
 let resizeTimer = 0;
