@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 16:10",
-  "version": "1.0.8.12",
-  "versionLabel": "v1.0.8.12",
-  "branch": "bugfix/ballet-timetable-teacher-visibility",
-  "commit": "107b0b8",
+  "updatedAt": "2026-08-02 16:20",
+  "version": "1.0.8.13",
+  "versionLabel": "v1.0.8.13",
+  "branch": "bugfix/ballet-training-chart-compact",
+  "commit": "35977a3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-teacher-visibility · commit 107b0b8 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-training-chart-compact · commit 35977a3 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "收紧今年与全部训练折线图",
+      "summary": "“今年”和“全部”的训练折线图不再继承通用图表的整行最小宽度，改为按实际月份 / 年份点数动态收敛并左对齐；桌面最大宽度与本月热力图一致为 `840px`，记录较少时继续缩短，手机端仍占满可用宽度。"
+    },
     {
       "date": "2026-08-02",
       "title": "课表紧凑卡始终显示老师",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "课程计划拆分预约与抢课工作区",
       "summary": "芭蕾“课程计划”改为左侧“课程预约”、右侧“抢课”：右侧通过“代抢 / 上次抢课结果”两个 Tab 互斥展示目标和最近一次执行结果，不再同时纵向铺开两组列表；上次结果直接使用执行时保存的课程日期，避免周目标滚动后错配新日期。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "自动抢课改为课程优先并压缩关键路径",
-      "summary": "周日自动抢课新增一级课程优先级 `芭蕾 L1 > 软开`，再在同课程内按 `周六 > 周日 > 周五 > 其他日期` 排序；当前真实 mutation 顺序固定为周五 L1、周二 L1、周五软开、周二软开、周四软开，老师继续不限。"
     }
   ]
 };

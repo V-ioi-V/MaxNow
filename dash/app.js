@@ -3342,11 +3342,13 @@ function renderBalletTrend() {
   const chart = qs("#ballet-trend-chart");
   if (!chart || !showTrend) return;
   chart.classList.toggle("is-heatmap", chartType === "heatmap");
+  chart.classList.toggle("is-compact-line", chartType !== "heatmap");
   if (!records.length) {
     chart.innerHTML = `<p class="empty-state">当前时间范围还没有可用统计。</p>`;
     return;
   }
   if (chartType === "heatmap") {
+    chart.style.removeProperty("--ballet-trend-chart-width");
     chart.innerHTML = createBalletMonthHeatmap(records, {
       title: chartTitle,
       month,
@@ -3355,6 +3357,8 @@ function renderBalletTrend() {
     });
     return;
   }
+  const compactChartWidth = Math.min(840, Math.max(420, records.length * 84 + 104));
+  chart.style.setProperty("--ballet-trend-chart-width", `${compactChartWidth}px`);
   const labelInterval = activeBalletPeriod === "month" ? 5 : entries.length > 24 ? 6 : 1;
   chart.innerHTML = createLineChart(records, {
     key: "value",
@@ -3364,7 +3368,7 @@ function renderBalletTrend() {
     yFormatter: (value) => (isClasses ? `${Math.round(value)}` : value.toFixed(1).replace(/\.0$/, "")),
     integerYScale: isClasses,
     stroke: "#c44778",
-    width: Math.max(getChartRenderWidth(chart), records.length * 58 + 104),
+    width: compactChartWidth,
     xFormatter,
     labelInterval,
   });

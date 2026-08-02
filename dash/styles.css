@@ -7072,6 +7072,15 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-width: 720px;
 }
 
+.ballet-line-chart.is-compact-line {
+  width: min(100%, var(--ballet-trend-chart-width, 840px));
+  margin-right: auto;
+}
+
+.ballet-line-chart.is-compact-line .line-chart-svg {
+  min-width: 0;
+}
+
 .ballet-line-chart .empty-state {
   padding: 36px 20px;
 }
