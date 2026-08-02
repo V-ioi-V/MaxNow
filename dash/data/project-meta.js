@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 17:13",
+  "updatedAt": "2026-08-02 17:21",
   "version": "1.0.8.17",
   "versionLabel": "v1.0.8.17",
   "branch": "feature/ballet-training-history-drawer",
-  "commit": "bcbaee7",
+  "commit": "d8ed019",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-training-history-drawer · commit bcbaee7 · 有未提交代码改动",
+  "deployNote": "feature/ballet-training-history-drawer · commit d8ed019 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",

@@ -1980,6 +1980,20 @@ server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部�
 safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
 
+2026-08-02 已部署训练趋势与上课历史同高并排布局：
+
+```text
+deployed commit: d8ed019 feat: compact ballet history beside training chart
+version: 1.0.8.17
+changes: 桌面训练详情改为左侧图表决定行高、右侧紧凑历史绝对铺满同高区域；主页面最近 5 节、手机最近 3 节，完整当前范围历史进入右侧独立滚动抽屉；本月 / 今年 / 全部同步筛选历史和总数
+asset cache: styles.css?v=226；app.js?v=187
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-171930-training-history-drawer/dash-data.tgz
+runtime data stash: 3643f3bd5b848cf7890be7a884512d3cb3aa5d21（部署后保留；服务器权威运行数据已恢复，project-meta.* 按新版本重新生成）
+local visual verification: 1440px 下图表 / 历史同顶同底且均高 386px，向预览临时追加到 44 条后整行仍为 386px；1000px 下上下排列；390px 下只显示最近 3 条、抽屉占满可用宽度，整页无横向溢出；抽屉 Esc 关闭后焦点返回入口
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上并排详情、历史抽屉与最多 5 条预览标记存在；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=226 / Blog 为 302 / 200 / 401 / 200 / 200；nginx 与 maxnow-auth active，课程同步与自动抢课 service inactive，自动抢课 timer active、下次 2026-08-09 14:19:35
+safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
+
 2026-08-02 已部署今年 / 全部训练折线图紧凑宽度：
 
 ```text
