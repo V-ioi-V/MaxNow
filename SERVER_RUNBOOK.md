@@ -2074,3 +2074,16 @@ local visual verification: 2048px 下热力图宽 840px、历史紧邻且占满�
 server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=229 / app.js?v=188 为 302 / 200 / 401 / 200 / 302；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
 safety: 仅部署静态页面、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署课表当前时间标签防遮挡修复：
+
+```text
+deployed source commit: 28e1d1f fix: keep timetable now label clear
+version: 1.0.8.20
+changes: 当前时间数字改为最左侧时间轴第 1 列的独立网格项；玫瑰色横线只跨第 2 列至末列，课程卡与时间标签在结构上不再共用网格列
+asset cache: styles.css?v=230；app.js?v=189
+deployment path: 推送远端 main 后服务器自动更新到相同提交；服务器 dash/data 权威运行数据保持存在，本次未手动覆盖或刷新课程数据
+local visual verification: 2048px 与 1280px 下标签 / 横线分别从第 1 / 第 2 网格列开始，间距均为 7px；时间标签与全部课程卡交集数量为 0，课表与整页横向溢出均为 0
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；未登录首页 / 芭蕾数据为 302 / 401；nginx 与 maxnow-auth active，课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
+safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 18:01",
+  "updatedAt": "2026-08-02 18:03",
   "version": "1.0.8.20",
   "versionLabel": "v1.0.8.20",
   "branch": "bugfix/ballet-now-label",
-  "commit": "895cb87",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-now-label · commit 895cb87 · 干净",
+  "commit": "28e1d1f",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-now-label · commit 28e1d1f · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",
