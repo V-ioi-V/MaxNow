@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 18:11",
+  "updatedAt": "2026-08-02 18:14",
   "version": "1.0.8.21",
   "versionLabel": "v1.0.8.21",
   "branch": "bugfix/ballet-booking-headings",
-  "commit": "8325877",
+  "commit": "f088f2d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-booking-headings · commit 8325877 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-booking-headings · commit f088f2d · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",

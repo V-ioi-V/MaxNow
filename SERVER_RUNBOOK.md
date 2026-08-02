@@ -2089,3 +2089,17 @@ local visual verification: 2048px 与 1280px 下标签 / 横线分别从第 1 / 
 server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；未登录首页 / 芭蕾数据为 302 / 401；nginx 与 maxnow-auth active，课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
 safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署代抢普通标题样式：
+
+```text
+deployed commit: f088f2d fix: render booking columns as titled sections
+version: 1.0.8.21
+changes: 移除“代抢 / 上次抢课结果”居中粉色胶囊式伪 Tab；两栏顶部改为英文眉题、左对齐中文标题和右侧节数状态，继续同时展示完整列表
+asset cache: styles.css?v=231；app.js?v=190
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-181419-booking-headings/dash-data.tgz
+runtime data stash: stash@{0}，说明为 predeploy-booking-headings-20260802-181419；部署后保留，除 project-meta.* 外的服务器权威运行数据按部署前脏文件清单精确恢复，project-meta.* 按新版本重新生成
+local visual verification: 2048px 下两栏标题与“抢课”均为 16px，标题左边缘与英文眉题对齐，表头边框为 0、背景透明、旧 Tab class 数量为 0；双栏同顶同底等宽，1000px 与 390px 下自然堆叠且无横向溢出
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上新标题结构存在且旧 Tab class 不存在；未登录首页 / 登录页 / 芭蕾数据 / styles.css?v=231 为 302 / 200 / 401 / 200；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
+safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
