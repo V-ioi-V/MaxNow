@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 17:21",
-  "version": "1.0.8.17",
-  "versionLabel": "v1.0.8.17",
-  "branch": "feature/ballet-training-history-drawer",
-  "commit": "d8ed019",
+  "updatedAt": "2026-08-02 17:27",
+  "version": "1.0.8.18",
+  "versionLabel": "v1.0.8.18",
+  "branch": "feature/ballet-booking-tab-panels",
+  "commit": "b131b31",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-training-history-drawer · commit d8ed019 · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-tab-panels · commit b131b31 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "抢课双列表明确为双 Tab 面板",
+      "summary": "“代抢”和“上次抢课结果”继续同时展示，但各自增加完整面板边界，让标题与列表明确属于同一块；“代抢”固定作为左侧标题，不承担点击切换功能。"
+    },
     {
       "date": "2026-08-02",
       "title": "训练趋势与上课历史改为同高并排",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "抢课摘要改为累计候补口径",
       "summary": "抢课区中间摘要卡从“当前已预约”改为“累计候补”，直接读取自动抢课公开状态的 `totalWaitlisted`；生产权威状态为累计抢到 `4` 节、累计候补 `1` 节，不再把当前未来预约与候补共 `5` 条误显示成累计值。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "收紧今年与全部训练折线图",
-      "summary": "“今年”和“全部”的训练折线图不再继承通用图表的整行最小宽度，改为按实际月份 / 年份点数动态收敛并左对齐；桌面最大宽度与本月热力图一致为 `840px`，记录较少时继续缩短，手机端仍占满可用宽度。"
     }
   ]
 };

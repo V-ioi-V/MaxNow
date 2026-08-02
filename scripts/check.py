@@ -410,12 +410,15 @@ def check_ballet_booking_fast():
         'id="ballet-booking-average"',
         'id="ballet-booking-average-detail"',
         'class="ballet-booking-columns"',
+        'class="ballet-booking-column ballet-booking-tab-panel"',
         'id="ballet-booking-targets-title">代抢',
         'id="ballet-booking-results-title">上次抢课结果',
         ".ballet-booking-summary {",
         "grid-template-columns: repeat(3, minmax(0, 1fr));",
         ".ballet-booking-columns {",
         "grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));",
+        "grid-template-rows: auto minmax(0, 1fr);",
+        ".ballet-booking-column:hover {",
         'ready_waitlist: "可排队"',
         "allowWaitlist=true",
         "Teacher is display-only for the Sunday fast path",
@@ -1677,7 +1680,7 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=226" not in dashboard_html
+        "styles.css?v=227" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=187" not in dashboard_html
     ):

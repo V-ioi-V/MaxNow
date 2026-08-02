@@ -4646,15 +4646,30 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-width: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
-  align-items: start;
+  align-items: stretch;
   gap: 12px;
 }
 
 .ballet-booking-column {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
   min-width: 0;
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   align-content: start;
   gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--ballet) 20%, var(--line));
+  border-radius: calc(var(--radius) + 2px);
+  padding: 10px;
+  background: linear-gradient(160deg, #fffafd, #ffffff 48%);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ballet-booking-column:hover {
+    border-color: var(--ballet-border);
+    box-shadow: 0 12px 28px rgba(144, 62, 95, 0.1);
+  }
 }
 
 .ballet-booking-column-head {
@@ -4669,6 +4684,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   padding: 8px 12px;
   background: #fffafd;
   color: var(--ballet);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .ballet-booking-column-head h4 {
@@ -4695,6 +4711,12 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-booking-column .ballet-booking-fast-target time {
   grid-column: 1 / -1;
+}
+
+.ballet-booking-column .ballet-booking-fast-targets,
+.ballet-booking-column .ballet-booking-fast-results {
+  min-height: 0;
+  align-content: start;
 }
 
 .ballet-booking-empty {
