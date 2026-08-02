@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 15:55",
-  "version": "1.0.8.11",
-  "versionLabel": "v1.0.8.11",
-  "branch": "feature/ballet-booking-metrics-tabs",
-  "commit": "836b339",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-metrics-tabs · commit 836b339 · 有未提交代码改动",
+  "updatedAt": "2026-08-02 16:08",
+  "version": "1.0.8.12",
+  "versionLabel": "v1.0.8.12",
+  "branch": "bugfix/ballet-timetable-teacher-visibility",
+  "commit": "d59a28e",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-timetable-teacher-visibility · commit d59a28e · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "课表紧凑卡始终显示老师",
+      "summary": "修复 60 分钟软开课在同时展示人数、排队、时间和“已预约”时，老师行被底部换行与弹性压缩挤掉的问题；老师姓名调整为课程名后的必保留独立行，中等桌面和重叠窄卡也不再隐藏。"
+    },
     {
       "date": "2026-08-02",
       "title": "抢课摘要改为三等分并校准耗时口径",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "自动抢课改为课程优先并压缩关键路径",
       "summary": "周日自动抢课新增一级课程优先级 `芭蕾 L1 > 软开`，再在同课程内按 `周六 > 周日 > 周五 > 其他日期` 排序；当前真实 mutation 顺序固定为周五 L1、周二 L1、周五软开、周二软开、周四软开，老师继续不限。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "自动抢课不再限制老师",
-      "summary": "周日自动抢课的五项目标改为按日期、课型 / 等级、起止时间和大教室唯一匹配；老师不再参与课程匹配或同周 occurrence 幂等键，临时代课不会阻止预约或候补。其他字段仍需唯一命中，避免扩大到相邻时段、其他课型或小教室。"
     }
   ]
 };

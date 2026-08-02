@@ -4161,7 +4161,7 @@ function createBalletTimetableCourse(record, mobile = false) {
   const meta = document.createElement("small");
   meta.className = "ballet-timetable-meta";
   const detail = document.createElement("small");
-  detail.className = "ballet-timetable-meta-detail";
+  detail.className = "ballet-timetable-meta-detail ballet-timetable-teacher";
   const detailText = mobile
     ? [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补"
     : balletTeacher(record) || "老师待确认";
@@ -4187,11 +4187,11 @@ function createBalletTimetableCourse(record, mobile = false) {
   state.textContent = status.label;
   state.dataset.availability = status.key;
   foot.append(time, state);
-  article.append(title);
+  article.append(title, detail);
   if (counts) {
     article.append(meta);
   }
-  article.append(detail, foot);
+  article.append(foot);
   article.title = [
     balletCourseName(record),
     [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–"),
