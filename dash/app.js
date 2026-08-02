@@ -3985,9 +3985,73 @@ function createBalletHistoryItem(record) {
   return article;
 }
 
+function getBalletHistoryPeriodLabel() {
+  return {
+    month: "本月",
+    year: "今年",
+    all: "全部",
+  }[activeBalletPeriod] || "本月";
+}
+
+function getBalletHistoryRecords() {
+  const today = localDateKey();
+  const period = activeBalletPeriod === "month"
+    ? today.slice(0, 7)
+    : activeBalletPeriod === "year"
+      ? today.slice(0, 4)
+      : "";
+  return [...(balletData.records || [])]
+    .filter((record) => {
+      if (!isBalletCompletedRecord(record)) return false;
+      return !period || balletRecordDate(record).startsWith(period);
+    })
+    .sort((a, b) => {
+      const aKey = `${balletRecordDate(a)}T${balletStartTime(a) || "00:00"}`;
+      const bKey = `${balletRecordDate(b)}T${balletStartTime(b) || "00:00"}`;
+      return bKey.localeCompare(aKey);
+    });
+}
+
+function createBalletHistoryPreviewItem(record) {
+  const article = document.createElement("article");
+  article.className = "ballet-history-preview-item";
+  const dateValue = balletRecordDate(record);
+  const date = document.createElement("time");
+  if (dateValue) date.dateTime = dateValue;
+  date.textContent = dateValue ? dateValue.slice(5) : "--";
+  const main = document.createElement("div");
+  const title = document.createElement("strong");
+  const meta = document.createElement("small");
+  const timeRange = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
+  title.textContent = balletCourseName(record);
+  meta.textContent = [balletTeacher(record), timeRange].filter(Boolean).join(" · ") || "课程详情待补";
+  main.append(title, meta);
+  article.append(date, main);
+  return article;
+}
+
 function renderBalletHistory() {
-  const records = [...(balletData.records || [])].sort((a, b) => balletRecordDate(b).localeCompare(balletRecordDate(a)));
-  setText("#ballet-history-count", `${records.length} 节`);
+  const records = getBalletHistoryRecords();
+  const periodLabel = getBalletHistoryPeriodLabel();
+  setText("#ballet-history-count", `共 ${records.length} 节`);
+  setText("#ballet-history-drawer-summary", `${periodLabel} · 共 ${records.length} 节`);
+
+  const preview = qs("#ballet-history-preview");
+  if (preview) {
+    preview.replaceChildren();
+    if (!records.length) {
+      const empty = document.createElement("p");
+      empty.className = "ballet-history-preview-empty";
+      empty.textContent = `${periodLabel}暂无上课记录`;
+      preview.appendChild(empty);
+    } else {
+      preview.append(...records.slice(0, 5).map(createBalletHistoryPreviewItem));
+    }
+  }
+
+  const openButton = qs("#ballet-history-open");
+  if (openButton) openButton.disabled = !records.length;
+
   const container = qs("#ballet-history");
   if (!container) return;
   container.replaceChildren();
@@ -3995,7 +4059,7 @@ function renderBalletHistory() {
     container.appendChild(emptyTemplate.content.cloneNode(true));
     return;
   }
-  container.append(...records.slice(0, 24).map(createBalletHistoryItem));
+  container.append(...records.map(createBalletHistoryItem));
 }
 
 function createBalletUpcomingItem(record) {
@@ -5627,6 +5691,7 @@ qsa("[data-ballet-period]").forEach((button) => {
   button.addEventListener("click", () => {
     activeBalletPeriod = button.dataset.balletPeriod || "month";
     renderBalletTraining();
+    renderBalletHistory();
   });
 });
 
@@ -5635,6 +5700,29 @@ qsa("[data-ballet-metric]").forEach((button) => {
     activeBalletMetric = button.dataset.balletMetric || "classes";
     renderBalletTraining();
   });
+});
+
+const balletHistoryDrawer = qs("#ballet-history-drawer");
+
+qs("#ballet-history-open")?.addEventListener("click", () => {
+  if (!balletHistoryDrawer) return;
+  if (typeof balletHistoryDrawer.showModal === "function") {
+    balletHistoryDrawer.showModal();
+  } else {
+    balletHistoryDrawer.setAttribute("open", "");
+  }
+});
+
+qs("#ballet-history-close")?.addEventListener("click", () => {
+  if (!balletHistoryDrawer) return;
+  if (typeof balletHistoryDrawer.close === "function") balletHistoryDrawer.close();
+  else balletHistoryDrawer.removeAttribute("open");
+});
+
+balletHistoryDrawer?.addEventListener("click", (event) => {
+  if (event.target !== balletHistoryDrawer) return;
+  if (typeof balletHistoryDrawer.close === "function") balletHistoryDrawer.close();
+  else balletHistoryDrawer.removeAttribute("open");
 });
 
 refreshButton?.addEventListener("click", async () => {

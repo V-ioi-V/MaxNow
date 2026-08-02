@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=225" />
+    <link rel="stylesheet" href="./styles.css?v=226" />
   </head>
   <body>
     <div class="app-shell">
@@ -820,7 +820,6 @@
                 <p class="eyebrow">Training Record</p>
                 <h2>训练记录</h2>
               </div>
-              <span class="status-pill" id="ballet-history-count">0 节</span>
             </header>
             <div class="ballet-chart-controls">
               <div class="ballet-segmented" role="group" aria-label="统计时间范围">
@@ -875,25 +874,51 @@
                 </section>
               </div>
             </div>
-            <section class="ballet-training-trend" id="ballet-training-trend">
-              <header>
-                <h3 id="ballet-trend-title">本月上课节数</h3>
-                <span class="status-pill" id="ballet-trend-unit">节</span>
-              </header>
-              <div class="line-chart ballet-line-chart" id="ballet-trend-chart"></div>
-            </section>
-            <p class="ballet-trend-placeholder" id="ballet-trend-placeholder" hidden>
-              记录达到 5 节后显示趋势；当前先保留准确的总数、分类和历史。
-            </p>
-            <section class="ballet-history-section" aria-labelledby="ballet-history-title">
-              <header>
-                <div>
-                  <p class="eyebrow">Attendance</p>
-                  <h3 id="ballet-history-title">上课历史</h3>
-                </div>
-              </header>
-              <div class="ballet-history-list" id="ballet-history"></div>
-            </section>
+            <div class="ballet-training-detail-grid">
+              <div class="ballet-training-chart-column">
+                <section class="ballet-training-trend" id="ballet-training-trend">
+                  <header>
+                    <h3 id="ballet-trend-title">本月上课节数</h3>
+                    <span class="status-pill" id="ballet-trend-unit">节</span>
+                  </header>
+                  <div class="line-chart ballet-line-chart" id="ballet-trend-chart"></div>
+                </section>
+                <p class="ballet-trend-placeholder" id="ballet-trend-placeholder" hidden>
+                  记录达到 5 节后显示趋势；当前先保留准确的总数、分类和历史。
+                </p>
+              </div>
+              <div class="ballet-history-preview-slot">
+                <aside class="ballet-history-preview" aria-labelledby="ballet-history-title">
+                  <header>
+                    <div>
+                      <p class="eyebrow">Attendance</p>
+                      <h3 id="ballet-history-title">上课历史</h3>
+                    </div>
+                    <span class="status-pill" id="ballet-history-count">共 0 节</span>
+                  </header>
+                  <div class="ballet-history-preview-list" id="ballet-history-preview"></div>
+                  <button class="ballet-history-open" id="ballet-history-open" type="button">
+                    查看全部上课记录 <span aria-hidden="true">→</span>
+                  </button>
+                </aside>
+              </div>
+            </div>
+
+            <dialog class="ballet-history-drawer" id="ballet-history-drawer" aria-labelledby="ballet-history-drawer-title">
+              <div class="ballet-history-drawer-shell">
+                <header class="ballet-history-drawer-head">
+                  <div>
+                    <p class="eyebrow">Attendance History</p>
+                    <h2 id="ballet-history-drawer-title">全部上课记录</h2>
+                    <p id="ballet-history-drawer-summary">本月 · 共 0 节</p>
+                  </div>
+                  <button class="ballet-history-close" id="ballet-history-close" type="button" aria-label="关闭上课历史">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </header>
+                <div class="ballet-history-list" id="ballet-history"></div>
+              </div>
+            </dialog>
           </article>
 
           <article class="panel ballet-timetable-panel" aria-labelledby="ballet-timetable-title">
@@ -1278,6 +1303,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=186"></script>
+    <script src="./app.js?v=187"></script>
   </body>
 </html>

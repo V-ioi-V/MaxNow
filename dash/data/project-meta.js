@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 17:04",
-  "version": "1.0.8.16",
-  "versionLabel": "v1.0.8.16",
-  "branch": "bugfix/ballet-timetable-time-visible",
-  "commit": "406f766",
+  "updatedAt": "2026-08-02 17:13",
+  "version": "1.0.8.17",
+  "versionLabel": "v1.0.8.17",
+  "branch": "feature/ballet-training-history-drawer",
+  "commit": "bcbaee7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-timetable-time-visible · commit 406f766 · 有未提交代码改动",
+  "deployNote": "feature/ballet-training-history-drawer · commit bcbaee7 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "训练趋势与上课历史改为同高并排",
+      "summary": "训练记录详情区改为桌面左侧趋势图、右侧紧凑历史：左侧图表独立决定整行高度，右侧预览脱离网格行高计算并始终铺满同高区域，只展示最近 5 节，记录增长不再拉长主页面。"
+    },
     {
       "date": "2026-08-02",
       "title": "课表紧凑卡完整显示起止时间",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "收紧今年与全部训练折线图",
       "summary": "“今年”和“全部”的训练折线图不再继承通用图表的整行最小宽度，改为按实际月份 / 年份点数动态收敛并左对齐；桌面最大宽度与本月热力图一致为 `840px`，记录较少时继续缩短，手机端仍占满可用宽度。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "课表紧凑卡始终显示老师",
-      "summary": "修复 60 分钟软开课在同时展示人数、排队、时间和“已预约”时，老师行被底部换行与弹性压缩挤掉的问题；老师姓名调整为课程名后的必保留独立行，中等桌面和重叠窄卡也不再隐藏。"
     }
   ]
 };

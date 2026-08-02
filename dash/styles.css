@@ -1427,6 +1427,8 @@ body[data-view="tokens"] .topbar-token-ranges {
 .ballet-training-total,
 .ballet-breakdown-section,
 .ballet-bar-item,
+.ballet-history-preview,
+.ballet-history-preview-item,
 .ballet-history-item,
 .ballet-upcoming-item,
 .ballet-timetable-course,
@@ -1476,6 +1478,8 @@ body[data-view="tokens"] .topbar-token-ranges {
     .ballet-training-total:hover,
     .ballet-breakdown-section:hover,
     .ballet-bar-item:hover,
+    .ballet-history-preview:hover,
+    .ballet-history-preview-item:hover,
     .ballet-membership-item:hover,
     .ballet-membership-metrics section:hover,
     .ballet-week-grid section:hover,
@@ -6853,11 +6857,232 @@ body[data-view="ricky"] .topbar-ricky-status {
   display: none;
 }
 
-.ballet-history-section {
+.ballet-training-detail-grid {
   min-width: 0;
-  margin-top: var(--page-grid-gap);
-  padding-top: var(--page-grid-gap);
-  border-top: 1px solid color-mix(in srgb, var(--ballet) 14%, var(--line));
+  display: grid;
+  grid-template-columns: minmax(0, 1.72fr) minmax(300px, 0.68fr);
+  align-items: stretch;
+  gap: var(--page-grid-gap);
+}
+
+.ballet-training-chart-column,
+.ballet-history-preview-slot {
+  min-width: 0;
+}
+
+.ballet-history-preview-slot {
+  position: relative;
+}
+
+.ballet-history-preview {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ballet) 18%, var(--line));
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, #fffafd, #ffffff 56%);
+}
+
+.ballet-history-preview > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 14px 10px;
+}
+
+.ballet-history-preview h3 {
+  margin: 3px 0 0;
+  font-size: 16px;
+}
+
+.ballet-history-preview-list {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  align-content: start;
+  gap: 7px;
+  overflow: hidden;
+  padding: 0 12px 10px;
+}
+
+.ballet-history-preview-item {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--ballet) 10%, var(--line));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.ballet-history-preview-item time {
+  color: var(--ballet);
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.ballet-history-preview-item > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.ballet-history-preview-item strong,
+.ballet-history-preview-item small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ballet-history-preview-item strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.ballet-history-preview-item small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ballet-history-preview-empty {
+  grid-row: 1 / -1;
+  align-self: center;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.ballet-history-open {
+  min-height: 42px;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--ballet) 12%, var(--line));
+  padding: 0 14px;
+  background: color-mix(in srgb, var(--ballet) 4%, #ffffff);
+  color: var(--ballet);
+  font-size: 12px;
+  font-weight: 850;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.ballet-history-open:hover,
+.ballet-history-open:focus-visible {
+  background: color-mix(in srgb, var(--ballet) 9%, #ffffff);
+  color: var(--ballet-deep, #9c315b);
+}
+
+.ballet-history-open:focus-visible,
+.ballet-history-close:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ballet) 22%, transparent);
+  outline-offset: -3px;
+}
+
+.ballet-history-open:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
+
+.ballet-history-drawer {
+  width: min(520px, 100%);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0 0 0 auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.ballet-history-drawer::backdrop {
+  background: rgba(21, 30, 47, 0.38);
+  backdrop-filter: blur(3px);
+}
+
+.ballet-history-drawer-shell {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  border-left: 1px solid var(--ballet-border);
+  background: linear-gradient(160deg, #fffafd, #ffffff 42%);
+  box-shadow: -24px 0 56px rgba(45, 38, 54, 0.2);
+}
+
+.ballet-history-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px 22px 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ballet) 14%, var(--line));
+}
+
+.ballet-history-drawer-head h2 {
+  margin: 4px 0 0;
+  font-size: 22px;
+}
+
+.ballet-history-drawer-head > div > p:last-child {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.ballet-history-close {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 24px;
+  line-height: 1;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.ballet-history-close:hover {
+  border-color: var(--ballet-border);
+  background: #fff4f8;
+  color: var(--ballet);
+}
+
+.ballet-history-drawer .ballet-history-list {
+  min-height: 0;
+  align-content: start;
+  overflow-y: auto;
+  padding: 16px 18px 24px;
+}
+
+.ballet-history-drawer .ballet-history-item {
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+.ballet-history-drawer .ballet-history-meta {
+  grid-column: 2;
+  justify-content: flex-start;
 }
 
 .ballet-bar-list,
@@ -7661,6 +7886,24 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-growth-modules {
     grid-column: auto;
   }
+
+  .ballet-training-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-history-preview-slot {
+    position: static;
+  }
+
+  .ballet-history-preview {
+    position: static;
+    min-height: 0;
+  }
+
+  .ballet-history-preview-list {
+    grid-template-rows: none;
+    grid-auto-rows: minmax(58px, auto);
+  }
 }
 
 @media (min-width: 1500px) {
@@ -8146,6 +8389,30 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .ballet-heatmap-legend {
     flex-wrap: wrap;
+  }
+
+  .ballet-history-preview-item:nth-child(n + 4) {
+    display: none;
+  }
+
+  .ballet-history-drawer {
+    width: 100%;
+  }
+
+  .ballet-history-drawer-head {
+    padding: 20px 16px 16px;
+  }
+
+  .ballet-history-drawer .ballet-history-list {
+    padding: 12px 14px 20px;
+  }
+
+  .ballet-history-drawer .ballet-history-item {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-history-drawer .ballet-history-meta {
+    grid-column: auto;
   }
 
   .ballet-history-item,
