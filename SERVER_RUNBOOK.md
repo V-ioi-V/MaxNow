@@ -1938,3 +1938,17 @@ local visual verification: 1600×1000 下课程预约 / 抢课两栏同顶同底
 server verification: scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 自动抢课状态 / styles.css?v=219 / Blog 为 302 / 200 / 401 / 200 / 200；nginx 与 maxnow-auth active，自动抢课 timer enabled / active、下次 2026-08-09 14:19:35，service inactive
 safety: 仅部署静态页面、脱敏状态展示和文档；未运行 preview / execute、未启动自动抢课 service、未读取凭据、未访问闻道，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署紧凑版本月训练热力图：
+
+```text
+deployed commit: 28d21cf fix: compact ballet training heatmap
+version: 1.0.8.10
+changes: 热力图外框在桌面收敛为最大 840px 并左对齐，格子高度、间距和内边距同步压缩；未纳入同步的日期改为低对比浅底虚线格并隐藏重复破折号，手机端仍占满可用宽度
+asset cache: styles.css?v=220；app.js?v=180
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-152810-ballet-heatmap-compact
+runtime data stash: ea2ea3ebf81d57c879a20c1e42915a4f19fef022（部署后保留；服务器权威运行数据已恢复，project-meta.* / project-status.* 按新版本重新生成）
+local visual verification: 1600×1000 下热力图外框宽 840px、内部无多余横向空白，训练趋势卡仍为 1234px；390×844 下图表宽 301px、七列网格宽 280px，图表、格子和整页均无横向溢出；控制台无错误或警告
+server verification: scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / styles.css?v=220 / Blog 为 302 / 200 / 200 / 200；自动抢课 timer enabled / active、下次 2026-08-09 14:19:35，service inactive
+safety: 仅部署静态样式和文档；未运行 preview / execute、未启动自动抢课 service、未读取凭据、未访问闻道，也未提交预约、候补、取消、转课或课程同步
+```

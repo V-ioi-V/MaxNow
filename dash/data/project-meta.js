@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 15:25",
+  "updatedAt": "2026-08-02 15:29",
   "version": "1.0.8.10",
   "versionLabel": "v1.0.8.10",
   "branch": "bugfix/ballet-heatmap-compact",
-  "commit": "d321cd0",
+  "commit": "28d21cf",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-heatmap-compact · commit d321cd0 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-heatmap-compact · commit 28d21cf · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",
