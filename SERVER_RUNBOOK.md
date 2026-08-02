@@ -463,15 +463,15 @@ public URL -> authenticated no-store aliases /data/ballet-booking-fast.json + .j
 credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 ```
 
-固定跨日期优先级为 `周六 > 周日 > 周五 > 其他日期`。当前实际提交顺序：
+固定优先级先按课程 `芭蕾 L1 > 软开`，再在同一课程内按日期 `周六 > 周日 > 周五 > 其他日期`。当前实际提交顺序：
 
-1. 周五 18:45–19:45，软开，大教室，不限老师。
-2. 周五 19:45–21:15，芭蕾 L1，大教室，不限老师。
-3. 周二 18:45–19:45，软开，大教室，不限老师。
-4. 周二 19:45–21:15，芭蕾 L1，大教室，不限老师。
+1. 周五 19:45–21:15，芭蕾 L1，大教室，不限老师。
+2. 周二 19:45–21:15，芭蕾 L1，大教室，不限老师。
+3. 周五 18:45–19:45，软开，大教室，不限老师。
+4. 周二 18:45–19:45，软开，大教室，不限老师。
 5. 周四 18:45–19:45，软开，大教室，不限老师。
 
-服务在 14:19:35 先用当前日期课表做一次只读会话预热；14:20 后每节依次执行“目标日期课表唯一语义匹配 → 已预约 / 已排队 / 可预约 / 可排队检查 → 唯一课程卡资格 → 闻道规则 → `do_addbook`”。匹配字段为日期、课型 / 等级、起止时间和教室，并且必须恰好命中一节；老师不参与匹配或 occurrence 幂等键，临时代课不会阻止目标执行。`available` 执行预约；`queue_available` 只有在仓库配置显式设置 `allowWaitlist=true` 时执行候补；已预约或已排队不重复提交。网络波动、发布延迟、课程卡尚未开放、规则短暂未就绪或 mutation 明确返回 `NOTOPEN` 时，首次失败后最多重试 3 次，间隔为 80 / 160 / 320ms；明确已满、已停止、无卡或不可约时直接进入下一节。
+服务在 14:19:35 先用当前日期课表做一次只读会话预热；14:20 后用最多 3 个 worker 并发读取三个目标日期课表，同一日期的多个目标共享一次课表响应。课程卡资格和闻道规则由最多 2 个 worker 提前预检，完成超过 8 秒则在提交前重新预检。HTTPS 连接池最多保留 3 条 keep-alive 连接。随后严格按上述顺序逐节执行唯一语义确认和 `do_addbook`；任意时刻最多只有一个真实预约 / 候补 mutation。全部提交后，预约详情可以最多 3 路并发只读核验。匹配字段为日期、课型 / 等级、起止时间和教室，并且必须恰好命中一节；老师不参与匹配或 occurrence 幂等键，临时代课不会阻止目标执行。`available` 执行预约；`queue_available` 只有在仓库配置显式设置 `allowWaitlist=true` 时执行候补；已预约或已排队不重复提交。网络波动、发布延迟、课程卡尚未开放、规则短暂未就绪或 mutation 明确返回 `NOTOPEN` 时，首次失败后最多重试 3 次，间隔为 80 / 160 / 320ms；明确已满、已停止、无卡或不可约时直接进入下一节。
 
 每节是独立失败域：一节失败或 mutation 结果未知都继续后续目标。未知 mutation 可能已经被闻道接受，因此本节绝不重复 POST，只在全部课程处理结束后统一查询实时预约记录；若查到则按 `bookingStatus=booked` 或 `waitlist` 回填，候补存在正整数位次时同时发布 `waitlistPosition`，否则保留“结果待确认”。只有 `auth_required`、配置错误或页面结构变化等全局问题才停止后续课程。fast path 单请求超时为 5 秒，避免一次网络故障长期占住后续高优先级目标。
 
@@ -514,7 +514,7 @@ sudo stat -c '%U:%G %a %n' \
   /var/lib/maxnow-ballet-booking-fast-public/ballet-booking-fast.json
 ```
 
-如果 Owner 要修改目标或顺序，先改仓库配置与 Skill，补 fixture 测试和页面 fallback，部署后运行 `preview` 刷新状态；不得直接在服务器热改 JSON。暂停自动抢课时删除 enable gate 并 disable timer，不删除私有幂等账本：
+如果 Owner 要修改目标或顺序，先改仓库配置与 Skill，补 fixture 测试和页面 fallback，部署后运行 `preview` 刷新状态；不得直接在服务器热改 JSON。运行结果的 `timings` 会按课表、课程卡、规则、mutation 和最终核验给出脱敏分段耗时，用于判断慢在源站还是本地排队，不保存 URL、ID 或响应正文。暂停自动抢课时删除 enable gate 并 disable timer，不删除私有幂等账本：
 
 ```bash
 sudo systemctl disable --now maxnow-ballet-booking-fast.timer

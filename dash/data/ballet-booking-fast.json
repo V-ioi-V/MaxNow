@@ -4,12 +4,17 @@
   "enabled": true,
   "waitlistEnabled": true,
   "schedule": "每周日 14:20（北京时间）",
+  "coursePriorityOrder": [
+    "芭蕾 L1",
+    "软开"
+  ],
   "priorityOrder": [
     "周六",
     "周日",
     "周五",
     "其他日期"
   ],
+  "prioritySummary": "芭蕾 L1 > 软开；同课程按周六 > 周日 > 周五 > 其他日期",
   "lastAttemptAt": null,
   "lastSuccessAt": null,
   "nextRunAt": "2026-08-02T14:20:00+08:00",
@@ -18,16 +23,6 @@
   "totalWaitlisted": 0,
   "lastStatus": "waiting",
   "targets": [
-    {
-      "key": "friday-soft-open",
-      "weekday": "周五",
-      "date": "2026-08-07",
-      "startTime": "18:45",
-      "endTime": "19:45",
-      "course": "软开",
-      "teacher": "不限老师",
-      "venue": "大教室"
-    },
     {
       "key": "friday-ballet-l1",
       "weekday": "周五",
@@ -39,9 +34,19 @@
       "venue": "大教室"
     },
     {
-      "key": "tuesday-soft-open",
+      "key": "tuesday-ballet-l1",
       "weekday": "周二",
       "date": "2026-08-04",
+      "startTime": "19:45",
+      "endTime": "21:15",
+      "course": "芭蕾 L1",
+      "teacher": "不限老师",
+      "venue": "大教室"
+    },
+    {
+      "key": "friday-soft-open",
+      "weekday": "周五",
+      "date": "2026-08-07",
       "startTime": "18:45",
       "endTime": "19:45",
       "course": "软开",
@@ -49,12 +54,12 @@
       "venue": "大教室"
     },
     {
-      "key": "tuesday-ballet-l1",
+      "key": "tuesday-soft-open",
       "weekday": "周二",
       "date": "2026-08-04",
-      "startTime": "19:45",
-      "endTime": "21:15",
-      "course": "芭蕾 L1",
+      "startTime": "18:45",
+      "endTime": "19:45",
+      "course": "软开",
       "teacher": "不限老师",
       "venue": "大教室"
     },

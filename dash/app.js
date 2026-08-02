@@ -127,7 +127,9 @@ const fallbackBalletBookingFast =
   window.MAXNOW_BALLET_BOOKING_FAST_DATA || {
     schemaVersion: 1,
     enabled: false,
+    coursePriorityOrder: ["芭蕾 L1", "软开"],
     priorityOrder: ["周六", "周日", "周五", "其他日期"],
+    prioritySummary: "芭蕾 L1 > 软开；同课程按周六 > 周日 > 周五 > 其他日期",
     targets: [],
     lastStatus: "waiting",
   };
@@ -2628,7 +2630,7 @@ function renderBalletBookingFast() {
   );
   setText(
     "#ballet-booking-fast-priority",
-    `固定优先级：${(balletBookingFastData?.priorityOrder || []).join(" > ")}`,
+    `固定优先级：${balletBookingFastData?.prioritySummary || (balletBookingFastData?.priorityOrder || []).join(" > ")}`,
   );
 
   const targets = Array.isArray(balletBookingFastData?.targets)

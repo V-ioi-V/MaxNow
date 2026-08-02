@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -11,6 +11,16 @@
     5,
     6,
     4
+  ],
+  "priorityCourses": [
+    {
+      "courseType": "ballet",
+      "level": "L1"
+    },
+    {
+      "courseType": "soft_open",
+      "level": "none"
+    }
   ],
   "targets": [
     {

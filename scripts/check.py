@@ -312,8 +312,13 @@ def check_ballet_booking_fast():
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     targets = config.get("targets", [])
     if (
-        config.get("schemaVersion") != 2
+        config.get("schemaVersion") != 3
         or not targets
+        or config.get("priorityCourses")
+        != [
+            {"courseType": "ballet", "level": "L1"},
+            {"courseType": "soft_open", "level": "none"},
+        ]
         or any(
             "teacher" in target or "allowBlankTeacher" in target
             for target in targets
@@ -332,12 +337,15 @@ def check_ballet_booking_fast():
         or {item.get("teacher") for item in data.get("targets", [])}
         != {"不限老师"}
         or data.get("priorityOrder") != ["周六", "周日", "周五", "其他日期"]
+        or data.get("coursePriorityOrder") != ["芭蕾 L1", "软开"]
+        or data.get("prioritySummary")
+        != "芭蕾 L1 > 软开；同课程按周六 > 周日 > 周五 > 其他日期"
         or [item.get("key") for item in data.get("targets", [])]
         != [
-            "friday-soft-open",
             "friday-ballet-l1",
-            "tuesday-soft-open",
             "tuesday-ballet-l1",
+            "friday-soft-open",
+            "tuesday-soft-open",
             "thursday-soft-open",
         ]
     ):
@@ -368,6 +376,9 @@ def check_ballet_booking_fast():
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
+    fast_script = (
+        ROOT / "scripts/book_ballet_fast.py"
+    ).read_text(encoding="utf-8")
     skill = (
         ROOT / "openclaw/maxnow-ballet-live/SKILL.md"
     ).read_text(encoding="utf-8")
@@ -377,6 +388,11 @@ def check_ballet_booking_fast():
         "AccuracySec=1s",
         "LoadCredentialEncrypted=wenda-session.json:",
         "scripts/book_ballet_fast.py execute",
+        "class PersistentWendaBookingSource",
+        "PREFETCH_WORKERS = 3",
+        "PREFLIGHT_WORKERS = 2",
+        "PREFLIGHT_TTL_SECONDS = 8",
+        "Actual booking or waitlist mutations must remain strictly serial",
         "ConditionPathExists=/etc/maxnow-ballet/enable-fast-booking",
         "location = /data/ballet-booking-fast.json",
         "alias /var/lib/maxnow-ballet-booking-fast-public/ballet-booking-fast.json;",
@@ -389,15 +405,26 @@ def check_ballet_booking_fast():
         "allowWaitlist=true",
         "Teacher is display-only for the Sunday fast path",
         "可预约则预约，可排队则候补",
+        "芭蕾 L1 > 软开",
         "周六 > 周日 > 周五 > 其他日期",
     )
     combined = "\n".join(
-        (timer, service, locations, dashboard_js, dashboard_html, dashboard_css, skill)
+        (
+            timer,
+            service,
+            locations,
+            dashboard_js,
+            dashboard_html,
+            dashboard_css,
+            fast_script,
+            skill,
+        )
     )
     if any(marker not in combined for marker in required):
         raise ValueError("ballet fast booking: service, UI, or Skill contract is incomplete")
     return (
-        "ballet fast booking: Sunday precision timer, sequential fast path, "
+        "ballet fast booking: Sunday precision timer, bounded concurrent reads, "
+        "serial mutation fast path, "
         "teacher-flexible matching, priority, exact-target waitlist, redaction, "
         "status UI, and fail-closed tests are valid"
     )
@@ -1607,7 +1634,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=218" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=178" not in dashboard_html
+        or "app.js?v=179" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1825,7 +1852,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=178" not in dashboard_html:
+    if "app.js?v=179" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

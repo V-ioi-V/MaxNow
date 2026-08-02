@@ -98,7 +98,7 @@ Current recurring targets are:
 - Tuesday 19:45–21:15 ballet L1, 大教室, any teacher.
 - Thursday 18:45–19:45 soft-open, 大教室, any teacher.
 
-Always preserve the permanent priority `周六 > 周日 > 周五 > 其他日期`. For the current targets, the actual order is Friday soft-open, Friday ballet L1, Tuesday soft-open, Tuesday ballet L1, Thursday soft-open.
+For the Sunday fast path, sort first by course priority `ballet L1 > soft-open`, then within the same course by weekday priority `周六 > 周日 > 周五 > 其他日期`. The current mutation order is Friday ballet L1, Tuesday ballet L1, Friday soft-open, Tuesday soft-open, Thursday soft-open. Timetable GETs may run with at most three workers and share a page by date; card/rules preflight may run with at most two workers and expires after eight seconds. Actual booking or waitlist mutations must remain strictly serial in that priority order. Final booking-detail verification may use at most three read-only workers.
 
 To query the automation plan and safe result ledger, run:
 
