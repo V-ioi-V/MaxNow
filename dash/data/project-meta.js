@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 16:37",
-  "version": "1.0.8.14",
-  "versionLabel": "v1.0.8.14",
-  "branch": "bugfix/ballet-waitlist-summary",
-  "commit": "11ad94b",
+  "updatedAt": "2026-08-02 16:45",
+  "version": "1.0.8.15",
+  "versionLabel": "v1.0.8.15",
+  "branch": "feature/ballet-booking-parallel-results",
+  "commit": "45c39d7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-waitlist-summary · commit 11ad94b · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-parallel-results · commit 45c39d7 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "代抢与上次结果改为并列展示",
+      "summary": "抢课区去掉“代抢 / 上次抢课结果”的点击切换 Tab，改为两个始终同时渲染的独立列表；桌面空间足够时左右等分并列，容器变窄时自动上下排列，不隐藏任一组内容。"
+    },
     {
       "date": "2026-08-02",
       "title": "抢课摘要改为累计候补口径",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "抢课摘要改为三等分并校准耗时口径",
       "summary": "抢课区顶部拆为“累计抢到 / 当前已预约 / 上次抢课耗时”三张等宽摘要卡，桌面与手机端都保持三等分；最后一张显示上次关键路径总耗时，`66,107 ms` 改为易读的 `66.1 s`，副说明保留有效目标数和逐目标平均耗时，不再只显示容易误解的 `13,221 ms` 平均值。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "收紧本月训练热力图",
-      "summary": "本月训练热力图不再把粉色图表外框撑满整行，桌面最大宽度收敛为七列日历实际所需的 `840px` 并左对齐；格子高度、间距和外框内边距同步压缩，内容较少时不再保留大块空白。"
     }
   ]
 };

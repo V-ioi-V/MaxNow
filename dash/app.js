@@ -165,7 +165,6 @@ const browserDataHealth = new Map();
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
 let activeBalletPeriod = "month";
 let activeBalletMetric = "classes";
-let activeBalletBookingTab = "targets";
 
 const qs = (selector) => document.querySelector(selector);
 const qsa = (selector) => [...document.querySelectorAll(selector)];
@@ -2645,19 +2644,6 @@ function formatBalletBookingDuration(milliseconds) {
   return `${(duration / 1000).toFixed(1)} s`;
 }
 
-function renderBalletBookingTabs() {
-  qsa("[data-ballet-booking-tab]").forEach((button) => {
-    const active = button.dataset.balletBookingTab === activeBalletBookingTab;
-    button.classList.toggle("is-active", active);
-    button.setAttribute("aria-selected", String(active));
-    button.tabIndex = active ? 0 : -1;
-  });
-  const targetsPanel = qs("#ballet-booking-targets-panel");
-  const resultsPanel = qs("#ballet-booking-results-panel");
-  if (targetsPanel) targetsPanel.hidden = activeBalletBookingTab !== "targets";
-  if (resultsPanel) resultsPanel.hidden = activeBalletBookingTab !== "results";
-}
-
 function renderBalletBookingFast() {
   const statusKey = String(balletBookingFastData?.lastStatus || "waiting");
   const statusState =
@@ -2734,7 +2720,6 @@ function renderBalletBookingFast() {
       : "暂无有效执行耗时",
   );
   setText("#ballet-course-plan-count", `${upcomingCount} 约 · ${targets.length} 抢`);
-  renderBalletBookingTabs();
 }
 
 function balletRecordDate(item = {}) {
@@ -5641,13 +5626,6 @@ qsa("[data-ballet-period]").forEach((button) => {
   button.addEventListener("click", () => {
     activeBalletPeriod = button.dataset.balletPeriod || "month";
     renderBalletTraining();
-  });
-});
-
-qsa("[data-ballet-booking-tab]").forEach((button) => {
-  button.addEventListener("click", () => {
-    activeBalletBookingTab = button.dataset.balletBookingTab || "targets";
-    renderBalletBookingTabs();
   });
 });
 
