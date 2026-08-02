@@ -2130,5 +2130,20 @@ runtime data stash: 2509f20ea985c3ff51b515260d94a881b6138856（部署后保留�
 deployment path: 本地 origin/main 推送到 88d4d59 后，通过校验过的 Git bundle 将服务器 main 从 65e368d 快进；未覆盖或刷新课程数据
 local verification: 1280×720 与 390×844 无横向溢出，画布内部尺寸 1280×1710，剪贴板复制和 PNG 下载均成功；合并最新 Codex 用量数据后 scripts/check.py、Node 语法检查与 git diff --check 通过
 server verification: scripts/check.py 与 nginx -t 全部通过；线上底图识别为 1280×1710 PNG，未登录首页 / 登录页 / 芭蕾数据 / 模板配置 / Blog 为 302 / 200 / 401 / 200 / 200；nginx 与 maxnow-auth active，课程同步、完整同步和自动抢课 service 均 inactive，自动抢课 timer active
-safety: 仅部署静态页面、图片素材、浏览器本地拼图逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+ safety: 仅部署静态页面、图片素材、浏览器本地拼图逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
+
+2026-08-02 已部署芭蕾周记录入口对齐与预生成加速：
+
+```text
+deployed source commit: 2ede444 fix: align and warm ballet cover trigger
+version: 1.0.8.26
+changes: week N 入口移到“已同步”右侧并复用 12px / 700 / 30px 状态胶囊规格；进入芭蕾页后利用浏览器空闲时间预生成，同页多个触发动作共享生成任务，模板配置不再每次点击强制重取
+asset cache: styles.css?v=234；app.js?v=192
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-205849-ballet-cover-status/dash-data.tgz
+runtime data stash: 3d91647953986c5e61f670081fd395db38a2da34（部署后保留；服务器权威 dash/data 已从备份恢复，project-meta.* / project-status.* 按新版本重新生成）
+deployment path: 通过校验过的 Git bundle 将服务器 main 从 4b0c3e7 快进到 2ede444；未覆盖或刷新课程数据
+local visual verification: 1280×720 与 390×844 下 week 2 均位于“已同步”右侧、同排等高且整页横向溢出为 0；进入芭蕾页 1.6 秒后封面已预生成，点击后约 0.35 秒完成缓存弹窗状态；桌面 / 手机弹窗无溢出且控制台无错误
+server verification: scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=234 / Blog 为 302 / 200 / 401 / 200 / 200；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
+safety: 仅部署静态页面、样式、浏览器本地拼图逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
