@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 16:24",
-  "version": "1.0.8.13",
-  "versionLabel": "v1.0.8.13",
-  "branch": "bugfix/ballet-training-chart-compact",
-  "commit": "9174284",
+  "updatedAt": "2026-08-02 16:35",
+  "version": "1.0.8.14",
+  "versionLabel": "v1.0.8.14",
+  "branch": "bugfix/ballet-waitlist-summary",
+  "commit": "4936766",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-training-chart-compact · commit 9174284 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-waitlist-summary · commit 4936766 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "抢课摘要改为累计候补口径",
+      "summary": "抢课区中间摘要卡从“当前已预约”改为“累计候补”，直接读取自动抢课公开状态的 `totalWaitlisted`；生产权威状态为累计抢到 `4` 节、累计候补 `1` 节，不再把当前未来预约与候补共 `5` 条误显示成累计值。"
+    },
     {
       "date": "2026-08-02",
       "title": "收紧今年与全部训练折线图",
@@ -28,11 +33,6 @@
       "date": "2026-08-02",
       "title": "收紧本月训练热力图",
       "summary": "本月训练热力图不再把粉色图表外框撑满整行，桌面最大宽度收敛为七列日历实际所需的 `840px` 并左对齐；格子高度、间距和外框内边距同步压缩，内容较少时不再保留大块空白。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "课程计划拆分预约与抢课工作区",
-      "summary": "芭蕾“课程计划”改为左侧“课程预约”、右侧“抢课”：右侧通过“代抢 / 上次抢课结果”两个 Tab 互斥展示目标和最近一次执行结果，不再同时纵向铺开两组列表；上次结果直接使用执行时保存的课程日期，避免周目标滚动后错配新日期。"
     }
   ]
 }

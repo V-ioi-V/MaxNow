@@ -2715,10 +2715,14 @@ function renderBalletBookingFast() {
     0,
     Math.floor(balletNumber(balletBookingFastData?.totalBooked)),
   );
+  const waitlistedCount = Math.max(
+    0,
+    Math.floor(balletNumber(balletBookingFastData?.totalWaitlisted)),
+  );
   const timing = getBalletBookingTiming(balletBookingFastData?.lastRun);
   setText("#ballet-booking-result-count", resultNodes.length);
   setText("#ballet-booking-grabbed", `${grabbedCount} 节`);
-  setText("#ballet-booking-reserved", `${upcomingCount} 节`);
+  setText("#ballet-booking-waitlisted", `${waitlistedCount} 节`);
   setText(
     "#ballet-booking-average",
     formatBalletBookingDuration(timing.totalMilliseconds),
