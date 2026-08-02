@@ -2045,3 +2045,17 @@ local visual verification: 1280px 下 23 张 60 分钟紧凑卡全部得到完�
 server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上时间标记与 text-overflow: clip 规则存在，macOS 用量 17:00 自动更新同时保留；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=225 / app.js?v=186 / Blog 为 302 / 200 / 401 / 200 / 302 / 200；nginx 与 maxnow-auth active，课程同步与自动抢课 service inactive，自动抢课 timer active、下次 2026-08-09 14:19:35
 safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署抢课双 Tab 面板边界：
+
+```text
+deployed commit: 3f60fe5 style: frame ballet booking tabs
+version: 1.0.8.18
+changes: “代抢”和“上次抢课结果”改为两个始终同时展示、各自带完整外框的 Tab 面板；“代抢”固定作为左侧标题，宽时等分同高并排，窄时自然上下排列
+asset cache: styles.css?v=227；app.js?v=187
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-173434-booking-tab-panels/dash-data.tgz
+runtime data stash: 4621479660ff13b53e4c2bea9a996c6dd8ff5aa0（部署后保留；服务器权威运行数据已恢复，project-meta.* 按新版本重新生成）
+local visual verification: 2048px 下双面板同顶同底、各占一半且高度均为 567px；1000px 与 390px 下上下排列并同时可见，页面横向溢出为 0，控制台无错误或警告
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上双面板与 styles.css?v=227 标记存在；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=227 为 302 / 200 / 401 / 200；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active，自动抢课下次 2026-08-09 14:19:35
+safety: 仅部署静态页面、样式和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```

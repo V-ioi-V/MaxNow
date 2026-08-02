@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 17:27",
+  "updatedAt": "2026-08-02 17:36",
   "version": "1.0.8.18",
   "versionLabel": "v1.0.8.18",
   "branch": "feature/ballet-booking-tab-panels",
-  "commit": "b131b31",
+  "commit": "3f60fe5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-tab-panels · commit b131b31 · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-tab-panels · commit 3f60fe5 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",
