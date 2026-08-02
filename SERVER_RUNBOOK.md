@@ -2117,3 +2117,18 @@ local visual verification: 2048px 下趋势卡与历史卡 top / bottom / height
 server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；未登录首页 / 登录页 / 芭蕾数据为 302 / 200 / 401；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
 safety: 仅部署静态页面、样式和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署芭蕾周记录小红书封面：
+
+```text
+deployed source commit: 88d4d59 feat: add ballet weekly cover generator
+version: 1.0.8.25
+changes: 芭蕾页顶部新增 week N 入口；浏览器用固定 1280×1710 粉色手作底图和透明手绘 0–9 本地拼合本周封面，支持预览、复制图片和下载 PNG；2026-07-27 至 2026-08-02 为 week 2，北京时间每周一加一
+asset cache: styles.css?v=233；app.js?v=191；底图 template-v1.png；配置 template.json
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-203403-ballet-week-cover/dash-data.tgz
+runtime data stash: 2509f20ea985c3ff51b515260d94a881b6138856（部署后保留；服务器原有运行数据按部署前脏文件清单恢复，project-meta.* / project-status.* / token-usage.* 按新版本重新生成）
+deployment path: 本地 origin/main 推送到 88d4d59 后，通过校验过的 Git bundle 将服务器 main 从 65e368d 快进；未覆盖或刷新课程数据
+local verification: 1280×720 与 390×844 无横向溢出，画布内部尺寸 1280×1710，剪贴板复制和 PNG 下载均成功；合并最新 Codex 用量数据后 scripts/check.py、Node 语法检查与 git diff --check 通过
+server verification: scripts/check.py 与 nginx -t 全部通过；线上底图识别为 1280×1710 PNG，未登录首页 / 登录页 / 芭蕾数据 / 模板配置 / Blog 为 302 / 200 / 401 / 200 / 200；nginx 与 maxnow-auth active，课程同步、完整同步和自动抢课 service 均 inactive，自动抢课 timer active
+safety: 仅部署静态页面、图片素材、浏览器本地拼图逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
