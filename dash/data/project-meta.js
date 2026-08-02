@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 18:21",
+  "updatedAt": "2026-08-02 18:26",
   "version": "1.0.8.22",
   "versionLabel": "v1.0.8.22",
   "branch": "bugfix/ballet-training-card-heading",
-  "commit": "392ad51",
+  "commit": "33ee9e5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-training-card-heading · commit 392ad51 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-training-card-heading · commit 33ee9e5 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",

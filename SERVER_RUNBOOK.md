@@ -2103,3 +2103,17 @@ local visual verification: 2048px 下两栏标题与“抢课”均为 16px，�
 server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上新标题结构存在且旧 Tab class 不存在；未登录首页 / 登录页 / 芭蕾数据 / styles.css?v=231 为 302 / 200 / 401 / 200；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
 safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署训练趋势卡与历史卡统一样式：
+
+```text
+deployed source commit: 33ee9e5 fix: align ballet trend and history cards
+version: 1.0.8.22
+changes: “8 月上课节数热力图”标题与 Training trend 眉题移入左侧完整卡片；左右卡片共用边框、圆角、背景和 hover 体系；内层热力图 / 折线图移除第二层边框、阴影与位移
+asset cache: styles.css?v=232；app.js?v=190
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-182502-training-card-heading/dash-data.tgz
+runtime data stash: 9c832c39a6a5a89a46819361921730636e13bb32（部署后保留；除 project-meta.* 外的服务器权威运行数据按部署前脏文件清单恢复，project-meta.* 按新版本重新生成）
+local visual verification: 2048px 下趋势卡与历史卡 top / bottom / height 差值均为 0，内层图表 border 0 / radius 0 / shadow none；1500px 与 390px 下正常上下排列且整页无横向溢出
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；未登录首页 / 登录页 / 芭蕾数据为 302 / 200 / 401；课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
+safety: 仅部署静态页面、样式和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
