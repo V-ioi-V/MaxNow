@@ -1952,3 +1952,17 @@ local visual verification: 1600×1000 下热力图外框宽 840px、内部无多
 server verification: scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / styles.css?v=220 / Blog 为 302 / 200 / 200 / 200；自动抢课 timer enabled / active、下次 2026-08-09 14:19:35，service inactive
 safety: 仅部署静态样式和文档；未运行 preview / execute、未启动自动抢课 service、未读取凭据、未访问闻道，也未提交预约、候补、取消、转课或课程同步
 ```
+
+2026-08-02 已部署三等分抢课摘要与总耗时口径：
+
+```text
+deployed commit: 836b339 feat: clarify ballet booking metrics
+version: 1.0.8.11
+changes: 抢课摘要改为累计抢到 / 当前已预约 / 上次抢课耗时三张等宽卡；上次耗时优先显示 criticalPathMilliseconds 总耗时，66,107 ms 展示为 66.1 s，并补充 5 个目标、平均 13.2 s/节；结果行课程名使用稳定日期列比例统一左边缘
+asset cache: styles.css?v=221；app.js?v=181
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-155324-ballet-booking-metrics-tabs/dash-data.tgz
+runtime data stash: cefee324d51da19945517481461fa34fe751eafd（部署后保留；服务器权威运行数据已恢复，project-meta.* / project-status.* 按新版本重新生成）
+local visual verification: 1600×1000 下三张摘要卡同顶、同底、等宽、等高，五条结果课程名横坐标一致，状态徽标右边缘一致；390×844 下仍为三等分且卡片、摘要区和整页横向溢出均为 0
+server verification: scripts/check.py 与 nginx -t 全部通过；权威公开状态保留 totalBooked=4 / totalWaitlisted=1 / criticalPathMilliseconds=66107 / 5 records；未登录 Dash / 登录页 / 自动抢课状态 / styles.css?v=221 / app.js?v=181 / Blog 为 302 / 200 / 401 / 200 / 302 / 200；nginx 与 maxnow-auth active，自动抢课 timer active、下次 2026-08-09 14:19:35，service inactive
+safety: 仅部署静态页面、脱敏状态展示和文档；未运行 preview / execute、未启动自动抢课 service、未读取凭据、未访问闻道，也未提交预约、候补、取消、转课或课程同步
+```
