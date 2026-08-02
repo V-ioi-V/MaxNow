@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -20,8 +20,6 @@
       "level": "none",
       "startTime": "18:45",
       "endTime": "19:45",
-      "teacher": "王嘉豪",
-      "allowBlankTeacher": true,
       "venue": "大教室"
     },
     {
@@ -31,8 +29,6 @@
       "level": "L1",
       "startTime": "19:45",
       "endTime": "21:15",
-      "teacher": "王嘉豪",
-      "allowBlankTeacher": true,
       "venue": "大教室"
     },
     {
@@ -42,8 +38,6 @@
       "level": "none",
       "startTime": "18:45",
       "endTime": "19:45",
-      "teacher": "李俊",
-      "allowBlankTeacher": true,
       "venue": "大教室"
     },
     {
@@ -53,8 +47,6 @@
       "level": "none",
       "startTime": "18:45",
       "endTime": "19:45",
-      "teacher": "李俊",
-      "allowBlankTeacher": true,
       "venue": "大教室"
     },
     {
@@ -64,8 +56,6 @@
       "level": "L1",
       "startTime": "19:45",
       "endTime": "21:15",
-      "teacher": "王嘉豪",
-      "allowBlankTeacher": true,
       "venue": "大教室"
     }
   ]

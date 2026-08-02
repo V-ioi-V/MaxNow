@@ -75,7 +75,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 1
+        or data.get("schemaVersion") != 2
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
@@ -98,8 +98,6 @@ def load_config(path: Path) -> dict[str, Any]:
         "level",
         "startTime",
         "endTime",
-        "teacher",
-        "allowBlankTeacher",
         "venue",
     }
     keys = set()
@@ -113,11 +111,8 @@ def load_config(path: Path) -> dict[str, Any]:
             or target["weekday"] not in range(7)
             or target["courseType"] not in COURSE_TYPE_LABELS
             or target["level"] not in {"none", "L1", "L1.5", "L2", "L3", "L4"}
-            or not isinstance(target["allowBlankTeacher"], bool)
-            or not all(
-                isinstance(target[field], str) and target[field].strip()
-                for field in ("teacher", "venue")
-            )
+            or not isinstance(target["venue"], str)
+            or not target["venue"].strip()
         ):
             raise FastBookingFailure("configuration_error")
         parse_hhmm(target["startTime"])
@@ -190,17 +185,12 @@ def public_target(target: dict[str, Any]) -> dict[str, Any]:
         "startTime": target["startTime"],
         "endTime": target["endTime"],
         "course": course,
-        "teacher": target["teacher"],
+        "teacher": "不限老师",
         "venue": target["venue"],
     }
 
 
 def record_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
-    teacher = ballet.normalize_space(str(record.get("teacher", "")))
-    expected_teacher = ballet.normalize_space(target["teacher"])
-    teacher_matches = teacher == expected_teacher or (
-        target["allowBlankTeacher"] and not teacher
-    )
     return (
         record.get("date") == target["date"]
         and record.get("courseType") == target["courseType"]
@@ -209,7 +199,6 @@ def record_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
         and record.get("endTime") == target["endTime"]
         and ballet.normalize_space(str(record.get("venue", "")))
         == ballet.normalize_space(target["venue"])
-        and teacher_matches
     )
 
 
@@ -244,7 +233,6 @@ def occurrence_key(target: dict[str, Any]) -> str:
             "endTime",
             "courseType",
             "level",
-            "teacher",
             "venue",
         )
     )

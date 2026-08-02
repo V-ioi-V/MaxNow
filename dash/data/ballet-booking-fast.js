@@ -25,7 +25,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "startTime": "18:45",
       "endTime": "19:45",
       "course": "软开",
-      "teacher": "李俊",
+      "teacher": "不限老师",
       "venue": "大教室"
     },
     {
@@ -35,7 +35,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "startTime": "19:45",
       "endTime": "21:15",
       "course": "芭蕾 L1",
-      "teacher": "王嘉豪",
+      "teacher": "不限老师",
       "venue": "大教室"
     },
     {
@@ -45,7 +45,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "startTime": "18:45",
       "endTime": "19:45",
       "course": "软开",
-      "teacher": "王嘉豪",
+      "teacher": "不限老师",
       "venue": "大教室"
     },
     {
@@ -55,7 +55,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "startTime": "19:45",
       "endTime": "21:15",
       "course": "芭蕾 L1",
-      "teacher": "王嘉豪",
+      "teacher": "不限老师",
       "venue": "大教室"
     },
     {
@@ -65,11 +65,11 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "startTime": "18:45",
       "endTime": "19:45",
       "course": "软开",
-      "teacher": "李俊",
+      "teacher": "不限老师",
       "venue": "大教室"
     }
   ],
   "lastRun": null,
   "preview": null,
-  "generatedAt": "2026-07-31T22:30:00+08:00"
+  "generatedAt": "2026-08-02T13:17:59+08:00"
 };

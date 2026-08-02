@@ -309,12 +309,28 @@ def check_ballet_booking_fast():
             + result.stdout.strip()
         )
 
+    config = load_json(ROOT / "config/ballet-booking-fast.json")
+    targets = config.get("targets", [])
+    if (
+        config.get("schemaVersion") != 2
+        or not targets
+        or any(
+            "teacher" in target or "allowBlankTeacher" in target
+            for target in targets
+        )
+    ):
+        raise ValueError(
+            "ballet fast booking: teacher-independent config is invalid"
+        )
+
     data = load_json(ROOT / "dash/data/ballet-booking-fast.json")
     if (
         data.get("schemaVersion") != 1
         or data.get("timezone") != "Asia/Shanghai"
         or data.get("waitlistEnabled") is not True
         or not isinstance(data.get("totalWaitlisted"), int)
+        or {item.get("teacher") for item in data.get("targets", [])}
+        != {"不限老师"}
         or data.get("priorityOrder") != ["周六", "周日", "周五", "其他日期"]
         or [item.get("key") for item in data.get("targets", [])]
         != [
@@ -371,6 +387,7 @@ def check_ballet_booking_fast():
         'id="ballet-booking-fast-targets"',
         'ready_waitlist: "可排队"',
         "allowWaitlist=true",
+        "Teacher is display-only for the Sunday fast path",
         "可预约则预约，可排队则候补",
         "周六 > 周日 > 周五 > 其他日期",
     )
@@ -381,7 +398,8 @@ def check_ballet_booking_fast():
         raise ValueError("ballet fast booking: service, UI, or Skill contract is incomplete")
     return (
         "ballet fast booking: Sunday precision timer, sequential fast path, "
-        "priority, exact-target waitlist, redaction, status UI, and fail-closed tests are valid"
+        "teacher-flexible matching, priority, exact-target waitlist, redaction, "
+        "status UI, and fail-closed tests are valid"
     )
 
 

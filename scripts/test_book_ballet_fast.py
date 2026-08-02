@@ -169,6 +169,36 @@ class FastBookingTests(unittest.TestCase):
             ],
         )
 
+    def test_target_matches_when_teacher_changes(self):
+        target = fast.materialize_targets(config(), self.release)[0]
+        record = {
+            "date": target["date"],
+            "courseType": target["courseType"],
+            "level": target["level"],
+            "startTime": target["startTime"],
+            "endTime": target["endTime"],
+            "teacher": "临时代课老师",
+            "venue": target["venue"],
+        }
+
+        self.assertTrue(fast.record_matches(record, target))
+        record["startTime"] = "18:46"
+        self.assertFalse(fast.record_matches(record, target))
+
+    def test_target_still_requires_exact_venue(self):
+        target = fast.materialize_targets(config(), self.release)[0]
+        record = {
+            "date": target["date"],
+            "courseType": target["courseType"],
+            "level": target["level"],
+            "startTime": target["startTime"],
+            "endTime": target["endTime"],
+            "teacher": "任意老师",
+            "venue": "小教室",
+        }
+
+        self.assertFalse(fast.record_matches(record, target))
+
     def test_fast_path_mutates_sequentially_then_verifies_once(self):
         source = FakeFastSource()
         result, state = fast.run_fast(
@@ -322,6 +352,10 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(public["nextRunAt"], "2026-08-02T14:20:00+08:00")
         self.assertTrue(public["waitlistEnabled"])
         self.assertEqual(public["totalWaitlisted"], 0)
+        self.assertEqual(
+            {target["teacher"] for target in public["targets"]},
+            {"不限老师"},
+        )
         for marker in (
             "courseId",
             "classTableId",
