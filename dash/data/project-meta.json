@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-01 22:26",
-  "version": "1.0.8.05",
-  "versionLabel": "v1.0.8.05",
-  "branch": "feature/ballet-completed-training-time",
-  "commit": "85f9fea",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-completed-training-time · commit 85f9fea · 有未提交代码改动",
+  "updatedAt": "2026-08-02 10:38",
+  "version": "1.0.8.06",
+  "versionLabel": "v1.0.8.06",
+  "branch": "bugfix/ballet-hide-future-months",
+  "commit": "a8defe0",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-hide-future-months · commit a8defe0 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "今年训练曲线隐藏未来月份",
+      "summary": "“今年”按月曲线只展示 1 月至浏览器当前月；当前为 8 月时不再绘制 9–12 月，也不把未来月份表达成 0。已经过去但没有训练记录的月份继续补 0，“全部”仍只按实际有记录的年份汇总。脚本缓存提升到 `app.js?v=178`，版本提升到 `1.0.8.06`。"
+    },
     {
       "date": "2026-08-01",
       "title": "本周训练时长改为仅统计已完成课程",
@@ -28,11 +33,6 @@
       "date": "2026-08-01",
       "title": "记录自动抢课动态配置待办",
       "summary": "`ROADMAP.md` Next 新增自动抢课动态配置任务：后续把稳定抢课引擎与目标课程分开，由服务器版本化配置作为唯一可编辑来源，并在 MaxNow 提供增删目标、优先级、逐课候补、单周覆盖和暂停能力。"
-    },
-    {
-      "date": "2026-08-01",
-      "title": "修复芭蕾同步账本权限并补齐失败可见性",
-      "summary": "修复 7 月 30 日手工补录后私有 `attendance-ledger.json` 被 root 原子替换为 `root:root 0600` 的问题；恢复 `ubuntu:www-data 0600` 并以真实服务用户完成 JSON / ledger 校验后，手动执行一次 rolling 只读同步成功，数据更新到 `2026-08-01 00:39:46`，保留 4 条上课记录、3 条未来预约和 7 天课表。"
     }
   ]
 }

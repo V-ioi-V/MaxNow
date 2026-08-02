@@ -3126,9 +3126,10 @@ function aggregateBalletRecords(granularity) {
   return [...buckets.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
 
-function fillBalletMonths(entries, year) {
+function fillBalletMonths(entries, year, monthCount = 12) {
   const byDate = new Map(entries.map((entry) => [entry.date, entry]));
-  return Array.from({ length: 12 }, (_, index) => {
+  const visibleMonthCount = Math.max(1, Math.min(12, Math.floor(Number(monthCount)) || 12));
+  return Array.from({ length: visibleMonthCount }, (_, index) => {
     const date = `${year}-${String(index + 1).padStart(2, "0")}`;
     return byDate.get(date) || { date, classes: 0, minutes: 0 };
   });
@@ -3166,7 +3167,7 @@ function getBalletTrend() {
   } else if (activeBalletPeriod === "year") {
     const monthly = normalizeBalletTrendEntries(aggregates.monthly, "month");
     entries = monthly.length ? monthly.filter((entry) => entry.date.startsWith(year)) : aggregateBalletRecords("month").filter((entry) => entry.date.startsWith(year));
-    entries = fillBalletMonths(entries, year);
+    entries = fillBalletMonths(entries, year, Number(month.slice(5, 7)));
     title = `${year} 年`;
     xFormatter = (record) => `${Number(record.date.slice(5, 7))}月`;
   } else {
