@@ -2674,7 +2674,7 @@ function renderBalletBookingFast() {
   const targets = Array.isArray(balletBookingFastData?.targets)
     ? balletBookingFastData.targets
     : [];
-  setText("#ballet-booking-target-count", targets.length);
+  setText("#ballet-booking-target-count", `${targets.length} 节`);
   const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
     ? balletBookingFastData.lastRun.records
     : [];
@@ -2706,7 +2706,7 @@ function renderBalletBookingFast() {
     Math.floor(balletNumber(balletBookingFastData?.totalWaitlisted)),
   );
   const timing = getBalletBookingTiming(balletBookingFastData?.lastRun);
-  setText("#ballet-booking-result-count", resultNodes.length);
+  setText("#ballet-booking-result-count", `${resultNodes.length} 节`);
   setText("#ballet-booking-grabbed", `${grabbedCount} 节`);
   setText("#ballet-booking-waitlisted", `${waitlistedCount} 节`);
   setText(

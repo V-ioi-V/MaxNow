@@ -410,7 +410,9 @@ def check_ballet_booking_fast():
         'id="ballet-booking-average"',
         'id="ballet-booking-average-detail"',
         'class="ballet-booking-columns"',
-        'class="ballet-booking-column ballet-booking-tab-panel"',
+        'class="ballet-booking-column"',
+        '<p class="eyebrow">Booking targets</p>',
+        '<p class="eyebrow">Last run</p>',
         'id="ballet-booking-targets-title">代抢',
         'id="ballet-booking-results-title">上次抢课结果',
         ".ballet-booking-summary {",
@@ -418,6 +420,8 @@ def check_ballet_booking_fast():
         ".ballet-booking-columns {",
         "grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));",
         "grid-template-rows: auto minmax(0, 1fr);",
+        ".ballet-booking-column-head > div {",
+        "justify-content: space-between;",
         ".ballet-booking-column:hover {",
         'ready_waitlist: "可排队"',
         "allowWaitlist=true",
@@ -438,7 +442,7 @@ def check_ballet_booking_fast():
             skill,
         )
     )
-    if any(marker not in combined for marker in required):
+    if any(marker not in combined for marker in required) or "ballet-booking-tab-panel" in dashboard_html:
         raise ValueError("ballet fast booking: service, UI, or Skill contract is incomplete")
     return (
         "ballet fast booking: Sunday precision timer, bounded concurrent reads, "
@@ -1693,9 +1697,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=230" not in dashboard_html
+        "styles.css?v=231" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=189" not in dashboard_html
+        or "app.js?v=190" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1913,7 +1917,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=189" not in dashboard_html:
+    if "app.js?v=190" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
