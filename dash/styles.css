@@ -1418,6 +1418,7 @@ body[data-view="tokens"] .topbar-token-ranges {
 .cloud-meta div,
 .ballet-session-metrics div,
 .ballet-booking-fast-metrics div,
+.ballet-booking-summary-card,
 .ballet-booking-fast-target,
 .ricky-place-item,
 .ricky-record-item,
@@ -1466,6 +1467,7 @@ body[data-view="tokens"] .topbar-token-ranges {
   .cloud-meta div:hover,
   .ballet-session-metrics div:hover,
   .ballet-booking-fast-metrics div:hover,
+  .ballet-booking-summary-card:hover,
   .ballet-booking-fast-target:hover,
   .ricky-place-item:hover,
     .ricky-record-item:hover,
@@ -4583,6 +4585,152 @@ body[data-view="ricky"] .topbar-ricky-status {
   gap: 8px;
 }
 
+.ballet-booking-workspace {
+  min-width: 0;
+}
+
+.ballet-booking-summary {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ballet-booking-summary-card {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  display: grid;
+  align-content: space-between;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--card-color) 22%, var(--line));
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--card-color) 4%, #ffffff);
+}
+
+.ballet-booking-summary-card[data-tone="green"] {
+  --card-color: var(--ok);
+  --card-border: var(--green-border);
+}
+
+.ballet-booking-summary-card[data-tone="cyan"] {
+  --card-color: var(--cyan);
+  --card-border: var(--cyan-border);
+}
+
+.ballet-booking-summary-card > span,
+.ballet-booking-summary-card > small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.ballet-booking-summary-card > strong {
+  color: var(--card-color);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ballet-booking-summary-counts {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ballet-booking-summary-counts strong {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  color: var(--card-color);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ballet-booking-summary-counts strong > span {
+  color: inherit;
+}
+
+.ballet-booking-summary-counts small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.ballet-booking-tabs {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 4px;
+  background: #f8fafc;
+}
+
+.ballet-booking-tab {
+  min-width: 0;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  padding: 7px 10px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+
+.ballet-booking-tab span {
+  min-width: 20px;
+  border-radius: 999px;
+  padding: 2px 6px;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ballet-booking-tab:hover,
+.ballet-booking-tab:focus-visible {
+  color: var(--ballet);
+}
+
+.ballet-booking-tab:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.ballet-booking-tab.is-active {
+  border-color: var(--ballet-border);
+  background: #ffffff;
+  color: var(--ballet);
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--ballet) 12%, transparent);
+}
+
+.ballet-booking-tab-panel[hidden] {
+  display: none;
+}
+
+.ballet-booking-empty {
+  margin: 0;
+  border: 1px dashed color-mix(in srgb, var(--ballet) 22%, var(--line));
+  border-radius: var(--radius);
+  padding: 18px 14px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
 .ballet-timetable-panel {
   width: 100%;
   margin-bottom: var(--page-section-gap);
@@ -6795,19 +6943,6 @@ body[data-view="ricky"] .topbar-ricky-status {
   gap: 8px;
 }
 
-.ballet-booking-fast-results:not([hidden]) {
-  margin-top: 12px;
-  border-top: 1px solid color-mix(in srgb, var(--ballet) 14%, var(--line));
-  padding-top: 12px;
-}
-
-.ballet-booking-fast-results:not([hidden])::before {
-  content: "上次执行结果";
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
-}
-
 .ballet-booking-fast-target {
   --card-color: var(--ballet);
   --card-border: var(--ballet-border);
@@ -7790,6 +7925,15 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-session-duration small {
     flex-basis: auto;
     text-align: left;
+  }
+
+  .ballet-booking-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .ballet-booking-tab {
+    padding-inline: 6px;
+    font-size: 11px;
   }
 
   .ballet-session-metrics,

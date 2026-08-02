@@ -165,6 +165,7 @@ const browserDataHealth = new Map();
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
 let activeBalletPeriod = "month";
 let activeBalletMetric = "classes";
+let activeBalletBookingTab = "targets";
 
 const qs = (selector) => document.querySelector(selector);
 const qsa = (selector) => [...document.querySelectorAll(selector)];
@@ -2609,13 +2610,46 @@ function createBalletBookingFastTarget(target = {}, result = null) {
   return article;
 }
 
+function createBalletBookingEmpty(message) {
+  const paragraph = document.createElement("p");
+  paragraph.className = "ballet-booking-empty";
+  paragraph.textContent = message;
+  return paragraph;
+}
+
+function getBalletBookingAverage(records = []) {
+  const durations = records
+    .map((record) => Number(record?.elapsedMilliseconds))
+    .filter((duration) => Number.isFinite(duration) && duration > 0);
+  if (!durations.length) return null;
+  return Math.round(
+    durations.reduce((total, duration) => total + duration, 0) / durations.length,
+  );
+}
+
+function renderBalletBookingTabs() {
+  qsa("[data-ballet-booking-tab]").forEach((button) => {
+    const active = button.dataset.balletBookingTab === activeBalletBookingTab;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", String(active));
+    button.tabIndex = active ? 0 : -1;
+  });
+  const targetsPanel = qs("#ballet-booking-targets-panel");
+  const resultsPanel = qs("#ballet-booking-results-panel");
+  if (targetsPanel) targetsPanel.hidden = activeBalletBookingTab !== "targets";
+  if (resultsPanel) resultsPanel.hidden = activeBalletBookingTab !== "results";
+}
+
 function renderBalletBookingFast() {
   const statusKey = String(balletBookingFastData?.lastStatus || "waiting");
   const statusState =
     BALLET_BOOKING_FAST_STATUS[statusKey] || BALLET_BOOKING_FAST_STATUS.stopped;
   const statusNode = qs("#ballet-booking-fast-status");
+  const workspaceStatusNode = qs("#ballet-booking-workspace-status");
   setText("#ballet-booking-fast-status", statusState.label);
   if (statusNode) statusNode.dataset.state = statusState.tone;
+  setText("#ballet-booking-workspace-status", statusState.label);
+  if (workspaceStatusNode) workspaceStatusNode.dataset.state = statusState.tone;
   setText(
     "#ballet-booking-fast-next",
     formatBalletSessionTimestamp(balletBookingFastData?.nextRunAt),
@@ -2636,31 +2670,43 @@ function renderBalletBookingFast() {
   const targets = Array.isArray(balletBookingFastData?.targets)
     ? balletBookingFastData.targets
     : [];
-  setText("#ballet-booking-target-count", `${targets.length} 节`);
+  setText("#ballet-booking-target-count", targets.length);
   const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
     ? balletBookingFastData.lastRun.records
     : [];
-  const resultsByKey = new Map(lastRecords.map((record) => [record.key, record]));
   const targetNodes = targets.map((target) =>
     createBalletBookingFastTarget(target, null),
   );
-  const resultNodes = targets
-    .filter((target) => resultsByKey.has(target.key))
-    .map((target) =>
-      createBalletBookingFastTarget(target, resultsByKey.get(target.key)),
-    );
+  const resultNodes = lastRecords.map((record) =>
+    createBalletBookingFastTarget(record, record),
+  );
   const targetContainer = qs("#ballet-booking-fast-targets");
   const resultContainer = qs("#ballet-booking-fast-results");
   if (targetContainer) {
-    targetContainer.replaceChildren(...targetNodes);
-    targetContainer.hidden = !targetNodes.length;
+    targetContainer.replaceChildren(
+      ...(targetNodes.length ? targetNodes : [createBalletBookingEmpty("暂无代抢课程")]),
+    );
   }
   if (resultContainer) {
-    resultContainer.replaceChildren(...resultNodes);
-    resultContainer.hidden = !resultNodes.length;
+    resultContainer.replaceChildren(
+      ...(resultNodes.length ? resultNodes : [createBalletBookingEmpty("暂无上次抢课结果")]),
+    );
   }
   const upcomingCount = getBalletFutureClasses().length;
-  setText("#ballet-course-plan-count", `${upcomingCount + targets.length} 节`);
+  const grabbedCount = Math.max(
+    0,
+    Math.floor(balletNumber(balletBookingFastData?.totalBooked)),
+  );
+  const averageMilliseconds = getBalletBookingAverage(lastRecords);
+  setText("#ballet-booking-result-count", resultNodes.length);
+  setText("#ballet-booking-grabbed", `${grabbedCount} 节`);
+  setText("#ballet-booking-reserved", `${upcomingCount} 节`);
+  setText(
+    "#ballet-booking-average",
+    Number.isFinite(averageMilliseconds) ? `${averageMilliseconds} ms` : "-- ms",
+  );
+  setText("#ballet-course-plan-count", `${upcomingCount} 约 · ${targets.length} 抢`);
+  renderBalletBookingTabs();
 }
 
 function balletRecordDate(item = {}) {
@@ -5563,6 +5609,13 @@ qsa("[data-ballet-period]").forEach((button) => {
   button.addEventListener("click", () => {
     activeBalletPeriod = button.dataset.balletPeriod || "month";
     renderBalletTraining();
+  });
+});
+
+qsa("[data-ballet-booking-tab]").forEach((button) => {
+  button.addEventListener("click", () => {
+    activeBalletBookingTab = button.dataset.balletBookingTab || "targets";
+    renderBalletBookingTabs();
   });
 });
 

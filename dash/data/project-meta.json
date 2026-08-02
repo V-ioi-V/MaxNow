@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 14:59",
-  "version": "1.0.8.08",
-  "versionLabel": "v1.0.8.08",
-  "branch": "feature/booking-fast-pipeline",
-  "commit": "3f97fa7",
+  "updatedAt": "2026-08-02 15:12",
+  "version": "1.0.8.09",
+  "versionLabel": "v1.0.8.09",
+  "branch": "feature/ballet-booking-tabs",
+  "commit": "8970d04",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/booking-fast-pipeline · commit 3f97fa7 · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-tabs · commit 8970d04 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "课程计划拆分预约与抢课工作区",
+      "summary": "芭蕾“课程计划”改为左侧“课程预约”、右侧“抢课”：右侧通过“代抢 / 上次抢课结果”两个 Tab 互斥展示目标和最近一次执行结果，不再同时纵向铺开两组列表；上次结果直接使用执行时保存的课程日期，避免周目标滚动后错配新日期。"
+    },
     {
       "date": "2026-08-02",
       "title": "自动抢课改为课程优先并压缩关键路径",
@@ -28,11 +33,6 @@
       "date": "2026-08-01",
       "title": "本周训练时长改为仅统计已完成课程",
       "summary": "本周训练右下“训练时长”不再把已预约课程计入主数字，只显示本周已完成课程的累计小时；副说明同步从“已确定 N 节”改为“已完成 N 节”。已预约与候补时长仍保留在各自指标卡，课程类型和已上完占比口径不变。脚本缓存提升到 `app.js?v=177`，版本提升到 `1.0.8.05`。"
-    },
-    {
-      "date": "2026-08-01",
-      "title": "固定训练记录三档图表粒度",
-      "summary": "“本月”从每日折线改为周一至周日排布的月度热力图，按节数 / 时间切换色阶与格内数值；最近成功同步之后的日期使用斜纹虚线状态，不伪装成 0。"
     }
   ]
 }
