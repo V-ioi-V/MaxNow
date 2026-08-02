@@ -398,7 +398,8 @@ def check_ballet_booking_fast():
         "alias /var/lib/maxnow-ballet-booking-fast-public/ballet-booking-fast.json;",
         'const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json"',
         "function renderBalletBookingFast()",
-        "function getBalletBookingAverage(records = [])",
+        "function getBalletBookingTiming(lastRun = {})",
+        "function formatBalletBookingDuration(milliseconds)",
         "function renderBalletBookingTabs()",
         'id="ballet-booking-fast-next"',
         "cloud-ballet-fast-card",
@@ -407,9 +408,11 @@ def check_ballet_booking_fast():
         'id="ballet-booking-grabbed"',
         'id="ballet-booking-reserved"',
         'id="ballet-booking-average"',
+        'id="ballet-booking-average-detail"',
         'data-ballet-booking-tab="targets"',
         'data-ballet-booking-tab="results"',
         ".ballet-booking-summary {",
+        "grid-template-columns: repeat(3, minmax(0, 1fr));",
         ".ballet-booking-tabs {",
         'ready_waitlist: "可排队"',
         "allowWaitlist=true",
@@ -1644,9 +1647,9 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     if (
-        "styles.css?v=220" not in dashboard_html
+        "styles.css?v=221" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=180" not in dashboard_html
+        or "app.js?v=181" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1864,7 +1867,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=180" not in dashboard_html:
+    if "app.js?v=181" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

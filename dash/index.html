@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=220" />
+    <link rel="stylesheet" href="./styles.css?v=221" />
   </head>
   <body>
     <div class="app-shell">
@@ -779,16 +779,19 @@
                 </header>
                 <div class="ballet-booking-summary" aria-label="抢课摘要">
                   <article class="ballet-booking-summary-card" data-tone="green">
-                    <span>抢课成果</span>
-                    <div class="ballet-booking-summary-counts">
-                      <strong><span id="ballet-booking-grabbed">0 节</span><small>已抢到</small></strong>
-                      <strong><span id="ballet-booking-reserved">0 节</span><small>已预约</small></strong>
-                    </div>
+                    <span>累计抢到</span>
+                    <strong id="ballet-booking-grabbed">0 节</strong>
+                    <small>自动预约成功</small>
+                  </article>
+                  <article class="ballet-booking-summary-card" data-tone="ballet">
+                    <span>当前已预约</span>
+                    <strong id="ballet-booking-reserved">0 节</strong>
+                    <small>未来预约与候补</small>
                   </article>
                   <article class="ballet-booking-summary-card" data-tone="cyan">
-                    <span>平均抢课时间</span>
-                    <strong id="ballet-booking-average">-- ms</strong>
-                    <small>按上次执行的有效目标计算</small>
+                    <span>上次抢课耗时</span>
+                    <strong id="ballet-booking-average">--</strong>
+                    <small id="ballet-booking-average-detail">暂无有效执行耗时</small>
                   </article>
                 </div>
                 <div class="ballet-booking-tabs" role="tablist" aria-label="抢课内容">
@@ -1273,6 +1276,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=180"></script>
+    <script src="./app.js?v=181"></script>
   </body>
 </html>

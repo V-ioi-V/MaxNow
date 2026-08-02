@@ -4592,7 +4592,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-booking-summary {
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 12px;
 }
@@ -4615,6 +4615,11 @@ body[data-view="ricky"] .topbar-ricky-status {
   --card-border: var(--green-border);
 }
 
+.ballet-booking-summary-card[data-tone="ballet"] {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+}
+
 .ballet-booking-summary-card[data-tone="cyan"] {
   --card-color: var(--cyan);
   --card-border: var(--cyan-border);
@@ -4631,32 +4636,6 @@ body[data-view="ricky"] .topbar-ricky-status {
   color: var(--card-color);
   font-size: 22px;
   font-variant-numeric: tabular-nums;
-}
-
-.ballet-booking-summary-counts {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.ballet-booking-summary-counts strong {
-  min-width: 0;
-  display: grid;
-  gap: 2px;
-  color: var(--card-color);
-  font-size: 18px;
-  font-variant-numeric: tabular-nums;
-}
-
-.ballet-booking-summary-counts strong > span {
-  color: inherit;
-}
-
-.ballet-booking-summary-counts small {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 750;
 }
 
 .ballet-booking-tabs {
@@ -6948,7 +6927,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   --card-border: var(--ballet-border);
   min-width: 0;
   display: grid;
-  grid-template-columns: minmax(210px, 0.5fr) minmax(160px, 1fr) auto;
+  grid-template-columns: minmax(210px, 31%) minmax(160px, 1fr) minmax(132px, max-content);
   align-items: center;
   gap: 12px;
   border: 1px solid var(--line);
@@ -6967,7 +6946,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-booking-fast-target > div {
   min-width: 0;
   display: grid;
+  justify-self: stretch;
   gap: 3px;
+  text-align: left;
 }
 
 .ballet-booking-fast-target strong,
@@ -7934,7 +7915,17 @@ body[data-view="ricky"] .topbar-ricky-status {
   }
 
   .ballet-booking-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .ballet-booking-summary-card {
+    gap: 6px;
+    padding: 9px 8px;
+  }
+
+  .ballet-booking-summary-card > strong {
+    font-size: 18px;
   }
 
   .ballet-booking-tab {

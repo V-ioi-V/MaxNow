@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 15:29",
-  "version": "1.0.8.10",
-  "versionLabel": "v1.0.8.10",
-  "branch": "bugfix/ballet-heatmap-compact",
-  "commit": "28d21cf",
+  "updatedAt": "2026-08-02 15:44",
+  "version": "1.0.8.11",
+  "versionLabel": "v1.0.8.11",
+  "branch": "feature/ballet-booking-metrics-tabs",
+  "commit": "8dfec58",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-heatmap-compact · commit 28d21cf · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-metrics-tabs · commit 8dfec58 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "抢课摘要改为三等分并校准耗时口径",
+      "summary": "抢课区顶部拆为“累计抢到 / 当前已预约 / 上次抢课耗时”三张等宽摘要卡，桌面与手机端都保持三等分；最后一张显示上次关键路径总耗时，`66,107 ms` 改为易读的 `66.1 s`，副说明保留有效目标数和逐目标平均耗时，不再只显示容易误解的 `13,221 ms` 平均值。"
+    },
     {
       "date": "2026-08-02",
       "title": "收紧本月训练热力图",
@@ -28,11 +33,6 @@
       "date": "2026-08-02",
       "title": "自动抢课不再限制老师",
       "summary": "周日自动抢课的五项目标改为按日期、课型 / 等级、起止时间和大教室唯一匹配；老师不再参与课程匹配或同周 occurrence 幂等键，临时代课不会阻止预约或候补。其他字段仍需唯一命中，避免扩大到相邻时段、其他课型或小教室。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "今年训练曲线隐藏未来月份",
-      "summary": "“今年”按月曲线只展示 1 月至浏览器当前月；当前为 8 月时不再绘制 9–12 月，也不把未来月份表达成 0。已经过去但没有训练记录的月份继续补 0，“全部”仍只按实际有记录的年份汇总。脚本缓存提升到 `app.js?v=178`，版本提升到 `1.0.8.06`。"
     }
   ]
 }

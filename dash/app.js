@@ -2617,14 +2617,32 @@ function createBalletBookingEmpty(message) {
   return paragraph;
 }
 
-function getBalletBookingAverage(records = []) {
+function getBalletBookingTiming(lastRun = {}) {
+  const records = Array.isArray(lastRun?.records) ? lastRun.records : [];
   const durations = records
     .map((record) => Number(record?.elapsedMilliseconds))
     .filter((duration) => Number.isFinite(duration) && duration > 0);
-  if (!durations.length) return null;
-  return Math.round(
-    durations.reduce((total, duration) => total + duration, 0) / durations.length,
-  );
+  const summedMilliseconds = durations.reduce((total, duration) => total + duration, 0);
+  const criticalPathMilliseconds = Number(lastRun?.criticalPathMilliseconds);
+  const totalMilliseconds = Number.isFinite(criticalPathMilliseconds) && criticalPathMilliseconds > 0
+    ? Math.round(criticalPathMilliseconds)
+    : durations.length
+      ? Math.round(summedMilliseconds)
+      : null;
+  return {
+    totalMilliseconds,
+    averageMilliseconds: durations.length
+      ? Math.round(summedMilliseconds / durations.length)
+      : null,
+    targetCount: durations.length,
+  };
+}
+
+function formatBalletBookingDuration(milliseconds) {
+  const duration = Number(milliseconds);
+  if (!Number.isFinite(duration) || duration <= 0) return "--";
+  if (duration < 1000) return `${Math.round(duration)} ms`;
+  return `${(duration / 1000).toFixed(1)} s`;
 }
 
 function renderBalletBookingTabs() {
@@ -2697,13 +2715,19 @@ function renderBalletBookingFast() {
     0,
     Math.floor(balletNumber(balletBookingFastData?.totalBooked)),
   );
-  const averageMilliseconds = getBalletBookingAverage(lastRecords);
+  const timing = getBalletBookingTiming(balletBookingFastData?.lastRun);
   setText("#ballet-booking-result-count", resultNodes.length);
   setText("#ballet-booking-grabbed", `${grabbedCount} 节`);
   setText("#ballet-booking-reserved", `${upcomingCount} 节`);
   setText(
     "#ballet-booking-average",
-    Number.isFinite(averageMilliseconds) ? `${averageMilliseconds} ms` : "-- ms",
+    formatBalletBookingDuration(timing.totalMilliseconds),
+  );
+  setText(
+    "#ballet-booking-average-detail",
+    timing.targetCount && Number.isFinite(timing.averageMilliseconds)
+      ? `${timing.targetCount} 个目标 · 平均 ${formatBalletBookingDuration(timing.averageMilliseconds)}/节`
+      : "暂无有效执行耗时",
   );
   setText("#ballet-course-plan-count", `${upcomingCount} 约 · ${targets.length} 抢`);
   renderBalletBookingTabs();
