@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=234" />
+    <link rel="stylesheet" href="./styles.css?v=235" />
   </head>
   <body>
     <div class="app-shell">
@@ -629,59 +629,45 @@
             </div>
           </div>
 
-          <section class="ballet-overview-grid" aria-label="本周训练、课程卡、成长等级与课程等级">
+          <section class="ballet-overview-grid" aria-label="训练概览、课程卡、成长等级与课程等级">
             <article class="panel ballet-week-panel" aria-labelledby="ballet-week-title">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">This Week</p>
-                  <h2 id="ballet-week-title">本周训练</h2>
+                  <p class="eyebrow">Training Summary</p>
+                  <h2 id="ballet-week-title">训练概览</h2>
                 </div>
                 <span class="status-pill" id="ballet-week-range">本周</span>
               </header>
               <div class="ballet-week-grid">
                 <section data-tone="green">
-                  <span>已完成</span>
-                  <strong id="ballet-week-completed">0 节</strong>
-                  <small id="ballet-week-completed-time">0 小时</small>
-                </section>
-                <section data-tone="pink">
-                  <span>已预约</span>
-                  <strong id="ballet-week-booked">0 节</strong>
-                  <small id="ballet-week-booked-time">0 小时</small>
-                </section>
-                <section data-tone="orange">
-                  <span>候补</span>
-                  <strong id="ballet-week-waitlist">0 节</strong>
-                  <small id="ballet-week-waitlist-time">0 小时</small>
+                  <span>本周训练次数</span>
+                  <strong id="ballet-week-classes">0 次</strong>
+                  <small>已上完课程</small>
                 </section>
                 <section data-tone="purple">
-                  <span>训练时长</span>
-                  <strong id="ballet-week-training-time">0 小时</strong>
-                  <small id="ballet-week-training-classes">已完成 0 节</small>
+                  <span>本周训练时长</span>
+                  <strong id="ballet-week-hours">0 小时</strong>
+                  <small>截至刷新时间</small>
                 </section>
-                <section class="ballet-week-bottom" data-tone="cyan">
-                  <div class="ballet-week-course-types">
-                    <header>
-                      <div>
-                        <span>Course Type</span>
-                        <strong>课程类型</strong>
-                      </div>
-                      <small class="status-pill" id="ballet-week-course-type-count">0 类</small>
-                    </header>
-                    <div class="ballet-week-type-list" id="ballet-week-course-types"></div>
-                  </div>
-                  <div class="ballet-week-completion">
-                    <span>已上完占比</span>
-                    <div
-                      class="ballet-week-completion-ring"
-                      id="ballet-week-completion-ring"
-                      role="img"
-                      aria-label="本周已上完课程占已确认训练的 0%"
-                    >
-                      <strong id="ballet-week-completion-rate">0%</strong>
-                    </div>
-                    <small id="ballet-week-completion-meta">已上 0 / 0 节</small>
-                  </div>
+                <section data-tone="pink">
+                  <span>本周最喜欢的课</span>
+                  <strong class="ballet-week-favorite" id="ballet-week-favorite">暂无</strong>
+                  <small id="ballet-week-favorite-meta">暂无已上完课程</small>
+                </section>
+                <section data-tone="cyan">
+                  <span>总训练次数</span>
+                  <strong id="ballet-total-classes">0 次</strong>
+                  <small>全部已上完课程</small>
+                </section>
+                <section data-tone="orange">
+                  <span>总训练时长</span>
+                  <strong id="ballet-total-hours">0 小时</strong>
+                  <small>全部已上完课程</small>
+                </section>
+                <section data-tone="blue">
+                  <span>最喜欢的课</span>
+                  <strong class="ballet-week-favorite" id="ballet-total-favorite">暂无</strong>
+                  <small id="ballet-total-favorite-meta">暂无已上完课程</small>
                 </section>
               </div>
             </article>
@@ -1351,6 +1337,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=192"></script>
+    <script src="./app.js?v=193"></script>
   </body>
 </html>

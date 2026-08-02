@@ -651,26 +651,34 @@ def check_ballet_read_model():
         or "pace.sampleSufficient" not in dashboard_js
         or "近 28 天节奏" in dashboard_js
         or 'id="ballet-membership-list"' not in dashboard_html
-        or 'id="ballet-week-completed"' not in dashboard_html
-        or 'id="ballet-week-course-types"' not in dashboard_html
-        or 'id="ballet-week-course-type-count"' not in dashboard_html
-        or 'id="ballet-week-completion-ring"' not in dashboard_html
-        or 'id="ballet-week-training-time"' not in dashboard_html
+        or 'id="ballet-week-classes"' not in dashboard_html
+        or 'id="ballet-week-hours"' not in dashboard_html
+        or 'id="ballet-week-favorite"' not in dashboard_html
+        or 'id="ballet-total-classes"' not in dashboard_html
+        or 'id="ballet-total-hours"' not in dashboard_html
+        or 'id="ballet-total-favorite"' not in dashboard_html
+        or 'id="ballet-week-booked"' in dashboard_html
+        or 'id="ballet-week-waitlist"' in dashboard_html
+        or 'id="ballet-week-completion-ring"' in dashboard_html
         or "最喜欢的老师" in dashboard_html
-        or "function getBalletWeekConfirmedRecords(week = {})" not in dashboard_js
-        or "function getBalletWeekCourseTypes(week = {})" not in dashboard_js
-        or "function renderBalletWeekCourseTypes(week = {})" not in dashboard_js
-        or "function getBalletWeekCompletionState(week = {})" not in dashboard_js
+        or "function balletTrainingCompletedAt(record = {})" not in dashboard_js
+        or "function getBalletCompletedTrainingRecords()" not in dashboard_js
+        or "function getBalletFavoriteCourse(records = [])" not in dashboard_js
+        or "function summarizeBalletTraining(records = [])" not in dashboard_js
+        or "function setBalletFavoriteCourse(valueSelector, metaSelector, favorite)" not in dashboard_js
+        or 'balletData.dataAsOf || balletData.sync?.lastSuccessAt || ""' not in dashboard_js
+        or '["attended", "completed", "已上完", "已完成"].includes(status)' not in dashboard_js
+        or "completedAt <= cutoff" not in dashboard_js
         or "date >= start && date <= end" not in dashboard_js
-        or 'String(record.bookingStatus || "").trim().toLowerCase() === "booked"' not in dashboard_js
         or "right.classes - left.classes" not in dashboard_js
-        or "const completedTrainingMinutes = Math.max(0, balletNumber(week.completedMinutes));" not in dashboard_js
-        or "`${formatBalletHours(completedTrainingMinutes)} 小时`" not in dashboard_js
-        or "`已完成 ${completedTrainingClasses} 节`" not in dashboard_js
-        or "completedClasses / confirmedClasses" not in dashboard_js
-        or ".ballet-week-completion-ring {" not in dashboard_css
-        or ".ballet-week-grid .ballet-week-bottom {" not in dashboard_css
-        or ".ballet-week-type-track {" not in dashboard_css
+        or "right.latestCompletedAt - left.latestCompletedAt" not in dashboard_js
+        or 'setText("#ballet-week-classes", `${weekSummary.classes} 次`);' not in dashboard_js
+        or 'setText("#ballet-total-hours", `${formatBalletHours(totalSummary.minutes)} 小时`);' not in dashboard_js
+        or ".ballet-week-grid .ballet-week-favorite {" not in dashboard_css
+        or "grid-template-rows: repeat(3, minmax(84px, 1fr));" not in dashboard_css
+        or "grid-auto-flow: column;" not in dashboard_css
+        or ".ballet-week-completion-ring {" in dashboard_css
+        or ".ballet-week-grid .ballet-week-bottom {" in dashboard_css
         or ".ballet-membership-card {" not in dashboard_css
         or "function createBalletCalendarIcon(" not in dashboard_js
         or "function balletMembershipDisplayName(" not in dashboard_js
@@ -1760,9 +1768,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=234" not in dashboard_html
+        "styles.css?v=235" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=192" not in dashboard_html
+        or "app.js?v=193" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -1980,7 +1988,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=192" not in dashboard_html:
+    if "app.js?v=193" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

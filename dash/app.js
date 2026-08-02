@@ -3810,109 +3810,63 @@ function renderBalletMembership() {
   container.append(...cards.map((card) => createBalletMembershipItem(card, cards.length)));
 }
 
-function getBalletWeekCompletedRecords(week = {}, records = getBalletGrowthRecords()) {
-  const start = String(week.weekStart || "");
-  const end = String(week.weekEnd || "");
-  if (!start || !end) return [];
-  return records.filter((record) => {
-    const date = balletRecordDate(record);
-    return date >= start && date <= end;
-  });
+function balletTrainingCompletedAt(record = {}) {
+  const date = balletRecordDate(record);
+  const endTime = String(record.endTime || "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(endTime)) {
+    return Number.NaN;
+  }
+  return Date.parse(`${date}T${endTime}:00+08:00`);
 }
 
-function getBalletWeekConfirmedRecords(week = {}) {
-  const start = String(week.weekStart || "");
-  const end = String(week.weekEnd || "");
-  const upcomingRecords = Array.isArray(balletData.upcoming?.records)
-    ? balletData.upcoming.records
-    : [];
-  const completedRecords = getBalletWeekCompletedRecords(week);
-  const bookedRecords = upcomingRecords.filter((record) => {
-    const date = balletRecordDate(record);
+function getBalletCompletedTrainingRecords() {
+  const cutoff = Date.parse(String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || ""));
+  if (!Number.isFinite(cutoff)) return [];
+  return (Array.isArray(balletData.records) ? balletData.records : []).filter((record) => {
+    const status = String(record.attendanceStatus || record.status || "").trim().toLowerCase();
+    const completedAt = balletTrainingCompletedAt(record);
     return (
-      date >= start
-      && date <= end
-      && String(record.bookingStatus || "").trim().toLowerCase() === "booked"
+      ["attended", "completed", "已上完", "已完成"].includes(status)
+      && Number.isFinite(completedAt)
+      && completedAt <= cutoff
     );
   });
-  const seen = new Set();
-  return [...completedRecords, ...bookedRecords].filter((record) => {
-    const key = [
-      balletRecordDate(record),
-      record.startTime,
-      record.endTime,
-      record.courseName,
-      balletTeacher(record),
-      record.venue,
-    ].map((value) => String(value || "").trim()).join("|");
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
 }
 
-function getBalletWeekCourseTypes(week = {}) {
-  const types = new Map();
-  getBalletWeekConfirmedRecords(week).forEach((record) => {
-    const key = String(record.courseType || "other").trim().toLowerCase() || "other";
-    const current = types.get(key) || {
-      key,
-      label: BALLET_COURSE_TYPE_LABELS[key] || String(record.courseType || "其他"),
-      classes: 0,
-    };
+function getBalletFavoriteCourse(records = []) {
+  const courses = new Map();
+  records.forEach((record) => {
+    const label = balletCourseName(record);
+    if (!label) return;
+    const key = label.replace(/\s+/g, " ").trim().toLocaleLowerCase("zh-CN");
+    const completedAt = balletTrainingCompletedAt(record);
+    const current = courses.get(key) || { label, classes: 0, latestCompletedAt: 0 };
     current.classes += 1;
-    types.set(key, current);
+    if (completedAt >= current.latestCompletedAt) {
+      current.label = label;
+      current.latestCompletedAt = completedAt;
+    }
+    courses.set(key, current);
   });
-  return [...types.values()].sort(
+  return [...courses.values()].sort(
     (left, right) =>
       right.classes - left.classes
+      || right.latestCompletedAt - left.latestCompletedAt
       || left.label.localeCompare(right.label, "zh-CN"),
-  );
+  )[0] || null;
 }
 
-function renderBalletWeekCourseTypes(week = {}) {
-  const container = qs("#ballet-week-course-types");
-  if (!container) return;
-  const items = getBalletWeekCourseTypes(week);
-  setText("#ballet-week-course-type-count", `${items.length} 类`);
-  container.replaceChildren();
-  if (!items.length) {
-    const empty = document.createElement("p");
-    empty.className = "ballet-week-type-empty";
-    empty.textContent = "本周暂无已确定课程";
-    container.appendChild(empty);
-    return;
-  }
-  const maxClasses = Math.max(...items.map((item) => item.classes), 1);
-  container.append(...items.map((item) => {
-    const article = document.createElement("article");
-    article.className = "ballet-week-type-item";
-    const head = document.createElement("div");
-    const label = document.createElement("strong");
-    const value = document.createElement("span");
-    label.textContent = item.label;
-    value.textContent = `${item.classes} 节`;
-    head.append(label, value);
-    const track = document.createElement("div");
-    track.className = "ballet-week-type-track";
-    const fill = document.createElement("span");
-    fill.style.width = `${Math.max(4, (item.classes / maxClasses) * 100)}%`;
-    track.appendChild(fill);
-    article.append(head, track);
-    return article;
-  }));
-}
-
-function getBalletWeekCompletionState(week = {}) {
-  const completedClasses = Math.max(0, balletNumber(week.completedClasses));
-  const confirmedClasses = completedClasses + Math.max(0, balletNumber(week.bookedClasses));
+function summarizeBalletTraining(records = []) {
   return {
-    completedClasses,
-    confirmedClasses,
-    completionRate: confirmedClasses
-      ? Math.min(100, Math.round((completedClasses / confirmedClasses) * 100))
-      : 0,
+    classes: records.length,
+    minutes: records.reduce((total, record) => total + (balletMinutes(record) || 0), 0),
+    favorite: getBalletFavoriteCourse(records),
   };
+}
+
+function setBalletFavoriteCourse(valueSelector, metaSelector, favorite) {
+  setText(valueSelector, favorite?.label || "暂无");
+  setText(metaSelector, favorite ? `已上 ${favorite.classes} 次` : "暂无已上完课程");
 }
 
 function renderBalletWeek() {
@@ -3923,42 +3877,28 @@ function renderBalletWeek() {
     "#ballet-week-range",
     start && end ? `${Number(start.slice(5, 7))}/${Number(start.slice(8, 10))}–${Number(end.slice(5, 7))}/${Number(end.slice(8, 10))}` : "本周",
   );
-  setText("#ballet-week-completed", `${balletNumber(week.completedClasses)} 节`);
-  setText("#ballet-week-completed-time", `${formatBalletHours(week.completedMinutes)} 小时`);
-  setText("#ballet-week-booked", `${balletNumber(week.bookedClasses)} 节`);
-  setText("#ballet-week-booked-time", `${formatBalletHours(week.bookedMinutes)} 小时`);
-  setText("#ballet-week-waitlist", `${balletNumber(week.waitlistClasses)} 节`);
-  setText("#ballet-week-waitlist-time", `${formatBalletHours(week.waitlistMinutes)} 小时`);
-  const completedTrainingClasses = Math.max(0, balletNumber(week.completedClasses));
-  const completedTrainingMinutes = Math.max(0, balletNumber(week.completedMinutes));
-  setText(
-    "#ballet-week-training-time",
-    `${formatBalletHours(completedTrainingMinutes)} 小时`,
+  const completedRecords = getBalletCompletedTrainingRecords();
+  const weekRecords = start && end
+    ? completedRecords.filter((record) => {
+        const date = balletRecordDate(record);
+        return date >= start && date <= end;
+      })
+    : [];
+  const weekSummary = summarizeBalletTraining(weekRecords);
+  const totalSummary = summarizeBalletTraining(completedRecords);
+  setText("#ballet-week-classes", `${weekSummary.classes} 次`);
+  setText("#ballet-week-hours", `${formatBalletHours(weekSummary.minutes)} 小时`);
+  setBalletFavoriteCourse(
+    "#ballet-week-favorite",
+    "#ballet-week-favorite-meta",
+    weekSummary.favorite,
   );
-  setText(
-    "#ballet-week-training-classes",
-    `已完成 ${completedTrainingClasses} 节`,
-  );
-  renderBalletWeekCourseTypes(week);
-  const {
-    completedClasses,
-    confirmedClasses: completionConfirmedClasses,
-    completionRate,
-  } = getBalletWeekCompletionState(week);
-  const completionRing = qs("#ballet-week-completion-ring");
-  if (completionRing) {
-    completionRing.style.setProperty("--ballet-week-completion", `${completionRate}%`);
-    completionRing.setAttribute(
-      "aria-label",
-      `本周已上完课程占已确认训练的 ${completionRate}%`,
-    );
-  }
-  setText("#ballet-week-completion-rate", `${completionRate}%`);
-  setText(
-    "#ballet-week-completion-meta",
-    completionConfirmedClasses
-      ? `已上 ${completedClasses} / ${completionConfirmedClasses} 节`
-      : "暂无已确认训练",
+  setText("#ballet-total-classes", `${totalSummary.classes} 次`);
+  setText("#ballet-total-hours", `${formatBalletHours(totalSummary.minutes)} 小时`);
+  setBalletFavoriteCourse(
+    "#ballet-total-favorite",
+    "#ballet-total-favorite-meta",
+    totalSummary.favorite,
   );
 }
 
