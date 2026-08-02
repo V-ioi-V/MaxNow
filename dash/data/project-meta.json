@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 14:50",
+  "updatedAt": "2026-08-02 14:59",
   "version": "1.0.8.08",
   "versionLabel": "v1.0.8.08",
   "branch": "feature/booking-fast-pipeline",
-  "commit": "f36425d",
+  "commit": "3f97fa7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/booking-fast-pipeline · commit f36425d · 有未提交代码改动",
+  "deployNote": "feature/booking-fast-pipeline · commit 3f97fa7 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",
