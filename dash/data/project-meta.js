@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 17:01",
+  "updatedAt": "2026-08-02 17:04",
   "version": "1.0.8.16",
   "versionLabel": "v1.0.8.16",
   "branch": "bugfix/ballet-timetable-time-visible",
-  "commit": "5f38858",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-timetable-time-visible · commit 5f38858 · 干净",
+  "commit": "406f766",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-timetable-time-visible · commit 406f766 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-02",

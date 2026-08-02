@@ -2018,3 +2018,16 @@ local visual verification: 1280px 视口下抢课卡可用宽度约 425px，两�
 server verification: 17 项自动抢课测试、20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上新双列表结构存在、旧 Tab 状态与事件逻辑不存在，权威脱敏状态保留 totalBooked=4 / totalWaitlisted=1 / 5 records / criticalPathMilliseconds=66107；未登录 Dash / 登录页 / 自动抢课状态 / styles.css?v=224 / app.js?v=185 / Blog 为 302 / 200 / 401 / 200 / 302 / 200；nginx 与 maxnow-auth active，课程同步与自动抢课 service inactive，自动抢课 timer active、下次 2026-08-09 14:19:35
 safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-02 已部署课表紧凑卡完整时间修复：
+
+```text
+deployed commit: 406f766 fix: keep timetable times visible
+version: 1.0.8.16
+changes: 60 分钟课程起止时间改为不可收缩事实并禁止省略号；宽桌面完整时间与状态同排，1101px–1500px 窄卡把状态放到完整时间下一行，老师姓名继续保留，人数 / 排队仍为优先压缩项
+asset cache: styles.css?v=225；app.js?v=186
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260802-170334-timetable-time-visible/dash-data.tgz
+local visual verification: 1280px 下 23 张 60 分钟紧凑卡全部得到完整 HH:MM–HH:MM 时间；最窄卡约 57px，时间与状态均在卡片边界内，老师缺失 0 条，卡片与整页横向溢出均为 0；已预约软开明确显示 19:00–20:00
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上时间标记与 text-overflow: clip 规则存在，macOS 用量 17:00 自动更新同时保留；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=225 / app.js?v=186 / Blog 为 302 / 200 / 401 / 200 / 302 / 200；nginx 与 maxnow-auth active，课程同步与自动抢课 service inactive，自动抢课 timer active、下次 2026-08-09 14:19:35
+safety: 仅部署静态页面、样式、脱敏展示逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
+```
