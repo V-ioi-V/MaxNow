@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-02 20:13",
-  "version": "1.0.8.25",
-  "versionLabel": "v1.0.8.25",
-  "branch": "feature/ballet-week-digits",
-  "commit": "db538cf",
+  "updatedAt": "2026-08-02 20:51",
+  "version": "1.0.8.26",
+  "versionLabel": "v1.0.8.26",
+  "branch": "bugfix/ballet-cover-status",
+  "commit": "4b0c3e7",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-week-digits · commit db538cf · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-cover-status · commit 4b0c3e7 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-02",
+      "title": "调整芭蕾周记录入口并加快首次出图",
+      "summary": "`week N` 入口从标题左侧移到“已同步”右侧，字号、字重、高度和色彩直接继承顶部状态胶囊，避免与相邻标题割裂。"
+    },
     {
       "date": "2026-08-02",
       "title": "完成芭蕾周记录封面",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "训练趋势卡与历史卡统一样式",
       "summary": "“8 月上课节数热力图”标题移入左侧卡片内，并增加 `Training trend` 眉题；左侧趋势卡与右侧上课历史卡同顶同底、共用边框和背景。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "代抢改为普通内容标题",
-      "summary": "“代抢 / 上次抢课结果”继续双栏并列，但移除居中粉色胶囊式伪 Tab；改用与“抢课”一致的英文眉题、左对齐中文标题和右侧节数状态。"
     }
   ]
 };

@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=233" />
+    <link rel="stylesheet" href="./styles.css?v=234" />
   </head>
   <body>
     <div class="app-shell">
@@ -88,21 +88,21 @@
       <main class="workspace">
         <header class="topbar" aria-label="Site status">
           <div class="topbar-heading">
-            <button
-              class="ballet-week-trigger"
-              id="ballet-week-trigger"
-              type="button"
-              aria-haspopup="dialog"
-              aria-controls="ballet-week-dialog"
-              aria-label="打开本周芭蕾周记录封面"
-            >
-              <span>week</span>
-              <strong id="ballet-week-trigger-number">2</strong>
-            </button>
             <strong id="view-title">&#20170;&#22825;</strong>
             <div class="topbar-data-status topbar-ballet-status" aria-label="芭蕾数据状态">
               <time class="topbar-update-time" id="ballet-updated" aria-live="polite">尚未更新</time>
               <span class="status-pill" id="ballet-connection-status" aria-live="polite">等待连接</span>
+              <button
+                class="ballet-week-trigger"
+                id="ballet-week-trigger"
+                type="button"
+                aria-haspopup="dialog"
+                aria-controls="ballet-week-dialog"
+                aria-label="打开本周芭蕾周记录封面"
+              >
+                <span>week</span>
+                <strong id="ballet-week-trigger-number">2</strong>
+              </button>
             </div>
             <div class="topbar-data-status topbar-token-status" aria-label="Token 数据状态">
               <time class="topbar-update-time" id="token-updated" aria-live="polite">尚未更新</time>
@@ -1351,6 +1351,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=191"></script>
+    <script src="./app.js?v=192"></script>
   </body>
 </html>

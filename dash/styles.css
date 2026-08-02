@@ -776,27 +776,27 @@ body[data-view="tokens"] .topbar-token-ranges {
 
 .ballet-week-trigger {
   display: none;
-  min-height: 34px;
-  align-items: baseline;
-  gap: 5px;
-  border: 1px solid color-mix(in srgb, var(--ballet) 28%, #ffffff);
+  min-height: 30px;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid color-mix(in srgb, var(--status-accent) 26%, #dbe7f4);
   border-radius: 999px;
-  padding: 4px 12px 5px;
-  background: linear-gradient(145deg, #fff8fa, #fdebf1);
-  box-shadow: 0 6px 16px rgba(169, 62, 103, 0.09);
-  color: var(--ballet-deep, #8f284f);
+  padding: 0 11px;
+  background: color-mix(in srgb, var(--status-accent) 8%, #ffffff);
+  color: var(--status-accent);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  font-weight: 700;
+  line-height: 1;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .ballet-week-trigger strong {
   display: inline;
   margin: 0;
   color: inherit;
-  font-size: 17px;
-  line-height: 1;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
 }
 
 body[data-view="ballet"] .ballet-week-trigger {
@@ -805,7 +805,8 @@ body[data-view="ballet"] .ballet-week-trigger {
 
 .ballet-week-trigger:hover {
   border-color: color-mix(in srgb, var(--ballet) 48%, #ffffff);
-  box-shadow: 0 8px 20px rgba(169, 62, 103, 0.14);
+  background: color-mix(in srgb, var(--ballet) 13%, #ffffff);
+  box-shadow: 0 6px 14px rgba(169, 62, 103, 0.12);
   transform: translateY(-1px);
 }
 

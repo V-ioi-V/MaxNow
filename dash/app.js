@@ -169,6 +169,8 @@ let lifeDataPromise = null;
 let leafletPromise = null;
 let balletWeekConfigPromise = null;
 let balletWeekCoverCache = null;
+let balletWeekCoverPromise = null;
+let balletWeekWarmupHandle = 0;
 const browserDataHealth = new Map();
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
@@ -281,7 +283,7 @@ function setBalletWeekActionsDisabled(disabled) {
   });
 }
 
-async function renderBalletWeekCover() {
+async function buildBalletWeekCover() {
   const canvas = qs("#ballet-week-canvas");
   const status = qs("#ballet-week-status");
   if (!canvas) return null;
@@ -289,7 +291,7 @@ async function renderBalletWeekCover() {
   if (status) status.textContent = "正在拼合本周封面…";
 
   try {
-    const config = await loadBalletWeekConfig({ force: true });
+    const config = await loadBalletWeekConfig();
     const info = updateBalletWeekTrigger(config);
     const cacheKey = `${config.templateVersion}:${info.week}`;
     if (balletWeekCoverCache?.key === cacheKey) {
@@ -334,6 +336,7 @@ async function renderBalletWeekCover() {
       x += widths[index] + gap;
     });
 
+    await new Promise((resolve) => requestAnimationFrame(resolve));
     const blob = await canvasToPngBlob(canvas);
     balletWeekCoverCache = {
       key: cacheKey,
@@ -350,6 +353,29 @@ async function renderBalletWeekCover() {
     setBalletWeekActionsDisabled(false);
     return null;
   }
+}
+
+function renderBalletWeekCover() {
+  if (balletWeekCoverPromise) return balletWeekCoverPromise;
+  balletWeekCoverPromise = buildBalletWeekCover().finally(() => {
+    balletWeekCoverPromise = null;
+  });
+  return balletWeekCoverPromise;
+}
+
+function warmBalletWeekCover() {
+  balletWeekWarmupHandle = 0;
+  if (balletWeekCoverCache || balletWeekCoverPromise) return;
+  renderBalletWeekCover();
+}
+
+function scheduleBalletWeekCoverWarmup() {
+  if (balletWeekCoverCache || balletWeekCoverPromise || balletWeekWarmupHandle) return;
+  if ("requestIdleCallback" in window) {
+    balletWeekWarmupHandle = window.requestIdleCallback(warmBalletWeekCover, { timeout: 1200 });
+    return;
+  }
+  balletWeekWarmupHandle = window.setTimeout(warmBalletWeekCover, 120);
 }
 
 const weatherIcons = {
@@ -5484,7 +5510,10 @@ function setView(view) {
   }
   if (nextView === "home" || nextView === "cloud") requestAnimationFrame(renderHome);
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
-  if (nextView === "ballet") requestAnimationFrame(renderBallet);
+  if (nextView === "ballet") {
+    requestAnimationFrame(renderBallet);
+    scheduleBalletWeekCoverWarmup();
+  }
   if (nextView === "ricky") requestAnimationFrame(renderRicky);
   if (nextView === "life") requestAnimationFrame(renderLife);
   if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));
@@ -5925,6 +5954,9 @@ qs("#ballet-week-trigger")?.addEventListener("click", () => {
   else balletWeekDialog.setAttribute("open", "");
   renderBalletWeekCover();
 });
+
+qs("#ballet-week-trigger")?.addEventListener("pointerenter", scheduleBalletWeekCoverWarmup);
+qs("#ballet-week-trigger")?.addEventListener("focus", scheduleBalletWeekCoverWarmup);
 
 qs("#ballet-week-close")?.addEventListener("click", () => {
   if (!balletWeekDialog) return;
