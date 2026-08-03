@@ -469,6 +469,10 @@ function drawBalletBriefText(context, value, x, y, maxWidth, fontSize, minFontSi
     if (context.measureText(text).width <= maxWidth) break;
     size -= 2;
   }
+  context.lineJoin = "round";
+  context.lineWidth = Math.max(1, size * 0.018);
+  context.strokeStyle = context.fillStyle;
+  context.strokeText(text, x, y, maxWidth);
   context.fillText(text, x, y, maxWidth);
 }
 
