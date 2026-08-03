@@ -2178,3 +2178,18 @@ local visual verification: 1280×900 与 390×844 下双页画布等宽等高、
 server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上底图为 1280×1710，字体与 OFL 文件存在；未登录 Dash / 登录页 / 芭蕾数据 / 周简报底图 / 字体 / 模板配置为 302 / 200 / 401 / 200 / 200 / 200；三个 timer 均 active，课程同步、完整同步和自动抢课 service 均 inactive
 safety: 仅部署静态页面、图片 / 字体素材、浏览器端脱敏统计和 rolling timer 的周日 20:00 只读触发；未访问闻道、未运行同步、未启动自动抢课，也未提交预约、候补、取消或转课
 ```
+
+2026-08-03 已部署芭蕾周记录首次加载修复：
+
+```text
+deployed source head: 890861a（功能提交 484673a fix: unblock ballet weekly images）
+version: 1.0.9.01
+changes: 两张运行时底图改为 120642 / 181852 bytes WebP，周简报动态字改为 30568 bytes 同款 Ma Shan Zheng WOFF2 子集；进入页面只空闲预生成封面，切换到周简报后才加载第二张图，图片加载增加 20 秒超时
+asset cache: styles.css?v=237；app.js?v=195；template-v1.webp；brief-template-v1.webp；MaShanZheng-Weekly.woff2
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260803-221750-ballet-week-image-load/dash-data.tgz
+runtime data stash: a4b6d2cff0090bea15fa04431223f6b561027778（部署后保留；服务器权威 dash/data 已从备份恢复，project-meta.* / project-status.* / token-usage.* 按新版本重新生成）
+deployment path: origin/main 先合并同期 Windows / macOS Codex 用量提交，再通过校验过的 Git bundle 将服务器 main 从 be75a88 快进到 890861a；未覆盖或刷新芭蕾课程数据
+local visual verification: 1280px 下 week 3 封面与 week 2 周简报均生成成功，周简报约 1.8 秒完成，内置字体已加载，画布保持 1280×1710，整页横向溢出为 0
+server verification: scripts/check.py 与 nginx -t 全部通过；三项新资源线上回环均为 200，下载耗时 0.09 / 0.09 / 0.10 秒；未登录 Dash / 登录页 / Blog 为 302 / 200 / 200；nginx、认证和三个相关 timer 均 active，课程同步、完整同步和自动抢课 service 均 inactive
+safety: 仅部署静态代码、WebP / WOFF2 素材和文档；未修改 timer / unit，未访问闻道、未运行课程同步、未启动自动抢课，也未提交预约、候补、取消或转课
+```
