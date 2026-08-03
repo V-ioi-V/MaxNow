@@ -274,12 +274,11 @@ function getBalletWeeklyBriefInfo(config = BALLET_WEEK_FALLBACK_CONFIG, date = n
 }
 
 function formatBalletBriefDateRange(info = {}) {
-  const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
   const format = (dateKey) => {
     const match = String(dateKey || "").match(/^\d{4}-(\d{2})-(\d{2})$/);
-    return match ? `${months[Number(match[1]) - 1]} ${String(Number(match[2])).padStart(2, "0")}` : "";
+    return match ? `${match[1]}.${match[2]}` : "";
   };
-  return `${format(info.monday)} – ${format(info.sunday)}`;
+  return `${format(info.monday)}–${format(info.sunday)}`;
 }
 
 function updateBalletWeekDialogRange(config = BALLET_WEEK_FALLBACK_CONFIG) {
@@ -510,7 +509,7 @@ async function buildBalletWeekBrief() {
       context,
       summary.info.week,
       Number(config.briefWeekNumberCenterX || 353),
-      Number(config.briefWeekNumberBaselineY || 378),
+      Number(config.briefWeekNumberBaselineY || 390),
       88,
       72,
       48,

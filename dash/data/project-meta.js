@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03 22:53",
-  "version": "1.0.9.02",
-  "versionLabel": "v1.0.9.02",
-  "branch": "bugfix/ballet-week-font-match",
-  "commit": "6c38dc6",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-week-font-match · commit 6c38dc6 · 有未提交代码改动",
+  "updatedAt": "2026-08-03 23:01",
+  "version": "1.0.9.03",
+  "versionLabel": "v1.0.9.03",
+  "branch": "bugfix/ballet-week-header-alignment",
+  "commit": "6776381",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-week-header-alignment · commit 6776381 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-03",
+      "title": "对齐周简报页眉周数与日期",
+      "summary": "周简报动态周数下移 `12px`，与底图“第 / 周”的基线对齐；页眉日期由英文月份改为紧凑的 `MM.DD–MM.DD` 纯数字格式，例如 `07.27–08.02`。"
+    },
     {
       "date": "2026-08-03",
       "title": "统一芭蕾周简报手写字体",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "训练概览只统计刷新前已上完课程",
       "summary": "芭蕾顶部原“本周训练”改为六项训练概览：本周训练次数、本周训练时长、本周最喜欢的课、总训练次数、总训练时长和全部时间最喜欢的课。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "调整芭蕾周记录入口并加快首次出图",
-      "summary": "`week N` 入口从标题左侧移到“已同步”右侧，字号、字重、高度和色彩直接继承顶部状态胶囊，避免与相邻标题割裂。"
     }
   ]
 };

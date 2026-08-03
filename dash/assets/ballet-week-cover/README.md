@@ -14,7 +14,7 @@
 3. 在 `template.json` 中同步修改 `templateVersion` 与 `templateFile`；如数字位置变化，再调整 `numberCenterX`、`numberBaselineY` 和 `digitScale`。
 4. 页面每次打开封面时都会重新检查 `template.json`；版本未变化且仍是同一周时复用当前页面缓存，版本变化后立即重新合成。
 
-周简报底图升级时保留新的 `brief-template-vN.png` 源文件，生成 `brief-template-vN.webp` 并让 `briefTemplateFile` 指向 WebP，同时提升 `briefTemplateVersion`；动态字坐标由 `briefWeekNumber*`、`briefDate*`、`briefColumnCenters` 和两组 `brief*ValueBaselineY` 配置控制。
+周简报底图升级时保留新的 `brief-template-vN.png` 源文件，生成 `brief-template-vN.webp` 并让 `briefTemplateFile` 指向 WebP，同时提升 `briefTemplateVersion`；动态字坐标由 `briefWeekNumber*`、`briefDate*`、`briefColumnCenters` 和两组 `brief*ValueBaselineY` 配置控制。页眉日期固定使用 `MM.DD–MM.DD` 纯数字格式；动态周数的基线需与底图“第 / 周”视觉对齐。
 
 进入芭蕾页时只空闲预生成默认封面；周简报等 Owner 切换到该页时才生成。不得同时下载两张底图和完整字体，避免较慢网络一直停在空白画布。
 
