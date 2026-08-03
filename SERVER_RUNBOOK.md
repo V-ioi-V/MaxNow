@@ -2193,3 +2193,18 @@ local visual verification: 1280px 下 week 3 封面与 week 2 周简报均生成
 server verification: scripts/check.py 与 nginx -t 全部通过；三项新资源线上回环均为 200，下载耗时 0.09 / 0.09 / 0.10 秒；未登录 Dash / 登录页 / Blog 为 302 / 200 / 200；nginx、认证和三个相关 timer 均 active，课程同步、完整同步和自动抢课 service 均 inactive
 safety: 仅部署静态代码、WebP / WOFF2 素材和文档；未修改 timer / unit，未访问闻道、未运行课程同步、未启动自动抢课，也未提交预约、候补、取消或转课
 ```
+
+2026-08-03 已部署芭蕾周简报字体匹配修复：
+
+```text
+deployed source commit: 6c38dc6 fix: match ballet weekly brief font
+version: 1.0.9.02
+changes: 周简报动态周数、日期、次数、时长和课程名改用 Zhi Mang Xing；其松长毛笔字形更接近固定底图“芭蕾周记录”，并固定为后续每周统一字体
+asset cache: styles.css?v=238；ZhiMangXing-Weekly.woff2 为 46108 bytes，完整 TTF、子集字符清单和 OFL 许可保留
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260803-225118-ballet-week-font-match/dash-data.tgz
+runtime data stash: e7e9a5d15c94fa35e90fb1cd50843d27a8bf76f5（部署后保留；服务器权威 dash/data 已恢复，project-meta.* 按新版本重新生成）
+deployment path: origin/main 快进到 6c38dc6，再通过校验过的 Git bundle 将服务器 main 从 c38983c 快进；未覆盖或刷新芭蕾课程数据
+local visual verification: 1280px 真实弹窗生成成功，画布保持 1280×1710；新动态值与固定标题的毛笔感明显接近，375px 可用宽度下弹窗左右边界均在视口内且整页无横向溢出
+server verification: scripts/check.py 与 nginx -t 全部通过；新字体识别为 46108 bytes WOFF2，styles.css?v=238 与字体引用存在；未登录入口 / 登录页为 302 / 200，nginx、认证与三个相关 timer 均 active，课程同步、完整同步和自动抢课 service 均 inactive
+safety: 仅部署静态样式、字体素材和文档；未访问闻道、未运行课程同步、未启动自动抢课，发布时三项 service 无新增日志，也未提交预约、候补、取消或转课
+```

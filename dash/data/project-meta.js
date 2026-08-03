@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03 22:48",
+  "updatedAt": "2026-08-03 22:53",
   "version": "1.0.9.02",
   "versionLabel": "v1.0.9.02",
   "branch": "bugfix/ballet-week-font-match",
-  "commit": "c38983c",
+  "commit": "6c38dc6",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-week-font-match · commit c38983c · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-week-font-match · commit 6c38dc6 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-03",
