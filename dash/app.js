@@ -15,6 +15,10 @@ const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json";
 const BALLET_WEEK_TEMPLATE_URL = "./assets/ballet-week-cover/template.json";
 const BALLET_WEEK_FALLBACK_CONFIG = {
   templateVersion: "v1",
+  briefTemplateVersion: "v1",
+  briefTemplateFile: "brief-template-v1.png",
+  briefRefreshWeekday: 7,
+  briefRefreshHour: 20,
   timezone: "Asia/Shanghai",
   anchorMonday: "2026-07-27",
   anchorWeek: 2,
@@ -170,7 +174,11 @@ let leafletPromise = null;
 let balletWeekConfigPromise = null;
 let balletWeekCoverCache = null;
 let balletWeekCoverPromise = null;
+let balletWeekBriefCache = null;
+let balletWeekBriefPromise = null;
 let balletWeekWarmupHandle = 0;
+let balletWeekActiveSlide = "cover";
+let balletWeekCarouselFrame = 0;
 const browserDataHealth = new Map();
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
@@ -225,14 +233,75 @@ function getBalletWeekInfo(config = BALLET_WEEK_FALLBACK_CONFIG, date = new Date
   };
 }
 
+function timePartsInTimeZone(date = new Date(), timeZone = "Asia/Shanghai") {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return {
+    dateKey: `${values.year}-${values.month}-${values.day}`,
+    hour: Number(values.hour),
+    minute: Number(values.minute),
+  };
+}
+
+function getBalletWeeklyBriefInfo(config = BALLET_WEEK_FALLBACK_CONFIG, date = new Date()) {
+  const timezone = config.timezone || BALLET_WEEK_FALLBACK_CONFIG.timezone;
+  const current = getBalletWeekInfo(config, date);
+  const local = timePartsInTimeZone(date, timezone);
+  const refreshHour = Number(config.briefRefreshHour ?? BALLET_WEEK_FALLBACK_CONFIG.briefRefreshHour);
+  const currentWeekReady = local.dateKey === current.sunday && local.hour * 60 + local.minute >= refreshHour * 60;
+  const weekDelta = currentWeekReady ? 0 : -1;
+  const mondayUtcDay = utcDayFromDateKey(current.monday) + weekDelta * 7 * 86400000;
+  const monday = dateKeyFromUtcDay(mondayUtcDay);
+  const sunday = dateKeyFromUtcDay(mondayUtcDay + 6 * 86400000);
+  const scheduledAt = `${sunday}T${String(refreshHour).padStart(2, "0")}:00:00+08:00`;
+  return {
+    week: Math.max(1, current.week + weekDelta),
+    monday,
+    sunday,
+    refreshHour,
+    scheduledAt,
+    cutoff: Date.parse(scheduledAt),
+  };
+}
+
+function formatBalletBriefDateRange(info = {}) {
+  const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  const format = (dateKey) => {
+    const match = String(dateKey || "").match(/^\d{4}-(\d{2})-(\d{2})$/);
+    return match ? `${months[Number(match[1]) - 1]} ${String(Number(match[2])).padStart(2, "0")}` : "";
+  };
+  return `${format(info.monday)} – ${format(info.sunday)}`;
+}
+
+function updateBalletWeekDialogRange(config = BALLET_WEEK_FALLBACK_CONFIG) {
+  const coverInfo = getBalletWeekInfo(config);
+  const briefInfo = getBalletWeeklyBriefInfo(config);
+  const range = balletWeekActiveSlide === "brief"
+    ? `周简报 week ${briefInfo.week} · ${formatBalletWeekDate(briefInfo.monday)}–${formatBalletWeekDate(briefInfo.sunday)}`
+    : `${formatBalletWeekDate(coverInfo.monday)}–${formatBalletWeekDate(coverInfo.sunday)} · 周一至周日`;
+  setText("#ballet-week-dialog-range", range);
+}
+
 function updateBalletWeekTrigger(config = BALLET_WEEK_FALLBACK_CONFIG) {
   const info = getBalletWeekInfo(config);
+  const briefInfo = getBalletWeeklyBriefInfo(config);
   if (balletWeekCoverCache && balletWeekCoverCache.week !== info.week) balletWeekCoverCache = null;
+  if (balletWeekBriefCache && balletWeekBriefCache.week !== briefInfo.week) balletWeekBriefCache = null;
   setText("#ballet-week-trigger-number", info.week);
   setText("#ballet-week-dialog-number", info.week);
-  setText("#ballet-week-dialog-range", `${formatBalletWeekDate(info.monday)}–${formatBalletWeekDate(info.sunday)} · 周一至周日`);
+  setText("#ballet-week-tab-number", info.week);
+  setText("#ballet-week-brief-refresh", `周简报 week ${briefInfo.week} · 周日 ${String(briefInfo.refreshHour).padStart(2, "0")}:00 刷新`);
+  updateBalletWeekDialogRange(config);
   const trigger = qs("#ballet-week-trigger");
-  if (trigger) trigger.setAttribute("aria-label", `打开芭蕾周记录 week ${info.week} 封面`);
+  if (trigger) trigger.setAttribute("aria-label", `打开芭蕾周记录 week ${info.week} 封面和周简报`);
   return info;
 }
 
@@ -245,7 +314,13 @@ async function loadBalletWeekConfig({ force = false } = {}) {
       return response.json();
     })
     .then((config) => {
-      if (!config.templateFile || !config.digitsManifest || !Number(config.width) || !Number(config.height)) {
+      if (
+        !config.templateFile
+        || !config.briefTemplateFile
+        || !config.digitsManifest
+        || !Number(config.width)
+        || !Number(config.height)
+      ) {
         throw new Error("模板配置不完整");
       }
       updateBalletWeekTrigger(config);
@@ -283,19 +358,23 @@ function setBalletWeekActionsDisabled(disabled) {
   });
 }
 
+function setBalletWeekStatus(type, message) {
+  const status = qs("#ballet-week-status");
+  if (status && balletWeekActiveSlide === type) status.textContent = message;
+}
+
 async function buildBalletWeekCover() {
   const canvas = qs("#ballet-week-canvas");
-  const status = qs("#ballet-week-status");
   if (!canvas) return null;
   setBalletWeekActionsDisabled(true);
-  if (status) status.textContent = "正在拼合本周封面…";
+  setBalletWeekStatus("cover", "正在拼合本周封面…");
 
   try {
     const config = await loadBalletWeekConfig();
     const info = updateBalletWeekTrigger(config);
     const cacheKey = `${config.templateVersion}:${info.week}`;
     if (balletWeekCoverCache?.key === cacheKey) {
-      if (status) status.textContent = "已从本页缓存读取 · 1280 × 1710 PNG";
+      setBalletWeekStatus("cover", "已从本页缓存读取 · 1280 × 1710 PNG");
       setBalletWeekActionsDisabled(false);
       return balletWeekCoverCache;
     }
@@ -344,12 +423,12 @@ async function buildBalletWeekCover() {
       week: info.week,
       filename: `芭蕾周记录-week-${info.week}.png`,
     };
-    if (status) status.textContent = "已生成 · 1280 × 1710 PNG · 本周结果仅在当前页面缓存";
+    setBalletWeekStatus("cover", "已生成 · 1280 × 1710 PNG · 本周结果仅在当前页面缓存");
     setBalletWeekActionsDisabled(false);
     return balletWeekCoverCache;
   } catch (error) {
     balletWeekCoverCache = null;
-    if (status) status.textContent = `生成失败：${error.message || error}`;
+    setBalletWeekStatus("cover", `生成失败：${error.message || error}`);
     setBalletWeekActionsDisabled(false);
     return null;
   }
@@ -363,14 +442,129 @@ function renderBalletWeekCover() {
   return balletWeekCoverPromise;
 }
 
+function formatBalletBriefDuration(minutes = 0) {
+  const safeMinutes = Math.max(0, Math.round(Number(minutes) || 0));
+  const hours = Math.floor(safeMinutes / 60);
+  return `${String(hours).padStart(2, "0")}:${String(safeMinutes % 60).padStart(2, "0")}`;
+}
+
+function drawBalletBriefText(context, value, x, y, maxWidth, fontSize, minFontSize = 32) {
+  const text = String(value || "暂无");
+  let size = fontSize;
+  context.textAlign = "center";
+  context.textBaseline = "alphabetic";
+  context.fillStyle = "#6b202a";
+  while (size > minFontSize) {
+    context.font = `${size}px "MaxNow Week Hand", "KaiTi", cursive`;
+    if (context.measureText(text).width <= maxWidth) break;
+    size -= 2;
+  }
+  context.fillText(text, x, y, maxWidth);
+}
+
+async function buildBalletWeekBrief() {
+  const canvas = qs("#ballet-week-brief-canvas");
+  if (!canvas) return null;
+  setBalletWeekActionsDisabled(true);
+  setBalletWeekStatus("brief", "正在生成本周训练简报…");
+
+  try {
+    const config = await loadBalletWeekConfig();
+    const summary = getBalletWeeklyBriefSummary(config);
+    const cacheKey = `${config.briefTemplateVersion}:${summary.info.week}:${summary.sourceAsOf}:${summary.completedRecords}`;
+    if (balletWeekBriefCache?.key === cacheKey) {
+      setBalletWeekStatus("brief", balletWeekBriefCache.statusMessage);
+      setBalletWeekActionsDisabled(false);
+      return balletWeekBriefCache;
+    }
+
+    const configUrl = new URL(BALLET_WEEK_TEMPLATE_URL, window.location.href);
+    const templateUrl = new URL(config.briefTemplateFile, configUrl);
+    const [templateImage] = await Promise.all([
+      loadBalletWeekImage(templateUrl),
+      document.fonts?.load?.('80px "MaxNow Week Hand"', "芭蕾周简报0123456789") || Promise.resolve(),
+    ]);
+
+    canvas.width = Number(config.width);
+    canvas.height = Number(config.height);
+    const context = canvas.getContext("2d", { alpha: false });
+    if (!context) throw new Error("浏览器不支持图片合成");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(templateImage, 0, 0, canvas.width, canvas.height);
+
+    const columns = Array.isArray(config.briefColumnCenters) ? config.briefColumnCenters.map(Number) : [240, 632, 1030];
+    const firstY = Number(config.briefFirstRowValueBaselineY || 846);
+    const secondY = Number(config.briefSecondRowValueBaselineY || 1450);
+    drawBalletBriefText(
+      context,
+      summary.info.week,
+      Number(config.briefWeekNumberCenterX || 353),
+      Number(config.briefWeekNumberBaselineY || 378),
+      88,
+      72,
+      48,
+    );
+    drawBalletBriefText(
+      context,
+      formatBalletBriefDateRange(summary.info),
+      Number(config.briefDateCenterX || 704),
+      Number(config.briefDateBaselineY || 377),
+      440,
+      38,
+      28,
+    );
+    drawBalletBriefText(context, String(summary.week.classes).padStart(2, "0"), columns[0], firstY, 250, 104, 72);
+    drawBalletBriefText(context, formatBalletBriefDuration(summary.week.minutes), columns[1], firstY, 300, 88, 58);
+    drawBalletBriefText(context, summary.week.favorite?.label || "暂无", columns[2], firstY, 300, 62, 38);
+    drawBalletBriefText(context, String(summary.total.classes).padStart(2, "0"), columns[0], secondY, 250, 104, 72);
+    drawBalletBriefText(context, formatBalletBriefDuration(summary.total.minutes), columns[1], secondY, 300, 88, 58);
+    drawBalletBriefText(context, summary.total.favorite?.label || "暂无", columns[2], secondY, 300, 62, 38);
+
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const blob = await canvasToPngBlob(canvas);
+    const statusMessage = summary.sourceReachedCutoff
+      ? `已生成 · week ${summary.info.week} · 数据截止 ${formatBalletWeekDate(summary.info.sunday)} ${String(summary.info.refreshHour).padStart(2, "0")}:00`
+      : `已生成 · week ${summary.info.week} · 数据暂截至 ${formatBalletDateTime(summary.sourceAsOf)}`;
+    balletWeekBriefCache = {
+      key: cacheKey,
+      blob,
+      week: summary.info.week,
+      sourceAsOf: summary.sourceAsOf,
+      statusMessage,
+      filename: `芭蕾周简报-week-${summary.info.week}.png`,
+    };
+    setBalletWeekStatus("brief", statusMessage);
+    setBalletWeekActionsDisabled(false);
+    return balletWeekBriefCache;
+  } catch (error) {
+    balletWeekBriefCache = null;
+    setBalletWeekStatus("brief", `周简报生成失败：${error.message || error}`);
+    setBalletWeekActionsDisabled(false);
+    return null;
+  }
+}
+
+function renderBalletWeekBrief() {
+  if (balletWeekBriefPromise) return balletWeekBriefPromise;
+  balletWeekBriefPromise = buildBalletWeekBrief().finally(() => {
+    balletWeekBriefPromise = null;
+  });
+  return balletWeekBriefPromise;
+}
+
+function renderBalletWeekAsset(type = balletWeekActiveSlide) {
+  return type === "brief" ? renderBalletWeekBrief() : renderBalletWeekCover();
+}
+
 function warmBalletWeekCover() {
   balletWeekWarmupHandle = 0;
-  if (balletWeekCoverCache || balletWeekCoverPromise) return;
-  renderBalletWeekCover();
+  if ((!balletWeekCoverCache && !balletWeekCoverPromise) || (!balletWeekBriefCache && !balletWeekBriefPromise)) {
+    Promise.all([renderBalletWeekCover(), renderBalletWeekBrief()]);
+  }
 }
 
 function scheduleBalletWeekCoverWarmup() {
-  if (balletWeekCoverCache || balletWeekCoverPromise || balletWeekWarmupHandle) return;
+  if ((balletWeekCoverCache && balletWeekBriefCache) || balletWeekWarmupHandle) return;
   if ("requestIdleCallback" in window) {
     balletWeekWarmupHandle = window.requestIdleCallback(warmBalletWeekCover, { timeout: 1200 });
     return;
@@ -3819,9 +4013,10 @@ function balletTrainingCompletedAt(record = {}) {
   return Date.parse(`${date}T${endTime}:00+08:00`);
 }
 
-function getBalletCompletedTrainingRecords() {
-  const cutoff = Date.parse(String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || ""));
-  if (!Number.isFinite(cutoff)) return [];
+function getBalletCompletedTrainingRecords(requestedCutoff = Number.POSITIVE_INFINITY) {
+  const sourceCutoff = Date.parse(String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || ""));
+  if (!Number.isFinite(sourceCutoff)) return [];
+  const cutoff = Math.min(sourceCutoff, Number(requestedCutoff));
   return (Array.isArray(balletData.records) ? balletData.records : []).filter((record) => {
     const status = String(record.attendanceStatus || record.status || "").trim().toLowerCase();
     const completedAt = balletTrainingCompletedAt(record);
@@ -3864,6 +4059,25 @@ function summarizeBalletTraining(records = []) {
   };
 }
 
+function getBalletWeeklyBriefSummary(config = BALLET_WEEK_FALLBACK_CONFIG, date = new Date()) {
+  const info = getBalletWeeklyBriefInfo(config, date);
+  const sourceAsOf = String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || "");
+  const sourceCutoff = Date.parse(sourceAsOf);
+  const completedRecords = getBalletCompletedTrainingRecords(info.cutoff);
+  const weekRecords = completedRecords.filter((record) => {
+    const recordDate = balletRecordDate(record);
+    return recordDate >= info.monday && recordDate <= info.sunday;
+  });
+  return {
+    info,
+    sourceAsOf,
+    sourceReachedCutoff: Number.isFinite(sourceCutoff) && sourceCutoff >= info.cutoff,
+    completedRecords: completedRecords.length,
+    week: summarizeBalletTraining(weekRecords),
+    total: summarizeBalletTraining(completedRecords),
+  };
+}
+
 function setBalletFavoriteCourse(valueSelector, metaSelector, favorite) {
   setText(valueSelector, favorite?.label || "暂无");
   setText(metaSelector, favorite ? `已上 ${favorite.classes} 次` : "暂无已上完课程");
@@ -3886,6 +4100,9 @@ function renderBalletWeek() {
     : [];
   const weekSummary = summarizeBalletTraining(weekRecords);
   const totalSummary = summarizeBalletTraining(completedRecords);
+  if (balletWeekBriefCache?.sourceAsOf !== String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || "")) {
+    balletWeekBriefCache = null;
+  }
   setText("#ballet-week-classes", `${weekSummary.classes} 次`);
   setText("#ballet-week-hours", `${formatBalletHours(weekSummary.minutes)} 小时`);
   setBalletFavoriteCourse(
@@ -5887,12 +6104,39 @@ balletHistoryDrawer?.addEventListener("click", (event) => {
 });
 
 const balletWeekDialog = qs("#ballet-week-dialog");
+const balletWeekCarousel = qs("#ballet-week-carousel");
+
+function selectBalletWeekSlide(type, { scroll = true } = {}) {
+  const nextType = type === "brief" ? "brief" : "cover";
+  balletWeekActiveSlide = nextType;
+  const coverTab = qs("#ballet-week-cover-tab");
+  const briefTab = qs("#ballet-week-brief-tab");
+  [
+    [coverTab, nextType === "cover"],
+    [briefTab, nextType === "brief"],
+  ].forEach(([tab, active]) => {
+    if (!tab) return;
+    tab.classList.toggle("is-active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  if (scroll && balletWeekCarousel) {
+    const left = nextType === "brief" ? balletWeekCarousel.clientWidth : 0;
+    balletWeekCarousel.scrollTo({
+      left,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
+  }
+  loadBalletWeekConfig()
+    .then((config) => updateBalletWeekDialogRange(config))
+    .catch(() => updateBalletWeekDialogRange());
+  renderBalletWeekAsset(nextType);
+}
 
 qs("#ballet-week-trigger")?.addEventListener("click", () => {
   if (!balletWeekDialog) return;
   if (typeof balletWeekDialog.showModal === "function") balletWeekDialog.showModal();
   else balletWeekDialog.setAttribute("open", "");
-  renderBalletWeekCover();
+  selectBalletWeekSlide(balletWeekActiveSlide, { scroll: false });
 });
 
 qs("#ballet-week-trigger")?.addEventListener("pointerenter", scheduleBalletWeekCoverWarmup);
@@ -5910,8 +6154,33 @@ balletWeekDialog?.addEventListener("click", (event) => {
   else balletWeekDialog.removeAttribute("open");
 });
 
+qs("#ballet-week-cover-tab")?.addEventListener("click", () => selectBalletWeekSlide("cover"));
+qs("#ballet-week-brief-tab")?.addEventListener("click", () => selectBalletWeekSlide("brief"));
+
+balletWeekCarousel?.addEventListener("scroll", () => {
+  if (balletWeekCarouselFrame) cancelAnimationFrame(balletWeekCarouselFrame);
+  balletWeekCarouselFrame = requestAnimationFrame(() => {
+    balletWeekCarouselFrame = 0;
+    const index = balletWeekCarousel.clientWidth
+      ? Math.round(balletWeekCarousel.scrollLeft / balletWeekCarousel.clientWidth)
+      : 0;
+    const nextType = index > 0 ? "brief" : "cover";
+    if (nextType !== balletWeekActiveSlide) selectBalletWeekSlide(nextType, { scroll: false });
+  });
+});
+
+balletWeekCarousel?.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    selectBalletWeekSlide("cover");
+  } else if (event.key === "ArrowRight") {
+    event.preventDefault();
+    selectBalletWeekSlide("brief");
+  }
+});
+
 qs("#ballet-week-copy")?.addEventListener("click", async () => {
-  const cover = balletWeekCoverCache || (await renderBalletWeekCover());
+  const cover = await renderBalletWeekAsset();
   const status = qs("#ballet-week-status");
   if (!cover) return;
   if (!("ClipboardItem" in window) || !navigator.clipboard?.write) {
@@ -5927,7 +6196,7 @@ qs("#ballet-week-copy")?.addEventListener("click", async () => {
 });
 
 qs("#ballet-week-download")?.addEventListener("click", async () => {
-  const cover = balletWeekCoverCache || (await renderBalletWeekCover());
+  const cover = await renderBalletWeekAsset();
   if (!cover) return;
   const url = URL.createObjectURL(cover.blob);
   const anchor = document.createElement("a");

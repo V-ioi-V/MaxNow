@@ -301,14 +301,14 @@ python3 scripts/check.py
 
 ### 芭蕾生产只读同步（每日 / 月度定时已启用）
 
-芭蕾页面与脱敏缓存已经部署。生产 rolling timer 每天 09:00、12:00、15:00、18:00、22:00 刷新全部数据，并在周日 14:30 额外读取抢课后发布的下周课表，与 14:20 自动抢课关键窗口错开；原每日 00:00 触发已移除。每月 1 日 00:47 继续执行 full 只读同步。长期 enable gate 为 root `0600`，两个 timer 均应保持 `enabled / active / waiting`。身份失效时同步器会停止后续网络尝试并保留旧数据，直到非敏感凭据版本变化。
+芭蕾页面与脱敏缓存已经部署。生产 rolling timer 每天 09:00、12:00、15:00、18:00、22:00 刷新全部数据，并在周日 14:30 额外读取抢课后发布的下周课表、周日 20:00 为训练周简报发布截止数据；两个周日触发均与 14:20 自动抢课关键窗口错开，原每日 00:00 触发已移除。每月 1 日 00:47 继续执行 full 只读同步。长期 enable gate 为 root `0600`，两个 timer 均应保持 `enabled / active / waiting`。身份失效时同步器会停止后续网络尝试并保留旧数据，直到非敏感凭据版本变化。
 
 目标运行边界：
 
 ```text
 service -> maxnow-ballet-sync.service
 timer -> maxnow-ballet-sync.timer
-schedule -> Asia/Shanghai 每天 09:00 / 12:00 / 15:00 / 18:00 / 22:00 + 周日 14:30
+schedule -> Asia/Shanghai 每天 09:00 / 12:00 / 15:00 / 18:00 / 22:00 + 周日 14:30 / 20:00
 monthly service -> maxnow-ballet-full-sync.service
 monthly timer -> maxnow-ballet-full-sync.timer
 monthly schedule -> Asia/Shanghai 每月 1 日 00:47
@@ -406,7 +406,7 @@ PY
 1. 先按本节规则写入新的 host-bound 加密凭据，不复用实验 unit 的临时 `/run/credentials` 路径；若重建生命周期探针，按 Owner 最新要求使用 1200 秒（20 分钟），不要改写已结束 v5 的 1500 秒历史配置或日志。
 2. 用本地脱敏样本完成 parser / 去重测试；首次真实同步只允许已确认的 GET 路径。
 3. 检查私有账本 `0600`、read model 无敏感字段、重复同步不增加历史数量、失败时旧缓存仍在。
-4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认 rolling timer 包含每天 09:00、12:00、15:00、18:00、22:00 和周日额外 14:30，且不再包含每日 00:00；full timer 为每月 1 日 00:47。不要把测试性即时请求算作定时任务证据。
+4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`，确认 rolling timer 包含每天 09:00、12:00、15:00、18:00、22:00 和周日额外 14:30 / 20:00，且不再包含每日 00:00；full timer 为每月 1 日 00:47。不要把测试性即时请求算作定时任务证据。
 5. 更新 Cloud 页自动化清单和系统状态来源，并在 `UPDATE_LOG.md` 记录真实启用时间与脱敏结果。
 
 #### 芭蕾对话式实时查询

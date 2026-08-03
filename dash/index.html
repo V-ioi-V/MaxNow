@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=235" />
+    <link rel="stylesheet" href="./styles.css?v=236" />
   </head>
   <body>
     <div class="app-shell">
@@ -929,22 +929,45 @@
               <div class="ballet-week-dialog-shell">
                 <header class="ballet-week-dialog-head">
                   <div>
-                    <p class="eyebrow">Xiaohongshu Cover</p>
-                    <h2 id="ballet-week-dialog-title">芭蕾周记录 · week <span id="ballet-week-dialog-number">2</span></h2>
-                    <p id="ballet-week-dialog-range">本周 · 周一至周日</p>
+                    <p class="eyebrow">Ballet Week</p>
+                    <h2 id="ballet-week-dialog-title">芭蕾周记录</h2>
+                    <p class="ballet-week-dialog-meta">
+                      <span>week <strong id="ballet-week-dialog-number">2</strong> · 每周一切换</span>
+                      <span id="ballet-week-brief-refresh">周简报 · 每周日 20:00 刷新</span>
+                    </p>
+                    <p class="ballet-week-dialog-range" id="ballet-week-dialog-range">本周 · 周一至周日</p>
                   </div>
-                  <button class="ballet-week-close" id="ballet-week-close" type="button" aria-label="关闭芭蕾周记录封面">
+                  <button class="ballet-week-close" id="ballet-week-close" type="button" aria-label="关闭芭蕾周记录">
                     <span aria-hidden="true">×</span>
                   </button>
                 </header>
+                <div class="ballet-week-switch" role="tablist" aria-label="切换芭蕾周记录图片">
+                  <button class="is-active" id="ballet-week-cover-tab" type="button" role="tab" aria-selected="true" aria-controls="ballet-week-cover-slide">
+                    week <span id="ballet-week-tab-number">2</span>
+                  </button>
+                  <button id="ballet-week-brief-tab" type="button" role="tab" aria-selected="false" aria-controls="ballet-week-brief-slide">周简报</button>
+                </div>
                 <div class="ballet-week-preview-shell">
-                  <canvas
-                    class="ballet-week-canvas"
-                    id="ballet-week-canvas"
-                    width="1280"
-                    height="1710"
-                    aria-label="芭蕾周记录小红书封面预览"
-                  ></canvas>
+                  <div class="ballet-week-carousel" id="ballet-week-carousel">
+                    <section class="ballet-week-slide" id="ballet-week-cover-slide" role="tabpanel" aria-labelledby="ballet-week-cover-tab">
+                      <canvas
+                        class="ballet-week-canvas"
+                        id="ballet-week-canvas"
+                        width="1280"
+                        height="1710"
+                        aria-label="芭蕾周记录小红书封面预览"
+                      ></canvas>
+                    </section>
+                    <section class="ballet-week-slide" id="ballet-week-brief-slide" role="tabpanel" aria-labelledby="ballet-week-brief-tab">
+                      <canvas
+                        class="ballet-week-canvas"
+                        id="ballet-week-brief-canvas"
+                        width="1280"
+                        height="1710"
+                        aria-label="芭蕾训练周简报预览"
+                      ></canvas>
+                    </section>
+                  </div>
                 </div>
                 <p class="ballet-week-status" id="ballet-week-status" aria-live="polite">正在准备本周封面…</p>
                 <div class="ballet-week-actions">
@@ -1049,15 +1072,15 @@
             <article class="panel cloud-card" data-tone="purple">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 09 / 12 / 15 / 18 / 22 · Sunday 14:30 · Monthly 00:47</p>
+                  <p class="eyebrow">Daily 09 / 12 / 15 / 18 / 22 · Sunday 14:30 / 20:00 · Monthly 00:47</p>
                   <h2>芭蕾只读同步</h2>
                 </div>
                 <span class="status-pill">只读同步已启用</span>
               </header>
-              <p class="item-copy">每天五次只读刷新预约、候补、上课记录、课程卡与周课表；周日 14:30 额外检查抢课后发布的下周课表，每月另执行全量校验。登录失效后停止网络请求并保留最后成功缓存。</p>
+              <p class="item-copy">每天五次只读刷新预约、候补、上课记录、课程卡与周课表；周日 14:30 额外检查抢课后发布的下周课表，20:00 刷新本周训练简报数据，每月另执行全量校验。登录失效后停止网络请求并保留最后成功缓存。</p>
               <dl class="cloud-meta">
                 <div><dt>日常</dt><dd>09:00 / 12:00 / 15:00 / 18:00 / 22:00 整体刷新</dd></div>
-                <div><dt>周日</dt><dd>14:30 检查下周课表；拿到后展示本周日 + 下周一周</dd></div>
+                <div><dt>周日</dt><dd>14:30 检查下周课表；20:00 刷新训练周简报</dd></div>
                 <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
                 <div><dt>失败</dt><dd>保留最后成功缓存并提示重新登录</dd></div>
               </dl>
@@ -1337,6 +1360,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=193"></script>
+    <script src="./app.js?v=194"></script>
   </body>
 </html>
