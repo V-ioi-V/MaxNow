@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03 22:13",
+  "updatedAt": "2026-08-03 22:15",
   "version": "1.0.9.01",
   "versionLabel": "v1.0.9.01",
   "branch": "bugfix/ballet-week-image-load",
-  "commit": "3f4b9e6",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-week-image-load · commit 3f4b9e6 · 有未提交代码改动",
+  "commit": "90fc2d9",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-week-image-load · commit 90fc2d9 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-03",
