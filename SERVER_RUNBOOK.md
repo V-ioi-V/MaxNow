@@ -2162,3 +2162,19 @@ local visual verification: 刷新时间 2026-07-30 19:06 的样例中，19:45 �
 server verification: scripts/check.py 与 nginx -t 全部通过；未登录 Dash / 登录页 / 芭蕾数据 / styles.css?v=235 / app.js?v=193 / Blog 为 302 / 200 / 401 / 200 / 302 / 200；nginx 与 maxnow-auth active，课程同步、完整同步和自动抢课 service 均 inactive，三个 timer 均 active
 safety: 仅部署静态页面、样式、浏览器端脱敏统计逻辑和文档；未访问闻道、未运行课程同步、未启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-03 已部署芭蕾训练周简报：
+
+```text
+deployed source commit: 59e1e37 feat: add ballet weekly brief
+version: 1.0.9.00
+changes: week N 弹窗增加可点击或左右滑动切换的训练周简报；固定 1280×1710 底图保留标题、指标名和装饰，浏览器用项目内置 Ma Shan Zheng 字体填写周数、日期与训练概览六项动态值；统计截止到最近一个已到达的周日 20:00
+asset cache: styles.css?v=236；app.js?v=194；底图 brief-template-v1.png；字体 MaShanZheng-Regular.ttf + OFL.txt
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260803-2148-ballet-weekly-brief/dash-data.tgz；旧 timer 同目录保留为 maxnow-ballet-sync.timer.before
+runtime data stash: 7982c67a3acc9e187c929ecb28cfa6167ab16007（部署后保留；服务器原有 dash/data 已从备份恢复，project-meta.* / project-status.* / token-usage.* 按新版本重新生成）
+deployment path: 本地 origin/main 推送到 59e1e37 后，通过校验过的 Git bundle 将服务器 main 从 ff2a47d 快进；未覆盖或刷新课程数据
+timer safety: 更新 unit 前先停止 maxnow-ballet-sync.timer，并在重启前刷新 persistent stamp；没有补跑已错过的周日 20:00，同步 service 自部署起无 journal 条目，下一次周简报触发为 2026-08-09 20:00
+local visual verification: 1280×900 与 390×844 下双页画布等宽等高、弹窗和页面无横向溢出；按钮切换、左右滑动、复制、下载及 MaxNow Week Hand 字体加载正常
+server verification: 20 项芭蕾测试、scripts/check.py 与 nginx -t 全部通过；线上底图为 1280×1710，字体与 OFL 文件存在；未登录 Dash / 登录页 / 芭蕾数据 / 周简报底图 / 字体 / 模板配置为 302 / 200 / 401 / 200 / 200 / 200；三个 timer 均 active，课程同步、完整同步和自动抢课 service 均 inactive
+safety: 仅部署静态页面、图片 / 字体素材、浏览器端脱敏统计和 rolling timer 的周日 20:00 只读触发；未访问闻道、未运行同步、未启动自动抢课，也未提交预约、候补、取消或转课
+```
