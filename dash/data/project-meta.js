@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03 23:01",
+  "updatedAt": "2026-08-03 23:03",
   "version": "1.0.9.03",
   "versionLabel": "v1.0.9.03",
   "branch": "bugfix/ballet-week-header-alignment",
-  "commit": "6776381",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-week-header-alignment · commit 6776381 · 干净",
+  "commit": "f092a1b",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-week-header-alignment · commit f092a1b · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-03",
