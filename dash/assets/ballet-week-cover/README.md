@@ -5,7 +5,7 @@
 - 浏览器加载轻量 `template-v1.webp`，与 `digits/` 中的透明手绘数字拼成 `week N` 封面；同名 PNG 是高质量源底图，不直接下发。
 - 浏览器加载轻量 `brief-template-v1.webp`；同名 PNG 源底图固定标题、六个指标名称与全部布艺装饰，运行时只填周数、日期、本周训练次数 / 时长 / 最爱课程和截至该周的总次数 / 总时长 / 最爱课程。
 
-周简报动态字统一使用项目内置的 `dash/assets/fonts/ma-shan-zheng/MaShanZheng-Weekly.woff2`，它是同一 `Ma Shan Zheng` 字体的网页子集，不依赖访问设备安装的字体；完整 TTF 作为源文件保留。字体许可固定保存在同目录 `OFL.txt`。
+周简报动态字统一使用项目内置的 `dash/assets/fonts/zhi-mang-xing/ZhiMangXing-Weekly.woff2`。`Zhi Mang Xing` 的笔画更松、更长，毛笔感更接近固定底图里的“芭蕾周记录”；网页子集不依赖访问设备安装字体，完整 TTF、子集字符清单和 `OFL.txt` 作为源文件与许可保留。后续周简报继续复用这一字体，不随周数或课程数据更换。
 
 ## 更换底图
 

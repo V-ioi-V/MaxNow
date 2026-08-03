@@ -121,7 +121,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ballet-session.json`：Cloud 页“芭蕾 Session 实验”折叠详情的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
 - `dash/data/ballet-booking-fast.json`：芭蕾“抢课”工作区与 Cloud 自动抢课运维卡共用的安全 fallback；生产状态由周日 fast-path service 写入独立 public 目录，经登录校验和 `no-store` exact alias 提供。芭蕾页用它渲染累计已抢到、累计候补、上次执行关键路径总耗时与逐目标平均值，并同时渲染脱敏代抢目标和上次抢课结果两个独立列表；累计值分别读取 `totalBooked` / `totalWaitlisted`，不与 `ballet.json` 当前未来预约 / 候补列表数量混用。Cloud 读取启用状态、优先级、上次 / 下次执行和累计数；该数据不作为课程余位事实源。
 - `dash/assets/ballet-week-cover/digits/`：芭蕾小红书周记录封面的长期手绘数字资产。`digit-0.png` 至 `digit-9.png` 是统一酒红色、统一高度与基线的透明 PNG，宽度按字形自然变化；`manifest.json` 保存脚本拼接所需尺寸，`digits-preview.png` 只用于验收。数字资产不依赖系统字体，也不要求每周重新生成图片。
-- `dash/assets/ballet-week-cover/brief-template-v1.png`：训练周简报的高质量源底图，保留标题、“第 / 周”、六个指标名和装饰；浏览器实际加载同名 `.webp` 并只填会变化的周数、日期与六项数据。动态值统一使用同款 `Ma Shan Zheng` 的 `dash/assets/fonts/ma-shan-zheng/MaShanZheng-Weekly.woff2` 网页子集，完整 TTF 和 `OFL.txt` 作为源文件与许可保留。
+- `dash/assets/ballet-week-cover/brief-template-v1.png`：训练周简报的高质量源底图，保留标题、“第 / 周”、六个指标名和装饰；浏览器实际加载同名 `.webp` 并只填会变化的周数、日期与六项数据。动态值固定使用更接近底图标题毛笔感的 `Zhi Mang Xing`，运行时文件为 `dash/assets/fonts/zhi-mang-xing/ZhiMangXing-Weekly.woff2`；完整 TTF、子集字符清单和 `OFL.txt` 作为源文件与许可保留。
 - `dash/data/ballet.js`：从 `ballet.json` 生成的浏览器 wrapper。
 - `dash/login.html` / `dash/login.js`：MaxNow 私人访问入口；只提交用户名和密码到同源 `/auth/login`，不在浏览器保存或读取会话 Cookie。
 - `scripts/maxnow_auth_service.py`：服务器本机认证服务；读取 htpasswd、签发和校验 7 天 HttpOnly 会话，不读取 Dashboard 数据。

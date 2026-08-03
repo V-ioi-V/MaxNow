@@ -1727,7 +1727,7 @@ def check_secondary_view_style():
         ".ballet-week-switch {",
         '@font-face {',
         'font-family: "MaxNow Week Hand";',
-        'MaShanZheng-Weekly.woff2',
+        'ZhiMangXing-Weekly.woff2',
     )
     weekly_cover_js = (
         "const BALLET_WEEK_TEMPLATE_URL",
@@ -1776,13 +1776,14 @@ def check_secondary_view_style():
     template_path = cover_root / cover_config["templateFile"]
     brief_template_path = cover_root / cover_config["briefTemplateFile"]
     digits_manifest_path = cover_root / cover_config["digitsManifest"]
-    weekly_font_root = ROOT / "dash/assets/fonts/ma-shan-zheng"
+    weekly_font_root = ROOT / "dash/assets/fonts/zhi-mang-xing"
     if (
         not template_path.is_file()
         or not brief_template_path.is_file()
         or not digits_manifest_path.is_file()
-        or not (weekly_font_root / "MaShanZheng-Weekly.woff2").is_file()
-        or not (weekly_font_root / "MaShanZheng-Regular.ttf").is_file()
+        or not (weekly_font_root / "ZhiMangXing-Weekly.woff2").is_file()
+        or not (weekly_font_root / "ZhiMangXing-Regular.ttf").is_file()
+        or not (weekly_font_root / "weekly-glyphs.txt").is_file()
         or not (weekly_font_root / "OFL.txt").is_file()
     ):
         raise ValueError("secondary views: ballet weekly image template, font, license, or digit manifest is missing")
@@ -1800,7 +1801,7 @@ def check_secondary_view_style():
         template_height = int.from_bytes(source_header[20:24], "big")
         if (template_width, template_height) != (1280, 1710):
             raise ValueError("secondary views: ballet weekly image template must be 1280x1710")
-    if (weekly_font_root / "MaShanZheng-Weekly.woff2").stat().st_size > 100_000:
+    if (weekly_font_root / "ZhiMangXing-Weekly.woff2").stat().st_size > 100_000:
         raise ValueError("secondary views: ballet weekly runtime font exceeds 100 KB")
     if "Promise.all([renderBalletWeekCover(), renderBalletWeekBrief()])" in dashboard_js:
         raise ValueError("secondary views: ballet weekly images must load only for the active slide")
@@ -1812,7 +1813,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=237" not in dashboard_html
+        "styles.css?v=238" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=195" not in dashboard_html
     ):
