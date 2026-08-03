@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03 21:47",
-  "version": "1.0.9.00",
-  "versionLabel": "v1.0.9.00",
-  "branch": "feature/ballet-weekly-brief",
-  "commit": "59e1e37",
+  "updatedAt": "2026-08-03 22:13",
+  "version": "1.0.9.01",
+  "versionLabel": "v1.0.9.01",
+  "branch": "bugfix/ballet-week-image-load",
+  "commit": "3f4b9e6",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-weekly-brief · commit 59e1e37 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-week-image-load · commit 3f4b9e6 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-03",
+      "title": "修复芭蕾周记录首次加载空白",
+      "summary": "线上底图从合计约 `6.0 MB` 的 PNG 改为合计约 `296 KB` 的 WebP，周简报动态字从 `5.6 MB` 完整 TTF 改为约 `30 KB` 的同款 `Ma Shan Zheng` WOFF2 网页子集；完整 PNG / TTF 仍作为源文件保留，视觉与字体选择不变。"
+    },
     {
       "date": "2026-08-02",
       "title": "完成芭蕾训练周简报",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-02",
       "title": "完成芭蕾周记录封面",
       "summary": "芭蕾页顶部标题左侧新增 `week N` 入口；点击后以固定粉色手作底图和透明手绘数字在浏览器本地生成 `1280×1710` PNG，支持预览、下载和剪贴板复制。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "建立芭蕾周记录手绘数字素材库",
-      "summary": "以当前封面效果中的手绘 `2` 为基准，完成酒红色透明 PNG `0–9` 数字；统一高度和基线，保留自然字宽，后续可由浏览器脚本稳定拼接任意周数。"
     }
   ]
 };

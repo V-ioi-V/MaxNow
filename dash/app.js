@@ -16,7 +16,7 @@ const BALLET_WEEK_TEMPLATE_URL = "./assets/ballet-week-cover/template.json";
 const BALLET_WEEK_FALLBACK_CONFIG = {
   templateVersion: "v1",
   briefTemplateVersion: "v1",
-  briefTemplateFile: "brief-template-v1.png",
+  briefTemplateFile: "brief-template-v1.webp",
   briefRefreshWeekday: 7,
   briefRefreshHour: 20,
   timezone: "Asia/Shanghai",
@@ -26,6 +26,7 @@ const BALLET_WEEK_FALLBACK_CONFIG = {
 const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;
 const BALLET_SESSION_PUBLISH_STALE_MS = 15 * 60 * 1000;
 const BALLET_SESSION_NEXT_RUN_INTERVAL_MINUTES = 20;
 const DATA_CACHE_PREFIX = "maxnow:last-good:v1:";
@@ -337,8 +338,18 @@ function loadBalletWeekImage(url) {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.decoding = "async";
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`图片素材加载失败：${url.pathname.split("/").pop()}`));
+    const timeout = window.setTimeout(() => {
+      image.src = "";
+      reject(new Error(`图片素材加载超时：${url.pathname.split("/").pop()}`));
+    }, BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS);
+    image.onload = () => {
+      window.clearTimeout(timeout);
+      resolve(image);
+    };
+    image.onerror = () => {
+      window.clearTimeout(timeout);
+      reject(new Error(`图片素材加载失败：${url.pathname.split("/").pop()}`));
+    };
     image.src = url.href;
   });
 }
@@ -367,7 +378,7 @@ async function buildBalletWeekCover() {
   const canvas = qs("#ballet-week-canvas");
   if (!canvas) return null;
   setBalletWeekActionsDisabled(true);
-  setBalletWeekStatus("cover", "正在拼合本周封面…");
+  setBalletWeekStatus("cover", "正在加载本周封面素材…");
 
   try {
     const config = await loadBalletWeekConfig();
@@ -466,7 +477,7 @@ async function buildBalletWeekBrief() {
   const canvas = qs("#ballet-week-brief-canvas");
   if (!canvas) return null;
   setBalletWeekActionsDisabled(true);
-  setBalletWeekStatus("brief", "正在生成本周训练简报…");
+  setBalletWeekStatus("brief", "正在加载本周训练简报素材…");
 
   try {
     const config = await loadBalletWeekConfig();
@@ -558,13 +569,11 @@ function renderBalletWeekAsset(type = balletWeekActiveSlide) {
 
 function warmBalletWeekCover() {
   balletWeekWarmupHandle = 0;
-  if ((!balletWeekCoverCache && !balletWeekCoverPromise) || (!balletWeekBriefCache && !balletWeekBriefPromise)) {
-    Promise.all([renderBalletWeekCover(), renderBalletWeekBrief()]);
-  }
+  if (!balletWeekCoverCache && !balletWeekCoverPromise) renderBalletWeekCover();
 }
 
 function scheduleBalletWeekCoverWarmup() {
-  if ((balletWeekCoverCache && balletWeekBriefCache) || balletWeekWarmupHandle) return;
+  if (balletWeekCoverCache || balletWeekCoverPromise || balletWeekWarmupHandle) return;
   if ("requestIdleCallback" in window) {
     balletWeekWarmupHandle = window.requestIdleCallback(warmBalletWeekCover, { timeout: 1200 });
     return;

@@ -1727,6 +1727,7 @@ def check_secondary_view_style():
         ".ballet-week-switch {",
         '@font-face {',
         'font-family: "MaxNow Week Hand";',
+        'MaShanZheng-Weekly.woff2',
     )
     weekly_cover_js = (
         "const BALLET_WEEK_TEMPLATE_URL",
@@ -1745,6 +1746,7 @@ def check_secondary_view_style():
         'anchorMonday: "2026-07-27"',
         "anchorWeek: 2",
         "briefRefreshHour: 20",
+        "const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;",
         'document.fonts?.load?.(\'80px "MaxNow Week Hand"\', "芭蕾周简报0123456789")',
     )
     if (
@@ -1767,6 +1769,8 @@ def check_secondary_view_style():
         or cover_config.get("briefRefreshWeekday") != 7
         or cover_config.get("briefRefreshHour") != 20
         or cover_config.get("briefTemplateVersion") != "v1"
+        or cover_config.get("templateFile") != "template-v1.webp"
+        or cover_config.get("briefTemplateFile") != "brief-template-v1.webp"
     ):
         raise ValueError("secondary views: ballet weekly cover dimensions or week anchor are invalid")
     template_path = cover_root / cover_config["templateFile"]
@@ -1777,18 +1781,29 @@ def check_secondary_view_style():
         not template_path.is_file()
         or not brief_template_path.is_file()
         or not digits_manifest_path.is_file()
+        or not (weekly_font_root / "MaShanZheng-Weekly.woff2").is_file()
         or not (weekly_font_root / "MaShanZheng-Regular.ttf").is_file()
         or not (weekly_font_root / "OFL.txt").is_file()
     ):
         raise ValueError("secondary views: ballet weekly image template, font, license, or digit manifest is missing")
     for image_path in (template_path, brief_template_path):
-        template_header = image_path.read_bytes()[:24]
-        if template_header[:8] != b"\x89PNG\r\n\x1a\n":
-            raise ValueError("secondary views: ballet weekly image template is not PNG")
-        template_width = int.from_bytes(template_header[16:20], "big")
-        template_height = int.from_bytes(template_header[20:24], "big")
+        template_header = image_path.read_bytes()[:16]
+        if template_header[:4] != b"RIFF" or template_header[8:12] != b"WEBP":
+            raise ValueError("secondary views: ballet weekly runtime template is not WebP")
+        if image_path.stat().st_size > 500_000:
+            raise ValueError("secondary views: ballet weekly runtime template exceeds 500 KB")
+        source_path = image_path.with_suffix(".png")
+        source_header = source_path.read_bytes()[:24]
+        if source_header[:8] != b"\x89PNG\r\n\x1a\n":
+            raise ValueError("secondary views: ballet weekly source template is not PNG")
+        template_width = int.from_bytes(source_header[16:20], "big")
+        template_height = int.from_bytes(source_header[20:24], "big")
         if (template_width, template_height) != (1280, 1710):
             raise ValueError("secondary views: ballet weekly image template must be 1280x1710")
+    if (weekly_font_root / "MaShanZheng-Weekly.woff2").stat().st_size > 100_000:
+        raise ValueError("secondary views: ballet weekly runtime font exceeds 100 KB")
+    if "Promise.all([renderBalletWeekCover(), renderBalletWeekBrief()])" in dashboard_js:
+        raise ValueError("secondary views: ballet weekly images must load only for the active slide")
     digits_manifest = json.loads(digits_manifest_path.read_text(encoding="utf-8"))
     digits = digits_manifest.get("digits", {})
     if set(digits) != set("0123456789"):
@@ -1797,9 +1812,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=236" not in dashboard_html
+        "styles.css?v=237" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=194" not in dashboard_html
+        or "app.js?v=195" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2017,7 +2032,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=194" not in dashboard_html:
+    if "app.js?v=195" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

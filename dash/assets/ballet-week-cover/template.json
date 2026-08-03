@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "templateVersion": "v1",
-  "templateFile": "template-v1.png",
+  "templateFile": "template-v1.webp",
   "briefTemplateVersion": "v1",
-  "briefTemplateFile": "brief-template-v1.png",
+  "briefTemplateFile": "brief-template-v1.webp",
   "briefRefreshWeekday": 7,
   "briefRefreshHour": 20,
   "width": 1280,
