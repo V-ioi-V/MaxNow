@@ -2223,3 +2223,18 @@ local visual verification: 1280px 真实周简报中动态周数与“第 / 周�
 server verification: scripts/check.py 与 nginx -t 全部通过；版本为 1.0.9.03，课程同步、完整同步和自动抢课 service 均保持 inactive
 safety: 仅部署静态脚本、模板坐标和文档；未访问闻道、未运行课程同步、未启动自动抢课，也未提交预约、候补、取消或转课
 ```
+
+2026-08-03 已部署芭蕾周简报龙藏体：
+
+```text
+deployed source commit: 04c7582 Use Long Cang for ballet weekly brief
+version: 1.0.9.04
+changes: 周简报动态周数、纯数字日期、次数、时长和课程名改用 Long Cang（龙藏体），并增加同色轻量圆润描边；底图固定标题与指标名继续保留，不重绘
+asset cache: styles.css?v=239；app.js?v=197；LongCang-Weekly.woff2 为 53112 bytes，完整 TTF、子集字符清单和 OFL 许可保留
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260803-233322-ballet-week-long-cang/dash-data.tgz
+runtime data stash: 56ddaeaddd4fa3f0948d7e55d81c48e2f4ed935b（部署后保留；服务器权威 dash/data 已恢复，project-meta.* 按新版本重新生成）
+deployment path: origin/main 快进到 04c7582，再通过校验过的 Git bundle 将服务器 main 从 c99ec5b 快进；未覆盖或刷新芭蕾课程数据
+local visual verification: 1280×720 与 390×844 真实弹窗均生成成功，龙藏体与轻描边已应用；画布保持 1280×1710，纯数字日期与周数基线未变，375px 可用宽度下无横向溢出
+server verification: scripts/check.py 与 nginx -t 全部通过；线上 styles.css?v=239、app.js?v=197 与 LongCang-Weekly.woff2 引用存在，字体文件为有效 WOFF2；未登录入口 / 登录页 / 样式 / 字体为 302 / 200 / 200 / 200，nginx、认证与三个相关 timer 均 active，课程同步、完整同步和自动抢课 service 均 inactive
+safety: 仅部署静态样式、脚本、字体素材和文档；未访问闻道、未运行课程同步、未启动自动抢课，发布时三项 service 无新增日志，也未提交预约、候补、取消或转课
+```
