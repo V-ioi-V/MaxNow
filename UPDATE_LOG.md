@@ -16,6 +16,7 @@
 - 新增 `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`，只使用服务器 host-bound Session，一次精确处理一节当前活动预约；默认 dry-run，execute 必须显式确认。
 - 通过官方历史预约详情的 GET-only 诊断确认 `check_cancelrules`、`do_cancel` 与 `bookid` contract；取消前后都重新读取实时预约，实际 mutation 最多一次，未知结果不重试且未确认目标消失时返回 `unknown_result`。
 - 增加 9 项取消专项测试，并纳入全仓检查；本次验收只读访问官方页面，当前没有活动预约，没有执行真实取消。版本提升到 `1.0.9.08`。
+- 主分支提交 `8e35f0f` 已部署；生产合成目标 dry-run 返回 `not_booked`，`requestsMade=1`、`postsMade=0`、`mutationAttempts=0`。服务器 33 项相关测试、完整检查和 nginx 校验通过，自动抢课 timer 未重启且仍为 `enabled / active`。
 
 ### 新增闻道抢课专用 Agent 入口
 

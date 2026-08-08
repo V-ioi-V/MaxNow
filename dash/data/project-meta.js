@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-08 09:31",
+  "updatedAt": "2026-08-08 09:34",
   "version": "1.0.9.08",
   "versionLabel": "v1.0.9.08",
   "branch": "feature/ballet-cancellation-runner",
-  "commit": "165dee1",
+  "commit": "8e35f0f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-cancellation-runner · commit 165dee1 · 有未提交代码改动",
+  "deployNote": "feature/ballet-cancellation-runner · commit 8e35f0f · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-08",

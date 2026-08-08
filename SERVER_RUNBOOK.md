@@ -2291,3 +2291,18 @@ timer recovery: 首次恢复 Persistent timer 时于 09:03:36 立即补触发一
 server verification: scripts/check.py、24 项预约测试与 nginx -t 全部通过；服务器 HEAD=dbb098e，timer enabled / active、下一次 2026-08-09 14:19:35，service inactive / dead；未登录首页 / 自动抢课状态 / Blog 为 302 / 401 / 200
 safety: 生产验证只执行一次闻道课表 GET，没有调用资格 / 规则 POST 或 do_addbook；补触发被 outside_window 在网络前拒绝，恢复状态后没有新增运行、预约、候补、取消或转课
 ```
+
+2026-08-08 已部署闻道单课取消 runner：
+
+```text
+deployed source commit: 8e35f0f Add safe ballet cancellation runner
+version: 1.0.9.08
+changes: 新增 cancel_ballet.py / run_ballet_cancellation.sh；单次只处理一节精确活动预约，校验官方取消 contract，dry-run 非变更预检，execute 最多一次 do_cancel 并以实时预约消失作为成功依据
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260808-093251-ballet-cancellation（完整 dash/data）
+runtime data stash: 67ca5264c7486df1e9c18bdd65647895e4abecc2（部署后保留；服务器权威 dash/data 已恢复，project-meta.* 按新版本重新生成）
+protocol verification: 使用服务器 host-bound Session 对官方预约索引与历史详情做 GET-only 诊断；确认 check_cancelrules 路径依次绑定 storeId / bookingRecordId，do_cancel 路径绑定 storeId 且 POST bookid 为同一 bookingRecordId；诊断未输出 ID 值、Cookie、响应正文或凭据痕迹
+production dry-run: 当前无活动预约；对明确不存在的合成目标运行新 runner，返回 preflight_failed / not_booked，requestsMade=1、postsMade=0、mutationAttempts=0，证明 Session 注入、隔离单元、输入解析和活动预约读取路径正常，未进入规则 POST 或取消 mutation
+server verification: 9 项取消专项测试与普通预约 / Fast Path 合计 33 项测试、scripts/check.py、shell 语法和 nginx -t 全部通过；runner 权限 0775，服务器 HEAD=8e35f0f；未登录 Dash / 自动抢课状态 / Blog 为 302 / 401 / 200
+automation state: 自动抢课 timer 全程未停止或重启，保持 enabled / active、下次 2026-08-09 14:19:35，service inactive；累计 totalRuns / totalBooked / totalWaitlisted 仍为 1 / 4 / 1
+safety: 本次所有闻道协议诊断均为 GET；生产 runner 验收只执行 1 个预约索引 GET。没有调用 check_cancelrules、do_cancel、do_addbook，也没有新增预约、候补、取消、转课或支付
+```
