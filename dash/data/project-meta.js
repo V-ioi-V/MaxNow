@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-08 08:16",
+  "updatedAt": "2026-08-08 08:20",
   "version": "1.0.9.05",
   "versionLabel": "v1.0.9.05",
   "branch": "feature/add-sunday-ballet-targets",
-  "commit": "793484e",
+  "commit": "a12f2e4",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/add-sunday-ballet-targets · commit 793484e · 有未提交代码改动",
+  "deployNote": "feature/add-sunday-ballet-targets · commit a12f2e4 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-08",

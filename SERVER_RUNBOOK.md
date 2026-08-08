@@ -2240,3 +2240,17 @@ local visual verification: 1280×720 与 390×844 真实弹窗均生成成功，
 server verification: scripts/check.py 与 nginx -t 全部通过；线上 styles.css?v=239、app.js?v=197 与 LongCang-Weekly.woff2 引用存在，字体文件为有效 WOFF2；未登录入口 / 登录页 / 样式 / 字体为 302 / 200 / 200 / 200，nginx、认证与三个相关 timer 均 active，课程同步、完整同步和自动抢课 service 均 inactive
 safety: 仅部署静态样式、脚本、字体素材和文档；未访问闻道、未运行课程同步、未启动自动抢课，发布时三项 service 无新增日志，也未提交预约、候补、取消或转课
 ```
+
+2026-08-08 已部署周日自动抢课新增两项目标：
+
+```text
+deployed source commit: a12f2e4 Add Sunday ballet booking targets
+version: 1.0.9.05
+changes: 在原五项目标上新增周日 19:00–20:00 软开与 20:00–21:30 芭蕾 L1，均为大教室且不限老师；七项目标继续可预约则预约、可排队则候补
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260808-ballet-sunday-targets-hdOzfG（完整 dash/data、变更前配置、私有幂等状态与公开状态）
+runtime data stash: 6c4ace23ae0b6e4eba2fad1684c72afd279e8ef5（部署后保留；服务器权威 dash/data 已恢复，project-meta.* / project-status.* 与自动抢课公开状态按新版本重新生成）
+deployment path: origin/main 快进到 a12f2e4，再通过校验过的 Git bundle 将服务器 main 从 793484e 快进；服务器 GitHub remote 已按机器规则改为 SSH 443，因服务器无 GitHub 私钥，本次未使用 GitHub HTTPS 拉取
+preview verification: 下次执行为 2026-08-09 14:20，新增目标日期均为 2026-08-16；公开状态共 7 项，顺序为周日 L1、周五 L1、周二 L1、周日软开、周五软开、周二软开、周四软开；累计仍为 1 次运行、4 次预约、1 次候补
+server verification: 17 项 Fast Path 测试、scripts/check.py 与 nginx -t 全部通过；timer enabled / active，下一次 2026-08-09 14:19:35，service inactive；未登录首页 / 自动抢课状态 / Blog 为 302 / 401 / 200
+safety: preview 仅在本地读取配置与私有幂等状态并发布脱敏计划，不加载凭据、不访问闻道、不增加运行或成功计数；未手动启动自动抢课 service，也未提交预约、候补、取消或转课
+```
