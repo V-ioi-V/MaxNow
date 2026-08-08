@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-08 08:58",
+  "updatedAt": "2026-08-08 09:07",
   "version": "1.0.9.06",
   "versionLabel": "v1.0.9.06",
   "branch": "bugfix/ballet-button-binding",
-  "commit": "ffd9294",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-button-binding · commit ffd9294 · 有未提交代码改动",
+  "commit": "4288ecb",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-button-binding · commit 4288ecb · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-08",

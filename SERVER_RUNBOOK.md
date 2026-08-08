@@ -2254,3 +2254,19 @@ preview verification: 下次执行为 2026-08-09 14:20，新增目标日期均�
 server verification: 17 项 Fast Path 测试、scripts/check.py 与 nginx -t 全部通过；timer enabled / active，下一次 2026-08-09 14:19:35，service inactive；未登录首页 / 自动抢课状态 / Blog 为 302 / 401 / 200
 safety: preview 仅在本地读取配置与私有幂等状态并发布脱敏计划，不加载凭据、不访问闻道、不增加运行或成功计数；未手动启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-08 已部署自动抢课课程 / 按钮原子绑定修复：
+
+```text
+deployed source commit: dbb098e Fix ballet course button binding
+version: 1.0.9.06
+changes: 普通预约不再复用展示层已排序课程后与源顺序按钮 zip；新 BookingTimetableParser 在每个 .classtable 课程块内一次解析并原子绑定课程事实与按钮，Fast Path 复用同一入口
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260808-090136-ballet-button-binding（完整 dash/data、变更前配置、自动抢课私有状态与公开状态）
+runtime data stash: 8a17211f93e215ee0d341066ddbb1e709c381e77（部署后保留；服务器权威 dash/data 已恢复，project-meta.* 按新版本重新生成）
+deployment path: origin/main 快进到 dbb098e，再通过校验过的增量 Git bundle 将服务器 main 从 ffd9294 快进；Fast Path timer 在部署窗口内停止，代码、运行数据和私有状态均有独立备份
+fixture verification: 普通预约与 Fast Path 共 24 项测试通过；小教室戴俊瑶 L1.5 / 大教室王嘉豪 L1 同时段以两种源顺序测试，目标大教室 L1 始终取得自身合成 courseid / classtableid；1000 次双课程块解析平均约 0.34 ms
+live session verification: 2026-08-08 09:02:58 使用 host-bound Session 只读 GET 8 月 9 日课表；真实源顺序为小教室 L1.5 后接大教室 L1，展示排序反转为大教室 L1 在前；新解析器仍唯一命中大教室 L1、两个课程块按钮互异且各自在块内完成 contract 校验，requestsMade=1、mutationAttempts=0
+timer recovery: 首次恢复 Persistent timer 时于 09:03:36 立即补触发一次 execute；周六 outside_window 门禁在同一秒、构造 Wenda source 和任何网络 / mutation 前以 exit 4 拒绝。该通用错误路径短暂覆盖的私有 / 公开运行状态已从上述部署前备份完整恢复，随后 reset-failed 并再次启动 timer；恢复后累计 totalRuns / totalBooked / totalWaitlisted 与 lastRun 仍为 1 / 4 / 1 和 8 月 2 日 success
+server verification: scripts/check.py、24 项预约测试与 nginx -t 全部通过；服务器 HEAD=dbb098e，timer enabled / active、下一次 2026-08-09 14:19:35，service inactive / dead；未登录首页 / 自动抢课状态 / Blog 为 302 / 401 / 200
+safety: 生产验证只执行一次闻道课表 GET，没有调用资格 / 规则 POST 或 do_addbook；补触发被 outside_window 在网络前拒绝，恢复状态后没有新增运行、预约、候补、取消或转课
+```
