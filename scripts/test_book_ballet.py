@@ -16,6 +16,14 @@ TARGET = {
 }
 TARGET_2 = {**TARGET, "date": "2026-07-31"}
 TARGET_3 = {**TARGET, "date": "2026-08-01"}
+REVERSED_TARGET = {
+    "date": "2026-08-09",
+    "startTime": "20:00",
+    "endTime": "21:30",
+    "courseName": "\u82ad\u857e L1",
+    "teacher": "\u738b\u5609\u8c6a",
+    "venue": "\u5927\u6559\u5ba4",
+}
 
 
 def timetable_with_booking_control() -> str:
@@ -44,6 +52,55 @@ def timetable_with_booking_control() -> str:
             "</script></body>"
         ),
     )
+
+
+def timetable_with_reordered_controls(reverse: bool = False) -> str:
+    courses = [
+        {
+            "course": "\u82ad\u857e L1.5",
+            "teacher": "\u6234\u4fca\u7476",
+            "venue": "\u5c0f\u6559\u5ba4",
+            "courseId": "72001",
+            "classTableId": "73001",
+        },
+        {
+            "course": "\u82ad\u857e L1",
+            "teacher": "\u738b\u5609\u8c6a",
+            "venue": "\u5927\u6559\u5ba4",
+            "courseId": "72002",
+            "classTableId": "73002",
+        },
+    ]
+    if reverse:
+        courses.reverse()
+    pages = []
+    for item in courses:
+        pages.append(
+            timetable_html(
+                course=item["course"],
+                time_text="20:00 ~ 21:30",
+                teacher=item["teacher"],
+                venue=item["venue"],
+                status="4 / 10",
+            ).replace(
+                "</div></div></body>",
+                (
+                    f'<button class="bookbtn" courseid="{item["courseId"]}" '
+                    f'classtableid="{item["classTableId"]}">\u9884\u7ea6</button>'
+                    "</div></div></body>"
+                ),
+            )
+        )
+    script = (
+        "<script>"
+        "customerid=80001;"
+        f'var a="{booking.CARD_TYPE_PATH}";'
+        f'var b="{booking.CHECK_RULES_PREFIX}80001";'
+        f'var c="{booking.BOOKING_SUBMIT_PATH}";'
+        f'var d="{booking.GET_USING_CARD_PATH}";'
+        "</script>"
+    )
+    return "".join(pages).replace("</body>", f"{script}</body>")
 
 
 class FakeSource:
@@ -101,6 +158,29 @@ class FakeSource:
 
 
 class BalletBookingTests(unittest.TestCase):
+    def test_course_control_binding_survives_source_order_changes(self):
+        for reverse in (False, True):
+            with self.subTest(reverse=reverse):
+                page = timetable_with_reordered_controls(reverse=reverse)
+                display_records = ballet.parse_timetable(
+                    page, REVERSED_TARGET["date"]
+                )["records"]
+                self.assertEqual(
+                    display_records[0]["courseName"], REVERSED_TARGET["courseName"]
+                )
+                entries = booking.parse_timetable_entries(
+                    page, REVERSED_TARGET["date"]
+                )
+                candidates = [
+                    entry
+                    for entry in entries
+                    if booking.same_course(entry["record"], REVERSED_TARGET)
+                ]
+                self.assertEqual(len(candidates), 1)
+                contract = booking.booking_contract(candidates[0])
+                self.assertEqual(contract["courseId"], "72002")
+                self.assertEqual(contract["classTableId"], "73002")
+
     def test_dry_run_is_read_only_and_redacted(self):
         source = FakeSource()
         result = booking.run(source, [TARGET], execute=False)

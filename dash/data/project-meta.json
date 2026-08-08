@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-08 08:20",
-  "version": "1.0.9.05",
-  "versionLabel": "v1.0.9.05",
-  "branch": "feature/add-sunday-ballet-targets",
-  "commit": "a12f2e4",
+  "updatedAt": "2026-08-08 08:58",
+  "version": "1.0.9.06",
+  "versionLabel": "v1.0.9.06",
+  "branch": "bugfix/ballet-button-binding",
+  "commit": "ffd9294",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/add-sunday-ballet-targets · commit a12f2e4 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-button-binding · commit ffd9294 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-08",
+      "title": "修复自动抢课课程与按钮错配",
+      "summary": "闻道课表的展示记录曾在解析后排序，而预约按钮仍保持源 HTML 顺序；普通预约与 Fast Path 再按位置配对时，同时间课程可能把目标课程绑定到另一教室课程的按钮，导致语义匹配正确但实际提交错误课程。"
+    },
     {
       "date": "2026-08-08",
       "title": "自动抢课新增周日晚间两项目标",
@@ -28,11 +33,6 @@
       "date": "2026-08-03",
       "title": "统一芭蕾周简报手写字体",
       "summary": "周简报动态周数、日期、次数、时长和课程名由偏粗偏圆的 `Ma Shan Zheng` 改为笔画更松、更长的 `Zhi Mang Xing`，更贴近固定底图“芭蕾周记录”的毛笔字形；这套字体固定为后续每周统一选择，不再按周更换。"
-    },
-    {
-      "date": "2026-08-03",
-      "title": "修复芭蕾周记录首次加载空白",
-      "summary": "线上底图从合计约 `6.0 MB` 的 PNG 改为合计约 `296 KB` 的 WebP，周简报动态字从 `5.6 MB` 完整 TTF 改为约 `30 KB` 的同款 `Ma Shan Zheng` WOFF2 网页子集；完整 PNG / TTF 仍作为源文件保留，视觉与字体选择不变。"
     }
   ]
 }

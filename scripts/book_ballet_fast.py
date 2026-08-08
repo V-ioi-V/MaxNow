@@ -472,19 +472,7 @@ def record_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
 def parse_timetable_entries(
     text: str, target_date: str
 ) -> list[dict[str, Any]]:
-    records = ballet.parse_timetable(text, target_date)["records"]
-    controls, scripts, script_sources = booking.parse_controls(text)
-    if len(records) != len(controls):
-        raise booking.BookingFailure("source_changed")
-    return [
-        {
-            "record": record,
-            "control": control,
-            "scripts": scripts,
-            "scriptSources": script_sources,
-        }
-        for record, control in zip(records, controls)
-    ]
+    return booking.parse_timetable_entries(text, target_date)
 
 
 def timetable_candidates(

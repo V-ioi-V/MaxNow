@@ -10,6 +10,7 @@ from pathlib import Path
 import book_ballet as booking
 import book_ballet_fast as fast
 import sync_ballet as ballet
+from test_book_ballet import timetable_with_reordered_controls
 from test_sync_ballet import detail_html, index_html, timetable_html
 
 
@@ -337,6 +338,19 @@ class FastBookingTests(unittest.TestCase):
         }
 
         self.assertFalse(fast.record_matches(record, target))
+
+    def test_fast_path_keeps_target_bound_to_its_own_button(self):
+        target = fast.materialize_targets(config(), self.release)[0]
+        for reverse in (False, True):
+            with self.subTest(reverse=reverse):
+                page = timetable_with_reordered_controls(reverse=reverse)
+                candidates = fast.timetable_candidates(
+                    None, target, prefetched_text=page
+                )
+                self.assertEqual(len(candidates), 1)
+                contract = booking.booking_contract(candidates[0])
+                self.assertEqual(contract["courseId"], "72002")
+                self.assertEqual(contract["classTableId"], "73002")
 
     def test_fast_path_mutates_sequentially_then_verifies_once(self):
         source = FakeFastSource()

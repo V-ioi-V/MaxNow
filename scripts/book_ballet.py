@@ -41,13 +41,11 @@ class BookingFailure(Exception):
         self.diagnostic = diagnostic
 
 
-class BookingControlParser(HTMLParser):
+class BookingTimetableParser(ballet.TimetableParser):
     def __init__(self):
         super().__init__()
-        self.div_depth = 0
-        self.root_depth = 0
-        self.current: dict[str, Any] | None = None
-        self.controls: list[dict[str, Any]] = []
+        self.current_control: dict[str, Any] | None = None
+        self.entries: list[dict[str, Any]] = []
         self.scripts: list[str] = []
         self.script_sources: list[str] = []
         self.in_script = False
@@ -58,31 +56,42 @@ class BookingControlParser(HTMLParser):
             self.in_script = True
             if values.get("src"):
                 self.script_sources.append(values["src"])
-        if tag == "div":
-            self.div_depth += 1
-            classes = set(values.get("class", "").split())
-            if self.current is None and "classtable" in classes:
-                self.root_depth = self.div_depth
-                self.current = {"controls": []}
-        if self.current is None:
+        was_in_course = self.current_nodes is not None
+        super().handle_starttag(tag, attrs)
+        if not was_in_course and self.current_nodes is not None:
+            self.current_control = {"controls": []}
+        if self.current_control is None:
             return
-        self.current["controls"].append(
+        self.current_control["controls"].append(
             {
                 "tag": tag,
                 "attrs": values,
             }
         )
+
     def handle_endtag(self, tag: str):
         if tag == "script":
             self.in_script = False
-        if tag == "div":
-            if self.current is not None and self.div_depth == self.root_depth:
-                self.controls.append(self.current)
-                self.current = None
-                self.root_depth = 0
-            self.div_depth -= 1
+        closes_course = (
+            tag == "div"
+            and self.current_nodes is not None
+            and bool(self.div_stack)
+            and "classtable" in self.div_stack[-1]["classes"]
+        )
+        super().handle_endtag(tag)
+        if closes_course:
+            if self.current_control is None or not self.courses:
+                raise BookingFailure("source_changed")
+            self.entries.append(
+                {
+                    "record": self.courses[-1],
+                    "control": self.current_control,
+                }
+            )
+            self.current_control = None
 
     def handle_data(self, data: str):
+        super().handle_data(data)
         if self.in_script:
             self.scripts.append(data)
 
@@ -123,17 +132,36 @@ def safe_diagnostic(
     }
 
 
-def parse_controls(
-    text: str,
-) -> tuple[list[dict[str, Any]], list[str], list[str]]:
-    parser = BookingControlParser()
+def parse_timetable_entries(
+    text: str, course_date: str
+) -> list[dict[str, Any]]:
+    try:
+        parsed_date = ballet.date.fromisoformat(course_date)
+    except ValueError:
+        raise BookingFailure("configuration_error")
+    parser = BookingTimetableParser()
     try:
         parser.feed(text)
     except BookingFailure:
         raise
+    except ballet.SyncFailure as failure:
+        raise BookingFailure(failure.code)
     except Exception:
         raise BookingFailure("parse_error")
-    return parser.controls, parser.scripts, parser.script_sources
+    if parser.current_control is not None or len(parser.entries) != len(parser.courses):
+        raise BookingFailure("source_changed")
+    return [
+        {
+            "record": {
+                **entry["record"],
+                "date": parsed_date.isoformat(),
+            },
+            "control": entry["control"],
+            "scripts": parser.scripts,
+            "scriptSources": parser.script_sources,
+        }
+        for entry in parser.entries
+    ]
 
 
 def parse_request(text: str, execute: bool) -> list[dict[str, str]]:
@@ -216,23 +244,11 @@ def timetable_candidates(
 ) -> list[dict[str, Any]]:
     path = f"{ballet.TIMETABLE_PATH}/{target['date']}"
     text = source.request(path, "classtable")
-    records = ballet.parse_timetable(text, target["date"])["records"]
-    controls, scripts, script_sources = parse_controls(text)
-    if len(records) != len(controls):
-        raise BookingFailure("source_changed")
-    candidates = []
-    for record, control in zip(records, controls):
-        if not same_course(record, target):
-            continue
-        candidates.append(
-            {
-                "record": record,
-                "control": control,
-                "scripts": scripts,
-                "scriptSources": script_sources,
-            }
-        )
-    return candidates
+    return [
+        entry
+        for entry in parse_timetable_entries(text, target["date"])
+        if same_course(entry["record"], target)
+    ]
 
 
 def booking_contract(candidate: dict[str, Any]) -> dict[str, Any]:
