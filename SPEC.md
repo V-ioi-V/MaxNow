@@ -19,7 +19,7 @@ dash/  -> dash.maxnow.cn 私人状态工作站
 blog/  -> blog.maxnow.cn 公开博客发布层
 ```
 
-根目录保留 `AGENTS.md`、`SPEC.md`、`STYLE_CONTEXT.md`、`ROADMAP.md`、`CONTEXT.md`、`IDEAS.md`、`UPDATE_LOG.md`、`DEPLOY.md` 和 `SERVER_RUNBOOK.md`，用于统一维护产品规则、视觉样式上下文、路线图、上下文、部署和操作记录。暂时不拆成多个 GitHub 仓库。
+根目录保留 `AGENTS.md`、`WENDA_BOOKING_AGENT.md`、`SPEC.md`、`STYLE_CONTEXT.md`、`ROADMAP.md`、`CONTEXT.md`、`IDEAS.md`、`UPDATE_LOG.md`、`DEPLOY.md` 和 `SERVER_RUNBOOK.md`，用于统一维护 Agent 条件入口、闻道抢课操作约束、产品规则、视觉样式上下文、路线图、上下文、部署和操作记录。暂时不拆成多个 GitHub 仓库。
 
 ## 系统组成
 

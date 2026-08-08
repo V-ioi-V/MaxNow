@@ -99,6 +99,7 @@ def check_required_files():
         "blog/preview.html",
         "blog/preview.css",
         "AGENTS.md",
+        "WENDA_BOOKING_AGENT.md",
         "CONTEXT.md",
         "SPEC.md",
         "BALLET_GROWTH_SCORING.md",

@@ -19,6 +19,7 @@ Read this file before making code changes in this repository.
 - Read `CONTEXT.md` when the task depends on project direction, context strategy, automation scope, or next-step planning.
 - Read `ROADMAP.md` when the task asks what remains, what to do next, or how to sequence work.
 - Read `SERVER_RUNBOOK.md` before operating the MaxNow server over SSH or changing nginx/server deployment state.
+- For any Wenda course query or mutation, or any change to Wenda booking / waitlist / cancellation / transfer scripts, runners, configuration, or systemd entrypoints, read `WENDA_BOOKING_AGENT.md` completely first and update it in the same branch when those entrypoints change.
 - For OpenClaw behavior, read `openclaw/maxnow-dashboard/SKILL.md`.
 
 ## Completion Records
@@ -69,6 +70,7 @@ STYLE_CONTEXT.md
 README.md
 DEPLOY.md
 SERVER_RUNBOOK.md
+WENDA_BOOKING_AGENT.md
 scripts/check.py
 scripts/update_data.py
 scripts/sync_system_status.py
