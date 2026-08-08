@@ -90,6 +90,9 @@ scripts/sync_weather.py
 scripts/sync_ricky_travel.py
 scripts/sync_life_foods.py
 scripts/sync_ballet.py
+scripts/cancel_ballet.py
+scripts/run_ballet_cancellation.sh
+scripts/test_cancel_ballet.py
 scripts/test_sync_ballet.py
 scripts/sync_ballet_session_status.py
 scripts/test_sync_ballet_session_status.py

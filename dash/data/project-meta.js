@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-08 09:14",
-  "version": "1.0.9.07",
-  "versionLabel": "v1.0.9.07",
-  "branch": "feature/wenda-booking-agent-entry",
-  "commit": "b470922",
+  "updatedAt": "2026-08-08 09:31",
+  "version": "1.0.9.08",
+  "versionLabel": "v1.0.9.08",
+  "branch": "feature/ballet-cancellation-runner",
+  "commit": "165dee1",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/wenda-booking-agent-entry · commit b470922 · 有未提交代码改动",
+  "deployNote": "feature/ballet-cancellation-runner · commit 165dee1 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-08",
+      "title": "新增闻道单课取消 runner",
+      "summary": "新增 `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`，只使用服务器 host-bound Session，一次精确处理一节当前活动预约；默认 dry-run，execute 必须显式确认。"
+    },
     {
       "date": "2026-08-08",
       "title": "新增闻道抢课专用 Agent 入口",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-03",
       "title": "周简报动态字改用龙藏体",
       "summary": "周简报每周变化的周数、数字日期、次数、时长和课程名统一改用项目内置 `Long Cang`（龙藏体），并增加同色轻量圆润描边，使宽松手写结构更接近底图固定标题“芭蕾周记录”；固定底图文字不重绘。"
-    },
-    {
-      "date": "2026-08-03",
-      "title": "对齐周简报页眉周数与日期",
-      "summary": "周简报动态周数下移 `12px`，与底图“第 / 周”的基线对齐；页眉日期由英文月份改为紧凑的 `MM.DD–MM.DD` 纯数字格式，例如 `07.27–08.02`。"
     }
   ]
 };

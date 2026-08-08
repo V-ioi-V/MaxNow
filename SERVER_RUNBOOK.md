@@ -446,6 +446,27 @@ runner 使用与实时查询相同的 host-bound 加密凭据和 hardened transi
 
 2026-07-28 16:44 已部署主分支 `5389624`（版本 `1.0.6.00`）的芭蕾对话式显式预约。部署前公开运行数据与 root-only 芭蕾私有状态备份在 `/home/ubuntu/maxnow-deploy-backups/20260728-1643-ballet-booking`；拉取后恢复服务器运行数据，并保留新版本 `project-meta.*` / `project-status.*`。首次真实单课提交只产生一次 mutation，脚本内验证和独立实时预约查询均为 `booked`；最终代码再次 dry-run 返回 `already_booked` 且 `mutationAttempts=0`。生产 rolling service 随后成功刷新页面脱敏预约快照，目标记录为 `booked`、`dataAsOf=2026-07-28T16:43:38+08:00`。服务器全仓检查与 `nginx -t` 通过，Dash 匿名访问 `302`、Blog `200`。
 
+#### 芭蕾对话式显式取消
+
+只在 Owner 当前请求中明确要求取消一节精确活动预约时使用。先运行实时预约查询并以其日期、开始 / 结束时间、课程名、老师和教室作为输入；第一版一次只接受一节。必须先以 `confirm:false` dry-run，结果为 `ready`、`mutationAttempts=0` 后，才可将同一份输入仅改为 `confirm:true` execute：
+
+```bash
+cd /var/www/maxnow-dashboard
+scripts/run_ballet_live_query.sh bookings
+
+printf '%s' '{"course":{"date":"2026-08-20","startTime":"19:00","endTime":"20:00","courseName":"示例课程","teacher":"示例老师","venue":"示例教室"},"confirm":false}' \
+  | scripts/run_ballet_cancellation.sh dry-run
+
+printf '%s' '{"course":{"date":"2026-08-20","startTime":"19:00","endTime":"20:00","courseName":"示例课程","teacher":"示例老师","venue":"示例教室"},"confirm":true}' \
+  | scripts/run_ballet_cancellation.sh execute
+```
+
+runner 使用服务器 host-bound 加密 Session 和 hardened transient systemd unit。它从当前活动预约详情中唯一匹配目标，要求页面存在唯一 `.cancelbook` 控件，并验证官方脚本仍使用 `check_cancelrules/{storeId}/{bookingRecordId}` 非变更 POST、`do_cancel/{storeId}` 单次 mutation 和 `bookid` 字段；路径、方法、字段或控件变化时以 `source_changed` fail closed。dry-run 会调用官方规则检查，但不会调用 `do_cancel`。
+
+execute 在 mutation 前重新读取同一预约并再次检查规则；每次最多一次 `do_cancel`，随后重新查询活动预约，只有目标消失才报告 `cancelled`。mutation 后网络或响应未知时仍先做实时复核；目标仍存在或复核失败就返回 `unknown_result`，不得重试。脚本不支持批量、定时或自动取消，也不支持转课、支付、登录或任意 POST；输出不得包含预约记录 ID、Cookie、原始 HTML、响应正文、凭据路径或真实内部 URL。
+
+成功后再次运行 `scripts/run_ballet_live_query.sh bookings` 做独立实时复核，再启动一次 `maxnow-ballet-sync.service` 刷新页面脱敏预约快照。仅做开发 / 部署验收时不得使用 execute；优先对不存在的合成目标运行生产 dry-run，并确认 `mutationAttempts=0`。
+
 #### 芭蕾周日自动抢课 Fast Path
 
 Owner 已单独批准当前七节固定课程在北京时间每周日 14:20 无人值守预约。关键路径不经过 Codex、Skill、OpenClaw 或 SSH：

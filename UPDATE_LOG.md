@@ -11,6 +11,12 @@
 
 ## 2026-08-08
 
+### 新增闻道单课取消 runner
+
+- 新增 `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`，只使用服务器 host-bound Session，一次精确处理一节当前活动预约；默认 dry-run，execute 必须显式确认。
+- 通过官方历史预约详情的 GET-only 诊断确认 `check_cancelrules`、`do_cancel` 与 `bookid` contract；取消前后都重新读取实时预约，实际 mutation 最多一次，未知结果不重试且未确认目标消失时返回 `unknown_result`。
+- 增加 9 项取消专项测试，并纳入全仓检查；本次验收只读访问官方页面，当前没有活动预约，没有执行真实取消。版本提升到 `1.0.9.08`。
+
 ### 新增闻道抢课专用 Agent 入口
 
 - `AGENTS.md` 只新增一条条件路由：闻道课程查询、预约、候补、取消、转课或相关执行入口变更前，必须完整读取 `WENDA_BOOKING_AGENT.md`，避免把完整操作约束堆进总入口；仓库检查同时把该专用文件列为必需文件。

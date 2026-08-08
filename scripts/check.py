@@ -127,6 +127,9 @@ def check_required_files():
         "scripts/probe_ballet_session.py",
         "scripts/test_probe_ballet_session.py",
         "scripts/sync_ballet.py",
+        "scripts/cancel_ballet.py",
+        "scripts/run_ballet_cancellation.sh",
+        "scripts/test_cancel_ballet.py",
         "scripts/test_sync_ballet.py",
         "scripts/query_ballet_live.py",
         "scripts/run_ballet_live_query.sh",
@@ -287,6 +290,32 @@ def check_ballet_booking():
     return (
         "ballet booking: exact matching, unified preflight, explicit "
         "confirmation, sequential execution, verification, and redaction are valid"
+    )
+
+
+def check_ballet_cancellation():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(ROOT / "scripts/test_cancel_ballet.py"),
+        ],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(
+            "ballet cancellation: fixture self-test failed: "
+            + result.stdout.strip()
+        )
+    return (
+        "ballet cancellation: exact active-booking match, official contract "
+        "validation, explicit confirmation, single mutation, live verification, "
+        "and redaction are valid"
     )
 
 
@@ -2130,6 +2159,7 @@ def main():
     checks.append(check_ballet_sync())
     checks.append(check_ballet_live_query())
     checks.append(check_ballet_booking())
+    checks.append(check_ballet_cancellation())
     checks.append(check_ballet_booking_fast())
     checks.append(check_ballet_session_probe())
     checks.append(check_ballet_session_status())

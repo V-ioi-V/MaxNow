@@ -14,9 +14,10 @@
 
 - `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：使用服务器保存的 Session 做最小范围实时只读查询和写后复核。
 - `scripts/book_ballet.py` / `scripts/run_ballet_booking.sh`：Owner 显式指定课程后的普通预约入口；课程与按钮必须在同一 `.classtable` 块内原子绑定。
+- `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`：Owner 显式指定当前预约后的单课取消入口；先精确匹配唯一活动预约并校验该详情页的官方取消 contract，dry-run 只调用非变更规则检查，execute 重检后最多一次取消 mutation，再以实时预约列表确认目标消失。mutation 结果未知时不得重试。
 - `scripts/book_ballet_fast.py` / `scripts/run_ballet_booking_fast.sh`：周日 14:20 自动抢课入口；读取版本化目标配置，真实 mutation 严格串行并在结束后统一实时核验。
 - `config/ballet-booking-fast.json`、`server/maxnow-ballet-booking-fast.*`：Fast Path 的目标与调度入口，不得绕过 Session、时间窗、唯一匹配、幂等和失败关闭边界。
-- 当前 runner 没有取消、转课或支付能力。Owner 明确授权这类操作时，应先按本文件的 Session 优先顺序确认官方协议，再实现或使用最小受限入口；不能把 runner 的现状解释为必须操作微信。
+- 当前取消 runner 只支持一次一节，不支持批量、定时或自动取消；现有 runner 仍没有转课或支付能力。Owner 明确授权未实现的写操作时，应先按本文件的 Session 优先顺序确认官方协议，再实现或使用最小受限入口；不能把 runner 的现状解释为必须操作微信。
 
 ## 维护规则
 
@@ -26,4 +27,5 @@
 
 ## 变更记录
 
+- 2026-08-08：增加单课取消入口；用保存的服务器 Session 只读确认详情页 contract，固定精确活动预约匹配、非变更规则预检、显式确认、单次取消 mutation、实时消失验证和未知结果不重试。
 - 2026-08-08：建立专用入口；固化服务器 Session 优先、协议先只读确认、单次最小提交、独立实时复核和交互登录降级边界，并纳入普通预约与 Fast Path 现有入口。
