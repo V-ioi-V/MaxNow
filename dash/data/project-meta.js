@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-03 23:35",
-  "version": "1.0.9.04",
-  "versionLabel": "v1.0.9.04",
-  "branch": "bugfix/ballet-week-long-cang",
-  "commit": "04c7582",
+  "updatedAt": "2026-08-08 08:16",
+  "version": "1.0.9.05",
+  "versionLabel": "v1.0.9.05",
+  "branch": "feature/add-sunday-ballet-targets",
+  "commit": "793484e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-week-long-cang · commit 04c7582 · 有未提交代码改动",
+  "deployNote": "feature/add-sunday-ballet-targets · commit 793484e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-08",
+      "title": "自动抢课新增周日晚间两项目标",
+      "summary": "Owner 明确要求周日 14:20 抢下周课程时，新增周日 19:00–20:00 软开与 20:00–21:30 芭蕾 L1 两节大教室目标；两节继续不限老师，可预约则预约、可排队则候补。"
+    },
     {
       "date": "2026-08-03",
       "title": "周简报动态字改用龙藏体",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-03",
       "title": "修复芭蕾周记录首次加载空白",
       "summary": "线上底图从合计约 `6.0 MB` 的 PNG 改为合计约 `296 KB` 的 WebP，周简报动态字从 `5.6 MB` 完整 TTF 改为约 `30 KB` 的同款 `Ma Shan Zheng` WOFF2 网页子集；完整 PNG / TTF 仍作为源文件保留，视觉与字体选择不变。"
-    },
-    {
-      "date": "2026-08-02",
-      "title": "完成芭蕾训练周简报",
-      "summary": "芭蕾 `week N` 弹窗新增训练周简报页，可用顶部按钮或左右滑动切换；当前页可直接复制或下载 `1280×1710` PNG。"
     }
   ]
 };

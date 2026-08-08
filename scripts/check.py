@@ -342,8 +342,10 @@ def check_ballet_booking_fast():
         != "芭蕾 L1 > 软开；同课程按周六 > 周日 > 周五 > 其他日期"
         or [item.get("key") for item in data.get("targets", [])]
         != [
+            "sunday-ballet-l1",
             "friday-ballet-l1",
             "tuesday-ballet-l1",
+            "sunday-soft-open",
             "friday-soft-open",
             "tuesday-soft-open",
             "thursday-soft-open",

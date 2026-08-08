@@ -67,6 +67,24 @@
       "startTime": "19:45",
       "endTime": "21:15",
       "venue": "大教室"
+    },
+    {
+      "key": "sunday-soft-open",
+      "weekday": 6,
+      "courseType": "soft_open",
+      "level": "none",
+      "startTime": "19:00",
+      "endTime": "20:00",
+      "venue": "大教室"
+    },
+    {
+      "key": "sunday-ballet-l1",
+      "weekday": 6,
+      "courseType": "ballet",
+      "level": "L1",
+      "startTime": "20:00",
+      "endTime": "21:30",
+      "venue": "大教室"
     }
   ]
 }
