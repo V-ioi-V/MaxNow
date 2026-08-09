@@ -2319,3 +2319,17 @@ preview verification: 无网络 preview 发布的下一次执行为 2026-08-09 1
 server verification: 33 项预约 / Fast Path / 取消测试、scripts/check.py 与 nginx -t 全部通过；timer enabled / active、下一次 2026-08-09 14:19:35，service inactive；未登录首页 / 自动抢课状态 / Blog 为 302 / 401 / 200
 safety: preview 仅读取配置与私有幂等状态并发布脱敏计划，不加载凭据、不访问闻道、不增加运行或成功计数；未手动启动自动抢课 service，也未提交预约、候补、取消或转课
 ```
+
+2026-08-09 已部署自动抢课教室优先级与手动预约数据刷新：
+
+```text
+deployed source commit: ef53cd1 Fix ballet room fallback priority
+version: 1.0.9.12
+changes: 周日 17:30 芭蕾 L1 与 19:00 肌肉素质不再固定教室；同一日期、课型 / 等级和时间先在大教室中唯一匹配，大教室为 0 节时再在小教室中唯一匹配，优先层多条时继续失败关闭
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260809-ef53cd1-ballet-room-fallback（完整 dash/data、私有 Fast Path 状态与公开状态）
+deployment path: origin/main 与服务器 main 从 b996c4f 快进到 ef53cd1；恢复服务器权威运行数据后刷新 project-meta，并从原私有状态发布新规则 preview
+production dry-run: 用 2026-08-09 14:19:50 作为非变更目标窗口读取 2026-08-16 课表；两节目标均唯一选择小教室并返回 already_booked，requestsMade=1、mutationAttempts=0，没有调用 do_addbook
+ballet refresh: Owner 已手动预约后启动一次既有 maxnow-ballet-sync.service；Result=success、ExecMainStatus=0，dataAsOf=2026-08-09T14:50:08+08:00，两条 upcoming 均为小教室 booked
+server verification: 33 项预约 / Fast Path / 取消测试、scripts/check.py 与 nginx -t 通过；timer enabled / active、下一次 2026-08-16 14:19:35，service inactive；未登录首页 / 自动抢课状态 / Blog 为 302 / 401 / 200
+safety: dry-run 与芭蕾刷新均未执行预约、候补、取消或转课 mutation；页面刷新只使用既有 GET-only 同步入口
+```

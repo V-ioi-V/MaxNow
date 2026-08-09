@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-09 14:46",
+  "updatedAt": "2026-08-09 14:52",
   "version": "1.0.9.12",
   "versionLabel": "v1.0.9.12",
   "branch": "bugfix/ballet-room-fallback",
-  "commit": "b996c4f",
+  "commit": "ef53cd1",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-room-fallback · commit b996c4f · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-room-fallback · commit ef53cd1 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-09",
