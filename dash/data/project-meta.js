@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-09 13:45",
-  "version": "1.0.9.11",
-  "versionLabel": "v1.0.9.11",
-  "branch": "bugfix/token-merge-recovery",
-  "commit": "a6ffdab",
+  "updatedAt": "2026-08-09 14:46",
+  "version": "1.0.9.12",
+  "versionLabel": "v1.0.9.12",
+  "branch": "bugfix/ballet-room-fallback",
+  "commit": "b996c4f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/token-merge-recovery · commit a6ffdab · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-room-fallback · commit b996c4f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-09",
+      "title": "自动抢课增加小教室兜底",
+      "summary": "周日 17:30 芭蕾 L1 与 19:00 肌肉素质不再固定要求大教室；同一日期、课程和时间优先唯一匹配大教室，大教室没有时再唯一匹配小教室。"
+    },
     {
       "date": "2026-08-09",
       "title": "修复 Token 总账拉取失败后归零",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-08",
       "title": "新增闻道单课取消 runner",
       "summary": "新增 `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`，只使用服务器 host-bound Session，一次精确处理一节当前活动预约；默认 dry-run，execute 必须显式确认。"
-    },
-    {
-      "date": "2026-08-08",
-      "title": "新增闻道抢课专用 Agent 入口",
-      "summary": "`AGENTS.md` 只新增一条条件路由：闻道课程查询、预约、候补、取消、转课或相关执行入口变更前，必须完整读取 `WENDA_BOOKING_AGENT.md`，避免把完整操作约束堆进总入口；仓库检查同时把该专用文件列为必需文件。"
     }
   ]
 };

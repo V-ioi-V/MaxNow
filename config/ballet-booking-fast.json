@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -22,6 +22,10 @@
       "level": "none"
     }
   ],
+  "venuePriority": [
+    "大教室",
+    "小教室"
+  ],
   "targets": [
     {
       "key": "sunday-ballet-l1",
@@ -29,8 +33,7 @@
       "courseType": "ballet",
       "level": "L1",
       "startTime": "17:30",
-      "endTime": "19:00",
-      "venue": "大教室"
+      "endTime": "19:00"
     },
     {
       "key": "sunday-conditioning",
@@ -38,8 +41,7 @@
       "courseType": "conditioning",
       "level": "none",
       "startTime": "19:00",
-      "endTime": "20:00",
-      "venue": "大教室"
+      "endTime": "20:00"
     }
   ]
 }

@@ -313,7 +313,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 3
+        or data.get("schemaVersion") != 4
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
@@ -321,6 +321,7 @@ def load_config(path: Path) -> dict[str, Any]:
         or data["release"].get("weekday") != 6
         or not isinstance(data.get("priorityWeekdays"), list)
         or not isinstance(data.get("priorityCourses"), list)
+        or not isinstance(data.get("venuePriority"), list)
         or not isinstance(data.get("targets"), list)
         or not data["targets"]
         or len(data["targets"]) > 10
@@ -337,6 +338,8 @@ def load_config(path: Path) -> dict[str, Any]:
     ]
     if course_priorities != expected_course_priorities:
         raise FastBookingFailure("configuration_error")
+    if data["venuePriority"] != ["大教室", "小教室"]:
+        raise FastBookingFailure("configuration_error")
     required = {
         "key",
         "weekday",
@@ -344,7 +347,6 @@ def load_config(path: Path) -> dict[str, Any]:
         "level",
         "startTime",
         "endTime",
-        "venue",
     }
     keys = set()
     for target in data["targets"]:
@@ -357,8 +359,6 @@ def load_config(path: Path) -> dict[str, Any]:
             or target["weekday"] not in range(7)
             or target["courseType"] not in COURSE_TYPE_LABELS
             or target["level"] not in {"none", "L1", "L1.5", "L2", "L3", "L4"}
-            or not isinstance(target["venue"], str)
-            or not target["venue"].strip()
         ):
             raise FastBookingFailure("configuration_error")
         parse_hhmm(target["startTime"])
@@ -423,6 +423,7 @@ def materialize_targets(
         targets.append(
             {
                 **configured,
+                "venuePriority": list(config["venuePriority"]),
                 "date": target_date(
                     release_at.astimezone(ballet.TIMEZONE).date(),
                     configured["weekday"],
@@ -453,7 +454,7 @@ def public_target(target: dict[str, Any]) -> dict[str, Any]:
         "endTime": target["endTime"],
         "course": course,
         "teacher": "不限老师",
-        "venue": target["venue"],
+        "venue": target.get("_selectedVenue") or "大教室优先，小教室兜底",
     }
 
 
@@ -464,8 +465,11 @@ def record_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
         and record.get("level") == target["level"]
         and record.get("startTime") == target["startTime"]
         and record.get("endTime") == target["endTime"]
-        and ballet.normalize_space(str(record.get("venue", "")))
-        == ballet.normalize_space(target["venue"])
+        and (
+            not target.get("_selectedVenue")
+            or ballet.normalize_space(str(record.get("venue", "")))
+            == ballet.normalize_space(str(target["_selectedVenue"]))
+        )
     )
 
 
@@ -484,11 +488,21 @@ def timetable_candidates(
     if text is None:
         path = f"{ballet.TIMETABLE_PATH}/{target['date']}"
         text = source.request(path, "classtable")
-    return [
+    matches = [
         entry
         for entry in parse_timetable_entries(text, target["date"])
         if record_matches(entry["record"], target)
     ]
+    for venue in target["venuePriority"]:
+        preferred = [
+            entry
+            for entry in matches
+            if ballet.normalize_space(str(entry["record"].get("venue", "")))
+            == ballet.normalize_space(venue)
+        ]
+        if preferred:
+            return preferred
+    return []
 
 
 def prepare_candidate(
@@ -560,7 +574,6 @@ def occurrence_key(target: dict[str, Any]) -> str:
             "endTime",
             "courseType",
             "level",
-            "venue",
         )
     )
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
@@ -724,6 +737,7 @@ def run_fast(
             continue
         for attempt in range(1, MAX_RETRIES + 2):
             mutation_submitted = False
+            result_target = target
             try:
                 if attempt == 1:
                     candidates_or_failure = cached_candidates.get(target["key"])
@@ -735,11 +749,15 @@ def run_fast(
                 if len(candidates) != 1:
                     raise FastBookingFailure("course_not_unique")
                 candidate = candidates[0]
+                result_target = {
+                    **target,
+                    "_selectedVenue": candidate["record"].get("venue"),
+                }
                 availability = candidate["record"]["availability"]
                 if availability == "booked":
                     records.append(
                         safe_record(
-                            target,
+                            result_target,
                             "already_booked",
                             attempts=attempt,
                             elapsedMilliseconds=round(
@@ -751,7 +769,7 @@ def run_fast(
                 if availability == "waitlist":
                     records.append(
                         safe_record(
-                            target,
+                            result_target,
                             "already_waitlisted",
                             attempts=attempt,
                             availability=availability,
@@ -778,7 +796,7 @@ def run_fast(
                 if availability != "available" and not is_waitlist_action:
                     records.append(
                         safe_record(
-                            target,
+                            result_target,
                             "not_available",
                             attempts=attempt,
                             availability=availability,
@@ -803,7 +821,7 @@ def run_fast(
                 if not execute:
                     records.append(
                         safe_record(
-                            target,
+                            result_target,
                             "ready_waitlist" if is_waitlist_action else "ready",
                             availability=availability,
                             attempts=attempt,
@@ -840,7 +858,7 @@ def run_fast(
                     )
                     records.append(
                         safe_record(
-                            target,
+                            result_target,
                             intended_outcome,
                             availability=availability,
                             attempts=attempt,
@@ -853,7 +871,7 @@ def run_fast(
                     verification_targets.append(
                         (
                             len(records) - 1,
-                            target,
+                            result_target,
                             True,
                             intended_outcome,
                         )
@@ -876,7 +894,7 @@ def run_fast(
                         continue
                     records.append(
                         safe_record(
-                            target,
+                            result_target,
                             code,
                             attempts=attempt,
                             elapsedMilliseconds=round(
@@ -897,7 +915,7 @@ def run_fast(
                 if code in GLOBAL_STOP_CODES:
                     records.append(
                         safe_record(
-                            target,
+                            result_target,
                             code,
                             attempts=attempt,
                             elapsedMilliseconds=round(
@@ -916,7 +934,7 @@ def run_fast(
                     continue
                 records.append(
                     safe_record(
-                        target,
+                        result_target,
                         code,
                         attempts=attempt,
                         elapsedMilliseconds=round(
@@ -933,7 +951,7 @@ def run_fast(
                     verification_targets.append(
                         (
                             len(records) - 1,
-                            target,
+                            result_target,
                             False,
                             "waitlisted" if is_waitlist_action else "booked",
                         )
@@ -1073,7 +1091,7 @@ def build_public(
         "schedule": "每周日 14:20（北京时间）",
         "coursePriorityOrder": ["芭蕾 L1", "肌肉素质"],
         "priorityOrder": ["周六", "周日", "周五", "其他日期"],
-        "prioritySummary": "芭蕾 L1 > 肌肉素质；同课程按周六 > 周日 > 周五 > 其他日期",
+        "prioritySummary": "芭蕾 L1 > 肌肉素质；教室按大教室 > 小教室兜底",
         "lastAttemptAt": state.get("lastAttemptAt"),
         "lastSuccessAt": state.get("lastSuccessAt"),
         "nextRunAt": next_run.isoformat(timespec="seconds"),

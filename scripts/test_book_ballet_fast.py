@@ -308,26 +308,61 @@ class FastBookingTests(unittest.TestCase):
             "startTime": target["startTime"],
             "endTime": target["endTime"],
             "teacher": "临时代课老师",
-            "venue": target["venue"],
+            "venue": "小教室",
         }
 
         self.assertTrue(fast.record_matches(record, target))
         record["startTime"] = "18:46"
         self.assertFalse(fast.record_matches(record, target))
 
-    def test_target_still_requires_exact_venue(self):
+    def test_timetable_candidates_prefer_large_room_then_fall_back_to_small(self):
         target = fast.materialize_targets(config(), self.release)[0]
-        record = {
-            "date": target["date"],
-            "courseType": target["courseType"],
-            "level": target["level"],
-            "startTime": target["startTime"],
-            "endTime": target["endTime"],
-            "teacher": "任意老师",
-            "venue": "小教室",
-        }
+        def candidate_page(venue, course_id, class_table_id):
+            return timetable_html(
+                course="芭蕾L1-入门",
+                time_text="17:30 ~ 19:00",
+                teacher="任意老师",
+                venue=venue,
+                status="4 / 10",
+            ).replace(
+                "</div></div></body>",
+                (
+                    f'<button class="bookbtn" courseid="{course_id}" '
+                    f'classtableid="{class_table_id}">预约</button>'
+                    "</div></div></body>"
+                ),
+            )
 
-        self.assertFalse(fast.record_matches(record, target))
+        small = candidate_page("小教室", "71001", "72001")
+        large = candidate_page("大教室", "71002", "72002")
+        for page in (small + large, large + small):
+            with self.subTest(small_first=page.index("小教室") < page.index("大教室")):
+                candidates = fast.timetable_candidates(
+                    None, target, prefetched_text=page
+                )
+                self.assertEqual(len(candidates), 1)
+                self.assertEqual(candidates[0]["record"]["venue"], "大教室")
+                button = next(
+                    item
+                    for item in candidates[0]["control"]["controls"]
+                    if item["tag"] == "button"
+                )
+                self.assertEqual(
+                    button["attrs"]["classtableid"],
+                    "72002",
+                )
+
+        candidates = fast.timetable_candidates(
+            None, target, prefetched_text=small
+        )
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["record"]["venue"], "小教室")
+
+        duplicate_large = candidate_page("大教室", "71003", "72003")
+        candidates = fast.timetable_candidates(
+            None, target, prefetched_text=large + duplicate_large + small
+        )
+        self.assertEqual(len(candidates), 2)
 
     def test_fast_path_keeps_target_bound_to_its_own_button(self):
         target = fast.materialize_targets(config(), self.release)[0]
@@ -576,6 +611,10 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(
             {target["teacher"] for target in public["targets"]},
             {"不限老师"},
+        )
+        self.assertEqual(
+            {target["venue"] for target in public["targets"]},
+            {"大教室优先，小教室兜底"},
         )
         for marker in (
             "courseId",

@@ -14,10 +14,10 @@
     "周五",
     "其他日期"
   ],
-  "prioritySummary": "芭蕾 L1 > 肌肉素质；同课程按周六 > 周日 > 周五 > 其他日期",
+  "prioritySummary": "芭蕾 L1 > 肌肉素质；教室按大教室 > 小教室兜底",
   "lastAttemptAt": null,
   "lastSuccessAt": null,
-  "nextRunAt": "2026-08-09T14:20:00+08:00",
+  "nextRunAt": "2026-08-16T14:20:00+08:00",
   "totalRuns": 0,
   "totalBooked": 0,
   "totalWaitlisted": 0,
@@ -26,25 +26,25 @@
     {
       "key": "sunday-ballet-l1",
       "weekday": "周日",
-      "date": "2026-08-16",
+      "date": "2026-08-23",
       "startTime": "17:30",
       "endTime": "19:00",
       "course": "芭蕾 L1",
       "teacher": "不限老师",
-      "venue": "大教室"
+      "venue": "大教室优先，小教室兜底"
     },
     {
       "key": "sunday-conditioning",
       "weekday": "周日",
-      "date": "2026-08-16",
+      "date": "2026-08-23",
       "startTime": "19:00",
       "endTime": "20:00",
       "course": "肌肉素质",
       "teacher": "不限老师",
-      "venue": "大教室"
+      "venue": "大教室优先，小教室兜底"
     }
   ],
   "lastRun": null,
   "preview": null,
-  "generatedAt": "2026-08-09T12:30:00+08:00"
+  "generatedAt": "2026-08-09T14:50:00+08:00"
 }

@@ -342,15 +342,18 @@ def check_ballet_booking_fast():
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     targets = config.get("targets", [])
     if (
-        config.get("schemaVersion") != 3
+        config.get("schemaVersion") != 4
         or not targets
         or config.get("priorityCourses")
         != [
             {"courseType": "ballet", "level": "L1"},
             {"courseType": "conditioning", "level": "none"},
         ]
+        or config.get("venuePriority") != ["大教室", "小教室"]
         or any(
-            "teacher" in target or "allowBlankTeacher" in target
+            "teacher" in target
+            or "allowBlankTeacher" in target
+            or "venue" in target
             for target in targets
         )
     ):
@@ -369,7 +372,9 @@ def check_ballet_booking_fast():
         or data.get("priorityOrder") != ["周六", "周日", "周五", "其他日期"]
         or data.get("coursePriorityOrder") != ["芭蕾 L1", "肌肉素质"]
         or data.get("prioritySummary")
-        != "芭蕾 L1 > 肌肉素质；同课程按周六 > 周日 > 周五 > 其他日期"
+        != "芭蕾 L1 > 肌肉素质；教室按大教室 > 小教室兜底"
+        or {item.get("venue") for item in data.get("targets", [])}
+        != {"大教室优先，小教室兜底"}
         or [item.get("key") for item in data.get("targets", [])]
         != [
             "sunday-ballet-l1",
