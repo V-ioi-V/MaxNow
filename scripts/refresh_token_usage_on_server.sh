@@ -130,6 +130,33 @@ restore_runtime_pair() {
   fi
 }
 
+restore_backup_pair() {
+  local name="$1"
+  local backup_json="$BACKUP_DIR/$name.json"
+  local backup_js="$BACKUP_DIR/$name.js"
+
+  if [[ -f "$backup_json" ]]; then
+    cp -a "$backup_json" "dash/data/$name.json"
+  fi
+  if [[ -f "$backup_js" ]]; then
+    cp -a "$backup_js" "dash/data/$name.js"
+  fi
+}
+
+restore_all_pull_backups() {
+  local name
+  for name in \
+    openclaw-usage \
+    codex-usage \
+    codex-macos-usage \
+    codex-server-usage \
+    token-usage \
+    project-meta; do
+    restore_backup_pair "$name"
+  done
+  log "restored pre-pull usage ledgers after pull failure"
+}
+
 refresh_openclaw_if_empty() {
   local openclaw_units
   openclaw_units="$(usage_units dash/data/openclaw-usage.json)"
@@ -159,14 +186,20 @@ log "token usage server refresh start"
 BACKUP_ROOT="/tmp/maxnow-token-usage-refresh"
 BACKUP_DIR="$BACKUP_ROOT/$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BACKUP_DIR"
-cp -a dash/data/openclaw-usage.json "$BACKUP_DIR/openclaw-usage.json" 2>/dev/null || true
-cp -a dash/data/openclaw-usage.js "$BACKUP_DIR/openclaw-usage.js" 2>/dev/null || true
-cp -a dash/data/codex-server-usage.json "$BACKUP_DIR/codex-server-usage.json" 2>/dev/null || true
-cp -a dash/data/codex-server-usage.js "$BACKUP_DIR/codex-server-usage.js" 2>/dev/null || true
+for name in \
+  openclaw-usage \
+  codex-usage \
+  codex-macos-usage \
+  codex-server-usage \
+  token-usage \
+  project-meta; do
+  cp -a "dash/data/$name.json" "$BACKUP_DIR/$name.json" 2>/dev/null || true
+  cp -a "dash/data/$name.js" "$BACKUP_DIR/$name.js" 2>/dev/null || true
+done
 ln -sfn "$BACKUP_DIR" "$BACKUP_ROOT/latest" 2>/dev/null || true
 
 if [[ "$SKIP_PULL" -eq 0 ]]; then
-  git stash push -m before-token-usage-refresh -- \
+  git restore --worktree -- \
     dash/data/openclaw-usage.json \
     dash/data/openclaw-usage.js \
     dash/data/codex-usage.json \
@@ -178,8 +211,11 @@ if [[ "$SKIP_PULL" -eq 0 ]]; then
     dash/data/token-usage.json \
     dash/data/token-usage.js \
     dash/data/project-meta.json \
-    dash/data/project-meta.js >/dev/null 2>&1 || true
-  pull_origin_main
+    dash/data/project-meta.js
+  if ! pull_origin_main; then
+    restore_all_pull_backups
+    exit 1
+  fi
 fi
 
 restore_runtime_pair openclaw-usage

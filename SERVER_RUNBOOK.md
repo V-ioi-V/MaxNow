@@ -980,6 +980,10 @@ ubuntu crontab 在每小时 `:10` 拉取本机源账本并发布统一 Token 总
 # END MAXNOW-TOKEN-USAGE-REFRESH
 ```
 
+该任务的 GitHub Git transport 固定使用 SSH 443。服务器 `ubuntu` 使用 MaxNow 仓库专用只读 deploy key，仓库级 `core.sshCommand` 指向该 key；不得改回 GitHub HTTPS 或 SSH 22。私钥只保存在服务器 `~/.ssh` 且权限为 `0600`，公钥在 GitHub 仓库 Deploy keys 中保持只读。验证时只输出认证是否成功和 remote URL，不输出私钥内容。
+
+总账脚本在拉取前把 `openclaw-usage`、三路 Codex usage、统一 `token-usage` 与 `project-meta` 的 JSON / JS 原样备份到 `/tmp/maxnow-token-usage-refresh/<timestamp>`，再清理这些受管工作树文件并执行 fast-forward pull。若三次拉取仍失败，必须恢复全部备份后退出；成功后只恢复服务器权威 `openclaw-usage.*` / `codex-server-usage.*`，再合并总账。不要重新引入未清理的长期 Git stash。
+
 固定周期为 macOS `:00`、Windows `:02`、服务器源采集 `:05`、总账发布 `:10`。总账任务保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage`；`git pull` 单次默认 120 秒超时，遇到并发 Git 更新等瞬时失败时最多尝试 3 次。
 
 2026-07-28 11:10 的总账发布曾与另一条 Git 更新并发，`git pull` 因 `cannot lock ref 'refs/remotes/origin/main'` 退出，导致已经上报到 `origin/main` 的 macOS 源账本没有进入线上总账。11:28 使用原 cron 锁手动补跑后，总账更新为 `11:28`，Codex macOS 来源时间更新为 `11:00`；随后为拉取步骤增加有限重试，避免一次引用锁竞争漏掉整小时发布。

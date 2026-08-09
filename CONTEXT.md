@@ -79,7 +79,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/report_codex_usage.sh`：Owner macOS 本机的 Codex 用量上报脚本；只刷新并提交本机 `codex-macos-usage.*` 源账本，推送后不再 SSH 触发服务器合并。
 - `scripts/install_local_codex_usage_launchd.sh`：注册 macOS launchd 任务 `cn.maxnow.local-codex-usage-report`，默认每小时 `:00` 运行。
 - `scripts/refresh_token_sources_on_server.sh`：root 每小时 `:05` 刷新 OpenClaw / Codex server 源账本，不提前拉取本机账本。
-- `scripts/refresh_token_usage_on_server.sh`：服务器侧 Token 总账刷新脚本；拉取最新本机源账本，保护 `openclaw-usage.*` / `codex-server-usage.*` 运行态账本，并合并 `token-usage.*`。
+- `scripts/refresh_token_usage_on_server.sh`：服务器侧 Token 总账刷新脚本；拉取最新本机源账本，保护 `openclaw-usage.*` / `codex-server-usage.*` 运行态账本，并合并 `token-usage.*`；拉取前会临时备份全部 usage / project-meta 文件，拉取失败时原样恢复，不能把线上总账降级成仓库旧基线。
 - `scripts/sync_weather.py`：从 Open-Meteo 的中国气象局 CMA / GRAPES 模型刷新北京市海淀区天气，写入 `dash/data/dashboard.*` 的 `weather` 字段，并用当前降水量修正漏报为云的天气码。
 - `scripts/sync_market_indices.py`：从腾讯公开行情接口刷新纳指100、标普500、上证指数、深证成指和创业板指，生成 Home 市场涨幅卡读取的 `dash/data/market-indices.*`。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
@@ -155,7 +155,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - MaxNow 版本号由根目录 `VERSION` 手动维护，格式为 `x.x.x.xx`；`python scripts/update_data.py project-meta` 会刷新 Home 的版本与版本更新模块。任何已完成的 Owner 可见或运维相关改动都要升版本：小 UI / 文案 / 布局调整、新页面能力、新数据源和新自动化默认升最后两位；重要功能模块稳定落地升 patch；大版本阶段切换升 minor / major。
 - Windows / macOS / server Codex 都从 `.codex/sessions` 读取 token、模型和 `task_complete.duration_ms`；活跃时长只统计已完成任务，排除用户停留、休眠和轮次之间的空闲时间，不导出对话正文。
 - Token 自动化使用同一固定小时周期：macOS `:00`、Windows `:02`、root server sources `:05`、ubuntu ledger merge `:10`。本机任务继续使用专用 main clone；Git HTTP 低速边界和 SSH keepalive 防止 `git pull` / `push` 无限挂起，Windows 任务最长运行 10 分钟。Windows / macOS 上报若因并发 push 留下本地生成提交，只在提交标题和文件边界都确认属于对应任务时自动回到最新 `origin/main`、重新生成并最多重试 3 次；若上次运行只留下对应的未提交 usage 生成文件，也会在确认没有越界改动后恢复并重新生成。Windows PowerShell 上报必须逐步检查 Git / Python 原生命令退出码，不能仅凭脚本走到末尾判定成功；人工提交或其他文件改动一律阻断自动 reset / restore。
-- 服务器 root crontab 使用 `MAXNOW-TOKEN-SOURCE-REFRESH` 和 `/tmp/maxnow-token-source-refresh.lock`，日志写入 `logs/token-source-refresh.log`；ubuntu crontab 使用 `MAXNOW-TOKEN-USAGE-REFRESH` 和 `/tmp/maxnow-token-usage-refresh.lock`，每小时 `:10` 拉取并合并总账。总账拉取对并发 Git 引用更新等瞬时失败最多尝试 3 次，持续失败仍会退出并保留旧总账。
+- 服务器 root crontab 使用 `MAXNOW-TOKEN-SOURCE-REFRESH` 和 `/tmp/maxnow-token-source-refresh.lock`，日志写入 `logs/token-source-refresh.log`；ubuntu crontab 使用 `MAXNOW-TOKEN-USAGE-REFRESH` 和 `/tmp/maxnow-token-usage-refresh.lock`，每小时 `:10` 通过仓库专用只读 GitHub SSH deploy key 拉取并合并总账。总账拉取对并发 Git 引用更新等瞬时失败最多尝试 3 次；持续失败会从临时备份恢复拉取前全部 usage / project-meta 文件后退出，不得留下仓库旧基线。
 - `dash/data/token-usage.json` 是 Token 页统一入口；OpenClaw、Codex Windows / macOS、Codex server 和后续其他来源都应合入这个总账。Token 页 `1d` 按当前浏览器本地日期 00:00 起算，`7d` / `30d` 包括今天在内的最近 7 / 30 个自然日；来源费用面板和模型占比、调用消耗同层并列展示，并且来源 token、费用和 runs 跟随当前范围更新。页头展示各来源账本的最后更新时间。
 - 2026-07-10 起，Dash Home 首批读取 dashboard / project-status / last-30 / wiki-todos / dounai_checkin / market-indices / project-meta 小数据并渲染；Token 总账、Ricky、生活页数据和 Leaflet 地图资源按当前视图需要再加载。`.js` wrapper 仍由脚本生成并校验，但主要作为数据一致性和静态兜底资产，不要重新放回首屏同步脚本列表。
 - 2026-07-08 起，Home 状态条下方主内容采用统一 `home-board` 两列版式：左列 `home-lane-primary` 放 Token 热力格、Personal Wiki、待推进、AI 前沿和版本更新，版本更新固定排在 AI 前沿下方；右列 `home-side-stack` 视觉上是 widget 网格，按优先级放市场涨幅、今日 Todo、近期用量、豆奶和系统状态。两列外壳负责大块对齐，左列负责吸收内容型长模块，右列 widget 卡型负责半宽 / 满宽短状态入口，避免左列空着而右列继续下排，也避免所有卡片被二列布局拉成大卡。后续新增 Home 卡片必须先选 lane，再选 `wide-short` / `wide-tall` / `mid-short` / `mid-tall` / `widget-compact` / `widget-wide` 卡型。

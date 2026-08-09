@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-09 12:23",
-  "version": "1.0.9.10",
-  "versionLabel": "v1.0.9.10",
-  "branch": "feature/ballet-two-sunday-targets",
-  "commit": "b4f7f1b",
+  "updatedAt": "2026-08-09 13:39",
+  "version": "1.0.9.11",
+  "versionLabel": "v1.0.9.11",
+  "branch": "bugfix/token-merge-recovery",
+  "commit": "d7e4e03",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-two-sunday-targets · commit b4f7f1b · 有未提交代码改动",
+  "deployNote": "bugfix/token-merge-recovery · commit d7e4e03 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-09",
+      "title": "修复 Token 总账拉取失败后归零",
+      "summary": "服务器 Git remote 切换到 GitHub SSH 443 后缺少对应凭据，每小时 `:10` 总账任务在 `git pull` 阶段失败；旧脚本又已先暂存运行态账本，导致线上退回仓库内 7 月 7 日旧总账，Token 页当天范围显示为 0。"
+    },
     {
       "date": "2026-08-09",
       "title": "自动抢课改为箭头所示两节周日课程",
@@ -28,11 +33,6 @@
       "date": "2026-08-08",
       "title": "新增闻道抢课专用 Agent 入口",
       "summary": "`AGENTS.md` 只新增一条条件路由：闻道课程查询、预约、候补、取消、转课或相关执行入口变更前，必须完整读取 `WENDA_BOOKING_AGENT.md`，避免把完整操作约束堆进总入口；仓库检查同时把该专用文件列为必需文件。"
-    },
-    {
-      "date": "2026-08-08",
-      "title": "修复自动抢课课程与按钮错配",
-      "summary": "闻道课表的展示记录曾在解析后排序，而预约按钮仍保持源 HTML 顺序；普通预约与 Fast Path 再按位置配对时，同时间课程可能把目标课程绑定到另一教室课程的按钮，导致语义匹配正确但实际提交错误课程。"
     }
   ]
 }
