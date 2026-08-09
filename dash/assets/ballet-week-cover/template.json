@@ -5,7 +5,7 @@
   "briefTemplateVersion": "v1",
   "briefTemplateFile": "brief-template-v1.webp",
   "briefRefreshWeekday": 7,
-  "briefRefreshHour": 20,
+  "briefRefreshHour": 18,
   "width": 1280,
   "height": 1710,
   "timezone": "Asia/Shanghai",

@@ -751,9 +751,9 @@ def check_ballet_read_model():
         )
         or "OnCalendar=*-*-* 00:00:00 Asia/Shanghai" in timer
         or "OnCalendar=Sun *-*-* 14:30:00 Asia/Shanghai" not in timer
-        or "OnCalendar=Sun *-*-* 20:00:00 Asia/Shanghai" not in timer
+        or "OnCalendar=Sun *-*-* 20:00:00 Asia/Shanghai" in timer
         or "Sunday 14:30" not in dashboard_html
-        or "20:00 刷新训练周简报" not in dashboard_html
+        or "18:00 刷新训练周简报" not in dashboard_html
         or "周日 14:30 检查下周课表" not in dashboard_js
         or "09:00 / 12:00 / 15:00 / 18:00 / 22:00 整体刷新" not in dashboard_html
         or "每天 09 / 12 / 15 / 18 / 22 点更新" not in dashboard_js
@@ -1777,7 +1777,7 @@ def check_secondary_view_style():
         '"ClipboardItem" in window',
         'anchorMonday: "2026-07-27"',
         "anchorWeek: 2",
-        "briefRefreshHour: 20",
+        "briefRefreshHour: 18",
         'return `${format(info.monday)}–${format(info.sunday)}`;',
         "const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;",
         'document.fonts?.load?.(\'80px "MaxNow Week Hand"\', "芭蕾周简报0123456789")',
@@ -1802,7 +1802,7 @@ def check_secondary_view_style():
         or cover_config.get("anchorMonday") != "2026-07-27"
         or cover_config.get("anchorWeek") != 2
         or cover_config.get("briefRefreshWeekday") != 7
-        or cover_config.get("briefRefreshHour") != 20
+        or cover_config.get("briefRefreshHour") != 18
         or cover_config.get("briefWeekNumberBaselineY") != 390
         or cover_config.get("briefTemplateVersion") != "v1"
         or cover_config.get("templateFile") != "template-v1.webp"
@@ -1851,7 +1851,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=239" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=197" not in dashboard_html
+        or "app.js?v=198" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2069,7 +2069,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=197" not in dashboard_html:
+    if "app.js?v=198" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

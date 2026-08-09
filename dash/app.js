@@ -18,7 +18,7 @@ const BALLET_WEEK_FALLBACK_CONFIG = {
   briefTemplateVersion: "v1",
   briefTemplateFile: "brief-template-v1.webp",
   briefRefreshWeekday: 7,
-  briefRefreshHour: 20,
+  briefRefreshHour: 18,
   timezone: "Asia/Shanghai",
   anchorMonday: "2026-07-27",
   anchorWeek: 2,

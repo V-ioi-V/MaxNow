@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-08 09:34",
-  "version": "1.0.9.08",
-  "versionLabel": "v1.0.9.08",
-  "branch": "feature/ballet-cancellation-runner",
-  "commit": "8e35f0f",
+  "updatedAt": "2026-08-09 11:55",
+  "version": "1.0.9.09",
+  "versionLabel": "v1.0.9.09",
+  "branch": "feature/ballet-brief-1800",
+  "commit": "6750f07",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-cancellation-runner · commit 8e35f0f · 有未提交代码改动",
+  "deployNote": "feature/ballet-brief-1800 · commit 6750f07 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-09",
+      "title": "周简报改为周日 18:00 结算",
+      "summary": "芭蕾训练周简报从周日 20:00 提前到周日 18:00 切换本周，页面标签、画布截止时间、模板配置与说明文档同步更新；已完成课程口径保持不变。"
+    },
     {
       "date": "2026-08-08",
       "title": "新增闻道单课取消 runner",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-08",
       "title": "自动抢课新增周日晚间两项目标",
       "summary": "Owner 明确要求周日 14:20 抢下周课程时，新增周日 19:00–20:00 软开与 20:00–21:30 芭蕾 L1 两节大教室目标；两节继续不限老师，可预约则预约、可排队则候补。"
-    },
-    {
-      "date": "2026-08-03",
-      "title": "周简报动态字改用龙藏体",
-      "summary": "周简报每周变化的周数、数字日期、次数、时长和课程名统一改用项目内置 `Long Cang`（龙藏体），并增加同色轻量圆润描边，使宽松手写结构更接近底图固定标题“芭蕾周记录”；固定底图文字不重绘。"
     }
   ]
 };
