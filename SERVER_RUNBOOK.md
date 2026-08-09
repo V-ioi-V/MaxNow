@@ -2301,3 +2301,17 @@ server verification: 9 项取消专项测试与普通预约 / Fast Path 合计 3
 automation state: 自动抢课 timer 全程未停止或重启，保持 enabled / active、下次 2026-08-09 14:19:35，service inactive；累计 totalRuns / totalBooked / totalWaitlisted 仍为 1 / 4 / 1
 safety: 本次所有闻道协议诊断均为 GET；生产 runner 验收只执行 1 个预约索引 GET。没有调用 check_cancelrules、do_cancel、do_addbook，也没有新增预约、候补、取消、转课或支付
 ```
+
+2026-08-09 已部署自动抢课两项目标替换：
+
+```text
+deployed source commit: b4f7f1b Update Sunday ballet booking targets
+version: 1.0.9.10
+changes: 自动抢课只保留 2026-08-16 周日大教室 17:30–19:00 芭蕾 L1 与 19:00–20:00 肌肉素质，均不限老师；此前七项目标全部退出配置
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260809-ballet-two-targets-VI9Tez（完整 dash/data、变更前配置、私有抢课状态与公开状态）
+runtime data stash: predeploy-ballet-two-targets-20260809（部署后保留；服务器权威 dash/data 已恢复，自动抢课 fallback 与 project-meta.* / project-status.* 按新版本重新生成）
+deployment path: origin/main 快进到 b4f7f1b，再通过校验过的 Git bundle 将服务器 main 从 0fc3a46 快进；Fast Path timer 在代码切换窗口内停止并由失败保护恢复，未触发 service
+preview verification: 无网络 preview 发布的下一次执行为 2026-08-09 14:20，两项目标日期均为 2026-08-16；累计保持 1 次运行、4 次预约、1 次候补
+server verification: 33 项预约 / Fast Path / 取消测试、scripts/check.py 与 nginx -t 全部通过；timer enabled / active、下一次 2026-08-09 14:19:35，service inactive；未登录首页 / 自动抢课状态 / Blog 为 302 / 401 / 200
+safety: preview 仅读取配置与私有幂等状态并发布脱敏计划，不加载凭据、不访问闻道、不增加运行或成功计数；未手动启动自动抢课 service，也未提交预约、候补、取消或转课
+```
