@@ -347,7 +347,7 @@ def check_ballet_booking_fast():
         or config.get("priorityCourses")
         != [
             {"courseType": "ballet", "level": "L1"},
-            {"courseType": "soft_open", "level": "none"},
+            {"courseType": "conditioning", "level": "none"},
         ]
         or any(
             "teacher" in target or "allowBlankTeacher" in target
@@ -367,18 +367,13 @@ def check_ballet_booking_fast():
         or {item.get("teacher") for item in data.get("targets", [])}
         != {"不限老师"}
         or data.get("priorityOrder") != ["周六", "周日", "周五", "其他日期"]
-        or data.get("coursePriorityOrder") != ["芭蕾 L1", "软开"]
+        or data.get("coursePriorityOrder") != ["芭蕾 L1", "肌肉素质"]
         or data.get("prioritySummary")
-        != "芭蕾 L1 > 软开；同课程按周六 > 周日 > 周五 > 其他日期"
+        != "芭蕾 L1 > 肌肉素质；同课程按周六 > 周日 > 周五 > 其他日期"
         or [item.get("key") for item in data.get("targets", [])]
         != [
             "sunday-ballet-l1",
-            "friday-ballet-l1",
-            "tuesday-ballet-l1",
-            "sunday-soft-open",
-            "friday-soft-open",
-            "tuesday-soft-open",
-            "thursday-soft-open",
+            "sunday-conditioning",
         ]
     ):
         raise ValueError("ballet fast booking: public plan or priority is invalid")
@@ -459,7 +454,7 @@ def check_ballet_booking_fast():
         "allowWaitlist=true",
         "Teacher is display-only for the Sunday fast path",
         "可预约则预约，可排队则候补",
-        "芭蕾 L1 > 软开",
+        "芭蕾 L1 > 肌肉素质",
         "周六 > 周日 > 周五 > 其他日期",
     )
     combined = "\n".join(
@@ -1851,7 +1846,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=239" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=198" not in dashboard_html
+        or "app.js?v=199" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2069,7 +2064,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=198" not in dashboard_html:
+    if "app.js?v=199" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

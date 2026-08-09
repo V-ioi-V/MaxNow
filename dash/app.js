@@ -139,9 +139,9 @@ const fallbackBalletBookingFast =
   window.MAXNOW_BALLET_BOOKING_FAST_DATA || {
     schemaVersion: 1,
     enabled: false,
-    coursePriorityOrder: ["芭蕾 L1", "软开"],
+    coursePriorityOrder: ["芭蕾 L1", "肌肉素质"],
     priorityOrder: ["周六", "周日", "周五", "其他日期"],
-    prioritySummary: "芭蕾 L1 > 软开；同课程按周六 > 周日 > 周五 > 其他日期",
+    prioritySummary: "芭蕾 L1 > 肌肉素质；同课程按周六 > 周日 > 周五 > 其他日期",
     targets: [],
     lastStatus: "waiting",
   };

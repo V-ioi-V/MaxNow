@@ -18,72 +18,27 @@
       "level": "L1"
     },
     {
-      "courseType": "soft_open",
+      "courseType": "conditioning",
       "level": "none"
     }
   ],
   "targets": [
     {
-      "key": "tuesday-soft-open",
-      "weekday": 1,
-      "courseType": "soft_open",
-      "level": "none",
-      "startTime": "18:45",
-      "endTime": "19:45",
-      "venue": "大教室"
-    },
-    {
-      "key": "tuesday-ballet-l1",
-      "weekday": 1,
-      "courseType": "ballet",
-      "level": "L1",
-      "startTime": "19:45",
-      "endTime": "21:15",
-      "venue": "大教室"
-    },
-    {
-      "key": "thursday-soft-open",
-      "weekday": 3,
-      "courseType": "soft_open",
-      "level": "none",
-      "startTime": "18:45",
-      "endTime": "19:45",
-      "venue": "大教室"
-    },
-    {
-      "key": "friday-soft-open",
-      "weekday": 4,
-      "courseType": "soft_open",
-      "level": "none",
-      "startTime": "18:45",
-      "endTime": "19:45",
-      "venue": "大教室"
-    },
-    {
-      "key": "friday-ballet-l1",
-      "weekday": 4,
-      "courseType": "ballet",
-      "level": "L1",
-      "startTime": "19:45",
-      "endTime": "21:15",
-      "venue": "大教室"
-    },
-    {
-      "key": "sunday-soft-open",
-      "weekday": 6,
-      "courseType": "soft_open",
-      "level": "none",
-      "startTime": "19:00",
-      "endTime": "20:00",
-      "venue": "大教室"
-    },
-    {
       "key": "sunday-ballet-l1",
       "weekday": 6,
       "courseType": "ballet",
       "level": "L1",
-      "startTime": "20:00",
-      "endTime": "21:30",
+      "startTime": "17:30",
+      "endTime": "19:00",
+      "venue": "大教室"
+    },
+    {
+      "key": "sunday-conditioning",
+      "weekday": 6,
+      "courseType": "conditioning",
+      "level": "none",
+      "startTime": "19:00",
+      "endTime": "20:00",
       "venue": "大教室"
     }
   ]

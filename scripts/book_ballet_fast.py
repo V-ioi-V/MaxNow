@@ -333,7 +333,7 @@ def load_config(path: Path) -> dict[str, Any]:
     course_priorities = data["priorityCourses"]
     expected_course_priorities = [
         {"courseType": "ballet", "level": "L1"},
-        {"courseType": "soft_open", "level": "none"},
+        {"courseType": "conditioning", "level": "none"},
     ]
     if course_priorities != expected_course_priorities:
         raise FastBookingFailure("configuration_error")
@@ -1071,9 +1071,9 @@ def build_public(
         "enabled": config["enabled"],
         "waitlistEnabled": config["allowWaitlist"],
         "schedule": "每周日 14:20（北京时间）",
-        "coursePriorityOrder": ["芭蕾 L1", "软开"],
+        "coursePriorityOrder": ["芭蕾 L1", "肌肉素质"],
         "priorityOrder": ["周六", "周日", "周五", "其他日期"],
-        "prioritySummary": "芭蕾 L1 > 软开；同课程按周六 > 周日 > 周五 > 其他日期",
+        "prioritySummary": "芭蕾 L1 > 肌肉素质；同课程按周六 > 周日 > 周五 > 其他日期",
         "lastAttemptAt": state.get("lastAttemptAt"),
         "lastSuccessAt": state.get("lastSuccessAt"),
         "nextRunAt": next_run.isoformat(timespec="seconds"),
