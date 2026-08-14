@@ -2347,3 +2347,17 @@ live verification: 2026-08-14 22:47 变更前实时 GET 返回 9 条闻道历史
 server verification: 27 项同步 / 实时查询测试和 scripts/check.py 通过；nginx -t 通过，nginx / maxnow-auth 与 rolling / full / Fast Path 三个 timer 均 active；未登录首页 / ballet.json 为 302 / 401
 safety: 部署和验收只运行闻道 GET-only 上课查询与既有只读同步，没有调用预约规则 POST 或任何预约、候补、取消、转课 mutation
 ```
+
+2026-08-14 已部署 8 月 7 日课程老师校正：
+
+```text
+deployed source commit: 91aca72 Correct Aug 7 ballet teacher
+version: 1.0.9.14
+changes: 将 2026-08-07 19:45–21:15 芭蕾 L1 的历史老师明确校正为张瀚泽；其他空老师历史仍默认李俊，未来课表、当前预约和候补不套用历史校正；Dashboard 同步与实时上课查询共用该例外
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260814-aug7-teacher/dash-data.tgz
+runtime data stash: predeploy-aug7-teacher-20260814（部署后保留；服务器权威 dash/data 已从备份恢复，project-meta.* / project-status.* 按新版本重新生成）
+deployment path: origin/main 与服务器 main 快进到 91aca72；服务器 GitHub remote 保持 SSH 443
+live verification: 既有 rolling GET-only 同步 Result=success / ExecMainStatus=0，dataAsOf=2026-08-14T23:05:37+08:00；8 月 7 日目标记录显示张瀚泽，老师汇总为李俊 6 节 / 420 分钟、张瀚泽 2 节 / 180 分钟、王嘉豪 2 节 / 150 分钟、戴俊瑶 1 节 / 90 分钟；23:06:19 独立实时查询同样返回张瀚泽
+server verification: 28 项同步 / 实时查询测试和 scripts/check.py 通过；部署前后运行数据均有独立备份
+safety: 部署和验收只运行闻道 GET-only 上课查询与既有只读同步，没有调用预约规则 POST 或任何预约、候补、取消、转课 mutation
+```

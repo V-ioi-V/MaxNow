@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-14 23:03",
+  "updatedAt": "2026-08-14 23:06",
   "version": "1.0.9.14",
   "versionLabel": "v1.0.9.14",
   "branch": "bugfix/ballet-aug7-teacher",
-  "commit": "394e9f0",
+  "commit": "91aca72",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-aug7-teacher · commit 394e9f0 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-aug7-teacher · commit 91aca72 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-14",
