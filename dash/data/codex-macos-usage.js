@@ -1,5 +1,5 @@
 window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
-  "updatedAt": "2026-08-15 06:01",
+  "updatedAt": "2026-08-15 07:00",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
