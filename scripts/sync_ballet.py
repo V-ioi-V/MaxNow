@@ -49,6 +49,9 @@ MAX_RESPONSE_BYTES = 2_000_000
 ROLLING_DAYS = 60
 CACHE_TTL_HOURS = 36
 DEFAULT_ATTENDANCE_TEACHER = "李俊"
+ATTENDANCE_TEACHER_OVERRIDES = {
+    ("2026-08-07", "19:45", "21:15", "芭蕾L1-入门"): "张瀚泽",
+}
 
 COURSE_TYPE_ORDER = (
     "ballet",
@@ -1017,8 +1020,15 @@ def normalize_attendance(
 
 
 def attendance_teacher(record: dict[str, Any]) -> str:
+    override_key = (
+        str(record.get("date", "")),
+        str(record.get("startTime", "")),
+        str(record.get("endTime", "")),
+        normalize_course_name(str(record.get("courseName", ""))),
+    )
     return (
-        normalize_space(str(record.get("teacher", "")))
+        ATTENDANCE_TEACHER_OVERRIDES.get(override_key)
+        or normalize_space(str(record.get("teacher", "")))
         or DEFAULT_ATTENDANCE_TEACHER
     )
 

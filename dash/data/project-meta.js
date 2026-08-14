@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-14 22:55",
-  "version": "1.0.9.13",
-  "versionLabel": "v1.0.9.13",
-  "branch": "bugfix/ballet-missing-teacher",
-  "commit": "c370033",
+  "updatedAt": "2026-08-14 23:03",
+  "version": "1.0.9.14",
+  "versionLabel": "v1.0.9.14",
+  "branch": "bugfix/ballet-aug7-teacher",
+  "commit": "394e9f0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-missing-teacher · commit c370033 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-aug7-teacher · commit 394e9f0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-14",
+      "title": "校正 8 月 7 日课程老师",
+      "summary": "Owner 将 2026-08-07 19:45–21:15 芭蕾 L1 的老师明确校正为“张瀚泽”；这条记录不再使用空老师默认李俊。"
+    },
     {
       "date": "2026-08-14",
       "title": "统一实际上课历史的空老师口径",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-09",
       "title": "自动抢课改为箭头所示两节周日课程",
       "summary": "Owner 明确只抢周日大教室 17:30–19:00 芭蕾 L1 与 19:00–20:00 肌肉素质，均不限老师；此前周二、周四、周五及旧周日晚间目标全部移除。"
-    },
-    {
-      "date": "2026-08-09",
-      "title": "周简报改为周日 18:00 结算",
-      "summary": "芭蕾训练周简报从周日 20:00 提前到周日 18:00 切换本周，页面标签、画布截止时间、模板配置与说明文档同步更新；已完成课程口径保持不变。"
     }
   ]
 };

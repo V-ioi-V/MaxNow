@@ -364,7 +364,7 @@ class BalletSyncTests(unittest.TestCase):
         detail = ballet.parse_detail(
             detail_html(
                 course="芭蕾L1-入门",
-                day="2026-08-07",
+                day="2026-08-08",
                 teacher="",
             ),
             "10004",
@@ -384,7 +384,7 @@ class BalletSyncTests(unittest.TestCase):
         detail = ballet.parse_detail(
             detail_html(
                 course="芭蕾L1-入门",
-                day="2026-08-07",
+                day="2026-08-08",
                 teacher="戴俊瑶",
             ),
             "10005",
@@ -395,6 +395,23 @@ class BalletSyncTests(unittest.TestCase):
         )
 
         self.assertEqual(normalized["teacher"], "戴俊瑶")
+
+    def test_owner_confirmed_attendance_teacher_override_takes_precedence(self):
+        detail = ballet.parse_detail(
+            detail_html(
+                course="芭蕾L1-入门",
+                day="2026-08-07",
+                time_text="19:45~21:15",
+                teacher="",
+            ),
+            "10006",
+        )
+        normalized = ballet.normalize_attendance(
+            detail,
+            "2026-08-14T23:00:00+08:00",
+        )
+
+        self.assertEqual(normalized["teacher"], "张瀚泽")
 
     def test_sunday_publish_window_keeps_today_and_adds_next_week(self):
         with tempfile.TemporaryDirectory() as directory:
