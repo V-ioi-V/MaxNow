@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-14 22:50",
+  "updatedAt": "2026-08-14 22:55",
   "version": "1.0.9.13",
   "versionLabel": "v1.0.9.13",
   "branch": "bugfix/ballet-missing-teacher",
-  "commit": "bff083d",
+  "commit": "c370033",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-missing-teacher · commit bff083d · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-missing-teacher · commit c370033 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-14",

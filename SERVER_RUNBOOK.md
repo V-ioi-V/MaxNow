@@ -2333,3 +2333,17 @@ ballet refresh: Owner 已手动预约后启动一次既有 maxnow-ballet-sync.se
 server verification: 33 项预约 / Fast Path / 取消测试、scripts/check.py 与 nginx -t 通过；timer enabled / active、下一次 2026-08-16 14:19:35，service inactive；未登录首页 / 自动抢课状态 / Blog 为 302 / 401 / 200
 safety: dry-run 与芭蕾刷新均未执行预约、候补、取消或转课 mutation；页面刷新只使用既有 GET-only 同步入口
 ```
+
+2026-08-14 已部署实际上课历史空老师归一化：
+
+```text
+deployed source commit: c370033 Fix missing ballet attendance teacher
+version: 1.0.9.13
+changes: 实际上课历史的老师字段为空时按 Owner 确认口径补为李俊；闻道明确姓名与手工补录保持原值，未来课表、当前预约和候补不套用默认老师；Dashboard 同步与实时上课查询共用该规则
+runtime data backup: /home/ubuntu/maxnow-deploy-backups/20260814-ballet-missing-teacher/dash-data.tgz
+runtime data stash: predeploy-ballet-missing-teacher-20260814（部署后保留；服务器权威 dash/data 已从备份恢复，project-meta.* / project-status.* 按新版本重新生成）
+deployment path: origin/main 与服务器 main 从 bff083d 快进到 c370033；服务器 GitHub remote 保持 SSH 443
+live verification: 2026-08-14 22:47 变更前实时 GET 返回 9 条闻道历史，其中 4 条明确为李俊、1 条老师为空；部署后既有 rolling GET-only 同步 Result=success / ExecMainStatus=0，dataAsOf=2026-08-14T22:52:51+08:00，8 月 7 日 19:45 芭蕾 L1 显示李俊，汇总为李俊 7 节 / 510 分钟、空老师 0 条；22:54 独立实时查询同样返回李俊
+server verification: 27 项同步 / 实时查询测试和 scripts/check.py 通过；nginx -t 通过，nginx / maxnow-auth 与 rolling / full / Fast Path 三个 timer 均 active；未登录首页 / ballet.json 为 302 / 401
+safety: 部署和验收只运行闻道 GET-only 上课查询与既有只读同步，没有调用预约规则 POST 或任何预约、候补、取消、转课 mutation
+```
