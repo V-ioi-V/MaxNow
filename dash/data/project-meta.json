@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-09 14:52",
-  "version": "1.0.9.12",
-  "versionLabel": "v1.0.9.12",
-  "branch": "bugfix/ballet-room-fallback",
-  "commit": "ef53cd1",
+  "updatedAt": "2026-08-14 22:50",
+  "version": "1.0.9.13",
+  "versionLabel": "v1.0.9.13",
+  "branch": "bugfix/ballet-missing-teacher",
+  "commit": "bff083d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-room-fallback · commit ef53cd1 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-missing-teacher · commit bff083d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-14",
+      "title": "统一实际上课历史的空老师口径",
+      "summary": "Owner 确认闻道实际上课历史未填写老师时统一按“李俊”处理；明确填写的老师和 Owner 手工补录老师保持原值，未来课表、当前预约与候补不套用该默认值。"
+    },
     {
       "date": "2026-08-09",
       "title": "自动抢课增加小教室兜底",
@@ -28,11 +33,6 @@
       "date": "2026-08-09",
       "title": "周简报改为周日 18:00 结算",
       "summary": "芭蕾训练周简报从周日 20:00 提前到周日 18:00 切换本周，页面标签、画布截止时间、模板配置与说明文档同步更新；已完成课程口径保持不变。"
-    },
-    {
-      "date": "2026-08-08",
-      "title": "新增闻道单课取消 runner",
-      "summary": "新增 `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`，只使用服务器 host-bound Session，一次精确处理一节当前活动预约；默认 dry-run，execute 必须显式确认。"
     }
   ]
 }

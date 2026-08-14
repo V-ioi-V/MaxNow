@@ -13,6 +13,7 @@
 ## 当前入口与能力边界
 
 - `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：使用服务器保存的 Session 做最小范围实时只读查询和写后复核。
+- 实时上课记录与 Dashboard 同步共用同一老师归一化规则：只有实际上课历史的老师字段为空时，按 Owner 确认口径补为“李俊”；课表、当前预约和候补继续保留闻道原值，不把空老师推断为李俊。
 - `scripts/book_ballet.py` / `scripts/run_ballet_booking.sh`：Owner 显式指定课程后的普通预约入口；课程与按钮必须在同一 `.classtable` 块内原子绑定。
 - `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`：Owner 显式指定当前预约后的单课取消入口；先精确匹配唯一活动预约并校验该详情页的官方取消 contract，dry-run 只调用非变更规则检查，execute 重检后最多一次取消 mutation，再以实时预约列表确认目标消失。mutation 结果未知时不得重试。
 - `scripts/book_ballet_fast.py` / `scripts/run_ballet_booking_fast.sh`：周日 14:20 自动抢课入口；读取版本化目标配置，真实 mutation 严格串行并在结束后统一实时核验。
@@ -28,6 +29,7 @@
 
 ## 变更记录
 
+- 2026-08-14：Owner 确认实际上课历史中未填写老师的记录统一按李俊处理；实时上课记录与 Dashboard 同步共用该规则，未来课表和活动预约不继承默认老师。
 - 2026-08-09：Owner 取消 Fast Path 的固定教室要求；两项目标改为大教室优先、大教室没有则小教室兜底，每一层仍必须唯一命中，避免同条件多课时猜测提交。
 - 2026-08-09：Owner 将自动抢课目标收敛为周日 17:30–19:00 芭蕾 L1 与 19:00–20:00 肌肉素质两节大教室课程；删除其余五节及旧周日晚间目标，继续采用精确语义匹配、串行 mutation、候补开关和统一实时复核。
 - 2026-08-08：增加单课取消入口；用保存的服务器 Session 只读确认详情页 contract，固定精确活动预约匹配、非变更规则预检、显式确认、单次取消 mutation、实时消失验证和未知结果不重试。

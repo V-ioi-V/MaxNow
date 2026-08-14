@@ -360,6 +360,42 @@ class BalletSyncTests(unittest.TestCase):
             ],
         )
 
+    def test_missing_attendance_teacher_defaults_to_lijun(self):
+        detail = ballet.parse_detail(
+            detail_html(
+                course="芭蕾L1-入门",
+                day="2026-08-07",
+                teacher="",
+            ),
+            "10004",
+        )
+        normalized = ballet.normalize_attendance(
+            detail,
+            "2026-08-14T22:47:26+08:00",
+        )
+
+        self.assertEqual(normalized["teacher"], "李俊")
+        legacy_record = {**normalized, "teacher": ""}
+        summary, _ = ballet.compute_aggregates([legacy_record], NOW)
+        self.assertEqual(summary["byTeacher"][0]["label"], "李俊")
+        self.assertEqual(ballet._public_record(legacy_record)["teacher"], "李俊")
+
+    def test_explicit_attendance_teacher_is_preserved(self):
+        detail = ballet.parse_detail(
+            detail_html(
+                course="芭蕾L1-入门",
+                day="2026-08-07",
+                teacher="戴俊瑶",
+            ),
+            "10005",
+        )
+        normalized = ballet.normalize_attendance(
+            detail,
+            "2026-08-14T22:47:26+08:00",
+        )
+
+        self.assertEqual(normalized["teacher"], "戴俊瑶")
+
     def test_sunday_publish_window_keeps_today_and_adds_next_week(self):
         with tempfile.TemporaryDirectory() as directory:
             fixture = Path(directory)

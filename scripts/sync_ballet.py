@@ -48,6 +48,7 @@ GLOBAL_NAME = "MAXNOW_BALLET_DATA"
 MAX_RESPONSE_BYTES = 2_000_000
 ROLLING_DAYS = 60
 CACHE_TTL_HOURS = 36
+DEFAULT_ATTENDANCE_TEACHER = "李俊"
 
 COURSE_TYPE_ORDER = (
     "ballet",
@@ -985,7 +986,8 @@ def normalize_attendance(
     if status not in {"已上课", "已完成"}:
         raise SyncFailure("source_changed")
     course_type, level = classify_course(detail["courseName"])
-    key, fallback = stable_key(detail)
+    teacher = attendance_teacher(detail)
+    key, fallback = stable_key({**detail, "teacher": teacher})
     record = {
         "stableKey": key,
         "keySource": "fallback" if fallback else "source_record_id",
@@ -1000,7 +1002,7 @@ def normalize_attendance(
         "startTime": detail.get("startTime") or "",
         "endTime": detail.get("endTime") or "",
         "durationMinutes": detail.get("durationMinutes"),
-        "teacher": normalize_space(detail.get("teacher", "")),
+        "teacher": teacher,
         "venue": normalize_space(detail.get("venue", "")),
         "studio": normalize_space(detail.get("studio", "")),
         "attendanceStatus": "attended",
@@ -1012,6 +1014,13 @@ def normalize_attendance(
         "recordState": "active",
     }
     return record
+
+
+def attendance_teacher(record: dict[str, Any]) -> str:
+    return (
+        normalize_space(str(record.get("teacher", "")))
+        or DEFAULT_ATTENDANCE_TEACHER
+    )
 
 
 def normalize_manual_attendance(
@@ -1278,7 +1287,7 @@ def _add_to_bucket(bucket: dict[str, Any], record: dict[str, Any]) -> None:
         LEVEL_DISPLAY_LABELS[level_display_key],
         duration,
     )
-    teacher = normalize_space(str(record.get("teacher", ""))) or "老师待确认"
+    teacher = attendance_teacher(record)
     _increment_breakdown(bucket["byTeacher"], teacher, teacher, duration)
     if duration is not None:
         bucket["byCourseType"][record["courseType"]]["minutes"] += duration
@@ -1404,7 +1413,7 @@ def _public_record(record: dict[str, Any]) -> dict[str, Any]:
         "startTime": record["startTime"],
         "endTime": record["endTime"],
         "durationMinutes": record["durationMinutes"],
-        "teacher": record["teacher"],
+        "teacher": attendance_teacher(record),
         "venue": record["venue"],
         "studio": record["studio"],
         "attendanceStatus": record["attendanceStatus"],

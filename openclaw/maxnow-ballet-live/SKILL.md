@@ -39,6 +39,7 @@ scripts/run_ballet_live_query.sh membership
    - `"live":true`
    - a current `fetchedAt`
 5. Answer from `data` and state the live query time. If the command fails, report the safe error and say no live data was returned. Do not fall back to cached data.
+6. For `attendance` only, the shared normalization rule returns `李俊` when Wenda leaves the teacher field empty, per the owner's confirmed history rule. Do not apply this default to timetable, booking, or waitlist records.
 
 ## Booking Workflow
 
