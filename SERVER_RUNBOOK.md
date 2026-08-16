@@ -2538,3 +2538,14 @@ runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-gap-start-lab
 browser verification: 9 节脱敏课程预览中标签序列为 10:00 / 11:00 / 12:00 / 13:00 / 18:00 / 19:00 / 20:00 / 21:00 / 22:00，压缩带高 38px，没有范围文案且整页无横向溢出
 safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-16 已部署周安排时间轴收口修复：
+
+```text
+deployed source commits: ac23183 fix: trim ballet weekly timeline + 905a974 chore: refresh project metadata
+version: 1.0.10.13
+changes: 压缩空档只显示 13:00 起始刻度，不再在下沿显示 18:00；时间轴最后一小时按全周最晚课程的准确结束分钟裁短，最后课程 21:15 结束时课表同步收在 21:15
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-timeline-trim/dash-data.tgz
+browser verification: 9 节脱敏课程预览标签为 10:00 / 11:00 / 12:00 / 13:00 / 19:00 / 20:00 / 21:00 / 21:15，没有 18:00 或范围文案；最后课程到底边约 15px，整页无横向溢出
+safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
