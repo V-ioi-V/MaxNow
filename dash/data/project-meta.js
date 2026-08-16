@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 00:08",
-  "version": "1.0.10.15",
-  "versionLabel": "v1.0.10.15",
-  "branch": "bugfix/ballet-attendance-pagination",
-  "commit": "79ef67b",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-attendance-pagination · commit 79ef67b · 干净",
+  "updatedAt": "2026-08-17 00:29",
+  "version": "1.0.10.16",
+  "versionLabel": "v1.0.10.16",
+  "branch": "feature/ballet-plan-room-lanes",
+  "commit": "61f5c5b",
+  "dirty": true,
+  "dirtyLevel": "generated",
+  "deployNote": "feature/ballet-plan-room-lanes · commit 61f5c5b · 运行数据已更新",
   "recentUpdates": [
+    {
+      "date": "2026-08-17",
+      "title": "周安排按日拆分大小教室",
+      "summary": "周安排的每个日期固定拆成“大教室 / 小教室”两个子列，真实课程按教室进入对应列；课程冲突只在同一教室内分轨，避免不同教室的同时段课程互相挤窄。"
+    },
     {
       "date": "2026-08-16",
       "title": "适配闻道上课历史分页",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-16",
       "title": "简化周安排压缩空档刻度",
       "summary": "周安排的压缩空档左侧只显示起始整点，例如 `13:00`；移除 `13:00–18:00` 范围文案，空档结束的 `18:00` 继续作为晚间时间轴正常刻度。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "收齐抢课摘要高度并移除周安排底注",
-      "summary": "“上次抢课结果”更名为“本地抢课结果”，英文眉题同步改为 `Local Result`。"
     }
   ]
 };
