@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 00:02",
+  "updatedAt": "2026-08-17 00:08",
   "version": "1.0.10.15",
   "versionLabel": "v1.0.10.15",
   "branch": "bugfix/ballet-attendance-pagination",
-  "commit": "f787d5a",
+  "commit": "79ef67b",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-attendance-pagination · commit f787d5a · 干净",
+  "deployNote": "bugfix/ballet-attendance-pagination · commit 79ef67b · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-16",
