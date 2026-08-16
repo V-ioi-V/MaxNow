@@ -3486,7 +3486,9 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
     time.dataset.rowEdge =
       layoutRows.length === 1 ? "both" : rowIndex === 0 ? "start" : rowIndex === layoutRows.length - 1 ? "end" : "middle";
     const label = document.createElement("span");
-    label.textContent = row.label;
+    label.textContent = row.type === "gap"
+      ? formatBalletTimetableHour(row.startHour)
+      : row.label;
     time.appendChild(label);
     time.style.gridColumn = "1";
     time.style.gridRow = `${row.startLine} / ${row.endLine}`;
