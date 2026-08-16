@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 15:01",
-  "version": "1.0.10.06",
-  "versionLabel": "v1.0.10.06",
-  "branch": "feature/ballet-course-plan-three-weeks",
-  "commit": "f30e61d",
+  "updatedAt": "2026-08-16 15:16",
+  "version": "1.0.10.07",
+  "versionLabel": "v1.0.10.07",
+  "branch": "bugfix/ballet-week-schedule-accuracy",
+  "commit": "f53ca3f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-course-plan-three-weeks · commit f30e61d · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-week-schedule-accuracy · commit f53ca3f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "恢复完整课表并修正周安排重复课程",
+      "summary": "恢复课程计划下方的完整本周时间轴课表；周安排的真实课程改为直接复用完整课表的课型色、预约 / 候补深浅、老师 / 教室、时间与状态卡片样式。"
+    },
     {
       "date": "2026-08-16",
       "title": "课程计划整合为三周周安排",
@@ -28,11 +33,6 @@
       "date": "2026-08-16",
       "title": "收紧课程计划与代抢展示",
       "summary": "“课程计划”桌面改为课程预约占三分之一、抢课占三分之二，`860px` 以下继续单列，保留既有面板外壳与响应式边界。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "抢课结束后立即刷新芭蕾面板",
-      "summary": "Fast Path systemd 单元增加成功与失败完成钩子；每次真实执行结束后立即启动既有 GET-only rolling 同步，让预约、候补、课程卡和课表状态尽快更新到 MaxNow 芭蕾面板。"
     }
   ]
 }

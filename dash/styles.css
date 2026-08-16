@@ -4809,6 +4809,34 @@ body[data-view="ricky"] .topbar-ricky-status {
   padding: 9px 7px;
 }
 
+.ballet-plan-week-courses > .ballet-timetable-course.is-plan {
+  min-height: 78px;
+  justify-content: center;
+  gap: 4px;
+  padding: 9px 7px;
+  text-align: center;
+}
+
+.ballet-plan-week-courses > .ballet-timetable-course.is-plan strong,
+.ballet-plan-week-courses > .ballet-timetable-course.is-plan small {
+  width: 100%;
+  text-align: center;
+}
+
+.ballet-plan-week-courses > .ballet-timetable-course.is-plan > div {
+  width: 100%;
+  margin-top: 1px;
+  justify-content: center;
+}
+
+.ballet-plan-week-courses > .ballet-timetable-course.is-plan .ballet-timetable-state {
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
 .ballet-plan-week-course {
   position: relative;
   min-width: 0;
