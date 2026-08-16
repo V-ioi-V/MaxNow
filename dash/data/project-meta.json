@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 16:46",
+  "updatedAt": "2026-08-16 16:47",
   "version": "1.0.10.12",
   "versionLabel": "v1.0.10.12",
   "branch": "bugfix/ballet-plan-time-axis",
-  "commit": "a8dce31",
+  "commit": "28348fd",
   "dirty": true,
-  "dirtyLevel": "generated",
-  "deployNote": "bugfix/ballet-plan-time-axis · commit a8dce31 · 运行数据已更新",
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-plan-time-axis · commit 28348fd · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",
