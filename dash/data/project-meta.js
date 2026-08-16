@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 00:29",
-  "version": "1.0.10.16",
-  "versionLabel": "v1.0.10.16",
+  "updatedAt": "2026-08-17 00:34",
+  "version": "1.0.10.17",
+  "versionLabel": "v1.0.10.17",
   "branch": "feature/ballet-plan-room-lanes",
-  "commit": "61f5c5b",
-  "dirty": true,
-  "dirtyLevel": "generated",
-  "deployNote": "feature/ballet-plan-room-lanes · commit 61f5c5b · 运行数据已更新",
+  "commit": "29f8bdb",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "feature/ballet-plan-room-lanes · commit 29f8bdb · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-17",
