@@ -3067,7 +3067,7 @@ function createBalletBookingMiniTimetable(targets = [], options = {}) {
   timetable.setAttribute("role", "table");
   timetable.setAttribute(
     "aria-label",
-    mode === "results" ? "上次抢课结果微型课表" : "每周自动抢课微型课表",
+    mode === "results" ? "本地抢课结果微型课表" : "每周自动抢课微型课表",
   );
 
   const grid = document.createElement("div");
@@ -3589,15 +3589,6 @@ function renderBalletPlanWeek() {
   if (showTargets) renderBalletPlanWeekTargets(container, weekDates, weekTargets, targets);
   else renderBalletPlanWeekTimeline(container, weekDates, actualRecords);
 
-  const actualCount = actualRecords.length;
-  setText(
-    "#ballet-plan-week-note",
-    showTargets
-      ? `准备抢 ${weekTargets.length} 条规则 · 真实结果会自动替换计划`
-      : actualCount
-        ? `${actualCount} 节课程 · 已按预约 / 候补状态更新`
-        : "本周暂无课程记录",
-  );
 }
 
 function getBalletBookingResultSummary(records = []) {

@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 16:21",
-  "version": "1.0.10.10",
-  "versionLabel": "v1.0.10.10",
+  "updatedAt": "2026-08-16 16:28",
+  "version": "1.0.10.11",
+  "versionLabel": "v1.0.10.11",
   "branch": "bugfix/ballet-plan-time-axis",
-  "commit": "37d1456",
+  "commit": "698dd45",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-plan-time-axis · commit 37d1456 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-plan-time-axis · commit 698dd45 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "收齐抢课摘要高度并移除周安排底注",
+      "summary": "“上次抢课结果”更名为“本地抢课结果”，英文眉题同步改为 `Local Result`。"
+    },
     {
       "date": "2026-08-16",
       "title": "修正周安排压缩空档时间拥挤",
@@ -28,11 +33,6 @@
       "date": "2026-08-16",
       "title": "恢复完整课表并修正周安排重复课程",
       "summary": "恢复课程计划下方的完整本周时间轴课表；周安排的真实课程改为直接复用完整课表的课型色、预约 / 候补深浅、老师 / 教室、时间与状态卡片样式。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "课程计划整合为三周周安排",
-      "summary": "“课程计划”重组为两行四区：宽桌面顶部课程预约 / 周安排按三分之一 / 三分之二，底部抢课助手 / 上次抢课结果各占一半；独立的源站全量周课表退出页面，训练记录继续收尾。"
     }
   ]
 }

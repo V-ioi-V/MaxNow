@@ -4639,6 +4639,12 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-width: 0;
 }
 
+.ballet-booking-assistant,
+.ballet-booking-last-run {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
 .ballet-plan-group {
   min-width: 0;
   padding: 16px;
@@ -4676,7 +4682,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
-  margin-bottom: 12px;
+  height: 100%;
 }
 
 .ballet-booking-summary-card {
@@ -5129,42 +5135,6 @@ body[data-view="ricky"] .topbar-ricky-status {
   font-size: 10px;
 }
 
-.ballet-plan-week-legend {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 7px 12px;
-  padding-top: 10px;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.ballet-plan-week-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 750;
-}
-
-.ballet-plan-week-legend i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--ballet-soft);
-  border: 1px solid var(--ballet-border);
-}
-
-.ballet-plan-week-legend i[data-course="soft-open"] {
-  border-color: #d9cfbd;
-  background: #f0ebe2;
-}
-
-.ballet-plan-week-legend i[data-course="other"] {
-  border-color: #cfc8ef;
-  background: #eeeaff;
-}
-
 .ballet-booking-last-run-meta {
   display: flex;
   align-items: center;
@@ -5179,6 +5149,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+  height: 100%;
 }
 
 .ballet-booking-result-summary > article {
