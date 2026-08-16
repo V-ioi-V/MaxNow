@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 14:06",
+  "updatedAt": "2026-08-16 14:10",
   "version": "1.0.10.04",
   "versionLabel": "v1.0.10.04",
   "branch": "feature/ballet-booking-result-timetable",
-  "commit": "9deb3bb",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-booking-result-timetable · commit 9deb3bb · 干净",
+  "commit": "206bcad",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/ballet-booking-result-timetable · commit 206bcad · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",

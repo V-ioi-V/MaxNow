@@ -2412,3 +2412,18 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=240、a
 automation state: Fast Path timer 保持 active / waiting，下一次仍为 2026-08-16 14:19:35；Fast Path 与 rolling sync service 均 inactive / dead
 safety: 静态 UI 部署未访问闻道、未启动芭蕾同步、未执行预约、候补、取消或转课
 ```
+
+2026-08-16 14:08 已部署代抢与上次结果统一微型课表：
+
+```text
+deployed source commits: 9deb3bb Polish ballet booking timetables + 206bcad Refresh project metadata
+version: 1.0.10.04
+changes: 代抢与上次抢课结果统一为居中微型课表；目标格显示 8px 的优先 01–12，结果格按日期显示课程、时段、执行状态、重试与候补位次；非 L1 / 软开旧结果使用中性蓝灰课程色
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-result-timetable/dash-data.tgz
+deployment path: 本地 origin/main 快进到 206bcad 后生成增量 Git bundle，服务器 main 从 73569e6 快进；恢复服务器权威 dash/data 后重新生成 project-status.* / project-meta.*
+browser verification: 本地 1920 / 860 / 390px 实测目标课表文字居中、优先级 8px；宽屏外层仍为 1:2，860px 单列，390px 两列，全部无横向溢出
+production result input: 受保护公开状态保留 2 条上次执行记录，日期、星期、课程与开始时间字段完整，新结果课表可直接按日期分组渲染
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=241、app.js?v=203 已生效；未登录 Dash / 登录页为 302 / 200
+automation state: 部署前后 Fast Path 与 rolling sync service 均 inactive / dead；Fast Path timer 未停止或重启，保持 active / waiting，下一次 2026-08-16 14:19:35
+safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
