@@ -3439,12 +3439,24 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
     renderBalletPlanWeekTargets(container, weekDates, [], []);
     return;
   }
+  const latestEndMinute = Math.max(
+    ...days.flatMap((day) => day.records.map(balletTimetableInterval).filter(Boolean).map((interval) => interval.end)),
+  );
+  const lastTimelineRow = rows[rows.length - 1];
+  if (lastTimelineRow?.type === "hour") {
+    lastTimelineRow.trackCount = Math.max(
+      1,
+      Math.min(60, latestEndMinute - lastTimelineRow.hour * 60),
+    );
+  }
 
   container.dataset.mode = "timeline";
   container.style.setProperty(
     "--ballet-plan-time-rows",
     rows
-      .map((row) => row.type === "gap" ? "38px" : "repeat(60, var(--ballet-plan-minute-height))")
+      .map((row) => row.type === "gap"
+        ? "38px"
+        : `repeat(${row.trackCount}, var(--ballet-plan-minute-height))`)
       .join(" "),
   );
 
@@ -3455,7 +3467,7 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
     const endLine = startLine + row.trackCount;
     nextGridLine = endLine;
     if (row.type === "hour") {
-      for (let minute = 0; minute <= 60; minute += 1) {
+      for (let minute = 0; minute <= row.trackCount; minute += 1) {
         minuteGridLines.set(row.hour * 60 + minute, startLine + minute);
       }
     } else {
@@ -3480,16 +3492,22 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
   });
 
   layoutRows.forEach((row, rowIndex) => {
+    const previousRow = layoutRows[rowIndex - 1];
     const time = document.createElement("div");
     time.className = "ballet-plan-week-time";
     time.dataset.rowType = row.type;
     time.dataset.rowEdge =
       layoutRows.length === 1 ? "both" : rowIndex === 0 ? "start" : rowIndex === layoutRows.length - 1 ? "end" : "middle";
-    const label = document.createElement("span");
-    label.textContent = row.type === "gap"
+    const labelText = row.type === "gap"
       ? formatBalletTimetableHour(row.startHour)
-      : row.label;
-    time.appendChild(label);
+      : previousRow?.type === "gap" && previousRow.endHour === row.hour
+        ? ""
+        : row.label;
+    if (labelText) {
+      const label = document.createElement("span");
+      label.textContent = labelText;
+      time.appendChild(label);
+    }
     time.style.gridColumn = "1";
     time.style.gridRow = `${row.startLine} / ${row.endLine}`;
     container.appendChild(time);
@@ -3497,13 +3515,15 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
 
   const finalRow = layoutRows[layoutRows.length - 1];
   if (finalRow) {
-    const finalHour = finalRow.type === "gap" ? finalRow.endHour : Number(finalRow.hour) + 1;
+    const finalMinute = finalRow.type === "gap"
+      ? finalRow.endHour * 60
+      : finalRow.hour * 60 + finalRow.trackCount;
     const terminal = document.createElement("div");
     terminal.className = "ballet-plan-week-time ballet-plan-week-end-time";
     terminal.style.gridColumn = "1";
     terminal.style.gridRow = `${nextGridLine} / span 1`;
     const label = document.createElement("span");
-    label.textContent = formatBalletTimetableHour(finalHour);
+    label.textContent = `${String(Math.floor(finalMinute / 60)).padStart(2, "0")}:${String(finalMinute % 60).padStart(2, "0")}`;
     terminal.appendChild(label);
     const spacer = document.createElement("div");
     spacer.className = "ballet-plan-week-end-spacer";
