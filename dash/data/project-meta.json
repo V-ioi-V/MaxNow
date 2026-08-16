@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 14:10",
-  "version": "1.0.10.04",
-  "versionLabel": "v1.0.10.04",
-  "branch": "feature/ballet-booking-result-timetable",
-  "commit": "206bcad",
+  "updatedAt": "2026-08-16 14:26",
+  "version": "1.0.10.05",
+  "versionLabel": "v1.0.10.05",
+  "branch": "feature/ballet-course-plan-equal-columns",
+  "commit": "80ef11e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-result-timetable · commit 206bcad · 有未提交代码改动",
+  "deployNote": "feature/ballet-course-plan-equal-columns · commit 80ef11e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "课程预约与抢课恢复等宽",
+      "summary": "“课程计划”桌面两栏从预约三分之一 / 抢课三分之二恢复为各占一半，`860px` 以下继续上下排列；微型代抢课表和上次结果课表的内容、状态与优先级保持不变。"
+    },
     {
       "date": "2026-08-16",
       "title": "统一代抢与上次结果微型课表",
@@ -28,11 +33,6 @@
       "date": "2026-08-16",
       "title": "自动抢课改为长期周规则",
       "summary": "Owner 不再每周提供固定课表；Fast Path 每周日放课后动态扫描周一至周六，周一至周五只处理 18:40（含）后开始的课程，周六全天，周日不抢。"
-    },
-    {
-      "date": "2026-08-14",
-      "title": "校正 8 月 7 日课程老师",
-      "summary": "Owner 将 2026-08-07 19:45–21:15 芭蕾 L1 的老师明确校正为“张瀚泽”；这条记录不再使用空老师默认李俊。"
     }
   ]
 }

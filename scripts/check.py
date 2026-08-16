@@ -471,7 +471,7 @@ def check_ballet_booking_fast():
         ".ballet-booking-summary {",
         "grid-template-columns: repeat(3, minmax(0, 1fr));",
         ".ballet-booking-columns {",
-        "grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);",
+        "grid-template-columns: repeat(2, minmax(0, 1fr));",
         "grid-template-columns: minmax(0, 1fr);",
         "grid-template-rows: auto minmax(0, 1fr);",
         ".ballet-booking-column-head > div {",
@@ -1881,7 +1881,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=241" not in dashboard_html
+        "styles.css?v=242" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=203" not in dashboard_html
     ):
