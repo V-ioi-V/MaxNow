@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 16:33",
-  "version": "1.0.10.11",
-  "versionLabel": "v1.0.10.11",
+  "updatedAt": "2026-08-16 16:46",
+  "version": "1.0.10.12",
+  "versionLabel": "v1.0.10.12",
   "branch": "bugfix/ballet-plan-time-axis",
-  "commit": "f4fc14a",
+  "commit": "a8dce31",
   "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-plan-time-axis · commit f4fc14a · 有未提交代码改动",
+  "dirtyLevel": "generated",
+  "deployNote": "bugfix/ballet-plan-time-axis · commit a8dce31 · 运行数据已更新",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "简化周安排压缩空档刻度",
+      "summary": "周安排的压缩空档左侧只显示起始整点，例如 `13:00`；移除 `13:00–18:00` 范围文案，空档结束的 `18:00` 继续作为晚间时间轴正常刻度。"
+    },
     {
       "date": "2026-08-16",
       "title": "收齐抢课摘要高度并移除周安排底注",
@@ -28,11 +33,6 @@
       "date": "2026-08-16",
       "title": "收紧课程计划右侧布局与取消状态",
       "summary": "宽桌面课程计划改为左侧预约贯穿、右侧顶部“抢课助手 / 上次抢课结果”并排、右侧下方“周安排”占满；周安排按自身内容高度收口，不再为追平长预约列表留下大块卡内空白。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "恢复完整课表并修正周安排重复课程",
-      "summary": "恢复课程计划下方的完整本周时间轴课表；周安排的真实课程改为直接复用完整课表的课型色、预约 / 候补深浅、老师 / 教室、时间与状态卡片样式。"
     }
   ]
 }
