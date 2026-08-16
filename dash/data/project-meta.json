@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 15:36",
-  "version": "1.0.10.08",
-  "versionLabel": "v1.0.10.08",
-  "branch": "bugfix/ballet-plan-right-stack",
-  "commit": "25ce00a",
+  "updatedAt": "2026-08-16 15:56",
+  "version": "1.0.10.09",
+  "versionLabel": "v1.0.10.09",
+  "branch": "bugfix/ballet-plan-time-axis",
+  "commit": "e25d7eb",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-plan-right-stack · commit 25ce00a · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-plan-time-axis · commit e25d7eb · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "周安排改为真实时间轴课表",
+      "summary": "课程计划右侧改为独立的“抢课摘要行 + 周安排”自然高度容器，顶部两张卡不再被左侧预约列表拉高，周安排紧接摘要行显示。"
+    },
     {
       "date": "2026-08-16",
       "title": "收紧课程计划右侧布局与取消状态",
@@ -28,11 +33,6 @@
       "date": "2026-08-16",
       "title": "课程预约与抢课恢复等宽",
       "summary": "“课程计划”桌面两栏从预约三分之一 / 抢课三分之二恢复为各占一半，`860px` 以下继续上下排列；微型代抢课表和上次结果课表的内容、状态与优先级保持不变。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "统一代抢与上次结果微型课表",
-      "summary": "“代抢”微型课表重新收紧为居中日期、课程与时段的轻量网格，每节目标以 `8px` 小字标出实际 `优先 01–12` 执行顺序，周六仅保留低权重“周末优先”提示。"
     }
   ]
 }

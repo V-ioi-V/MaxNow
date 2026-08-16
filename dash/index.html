@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=245" />
+    <link rel="stylesheet" href="./styles.css?v=246" />
   </head>
   <body>
     <div class="app-shell">
@@ -766,68 +766,71 @@
                 </header>
                 <div class="ballet-upcoming-list" id="ballet-upcoming-list"></div>
               </section>
-              <section class="ballet-plan-group ballet-booking-assistant" aria-labelledby="ballet-booking-workspace-title">
-                <header>
-                  <div>
-                    <p class="eyebrow">Booking Assistant</p>
-                    <h3 id="ballet-booking-workspace-title">抢课助手</h3>
-                  </div>
-                  <span class="status-pill" id="ballet-booking-workspace-status">计划中</span>
-                </header>
-                <div class="ballet-booking-summary" aria-label="抢课摘要">
-                  <article class="ballet-booking-summary-card" data-tone="green">
-                    <span>累计抢到</span>
-                    <strong id="ballet-booking-grabbed">0 节</strong>
-                    <small>自动预约成功</small>
-                  </article>
-                  <article class="ballet-booking-summary-card" data-tone="ballet">
-                    <span>累计候补</span>
-                    <strong id="ballet-booking-waitlisted">0 节</strong>
-                    <small>自动候补成功</small>
-                  </article>
-                  <article class="ballet-booking-summary-card" data-tone="cyan">
-                    <span>上次抢课耗时</span>
-                    <strong id="ballet-booking-average">--</strong>
-                    <small id="ballet-booking-average-detail">暂无有效执行耗时</small>
-                  </article>
-                  <article class="ballet-booking-summary-card" data-tone="status">
-                    <span>运行状态</span>
-                    <strong id="ballet-booking-health">--</strong>
-                    <small id="ballet-booking-health-detail">等待运行数据</small>
-                  </article>
+              <div class="ballet-course-plan-right">
+                <div class="ballet-course-plan-summary">
+                  <section class="ballet-plan-group ballet-booking-assistant" aria-labelledby="ballet-booking-workspace-title">
+                    <header>
+                      <div>
+                        <p class="eyebrow">Booking Assistant</p>
+                        <h3 id="ballet-booking-workspace-title">抢课助手</h3>
+                      </div>
+                      <span class="status-pill" id="ballet-booking-workspace-status">计划中</span>
+                    </header>
+                    <div class="ballet-booking-summary" aria-label="抢课摘要">
+                      <article class="ballet-booking-summary-card" data-tone="green">
+                        <span>累计抢到</span>
+                        <strong id="ballet-booking-grabbed">0 节</strong>
+                        <small>自动预约成功</small>
+                      </article>
+                      <article class="ballet-booking-summary-card" data-tone="ballet">
+                        <span>累计候补</span>
+                        <strong id="ballet-booking-waitlisted">0 节</strong>
+                        <small>自动候补成功</small>
+                      </article>
+                      <article class="ballet-booking-summary-card" data-tone="cyan">
+                        <span>上次抢课耗时</span>
+                        <strong id="ballet-booking-average">--</strong>
+                        <small id="ballet-booking-average-detail">暂无有效执行耗时</small>
+                      </article>
+                      <article class="ballet-booking-summary-card" data-tone="status">
+                        <span>运行状态</span>
+                        <strong id="ballet-booking-health">--</strong>
+                        <small id="ballet-booking-health-detail">等待运行数据</small>
+                      </article>
+                    </div>
+                  </section>
+                  <section class="ballet-plan-group ballet-booking-last-run" aria-labelledby="ballet-booking-results-title">
+                    <header>
+                      <div>
+                        <p class="eyebrow">Last Run</p>
+                        <h3 id="ballet-booking-results-title">上次抢课结果</h3>
+                      </div>
+                      <div class="ballet-booking-last-run-meta">
+                        <span id="ballet-booking-result-count">0 节课程</span>
+                        <span aria-hidden="true">·</span>
+                        <time id="ballet-booking-result-time">暂无执行</time>
+                      </div>
+                    </header>
+                    <div class="ballet-booking-result-summary" id="ballet-booking-fast-results" aria-label="上次抢课总体结果">
+                      <article data-result="booked">
+                        <span>成功预约</span>
+                        <strong id="ballet-booking-result-booked">0 节</strong>
+                        <small>自动预约完成</small>
+                      </article>
+                      <article data-result="waitlist">
+                        <span>候补中</span>
+                        <strong id="ballet-booking-result-waitlist">0 节</strong>
+                        <small id="ballet-booking-result-waitlist-detail">等待候补结果</small>
+                      </article>
+                      <article data-result="missed">
+                        <span>未抢到</span>
+                        <strong id="ballet-booking-result-missed">0 节</strong>
+                        <small>需人工关注</small>
+                      </article>
+                    </div>
+                  </section>
                 </div>
-              </section>
-              <section class="ballet-plan-group ballet-booking-last-run" aria-labelledby="ballet-booking-results-title">
-                <header>
-                  <div>
-                    <p class="eyebrow">Last Run</p>
-                    <h3 id="ballet-booking-results-title">上次抢课结果</h3>
-                  </div>
-                  <div class="ballet-booking-last-run-meta">
-                    <span id="ballet-booking-result-count">0 节课程</span>
-                    <span aria-hidden="true">·</span>
-                    <time id="ballet-booking-result-time">暂无执行</time>
-                  </div>
-                </header>
-                <div class="ballet-booking-result-summary" id="ballet-booking-fast-results" aria-label="上次抢课总体结果">
-                  <article data-result="booked">
-                    <span>成功预约</span>
-                    <strong id="ballet-booking-result-booked">0 节</strong>
-                    <small>自动预约完成</small>
-                  </article>
-                  <article data-result="waitlist">
-                    <span>候补中</span>
-                    <strong id="ballet-booking-result-waitlist">0 节</strong>
-                    <small id="ballet-booking-result-waitlist-detail">等待候补结果</small>
-                  </article>
-                  <article data-result="missed">
-                    <span>未抢到</span>
-                    <strong id="ballet-booking-result-missed">0 节</strong>
-                    <small>需人工关注</small>
-                  </article>
-                </div>
-              </section>
-              <section class="ballet-plan-group ballet-plan-week" aria-labelledby="ballet-plan-week-title">
+                <section class="ballet-plan-group ballet-plan-week" aria-labelledby="ballet-plan-week-title">
                 <header>
                   <div>
                     <p class="eyebrow">Weekly Schedule</p>
@@ -848,7 +851,8 @@
                   <span><i data-course="other"></i>其他课程</span>
                   <small id="ballet-plan-week-note">按周一到周日展示</small>
                 </div>
-              </section>
+                </section>
+              </div>
             </div>
           </article>
 
@@ -1396,6 +1400,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=206"></script>
+    <script src="./app.js?v=207"></script>
   </body>
 </html>

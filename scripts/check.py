@@ -1590,10 +1590,14 @@ def check_secondary_view_style():
         or "function getBalletBookingSnapshotRecords()" not in dashboard_js
         or "function balletPlanCourseKey(record = {})" not in dashboard_js
         or 'course.classList.add("is-plan")' not in dashboard_js
+        or "function renderBalletPlanWeekTimeline(container, weekDates, actualRecords)" not in dashboard_js
         or 'id="ballet-timetable-grid"' not in ballet_view_markup
         or 'id="ballet-timetable-mobile"' not in ballet_view_markup
+        or 'class="ballet-course-plan-right"' not in ballet_view_markup
+        or 'class="ballet-course-plan-summary"' not in ballet_view_markup
         or ".ballet-plan-week-days {" not in dashboard_css
-        or ".ballet-plan-week-courses > .ballet-timetable-course.is-plan {" not in dashboard_css
+        or '.ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan {' not in dashboard_css
+        or ".ballet-plan-week-time-corner {" not in dashboard_css
         or ".ballet-booking-result-summary {" not in dashboard_css
     ):
         raise ValueError("secondary views: ballet three-week course plan contract is incomplete")
@@ -1787,9 +1791,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=245" not in dashboard_html
+        "styles.css?v=246" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=206" not in dashboard_html
+        or "app.js?v=207" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2007,7 +2011,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=206" not in dashboard_html:
+    if "app.js?v=207" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

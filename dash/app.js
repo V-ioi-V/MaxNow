@@ -3338,9 +3338,15 @@ function getBalletPlanActualRecords() {
 
 function createBalletPlanWeekCourse(record = {}, options = {}) {
   if (!options.planned) {
+    const interval = balletTimetableInterval(record);
     const course = createBalletTimetableCourse(
-      { ...record, availability: getBalletPlanAvailability(record) },
-      true,
+      {
+        ...record,
+        availability: getBalletPlanAvailability(record),
+        durationMinutes: record.durationMinutes || (interval ? interval.end - interval.start : undefined),
+      },
+      false,
+      { includeVenue: true },
     );
     course.classList.add("is-plan");
     return course;
@@ -3377,6 +3383,183 @@ function createBalletPlanWeekCourse(record = {}, options = {}) {
   return article;
 }
 
+function createBalletPlanWeekHeader(date, weekday) {
+  const header = document.createElement("header");
+  header.className = "ballet-plan-week-day-header";
+  header.dataset.dayState = getBalletTimetableDayState(date);
+  const name = document.createElement("strong");
+  name.textContent = weekday;
+  const dateNode = document.createElement("time");
+  dateNode.dateTime = date;
+  dateNode.textContent = date.slice(5).replace("-", "/");
+  header.append(name, dateNode);
+  return header;
+}
+
+function renderBalletPlanWeekTargets(container, weekDates, weekTargets, allTargets) {
+  container.dataset.mode = "targets";
+  container.style.removeProperty("--ballet-plan-time-rows");
+  weekDates.forEach(({ date, weekday }) => {
+    const day = document.createElement("section");
+    day.className = "ballet-plan-week-day";
+    day.dataset.dayState = getBalletTimetableDayState(date);
+    const header = createBalletPlanWeekHeader(date, weekday);
+    const courses = document.createElement("div");
+    courses.className = "ballet-plan-week-courses";
+    const dayTargets = weekTargets.filter((target) => target.date === date);
+    courses.append(
+      ...dayTargets.map((target) => createBalletPlanWeekCourse(target, {
+        planned: true,
+        priority: allTargets.indexOf(target) + 1,
+      })),
+    );
+    if (!courses.childElementCount) {
+      const empty = document.createElement("span");
+      empty.className = "ballet-plan-week-empty";
+      empty.textContent = "暂无安排";
+      courses.appendChild(empty);
+    }
+    day.append(header, courses);
+    container.appendChild(day);
+  });
+}
+
+function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
+  const days = weekDates.map(({ date, weekday }) => ({
+    date,
+    weekday,
+    records: actualRecords
+      .filter((record) => record.date === date)
+      .sort((left, right) =>
+        String(balletStartTime(left)).localeCompare(String(balletStartTime(right))),
+      ),
+  }));
+  const rows = buildBalletTimetableRows(days);
+  if (!rows.length) {
+    renderBalletPlanWeekTargets(container, weekDates, [], []);
+    return;
+  }
+
+  container.dataset.mode = "timeline";
+  container.style.setProperty(
+    "--ballet-plan-time-rows",
+    rows
+      .map((row) => row.type === "gap" ? "24px" : "repeat(60, var(--ballet-plan-minute-height))")
+      .join(" "),
+  );
+
+  let nextGridLine = 2;
+  const minuteGridLines = new Map();
+  const layoutRows = rows.map((row) => {
+    const startLine = nextGridLine;
+    const endLine = startLine + row.trackCount;
+    nextGridLine = endLine;
+    if (row.type === "hour") {
+      for (let minute = 0; minute <= 60; minute += 1) {
+        minuteGridLines.set(row.hour * 60 + minute, startLine + minute);
+      }
+    } else {
+      minuteGridLines.set(row.startHour * 60, startLine);
+      minuteGridLines.set(row.endHour * 60, endLine);
+    }
+    return { ...row, startLine, endLine };
+  });
+
+  const corner = document.createElement("div");
+  corner.className = "ballet-plan-week-time-corner";
+  corner.textContent = "时间";
+  corner.style.gridColumn = "1";
+  corner.style.gridRow = "1";
+  container.appendChild(corner);
+
+  days.forEach((day, index) => {
+    const header = createBalletPlanWeekHeader(day.date, day.weekday);
+    header.style.gridColumn = String(index + 2);
+    header.style.gridRow = "1";
+    container.appendChild(header);
+  });
+
+  layoutRows.forEach((row, rowIndex) => {
+    const time = document.createElement("div");
+    time.className = "ballet-plan-week-time";
+    time.dataset.rowType = row.type;
+    time.dataset.rowEdge =
+      layoutRows.length === 1 ? "both" : rowIndex === 0 ? "start" : rowIndex === layoutRows.length - 1 ? "end" : "middle";
+    const label = document.createElement("span");
+    label.textContent = row.label;
+    time.appendChild(label);
+    time.style.gridColumn = "1";
+    time.style.gridRow = `${row.startLine} / ${row.endLine}`;
+    container.appendChild(time);
+  });
+
+  const finalRow = layoutRows[layoutRows.length - 1];
+  if (finalRow) {
+    const finalHour = finalRow.type === "gap" ? finalRow.endHour : Number(finalRow.hour) + 1;
+    const terminal = document.createElement("div");
+    terminal.className = "ballet-plan-week-time ballet-plan-week-end-time";
+    terminal.style.gridColumn = "1";
+    terminal.style.gridRow = `${nextGridLine} / span 1`;
+    const label = document.createElement("span");
+    label.textContent = formatBalletTimetableHour(finalHour);
+    terminal.appendChild(label);
+    const spacer = document.createElement("div");
+    spacer.className = "ballet-plan-week-end-spacer";
+    spacer.style.gridColumn = "2 / -1";
+    spacer.style.gridRow = `${nextGridLine} / span 1`;
+    container.append(terminal, spacer);
+  }
+
+  days.forEach((day, index) => {
+    const dayState = getBalletTimetableDayState(day.date);
+    layoutRows.forEach((row, rowIndex) => {
+      const cell = document.createElement("div");
+      cell.className = "ballet-plan-week-cell";
+      cell.dataset.dayState = dayState;
+      cell.dataset.rowType = row.type;
+      cell.dataset.rowEdge =
+        layoutRows.length === 1 ? "both" : rowIndex === 0 ? "start" : rowIndex === layoutRows.length - 1 ? "end" : "middle";
+      cell.style.gridColumn = String(index + 2);
+      cell.style.gridRow = `${row.startLine} / ${row.endLine}`;
+      container.appendChild(cell);
+    });
+
+    const layout = layoutBalletTimetableRecords(day.records);
+    layout.items.forEach(({ record, interval, lane, laneCount }) => {
+      const startLine = minuteGridLines.get(interval.start);
+      const endLine = minuteGridLines.get(interval.end);
+      if (!startLine || !endLine || endLine <= startLine) return;
+      const course = createBalletPlanWeekCourse(record);
+      course.dataset.dayState = dayState;
+      course.dataset.overlap = laneCount > 1 ? "true" : "false";
+      course.style.gridColumn = String(index + 2);
+      course.style.gridRow = `${startLine} / ${endLine}`;
+      course.style.setProperty("--ballet-lane-left", `${(lane * 100) / laneCount}%`);
+      course.style.setProperty("--ballet-lane-width", `${100 / laneCount}%`);
+      container.appendChild(course);
+    });
+  });
+
+  const todayIndex = days.findIndex((day) => day.date === localDateKey());
+  const now = new Date();
+  const nowLine = minuteGridLines.get(now.getHours() * 60 + now.getMinutes());
+  if (todayIndex >= 0 && nowLine) {
+    const marker = document.createElement("div");
+    marker.className = "ballet-plan-week-now-line";
+    marker.style.gridColumn = "2 / -1";
+    marker.style.gridRow = `${nowLine} / span 1`;
+    marker.setAttribute("aria-hidden", "true");
+    const label = document.createElement("time");
+    label.className = "ballet-plan-week-now-label";
+    label.dateTime = now.toISOString();
+    label.textContent = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    label.style.gridColumn = "1";
+    label.style.gridRow = `${nowLine} / span 1`;
+    label.setAttribute("aria-hidden", "true");
+    container.append(marker, label);
+  }
+}
+
 function renderBalletPlanWeek() {
   const container = qs("#ballet-plan-week-days");
   if (!container) return;
@@ -3403,39 +3586,8 @@ function renderBalletPlanWeek() {
   if (next) next.disabled = balletPlanWeekOffset >= 1;
 
   container.replaceChildren();
-  weekDates.forEach(({ date, weekday }) => {
-    const day = document.createElement("section");
-    day.className = "ballet-plan-week-day";
-    day.dataset.dayState = getBalletTimetableDayState(date);
-    const header = document.createElement("header");
-    const name = document.createElement("strong");
-    name.textContent = weekday;
-    const dateNode = document.createElement("time");
-    dateNode.dateTime = date;
-    dateNode.textContent = date.slice(5).replace("-", "/");
-    header.append(name, dateNode);
-    const courses = document.createElement("div");
-    courses.className = "ballet-plan-week-courses";
-    const dayActual = actualRecords
-      .filter((record) => record.date === date)
-      .sort((left, right) => String(balletStartTime(left)).localeCompare(String(balletStartTime(right))));
-    const dayTargets = showTargets ? weekTargets.filter((target) => target.date === date) : [];
-    courses.append(
-      ...dayActual.map((record) => createBalletPlanWeekCourse(record)),
-      ...dayTargets.map((target) => createBalletPlanWeekCourse(target, {
-        planned: true,
-        priority: targets.indexOf(target) + 1,
-      })),
-    );
-    if (!courses.childElementCount) {
-      const empty = document.createElement("span");
-      empty.className = "ballet-plan-week-empty";
-      empty.textContent = "暂无安排";
-      courses.appendChild(empty);
-    }
-    day.append(header, courses);
-    container.appendChild(day);
-  });
+  if (showTargets) renderBalletPlanWeekTargets(container, weekDates, weekTargets, targets);
+  else renderBalletPlanWeekTimeline(container, weekDates, actualRecords);
 
   const actualCount = actualRecords.length;
   setText(
@@ -5038,7 +5190,7 @@ function getBalletTimetableCounts(record = {}) {
   };
 }
 
-function createBalletTimetableCourse(record, mobile = false) {
+function createBalletTimetableCourse(record, mobile = false, options = {}) {
   const article = document.createElement("article");
   article.className = mobile ? "ballet-timetable-course is-mobile" : "ballet-timetable-course";
   article.dataset.courseType = String(record.courseType || "other").toLowerCase();
@@ -5053,7 +5205,7 @@ function createBalletTimetableCourse(record, mobile = false) {
   meta.className = "ballet-timetable-meta";
   const detail = document.createElement("small");
   detail.className = "ballet-timetable-meta-detail ballet-timetable-teacher";
-  const detailText = mobile
+  const detailText = mobile || options.includeVenue
     ? [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补"
     : balletTeacher(record) || "老师待确认";
   detail.textContent = detailText;
