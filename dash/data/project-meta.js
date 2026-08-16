@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 16:07",
-  "version": "1.0.10.09",
-  "versionLabel": "v1.0.10.09",
+  "updatedAt": "2026-08-16 16:15",
+  "version": "1.0.10.10",
+  "versionLabel": "v1.0.10.10",
   "branch": "bugfix/ballet-plan-time-axis",
-  "commit": "2e13ecf",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-plan-time-axis · commit 2e13ecf · 干净",
+  "commit": "1845728",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-plan-time-axis · commit 1845728 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "修正周安排压缩空档时间拥挤",
+      "summary": "周安排时间列由 `50px` 放宽为桌面 `68px`、移动端 `64px`，压缩空档由 `24px` 增高为 `38px`；`13:00–18:00` 等范围强制单行显示，与上下整点保持清楚间距。"
+    },
     {
       "date": "2026-08-16",
       "title": "周安排改为真实时间轴课表",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-16",
       "title": "课程计划整合为三周周安排",
       "summary": "“课程计划”重组为两行四区：宽桌面顶部课程预约 / 周安排按三分之一 / 三分之二，底部抢课助手 / 上次抢课结果各占一半；独立的源站全量周课表退出页面，训练记录继续收尾。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "课程预约与抢课恢复等宽",
-      "summary": "“课程计划”桌面两栏从预约三分之一 / 抢课三分之二恢复为各占一半，`860px` 以下继续上下排列；微型代抢课表和上次结果课表的内容、状态与优先级保持不变。"
     }
   ]
 };

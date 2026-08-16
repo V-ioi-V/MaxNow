@@ -3444,7 +3444,7 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
   container.style.setProperty(
     "--ballet-plan-time-rows",
     rows
-      .map((row) => row.type === "gap" ? "24px" : "repeat(60, var(--ballet-plan-minute-height))")
+      .map((row) => row.type === "gap" ? "38px" : "repeat(60, var(--ballet-plan-minute-height))")
       .join(" "),
   );
 

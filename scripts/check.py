@@ -1598,6 +1598,9 @@ def check_secondary_view_style():
         or ".ballet-plan-week-days {" not in dashboard_css
         or '.ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan {' not in dashboard_css
         or ".ballet-plan-week-time-corner {" not in dashboard_css
+        or 'grid-template-columns: 68px repeat(7, minmax(0, 1fr));' not in dashboard_css
+        or 'row.type === "gap" ? "38px"' not in dashboard_js
+        or "white-space: nowrap;" not in dashboard_css
         or ".ballet-booking-result-summary {" not in dashboard_css
     ):
         raise ValueError("secondary views: ballet three-week course plan contract is incomplete")
@@ -1791,7 +1794,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=246" not in dashboard_html
+        "styles.css?v=247" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=207" not in dashboard_html
     ):

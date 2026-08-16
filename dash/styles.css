@@ -4775,7 +4775,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-plan-week-days[data-mode="timeline"] {
-  grid-template-columns: 50px repeat(7, minmax(0, 1fr));
+  grid-template-columns: 68px repeat(7, minmax(0, 1fr));
   grid-template-rows: 48px var(--ballet-plan-time-rows, minmax(120px, auto));
   grid-auto-rows: 12px;
   overflow: clip;
@@ -4868,6 +4868,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   background: repeating-linear-gradient(135deg, #fcf8fa 0, #fcf8fa 7px, #f4ebef 7px, #f4ebef 8px);
   font-size: 8px;
   line-height: 1.15;
+  white-space: nowrap;
 }
 
 .ballet-plan-week-time[data-row-type="gap"] > span {
@@ -9462,7 +9463,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   }
 
   .ballet-plan-week-days[data-mode="timeline"] {
-    grid-template-columns: 50px repeat(7, minmax(122px, 1fr));
+    grid-template-columns: 64px repeat(7, minmax(122px, 1fr));
     overflow-x: auto;
     overscroll-behavior-inline: contain;
   }
