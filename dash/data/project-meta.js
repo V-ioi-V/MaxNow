@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 14:56",
+  "updatedAt": "2026-08-16 15:01",
   "version": "1.0.10.06",
   "versionLabel": "v1.0.10.06",
   "branch": "feature/ballet-course-plan-three-weeks",
-  "commit": "e826377",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-course-plan-three-weeks · commit e826377 · 干净",
+  "commit": "f30e61d",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/ballet-course-plan-three-weeks · commit f30e61d · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",

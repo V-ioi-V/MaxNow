@@ -2441,3 +2441,17 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=242 已
 automation state: Fast Path 与抢课后 rolling sync 均为 success / inactive；Fast Path timer active / waiting，下次 2026-08-23 14:19:35
 safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-16 15:00 已部署三周课程计划与预约摘要收敛：
+
+```text
+deployed source commits: e826377 Redesign ballet course plan around three weeks + f30e61d Refresh project metadata for course plan
+version: 1.0.10.06
+changes: 课程计划顶部按 1:2 展示最近三天预约摘要与上周 / 本周 / 下周周安排，底部抢课助手与上次结果各占一半；下周执行前显示 12 条待抢规则，执行后切换为实际状态；上次结果只保留三项总体数据
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-150023-ballet-three-week-plan/dash-data.tgz
+deployment path: 通过增量 Git bundle 将服务器 main 从 cc460ce 快进到 f30e61d；恢复服务器权威 dash/data 后重新生成 project-status.* / project-meta.*
+browser verification: 本地 1600px 顶部约 1:2、底部完全等宽；390px 无整页横向溢出，周课表仅内部横向浏览；三周边界、下周 01-12 优先级与控制台均验证正常
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=243、app.js?v=204 已生效；HTTPS 首页 / 登录页 / 受保护 ballet.json 为 302 / 200 / 401
+automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；三个对应 service 均 inactive；Fast Path 下次触发 2026-08-23 14:19:35
+safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
