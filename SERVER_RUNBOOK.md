@@ -474,6 +474,7 @@ Owner 已单独批准长期周规则在北京时间每周日 14:20 无人值守�
 ```text
 service -> maxnow-ballet-booking-fast.service
 timer -> maxnow-ballet-booking-fast.timer
+post-run refresh -> OnSuccess / OnFailure: maxnow-ballet-sync.service（GET-only）
 arm -> Sunday 14:19:35 Asia/Shanghai
 submit -> script waits until 14:20:00 Asia/Shanghai
 enable gate -> /etc/maxnow-ballet/enable-fast-booking
@@ -489,6 +490,8 @@ credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 服务在 14:19:35 先用当前日期课表做一次只读会话预热；14:20 后最多 3 路并发读取周一至周六 6 个日期页并从实际课表动态生成目标。课程卡资格和闻道规则由最多 2 个 worker 提前预检，完成超过 8 秒则在提交前重新预检。HTTPS 连接池最多保留 3 条 keep-alive 连接，整次服务上限 600 秒，以容纳全天规则可能发现的多节课程。随后严格按上述顺序逐节执行唯一语义确认和 `do_addbook`；任意时刻最多只有一个真实预约 / 候补 mutation。全部提交后，预约详情并发只读核验。匹配字段为日期、实际课程名、课型 / 等级和起止时间；老师不参与匹配或 occurrence 幂等键，临时代课不会阻止目标执行。匹配候选先限定大教室并要求恰好一节，大教室为 0 节时再限定小教室并要求恰好一节；优先层出现多节时仍失败关闭，不猜测提交。`available` 执行预约；`queue_available` 只有在仓库配置显式设置 `allowWaitlist=true` 时执行候补；已预约或已排队不重复提交。网络波动、发布延迟、课程卡尚未开放、规则短暂未就绪或 mutation 明确返回 `NOTOPEN` 时，首次失败后最多重试 3 次，间隔为 80 / 160 / 320ms；明确已满、已停止、无卡或不可约时直接进入下一节。
 
 每节是独立失败域：一节失败或 mutation 结果未知都继续后续目标。未知 mutation 可能已经被闻道接受，因此本节绝不重复 POST，只在全部课程处理结束后统一查询实时预约记录；若查到则按 `bookingStatus=booked` 或 `waitlist` 回填，候补存在正整数位次时同时发布 `waitlistPosition`，否则保留“结果待确认”。只有 `auth_required`、配置错误或页面结构变化等全局问题才停止后续课程。fast path 单请求超时为 5 秒，避免一次网络故障长期占住后续高优先级目标。
+
+Fast Path 单元进入成功或失败终态后，systemd 分别通过 `OnSuccess=maxnow-ballet-sync.service` / `OnFailure=maxnow-ballet-sync.service` 立即排队一次既有 rolling 同步。该同步只使用闻道 GET allowlist，负责刷新 `dash/data/ballet.*` 中的预约、候补、上课记录、课程卡与课表；它在真实 mutation 与统一核验之后运行，不占用 14:20 关键路径，也不改变 Fast Path 单元自身的 Result。若 rolling 同步已经运行，systemd 合并 start job，不并发启动第二个实例。部署验收不得手动启动 Fast Path；可用 `systemd-analyze verify` 和 unit 属性检查完成钩子，只有实际定时执行后才验收自动联动。
 
 私有 occurrence 哈希和 `terminalOutcomes` 只用于避免同一周目标重复提交并区分预约 / 候补结果；公开状态不得包含 course / class table / customer / card ID、PHPSESSID、响应正文、凭据路径、unit 名或日志路径。累计预约数与累计候补数分开记录，以闻道明确成功号或统一核验结果为准；统一核验不可用时页面显示“已提交，待核验”，不能重试。公开逐课结果可记录预约 / 候补状态、候补位次、尝试次数和脱敏耗时，不能保存请求 URL、源 ID 或响应正文。
 

@@ -4,6 +4,8 @@ Documentation=file:/var/www/maxnow-dashboard/SERVER_RUNBOOK.md
 Wants=network-online.target
 After=network-online.target
 ConditionPathExists=/etc/maxnow-ballet/enable-fast-booking
+OnSuccess=maxnow-ballet-sync.service
+OnFailure=maxnow-ballet-sync.service
 
 [Service]
 Type=oneshot

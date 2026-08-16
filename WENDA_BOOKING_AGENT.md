@@ -16,7 +16,7 @@
 - 实时上课记录与 Dashboard 同步共用同一老师归一化规则：实际上课历史的老师字段为空时默认补为“李俊”，其中 2026-08-07 19:45–21:15 芭蕾 L1 按 Owner 明确校正为“张瀚泽”；课表、当前预约和候补继续保留闻道原值。
 - `scripts/book_ballet.py` / `scripts/run_ballet_booking.sh`：Owner 显式指定课程后的普通预约入口；课程与按钮必须在同一 `.classtable` 块内原子绑定。
 - `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`：Owner 显式指定当前预约后的单课取消入口；先精确匹配唯一活动预约并校验该详情页的官方取消 contract，dry-run 只调用非变更规则检查，execute 重检后最多一次取消 mutation，再以实时预约列表确认目标消失。mutation 结果未知时不得重试。
-- `scripts/book_ballet_fast.py` / `scripts/run_ballet_booking_fast.sh`：周日 14:20 自动抢课入口；读取版本化长期规则，放课后动态发现本周目标，真实 mutation 严格串行并在结束后统一实时核验。
+- `scripts/book_ballet_fast.py` / `scripts/run_ballet_booking_fast.sh`：周日 14:20 自动抢课入口；读取版本化长期规则，放课后动态发现本周目标，真实 mutation 严格串行并在结束后统一实时核验。生产 systemd 单元在每次执行结束后，无论主流程成功或失败，都立即触发一次独立的 GET-only rolling 同步，刷新 MaxNow 芭蕾面板；同步结果不覆盖抢课单元自身结果。
 - `config/ballet-booking-fast.json`、`server/maxnow-ballet-booking-fast.*`：Fast Path 的目标与调度入口，不得绕过 Session、时间窗、唯一匹配、幂等和失败关闭边界。
 - 当前 Fast Path 每周扫描放课后的周一至周六课表：周一至周五只处理 18:40（含）后开始的课，周六处理全天；动态处理所有标准芭蕾 L1 与课程名严格等于“软开”或“软开课”的课程，周日不进入目标。软开专项、软开-胯及其他只因分类器含“软开”而归入同类的近似课程必须排除。提交顺序先处理全部 L1，再处理软开 / 软开课；每一课程层内先周六，再周一至周五。目标不限老师；同一日期、课程名与时间先在大教室中唯一匹配，大教室没有时再在小教室中唯一匹配；可预约则预约、仅可排队且 `allowWaitlist=true` 时才候补。
 - 当前取消 runner 只支持一次一节，不支持批量、定时或自动取消；现有 runner 仍没有转课或支付能力。Owner 明确授权未实现的写操作时，应先按本文件的 Session 优先顺序确认官方协议，再实现或使用最小受限入口；不能把 runner 的现状解释为必须操作微信。
@@ -29,6 +29,7 @@
 
 ## 变更记录
 
+- 2026-08-16：Owner 要求 Fast Path 每次执行结束后立即刷新 MaxNow 芭蕾面板；生产单元以 `OnSuccess` / `OnFailure` 将独立 rolling 同步挂在抢课关键路径之后，刷新只读且不改变抢课结果。
 - 2026-08-16：Owner 将 Fast Path 改为长期周规则：周一至周五只抢 18:40（含）后开始的课，周六全天；课程范围为所有标准芭蕾 L1，以及精确“软开”或“软开课”。当天实时课表确认标准名称为“软开课”、专项名称为“软开专项【前后腿】”；专项、软开-胯继续排除，后续不再要求 Owner 每周提供固定课表。
 - 2026-08-14：Owner 将 2026-08-07 19:45–21:15 芭蕾 L1 的老师从空值默认李俊明确校正为张瀚泽；实时上课记录与 Dashboard 同步共用该例外。
 - 2026-08-14：Owner 确认实际上课历史中未填写老师的记录统一按李俊处理；实时上课记录与 Dashboard 同步共用该规则，未来课表和活动预约不继承默认老师。

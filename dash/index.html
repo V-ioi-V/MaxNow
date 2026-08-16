@@ -1072,15 +1072,16 @@
             <article class="panel cloud-card" data-tone="purple">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 09 / 12 / 15 / 18 / 22 · Sunday 14:30 / 20:00 · Monthly 00:47</p>
+                  <p class="eyebrow">Daily 09 / 12 / 15 / 18 / 22 · Sunday 14:30 · Post-booking · Monthly 00:47</p>
                   <h2>芭蕾只读同步</h2>
                 </div>
                 <span class="status-pill">只读同步已启用</span>
               </header>
-              <p class="item-copy">每天五次只读刷新预约、候补、上课记录、课程卡与周课表；周日 14:30 额外检查抢课后发布的下周课表，18:00 刷新本周训练简报数据，每月另执行全量校验。登录失效后停止网络请求并保留最后成功缓存。</p>
+              <p class="item-copy">每天五次只读刷新预约、候补、上课记录、课程卡与周课表；自动抢课每次执行结束后立即追加一次整体刷新，周日 14:30 仍额外检查下周课表，18:00 刷新本周训练简报数据，每月另执行全量校验。登录失效后停止网络请求并保留最后成功缓存。</p>
               <dl class="cloud-meta">
                 <div><dt>日常</dt><dd>09:00 / 12:00 / 15:00 / 18:00 / 22:00 整体刷新</dd></div>
                 <div><dt>周日</dt><dd>14:30 检查下周课表；18:00 刷新训练周简报</dd></div>
+                <div><dt>抢课后</dt><dd>执行结束立即刷新芭蕾面板</dd></div>
                 <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
                 <div><dt>失败</dt><dd>保留最后成功缓存并提示重新登录</dd></div>
               </dl>
@@ -1094,7 +1095,7 @@
                 </div>
                 <span class="status-pill" id="ballet-booking-fast-status" aria-live="polite">等待首次执行</span>
               </header>
-              <p class="item-copy">周日 14:19:35 预热，14:20:00 按固定优先级顺序提交；可预约则预约，仅可排队则候补。逐课独立，安全失败最多重试 3 次，单课失败不阻断后续课程。</p>
+              <p class="item-copy">周日 14:19:35 预热，14:20:00 按固定优先级顺序提交；可预约则预约，仅可排队则候补。逐课独立，安全失败最多重试 3 次，执行结束立即只读刷新芭蕾面板。</p>
               <div class="ballet-booking-fast-metrics">
                 <div>
                   <span>下次抢课</span>
@@ -1110,7 +1111,7 @@
                 </div>
               </div>
               <p class="ballet-booking-fast-priority" id="ballet-booking-fast-priority">
-                固定优先级：芭蕾 L1 &gt; 软开；同课程按周六 &gt; 周日 &gt; 周五 &gt; 其他日期
+                固定优先级：芭蕾 L1 &gt; 软开；同课程按周六 &gt; 周一至周五，同日按开始时间
               </p>
               <p class="cloud-operation-boundary">边界：只处理课程计划中的精确目标；可预约则预约，可排队则候补；不取消、不转课、不付费。</p>
             </article>
