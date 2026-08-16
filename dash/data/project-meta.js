@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 13:38",
+  "updatedAt": "2026-08-16 13:40",
   "version": "1.0.10.02",
   "versionLabel": "v1.0.10.02",
   "branch": "feature/ballet-post-booking-refresh",
-  "commit": "1bccccb",
+  "commit": "23789f0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-post-booking-refresh · commit 1bccccb · 有未提交代码改动",
+  "deployNote": "feature/ballet-post-booking-refresh · commit 23789f0 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",

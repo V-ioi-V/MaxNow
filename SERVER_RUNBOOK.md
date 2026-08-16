@@ -2387,3 +2387,15 @@ preview verification: 12 条规则按 6 条 L1 后接 6 条软开发布；每层
 server verification: 87 项芭蕾测试、scripts/check.py 与 nginx -t 通过；timer active / waiting，正式下一次触发 2026-08-16 14:19:35，service inactive / dead，TimeoutStartUSec=10min
 safety: 部署只执行一次今天课表 GET 与无网络 preview；未运行 execute，未提交预约、候补、取消或转课
 ```
+
+2026-08-16 13:40 已部署抢课后即时刷新：
+
+```text
+deployed source commit: 23789f0 Refresh ballet panel after fast booking
+version: 1.0.10.02
+changes: Fast Path unit 的 OnSuccess / OnFailure 均触发 maxnow-ballet-sync.service；真实执行结束后立即用既有 GET-only rolling 同步刷新芭蕾面板，刷新结果不覆盖抢课结果
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-post-booking-refresh（完整 dash/data 与变更前 Fast Path service）
+server verification: systemd-analyze verify、scripts/check.py 与 nginx -t 通过；systemctl show 确认 OnSuccess / OnFailure 均为 maxnow-ballet-sync.service
+timer state: active / waiting，下一次正式触发仍为 2026-08-16 14:19:35；Fast Path 与 rolling sync service 均保持 inactive / dead
+safety: 部署未停止或重启 timer，未手动启动 Fast Path 或 rolling sync，未访问闻道，也未提交预约、候补、取消或转课
+```

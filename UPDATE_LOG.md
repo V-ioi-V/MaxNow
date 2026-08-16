@@ -16,6 +16,7 @@
 - Fast Path systemd 单元增加成功与失败完成钩子；每次真实执行结束后立即启动既有 GET-only rolling 同步，让预约、候补、课程卡和课表状态尽快更新到 MaxNow 芭蕾面板。
 - 后置刷新在 mutation 与统一实时核验之后运行，不占用 14:20 抢课关键路径；刷新失败不会覆盖抢课结果，已在运行的同步由 systemd 合并而不重复并发。
 - Cloud 运维卡同步展示“抢课后立即刷新”，并修正长期周规则的静态优先级文案；版本提升到 `1.0.10.02`。
+- 功能提交 `23789f0` 已部署；生产 unit 的 `OnSuccess` / `OnFailure` 均解析为 `maxnow-ballet-sync.service`，systemd unit 校验、服务器全仓检查和 nginx 校验通过。部署未重启 timer、未启动 Fast Path 或只读同步，正式触发仍为今天 14:19:35。
 
 ### 自动抢课改为长期周规则
 
