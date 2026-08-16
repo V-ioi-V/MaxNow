@@ -2485,3 +2485,18 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=245、a
 automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；三个对应 service 均 inactive；Fast Path 下次触发仍为 2026-08-23 14:19:35
 safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-16 已部署周安排时间轴与课程卡统一：
+
+```text
+deployed source commit: e875c0d Add time axis to ballet weekly schedule
+version: 1.0.10.09
+changes: 课程计划右侧改为自然高度的抢课摘要行与周安排；周安排增加左侧真实时间轴并压缩无人上课时段，实际课程复用下方完整课表的课型色、预约 / 候补状态、老师、教室、完整时间和状态元素；无具体时间的待抢规则继续使用日期卡
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-plan-time-axis/dash-data.tgz
+deployment path: 通过校验过的 Git bundle 将服务器 main 从 e25d7eb 快进到 e875c0d；恢复服务器权威 dash/data 后重新生成 project-status.* / project-meta.*，未刷新芭蕾源数据
+production data verification: 下周 9 节课程，其中 8 节已预约、1 节候补；时间轴包含 10:00–22:00 与压缩的 13:00–18:00 空档，课程按真实分钟位置渲染
+browser verification: 1600px 抢课助手 / 上次结果同顶同底且周安排紧接其下；390px 整页无横向溢出，周安排仅内部横向浏览，9 张课程卡均无内容裁切
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=246、app.js?v=207 已生效；HTTPS 首页 / 登录页 / 受保护 ballet.json / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；三个对应 service 均 inactive；Fast Path 下次触发为 2026-08-23 14:19:35
+safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
