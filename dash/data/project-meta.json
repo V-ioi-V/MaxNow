@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 14:26",
+  "updatedAt": "2026-08-16 14:29",
   "version": "1.0.10.05",
   "versionLabel": "v1.0.10.05",
   "branch": "feature/ballet-course-plan-equal-columns",
-  "commit": "80ef11e",
+  "commit": "7d9ae7a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-course-plan-equal-columns · commit 80ef11e · 有未提交代码改动",
+  "deployNote": "feature/ballet-course-plan-equal-columns · commit 7d9ae7a · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",

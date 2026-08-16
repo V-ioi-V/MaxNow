@@ -2427,3 +2427,17 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=241、a
 automation state: 部署前后 Fast Path 与 rolling sync service 均 inactive / dead；Fast Path timer 未停止或重启，保持 active / waiting，下一次 2026-08-16 14:19:35
 safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-16 14:29 已部署课程预约与抢课等宽布局：
+
+```text
+deployed source commit: 7d9ae7a Balance ballet course plan columns
+version: 1.0.10.05
+changes: 课程计划桌面两栏由 1fr / 2fr 恢复为 1fr / 1fr；860px 以下继续单列，代抢与上次结果微型课表内容不变
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-equal-columns/dash-data.tgz
+deployment path: 通过校验过的增量 Git bundle 将服务器 main 从 80ef11e 快进到 7d9ae7a；恢复服务器权威 dash/data 后重新生成 project-status.* / project-meta.*
+browser verification: 1920px 两栏均为 759.5px，1280px 均为 458.7px；860px 单列，两栏宽度一致且无横向溢出，控制台无错误
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=242 已生效
+automation state: Fast Path 与抢课后 rolling sync 均为 success / inactive；Fast Path timer active / waiting，下次 2026-08-23 14:19:35
+safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
