@@ -2399,3 +2399,16 @@ server verification: systemd-analyze verify、scripts/check.py 与 nginx -t 通�
 timer state: active / waiting，下一次正式触发仍为 2026-08-16 14:19:35；Fast Path 与 rolling sync service 均保持 inactive / dead
 safety: 部署未停止或重启 timer，未手动启动 Fast Path 或 rolling sync，未访问闻道，也未提交预约、候补、取消或转课
 ```
+
+2026-08-16 13:53 已部署课程计划 1:2 与代抢微型课表：
+
+```text
+deployed source commit: 7cb4862 Compact ballet booking plan layout
+version: 1.0.10.03
+changes: 课程预约 / 抢课桌面宽度改为 1fr / 2fr；12 条长期周规则按周一至周六六列微型课表展示，周六标记先抢；上次结果移到下方紧凑横排
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-booking-mini-timetable（完整 dash/data）
+browser verification: 1920 / 1280px 外层宽度比精确为 2、同排卡同顶同底；860px 上下堆叠；390px 微型课表两列；全部无整页横向溢出，控制台无错误
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=240、app.js?v=202 和微型课表渲染入口已在部署目录生效
+automation state: Fast Path timer 保持 active / waiting，下一次仍为 2026-08-16 14:19:35；Fast Path 与 rolling sync service 均 inactive / dead
+safety: 静态 UI 部署未访问闻道、未启动芭蕾同步、未执行预约、候补、取消或转课
+```
