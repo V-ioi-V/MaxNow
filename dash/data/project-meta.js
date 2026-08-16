@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 23:38",
-  "version": "1.0.10.14",
-  "versionLabel": "v1.0.10.14",
-  "branch": "feature/ballet-booking-summary-balance",
-  "commit": "cfc0c60",
+  "updatedAt": "2026-08-17 00:02",
+  "version": "1.0.10.15",
+  "versionLabel": "v1.0.10.15",
+  "branch": "bugfix/ballet-attendance-pagination",
+  "commit": "f787d5a",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-booking-summary-balance · commit cfc0c60 · 干净",
+  "deployNote": "bugfix/ballet-attendance-pagination · commit f787d5a · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "适配闻道上课历史分页",
+      "summary": "闻道上课记录首屏开始只内嵌最近 10 条，但标题继续报告累计总数；同步器改为校验并调用页面官方固定分页接口，补齐更早的历史摘要。"
+    },
     {
       "date": "2026-08-16",
       "title": "平衡抢课摘要宽度与四项排版",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-16",
       "title": "收齐抢课摘要高度并移除周安排底注",
       "summary": "“上次抢课结果”更名为“本地抢课结果”，英文眉题同步改为 `Local Result`。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "修正周安排压缩空档时间拥挤",
-      "summary": "周安排时间列由 `50px` 放宽为桌面 `68px`、移动端 `64px`，压缩空档由 `24px` 增高为 `38px`；`13:00–18:00` 等范围强制单行显示，与上下整点保持清楚间距。"
     }
   ]
 };
