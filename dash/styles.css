@@ -4610,20 +4610,27 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-width: 0;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-areas:
+    "reservations reservations assistant assistant last-run last-run"
+    "reservations reservations week week week week";
   gap: var(--page-grid-gap);
 }
 
 .ballet-plan-reservations {
-  grid-column: span 2;
+  grid-area: reservations;
 }
 
 .ballet-plan-week {
-  grid-column: span 4;
+  grid-area: week;
+  align-self: start;
 }
 
-.ballet-booking-assistant,
+.ballet-booking-assistant {
+  grid-area: assistant;
+}
+
 .ballet-booking-last-run {
-  grid-column: span 3;
+  grid-area: last-run;
 }
 
 .ballet-plan-group {
@@ -9251,29 +9258,21 @@ body[data-view="ricky"] .topbar-ricky-status {
 @media (max-width: 1320px) {
   .ballet-course-plan-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .ballet-plan-reservations,
-  .ballet-plan-week {
-    grid-column: 1 / -1;
-  }
-
-  .ballet-booking-assistant,
-  .ballet-booking-last-run {
-    grid-column: span 1;
+    grid-template-areas:
+      "reservations reservations"
+      "assistant last-run"
+      "week week";
   }
 }
 
 @media (max-width: 860px) {
   .ballet-course-plan-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .ballet-plan-reservations,
-  .ballet-plan-week,
-  .ballet-booking-assistant,
-  .ballet-booking-last-run {
-    grid-column: 1;
+    grid-template-areas:
+      "reservations"
+      "assistant"
+      "last-run"
+      "week";
   }
 
   .ballet-plan-week-days {

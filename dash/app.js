@@ -3688,6 +3688,18 @@ function formatBalletCancellation(record = {}) {
   return raw ? `取消规则：${raw}` : "";
 }
 
+function getBalletCancellationDisplay(record = {}) {
+  const knownCancellation = formatBalletCancellation(record);
+  if (knownCancellation) return knownCancellation;
+  if (record._planSource === "timetable" && balletRecordDate(record) === localDateKey()) {
+    const classBoundary = balletClassBoundary(record);
+    return Number.isFinite(classBoundary) && classBoundary < Date.now()
+      ? "课程已结束"
+      : "已过可取消时段";
+  }
+  return "取消时间未提供";
+}
+
 function getBalletUiState() {
   const sync = balletData.sync || {};
   const cacheState = String(sync.cacheState || "").toLowerCase();
@@ -4908,7 +4920,7 @@ function createBalletUpcomingItem(record) {
   ].filter(Boolean).join(" · ") || "课程详情待补";
   const cancellation = document.createElement("small");
   cancellation.className = "ballet-upcoming-note";
-  cancellation.textContent = formatBalletCancellation(record) || "最晚取消时间待同步";
+  cancellation.textContent = getBalletCancellationDisplay(record);
   main.append(title, meta);
   const tags = document.createElement("div");
   tags.className = "ballet-history-meta";

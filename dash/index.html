@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=244" />
+    <link rel="stylesheet" href="./styles.css?v=245" />
   </head>
   <body>
     <div class="app-shell">
@@ -766,28 +766,6 @@
                 </header>
                 <div class="ballet-upcoming-list" id="ballet-upcoming-list"></div>
               </section>
-              <section class="ballet-plan-group ballet-plan-week" aria-labelledby="ballet-plan-week-title">
-                <header>
-                  <div>
-                    <p class="eyebrow">Weekly Schedule</p>
-                    <h3 id="ballet-plan-week-title">周安排</h3>
-                  </div>
-                  <div class="ballet-plan-week-switcher" aria-label="切换课程周">
-                    <button type="button" id="ballet-plan-week-prev" aria-label="查看上一周">‹</button>
-                    <strong id="ballet-plan-week-label">本周</strong>
-                    <span aria-hidden="true">·</span>
-                    <time id="ballet-plan-week-range">--</time>
-                    <button type="button" id="ballet-plan-week-next" aria-label="查看下一周">›</button>
-                  </div>
-                </header>
-                <div class="ballet-plan-week-days" id="ballet-plan-week-days"></div>
-                <div class="ballet-plan-week-legend" aria-label="周安排状态说明">
-                  <span><i data-course="l1"></i>L1</span>
-                  <span><i data-course="soft-open"></i>软开</span>
-                  <span><i data-course="other"></i>其他课程</span>
-                  <small id="ballet-plan-week-note">按周一到周日展示</small>
-                </div>
-              </section>
               <section class="ballet-plan-group ballet-booking-assistant" aria-labelledby="ballet-booking-workspace-title">
                 <header>
                   <div>
@@ -847,6 +825,28 @@
                     <strong id="ballet-booking-result-missed">0 节</strong>
                     <small>需人工关注</small>
                   </article>
+                </div>
+              </section>
+              <section class="ballet-plan-group ballet-plan-week" aria-labelledby="ballet-plan-week-title">
+                <header>
+                  <div>
+                    <p class="eyebrow">Weekly Schedule</p>
+                    <h3 id="ballet-plan-week-title">周安排</h3>
+                  </div>
+                  <div class="ballet-plan-week-switcher" aria-label="切换课程周">
+                    <button type="button" id="ballet-plan-week-prev" aria-label="查看上一周">‹</button>
+                    <strong id="ballet-plan-week-label">本周</strong>
+                    <span aria-hidden="true">·</span>
+                    <time id="ballet-plan-week-range">--</time>
+                    <button type="button" id="ballet-plan-week-next" aria-label="查看下一周">›</button>
+                  </div>
+                </header>
+                <div class="ballet-plan-week-days" id="ballet-plan-week-days"></div>
+                <div class="ballet-plan-week-legend" aria-label="周安排状态说明">
+                  <span><i data-course="l1"></i>L1</span>
+                  <span><i data-course="soft-open"></i>软开</span>
+                  <span><i data-course="other"></i>其他课程</span>
+                  <small id="ballet-plan-week-note">按周一到周日展示</small>
                 </div>
               </section>
             </div>
@@ -1396,6 +1396,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=205"></script>
+    <script src="./app.js?v=206"></script>
   </body>
 </html>
