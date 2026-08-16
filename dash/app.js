@@ -3031,6 +3031,99 @@ function createBalletBookingEmpty(message) {
   return paragraph;
 }
 
+const BALLET_BOOKING_WEEKDAY_ORDER = {
+  周一: 1,
+  周二: 2,
+  周三: 3,
+  周四: 4,
+  周五: 5,
+  周六: 6,
+};
+
+function balletBookingTargetTone(target = {}) {
+  const course = String(target.course || "").replace(/\s+/g, "").toLowerCase();
+  return course.includes("l1") ? "l1" : "soft-open";
+}
+
+function createBalletBookingMiniTimetable(targets = []) {
+  const timetable = document.createElement("div");
+  timetable.className = "ballet-booking-mini-timetable";
+  timetable.setAttribute("role", "table");
+  timetable.setAttribute("aria-label", "每周自动抢课微型课表");
+
+  const grid = document.createElement("div");
+  grid.className = "ballet-booking-mini-grid";
+  grid.setAttribute("role", "row");
+  const groups = new Map();
+  targets.forEach((target) => {
+    const key = `${target.weekday || ""}|${target.date || ""}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(target);
+  });
+  const sortedGroups = [...groups.values()].sort((left, right) => {
+    const weekdayDiff = (BALLET_BOOKING_WEEKDAY_ORDER[left[0]?.weekday] || 99)
+      - (BALLET_BOOKING_WEEKDAY_ORDER[right[0]?.weekday] || 99);
+    return weekdayDiff || String(left[0]?.date || "").localeCompare(String(right[0]?.date || ""));
+  });
+
+  sortedGroups.forEach((dayTargets) => {
+    const firstTarget = dayTargets[0] || {};
+    const day = document.createElement("section");
+    day.className = "ballet-booking-mini-day";
+    day.dataset.priority = firstTarget.weekday === "周六" ? "first" : "standard";
+    day.setAttribute("role", "cell");
+
+    const header = document.createElement("header");
+    const heading = document.createElement("div");
+    const weekday = document.createElement("strong");
+    weekday.textContent = firstTarget.weekday || "未定";
+    const date = document.createElement("time");
+    date.dateTime = firstTarget.date || "";
+    date.textContent = String(firstTarget.date || "").slice(5).replace("-", "/");
+    heading.append(weekday, date);
+    header.appendChild(heading);
+    if (firstTarget.weekday === "周六") {
+      const priority = document.createElement("span");
+      priority.className = "ballet-booking-mini-priority";
+      priority.textContent = "先抢";
+      header.appendChild(priority);
+    }
+
+    const courses = document.createElement("div");
+    courses.className = "ballet-booking-mini-courses";
+    dayTargets
+      .slice()
+      .sort((left, right) => {
+        const toneOrder = { l1: 0, "soft-open": 1 };
+        return toneOrder[balletBookingTargetTone(left)] - toneOrder[balletBookingTargetTone(right)];
+      })
+      .forEach((target) => {
+        const course = document.createElement("article");
+        course.className = "ballet-booking-mini-course";
+        course.dataset.course = balletBookingTargetTone(target);
+        const title = document.createElement("strong");
+        title.textContent = target.course || "未命名课程";
+        const time = document.createElement("span");
+        time.textContent = target.startTime || "全天";
+        course.append(title, time);
+        courses.appendChild(course);
+      });
+
+    day.append(header, courses);
+    grid.appendChild(day);
+  });
+
+  const legend = document.createElement("div");
+  legend.className = "ballet-booking-mini-legend";
+  legend.innerHTML = `
+    <span><i data-course="l1"></i>L1 优先</span>
+    <span><i data-course="soft-open"></i>软开</span>
+    <small>不限老师 · 大教室优先，小教室兜底</small>
+  `;
+  timetable.append(grid, legend);
+  return timetable;
+}
+
 function getBalletBookingTiming(lastRun = {}) {
   const records = Array.isArray(lastRun?.records) ? lastRun.records : [];
   const durations = records
@@ -3094,9 +3187,9 @@ function renderBalletBookingFast() {
   const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
     ? balletBookingFastData.lastRun.records
     : [];
-  const targetNodes = targets.map((target) =>
-    createBalletBookingFastTarget(target, null),
-  );
+  const targetNodes = usesWeeklyRules
+    ? targets.length ? [createBalletBookingMiniTimetable(targets)] : []
+    : targets.map((target) => createBalletBookingFastTarget(target, null));
   const resultNodes = lastRecords.map((record) =>
     createBalletBookingFastTarget(record, record),
   );

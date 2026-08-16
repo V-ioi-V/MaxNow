@@ -4609,7 +4609,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-course-plan-grid {
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: var(--page-grid-gap);
 }
 
@@ -4697,7 +4697,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-booking-columns {
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
   gap: 12px;
 }
@@ -4761,6 +4761,191 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-booking-column .ballet-booking-fast-results {
   min-height: 0;
   align-content: start;
+}
+
+.ballet-booking-results-column .ballet-booking-fast-target {
+  grid-template-columns: 1fr;
+  gap: 7px;
+}
+
+.ballet-booking-results-column .ballet-booking-fast-target time {
+  grid-column: auto;
+}
+
+.ballet-booking-results-column .ballet-booking-fast-target .status-pill {
+  width: fit-content;
+  max-width: 100%;
+  justify-self: start;
+  white-space: normal;
+}
+
+.ballet-booking-results-column .ballet-booking-fast-results {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.ballet-booking-mini-timetable {
+  min-width: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.ballet-booking-mini-grid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.ballet-booking-mini-day {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ballet) 16%, var(--line));
+  border-radius: 11px;
+  background: #ffffff;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.ballet-booking-mini-day[data-priority="first"] {
+  border-color: color-mix(in srgb, var(--ballet) 34%, var(--line));
+  background: linear-gradient(180deg, #fff4f8, #ffffff 78%);
+}
+
+.ballet-booking-mini-day > header {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px 8px 7px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ballet) 12%, var(--line));
+  background: color-mix(in srgb, var(--ballet) 4%, #ffffff);
+}
+
+.ballet-booking-mini-day > header > div {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.ballet-booking-mini-day > header strong {
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.ballet-booking-mini-day > header time {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.ballet-booking-mini-priority {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 2px 5px;
+  background: var(--ballet);
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 850;
+  line-height: 1.3;
+}
+
+.ballet-booking-mini-courses {
+  display: grid;
+  gap: 5px;
+  padding: 7px;
+}
+
+.ballet-booking-mini-course {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  border: 1px solid var(--course-border);
+  border-radius: 8px;
+  padding: 7px 6px;
+  background: var(--course-bg);
+}
+
+.ballet-booking-mini-course[data-course="l1"] {
+  --course-border: #b9dfc8;
+  --course-bg: #effaf3;
+  --course-color: #25734a;
+}
+
+.ballet-booking-mini-course[data-course="soft-open"] {
+  --course-border: #ded7ca;
+  --course-bg: #f7f4ee;
+  --course-color: #766a57;
+}
+
+.ballet-booking-mini-course strong {
+  color: var(--course-color);
+  font-size: 11px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.ballet-booking-mini-course span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.ballet-booking-mini-legend {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  padding: 0 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.ballet-booking-mini-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ballet-booking-mini-legend i {
+  width: 7px;
+  height: 7px;
+  border: 1px solid;
+  border-radius: 2px;
+}
+
+.ballet-booking-mini-legend i[data-course="l1"] {
+  border-color: #9fd2b5;
+  background: #dff4e7;
+}
+
+.ballet-booking-mini-legend i[data-course="soft-open"] {
+  border-color: #cdc4b5;
+  background: #eee9df;
+}
+
+.ballet-booking-mini-legend small {
+  min-width: min(100%, 210px);
+  margin-left: auto;
+  color: var(--muted);
+  font-size: inherit;
+  font-weight: inherit;
+  text-align: right;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ballet-booking-mini-day:hover {
+    border-color: var(--card-border);
+    box-shadow: 0 10px 22px rgba(144, 62, 95, 0.09);
+    transform: translateY(-2px);
+  }
 }
 
 .ballet-booking-empty {
@@ -8399,6 +8584,16 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .ballet-booking-summary-card > strong {
     font-size: 18px;
+  }
+
+  .ballet-booking-mini-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ballet-booking-mini-legend small {
+    flex-basis: 100%;
+    margin-left: 0;
+    text-align: left;
   }
 
   .ballet-session-metrics,

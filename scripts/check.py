@@ -462,7 +462,8 @@ def check_ballet_booking_fast():
         'id="ballet-booking-average"',
         'id="ballet-booking-average-detail"',
         'class="ballet-booking-columns"',
-        'class="ballet-booking-column"',
+        'class="ballet-booking-column ballet-booking-targets-column"',
+        'class="ballet-booking-column ballet-booking-results-column"',
         '<p class="eyebrow">Booking targets</p>',
         '<p class="eyebrow">Last run</p>',
         'id="ballet-booking-targets-title">代抢',
@@ -470,11 +471,18 @@ def check_ballet_booking_fast():
         ".ballet-booking-summary {",
         "grid-template-columns: repeat(3, minmax(0, 1fr));",
         ".ballet-booking-columns {",
-        "grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));",
+        "grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);",
+        "grid-template-columns: minmax(0, 1fr);",
         "grid-template-rows: auto minmax(0, 1fr);",
         ".ballet-booking-column-head > div {",
         "justify-content: space-between;",
         ".ballet-booking-column:hover {",
+        "function createBalletBookingMiniTimetable(targets = [])",
+        ".ballet-booking-mini-grid {",
+        "grid-template-columns: repeat(6, minmax(0, 1fr));",
+        '.ballet-booking-mini-day[data-priority="first"]',
+        ".ballet-booking-mini-day:hover {",
+        "grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));",
         'ready_waitlist: "可排队"',
         "allowWaitlist=true",
         "Teacher is display-only and must not affect matching",
@@ -1869,9 +1877,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=239" not in dashboard_html
+        "styles.css?v=240" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=201" not in dashboard_html
+        or "app.js?v=202" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2089,7 +2097,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=201" not in dashboard_html:
+    if "app.js?v=202" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
