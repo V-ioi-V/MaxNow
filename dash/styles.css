@@ -4793,7 +4793,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-width: 0;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 6px;
+  gap: 7px;
 }
 
 .ballet-booking-mini-day {
@@ -4802,8 +4802,8 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-width: 0;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--ballet) 16%, var(--line));
-  border-radius: 11px;
-  background: #ffffff;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff, #fffdfd);
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
@@ -4814,18 +4814,20 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-booking-mini-day > header {
   min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-  padding: 8px 8px 7px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 49px;
+  padding: 8px 6px 7px;
   border-bottom: 1px solid color-mix(in srgb, var(--ballet) 12%, var(--line));
-  background: color-mix(in srgb, var(--ballet) 4%, #ffffff);
+  background: linear-gradient(180deg, #fff9fb, #fffdfd);
+  text-align: center;
 }
 
 .ballet-booking-mini-day > header > div {
   min-width: 0;
   display: grid;
+  justify-items: center;
   gap: 1px;
 }
 
@@ -4843,12 +4845,14 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-booking-mini-priority {
-  flex: 0 0 auto;
+  position: absolute;
+  top: 5px;
+  right: 5px;
   border-radius: 999px;
-  padding: 2px 5px;
-  background: var(--ballet);
-  color: #ffffff;
-  font-size: 8px;
+  padding: 2px 4px;
+  background: color-mix(in srgb, var(--ballet) 10%, #ffffff);
+  color: var(--ballet);
+  font-size: 7px;
   font-weight: 850;
   line-height: 1.3;
 }
@@ -4862,11 +4866,13 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-booking-mini-course {
   min-width: 0;
   display: grid;
+  place-items: center;
   gap: 2px;
   border: 1px solid var(--course-border);
   border-radius: 8px;
   padding: 7px 6px;
   background: var(--course-bg);
+  text-align: center;
 }
 
 .ballet-booking-mini-course[data-course="l1"] {
@@ -4879,6 +4885,12 @@ body[data-view="ricky"] .topbar-ricky-status {
   --course-border: #ded7ca;
   --course-bg: #f7f4ee;
   --course-color: #766a57;
+}
+
+.ballet-booking-mini-course[data-course="other"] {
+  --course-border: #cad9e6;
+  --course-bg: #f2f7fb;
+  --course-color: #526f87;
 }
 
 .ballet-booking-mini-course strong {
@@ -4896,11 +4908,57 @@ body[data-view="ricky"] .topbar-ricky-status {
   white-space: nowrap;
 }
 
+.ballet-booking-mini-order,
+.ballet-booking-mini-status {
+  display: block;
+  max-width: 100%;
+  margin-top: 2px;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.ballet-booking-mini-order {
+  color: color-mix(in srgb, var(--course-color) 76%, var(--muted));
+}
+
+.ballet-booking-mini-status {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.ballet-booking-mini-course[data-state="booked"] .ballet-booking-mini-status,
+.ballet-booking-mini-course[data-state="already_booked"] .ballet-booking-mini-status {
+  color: var(--ok);
+}
+
+.ballet-booking-mini-course[data-state="waitlisted"] .ballet-booking-mini-status,
+.ballet-booking-mini-course[data-state="already_waitlisted"] .ballet-booking-mini-status {
+  color: var(--orange);
+}
+
+.ballet-booking-mini-course[data-state="auth_required"] .ballet-booking-mini-status,
+.ballet-booking-mini-course[data-state="source_changed"] .ballet-booking-mini-status,
+.ballet-booking-mini-course[data-state="unknown_result"] .ballet-booking-mini-status {
+  color: var(--danger);
+}
+
+.ballet-booking-mini-timetable.is-results.has-1-days .ballet-booking-mini-grid {
+  grid-template-columns: minmax(0, 240px);
+}
+
+.ballet-booking-mini-timetable.is-results.has-2-days .ballet-booking-mini-grid {
+  grid-template-columns: repeat(2, minmax(0, 240px));
+}
+
 .ballet-booking-mini-legend {
   min-width: 0;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 7px 12px;
   padding: 0 2px;
   color: var(--muted);
@@ -4933,11 +4991,11 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-booking-mini-legend small {
   min-width: min(100%, 210px);
-  margin-left: auto;
+  margin-left: 0;
   color: var(--muted);
   font-size: inherit;
   font-weight: inherit;
-  text-align: right;
+  text-align: center;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -8590,10 +8648,18 @@ body[data-view="ricky"] .topbar-ricky-status {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .ballet-booking-mini-timetable.is-results.has-1-days .ballet-booking-mini-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ballet-booking-mini-timetable.is-results.has-2-days .ballet-booking-mini-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .ballet-booking-mini-legend small {
     flex-basis: 100%;
     margin-left: 0;
-    text-align: left;
+    text-align: center;
   }
 
   .ballet-session-metrics,
