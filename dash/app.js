@@ -3346,7 +3346,7 @@ function createBalletPlanWeekCourse(record = {}, options = {}) {
         durationMinutes: record.durationMinutes || (interval ? interval.end - interval.start : undefined),
       },
       false,
-      { includeVenue: true },
+      { includeVenue: false },
     );
     course.classList.add("is-plan");
     return course;
@@ -3460,7 +3460,7 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
       .join(" "),
   );
 
-  let nextGridLine = 2;
+  let nextGridLine = 3;
   const minuteGridLines = new Map();
   const layoutRows = rows.map((row) => {
     const startLine = nextGridLine;
@@ -3481,14 +3481,24 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
   corner.className = "ballet-plan-week-time-corner";
   corner.textContent = "时间";
   corner.style.gridColumn = "1";
-  corner.style.gridRow = "1";
+  corner.style.gridRow = "1 / 3";
   container.appendChild(corner);
 
   days.forEach((day, index) => {
     const header = createBalletPlanWeekHeader(day.date, day.weekday);
-    header.style.gridColumn = String(index + 2);
+    header.style.gridColumn = `${index * 2 + 2} / span 2`;
     header.style.gridRow = "1";
     container.appendChild(header);
+    BALLET_TIMETABLE_ROOMS.forEach((room, roomIndex) => {
+      const roomHeader = createBalletTimetableRoomHeader(
+        room,
+        getBalletTimetableDayState(day.date),
+      );
+      roomHeader.classList.add("ballet-plan-week-room");
+      roomHeader.style.gridColumn = String(index * 2 + roomIndex + 2);
+      roomHeader.style.gridRow = "2";
+      container.appendChild(roomHeader);
+    });
   });
 
   layoutRows.forEach((row, rowIndex) => {
@@ -3534,32 +3544,46 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
 
   days.forEach((day, index) => {
     const dayState = getBalletTimetableDayState(day.date);
-    layoutRows.forEach((row, rowIndex) => {
-      const cell = document.createElement("div");
-      cell.className = "ballet-plan-week-cell";
-      cell.dataset.dayState = dayState;
-      cell.dataset.rowType = row.type;
-      cell.dataset.rowEdge =
-        layoutRows.length === 1 ? "both" : rowIndex === 0 ? "start" : rowIndex === layoutRows.length - 1 ? "end" : "middle";
-      cell.style.gridColumn = String(index + 2);
-      cell.style.gridRow = `${row.startLine} / ${row.endLine}`;
-      container.appendChild(cell);
+    const dayStartColumn = index * 2 + 2;
+    BALLET_TIMETABLE_ROOMS.forEach((room, roomIndex) => {
+      layoutRows.forEach((row, rowIndex) => {
+        const cell = document.createElement("div");
+        cell.className = "ballet-plan-week-cell";
+        cell.dataset.dayState = dayState;
+        cell.dataset.room = room.key;
+        cell.dataset.rowType = row.type;
+        cell.dataset.rowEdge =
+          layoutRows.length === 1 ? "both" : rowIndex === 0 ? "start" : rowIndex === layoutRows.length - 1 ? "end" : "middle";
+        cell.style.gridColumn = String(dayStartColumn + roomIndex);
+        cell.style.gridRow = `${row.startLine} / ${row.endLine}`;
+        container.appendChild(cell);
+      });
     });
 
-    const layout = layoutBalletTimetableRecords(day.records);
-    layout.items.forEach(({ record, interval, lane, laneCount }) => {
-      const startLine = minuteGridLines.get(interval.start);
-      const endLine = minuteGridLines.get(interval.end);
-      if (!startLine || !endLine || endLine <= startLine) return;
-      const course = createBalletPlanWeekCourse(record);
-      course.dataset.dayState = dayState;
-      course.dataset.overlap = laneCount > 1 ? "true" : "false";
-      course.style.gridColumn = String(index + 2);
-      course.style.gridRow = `${startLine} / ${endLine}`;
-      course.style.setProperty("--ballet-lane-left", `${(lane * 100) / laneCount}%`);
-      course.style.setProperty("--ballet-lane-width", `${100 / laneCount}%`);
-      container.appendChild(course);
-    });
+    [...BALLET_TIMETABLE_ROOMS, { key: "unknown", label: "未标注教室" }].forEach(
+      (room, roomIndex) => {
+        const roomRecords = day.records.filter(
+          (record) => balletTimetableRoomKey(record) === room.key,
+        );
+        const layout = layoutBalletTimetableRecords(roomRecords);
+        layout.items.forEach(({ record, interval, lane, laneCount }) => {
+          const startLine = minuteGridLines.get(interval.start);
+          const endLine = minuteGridLines.get(interval.end);
+          if (!startLine || !endLine || endLine <= startLine) return;
+          const course = createBalletPlanWeekCourse(record);
+          course.dataset.dayState = dayState;
+          course.dataset.room = room.key;
+          course.dataset.overlap = laneCount > 1 ? "true" : "false";
+          course.style.gridColumn = room.key === "unknown"
+            ? `${dayStartColumn} / span 2`
+            : String(dayStartColumn + roomIndex);
+          course.style.gridRow = `${startLine} / ${endLine}`;
+          course.style.setProperty("--ballet-lane-left", `${(lane * 100) / laneCount}%`);
+          course.style.setProperty("--ballet-lane-width", `${100 / laneCount}%`);
+          container.appendChild(course);
+        });
+      },
+    );
   });
 
   const todayIndex = days.findIndex((day) => day.date === localDateKey());

@@ -4785,8 +4785,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-plan-week-days[data-mode="timeline"] {
-  grid-template-columns: 68px repeat(7, minmax(0, 1fr));
-  grid-template-rows: 48px var(--ballet-plan-time-rows, minmax(120px, auto));
+  grid-template-columns: 68px repeat(7, minmax(0, 1fr) minmax(0, 1fr));
+  grid-template-rows: 48px 20px var(--ballet-plan-time-rows, minmax(120px, auto));
   grid-auto-rows: 12px;
   overflow: clip;
 }
@@ -4794,6 +4794,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-plan-week-time-corner,
 .ballet-plan-week-time,
 .ballet-plan-week-day-header,
+.ballet-plan-week-room,
 .ballet-plan-week-cell {
   min-width: 0;
   border: 0;
@@ -4844,6 +4845,16 @@ body[data-view="ricky"] .topbar-ricky-status {
   background: #fcfafb;
   opacity: 0.62;
   filter: saturate(0.74);
+}
+
+.ballet-timetable-room.ballet-plan-week-room {
+  min-height: 20px;
+  font-size: 7px;
+  letter-spacing: 0.02em;
+}
+
+.ballet-plan-week-room[data-room="large"] {
+  border-left-color: var(--ballet-plan-day-divider);
 }
 
 .ballet-plan-week-time {
@@ -4907,6 +4918,10 @@ body[data-view="ricky"] .topbar-ricky-status {
   background: rgba(255, 255, 255, 0.88);
 }
 
+.ballet-plan-week-cell[data-room="small"] {
+  border-left-color: #f4eef1;
+}
+
 .ballet-plan-week-cell[data-row-type="gap"] {
   background: repeating-linear-gradient(135deg, #fdfafb 0, #fdfafb 10px, #f6eff2 10px, #f6eff2 11px);
 }
@@ -4925,19 +4940,19 @@ body[data-view="ricky"] .topbar-ricky-status {
   justify-self: start;
   gap: 1px;
   overflow: hidden;
-  padding: 4px 5px;
+  padding: 3px 4px;
 }
 
 .ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan strong {
   flex: 0 0 auto;
-  font-size: 10px;
-  line-height: 1.15;
+  font-size: 8px;
+  line-height: 1.12;
 }
 
 .ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan small {
   flex: 0 0 auto;
-  font-size: 8px;
-  line-height: 1.1;
+  font-size: 7px;
+  line-height: 1.08;
 }
 
 .ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan .ballet-timetable-meta {
@@ -4950,8 +4965,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan > div {
   flex: 0 0 auto;
   flex-wrap: nowrap;
-  gap: 2px;
-  font-size: 8px;
+  gap: 1px;
+  font-size: 7px;
 }
 
 .ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan .ballet-timetable-time-range {
@@ -4961,7 +4976,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan .ballet-timetable-state {
   min-height: 14px;
-  padding-inline: 4px;
+  padding-inline: 3px;
+  font-size: 7px;
 }
 
 .ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan[data-overlap="true"] > div {
@@ -9440,7 +9456,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   }
 
   .ballet-plan-week-days[data-mode="timeline"] {
-    grid-template-columns: 64px repeat(7, minmax(122px, 1fr));
+    grid-template-columns: 64px repeat(7, minmax(88px, 1fr) minmax(88px, 1fr));
     overflow-x: auto;
     overscroll-behavior-inline: contain;
   }
