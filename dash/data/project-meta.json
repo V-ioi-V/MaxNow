@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 15:16",
+  "updatedAt": "2026-08-16 15:20",
   "version": "1.0.10.07",
   "versionLabel": "v1.0.10.07",
   "branch": "bugfix/ballet-week-schedule-accuracy",
-  "commit": "f53ca3f",
+  "commit": "eef9dac",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-week-schedule-accuracy · commit f53ca3f · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-week-schedule-accuracy · commit eef9dac · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",

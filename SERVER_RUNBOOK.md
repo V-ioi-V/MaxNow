@@ -2455,3 +2455,18 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=243、a
 automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；三个对应 service 均 inactive；Fast Path 下次触发 2026-08-23 14:19:35
 safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-16 15:19 已恢复完整课表并修正周安排重复课程：
+
+```text
+deployed source commit: eef9dac Fix ballet schedule accuracy and restore timetable
+version: 1.0.10.07
+changes: 恢复课程计划下方完整本周时间轴课表；课程预约按完整自然日保留最近三个有课日期并用课表 Owner 状态补齐当天已开始课程；周安排按日期、起止时间和标准课型语义去重，真实课程复用完整课表卡片样式
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-151916-ballet-schedule-accuracy/dash-data.tgz
+deployment path: 通过增量 Git bundle 将服务器 main 从 f53ca3f 快进到 eef9dac；恢复服务器权威 dash/data 后重新生成 project-status.* / project-meta.*
+production data verification: 2026-08-16 Owner 状态 2 节；2026-08-17 至 2026-08-23 共 9 节，其中 8 节已预约、1 节候补；浏览器使用同一份脱敏生产数据验证预约摘要 6 节、今天两节、下周去重后 9 节
+browser verification: 1600px 预约 / 周安排保持约 1:2 且同顶同底，完整时间轴课表恢复；390px 无整页横向溢出，完整课表使用逐日移动卡，周安排仅内部横向浏览；控制台无错误
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=244、app.js?v=205 和 ballet-timetable-grid 已生效；HTTPS 首页 / 登录页 / 受保护 ballet.json 为 302 / 200 / 401
+automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；Fast Path 下次触发 2026-08-23 14:19:35
+safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
