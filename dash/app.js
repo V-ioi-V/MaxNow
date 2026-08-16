@@ -3067,7 +3067,7 @@ function createBalletBookingMiniTimetable(targets = [], options = {}) {
   timetable.setAttribute("role", "table");
   timetable.setAttribute(
     "aria-label",
-    mode === "results" ? "本地抢课结果微型课表" : "每周自动抢课微型课表",
+    mode === "results" ? "本次抢课结果微型课表" : "每周自动抢课微型课表",
   );
 
   const grid = document.createElement("div");

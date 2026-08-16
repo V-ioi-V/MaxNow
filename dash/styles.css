@@ -4628,7 +4628,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-course-plan-summary {
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
   align-items: stretch;
   gap: var(--page-grid-gap);
 }
@@ -4690,12 +4690,15 @@ body[data-view="ricky"] .topbar-ricky-status {
   --card-border: var(--ballet-border);
   min-width: 0;
   display: grid;
-  align-content: space-between;
+  grid-template-rows: 18px 36px 34px;
+  align-content: center;
+  justify-items: center;
   gap: 8px;
   border: 1px solid color-mix(in srgb, var(--card-color) 22%, var(--line));
   border-radius: var(--radius);
   padding: 12px 14px;
   background: color-mix(in srgb, var(--card-color) 4%, #ffffff);
+  text-align: center;
 }
 
 .ballet-booking-summary-card[data-tone="green"] {
@@ -4719,7 +4722,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-booking-summary-card[data-tone="status"] > strong {
-  font-size: 17px;
+  font-size: 16px;
+  line-height: 1.1;
 }
 
 .ballet-plan-week-switcher {
@@ -5189,12 +5193,14 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-booking-summary-card > span,
 .ballet-booking-summary-card > small {
+  align-self: start;
   color: var(--muted);
   font-size: 11px;
   font-weight: 750;
 }
 
 .ballet-booking-summary-card > strong {
+  align-self: start;
   color: var(--card-color);
   font-size: 22px;
   font-variant-numeric: tabular-nums;

@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 16:55",
-  "version": "1.0.10.13",
-  "versionLabel": "v1.0.10.13",
-  "branch": "bugfix/ballet-plan-time-axis",
-  "commit": "905a974",
+  "updatedAt": "2026-08-16 23:36",
+  "version": "1.0.10.14",
+  "versionLabel": "v1.0.10.14",
+  "branch": "feature/ballet-booking-summary-balance",
+  "commit": "859755a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-plan-time-axis · commit 905a974 · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-summary-balance · commit 859755a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "平衡抢课摘要宽度与四项排版",
+      "summary": "“本地抢课结果 / Local Result”更名为“本次抢课 / This Run”。"
+    },
     {
       "date": "2026-08-16",
       "title": "收紧周安排压缩刻度与底部留白",
@@ -28,11 +33,6 @@
       "date": "2026-08-16",
       "title": "修正周安排压缩空档时间拥挤",
       "summary": "周安排时间列由 `50px` 放宽为桌面 `68px`、移动端 `64px`，压缩空档由 `24px` 增高为 `38px`；`13:00–18:00` 等范围强制单行显示，与上下整点保持清楚间距。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "周安排改为真实时间轴课表",
-      "summary": "课程计划右侧改为独立的“抢课摘要行 + 周安排”自然高度容器，顶部两张卡不再被左侧预约列表拉高，周安排紧接摘要行显示。"
     }
   ]
 }
