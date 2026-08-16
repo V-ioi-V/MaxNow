@@ -2470,3 +2470,18 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=244、a
 automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；Fast Path 下次触发 2026-08-23 14:19:35
 safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-16 15:36 已部署课程计划右侧收口与取消状态修正：
+
+```text
+deployed source commit: 25ce00a Fix ballet course plan layout
+version: 1.0.10.08
+changes: 宽桌面课程计划左侧预约占三分之一并贯穿模块；右侧顶部抢课助手 / 上次结果等分，下方周安排占满并按内容高度收口；当天已预约课程退出可取消快照后显示已过可取消时段，课程结束后显示课程已结束
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-1536-ballet-plan-right-stack/dash-data.tgz
+runtime data stash: 6156b830c9d335caa9654b12b1edda2e2d2499cc（部署后保留；服务器权威 dash/data 已从备份恢复，project-meta.* / project-status.* 按新版本重新生成）
+deployment path: 通过校验过的增量 Git bundle 将服务器 main 从 7612326 快进到 25ce00a；未覆盖或刷新芭蕾课程数据
+browser verification: 1600px 下助手 / 结果均为 401px 宽、308px 高且同顶同底，周安排紧接其下并按内容收口；390px 按预约 → 助手 → 上次结果 → 周安排单列，整页无横向溢出，周安排仅内部横向浏览；控制台无错误
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=245、app.js?v=206 和取消状态文案已生效；HTTPS 首页 / 登录页 / 受保护 ballet.json / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；三个对应 service 均 inactive；Fast Path 下次触发仍为 2026-08-23 14:19:35
+safety: 静态 UI 部署未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```

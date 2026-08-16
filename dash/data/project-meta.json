@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 15:30",
+  "updatedAt": "2026-08-16 15:36",
   "version": "1.0.10.08",
   "versionLabel": "v1.0.10.08",
   "branch": "bugfix/ballet-plan-right-stack",
-  "commit": "7612326",
+  "commit": "25ce00a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-plan-right-stack · commit 7612326 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-plan-right-stack · commit 25ce00a · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",
