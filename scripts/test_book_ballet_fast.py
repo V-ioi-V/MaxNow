@@ -71,12 +71,26 @@ class FakeFastSource:
                 day = datetime.fromisoformat(active_date).weekday()
                 courses = (
                     [
-                        ("软开", "10:00", "11:00", "李俊"),
+                        ("软开课", "10:00", "11:00", "李俊"),
                         ("软开专项", "11:00", "12:00", "李俊"),
                         ("软开-胯", "12:00", "13:00", "李俊"),
                         ("芭蕾 L1", "13:00", "14:30", "王嘉豪"),
                     ]
-                    if day in {0, 1, 2, 3, 4, 5}
+                    if day == 5
+                    else [
+                        ("软开", "10:00", "11:00", "李俊"),
+                        ("芭蕾 L1", "13:00", "14:30", "王嘉豪"),
+                        ("软开专项", "18:45", "19:45", "李俊"),
+                        ("软开-胯", "18:45", "19:45", "李俊"),
+                        (
+                            "软开课" if day % 2 else "软开",
+                            "18:45",
+                            "19:45",
+                            "李俊",
+                        ),
+                        ("芭蕾 L1", "19:45", "21:15", "王嘉豪"),
+                    ]
+                    if day in {0, 1, 2, 3, 4}
                     else [("肌肉素质", "19:00", "20:00", "戴俊瑶")]
                 )
                 pages = []
@@ -291,34 +305,34 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(
             [target["key"] for target in targets],
             [
-                "soft-open-5",
                 "ballet-l1-5",
-                "soft-open-0",
                 "ballet-l1-0",
-                "soft-open-1",
                 "ballet-l1-1",
-                "soft-open-2",
                 "ballet-l1-2",
-                "soft-open-3",
                 "ballet-l1-3",
-                "soft-open-4",
                 "ballet-l1-4",
+                "soft-open-5",
+                "soft-open-0",
+                "soft-open-1",
+                "soft-open-2",
+                "soft-open-3",
+                "soft-open-4",
             ],
         )
         self.assertEqual(
             [target["date"] for target in targets],
             [
                 "2026-08-08",
-                "2026-08-08",
-                "2026-08-03",
                 "2026-08-03",
                 "2026-08-04",
-                "2026-08-04",
                 "2026-08-05",
-                "2026-08-05",
-                "2026-08-06",
                 "2026-08-06",
                 "2026-08-07",
+                "2026-08-08",
+                "2026-08-03",
+                "2026-08-04",
+                "2026-08-05",
+                "2026-08-06",
                 "2026-08-07",
             ],
         )
@@ -336,10 +350,16 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(len(targets), 12)
         self.assertEqual(
             {target["_courseName"] for target in targets},
-            {"软开", "芭蕾 L1"},
+            {"软开", "软开课", "芭蕾 L1"},
         )
         self.assertNotIn("软开专项", {target["_courseName"] for target in targets})
         self.assertNotIn("软开-胯", {target["_courseName"] for target in targets})
+        self.assertTrue(
+            all(
+                target["weekday"] == 5 or target["startTime"] >= "18:40"
+                for target in targets
+            )
+        )
 
     def test_target_matches_when_teacher_changes(self):
         target = fast.materialize_targets(config(), self.release)[0]
@@ -372,7 +392,7 @@ class FastBookingTests(unittest.TestCase):
             "endTime": "19:00",
             "courseType": "ballet",
             "level": "L1",
-            "exactCourseName": None,
+            "exactCourseNames": None,
         }
         def candidate_page(venue, course_id, class_table_id):
             return timetable_html(
@@ -427,7 +447,7 @@ class FastBookingTests(unittest.TestCase):
             **target,
             "courseType": "ballet",
             "level": "L1",
-            "exactCourseName": None,
+            "exactCourseNames": None,
             "startTime": "20:00",
             "endTime": "21:30",
         }
@@ -462,18 +482,18 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(
             source.mutation_order,
             [
-                "soft-open-2026-08-08-1000-1100-0",
                 "ballet-l1-2026-08-08-1300-1430-0",
-                "soft-open-2026-08-03-1000-1100-0",
-                "ballet-l1-2026-08-03-1300-1430-0",
-                "soft-open-2026-08-04-1000-1100-0",
-                "ballet-l1-2026-08-04-1300-1430-0",
-                "soft-open-2026-08-05-1000-1100-0",
-                "ballet-l1-2026-08-05-1300-1430-0",
-                "soft-open-2026-08-06-1000-1100-0",
-                "ballet-l1-2026-08-06-1300-1430-0",
-                "soft-open-2026-08-07-1000-1100-0",
-                "ballet-l1-2026-08-07-1300-1430-0",
+                "ballet-l1-2026-08-03-1945-2115-0",
+                "ballet-l1-2026-08-04-1945-2115-0",
+                "ballet-l1-2026-08-05-1945-2115-0",
+                "ballet-l1-2026-08-06-1945-2115-0",
+                "ballet-l1-2026-08-07-1945-2115-0",
+                "soft-open-2026-08-08-1000-1100-0",
+                "soft-open-2026-08-03-1845-1945-0",
+                "soft-open-2026-08-04-1845-1945-0",
+                "soft-open-2026-08-05-1845-1945-0",
+                "soft-open-2026-08-06-1845-1945-0",
+                "soft-open-2026-08-07-1845-1945-0",
             ],
         )
 
@@ -553,7 +573,7 @@ class FastBookingTests(unittest.TestCase):
 
     def test_queue_available_target_joins_waitlist_and_verifies_position(self):
         source = FakeFastSource(
-            queue_target_keys={"soft-open-2026-08-08-1000-1100-0"}
+            queue_target_keys={"ballet-l1-2026-08-08-1300-1430-0"}
         )
         result, state = fast.run_fast(
             source,
@@ -572,7 +592,7 @@ class FastBookingTests(unittest.TestCase):
 
     def test_queue_available_target_is_ready_in_dry_run(self):
         source = FakeFastSource(
-            queue_target_keys={"soft-open-2026-08-08-1000-1100-0"}
+            queue_target_keys={"ballet-l1-2026-08-08-1300-1430-0"}
         )
         result, state = fast.run_fast(
             source,
@@ -590,7 +610,7 @@ class FastBookingTests(unittest.TestCase):
         disabled = copy.deepcopy(config())
         disabled["allowWaitlist"] = False
         source = FakeFastSource(
-            queue_target_keys={"soft-open-2026-08-08-1000-1100-0"}
+            queue_target_keys={"ballet-l1-2026-08-08-1300-1430-0"}
         )
         result, state = fast.run_fast(
             source,

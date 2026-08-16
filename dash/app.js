@@ -140,9 +140,9 @@ const fallbackBalletBookingFast =
     schemaVersion: 1,
     enabled: false,
     planMode: "weekly-rules",
-    coursePriorityOrder: ["软开", "芭蕾 L1"],
+    coursePriorityOrder: ["芭蕾 L1", "软开 / 软开课"],
     priorityOrder: ["周六", "周一", "周二", "周三", "周四", "周五"],
-    prioritySummary: "周一至周六全天：仅软开 + 芭蕾 L1；软开严格排除软开专项 / 软开-胯",
+    prioritySummary: "芭蕾 L1 > 软开 / 软开课；每类先周六，再周一至周五；工作日仅 18:40 后、周六全天；软开严格排除软开专项 / 软开-胯",
     targets: [],
     lastStatus: "waiting",
   };

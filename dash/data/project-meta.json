@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 13:20",
-  "version": "1.0.10.00",
-  "versionLabel": "v1.0.10.00",
+  "updatedAt": "2026-08-16 13:28",
+  "version": "1.0.10.01",
+  "versionLabel": "v1.0.10.01",
   "branch": "feature/ballet-recurring-weekly-rules",
-  "commit": "e252e71",
+  "commit": "46712b5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-recurring-weekly-rules · commit e252e71 · 有未提交代码改动",
+  "deployNote": "feature/ballet-recurring-weekly-rules · commit 46712b5 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",
       "title": "自动抢课改为长期周规则",
-      "summary": "Owner 不再每周提供固定课表；Fast Path 每周日放课后动态扫描周一至周六全天，处理所有标准芭蕾 L1 与课程名严格等于“软开”的课程，周日不抢。"
+      "summary": "Owner 不再每周提供固定课表；Fast Path 每周日放课后动态扫描周一至周六，周一至周五只处理 18:40（含）后开始的课程，周六全天，周日不抢。"
     },
     {
       "date": "2026-08-14",

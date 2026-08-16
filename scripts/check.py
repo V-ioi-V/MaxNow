@@ -346,8 +346,8 @@ def check_ballet_booking_fast():
         or not rules
         or config.get("priorityCourses")
         != [
-            {"courseType": "soft_open", "level": "none"},
             {"courseType": "ballet", "level": "L1"},
+            {"courseType": "soft_open", "level": "none"},
         ]
         or config.get("priorityWeekdays") != [5, 0, 1, 2, 3, 4]
         or config.get("venuePriority") != ["大教室", "小教室"]
@@ -359,13 +359,13 @@ def check_ballet_booking_fast():
         )
         or next(
             (
-                rule.get("exactCourseName")
+                rule.get("exactCourseNames")
                 for rule in rules
                 if rule.get("key") == "soft-open"
             ),
             None,
         )
-        != "软开"
+        != ["软开", "软开课"]
     ):
         raise ValueError(
             "ballet fast booking: teacher-independent config is invalid"
@@ -382,10 +382,11 @@ def check_ballet_booking_fast():
         != {"不限老师"}
         or data.get("priorityOrder")
         != ["周六", "周一", "周二", "周三", "周四", "周五"]
-        or data.get("coursePriorityOrder") != ["软开", "芭蕾 L1"]
+        or data.get("coursePriorityOrder") != ["芭蕾 L1", "软开 / 软开课"]
         or data.get("prioritySummary")
         != (
-            "周一至周六全天：仅软开 + 芭蕾 L1；"
+            "芭蕾 L1 > 软开 / 软开课；每类先周六，再周一至周五；"
+            "工作日仅 18:40 后、周六全天；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         )
         or {item.get("venue") for item in data.get("targets", [])}
@@ -394,7 +395,7 @@ def check_ballet_booking_fast():
         or {item.get("course") for item in data.get("targets", [])}
         != {"软开", "芭蕾 L1"}
         or {item.get("startTime") for item in data.get("targets", [])}
-        != {"全天"}
+        != {"全天", "18:40 后"}
     ):
         raise ValueError("ballet fast booking: public plan or priority is invalid")
     serialized = json.dumps(data, ensure_ascii=False)
@@ -474,8 +475,8 @@ def check_ballet_booking_fast():
         "allowWaitlist=true",
         "Teacher is display-only and must not affect matching",
         "可预约则预约，可排队则候补",
-        "Monday through Saturday, all day",
-        "软开专项",
+        "Monday through Friday",
+        "软开专项【前后腿】",
     )
     combined = "\n".join(
         (
@@ -1866,7 +1867,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=239" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=200" not in dashboard_html
+        or "app.js?v=201" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2084,7 +2085,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=200" not in dashboard_html:
+    if "app.js?v=201" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

@@ -323,6 +323,7 @@ def load_config(path: Path) -> dict[str, Any]:
         or not isinstance(data.get("priorityWeekdays"), list)
         or not isinstance(data.get("priorityCourses"), list)
         or not isinstance(data.get("venuePriority"), list)
+        or not isinstance(data.get("weekdayStartTimes"), dict)
         or not isinstance(data.get("selectionRules"), list)
         or not data["selectionRules"]
         or len(data["selectionRules"]) > 4
@@ -334,14 +335,26 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     course_priorities = data["priorityCourses"]
     expected_course_priorities = [
-        {"courseType": "soft_open", "level": "none"},
         {"courseType": "ballet", "level": "L1"},
+        {"courseType": "soft_open", "level": "none"},
     ]
     if course_priorities != expected_course_priorities:
         raise FastBookingFailure("configuration_error")
     if data["venuePriority"] != ["大教室", "小教室"]:
         raise FastBookingFailure("configuration_error")
-    required = {"key", "weekdays", "courseType", "level", "exactCourseName"}
+    expected_start_times = {
+        "0": "18:40",
+        "1": "18:40",
+        "2": "18:40",
+        "3": "18:40",
+        "4": "18:40",
+        "5": "00:00",
+    }
+    if data["weekdayStartTimes"] != expected_start_times:
+        raise FastBookingFailure("configuration_error")
+    for value in data["weekdayStartTimes"].values():
+        parse_hhmm(value)
+    required = {"key", "weekdays", "courseType", "level", "exactCourseNames"}
     keys = set()
     for rule in data["selectionRules"]:
         if not isinstance(rule, dict) or set(rule) != required:
@@ -354,10 +367,15 @@ def load_config(path: Path) -> dict[str, Any]:
             or rule["courseType"] not in COURSE_TYPE_LABELS
             or rule["level"] not in {"none", "L1", "L1.5", "L2", "L3", "L4"}
             or (
-                rule["exactCourseName"] is not None
+                rule["exactCourseNames"] is not None
                 and (
-                    not isinstance(rule["exactCourseName"], str)
-                    or not ballet.normalize_course_name(rule["exactCourseName"])
+                    not isinstance(rule["exactCourseNames"], list)
+                    or not rule["exactCourseNames"]
+                    or any(
+                        not isinstance(name, str)
+                        or not ballet.normalize_course_name(name)
+                        for name in rule["exactCourseNames"]
+                    )
                 )
             )
         ):
@@ -379,8 +397,7 @@ def load_config(path: Path) -> dict[str, Any]:
     )
     if (
         soft_open_rule is None
-        or ballet.normalize_course_name(soft_open_rule["exactCourseName"])
-        != ballet.normalize_course_name("软开")
+        or soft_open_rule["exactCourseNames"] != ["软开", "软开课"]
     ):
         raise FastBookingFailure("configuration_error")
     return data
@@ -437,7 +454,8 @@ def materialize_targets(
                     "weekday": weekday,
                     "courseType": configured["courseType"],
                     "level": configured["level"],
-                    "exactCourseName": configured["exactCourseName"],
+                    "exactCourseNames": configured["exactCourseNames"],
+                    "_notBeforeTime": config["weekdayStartTimes"][str(weekday)],
                     "venuePriority": list(config["venuePriority"]),
                     "date": target_date(
                         release_at.astimezone(ballet.TIMEZONE).date(), weekday
@@ -451,8 +469,8 @@ def materialize_targets(
             order += 1
     targets.sort(
         key=lambda item: (
-            priority_rank(item["weekday"], config["priorityWeekdays"]),
             course_priority_rank(item, config["priorityCourses"]),
+            priority_rank(item["weekday"], config["priorityWeekdays"]),
             item["_order"],
         )
     )
@@ -466,10 +484,17 @@ def rule_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
         or record.get("level") != target["level"]
     ):
         return False
-    exact_name = target.get("exactCourseName")
-    return exact_name is None or (
+    try:
+        record_start = parse_hhmm(str(record.get("startTime", "")))
+        not_before = parse_hhmm(str(target["_notBeforeTime"]))
+    except FastBookingFailure:
+        return False
+    if record_start < not_before:
+        return False
+    exact_names = target.get("exactCourseNames")
+    return exact_names is None or (
         ballet.normalize_course_name(str(record.get("courseName", "")))
-        == ballet.normalize_course_name(str(exact_name))
+        in {ballet.normalize_course_name(str(name)) for name in exact_names}
     )
 
 
@@ -540,9 +565,9 @@ def discover_targets(
         raise FastBookingFailure("source_changed")
     targets.sort(
         key=lambda item: (
+            course_priority_rank(item, config["priorityCourses"]),
             priority_rank(item["weekday"], config["priorityWeekdays"]),
             item["startTime"],
-            course_priority_rank(item, config["priorityCourses"]),
             item["_order"],
         )
     )
@@ -557,7 +582,11 @@ def public_target(target: dict[str, Any]) -> dict[str, Any]:
         "key": target["key"],
         "weekday": WEEKDAY_LABELS[target["weekday"]],
         "date": target.get("date"),
-        "startTime": target["startTime"] or "全天",
+        "startTime": target["startTime"] or (
+            "全天"
+            if target.get("_notBeforeTime") == "00:00"
+            else f"{target.get('_notBeforeTime')} 后"
+        ),
         "endTime": target["endTime"],
         "course": course,
         "teacher": "不限老师",
@@ -1243,10 +1272,11 @@ def build_public(
         "waitlistEnabled": config["allowWaitlist"],
         "schedule": "每周日 14:20（北京时间）",
         "planMode": "weekly-rules",
-        "coursePriorityOrder": ["软开", "芭蕾 L1"],
+        "coursePriorityOrder": ["芭蕾 L1", "软开 / 软开课"],
         "priorityOrder": ["周六", "周一", "周二", "周三", "周四", "周五"],
         "prioritySummary": (
-            "周一至周六全天：仅软开 + 芭蕾 L1；"
+            "芭蕾 L1 > 软开 / 软开课；每类先周六，再周一至周五；"
+            "工作日仅 18:40 后、周六全天；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         ),
         "lastAttemptAt": state.get("lastAttemptAt"),
