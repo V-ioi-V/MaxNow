@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 16:47",
-  "version": "1.0.10.12",
-  "versionLabel": "v1.0.10.12",
+  "updatedAt": "2026-08-16 16:54",
+  "version": "1.0.10.13",
+  "versionLabel": "v1.0.10.13",
   "branch": "bugfix/ballet-plan-time-axis",
-  "commit": "28348fd",
+  "commit": "ac23183",
   "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-plan-time-axis · commit 28348fd · 有未提交代码改动",
+  "dirtyLevel": "generated",
+  "deployNote": "bugfix/ballet-plan-time-axis · commit ac23183 · 运行数据已更新",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "收紧周安排压缩刻度与底部留白",
+      "summary": "修正上一版误解：压缩空档只保留起始 `13:00`，删除压缩带下沿的 `18:00` 重复刻度。"
+    },
     {
       "date": "2026-08-16",
       "title": "简化周安排压缩空档刻度",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-16",
       "title": "周安排改为真实时间轴课表",
       "summary": "课程计划右侧改为独立的“抢课摘要行 + 周安排”自然高度容器，顶部两张卡不再被左侧预约列表拉高，周安排紧接摘要行显示。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "收紧课程计划右侧布局与取消状态",
-      "summary": "宽桌面课程计划改为左侧预约贯穿、右侧顶部“抢课助手 / 上次抢课结果”并排、右侧下方“周安排”占满；周安排按自身内容高度收口，不再为追平长预约列表留下大块卡内空白。"
     }
   ]
 };
