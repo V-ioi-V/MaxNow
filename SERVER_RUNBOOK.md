@@ -2371,3 +2371,16 @@ server verification: 87 项芭蕾测试、scripts/check.py、systemd-analyze ver
 timer recovery: 13:18 恢复 timer 时发生一次即时触发；outside_window 在加载凭据、任何网络与 mutation 前以 exit 4 拒绝。私有 / 公开状态随后从部署前备份恢复并按新规则重新 preview，service reset-failed 后为 inactive / dead，timer 的正式触发不变
 safety: 部署验收只执行放课前 6 个日期的实时 GET-only 查询与无网络 preview；未手动执行 Fast Path execute，恢复 timer 的即时触发未加载凭据、未访问闻道且未提交预约、候补、取消或转课
 ```
+
+2026-08-16 13:29 已部署长期周规则时间窗与优先级收口：
+
+```text
+deployed source commit: a5fbdfa Refine recurring ballet booking windows
+version: 1.0.10.01
+changes: 周一至周五仅处理 18:40（含）后开始的课，周六全天；软开只接受精确“软开 / 软开课”，L1 可命中“芭蕾L1-入门”；提交顺序先全部 L1、再全部软开，每类先周六、再周一至周五
+live naming evidence: 2026-08-16 13:24:58 单次 GET 确认标准名称“软开课”、专项名称“软开专项【前后腿】”、L1 名称“芭蕾L1-入门”；查询未触发预约或候补
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-weekly-window-priority（完整 dash/data 与 Fast Path 私有 / 公开状态）
+preview verification: 12 条规则按 6 条 L1 后接 6 条软开发布；每层顺序为周六、周一、周二、周三、周四、周五；工作日显示 18:40 后，周六显示全天；totalRuns / totalBooked / totalWaitlisted 保持 2 / 4 / 1
+server verification: 87 项芭蕾测试、scripts/check.py 与 nginx -t 通过；timer active / waiting，正式下一次触发 2026-08-16 14:19:35，service inactive / dead，TimeoutStartUSec=10min
+safety: 部署只执行一次今天课表 GET 与无网络 preview；未运行 execute，未提交预约、候补、取消或转课
+```

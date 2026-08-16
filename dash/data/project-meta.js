@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 13:28",
+  "updatedAt": "2026-08-16 13:29",
   "version": "1.0.10.01",
   "versionLabel": "v1.0.10.01",
   "branch": "feature/ballet-recurring-weekly-rules",
-  "commit": "46712b5",
+  "commit": "a5fbdfa",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-recurring-weekly-rules · commit 46712b5 · 有未提交代码改动",
+  "deployNote": "feature/ballet-recurring-weekly-rules · commit a5fbdfa · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",
