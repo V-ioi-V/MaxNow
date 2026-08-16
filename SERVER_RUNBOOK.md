@@ -2500,3 +2500,17 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=246、a
 automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；三个对应 service 均 inactive；Fast Path 下次触发为 2026-08-23 14:19:35
 safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-16 已部署周安排压缩空档时间间距修复：
+
+```text
+deployed source commits: c3a5f3d fix: space ballet gap time labels + 37d1456 chore: refresh project metadata
+version: 1.0.10.10
+changes: 周安排时间列由 50px 放宽为桌面 68px / 移动端 64px，压缩空档由 24px 增高为 38px，13:00–18:00 等范围强制单行显示；课程分钟定位与数据不变
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-gap-spacing/dash-data.tgz
+deployment path: 通过校验过的 Git bundle 将服务器 main 从 1845728 快进到 37d1456；恢复服务器权威 dash/data 后重新生成 project-status.* / project-meta.*，未刷新芭蕾源数据
+browser verification: 1280px 时间列 68px、空档 38px、范围标签 48px 单行且整页无溢出；390px 时间列 64px、范围单行、周安排仅内部横向浏览，9 张课程卡保持原位
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=247 已生效；HTTPS 首页 / 登录页 / 受保护 ballet.json / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；三个对应 service 均 inactive
+safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
