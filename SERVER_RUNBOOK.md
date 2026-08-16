@@ -2514,3 +2514,16 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=247 已
 automation state: nginx、maxnow-auth、rolling sync / full sync / Fast Path timers 均 active；三个对应 service 均 inactive
 safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-16 已部署抢课摘要对齐与周安排底注移除：
+
+```text
+deployed source commits: aaea3fa fix: align ballet booking summaries + f4fc14a chore: refresh project metadata
+version: 1.0.10.11
+changes: “上次抢课结果”更名为“本地抢课结果”及 Local Result；抢课助手与本地抢课结果改为等高网格并减少底部留白；移除周安排底部图例、课程数量和状态说明小字
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-summary-align/dash-data.tgz
+deployment path: 通过校验过的 Git bundle 将服务器 main 从 698dd45 快进到 f4fc14a；恢复服务器权威 dash/data 后重新生成 project-status.* / project-meta.*，未刷新芭蕾源数据
+browser verification: 1920px 下两侧外框均高 214.2px、内部摘要卡均高 123.8px、底部内边距均为 16.7px，周安排底注节点为 0；390px 按预约 → 助手 → 本地结果 → 周安排单列且整页无横向溢出
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=248、app.js?v=208 和“本地抢课结果”文案已生效
+safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```

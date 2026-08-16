@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 16:30",
+  "updatedAt": "2026-08-16 16:33",
   "version": "1.0.10.11",
   "versionLabel": "v1.0.10.11",
   "branch": "bugfix/ballet-plan-time-axis",
-  "commit": "aaea3fa",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-plan-time-axis · commit aaea3fa · 干净",
+  "commit": "f4fc14a",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-plan-time-axis · commit f4fc14a · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",
