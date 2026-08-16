@@ -2549,3 +2549,18 @@ runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-timeline-trim
 browser verification: 9 节脱敏课程预览标签为 10:00 / 11:00 / 12:00 / 13:00 / 19:00 / 20:00 / 21:00 / 21:15，没有 18:00 或范围文案；最后课程到底边约 15px，整页无横向溢出
 safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-17 已部署闻道上课历史分页适配与抢课摘要宽度调整：
+
+```text
+deployed source commits: 4ed833f Polish ballet booking summary balance + f787d5a Fix paginated ballet attendance sync + 2c86175 Refresh project metadata
+version: 1.0.10.15
+changes: 抢课助手 / 本次抢课按约 56% / 44% 排布并统一四项居中；闻道上课记录首屏不足累计数时，按官方页面 contract 调用固定 newcheckrecord 分页 POST，摘要只按日期 + 课程名唯一复用私有账本旧详情
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260817-ballet-pagination-sWWxa4（21 个服务器运行数据文件 + /var/lib/maxnow-ballet 私有状态）
+deployment path: 服务器 main 从 1630881f 快进到 2c861755；恢复服务器权威运行数据后重新生成 project-meta.* 并合并 token-usage.*，服务器 HEAD 与 origin/main 一致
+server verification: scripts/check.py 全部通过；真实 rolling service Result=success / ExecMainStatus=0，dataAsOf=2026-08-17T00:05:54+08:00，sourceRecords=11、mergedRecords=13、公开上课记录=13、errorCode=null
+live verification: 2026-08-17T00:07:17+08:00 独立 wenda-live 上课查询成功；8 月 10–17 日返回 2 条记录，requestsMade=4，证明首屏 + 固定分页 + 范围内详情链路可用
+permissions: attendance-ledger.json 部署前后均为 ubuntu:www-data 0600，ubuntu 服务用户可读且 JSON 有效；同步后私有账本 13 条
+automation and HTTPS: rolling / full / Fast Path timers、nginx、maxnow-auth 均 active；匿名首页 / 芭蕾数据分别为 302 / 401
+safety: 分页 POST 只加载上课历史摘要；部署与验收未启动 Fast Path，也未调用预约、候补、取消或转课 mutation
+```
