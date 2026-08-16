@@ -454,39 +454,23 @@ def check_ballet_booking_fast():
         "function formatBalletBookingDuration(milliseconds)",
         'id="ballet-booking-fast-next"',
         "cloud-ballet-fast-card",
-        'id="ballet-booking-fast-targets"',
-        'id="ballet-booking-workspace-title">抢课',
+        'id="ballet-booking-workspace-title">抢课助手',
         'id="ballet-booking-grabbed"',
         'id="ballet-booking-waitlisted"',
         'Math.floor(balletNumber(balletBookingFastData?.totalWaitlisted))',
         'id="ballet-booking-average"',
         'id="ballet-booking-average-detail"',
-        'class="ballet-booking-columns"',
-        'class="ballet-booking-column ballet-booking-targets-column"',
-        'class="ballet-booking-column ballet-booking-results-column"',
-        '<p class="eyebrow">Booking targets</p>',
-        '<p class="eyebrow">Last run</p>',
-        'id="ballet-booking-targets-title">代抢',
+        '<p class="eyebrow">Last Run</p>',
         'id="ballet-booking-results-title">上次抢课结果',
+        'id="ballet-booking-result-booked"',
+        'id="ballet-booking-result-waitlist"',
+        'id="ballet-booking-result-missed"',
         ".ballet-booking-summary {",
-        "grid-template-columns: repeat(3, minmax(0, 1fr));",
-        ".ballet-booking-columns {",
-        "grid-template-columns: repeat(2, minmax(0, 1fr));",
-        "grid-template-columns: minmax(0, 1fr);",
-        "grid-template-rows: auto minmax(0, 1fr);",
-        ".ballet-booking-column-head > div {",
-        "justify-content: space-between;",
-        ".ballet-booking-column:hover {",
-        "function createBalletBookingMiniTimetable(targets = [], options = {})",
-        ".ballet-booking-mini-grid {",
-        "grid-template-columns: repeat(6, minmax(0, 1fr));",
-        '.ballet-booking-mini-day[data-priority="first"]',
-        'className = "ballet-booking-mini-order"',
-        'className = "ballet-booking-mini-status"',
-        'createBalletBookingMiniTimetable(lastRecords, { mode: "results" })',
-        "place-items: center;",
-        ".ballet-booking-mini-day:hover {",
-        "grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));",
+        ".ballet-booking-result-summary {",
+        "function getBalletBookingResultSummary(records = [])",
+        "function renderBalletPlanWeek()",
+        "const showTargets = balletPlanWeekOffset === 1",
+        'priority.textContent = `优先 ${String(options.priority).padStart(2, "0")}`',
         'ready_waitlist: "可排队"',
         "allowWaitlist=true",
         "Teacher is display-only and must not affect matching",
@@ -789,110 +773,16 @@ def check_ballet_read_model():
         or "周日 14:30 检查下周课表" not in dashboard_js
         or "09:00 / 12:00 / 15:00 / 18:00 / 22:00 整体刷新" not in dashboard_html
         or "每天 09 / 12 / 15 / 18 / 22 点更新" not in dashboard_js
-        or "function renderBalletTimetable()" not in dashboard_js
-        or 'id="ballet-timetable-grid"' not in dashboard_html
-        or 'id="ballet-timetable-mobile"' not in dashboard_html
-        or 'class="ballet-timetable-sticky-mask"' in dashboard_html
-        or "function buildBalletTimetableRows(days = [])" not in dashboard_js
-        or "function balletTimetableInterval(record = {})" not in dashboard_js
-        or "function layoutBalletTimetableRecords(records = [])" not in dashboard_js
-        or "const BALLET_TIMETABLE_ROOMS" not in dashboard_js
-        or "function balletTimetableRoomKey(record = {})" not in dashboard_js
-        or 'header.className = "ballet-timetable-room"' not in dashboard_js
-        or 'roomGroup.className = "ballet-timetable-mobile-room"' not in dashboard_js
-        or 'course.dataset.room = room.key' not in dashboard_js
-        or "minuteGridLines.get(interval.start)" not in dashboard_js
-        or 'grid.style.setProperty("--ballet-day-count"' not in dashboard_js
-        or 'grid.style.setProperty("--ballet-time-rows"' not in dashboard_js
-        or 'corner.textContent = "时间"' not in dashboard_js
-        or 'marker.className = "ballet-timetable-now-line"' not in dashboard_js
-        or 'label.className = "ballet-timetable-now-label"' not in dashboard_js
-        or 'label.style.gridColumn = "1"' not in dashboard_js
-        or 'grid.append(marker, label);' not in dashboard_js
-        or 'course.dataset.overlap = laneCount > 1 ? "true" : "false"' not in dashboard_js
-        or 'timeLabel.className = "ballet-timetable-time-label"' not in dashboard_js
-        or 'endTime.className = "ballet-timetable-time ballet-timetable-end-time"' not in dashboard_js
-        or "endTimeLabel.textContent = formatBalletTimetableHour(finalHour);" not in dashboard_js
-        or 'article.title = [' not in dashboard_js
-        or 'aria-label="横轴为日期和教室、纵轴为时间的本周课程表"' not in dashboard_html
-        or 'class="ballet-timetable-legend"' not in dashboard_html
-        or '.ballet-timetable-day[data-day-state="today"]' not in dashboard_css
-        or ".ballet-timetable-grid > .ballet-timetable-course" not in dashboard_css
-        or '.ballet-timetable-grid > .ballet-timetable-course[data-overlap="true"]' not in dashboard_css
-        or '.ballet-timetable-cell[data-row-type="gap"]' not in dashboard_css
-        or '.ballet-timetable-time[data-row-type="gap"]' not in dashboard_css
-        or ".ballet-timetable-time-label {" not in dashboard_css
-        or ".ballet-timetable-now-label {" not in dashboard_css
-        or "justify-self: end;" not in dashboard_css
-        or ".ballet-timetable-end-time {" not in dashboard_css
-        or "grid-auto-rows: 14px;" not in dashboard_css
-        or "border: 1px solid var(--card-border);" not in dashboard_css
-        or "border-left: 3px solid var(--card-color);" in dashboard_css
-        or "repeat(var(--ballet-day-count), minmax(0, 1fr) minmax(0, 1fr))" not in dashboard_css
-        or ".ballet-timetable-room {" not in dashboard_css
-        or "--ballet-day-divider: #dfccd4;" not in dashboard_css
-        or "--ballet-room-divider: #f4eef1;" not in dashboard_css
-        or '.ballet-timetable-room[data-room="large"] {' not in dashboard_css
-        or '.ballet-timetable-cell[data-room="large"] {' not in dashboard_css
-        or ".ballet-timetable-mobile-room {" not in dashboard_css
-        or "var(--ballet-time-rows, repeat(60, var(--ballet-minute-height)))" not in dashboard_css
-        or "@media (min-width: 861px) and (max-width: 1200px)" not in dashboard_css
-        or "--ballet-minute-height: clamp(1.28px, calc(2.14px - 0.04vw), 1.48px);" not in dashboard_css
-        or "--ballet-minute-height: clamp(1.65px, calc(3.26px - 0.1vw), 2.02px);" not in dashboard_css
-        or '? "30px"' not in dashboard_js
-        or ': "repeat(60, var(--ballet-minute-height))"' not in dashboard_js
-        or "width: 66.6667%;" in dashboard_css
-        or '.ballet-timetable-course[data-availability="booked"]' not in dashboard_css
-        or '.ballet-timetable-course[data-availability="attended"]' not in dashboard_css
-        or '.ballet-timetable-course[data-availability="waitlist"]' not in dashboard_css
-        or '.ballet-timetable-state[data-availability="available"]' not in dashboard_css
-        or '.ballet-timetable-state[data-availability="queue_available"]' not in dashboard_css
-        or '.ballet-timetable-state[data-availability="full"]' not in dashboard_css
-        or '.ballet-timetable-state[data-availability="cancelled"]' not in dashboard_css
-        or "function isBalletTimetableAttended(record = {})" not in dashboard_js
-        or "function getBalletTimetableCounts(record = {})" not in dashboard_js
-        or "function getBalletTimetableWaitlistPosition(record = {})" not in dashboard_js
-        or "getBalletTimetableUpcomingRecords" in dashboard_js
-        or "waitlistPosition ? `排队中 ${waitlistPosition}`" not in dashboard_js
-        or "rawWaitlistCount !== null" not in dashboard_js
-        or 'article.dataset.compact = Number(record.durationMinutes) <= 60 ? "true" : "false";' not in dashboard_js
-        or 'article.dataset.level = String(record.level || "none").toLowerCase();' not in dashboard_js
-        or 'capacity.className = "ballet-timetable-capacity"' not in dashboard_js
-        or 'waitlist.className = "ballet-timetable-waitlist"' not in dashboard_js
-        or 'detail.className = "ballet-timetable-meta-detail ballet-timetable-teacher";' not in dashboard_js
-        or 'time.className = "ballet-timetable-time-range";' not in dashboard_js
-        or "article.append(title, detail);" not in dashboard_js
-        or "article.append(foot);" not in dashboard_js
-        or ".ballet-timetable-capacity {" not in dashboard_css
-        or ".ballet-timetable-waitlist {" not in dashboard_css
-        or '.ballet-timetable-course[data-compact="true"] .ballet-timetable-meta-detail' in dashboard_css
-        or '.ballet-timetable-grid > .ballet-timetable-course .ballet-timetable-meta-detail' in dashboard_css
-        or '.ballet-timetable-grid > .ballet-timetable-course[data-overlap="true"] .ballet-timetable-meta-detail' in dashboard_css
-        or '.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-teacher {' not in dashboard_css
-        or '.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-time-range {' not in dashboard_css
-        or "min-width: max-content;" not in dashboard_css
-        or "text-overflow: clip;" not in dashboard_css
-        or "flex-wrap: nowrap;" not in dashboard_css
-        or "margin-top: auto;" not in dashboard_css
-        or 'attended: "已上完"' not in dashboard_js
-        or '.ballet-timetable-grid > .ballet-timetable-course[data-day-state="past"],' not in dashboard_css
-        or '.ballet-timetable-course[data-day-state="past"]:not([data-availability="attended"])' in dashboard_css
-        or "max-height: clamp(320px, 58vh, 500px);" in dashboard_css
-        or "max-height: min(68vh, 560px);" in dashboard_css
-        or ".ballet-timetable-sticky-mask" in dashboard_css
-        or "overflow: visible;" not in dashboard_css
-        or '--course-fill-waitlist: color-mix(in srgb, var(--course-fill) 24%, var(--course-border) 76%);' not in dashboard_css
-        or '--course-fill-booked: color-mix(in srgb, var(--course-border) 72%, #27303b 28%);' not in dashboard_css
-        or '--course-border-state: color-mix(in srgb, var(--course-border) 72%, #27303b 28%);' not in dashboard_css
-        or "--course-ink: #111827;" not in dashboard_css
-        or "--course-ink: #fffdf9;" not in dashboard_css
-        or "--course-fill: #f5e7d8;" not in dashboard_css
-        or "--course-border: #a96e48;" not in dashboard_css
-        or '.ballet-timetable-course[data-course-type="ballet"][data-level="l1.5"]' not in dashboard_css
-        or '.ballet-timetable-course[data-course-type="ballet"][data-level="l4"]' not in dashboard_css
-        or 'background: var(--course-fill-waitlist);' not in dashboard_css
-        or 'background: var(--course-fill-booked);' not in dashboard_css
-        or '.ballet-timetable-state[data-availability] {' not in dashboard_css
+        or "function renderBalletPlanWeek()" not in dashboard_js
+        or "const BALLET_PLAN_WEEKDAYS" not in dashboard_js
+        or "getBalletPlanWeekStart(offset = balletPlanWeekOffset)" not in dashboard_js
+        or "balletPlanWeekOffset = Math.max(-1" not in dashboard_js
+        or "balletPlanWeekOffset = Math.min(1" not in dashboard_js
+        or 'id="ballet-plan-week-days"' not in dashboard_html
+        or 'id="ballet-plan-week-prev"' not in dashboard_html
+        or 'id="ballet-plan-week-next"' not in dashboard_html
+        or ".ballet-plan-week-days {" not in dashboard_css
+        or 'grid-template-columns: repeat(7, minmax(0, 1fr));' not in dashboard_css
     ):
         raise ValueError("ballet: timetable frontend or refresh contract is incomplete")
     return "ballet: read model, timetable, decisions, totals, aggregates, and redaction are valid"
@@ -1684,13 +1574,23 @@ def check_secondary_view_style():
         'class="ballet-membership-card"',
         'class="panel ballet-course-plan-panel"',
         'class="panel ballet-training-panel"',
-        'class="panel ballet-timetable-panel"',
     )
     layout_positions = [ballet_view_markup.find(marker) for marker in layout_markers]
     if any(position < 0 for position in layout_positions) or layout_positions != sorted(layout_positions):
         raise ValueError("secondary views: ballet information priority order is invalid")
     if any(retired in ballet_view_markup for retired in ("ballet-page-intro", "ballet-head-next", "ballet-page-head")):
         raise ValueError("secondary views: retired ballet title layout remains")
+    if (
+        'id="ballet-plan-week-days"' not in ballet_view_markup
+        or 'id="ballet-plan-week-prev"' not in ballet_view_markup
+        or 'id="ballet-plan-week-next"' not in ballet_view_markup
+        or 'id="ballet-booking-result-booked"' not in ballet_view_markup
+        or "function renderBalletPlanWeek()" not in dashboard_js
+        or "getBalletPlanWeekDates()" not in dashboard_js
+        or ".ballet-plan-week-days {" not in dashboard_css
+        or ".ballet-booking-result-summary {" not in dashboard_css
+    ):
+        raise ValueError("secondary views: ballet three-week course plan contract is incomplete")
     if (
         "function createBalletUpcomingItem(record)" not in dashboard_js
         or "formatBalletCancellation(record)" not in dashboard_js
@@ -1881,9 +1781,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=242" not in dashboard_html
+        "styles.css?v=243" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=203" not in dashboard_html
+        or "app.js?v=204" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2101,7 +2001,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=203" not in dashboard_html:
+    if "app.js?v=204" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

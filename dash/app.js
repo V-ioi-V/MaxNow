@@ -181,6 +181,7 @@ let balletWeekBriefPromise = null;
 let balletWeekWarmupHandle = 0;
 let balletWeekActiveSlide = "cover";
 let balletWeekCarouselFrame = 0;
+let balletPlanWeekOffset = 0;
 const browserDataHealth = new Map();
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
@@ -3042,7 +3043,9 @@ const BALLET_BOOKING_WEEKDAY_ORDER = {
 };
 
 function balletBookingTargetTone(target = {}) {
-  const course = String(target.course || "").replace(/\s+/g, "").toLowerCase();
+  const course = String(target.course || target.courseName || target.name || "")
+    .replace(/\s+/g, "")
+    .toLowerCase();
   if (course.includes("l1")) return "l1";
   if (course.includes("软开")) return "soft-open";
   return "other";
@@ -3193,6 +3196,197 @@ function formatBalletBookingDuration(milliseconds) {
   return `${(duration / 1000).toFixed(1)} s`;
 }
 
+const BALLET_PLAN_WEEKDAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+
+function getBalletPlanWeekStart(offset = balletPlanWeekOffset) {
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() - ((date.getDay() + 6) % 7) + offset * 7);
+  return date;
+}
+
+function getBalletPlanWeekDates(offset = balletPlanWeekOffset) {
+  const start = getBalletPlanWeekStart(offset);
+  return BALLET_PLAN_WEEKDAYS.map((weekday, index) => {
+    const date = new Date(start);
+    date.setDate(start.getDate() + index);
+    return { date: localDateKey(date), weekday };
+  });
+}
+
+function getBalletPlanRecordStatus(record = {}) {
+  const bookingStatus = String(
+    record.bookingStatus || record.status || record.availability || record.attendanceStatus || "",
+  ).toLowerCase();
+  const labels = {
+    booked: "已预约",
+    already_booked: "已预约",
+    waitlisted: "候补中",
+    already_waitlisted: "候补中",
+    waitlist: "候补中",
+    attended: "已上完",
+  };
+  if (labels[bookingStatus]) return { key: bookingStatus, label: labels[bookingStatus] };
+  if (BALLET_BOOKING_RECORD_STATUS[bookingStatus]) {
+    return { key: bookingStatus, label: BALLET_BOOKING_RECORD_STATUS[bookingStatus] };
+  }
+  return { key: bookingStatus || "planned", label: bookingStatus ? "待确认" : "已安排" };
+}
+
+function getBalletPlanActualRecords() {
+  const records = [];
+  const add = (record, source) => {
+    const date = balletRecordDate(record);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+    records.push({ ...record, date, _planSource: source });
+  };
+  (Array.isArray(balletData.records) ? balletData.records : []).forEach((record) => add(record, "history"));
+  getBalletUpcomingRecords().forEach((record) => add(record, "upcoming"));
+  const timetableDays = Array.isArray(balletData.timetable?.days) ? balletData.timetable.days : [];
+  timetableDays.forEach((day) => {
+    (Array.isArray(day.records) ? day.records : [])
+      .filter((record) => ["booked", "waitlist", "attended"].includes(String(record.availability || "").toLowerCase()))
+      .forEach((record) => add({ ...record, date: day.date }, "timetable"));
+  });
+  const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
+    ? balletBookingFastData.lastRun.records
+    : [];
+  lastRecords.forEach((record) => add(record, "last-run"));
+
+  const unique = new Map();
+  records.forEach((record) => {
+    const key = balletTimetableCourseKey(record);
+    const current = unique.get(key);
+    const sourceOrder = { "last-run": 4, upcoming: 3, timetable: 2, history: 1 };
+    if (!current || sourceOrder[record._planSource] >= sourceOrder[current._planSource]) {
+      unique.set(key, record);
+    }
+  });
+  return [...unique.values()];
+}
+
+function createBalletPlanWeekCourse(record = {}, options = {}) {
+  const article = document.createElement("article");
+  article.className = "ballet-plan-week-course";
+  article.dataset.course = balletBookingTargetTone(record);
+  article.dataset.kind = options.planned ? "planned" : "actual";
+  const status = options.planned
+    ? { key: "planned", label: "准备抢" }
+    : getBalletPlanRecordStatus(record);
+  article.dataset.state = status.key;
+
+  const title = document.createElement("strong");
+  title.textContent = balletCourseName(record);
+  const time = document.createElement("span");
+  time.textContent = options.planned
+    ? String(record.startTime || "全天")
+    : record.endTime
+    ? `${balletStartTime(record) || "--"}–${balletEndTime(record)}`
+    : balletStartTime(record) || "全天";
+  const detail = document.createElement("small");
+  detail.textContent = options.planned
+    ? status.label
+    : [balletTeacher(record), record.venue, status.label].filter(Boolean).join(" · ");
+  article.append(title, time, detail);
+
+  if (options.priority) {
+    const priority = document.createElement("em");
+    priority.textContent = `优先 ${String(options.priority).padStart(2, "0")}`;
+    article.appendChild(priority);
+  }
+  article.title = [title.textContent, time.textContent, detail.textContent].filter(Boolean).join(" · ");
+  return article;
+}
+
+function renderBalletPlanWeek() {
+  const container = qs("#ballet-plan-week-days");
+  if (!container) return;
+  const weekDates = getBalletPlanWeekDates();
+  const dateSet = new Set(weekDates.map((item) => item.date));
+  const actualRecords = getBalletPlanActualRecords().filter((record) => dateSet.has(record.date));
+  const targets = Array.isArray(balletBookingFastData?.targets) ? balletBookingFastData.targets : [];
+  const weekTargets = targets.filter((target) => dateSet.has(String(target.date || "")));
+  const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
+    ? balletBookingFastData.lastRun.records
+    : [];
+  const hasRunForWeek = lastRecords.some((record) => dateSet.has(balletRecordDate(record)));
+  const showTargets = balletPlanWeekOffset === 1 && weekTargets.length && !hasRunForWeek;
+
+  const weekLabel = balletPlanWeekOffset === -1 ? "上周" : balletPlanWeekOffset === 1 ? "下周" : "本周";
+  setText("#ballet-plan-week-label", weekLabel);
+  setText(
+    "#ballet-plan-week-range",
+    `${weekDates[0].date.slice(5).replace("-", "/")}–${weekDates[6].date.slice(5).replace("-", "/")}`,
+  );
+  const previous = qs("#ballet-plan-week-prev");
+  const next = qs("#ballet-plan-week-next");
+  if (previous) previous.disabled = balletPlanWeekOffset <= -1;
+  if (next) next.disabled = balletPlanWeekOffset >= 1;
+
+  container.replaceChildren();
+  weekDates.forEach(({ date, weekday }) => {
+    const day = document.createElement("section");
+    day.className = "ballet-plan-week-day";
+    day.dataset.dayState = getBalletTimetableDayState(date);
+    const header = document.createElement("header");
+    const name = document.createElement("strong");
+    name.textContent = weekday;
+    const dateNode = document.createElement("time");
+    dateNode.dateTime = date;
+    dateNode.textContent = date.slice(5).replace("-", "/");
+    header.append(name, dateNode);
+    const courses = document.createElement("div");
+    courses.className = "ballet-plan-week-courses";
+    const dayActual = actualRecords
+      .filter((record) => record.date === date)
+      .sort((left, right) => String(balletStartTime(left)).localeCompare(String(balletStartTime(right))));
+    const dayTargets = showTargets ? weekTargets.filter((target) => target.date === date) : [];
+    courses.append(
+      ...dayActual.map((record) => createBalletPlanWeekCourse(record)),
+      ...dayTargets.map((target) => createBalletPlanWeekCourse(target, {
+        planned: true,
+        priority: targets.indexOf(target) + 1,
+      })),
+    );
+    if (!courses.childElementCount) {
+      const empty = document.createElement("span");
+      empty.className = "ballet-plan-week-empty";
+      empty.textContent = "暂无安排";
+      courses.appendChild(empty);
+    }
+    day.append(header, courses);
+    container.appendChild(day);
+  });
+
+  const actualCount = actualRecords.length;
+  setText(
+    "#ballet-plan-week-note",
+    showTargets
+      ? `准备抢 ${weekTargets.length} 条规则 · 真实结果会自动替换计划`
+      : actualCount
+        ? `${actualCount} 节课程 · 已按预约 / 候补状态更新`
+        : "本周暂无课程记录",
+  );
+}
+
+function getBalletBookingResultSummary(records = []) {
+  const booked = new Set(["booked", "already_booked"]);
+  const waitlist = new Set(["waitlisted", "already_waitlisted", "waitlist"]);
+  return records.reduce(
+    (summary, record) => {
+      const status = String(record.status || record.bookingStatus || "").toLowerCase();
+      if (booked.has(status)) summary.booked += 1;
+      else if (waitlist.has(status)) {
+        summary.waitlist += 1;
+        const position = Number(record.waitlistPosition);
+        if (Number.isInteger(position) && position > 0) summary.positions.push(position);
+      } else summary.missed += 1;
+      return summary;
+    },
+    { booked: 0, waitlist: 0, missed: 0, positions: [] },
+  );
+}
+
 function renderBalletBookingFast() {
   const statusKey = String(balletBookingFastData?.lastStatus || "waiting");
   const statusState =
@@ -3224,29 +3418,10 @@ function renderBalletBookingFast() {
     ? balletBookingFastData.targets
     : [];
   const usesWeeklyRules = balletBookingFastData?.planMode === "weekly-rules";
-  setText("#ballet-booking-target-count", `${targets.length} ${usesWeeklyRules ? "条规则" : "节"}`);
   const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
     ? balletBookingFastData.lastRun.records
     : [];
-  const targetNodes = usesWeeklyRules
-    ? targets.length ? [createBalletBookingMiniTimetable(targets, { mode: "targets" })] : []
-    : targets.map((target) => createBalletBookingFastTarget(target, null));
-  const resultNodes = lastRecords.length
-    ? [createBalletBookingMiniTimetable(lastRecords, { mode: "results" })]
-    : [];
-  const targetContainer = qs("#ballet-booking-fast-targets");
-  const resultContainer = qs("#ballet-booking-fast-results");
-  if (targetContainer) {
-    targetContainer.replaceChildren(
-      ...(targetNodes.length ? targetNodes : [createBalletBookingEmpty("暂无代抢课程")]),
-    );
-  }
-  if (resultContainer) {
-    resultContainer.replaceChildren(
-      ...(resultNodes.length ? resultNodes : [createBalletBookingEmpty("暂无上次抢课结果")]),
-    );
-  }
-  const upcomingCount = getBalletFutureClasses().length;
+  const upcomingCount = getBalletUpcomingSummaryRecords().length;
   const grabbedCount = Math.max(
     0,
     Math.floor(balletNumber(balletBookingFastData?.totalBooked)),
@@ -3256,9 +3431,34 @@ function renderBalletBookingFast() {
     Math.floor(balletNumber(balletBookingFastData?.totalWaitlisted)),
   );
   const timing = getBalletBookingTiming(balletBookingFastData?.lastRun);
-  setText("#ballet-booking-result-count", `${lastRecords.length} 节`);
+  const resultSummary = getBalletBookingResultSummary(lastRecords);
+  setText("#ballet-booking-result-count", `${lastRecords.length} 节课程`);
+  setText(
+    "#ballet-booking-result-time",
+    balletBookingFastData?.lastAttemptAt
+      ? formatBalletSessionTimestamp(balletBookingFastData.lastAttemptAt).replace(/^\d{4}-/, "")
+      : "暂无执行",
+  );
+  setText("#ballet-booking-result-booked", `${resultSummary.booked} 节`);
+  setText("#ballet-booking-result-waitlist", `${resultSummary.waitlist} 节`);
+  setText("#ballet-booking-result-missed", `${resultSummary.missed} 节`);
+  setText(
+    "#ballet-booking-result-waitlist-detail",
+    resultSummary.positions.length
+      ? `当前排位 ${resultSummary.positions.sort((a, b) => a - b).join(" / ")}`
+      : resultSummary.waitlist
+        ? "候补排位待更新"
+        : "本次无候补",
+  );
   setText("#ballet-booking-grabbed", `${grabbedCount} 节`);
   setText("#ballet-booking-waitlisted", `${waitlistedCount} 节`);
+  setText("#ballet-booking-health", statusState.label);
+  setText(
+    "#ballet-booking-health-detail",
+    balletBookingFastData?.lastAttemptAt
+      ? `最近执行 ${formatBalletSessionTimestamp(balletBookingFastData.lastAttemptAt).replace(/^\d{4}-/, "")}`
+      : `下次执行 ${formatBalletSessionTimestamp(balletBookingFastData?.nextRunAt).replace(/^\d{4}-/, "")}`,
+  );
   setText(
     "#ballet-booking-average",
     formatBalletBookingDuration(timing.totalMilliseconds),
@@ -3273,6 +3473,7 @@ function renderBalletBookingFast() {
     "#ballet-course-plan-count",
     `${upcomingCount} 约 · ${targets.length} ${usesWeeklyRules ? "规则" : "抢"}`,
   );
+  renderBalletPlanWeek();
 }
 
 function balletRecordDate(item = {}) {
@@ -3357,6 +3558,15 @@ function getBalletFutureClasses() {
       const right = `${balletRecordDate(b)}T${balletStartTime(b) || "00:00"}`;
       return left.localeCompare(right);
     });
+}
+
+function getBalletUpcomingSummaryRecords() {
+  const records = getBalletFutureClasses();
+  const dates = [...new Set(records.map((record) => balletRecordDate(record)).filter(Boolean))]
+    .sort()
+    .slice(0, 3);
+  const dateSet = new Set(dates);
+  return records.filter((record) => dateSet.has(balletRecordDate(record)));
 }
 
 function getBalletStatusLabel(value) {
@@ -4646,7 +4856,7 @@ function renderBalletUpcoming() {
   const panel = qs("#ballet-upcoming-panel");
   const container = qs("#ballet-upcoming-list");
   if (!panel || !container) return;
-  const records = getBalletFutureClasses();
+  const records = getBalletUpcomingSummaryRecords();
   panel.hidden = false;
   setText("#ballet-upcoming-count", `${records.length} 节`);
   container.replaceChildren();
@@ -6178,6 +6388,16 @@ qs("#home-ballet-card")?.addEventListener("keydown", (event) => {
     event.preventDefault();
     setView("ballet");
   }
+});
+
+qs("#ballet-plan-week-prev")?.addEventListener("click", () => {
+  balletPlanWeekOffset = Math.max(-1, balletPlanWeekOffset - 1);
+  renderBalletPlanWeek();
+});
+
+qs("#ballet-plan-week-next")?.addEventListener("click", () => {
+  balletPlanWeekOffset = Math.min(1, balletPlanWeekOffset + 1);
+  renderBalletPlanWeek();
 });
 
 qs("#system-panel")?.addEventListener("click", () => setView("cloud"));

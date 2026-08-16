@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=242" />
+    <link rel="stylesheet" href="./styles.css?v=243" />
   </head>
   <body>
     <div class="app-shell">
@@ -756,7 +756,7 @@
               <span class="status-pill" id="ballet-course-plan-count">0 节</span>
             </header>
             <div class="ballet-course-plan-grid">
-              <section class="ballet-plan-group" aria-labelledby="ballet-bookings-title">
+              <section class="ballet-plan-group ballet-plan-reservations" aria-labelledby="ballet-bookings-title">
                 <header>
                   <div>
                     <p class="eyebrow">Booked / Waitlist</p>
@@ -766,11 +766,33 @@
                 </header>
                 <div class="ballet-upcoming-list" id="ballet-upcoming-list"></div>
               </section>
-              <section class="ballet-plan-group ballet-booking-workspace" aria-labelledby="ballet-booking-workspace-title">
+              <section class="ballet-plan-group ballet-plan-week" aria-labelledby="ballet-plan-week-title">
+                <header>
+                  <div>
+                    <p class="eyebrow">Weekly Schedule</p>
+                    <h3 id="ballet-plan-week-title">周安排</h3>
+                  </div>
+                  <div class="ballet-plan-week-switcher" aria-label="切换课程周">
+                    <button type="button" id="ballet-plan-week-prev" aria-label="查看上一周">‹</button>
+                    <strong id="ballet-plan-week-label">本周</strong>
+                    <span aria-hidden="true">·</span>
+                    <time id="ballet-plan-week-range">--</time>
+                    <button type="button" id="ballet-plan-week-next" aria-label="查看下一周">›</button>
+                  </div>
+                </header>
+                <div class="ballet-plan-week-days" id="ballet-plan-week-days"></div>
+                <div class="ballet-plan-week-legend" aria-label="周安排状态说明">
+                  <span><i data-course="l1"></i>L1</span>
+                  <span><i data-course="soft-open"></i>软开</span>
+                  <span><i data-course="other"></i>其他课程</span>
+                  <small id="ballet-plan-week-note">按周一到周日展示</small>
+                </div>
+              </section>
+              <section class="ballet-plan-group ballet-booking-assistant" aria-labelledby="ballet-booking-workspace-title">
                 <header>
                   <div>
                     <p class="eyebrow">Booking Assistant</p>
-                    <h3 id="ballet-booking-workspace-title">抢课</h3>
+                    <h3 id="ballet-booking-workspace-title">抢课助手</h3>
                   </div>
                   <span class="status-pill" id="ballet-booking-workspace-status">计划中</span>
                 </header>
@@ -790,28 +812,41 @@
                     <strong id="ballet-booking-average">--</strong>
                     <small id="ballet-booking-average-detail">暂无有效执行耗时</small>
                   </article>
+                  <article class="ballet-booking-summary-card" data-tone="status">
+                    <span>运行状态</span>
+                    <strong id="ballet-booking-health">--</strong>
+                    <small id="ballet-booking-health-detail">等待运行数据</small>
+                  </article>
                 </div>
-                <div class="ballet-booking-columns">
-                  <section class="ballet-booking-column ballet-booking-targets-column" aria-labelledby="ballet-booking-targets-title">
-                    <header class="ballet-booking-column-head">
-                      <div>
-                        <p class="eyebrow">Booking targets</p>
-                        <h4 id="ballet-booking-targets-title">代抢</h4>
-                      </div>
-                      <span class="status-pill" id="ballet-booking-target-count">0 节</span>
-                    </header>
-                    <div class="ballet-booking-fast-targets" id="ballet-booking-fast-targets"></div>
-                  </section>
-                  <section class="ballet-booking-column ballet-booking-results-column" aria-labelledby="ballet-booking-results-title">
-                    <header class="ballet-booking-column-head">
-                      <div>
-                        <p class="eyebrow">Last run</p>
-                        <h4 id="ballet-booking-results-title">上次抢课结果</h4>
-                      </div>
-                      <span class="status-pill" id="ballet-booking-result-count">0 节</span>
-                    </header>
-                    <div class="ballet-booking-fast-results" id="ballet-booking-fast-results"></div>
-                  </section>
+              </section>
+              <section class="ballet-plan-group ballet-booking-last-run" aria-labelledby="ballet-booking-results-title">
+                <header>
+                  <div>
+                    <p class="eyebrow">Last Run</p>
+                    <h3 id="ballet-booking-results-title">上次抢课结果</h3>
+                  </div>
+                  <div class="ballet-booking-last-run-meta">
+                    <span id="ballet-booking-result-count">0 节课程</span>
+                    <span aria-hidden="true">·</span>
+                    <time id="ballet-booking-result-time">暂无执行</time>
+                  </div>
+                </header>
+                <div class="ballet-booking-result-summary" id="ballet-booking-fast-results" aria-label="上次抢课总体结果">
+                  <article data-result="booked">
+                    <span>成功预约</span>
+                    <strong id="ballet-booking-result-booked">0 节</strong>
+                    <small>自动预约完成</small>
+                  </article>
+                  <article data-result="waitlist">
+                    <span>候补中</span>
+                    <strong id="ballet-booking-result-waitlist">0 节</strong>
+                    <small id="ballet-booking-result-waitlist-detail">等待候补结果</small>
+                  </article>
+                  <article data-result="missed">
+                    <span>未抢到</span>
+                    <strong id="ballet-booking-result-missed">0 节</strong>
+                    <small>需人工关注</small>
+                  </article>
                 </div>
               </section>
             </div>
@@ -976,29 +1011,6 @@
                 </div>
               </div>
             </dialog>
-          </article>
-
-          <article class="panel ballet-timetable-panel" aria-labelledby="ballet-timetable-title">
-            <header class="panel-head ballet-timetable-head">
-              <div>
-                <p class="eyebrow">Weekly Timetable</p>
-                <h2 id="ballet-timetable-title">本周课程表</h2>
-              </div>
-              <div class="ballet-timetable-head-meta">
-                <div class="ballet-timetable-legend" aria-label="课程状态说明">
-                  <span data-availability="available">可约</span>
-                  <span data-availability="queue_available">可排队</span>
-                  <span data-availability="full">已满</span>
-                  <span data-availability="cancelled">已取消</span>
-                </div>
-                <span class="status-pill" id="ballet-timetable-count">等待同步</span>
-              </div>
-            </header>
-            <div class="ballet-timetable-scroll" aria-label="横轴为日期和教室、纵轴为时间的本周课程表">
-              <div class="ballet-timetable-grid" id="ballet-timetable-grid"></div>
-            </div>
-            <div class="ballet-timetable-mobile" id="ballet-timetable-mobile"></div>
-            <p class="ballet-timetable-note" id="ballet-timetable-note">同步完成后显示本周课程。</p>
           </article>
 
         </section>
@@ -1361,6 +1373,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=203"></script>
+    <script src="./app.js?v=204"></script>
   </body>
 </html>

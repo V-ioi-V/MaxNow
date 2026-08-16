@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 14:29",
-  "version": "1.0.10.05",
-  "versionLabel": "v1.0.10.05",
-  "branch": "feature/ballet-course-plan-equal-columns",
-  "commit": "7d9ae7a",
+  "updatedAt": "2026-08-16 14:55",
+  "version": "1.0.10.06",
+  "versionLabel": "v1.0.10.06",
+  "branch": "feature/ballet-course-plan-three-weeks",
+  "commit": "cc460ce",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-course-plan-equal-columns · commit 7d9ae7a · 有未提交代码改动",
+  "deployNote": "feature/ballet-course-plan-three-weeks · commit cc460ce · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-16",
+      "title": "课程计划整合为三周周安排",
+      "summary": "“课程计划”重组为两行四区：宽桌面顶部课程预约 / 周安排按三分之一 / 三分之二，底部抢课助手 / 上次抢课结果各占一半；独立的源站全量周课表退出页面，训练记录继续收尾。"
+    },
     {
       "date": "2026-08-16",
       "title": "课程预约与抢课恢复等宽",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-16",
       "title": "抢课结束后立即刷新芭蕾面板",
       "summary": "Fast Path systemd 单元增加成功与失败完成钩子；每次真实执行结束后立即启动既有 GET-only rolling 同步，让预约、候补、课程卡和课表状态尽快更新到 MaxNow 芭蕾面板。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "自动抢课改为长期周规则",
-      "summary": "Owner 不再每周提供固定课表；Fast Path 每周日放课后动态扫描周一至周六，周一至周五只处理 18:40（含）后开始的课程，周六全天，周日不抢。"
     }
   ]
 };
