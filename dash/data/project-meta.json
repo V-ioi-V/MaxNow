@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 13:16",
+  "updatedAt": "2026-08-16 13:20",
   "version": "1.0.10.00",
   "versionLabel": "v1.0.10.00",
   "branch": "feature/ballet-recurring-weekly-rules",
-  "commit": "ca02e13",
+  "commit": "e252e71",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-recurring-weekly-rules · commit ca02e13 · 有未提交代码改动",
+  "deployNote": "feature/ballet-recurring-weekly-rules · commit e252e71 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-16",

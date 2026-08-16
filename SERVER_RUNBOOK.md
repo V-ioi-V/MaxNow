@@ -2358,3 +2358,16 @@ live verification: 既有 rolling GET-only 同步 Result=success / ExecMainStatu
 server verification: 28 项同步 / 实时查询测试和 scripts/check.py 通过；部署前后运行数据均有独立备份
 safety: 部署和验收只运行闻道 GET-only 上课查询与既有只读同步，没有调用预约规则 POST 或任何预约、候补、取消、转课 mutation
 ```
+
+2026-08-16 已部署自动抢课长期周规则：
+
+```text
+deployed source commit: e252e71 Add recurring weekly ballet booking rules
+version: 1.0.10.00
+changes: 周日 14:20 放课后动态扫描周一至周六全天，处理所有标准芭蕾 L1 与精确“软开”；周日、软开专项和软开-胯排除，教室保持大教室优先 / 小教室兜底，服务上限提升至 600 秒
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260816-ballet-weekly-rules（完整 dash/data、Fast Path 私有 / 公开状态与变更前 service）
+preview verification: 无网络 preview 发布 2026-08-17 至 2026-08-22 共 12 条长期规则，planMode=weekly-rules；保留变更前 totalRuns=2 / totalBooked=4 / totalWaitlisted=1
+server verification: 87 项芭蕾测试、scripts/check.py、systemd-analyze verify 与 nginx -t 通过；TimeoutStartUSec=10min，timer enabled / active / waiting，正式下一次触发为 2026-08-16 14:19:35
+timer recovery: 13:18 恢复 timer 时发生一次即时触发；outside_window 在加载凭据、任何网络与 mutation 前以 exit 4 拒绝。私有 / 公开状态随后从部署前备份恢复并按新规则重新 preview，service reset-failed 后为 inactive / dead，timer 的正式触发不变
+safety: 部署验收只执行放课前 6 个日期的实时 GET-only 查询与无网络 preview；未手动执行 Fast Path execute，恢复 timer 的即时触发未加载凭据、未访问闻道且未提交预约、候补、取消或转课
+```
