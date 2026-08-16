@@ -1608,6 +1608,7 @@ def check_secondary_view_style():
         or '{ includeVenue: false }' not in dashboard_js
         or '.ballet-plan-week-cell[data-room="small"] {' not in dashboard_css
         or 'grid-template-columns: 64px repeat(7, minmax(88px, 1fr) minmax(88px, 1fr));' not in dashboard_css
+        or 'align-items: flex-start;\n  flex-direction: column;' not in dashboard_css
         or 'const latestEndMinute = Math.max(' not in dashboard_js
         or 'lastTimelineRow.trackCount = Math.max(' not in dashboard_js
         or 'for (let minute = 0; minute <= row.trackCount; minute += 1)' not in dashboard_js
@@ -1812,7 +1813,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=250" not in dashboard_html
+        "styles.css?v=251" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=212" not in dashboard_html
     ):
