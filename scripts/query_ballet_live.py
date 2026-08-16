@@ -139,8 +139,7 @@ def query_attendance(
     from_date: date | None,
     through_date: date | None,
 ) -> dict[str, Any]:
-    html = source.request(ballet.ATTENDANCE_PATH, "上课记录")
-    index = ballet.parse_index(html, "attendance")
+    index = ballet.fetch_attendance_index(source)
     selected = []
     for item in index:
         try:
@@ -151,6 +150,8 @@ def query_attendance(
             continue
         if through_date and item_date > through_date:
             continue
+        if item.get("summaryOnly") == "true":
+            raise ballet.SyncFailure("source_changed")
         selected.append(item)
     if len(selected) > MAX_DETAIL_RECORDS:
         raise ballet.SyncFailure("source_changed")

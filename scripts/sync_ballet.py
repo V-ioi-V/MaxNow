@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlsplit
+from urllib.parse import urlencode, urlsplit
 
 
 sys.dont_write_bytecode = True
@@ -30,6 +30,7 @@ STORE_ID = "54114"
 BASE_URL = "https://gm.wendaosoft.com"
 HOME_PATH = f"/gm/weixin/home/index/{STORE_ID}"
 ATTENDANCE_PATH = f"/gm/weixin/my/checkrecord/{STORE_ID}"
+ATTENDANCE_MORE_PREFIX = f"/gm/weixin/my/newcheckrecord/{STORE_ID}/"
 BOOKING_PATH = f"/gm/weixin/my/bookrecord/{STORE_ID}"
 MEMBERSHIP_PATH = f"/gm/weixin/my/mycard/{STORE_ID}"
 TIMETABLE_PATH = f"/gm/weixin/classtable/simpleclass/{STORE_ID}/430"
@@ -46,6 +47,8 @@ DEFAULT_STATE_DIR = Path("/var/lib/maxnow-ballet")
 DEFAULT_OUTPUT = ROOT / "dash" / "data" / "ballet.json"
 GLOBAL_NAME = "MAXNOW_BALLET_DATA"
 MAX_RESPONSE_BYTES = 2_000_000
+MAX_ATTENDANCE_RECORDS = 500
+MAX_ATTENDANCE_PAGES = 50
 ROLLING_DAYS = 60
 CACHE_TTL_HOURS = 36
 DEFAULT_ATTENDANCE_TEACHER = "李俊"
@@ -328,6 +331,15 @@ def validate_read_only_path(path: str) -> str:
     raise SyncFailure("configuration_error")
 
 
+def validate_attendance_page_path(path: str) -> str:
+    match = re.fullmatch(
+        re.escape(ATTENDANCE_MORE_PREFIX) + r"([1-9][0-9]{0,2})", path
+    )
+    if not match or int(match.group(1)) > MAX_ATTENDANCE_RECORDS:
+        raise SyncFailure("configuration_error")
+    return path
+
+
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
@@ -454,6 +466,62 @@ class WendaSource:
             raise SyncFailure("network_error")
         raise SyncFailure("http_error")
 
+    def request_attendance_page(self, offset: int, customer_id: str) -> str:
+        if not isinstance(offset, int):
+            raise SyncFailure("configuration_error")
+        path = validate_attendance_page_path(f"{ATTENDANCE_MORE_PREFIX}{offset}")
+        if not re.fullmatch(r"[1-9][0-9]{0,19}", customer_id):
+            raise SyncFailure("configuration_error")
+        body = urlencode({"customerid": customer_id}).encode("ascii")
+        last_network_failure = False
+        for attempt in range(self.retries + 1):
+            self.request_count += 1
+            headers = self._headers(path)
+            headers.update(
+                {
+                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                    "Referer": BASE_URL + ATTENDANCE_PATH,
+                    "X-Requested-With": "XMLHttpRequest",
+                }
+            )
+            request = urllib.request.Request(
+                BASE_URL + path,
+                data=body,
+                headers=headers,
+                method="POST",
+            )
+            try:
+                with self.opener.open(
+                    request, timeout=self.timeout_seconds
+                ) as response:
+                    status = int(response.status)
+                    response_headers = response.headers
+                    response_body = _read_limited(response)
+            except urllib.error.HTTPError as error:
+                status = int(error.code)
+                response_headers = error.headers
+                response_body = _read_limited(error)
+            except (urllib.error.URLError, TimeoutError, socket.timeout):
+                last_network_failure = True
+                if attempt < self.retries:
+                    time.sleep(min(2**attempt, 3))
+                    continue
+                raise SyncFailure("network_error")
+
+            self._update_session_in_memory(response_headers)
+            text = response_body.decode("utf-8", "replace")
+            if _is_auth_response(status, response_headers, text):
+                raise SyncFailure("auth_required")
+            if status >= 500 and attempt < self.retries:
+                time.sleep(min(2**attempt, 3))
+                continue
+            if status != 200:
+                raise SyncFailure("http_error")
+            return text
+        if last_network_failure:
+            raise SyncFailure("network_error")
+        raise SyncFailure("http_error")
+
 
 class FixtureSource:
     def __init__(self, fixture_dir: Path):
@@ -486,6 +554,18 @@ class FixtureSource:
         if expected_marker not in text:
             raise SyncFailure("source_changed")
         return text
+
+    def request_attendance_page(self, offset: int, customer_id: str) -> str:
+        validate_attendance_page_path(f"{ATTENDANCE_MORE_PREFIX}{offset}")
+        if not re.fullmatch(r"[1-9][0-9]{0,19}", customer_id):
+            raise SyncFailure("configuration_error")
+        self.request_count += 1
+        try:
+            return (self.fixture_dir / "attendance-pages" / f"{offset}.html").read_text(
+                encoding="utf-8"
+            )
+        except OSError:
+            raise SyncFailure("parse_error")
 
 
 class DetailLinkParser(HTMLParser):
@@ -544,6 +624,61 @@ class DetailLinkParser(HTMLParser):
             self.current_parts.append(data)
             if self.in_course:
                 self.current_course_parts.append(data)
+
+
+class AttendanceSummaryParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.stack: list[set[str]] = []
+        self.current: dict[str, list[str]] | None = None
+        self.root_depth = 0
+        self.section: str | None = None
+        self.rows: list[dict[str, str]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
+        classes = set((dict(attrs).get("class") or "").split())
+        self.stack.append(classes)
+        if self.current is None and "weui-cell" in classes:
+            self.current = {"course": [], "date": []}
+            self.root_depth = len(self.stack)
+        elif self.current is not None:
+            if "weui-cell__bd" in classes:
+                self.section = "course"
+            elif "weui-cell__ft" in classes:
+                self.section = "date"
+
+    def handle_endtag(self, tag: str):
+        if not self.stack:
+            return
+        classes = self.stack[-1]
+        if self.current is not None:
+            if "weui-cell__bd" in classes or "weui-cell__ft" in classes:
+                self.section = None
+            if len(self.stack) == self.root_depth:
+                course = normalize_space("".join(self.current["course"]))
+                date_text = normalize_space("".join(self.current["date"]))
+                date_match = re.fullmatch(r"(20\d{2}-\d{2}-\d{2})", date_text)
+                if not course or not date_match:
+                    raise SyncFailure("source_changed")
+                try:
+                    date.fromisoformat(date_match.group(1))
+                except ValueError:
+                    raise SyncFailure("source_changed")
+                self.rows.append(
+                    {
+                        "courseName": course,
+                        "date": date_match.group(1),
+                        "summaryOnly": "true",
+                    }
+                )
+                self.current = None
+                self.root_depth = 0
+                self.section = None
+        self.stack.pop()
+
+    def handle_data(self, data: str):
+        if self.current is not None and self.section:
+            self.current[self.section].append(data)
 
 
 class DetailCellParser(HTMLParser):
@@ -754,11 +889,112 @@ def parse_index(text: str, kind: str) -> list[dict[str, str]]:
             raise SyncFailure("duplicate_key")
         unique[source_id] = item
 
-    if kind == "attendance":
-        total_match = re.search(r"共\s*(\d+)\s*次", text)
-        if not total_match or int(total_match.group(1)) != len(unique):
-            raise SyncFailure("source_changed")
     return list(unique.values())
+
+
+def parse_attendance_total(text: str) -> int:
+    total_match = re.search(r"共\s*(\d+)\s*次", text)
+    if not total_match:
+        raise SyncFailure("source_changed")
+    total = int(total_match.group(1))
+    if total > MAX_ATTENDANCE_RECORDS:
+        raise SyncFailure("source_changed")
+    return total
+
+
+def parse_attendance_pagination_contract(text: str) -> str:
+    endpoint = re.escape(BASE_URL + ATTENDANCE_MORE_PREFIX)
+    if not re.search(
+        rf"url\s*:\s*['\"]{endpoint}['\"]\s*\+\s*totalcheck\b",
+        text,
+        re.IGNORECASE,
+    ):
+        raise SyncFailure("source_changed")
+    if not re.search(
+        r"(?:type|method)\s*:\s*['\"]post['\"]", text, re.IGNORECASE
+    ):
+        raise SyncFailure("source_changed")
+    customer_match = re.search(
+        r"['\"]?customerid['\"]?\s*:\s*['\"]?([1-9][0-9]{0,19})['\"]?",
+        text,
+        re.IGNORECASE,
+    )
+    if not customer_match:
+        raise SyncFailure("source_changed")
+    return customer_match.group(1)
+
+
+def parse_attendance_summary_page(text: str) -> list[dict[str, str]]:
+    parser = AttendanceSummaryParser()
+    try:
+        parser.feed(text)
+    except SyncFailure:
+        raise
+    except Exception:
+        raise SyncFailure("parse_error")
+    if not parser.rows:
+        raise SyncFailure("source_changed")
+    return parser.rows
+
+
+def fetch_attendance_index(
+    source: WendaSource | FixtureSource,
+) -> list[dict[str, str]]:
+    html_text = source.request(ATTENDANCE_PATH, "上课记录")
+    details = parse_index(html_text, "attendance")
+    total = parse_attendance_total(html_text)
+    if len(details) > total:
+        raise SyncFailure("source_changed")
+    if len(details) == total:
+        return details
+
+    customer_id = parse_attendance_pagination_contract(html_text)
+    rows: list[dict[str, str]] = list(details)
+    pages = 0
+    while len(rows) < total:
+        pages += 1
+        if pages > MAX_ATTENDANCE_PAGES:
+            raise SyncFailure("source_changed")
+        page_text = source.request_attendance_page(len(rows), customer_id)
+        summaries = parse_attendance_summary_page(page_text)
+        if len(rows) + len(summaries) > total:
+            raise SyncFailure("source_changed")
+        rows.extend(summaries)
+    if len(rows) != total:
+        raise SyncFailure("source_changed")
+    return rows
+
+
+def resolve_attendance_summaries(
+    index: list[dict[str, str]], ledger_records: list[dict[str, Any]]
+) -> list[dict[str, str]]:
+    represented_ids = {
+        item["sourceRecordId"] for item in index if item.get("sourceRecordId")
+    }
+    resolved: list[dict[str, str]] = []
+    for item in index:
+        if item.get("summaryOnly") != "true":
+            resolved.append(item)
+            continue
+        candidates = []
+        for record in ledger_records:
+            source_id = str((record.get("source") or {}).get("attendanceRecordId") or "")
+            if (
+                not source_id
+                or source_id in represented_ids
+                or record.get("keySource") == "manual"
+                or record.get("date") != item.get("date")
+                or normalize_space(str(record.get("courseName") or ""))
+                != normalize_space(item.get("courseName") or "")
+            ):
+                continue
+            candidates.append(source_id)
+        if len(candidates) != 1:
+            raise SyncFailure("source_changed")
+        source_id = candidates[0]
+        represented_ids.add(source_id)
+        resolved.append({**item, "sourceRecordId": source_id})
+    return resolved
 
 
 def parse_detail(text: str, source_record_id: str) -> dict[str, Any]:
@@ -2028,8 +2264,9 @@ def synchronize(
     observed_at = iso_now(now)
 
     try:
-        attendance_html = source.request(ATTENDANCE_PATH, "上课记录")
-        attendance_index = parse_index(attendance_html, "attendance")
+        attendance_index = resolve_attendance_summaries(
+            fetch_attendance_index(source), ledger.get("records", [])
+        )
         existing_by_id = {
             str((item.get("source") or {}).get("attendanceRecordId")): item
             for item in ledger.get("records", [])
@@ -2045,7 +2282,14 @@ def synchronize(
         for item in attendance_index:
             source_id = item["sourceRecordId"]
             existing = existing_by_id.get(source_id)
-            if _needs_detail(item, existing, mode, window):
+            if item.get("summaryOnly") == "true":
+                if not existing:
+                    raise SyncFailure("source_changed")
+                normalized = dict(existing)
+                normalized["lastSeenAt"] = observed_at
+                normalized["missingFullSyncCount"] = 0
+                normalized["recordState"] = "active"
+            elif _needs_detail(item, existing, mode, window):
                 detail_html = source.request(item["detailPath"], "约课记录明细")
                 detail = parse_detail(detail_html, source_id)
                 detail_cache[source_id] = detail

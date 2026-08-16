@@ -9,7 +9,14 @@ from unittest import mock
 
 import query_ballet_live as live
 import sync_ballet as ballet
-from test_sync_ballet import detail_html, index_html, membership_html, timetable_html
+from test_sync_ballet import (
+    attendance_summary_html,
+    detail_html,
+    index_html,
+    membership_html,
+    paginated_attendance_html,
+    timetable_html,
+)
 
 
 NOW = datetime.fromisoformat("2026-07-28T08:00:00+08:00")
@@ -145,6 +152,40 @@ class BalletLiveQueryTests(unittest.TestCase):
                 date.fromisoformat("2026-07-01"),
                 NOW,
             )
+
+    def test_paginated_attendance_allows_recent_range_but_not_summary_only_row(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_fixture(root)
+            (root / "attendance-pages").mkdir()
+            (root / "attendance.html").write_text(
+                paginated_attendance_html(
+                    [("10001", "芭蕾L1.5", "2026-07-26", "已上课")],
+                    2,
+                ),
+                encoding="utf-8",
+            )
+            (root / "attendance-pages" / "1.html").write_text(
+                attendance_summary_html(
+                    [("软开专项【前后腿】", "2026-06-01")]
+                ),
+                encoding="utf-8",
+            )
+            recent = live.run_query(
+                ballet.FixtureSource(root),
+                "attendance",
+                date.fromisoformat("2026-07-01"),
+                date.fromisoformat("2026-07-31"),
+                NOW,
+            )
+            with self.assertRaises(ballet.SyncFailure) as all_records:
+                live.run_query(
+                    ballet.FixtureSource(root), "attendance", None, None, NOW
+                )
+
+        self.assertEqual(len(recent["data"]["records"]), 1)
+        self.assertEqual(recent["requestsMade"], 3)
+        self.assertEqual(all_records.exception.code, "source_changed")
 
     def test_cli_fixture_writes_no_cache(self):
         with tempfile.TemporaryDirectory() as directory:

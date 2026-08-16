@@ -752,6 +752,9 @@ def check_ballet_read_model():
     if (
         "def _existing_owner_for_root_write(" not in sync_script
         or "os.fchown(descriptor, *existing_owner)" not in sync_script
+        or "def validate_attendance_page_path(" not in sync_script
+        or "def request_attendance_page(" not in sync_script
+        or "def resolve_attendance_summaries(" not in sync_script
         or "def publish_preflight_failure(" not in sync_script
         or '"lastAttemptStatus": failure.code' not in sync_script
         or 'label: "同步失败"' not in dashboard_js

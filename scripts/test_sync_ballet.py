@@ -67,6 +67,36 @@ def index_html(title: str, rows: list[tuple[str, str, str, str]]) -> str:
     )
 
 
+def paginated_attendance_html(
+    rows: list[tuple[str, str, str, str]], total: int
+) -> str:
+    base = index_html("上课记录", rows).replace(
+        f"共{len(rows)}次", f"共{total}次"
+    )
+    script = (
+        "<script>"
+        "var totalcheck = $('.weui-cell').length;"
+        "$.ajax({"
+        f"url:'{ballet.BASE_URL}{ballet.ATTENDANCE_MORE_PREFIX}'+totalcheck,"
+        "type:'post',data:{customerid:'1234567'}"
+        "});"
+        "</script>"
+    )
+    return base.replace("</body>", f"{script}</body>")
+
+
+def attendance_summary_html(rows: list[tuple[str, str]]) -> str:
+    return "".join(
+        (
+            '<a class="weui-cell weui-cell_access" href="javascript:;">'
+            f'<div class="weui-cell__bd"><p>{course}</p></div>'
+            f'<div class="weui-cell__ft">{day}</div>'
+            "</a>"
+        )
+        for course, day in rows
+    )
+
+
 def membership_html() -> str:
     return (
         "<html><title>我的会员卡</title><body>"
@@ -186,6 +216,49 @@ class BalletSyncTests(unittest.TestCase):
         for path in rejected:
             with self.subTest(path=path), self.assertRaises(ballet.SyncFailure):
                 ballet.validate_read_only_path(path)
+
+        page_path = f"{ballet.ATTENDANCE_MORE_PREFIX}10"
+        self.assertEqual(ballet.validate_attendance_page_path(page_path), page_path)
+        for path in (
+            f"{ballet.ATTENDANCE_MORE_PREFIX}0",
+            f"{ballet.ATTENDANCE_MORE_PREFIX}501",
+            f"{ballet.ATTENDANCE_MORE_PREFIX}10?customerid=1",
+            f"/gm/weixin/my/newcheckrecord/54115/10",
+        ):
+            with self.subTest(path=path), self.assertRaises(ballet.SyncFailure):
+                ballet.validate_attendance_page_path(path)
+
+    def test_attendance_page_post_is_exact_and_read_only(self):
+        class Response:
+            status = 200
+            headers = {}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self, size):
+                return attendance_summary_html(
+                    [("芭蕾L1-入门", "2026-07-01")]
+                ).encode("utf-8")
+
+        source = ballet.WendaSource(
+            ballet.Credentials(SESSION, USER_AGENT), retries=0
+        )
+        source.opener.open = mock.Mock(return_value=Response())
+        source.request_attendance_page(10, "1234567")
+        request = source.opener.open.call_args.args[0]
+        self.assertEqual(request.get_method(), "POST")
+        self.assertEqual(
+            request.full_url,
+            f"{ballet.BASE_URL}{ballet.ATTENDANCE_MORE_PREFIX}10",
+        )
+        self.assertEqual(request.data, b"customerid=1234567")
+        self.assertEqual(
+            request.headers["X-requested-with"], "XMLHttpRequest"
+        )
 
     def test_credentials_are_minimal_and_never_logged(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -733,6 +806,69 @@ class BalletSyncTests(unittest.TestCase):
                 item for item in ledger["records"] if item["recordState"] == "tombstone"
             ]
             self.assertEqual(len(tombstones), 1)
+
+    def test_paginated_attendance_reuses_unique_ledger_record(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixtures"
+            paths = ballet.build_paths(root / "private", root / "public" / "ballet.json")
+            write_fixture(fixture)
+            ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+
+            (fixture / "attendance-pages").mkdir()
+            (fixture / "attendance.html").write_text(
+                paginated_attendance_html(
+                    [("10001", "芭蕾L1.5", "2026-07-26", "已上课")],
+                    2,
+                ),
+                encoding="utf-8",
+            )
+            (fixture / "attendance-pages" / "1.html").write_text(
+                attendance_summary_html(
+                    [("软开专项【前后腿】", "2026-06-01")]
+                ),
+                encoding="utf-8",
+            )
+            result = ballet.synchronize(
+                paths,
+                ballet.FixtureSource(fixture),
+                "full",
+                datetime.fromisoformat("2026-08-01T00:47:00+08:00"),
+            )
+            ledger = json.loads(paths.ledger.read_text(encoding="utf-8"))
+            oldest = next(
+                item for item in ledger["records"] if item["date"] == "2026-06-01"
+            )
+
+        self.assertEqual(result.status, "success")
+        self.assertEqual(result.source_records, 2)
+        self.assertEqual(oldest["recordState"], "active")
+        self.assertEqual(oldest["missingFullSyncCount"], 0)
+
+    def test_paginated_attendance_fails_closed_without_unique_ledger_match(self):
+        index = [
+            {
+                "courseName": "芭蕾L1-入门",
+                "date": "2026-07-01",
+                "summaryOnly": "true",
+            }
+        ]
+        with self.assertRaises(ballet.SyncFailure) as missing:
+            ballet.resolve_attendance_summaries(index, [])
+        self.assertEqual(missing.exception.code, "source_changed")
+
+        duplicate = {
+            "courseName": "芭蕾L1-入门",
+            "date": "2026-07-01",
+            "keySource": "source",
+        }
+        records = [
+            {**duplicate, "source": {"attendanceRecordId": "10001"}},
+            {**duplicate, "source": {"attendanceRecordId": "10002"}},
+        ]
+        with self.assertRaises(ballet.SyncFailure) as ambiguous:
+            ballet.resolve_attendance_summaries(index, records)
+        self.assertEqual(ambiguous.exception.code, "source_changed")
 
     def test_manual_attendance_is_public_and_survives_full_sync(self):
         with tempfile.TemporaryDirectory() as directory:

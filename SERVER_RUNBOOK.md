@@ -425,7 +425,7 @@ scripts/run_ballet_live_query.sh membership
 
 运行器为每次查询创建 `--collect` 临时 systemd unit，通过 `LoadCredentialEncrypted` 把 `/etc/credstore.encrypted/maxnow-ballet-wenda.cred` 解密到 unit 专属 `%d` 目录。unit 使用 `DynamicUser`、`ProtectSystem=strict`、`ProtectHome=yes`、`NoNewPrivileges`、空 capability 集和 120 秒运行上限；命令结束后 unit 与解密凭据目录一并清理。查询脚本不接受输出文件或状态目录，不读取 / 写入 Dashboard 缓存和私有账本。
 
-实时入口只允许四种 scope、ISO 日期和既有 GET allowlist；课表单次最多 14 天，预约 / 上课明细最多 200 条。输出不得包含源记录 ID、会员标识、原始 HTML、Cookie、响应正文、凭据路径、unit 名称或内部日志。不要直接解密、打印、复制或散列 PHPSESSID。
+实时入口只允许四种 scope、ISO 日期、既有 GET allowlist，以及上课历史页面声明的固定分页 POST；课表单次最多 14 天，预约 / 上课明细最多 200 条。分页摘要没有详情 ID，查询日期范围包含这类记录时必须失败关闭，不读取 Dashboard 私有账本补齐。输出不得包含源记录 ID、会员标识、原始 HTML、Cookie、响应正文、凭据路径、unit 名称或内部日志。不要直接解密、打印、复制或散列 PHPSESSID。
 
 #### 芭蕾对话式显式预约
 
@@ -474,7 +474,7 @@ Owner 已单独批准长期周规则在北京时间每周日 14:20 无人值守�
 ```text
 service -> maxnow-ballet-booking-fast.service
 timer -> maxnow-ballet-booking-fast.timer
-post-run refresh -> OnSuccess / OnFailure: maxnow-ballet-sync.service（GET-only）
+post-run refresh -> OnSuccess / OnFailure: maxnow-ballet-sync.service（业务只读）
 arm -> Sunday 14:19:35 Asia/Shanghai
 submit -> script waits until 14:20:00 Asia/Shanghai
 enable gate -> /etc/maxnow-ballet/enable-fast-booking
@@ -491,7 +491,7 @@ credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 
 每节是独立失败域：一节失败或 mutation 结果未知都继续后续目标。未知 mutation 可能已经被闻道接受，因此本节绝不重复 POST，只在全部课程处理结束后统一查询实时预约记录；若查到则按 `bookingStatus=booked` 或 `waitlist` 回填，候补存在正整数位次时同时发布 `waitlistPosition`，否则保留“结果待确认”。只有 `auth_required`、配置错误或页面结构变化等全局问题才停止后续课程。fast path 单请求超时为 5 秒，避免一次网络故障长期占住后续高优先级目标。
 
-Fast Path 单元进入成功或失败终态后，systemd 分别通过 `OnSuccess=maxnow-ballet-sync.service` / `OnFailure=maxnow-ballet-sync.service` 立即排队一次既有 rolling 同步。该同步只使用闻道 GET allowlist，负责刷新 `dash/data/ballet.*` 中的预约、候补、上课记录、课程卡与课表；它在真实 mutation 与统一核验之后运行，不占用 14:20 关键路径，也不改变 Fast Path 单元自身的 Result。若 rolling 同步已经运行，systemd 合并 start job，不并发启动第二个实例。部署验收不得手动启动 Fast Path；可用 `systemd-analyze verify` 和 unit 属性检查完成钩子，只有实际定时执行后才验收自动联动。
+Fast Path 单元进入成功或失败终态后，systemd 分别通过 `OnSuccess=maxnow-ballet-sync.service` / `OnFailure=maxnow-ballet-sync.service` 立即排队一次既有 rolling 同步。该同步保持业务只读：除既有 GET allowlist 外，只允许闻道上课记录页面自身声明的固定 `newcheckrecord/{storeId}/{offset}` 分页 POST；该 POST 仅加载更早历史摘要，不执行预约、候补、取消或转课。同步负责刷新 `dash/data/ballet.*` 中的预约、候补、上课记录、课程卡与课表；它在真实 mutation 与统一核验之后运行，不占用 14:20 关键路径，也不改变 Fast Path 单元自身的 Result。若 rolling 同步已经运行，systemd 合并 start job，不并发启动第二个实例。部署验收不得手动启动 Fast Path；可用 `systemd-analyze verify` 和 unit 属性检查完成钩子，只有实际定时执行后才验收自动联动。
 
 私有 occurrence 哈希和 `terminalOutcomes` 只用于避免同一周目标重复提交并区分预约 / 候补结果；公开状态不得包含 course / class table / customer / card ID、PHPSESSID、响应正文、凭据路径、unit 名或日志路径。累计预约数与累计候补数分开记录，以闻道明确成功号或统一核验结果为准；统一核验不可用时页面显示“已提交，待核验”，不能重试。公开逐课结果可记录预约 / 候补状态、候补位次、尝试次数和脱敏耗时，不能保存请求 URL、源 ID 或响应正文。
 

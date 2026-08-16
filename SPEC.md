@@ -111,7 +111,7 @@ MaxNow 由四类文件组成：
    - `scripts/sync_market_indices.py` 从腾讯公开行情接口刷新纳指100、标普500和 A 股主指数，只生成 `dash/data/market-indices.*`。
    - `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 刷新同行记页面数据，只生成 `dash/data/ricky.*`。
    - `scripts/sync_life_foods.py` 从 personal-wiki `wiki/life/food-picker.md` 刷新生活页吃啥候选，只生成 `dash/data/life-foods.*`。
-   - `scripts/sync_ballet.py` 只通过已确认的闻道 GET 页面读取预约与实际上课记录，使用服务器私有账本增量去重并生成脱敏 `dash/data/ballet.*`；它不包含预约、取消、候补或转课写操作。
+   - `scripts/sync_ballet.py` 只通过已确认的闻道只读页面读取预约与实际上课记录；上课历史首屏不足累计数时，仅允许调用官方页面声明的固定 `newcheckrecord/{storeId}/{offset}` 分页 POST，并用私有账本按“日期 + 课程名”唯一补齐摘要记录。分页无唯一账本匹配时失败关闭，不猜测或新增历史；同步不包含预约、取消、候补或转课写操作。
    - `scripts/maxnow_auth_service.py` 仅在服务器本机监听，读取 nginx 密码哈希并签发短期 HttpOnly 会话 Cookie；它不读取 Dashboard 数据，也不提供业务 API。
 
 6. 产品记忆文档
