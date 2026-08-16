@@ -87,19 +87,18 @@ For multiple exact classes without an owner-specified order, sort them by the pe
 
 The enabled production fast path runs entirely on the MaxNow server. It arms at Sunday 14:19:35 Beijing time, warms the live session, waits until 14:20:00, and submits configured targets sequentially. It does not invoke Codex, this Skill, or SSH on the timing-critical path.
 
-Each target is an independent failure domain. Match exactly one live course by date, course type/level, start/end time, and venue. Teacher is display-only for the Sunday fast path and must not affect matching or the occurrence idempotency key, so a substitute teacher does not block a configured target. Transient pre-mutation failures and an explicit `NOTOPEN` response may be retried three times with short bounded backoff. A course-level failure or ambiguous mutation must not block later targets. Never retry an ambiguous mutation because Wenda may already have accepted it; include it in the final unified live-bookings verification instead. Stop later targets only for a global safety failure such as expired authentication, invalid configuration, or a changed page/endpoint contract.
+After release, the fast path reads Monday through Saturday timetable pages and dynamically discovers every matching occurrence. Each discovered occurrence is an independent failure domain. Match exactly one live course by date, exact discovered course name, course type/level, start/end time, and selected venue. Teacher is display-only and must not affect matching or the occurrence idempotency key, so a substitute teacher does not block a configured rule. Transient pre-mutation failures and an explicit `NOTOPEN` response may be retried three times with short bounded backoff. A course-level failure or ambiguous mutation must not block later targets. Never retry an ambiguous mutation because Wenda may already have accepted it; include it in the final unified live-bookings verification instead. Stop later targets only for a global safety failure such as expired authentication, invalid configuration, or a changed page/endpoint contract.
 
 For these configured recurring targets only, `allowWaitlist=true` authorizes the same exact-course fast path to join the waitlist when live availability is `queue_available`. If availability is `available`, book normally. If it is already `booked` or `waitlist`, do not submit again. Final verification must preserve Wenda's actual `bookingStatus` (`booked` or `waitlist`) and a safe positive `waitlistPosition` when present. This authorization does not extend to conversational bookings or any unconfigured class.
 
-Current recurring targets are:
+Current recurring rules are:
 
-- Friday 18:45–19:45 soft-open, 大教室, any teacher.
-- Friday 19:45–21:15 ballet L1, 大教室, any teacher.
-- Tuesday 18:45–19:45 soft-open, 大教室, any teacher.
-- Tuesday 19:45–21:15 ballet L1, 大教室, any teacher.
-- Thursday 18:45–19:45 soft-open, 大教室, any teacher.
+- Monday through Saturday, all day: every standard ballet L1 occurrence, any teacher.
+- Monday through Saturday, all day: only a course whose normalized name is exactly `软开`, any teacher.
+- Sunday courses are excluded. `软开专项`, `软开-胯`, and any other merely soft-open-classified near match are excluded.
+- For the same occurrence, prefer `大教室`; use `小教室` only when the large-room tier has no match. The selected tier must contain exactly one course.
 
-For the Sunday fast path, sort first by course priority `ballet L1 > soft-open`, then within the same course by weekday priority `周六 > 周日 > 周五 > 其他日期`. The current mutation order is Friday ballet L1, Tuesday ballet L1, Friday soft-open, Tuesday soft-open, Thursday soft-open. Timetable GETs may run with at most three workers and share a page by date; card/rules preflight may run with at most two workers and expires after eight seconds. Actual booking or waitlist mutations must remain strictly serial in that priority order. Final booking-detail verification may use at most three read-only workers.
+For the Sunday fast path, process Saturday first, then Monday through Friday; within a day sort by start time, with `软开` before ballet L1 only when times tie. Timetable GETs may run with at most three workers and share a page by date; card/rules preflight may run with at most two workers and expires after eight seconds. Actual booking or waitlist mutations must remain strictly serial in that priority order. Final booking-detail verification may use at most three read-only workers.
 
 To query the automation plan and safe result ledger, run:
 

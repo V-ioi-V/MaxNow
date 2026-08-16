@@ -36,6 +36,7 @@ RETRY_DELAYS_SECONDS = (0.08, 0.16, 0.32)
 PREFETCH_WORKERS = 3
 PREFLIGHT_WORKERS = 2
 PREFLIGHT_TTL_SECONDS = 8
+MAX_DISCOVERED_TARGETS = 30
 RETRIABLE_PREFLIGHT_CODES = {
     "card_not_open",
     "course_not_unique",
@@ -313,7 +314,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 4
+        or data.get("schemaVersion") != 5
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
@@ -322,56 +323,64 @@ def load_config(path: Path) -> dict[str, Any]:
         or not isinstance(data.get("priorityWeekdays"), list)
         or not isinstance(data.get("priorityCourses"), list)
         or not isinstance(data.get("venuePriority"), list)
-        or not isinstance(data.get("targets"), list)
-        or not data["targets"]
-        or len(data["targets"]) > 10
+        or not isinstance(data.get("selectionRules"), list)
+        or not data["selectionRules"]
+        or len(data["selectionRules"]) > 4
     ):
         raise FastBookingFailure("configuration_error")
     parse_hhmm(data["release"].get("time"))
     priorities = data["priorityWeekdays"]
-    if priorities != [5, 6, 4]:
+    if priorities != [5, 0, 1, 2, 3, 4]:
         raise FastBookingFailure("configuration_error")
     course_priorities = data["priorityCourses"]
     expected_course_priorities = [
+        {"courseType": "soft_open", "level": "none"},
         {"courseType": "ballet", "level": "L1"},
-        {"courseType": "conditioning", "level": "none"},
     ]
     if course_priorities != expected_course_priorities:
         raise FastBookingFailure("configuration_error")
     if data["venuePriority"] != ["大教室", "小教室"]:
         raise FastBookingFailure("configuration_error")
-    required = {
-        "key",
-        "weekday",
-        "courseType",
-        "level",
-        "startTime",
-        "endTime",
-    }
+    required = {"key", "weekdays", "courseType", "level", "exactCourseName"}
     keys = set()
-    for target in data["targets"]:
-        if not isinstance(target, dict) or set(target) != required:
+    for rule in data["selectionRules"]:
+        if not isinstance(rule, dict) or set(rule) != required:
             raise FastBookingFailure("configuration_error")
         if (
-            not isinstance(target["key"], str)
-            or not target["key"]
-            or target["key"] in keys
-            or target["weekday"] not in range(7)
-            or target["courseType"] not in COURSE_TYPE_LABELS
-            or target["level"] not in {"none", "L1", "L1.5", "L2", "L3", "L4"}
+            not isinstance(rule["key"], str)
+            or not rule["key"]
+            or rule["key"] in keys
+            or rule["weekdays"] != [0, 1, 2, 3, 4, 5]
+            or rule["courseType"] not in COURSE_TYPE_LABELS
+            or rule["level"] not in {"none", "L1", "L1.5", "L2", "L3", "L4"}
+            or (
+                rule["exactCourseName"] is not None
+                and (
+                    not isinstance(rule["exactCourseName"], str)
+                    or not ballet.normalize_course_name(rule["exactCourseName"])
+                )
+            )
         ):
             raise FastBookingFailure("configuration_error")
-        parse_hhmm(target["startTime"])
-        parse_hhmm(target["endTime"])
-        keys.add(target["key"])
+        keys.add(rule["key"])
     configured_priorities = {
         (item["courseType"], item["level"])
         for item in course_priorities
     }
     if any(
-        (target["courseType"], target["level"])
+        (rule["courseType"], rule["level"])
         not in configured_priorities
-        for target in data["targets"]
+        for rule in data["selectionRules"]
+    ):
+        raise FastBookingFailure("configuration_error")
+    soft_open_rule = next(
+        (rule for rule in data["selectionRules"] if rule["key"] == "soft-open"),
+        None,
+    )
+    if (
+        soft_open_rule is None
+        or ballet.normalize_course_name(soft_open_rule["exactCourseName"])
+        != ballet.normalize_course_name("软开")
     ):
         raise FastBookingFailure("configuration_error")
     return data
@@ -419,23 +428,121 @@ def materialize_targets(
     config: dict[str, Any], release_at: datetime
 ) -> list[dict[str, Any]]:
     targets = []
-    for order, configured in enumerate(config["targets"]):
-        targets.append(
-            {
-                **configured,
-                "venuePriority": list(config["venuePriority"]),
-                "date": target_date(
-                    release_at.astimezone(ballet.TIMEZONE).date(),
-                    configured["weekday"],
-                ).isoformat(),
-                "_order": order,
-            }
-        )
+    order = 0
+    for configured in config["selectionRules"]:
+        for weekday in configured["weekdays"]:
+            targets.append(
+                {
+                    "key": f"{configured['key']}-{weekday}",
+                    "weekday": weekday,
+                    "courseType": configured["courseType"],
+                    "level": configured["level"],
+                    "exactCourseName": configured["exactCourseName"],
+                    "venuePriority": list(config["venuePriority"]),
+                    "date": target_date(
+                        release_at.astimezone(ballet.TIMEZONE).date(), weekday
+                    ).isoformat(),
+                    "startTime": "",
+                    "endTime": "",
+                    "_ruleKey": configured["key"],
+                    "_order": order,
+                }
+            )
+            order += 1
     targets.sort(
         key=lambda item: (
+            priority_rank(item["weekday"], config["priorityWeekdays"]),
             course_priority_rank(item, config["priorityCourses"]),
+            item["_order"],
+        )
+    )
+    return targets
+
+
+def rule_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
+    if (
+        record.get("date") != target["date"]
+        or record.get("courseType") != target["courseType"]
+        or record.get("level") != target["level"]
+    ):
+        return False
+    exact_name = target.get("exactCourseName")
+    return exact_name is None or (
+        ballet.normalize_course_name(str(record.get("courseName", "")))
+        == ballet.normalize_course_name(str(exact_name))
+    )
+
+
+def discover_targets(
+    config: dict[str, Any],
+    planned_targets: list[dict[str, Any]],
+    prefetched_pages: dict[str, str | Exception],
+) -> list[dict[str, Any]]:
+    parsed_by_date: dict[str, list[dict[str, Any]]] = {}
+    targets: list[dict[str, Any]] = []
+    for planned in planned_targets:
+        page = prefetched_pages[planned["date"]]
+        if isinstance(page, Exception):
+            targets.append({**planned, "_discoveryFailure": page})
+            continue
+        if planned["date"] not in parsed_by_date:
+            parsed_by_date[planned["date"]] = parse_timetable_entries(
+                page, planned["date"]
+            )
+        matches = [
+            entry
+            for entry in parsed_by_date[planned["date"]]
+            if rule_matches(entry["record"], planned)
+        ]
+        grouped: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+        for entry in matches:
+            record = entry["record"]
+            group_key = (
+                str(record.get("startTime", "")),
+                str(record.get("endTime", "")),
+                ballet.normalize_course_name(str(record.get("courseName", ""))),
+            )
+            grouped.setdefault(group_key, []).append(entry)
+        for group_order, ((start_time, end_time, course_name), entries) in enumerate(
+            sorted(grouped.items())
+        ):
+            selected: list[dict[str, Any]] = []
+            selected_venue = ""
+            for venue in planned["venuePriority"]:
+                selected = [
+                    entry
+                    for entry in entries
+                    if ballet.normalize_space(
+                        str(entry["record"].get("venue", ""))
+                    )
+                    == ballet.normalize_space(venue)
+                ]
+                if selected:
+                    selected_venue = venue
+                    break
+            if not selected:
+                continue
+            targets.append(
+                {
+                    **planned,
+                    "key": (
+                        f"{planned['_ruleKey']}-{planned['date']}-"
+                        f"{start_time.replace(':', '')}-{end_time.replace(':', '')}-"
+                        f"{group_order}"
+                    ),
+                    "startTime": start_time,
+                    "endTime": end_time,
+                    "_courseName": course_name,
+                    "_selectedVenue": selected_venue,
+                }
+            )
+    if len(targets) > MAX_DISCOVERED_TARGETS:
+        raise FastBookingFailure("source_changed")
+    targets.sort(
+        key=lambda item: (
             priority_rank(item["weekday"], config["priorityWeekdays"]),
             item["startTime"],
+            course_priority_rank(item, config["priorityCourses"]),
             item["_order"],
         )
     )
@@ -450,7 +557,7 @@ def public_target(target: dict[str, Any]) -> dict[str, Any]:
         "key": target["key"],
         "weekday": WEEKDAY_LABELS[target["weekday"]],
         "date": target.get("date"),
-        "startTime": target["startTime"],
+        "startTime": target["startTime"] or "全天",
         "endTime": target["endTime"],
         "course": course,
         "teacher": "不限老师",
@@ -465,6 +572,11 @@ def record_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
         and record.get("level") == target["level"]
         and record.get("startTime") == target["startTime"]
         and record.get("endTime") == target["endTime"]
+        and (
+            not target.get("_courseName")
+            or ballet.normalize_course_name(str(record.get("courseName", "")))
+            == ballet.normalize_course_name(str(target["_courseName"]))
+        )
         and (
             not target.get("_selectedVenue")
             or ballet.normalize_space(str(record.get("venue", "")))
@@ -645,7 +757,7 @@ def run_fast(
     sleeper: Any = time.sleep,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     run_started = time.monotonic()
-    targets = materialize_targets(config, release_at)
+    planned_targets = materialize_targets(config, release_at)
     booked_occurrences = set(state.get("bookedOccurrences", []))
     terminal_outcomes = dict(state.get("terminalOutcomes", {}))
     records: list[dict[str, Any]] = []
@@ -656,13 +768,37 @@ def run_fast(
     mutation_wall_milliseconds = 0
 
     prefetch_started = time.monotonic()
-    unique_dates = list(dict.fromkeys(target["date"] for target in targets))
+    unique_dates = list(
+        dict.fromkeys(target["date"] for target in planned_targets)
+    )
     prefetched_pages: dict[str, str | Exception] = {}
 
     def fetch_date(target_date: str) -> str:
-        return source.request(
-            f"{ballet.TIMETABLE_PATH}/{target_date}", "classtable"
-        )
+        date_rules = [
+            target for target in planned_targets if target["date"] == target_date
+        ]
+        for attempt in range(1, MAX_RETRIES + 2):
+            try:
+                text = source.request(
+                    f"{ballet.TIMETABLE_PATH}/{target_date}", "classtable"
+                )
+                entries = parse_timetable_entries(text, target_date)
+                if any(
+                    rule_matches(entry["record"], rule)
+                    for entry in entries
+                    for rule in date_rules
+                ) or attempt > MAX_RETRIES:
+                    return text
+                sleeper(RETRY_DELAYS_SECONDS[attempt - 1])
+            except (booking.BookingFailure, ballet.SyncFailure) as failure:
+                if (
+                    getattr(failure, "code", "")
+                    not in {"network_error", "http_error"}
+                    or attempt > MAX_RETRIES
+                ):
+                    raise
+                sleeper(RETRY_DELAYS_SECONDS[attempt - 1])
+        raise FastBookingFailure("network_error")
 
     with ThreadPoolExecutor(
         max_workers=min(PREFETCH_WORKERS, len(unique_dates))
@@ -679,11 +815,15 @@ def run_fast(
     prefetch_wall_milliseconds = round(
         (time.monotonic() - prefetch_started) * 1000
     )
+    targets = discover_targets(config, planned_targets, prefetched_pages)
 
     cached_candidates: dict[str, list[dict[str, Any]] | Exception] = {}
     preflight_executor = ThreadPoolExecutor(max_workers=PREFLIGHT_WORKERS)
     preflight_futures: dict[str, Future[dict[str, Any]]] = {}
     for target in targets:
+        if target.get("_discoveryFailure") is not None:
+            cached_candidates[target["key"]] = target["_discoveryFailure"]
+            continue
         occurrence = occurrence_key(target)
         if occurrence in booked_occurrences:
             continue
@@ -716,6 +856,19 @@ def run_fast(
                     "not_attempted",
                     attempts=0,
                     elapsedMilliseconds=0,
+                )
+            )
+            continue
+        if target.get("_discoveryFailure") is not None:
+            failure = target["_discoveryFailure"]
+            records.append(
+                safe_record(
+                    target,
+                    getattr(failure, "code", "network_error"),
+                    attempts=1,
+                    elapsedMilliseconds=round(
+                        (time.monotonic() - target_started) * 1000
+                    ),
                 )
             )
             continue
@@ -1089,9 +1242,13 @@ def build_public(
         "enabled": config["enabled"],
         "waitlistEnabled": config["allowWaitlist"],
         "schedule": "每周日 14:20（北京时间）",
-        "coursePriorityOrder": ["芭蕾 L1", "肌肉素质"],
-        "priorityOrder": ["周六", "周日", "周五", "其他日期"],
-        "prioritySummary": "芭蕾 L1 > 肌肉素质；教室按大教室 > 小教室兜底",
+        "planMode": "weekly-rules",
+        "coursePriorityOrder": ["软开", "芭蕾 L1"],
+        "priorityOrder": ["周六", "周一", "周二", "周三", "周四", "周五"],
+        "prioritySummary": (
+            "周一至周六全天：仅软开 + 芭蕾 L1；"
+            "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
+        ),
         "lastAttemptAt": state.get("lastAttemptAt"),
         "lastSuccessAt": state.get("lastSuccessAt"),
         "nextRunAt": next_run.isoformat(timespec="seconds"),

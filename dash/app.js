@@ -139,9 +139,10 @@ const fallbackBalletBookingFast =
   window.MAXNOW_BALLET_BOOKING_FAST_DATA || {
     schemaVersion: 1,
     enabled: false,
-    coursePriorityOrder: ["芭蕾 L1", "肌肉素质"],
-    priorityOrder: ["周六", "周日", "周五", "其他日期"],
-    prioritySummary: "芭蕾 L1 > 肌肉素质；同课程按周六 > 周日 > 周五 > 其他日期",
+    planMode: "weekly-rules",
+    coursePriorityOrder: ["软开", "芭蕾 L1"],
+    priorityOrder: ["周六", "周一", "周二", "周三", "周四", "周五"],
+    prioritySummary: "周一至周六全天：仅软开 + 芭蕾 L1；软开严格排除软开专项 / 软开-胯",
     targets: [],
     lastStatus: "waiting",
   };
@@ -2994,7 +2995,10 @@ function createBalletBookingFastTarget(target = {}, result = null) {
 
   const time = document.createElement("time");
   const shortDate = String(target.date || "").slice(5).replace("-", "/");
-  time.textContent = [target.weekday, shortDate, `${target.startTime || "--"}–${target.endTime || "--"}`]
+  const timeRange = target.endTime
+    ? `${target.startTime || "--"}–${target.endTime}`
+    : target.startTime || "全天";
+  time.textContent = [target.weekday, shortDate, timeRange]
     .filter(Boolean)
     .join(" · ");
 
@@ -3079,13 +3083,14 @@ function renderBalletBookingFast() {
   );
   setText(
     "#ballet-booking-fast-priority",
-    `固定优先级：${balletBookingFastData?.prioritySummary || (balletBookingFastData?.priorityOrder || []).join(" > ")}`,
+    `长期规则：${balletBookingFastData?.prioritySummary || (balletBookingFastData?.priorityOrder || []).join(" > ")}`,
   );
 
   const targets = Array.isArray(balletBookingFastData?.targets)
     ? balletBookingFastData.targets
     : [];
-  setText("#ballet-booking-target-count", `${targets.length} 节`);
+  const usesWeeklyRules = balletBookingFastData?.planMode === "weekly-rules";
+  setText("#ballet-booking-target-count", `${targets.length} ${usesWeeklyRules ? "条规则" : "节"}`);
   const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
     ? balletBookingFastData.lastRun.records
     : [];
@@ -3130,7 +3135,10 @@ function renderBalletBookingFast() {
       ? `${timing.targetCount} 个目标 · 平均 ${formatBalletBookingDuration(timing.averageMilliseconds)}/节`
       : "暂无有效执行耗时",
   );
-  setText("#ballet-course-plan-count", `${upcomingCount} 约 · ${targets.length} 抢`);
+  setText(
+    "#ballet-course-plan-count",
+    `${upcomingCount} 约 · ${targets.length} ${usesWeeklyRules ? "规则" : "抢"}`,
+  );
 }
 
 function balletRecordDate(item = {}) {

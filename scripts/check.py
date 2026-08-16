@@ -340,22 +340,32 @@ def check_ballet_booking_fast():
         )
 
     config = load_json(ROOT / "config/ballet-booking-fast.json")
-    targets = config.get("targets", [])
+    rules = config.get("selectionRules", [])
     if (
-        config.get("schemaVersion") != 4
-        or not targets
+        config.get("schemaVersion") != 5
+        or not rules
         or config.get("priorityCourses")
         != [
+            {"courseType": "soft_open", "level": "none"},
             {"courseType": "ballet", "level": "L1"},
-            {"courseType": "conditioning", "level": "none"},
         ]
+        or config.get("priorityWeekdays") != [5, 0, 1, 2, 3, 4]
         or config.get("venuePriority") != ["大教室", "小教室"]
         or any(
-            "teacher" in target
-            or "allowBlankTeacher" in target
-            or "venue" in target
-            for target in targets
+            rule.get("weekdays") != [0, 1, 2, 3, 4, 5]
+            or "teacher" in rule
+            or "venue" in rule
+            for rule in rules
         )
+        or next(
+            (
+                rule.get("exactCourseName")
+                for rule in rules
+                if rule.get("key") == "soft-open"
+            ),
+            None,
+        )
+        != "软开"
     ):
         raise ValueError(
             "ballet fast booking: teacher-independent config is invalid"
@@ -365,21 +375,26 @@ def check_ballet_booking_fast():
     if (
         data.get("schemaVersion") != 1
         or data.get("timezone") != "Asia/Shanghai"
+        or data.get("planMode") != "weekly-rules"
         or data.get("waitlistEnabled") is not True
         or not isinstance(data.get("totalWaitlisted"), int)
         or {item.get("teacher") for item in data.get("targets", [])}
         != {"不限老师"}
-        or data.get("priorityOrder") != ["周六", "周日", "周五", "其他日期"]
-        or data.get("coursePriorityOrder") != ["芭蕾 L1", "肌肉素质"]
+        or data.get("priorityOrder")
+        != ["周六", "周一", "周二", "周三", "周四", "周五"]
+        or data.get("coursePriorityOrder") != ["软开", "芭蕾 L1"]
         or data.get("prioritySummary")
-        != "芭蕾 L1 > 肌肉素质；教室按大教室 > 小教室兜底"
+        != (
+            "周一至周六全天：仅软开 + 芭蕾 L1；"
+            "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
+        )
         or {item.get("venue") for item in data.get("targets", [])}
         != {"大教室优先，小教室兜底"}
-        or [item.get("key") for item in data.get("targets", [])]
-        != [
-            "sunday-ballet-l1",
-            "sunday-conditioning",
-        ]
+        or len(data.get("targets", [])) != 12
+        or {item.get("course") for item in data.get("targets", [])}
+        != {"软开", "芭蕾 L1"}
+        or {item.get("startTime") for item in data.get("targets", [])}
+        != {"全天"}
     ):
         raise ValueError("ballet fast booking: public plan or priority is invalid")
     serialized = json.dumps(data, ensure_ascii=False)
@@ -457,10 +472,10 @@ def check_ballet_booking_fast():
         ".ballet-booking-column:hover {",
         'ready_waitlist: "可排队"',
         "allowWaitlist=true",
-        "Teacher is display-only for the Sunday fast path",
+        "Teacher is display-only and must not affect matching",
         "可预约则预约，可排队则候补",
-        "芭蕾 L1 > 肌肉素质",
-        "周六 > 周日 > 周五 > 其他日期",
+        "Monday through Saturday, all day",
+        "软开专项",
     )
     combined = "\n".join(
         (
@@ -1851,7 +1866,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=239" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=199" not in dashboard_html
+        or "app.js?v=200" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2069,7 +2084,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=199" not in dashboard_html:
+    if "app.js?v=200" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
