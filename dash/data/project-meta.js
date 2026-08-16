@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-16 23:36",
+  "updatedAt": "2026-08-16 23:38",
   "version": "1.0.10.14",
   "versionLabel": "v1.0.10.14",
   "branch": "feature/ballet-booking-summary-balance",
-  "commit": "859755a",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-summary-balance · commit 859755a · 有未提交代码改动",
+  "commit": "cfc0c60",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "feature/ballet-booking-summary-balance · commit cfc0c60 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-16",
