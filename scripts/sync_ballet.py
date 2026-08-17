@@ -53,6 +53,7 @@ ROLLING_DAYS = 60
 CACHE_TTL_HOURS = 36
 DEFAULT_ATTENDANCE_TEACHER = "李俊"
 ATTENDANCE_TEACHER_OVERRIDES = {
+    ("2026-07-30", "18:45", "19:45", "软开课"): "王嘉豪",
     ("2026-08-07", "19:45", "21:15", "芭蕾L1-入门"): "张瀚泽",
 }
 

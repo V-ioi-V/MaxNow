@@ -486,6 +486,23 @@ class BalletSyncTests(unittest.TestCase):
 
         self.assertEqual(normalized["teacher"], "张瀚泽")
 
+    def test_owner_confirmed_manual_soft_open_teacher_override(self):
+        record = ballet.normalize_manual_attendance(
+            {
+                "courseName": "软开课",
+                "date": "2026-07-30",
+                "startTime": "18:45",
+                "endTime": "19:45",
+                "teacher": "李俊",
+            },
+            "2026-08-17T23:30:00+08:00",
+        )
+
+        self.assertEqual(ballet.attendance_teacher(record), "王嘉豪")
+        self.assertEqual(ballet._public_record(record)["teacher"], "王嘉豪")
+        summary, _ = ballet.compute_aggregates([record], NOW)
+        self.assertEqual(summary["byTeacher"][0]["label"], "王嘉豪")
+
     def test_sunday_publish_window_keeps_today_and_adds_next_week(self):
         with tempfile.TemporaryDirectory() as directory:
             fixture = Path(directory)

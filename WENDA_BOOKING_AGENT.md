@@ -13,7 +13,7 @@
 ## 当前入口与能力边界
 
 - `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：使用服务器保存的 Session 做最小范围实时只读查询和写后复核。上课记录允许跟随官方首屏脚本调用固定 `newcheckrecord/{storeId}/{offset}` 分页 POST；该请求只加载历史摘要，不是预约类 mutation，其他未列明 POST 仍禁止。
-- 实时上课记录与 Dashboard 同步共用同一老师归一化规则：实际上课历史的老师字段为空时默认补为“李俊”，其中 2026-08-07 19:45–21:15 芭蕾 L1 按 Owner 明确校正为“张瀚泽”；课表、当前预约和候补继续保留闻道原值。
+- 实时上课记录与 Dashboard 同步共用同一老师归一化规则：实际上课历史的老师字段为空时默认补为“李俊”；Owner 明确校正 2026-07-30 18:45–19:45 软开课为“王嘉豪”、2026-08-07 19:45–21:15 芭蕾 L1 为“张瀚泽”。这些单课例外不影响课表、当前预约和候补。
 - `scripts/book_ballet.py` / `scripts/run_ballet_booking.sh`：Owner 显式指定课程后的普通预约入口；课程与按钮必须在同一 `.classtable` 块内原子绑定。
 - `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`：Owner 显式指定当前预约后的单课取消入口；先精确匹配唯一活动预约并校验该详情页的官方取消 contract，dry-run 只调用非变更规则检查，execute 重检后最多一次取消 mutation，再以实时预约列表确认目标消失。mutation 结果未知时不得重试。
 - `scripts/book_ballet_fast.py` / `scripts/run_ballet_booking_fast.sh`：周日 14:20 自动抢课入口；读取版本化长期规则，放课后动态发现本周目标，真实 mutation 严格串行并在结束后统一实时核验。生产 systemd 单元在每次执行结束后，无论主流程成功或失败，都立即触发一次独立的业务只读 rolling 同步，刷新 MaxNow 芭蕾面板；同步只允许 GET 与上述固定上课历史分页 POST，结果不覆盖抢课单元自身结果。
@@ -28,6 +28,8 @@
 - `AGENTS.md` 只保留指向本文件的条件路由，不在总入口重复展开本文件内容。
 
 ## 变更记录
+
+- 2026-08-17：Owner 将 2026-07-30 18:45–19:45 软开课的历史老师从手工记录“李俊”明确校正为“王嘉豪”；该例外只作用于历史公开记录与聚合，不改变其他课程或未来课程事实。
 
 - 2026-08-16：闻道上课记录首屏开始只返回最近 10 条、累计数为 11；同步与实时查询适配官方固定分页 POST。分页只返回日期和课程名，Dashboard 同步必须与私有账本唯一匹配后复用旧详情；实时查询仅在所选日期范围不含摘要记录时继续，任何缺失或歧义均失败关闭。
 - 2026-08-16：Owner 要求 Fast Path 每次执行结束后立即刷新 MaxNow 芭蕾面板；生产单元以 `OnSuccess` / `OnFailure` 将独立 rolling 同步挂在抢课关键路径之后，刷新只读且不改变抢课结果。
