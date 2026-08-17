@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 22:56",
-  "version": "1.0.10.18",
-  "versionLabel": "v1.0.10.18",
-  "branch": "bugfix/ballet-empty-time-compression",
-  "commit": "5f5dd4d",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-empty-time-compression · commit 5f5dd4d · 干净",
+  "updatedAt": "2026-08-17 23:08",
+  "version": "1.0.10.19",
+  "versionLabel": "v1.0.10.19",
+  "branch": "bugfix/ballet-training-default-all",
+  "commit": "638cd63",
+  "dirty": true,
+  "dirtyLevel": "generated",
+  "deployNote": "bugfix/ballet-training-default-all · commit 638cd63 · 运行数据已更新",
   "recentUpdates": [
+    {
+      "date": "2026-08-17",
+      "title": "训练记录默认展示全部",
+      "summary": "芭蕾“训练记录”初次打开默认选中“全部”，主数字、课型、级别、老师、历年趋势与上课历史直接采用完整记录口径；仍可手动切换“本月 / 今年”。异常回退同样回到“全部”，避免刷新后重新缩到本月。"
+    },
     {
       "date": "2026-08-17",
       "title": "周安排按真实空档与空教室自适应压缩",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-16",
       "title": "平衡抢课摘要宽度与四项排版",
       "summary": "“本地抢课结果 / Local Result”更名为“本次抢课 / This Run”。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "收紧周安排压缩刻度与底部留白",
-      "summary": "修正上一版误解：压缩空档只保留起始 `13:00`，删除压缩带下沿的 `18:00` 重复刻度。"
     }
   ]
 };
