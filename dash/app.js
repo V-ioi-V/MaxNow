@@ -3562,7 +3562,7 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
     time.dataset.rowType = row.type;
     time.dataset.rowEdge =
       layoutRows.length === 1 ? "both" : rowIndex === 0 ? "start" : rowIndex === layoutRows.length - 1 ? "end" : "middle";
-    const labelText = Number.isFinite(row.labelMinute)
+    const labelText = row.type === "time" && Number.isFinite(row.labelMinute)
       ? formatBalletTimetableHour(Math.floor(row.labelMinute / 60))
       : "";
     if (labelText) {
@@ -3577,14 +3577,10 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
 
   const finalRow = layoutRows[layoutRows.length - 1];
   if (finalRow) {
-    const finalMinute = finalRow.endMinute;
     const terminal = document.createElement("div");
     terminal.className = "ballet-plan-week-time ballet-plan-week-end-time";
     terminal.style.gridColumn = "1";
     terminal.style.gridRow = `${nextGridLine} / span 1`;
-    const label = document.createElement("span");
-    label.textContent = `${String(Math.floor(finalMinute / 60)).padStart(2, "0")}:${String(finalMinute % 60).padStart(2, "0")}`;
-    terminal.appendChild(label);
     const spacer = document.createElement("div");
     spacer.className = "ballet-plan-week-end-spacer";
     spacer.style.gridColumn = "2 / -1";
