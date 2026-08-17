@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 23:23",
-  "version": "1.0.10.21",
-  "versionLabel": "v1.0.10.21",
-  "branch": "bugfix/ballet-week-timeline-labels",
-  "commit": "be1d3f9",
+  "updatedAt": "2026-08-17 23:35",
+  "version": "1.0.10.22",
+  "versionLabel": "v1.0.10.22",
+  "branch": "feature/ballet-history-modal",
+  "commit": "edcda1e",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-week-timeline-labels · commit be1d3f9 · 干净",
+  "deployNote": "feature/ballet-history-modal · commit edcda1e · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-17",
+      "title": "上课历史改为紧凑悬浮层",
+      "summary": "“查看更多”整宽底栏改为历史标题区的紧凑“全部记录”按钮；点击后在当前页面中央打开限高悬浮层，全部课程仅在浮层内部纵向滚动，不再占用整页高的右侧抽屉。"
+    },
     {
       "date": "2026-08-17",
       "title": "移除周安排的冗余时间标签",
@@ -28,11 +33,6 @@
       "date": "2026-08-17",
       "title": "周安排按真实空档与空教室自适应压缩",
       "summary": "周安排不再只折叠完整整点小时：整周连续至少 60 分钟无课时，直接按上一节结束分钟到下一节开始分钟压缩；示例 `12:30–18:45` 空档只保留 `13:00` 刻度，并把释放的高度分配给有课时段。"
-    },
-    {
-      "date": "2026-08-17",
-      "title": "周安排按日拆分大小教室",
-      "summary": "周安排的每个日期固定拆成“大教室 / 小教室”两个子列，真实课程按教室进入对应列；课程冲突只在同一教室内分轨，避免不同教室的同时段课程互相挤窄。"
     }
   ]
 }
