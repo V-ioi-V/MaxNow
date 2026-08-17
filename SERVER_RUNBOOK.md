@@ -2591,3 +2591,16 @@ server verification: scripts/check.py 与 nginx -t 全部通过；app.js?v=214 �
 automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-17 已部署 7 月 30 日软开课老师校正：
+
+```text
+deployed source commits: 616fee5 fix: correct July 30 ballet teacher + 23efc18 chore: finalize project metadata
+version: 1.0.10.20
+changes: 将 2026-07-30 18:45–19:45 软开课的历史老师精确校正为王嘉豪；规则按日期、起止时间和标准课程名唯一命中，只作用于历史公开记录与老师聚合
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260817-ballet-july30-teacher/dash-data.tgz + maxnow-ballet-private.tgz；部署 stash predeploy-ballet-july30-teacher-20260817 保留
+verification: 部署前公开数据与私有账本均唯一命中 1 条、老师为李俊；33 项同步 / 实时查询测试与 scripts/check.py 通过；GET-only rolling 同步 Result=success / ExecMainStatus=0 后，dataAsOf=2026-08-17T23:16:59+08:00，公开记录唯一命中并显示王嘉豪
+aggregate result: 李俊由 6 节 / 420 分钟调整为 5 节 / 360 分钟；王嘉豪由 2 节 / 150 分钟调整为 3 节 / 210 分钟；其他老师统计不变
+automation and HTTPS: rolling / full / Fast Path timers、nginx、maxnow-auth 均 active；匿名首页 / 登录页 / 芭蕾数据为 302 / 200 / 401
+safety: 部署与验收只启动既有 GET-only rolling 同步；未启动 Fast Path，未执行预约、候补、取消或转课 mutation
+```
