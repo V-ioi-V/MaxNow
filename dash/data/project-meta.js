@@ -4,10 +4,10 @@ window.MAXNOW_PROJECT_META_DATA = {
   "version": "1.0.10.20",
   "versionLabel": "v1.0.10.20",
   "branch": "bugfix/ballet-july30-teacher",
-  "commit": "616fee5",
+  "commit": "6de8ddd",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-july30-teacher · commit 616fee5 · 干净",
+  "deployNote": "bugfix/ballet-july30-teacher · commit 6de8ddd · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-17",
