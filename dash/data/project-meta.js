@@ -4,10 +4,10 @@ window.MAXNOW_PROJECT_META_DATA = {
   "version": "1.0.10.19",
   "versionLabel": "v1.0.10.19",
   "branch": "bugfix/ballet-training-default-all",
-  "commit": "638cd63",
-  "dirty": true,
-  "dirtyLevel": "generated",
-  "deployNote": "bugfix/ballet-training-default-all · commit 638cd63 · 运行数据已更新",
+  "commit": "df52061",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-training-default-all · commit df52061 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-17",
