@@ -2617,3 +2617,17 @@ server verification: scripts/check.py 与 nginx -t 全部通过；app.js?v=215 �
 automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-17 已部署上课历史紧凑悬浮层：
+
+```text
+deployed source commits: edcda1e feat: replace ballet history drawer with modal + babd9cb chore: finalize project metadata
+version: 1.0.10.22
+changes: 历史卡底部整宽“查看更多”改为标题区紧凑“全部记录”按钮；完整历史在当前页面中央的限高浮层打开，课程列表只在浮层内部纵向滚动，不再使用整页高右侧抽屉
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260817-233949-ballet-history-modal/dash-data.tgz；部署 stash predeploy-ballet-history-modal-20260817-233949 保留
+deployment path: 服务器 main 从 d417e5c 快进到 babd9cb；恢复服务器权威 dash/data 后重新生成 project-status.* / project-meta.*，未刷新芭蕾课程数据
+browser verification: 1280×720 下按钮宽约 83px、高 30px并位于历史标题区；浮层 760×518px 居中，列表 clientHeight 401px / scrollHeight 1850px；390×844 下浮层左右至少保留 10px、内部列表可滚动，桌面与手机均无整页横向溢出
+server verification: scripts/check.py 与 nginx -t 全部通过；styles.css?v=253、app.js?v=216 生效；匿名首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
