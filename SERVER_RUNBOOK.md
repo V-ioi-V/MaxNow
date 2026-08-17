@@ -2604,3 +2604,16 @@ aggregate result: 李俊由 6 节 / 420 分钟调整为 5 节 / 360 分钟；王
 automation and HTTPS: rolling / full / Fast Path timers、nginx、maxnow-auth 均 active；匿名首页 / 登录页 / 芭蕾数据为 302 / 200 / 401
 safety: 部署与验收只启动既有 GET-only rolling 同步；未启动 Fast Path，未执行预约、候补、取消或转课 mutation
 ```
+
+2026-08-17 已部署周安排冗余时间标签移除：
+
+```text
+deployed source commits: 79fec93 fix: remove redundant weekly timeline labels + f6a6a5f chore: finalize project metadata
+version: 1.0.10.21
+changes: 周安排左侧时间轴移除压缩空档起始 `13:00` 与底部收口 `21:15`；普通整点、课程卡完整起止时间、压缩斜纹和末课结束处精准收口保持不变
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260817-ballet-week-labels/dash-data.tgz；部署 stash predeploy-ballet-week-labels-20260817 保留
+browser verification: 使用线上脱敏 9 节课数据确认时间轴只剩 10:00 / 11:00 / 12:00 / 19:00 / 20:00 / 21:00；压缩段与终点 span 数均为 0，课程卡完整时间保留，底部间距约 14.67px，页面横向溢出为 0
+server verification: scripts/check.py 与 nginx -t 全部通过；app.js?v=215 生效；匿名首页 / 登录页 / 芭蕾数据为 302 / 200 / 401
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
