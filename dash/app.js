@@ -185,7 +185,7 @@ let balletPlanWeekOffset = 0;
 const browserDataHealth = new Map();
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
-let activeBalletPeriod = "month";
+let activeBalletPeriod = "all";
 let activeBalletMetric = "classes";
 
 const qs = (selector) => document.querySelector(selector);
@@ -4469,7 +4469,7 @@ function renderBalletTraining() {
     month: "本月",
     year: "今年",
     all: "全部",
-  }[activeBalletPeriod] || "本月";
+  }[activeBalletPeriod] || "全部";
   const classes = balletNumber(aggregate.classes);
   const minutes = balletNumber(aggregate.minutes);
   const isClasses = activeBalletMetric === "classes";
@@ -5052,7 +5052,7 @@ function getBalletHistoryPeriodLabel() {
     month: "本月",
     year: "今年",
     all: "全部",
-  }[activeBalletPeriod] || "本月";
+  }[activeBalletPeriod] || "全部";
 }
 
 function getBalletHistoryRecords() {
@@ -6780,7 +6780,7 @@ qs("#life-food-options")?.addEventListener("change", () => {
 
 qsa("[data-ballet-period]").forEach((button) => {
   button.addEventListener("click", () => {
-    activeBalletPeriod = button.dataset.balletPeriod || "month";
+    activeBalletPeriod = button.dataset.balletPeriod || "all";
     renderBalletTraining();
     renderBalletHistory();
   });

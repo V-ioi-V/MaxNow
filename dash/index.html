@@ -859,9 +859,9 @@
             </header>
             <div class="ballet-chart-controls">
               <div class="ballet-segmented" role="group" aria-label="统计时间范围">
-                <button class="ballet-segment-button is-active" type="button" data-ballet-period="month">本月</button>
+                <button class="ballet-segment-button" type="button" data-ballet-period="month">本月</button>
                 <button class="ballet-segment-button" type="button" data-ballet-period="year">今年</button>
-                <button class="ballet-segment-button" type="button" data-ballet-period="all">全部</button>
+                <button class="ballet-segment-button is-active" type="button" data-ballet-period="all">全部</button>
               </div>
               <div class="ballet-segmented" role="group" aria-label="统计指标">
                 <button class="ballet-segment-button is-active" type="button" data-ballet-metric="classes">节数</button>
@@ -870,7 +870,7 @@
             </div>
             <div class="ballet-training-overview">
               <section class="ballet-training-total" aria-live="polite">
-                <span id="ballet-training-period">本月上课</span>
+                <span id="ballet-training-period">全部上课</span>
                 <div>
                   <strong id="ballet-training-value">0</strong>
                   <small id="ballet-training-unit">节</small>
@@ -916,7 +916,7 @@
                   <header>
                     <div>
                       <p class="eyebrow">Training trend</p>
-                      <h3 id="ballet-trend-title">本月上课节数</h3>
+                      <h3 id="ballet-trend-title">历年上课节数</h3>
                     </div>
                   </header>
                   <div class="line-chart ballet-line-chart" id="ballet-trend-chart"></div>
@@ -1394,6 +1394,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=213"></script>
+    <script src="./app.js?v=214"></script>
   </body>
 </html>
