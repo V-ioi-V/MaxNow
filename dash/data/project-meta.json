@@ -4,10 +4,10 @@
   "version": "1.0.10.21",
   "versionLabel": "v1.0.10.21",
   "branch": "bugfix/ballet-week-timeline-labels",
-  "commit": "79fec93",
+  "commit": "be1d3f9",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-week-timeline-labels · commit 79fec93 · 干净",
+  "deployNote": "bugfix/ballet-week-timeline-labels · commit be1d3f9 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-17",
