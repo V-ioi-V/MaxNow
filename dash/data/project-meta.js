@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 23:08",
-  "version": "1.0.10.19",
-  "versionLabel": "v1.0.10.19",
-  "branch": "bugfix/ballet-training-default-all",
-  "commit": "53b9c35",
+  "updatedAt": "2026-08-17 23:15",
+  "version": "1.0.10.20",
+  "versionLabel": "v1.0.10.20",
+  "branch": "bugfix/ballet-july30-teacher",
+  "commit": "616fee5",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-training-default-all · commit 53b9c35 · 干净",
+  "deployNote": "bugfix/ballet-july30-teacher · commit 616fee5 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-17",
+      "title": "校正 7 月 30 日软开课老师",
+      "summary": "将 2026-07-30 18:45–19:45 软开课的历史老师明确校正为“王嘉豪”。该校正按日期、起止时间和课程名精确命中，只作用于历史公开记录与老师聚合，不改变其他软开课、未来课表、预约或候补。"
+    },
     {
       "date": "2026-08-17",
       "title": "训练记录默认展示全部",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-16",
       "title": "适配闻道上课历史分页",
       "summary": "闻道上课记录首屏开始只内嵌最近 10 条，但标题继续报告累计总数；同步器改为校验并调用页面官方固定分页接口，补齐更早的历史摘要。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "平衡抢课摘要宽度与四项排版",
-      "summary": "“本地抢课结果 / Local Result”更名为“本次抢课 / This Run”。"
     }
   ]
 };
