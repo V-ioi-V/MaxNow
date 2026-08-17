@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 23:35",
+  "updatedAt": "2026-08-17 23:37",
   "version": "1.0.10.22",
   "versionLabel": "v1.0.10.22",
-  "branch": "feature/ballet-history-modal",
-  "commit": "edcda1e",
+  "branch": "main",
+  "commit": "55289c2",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-history-modal · commit edcda1e · 干净",
+  "deployNote": "main · commit 55289c2 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-17",
