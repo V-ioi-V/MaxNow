@@ -4,10 +4,10 @@ window.MAXNOW_PROJECT_META_DATA = {
   "version": "1.0.10.18",
   "versionLabel": "v1.0.10.18",
   "branch": "bugfix/ballet-empty-time-compression",
-  "commit": "3df5720",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-empty-time-compression · commit 3df5720 · 有未提交代码改动",
+  "commit": "5f5dd4d",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-empty-time-compression · commit 5f5dd4d · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-17",
