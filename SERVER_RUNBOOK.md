@@ -2578,3 +2578,16 @@ server verification: scripts/check.py 与 nginx -t 全部通过；styles.css?v=2
 automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-17 已部署训练记录默认展示全部：
+
+```text
+deployed source commits: d5ec035 fix: default ballet training to all records + 55b5fad chore: align project metadata after rebase
+version: 1.0.10.19
+changes: 芭蕾训练记录初次打开、页面刷新和无效范围回退均默认选择“全部”；主值、课程类型、级别、老师、历年趋势与历史使用完整记录口径，本月 / 今年仍可手动切换
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260817-ballet-training-default-all/dash-data.tgz；部署 stash predeploy-ballet-training-default-all-20260817 保留
+browser verification: 本地真实 DOM 确认全部按钮 is-active / aria-pressed=true、全部上课与历年上课节数同步；切换本月正常，刷新恢复全部，整页横向溢出为 0
+server verification: scripts/check.py 与 nginx -t 全部通过；app.js?v=214 生效；匿名首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
