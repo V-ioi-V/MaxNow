@@ -2564,3 +2564,17 @@ permissions: attendance-ledger.json 部署前后均为 ubuntu:www-data 0600，ub
 automation and HTTPS: rolling / full / Fast Path timers、nginx、maxnow-auth 均 active；匿名首页 / 芭蕾数据分别为 302 / 401
 safety: 分页 POST 只加载上课历史摘要；部署与验收未启动 Fast Path，也未调用预约、候补、取消或转课 mutation
 ```
+
+2026-08-17 已部署周安排真实空档与空教室自适应压缩：
+
+```text
+deployed source commits: 5f5dd4d fix: compress empty ballet schedule space + f7ad22c chore: refresh project metadata
+version: 1.0.10.18
+changes: 周安排按上一节真实结束分钟到下一节真实开始分钟压缩整周长空档，并把释放高度分配给有课时段；当天整日无课的单间教室列自适应收窄，有课教室获得更多宽度
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260817-ballet-empty-space/dash-data.tgz；部署 stash predeploy-ballet-empty-space-20260817 保留
+deployment path: origin/main 与服务器 main 从 3df5720 快进到 f7ad22c；恢复服务器权威 dash/data 后分别重新生成 project-status.* / project-meta.*，未刷新芭蕾课程数据
+browser verification: 9 节脱敏课程在 2250px / 1440px 桌面均无课程裁切或整页溢出，860px / 390px 只在周安排内部横向浏览；标签保持 10:00 / 11:00 / 12:00 / 13:00 / 19:00 / 20:00 / 21:00 / 21:15
+server verification: scripts/check.py 与 nginx -t 全部通过；styles.css?v=252、app.js?v=213 生效；匿名首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 静态 UI 部署和验证未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
