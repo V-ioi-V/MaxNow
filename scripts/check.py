@@ -1601,21 +1601,20 @@ def check_secondary_view_style():
         or ".ballet-plan-week-days {" not in dashboard_css
         or '.ballet-plan-week-days[data-mode="timeline"] > .ballet-timetable-course.is-plan {' not in dashboard_css
         or ".ballet-plan-week-time-corner {" not in dashboard_css
-        or 'grid-template-columns: 68px repeat(7, minmax(0, 1fr) minmax(0, 1fr));' not in dashboard_css
+        or 'grid-template-columns: 68px var(--ballet-plan-room-columns' not in dashboard_css
         or 'roomHeader.classList.add("ballet-plan-week-room")' not in dashboard_js
         or 'balletTimetableRoomKey(record) === room.key' not in dashboard_js
         or 'room.key === "unknown"' not in dashboard_js
         or '{ includeVenue: false }' not in dashboard_js
         or '.ballet-plan-week-cell[data-room="small"] {' not in dashboard_css
-        or 'grid-template-columns: 64px repeat(7, minmax(88px, 1fr) minmax(88px, 1fr));' not in dashboard_css
+        or 'grid-template-columns: 64px var(--ballet-plan-room-columns' not in dashboard_css
         or 'align-items: flex-start;\n  flex-direction: column;' not in dashboard_css
-        or 'const latestEndMinute = Math.max(' not in dashboard_js
-        or 'lastTimelineRow.trackCount = Math.max(' not in dashboard_js
+        or 'function buildBalletPlanTimelineRows(days = [])' not in dashboard_js
+        or '.filter((gap) => gap.end - gap.start >= 60);' not in dashboard_js
+        or '"--ballet-plan-room-columns", roomColumns.join(" ")' not in dashboard_js
         or 'for (let minute = 0; minute <= row.trackCount; minute += 1)' not in dashboard_js
-        or 'const previousRow = layoutRows[rowIndex - 1];' not in dashboard_js
-        or 'previousRow?.type === "gap" && previousRow.endHour === row.hour' not in dashboard_js
-        or '? formatBalletTimetableHour(row.startHour)' not in dashboard_js
-        or 'finalRow.hour * 60 + finalRow.trackCount' not in dashboard_js
+        or 'minuteGridLines.set(row.startMinute + minute, startLine + minute);' not in dashboard_js
+        or 'const finalMinute = finalRow.endMinute;' not in dashboard_js
         or "white-space: nowrap;" not in dashboard_css
         or ".ballet-booking-assistant,\n.ballet-booking-last-run {" not in dashboard_css
         or "ballet-plan-week-legend" in ballet_view_markup
@@ -1813,9 +1812,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=251" not in dashboard_html
+        "styles.css?v=252" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=212" not in dashboard_html
+        or "app.js?v=213" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
@@ -2033,7 +2032,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=212" not in dashboard_html:
+    if "app.js?v=213" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

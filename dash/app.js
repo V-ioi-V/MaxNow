@@ -3399,6 +3399,7 @@ function createBalletPlanWeekHeader(date, weekday) {
 function renderBalletPlanWeekTargets(container, weekDates, weekTargets, allTargets) {
   container.dataset.mode = "targets";
   container.style.removeProperty("--ballet-plan-time-rows");
+  container.style.removeProperty("--ballet-plan-room-columns");
   weekDates.forEach(({ date, weekday }) => {
     const day = document.createElement("section");
     day.className = "ballet-plan-week-day";
@@ -3424,6 +3425,62 @@ function renderBalletPlanWeekTargets(container, weekDates, weekTargets, allTarge
   });
 }
 
+function buildBalletPlanTimelineRows(days = []) {
+  const intervals = days.flatMap((day) =>
+    (Array.isArray(day.records) ? day.records : [])
+      .map(balletTimetableInterval)
+      .filter(Boolean),
+  );
+  if (!intervals.length) return [];
+
+  const merged = intervals
+    .slice()
+    .sort((left, right) => left.start - right.start || left.end - right.end)
+    .reduce((groups, interval) => {
+      const previous = groups[groups.length - 1];
+      if (previous && interval.start <= previous.end) {
+        previous.end = Math.max(previous.end, interval.end);
+      } else {
+        groups.push({ start: interval.start, end: interval.end });
+      }
+      return groups;
+    }, []);
+  const compressedGaps = merged.slice(0, -1)
+    .map((interval, index) => ({ start: interval.end, end: merged[index + 1].start }))
+    .filter((gap) => gap.end - gap.start >= 60);
+  const firstMinute = merged[0].start;
+  const lastMinute = merged[merged.length - 1].end;
+  const rows = [];
+
+  for (let minute = firstMinute; minute < lastMinute;) {
+    const gap = compressedGaps.find((item) => item.start === minute);
+    if (gap) {
+      rows.push({
+        type: "gap",
+        startMinute: gap.start,
+        endMinute: gap.end,
+        trackCount: 1,
+        labelMinute: Math.ceil(gap.start / 60) * 60,
+      });
+      minute = gap.end;
+      continue;
+    }
+
+    const nextHour = (Math.floor(minute / 60) + 1) * 60;
+    const nextGap = compressedGaps.find((item) => item.start > minute);
+    const endMinute = Math.min(lastMinute, nextHour, nextGap?.start ?? lastMinute);
+    rows.push({
+      type: "time",
+      startMinute: minute,
+      endMinute,
+      trackCount: endMinute - minute,
+      labelMinute: minute % 60 === 0 ? minute : null,
+    });
+    minute = endMinute;
+  }
+  return rows;
+}
+
 function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
   const days = weekDates.map(({ date, weekday }) => ({
     date,
@@ -3434,23 +3491,21 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
         String(balletStartTime(left)).localeCompare(String(balletStartTime(right))),
       ),
   }));
-  const rows = buildBalletTimetableRows(days);
+  const rows = buildBalletPlanTimelineRows(days);
   if (!rows.length) {
     renderBalletPlanWeekTargets(container, weekDates, [], []);
     return;
   }
-  const latestEndMinute = Math.max(
-    ...days.flatMap((day) => day.records.map(balletTimetableInterval).filter(Boolean).map((interval) => interval.end)),
-  );
-  const lastTimelineRow = rows[rows.length - 1];
-  if (lastTimelineRow?.type === "hour") {
-    lastTimelineRow.trackCount = Math.max(
-      1,
-      Math.min(60, latestEndMinute - lastTimelineRow.hour * 60),
-    );
-  }
 
   container.dataset.mode = "timeline";
+  const roomColumns = days.flatMap((day) => {
+    const hasUnknownRoom = day.records.some((record) => balletTimetableRoomKey(record) === "unknown");
+    return BALLET_TIMETABLE_ROOMS.map((room) =>
+      hasUnknownRoom || day.records.some((record) => balletTimetableRoomKey(record) === room.key)
+        ? "minmax(var(--ballet-plan-active-room-width), 1fr)"
+        : "minmax(var(--ballet-plan-empty-room-width), 0.34fr)");
+  });
+  container.style.setProperty("--ballet-plan-room-columns", roomColumns.join(" "));
   container.style.setProperty(
     "--ballet-plan-time-rows",
     rows
@@ -3466,13 +3521,13 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
     const startLine = nextGridLine;
     const endLine = startLine + row.trackCount;
     nextGridLine = endLine;
-    if (row.type === "hour") {
+    if (row.type === "time") {
       for (let minute = 0; minute <= row.trackCount; minute += 1) {
-        minuteGridLines.set(row.hour * 60 + minute, startLine + minute);
+        minuteGridLines.set(row.startMinute + minute, startLine + minute);
       }
     } else {
-      minuteGridLines.set(row.startHour * 60, startLine);
-      minuteGridLines.set(row.endHour * 60, endLine);
+      minuteGridLines.set(row.startMinute, startLine);
+      minuteGridLines.set(row.endMinute, endLine);
     }
     return { ...row, startLine, endLine };
   });
@@ -3502,17 +3557,14 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
   });
 
   layoutRows.forEach((row, rowIndex) => {
-    const previousRow = layoutRows[rowIndex - 1];
     const time = document.createElement("div");
     time.className = "ballet-plan-week-time";
     time.dataset.rowType = row.type;
     time.dataset.rowEdge =
       layoutRows.length === 1 ? "both" : rowIndex === 0 ? "start" : rowIndex === layoutRows.length - 1 ? "end" : "middle";
-    const labelText = row.type === "gap"
-      ? formatBalletTimetableHour(row.startHour)
-      : previousRow?.type === "gap" && previousRow.endHour === row.hour
-        ? ""
-        : row.label;
+    const labelText = Number.isFinite(row.labelMinute)
+      ? formatBalletTimetableHour(Math.floor(row.labelMinute / 60))
+      : "";
     if (labelText) {
       const label = document.createElement("span");
       label.textContent = labelText;
@@ -3525,9 +3577,7 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
 
   const finalRow = layoutRows[layoutRows.length - 1];
   if (finalRow) {
-    const finalMinute = finalRow.type === "gap"
-      ? finalRow.endHour * 60
-      : finalRow.hour * 60 + finalRow.trackCount;
+    const finalMinute = finalRow.endMinute;
     const terminal = document.createElement("div");
     terminal.className = "ballet-plan-week-time ballet-plan-week-end-time";
     terminal.style.gridColumn = "1";

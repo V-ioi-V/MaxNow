@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 00:34",
-  "version": "1.0.10.17",
-  "versionLabel": "v1.0.10.17",
-  "branch": "feature/ballet-plan-room-lanes",
-  "commit": "29f8bdb",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-plan-room-lanes · commit 29f8bdb · 干净",
+  "updatedAt": "2026-08-17 22:56",
+  "version": "1.0.10.18",
+  "versionLabel": "v1.0.10.18",
+  "branch": "bugfix/ballet-empty-time-compression",
+  "commit": "3df5720",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-empty-time-compression · commit 3df5720 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-17",
+      "title": "周安排按真实空档与空教室自适应压缩",
+      "summary": "周安排不再只折叠完整整点小时：整周连续至少 60 分钟无课时，直接按上一节结束分钟到下一节开始分钟压缩；示例 `12:30–18:45` 空档只保留 `13:00` 刻度，并把释放的高度分配给有课时段。"
+    },
     {
       "date": "2026-08-17",
       "title": "周安排按日拆分大小教室",
@@ -28,11 +33,6 @@
       "date": "2026-08-16",
       "title": "收紧周安排压缩刻度与底部留白",
       "summary": "修正上一版误解：压缩空档只保留起始 `13:00`，删除压缩带下沿的 `18:00` 重复刻度。"
-    },
-    {
-      "date": "2026-08-16",
-      "title": "简化周安排压缩空档刻度",
-      "summary": "周安排的压缩空档左侧只显示起始整点，例如 `13:00`；移除 `13:00–18:00` 范围文案，空档结束的 `18:00` 继续作为晚间时间轴正常刻度。"
     }
   ]
 }
