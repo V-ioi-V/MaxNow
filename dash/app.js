@@ -5093,7 +5093,7 @@ function renderBalletHistory() {
   const periodLabel = getBalletHistoryPeriodLabel();
   const previewLimit = window.matchMedia("(max-width: 560px)").matches ? 3 : 8;
   setText("#ballet-history-count", `共 ${records.length} 节`);
-  setText("#ballet-history-drawer-summary", `${periodLabel} · 共 ${records.length} 节`);
+  setText("#ballet-history-dialog-summary", `${periodLabel} · 共 ${records.length} 节`);
 
   const preview = qs("#ballet-history-preview");
   if (preview) {
@@ -6789,27 +6789,27 @@ qsa("[data-ballet-metric]").forEach((button) => {
   });
 });
 
-const balletHistoryDrawer = qs("#ballet-history-drawer");
+const balletHistoryDialog = qs("#ballet-history-dialog");
 
 qs("#ballet-history-open")?.addEventListener("click", () => {
-  if (!balletHistoryDrawer) return;
-  if (typeof balletHistoryDrawer.showModal === "function") {
-    balletHistoryDrawer.showModal();
+  if (!balletHistoryDialog) return;
+  if (typeof balletHistoryDialog.showModal === "function") {
+    balletHistoryDialog.showModal();
   } else {
-    balletHistoryDrawer.setAttribute("open", "");
+    balletHistoryDialog.setAttribute("open", "");
   }
 });
 
 qs("#ballet-history-close")?.addEventListener("click", () => {
-  if (!balletHistoryDrawer) return;
-  if (typeof balletHistoryDrawer.close === "function") balletHistoryDrawer.close();
-  else balletHistoryDrawer.removeAttribute("open");
+  if (!balletHistoryDialog) return;
+  if (typeof balletHistoryDialog.close === "function") balletHistoryDialog.close();
+  else balletHistoryDialog.removeAttribute("open");
 });
 
-balletHistoryDrawer?.addEventListener("click", (event) => {
-  if (event.target !== balletHistoryDrawer) return;
-  if (typeof balletHistoryDrawer.close === "function") balletHistoryDrawer.close();
-  else balletHistoryDrawer.removeAttribute("open");
+balletHistoryDialog?.addEventListener("click", (event) => {
+  if (event.target !== balletHistoryDialog) return;
+  if (typeof balletHistoryDialog.close === "function") balletHistoryDialog.close();
+  else balletHistoryDialog.removeAttribute("open");
 });
 
 const balletWeekDialog = qs("#ballet-week-dialog");

@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=252" />
+    <link rel="stylesheet" href="./styles.css?v=253" />
   </head>
   <body>
     <div class="app-shell">
@@ -932,23 +932,32 @@
                       <p class="eyebrow">Attendance</p>
                       <h3 id="ballet-history-title">上课历史</h3>
                     </div>
-                    <span class="status-pill" id="ballet-history-count">共 0 节</span>
+                    <div class="ballet-history-preview-actions">
+                      <span class="status-pill" id="ballet-history-count">共 0 节</span>
+                      <button
+                        class="ballet-history-open"
+                        id="ballet-history-open"
+                        type="button"
+                        aria-haspopup="dialog"
+                        aria-controls="ballet-history-dialog"
+                        hidden
+                      >
+                        全部记录 <span aria-hidden="true">↗</span>
+                      </button>
+                    </div>
                   </header>
                   <div class="ballet-history-preview-list" id="ballet-history-preview"></div>
-                  <button class="ballet-history-open" id="ballet-history-open" type="button" hidden>
-                    查看更多 <span aria-hidden="true">→</span>
-                  </button>
                 </aside>
               </div>
             </div>
 
-            <dialog class="ballet-history-drawer" id="ballet-history-drawer" aria-labelledby="ballet-history-drawer-title">
-              <div class="ballet-history-drawer-shell">
-                <header class="ballet-history-drawer-head">
+            <dialog class="ballet-history-dialog" id="ballet-history-dialog" aria-labelledby="ballet-history-dialog-title">
+              <div class="ballet-history-dialog-shell">
+                <header class="ballet-history-dialog-head">
                   <div>
                     <p class="eyebrow">Attendance History</p>
-                    <h2 id="ballet-history-drawer-title">全部上课记录</h2>
-                    <p id="ballet-history-drawer-summary">本月 · 共 0 节</p>
+                    <h2 id="ballet-history-dialog-title">全部上课记录</h2>
+                    <p id="ballet-history-dialog-summary">本月 · 共 0 节</p>
                   </div>
                   <button class="ballet-history-close" id="ballet-history-close" type="button" aria-label="关闭上课历史">
                     <span aria-hidden="true">×</span>
@@ -1394,6 +1403,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=215"></script>
+    <script src="./app.js?v=216"></script>
   </body>
 </html>
