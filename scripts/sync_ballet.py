@@ -56,6 +56,9 @@ ATTENDANCE_TEACHER_OVERRIDES = {
     ("2026-07-30", "18:45", "19:45", "软开课"): "王嘉豪",
     ("2026-08-07", "19:45", "21:15", "芭蕾L1-入门"): "张瀚泽",
 }
+ATTENDANCE_EXCLUSIONS = {
+    ("2026-08-18", "19:45", "21:15", "芭蕾L1-入门", "大教室"),
+}
 
 COURSE_TYPE_ORDER = (
     "ballet",
@@ -1270,6 +1273,17 @@ def attendance_teacher(record: dict[str, Any]) -> str:
     )
 
 
+def is_attendance_excluded(record: dict[str, Any]) -> bool:
+    exclusion_key = (
+        str(record.get("date", "")),
+        str(record.get("startTime", "")),
+        str(record.get("endTime", "")),
+        normalize_course_name(str(record.get("courseName", ""))),
+        normalize_space(str(record.get("venue", ""))),
+    )
+    return exclusion_key in ATTENDANCE_EXCLUSIONS
+
+
 def normalize_manual_attendance(
     detail: dict[str, Any], observed_at: str
 ) -> dict[str, Any]:
@@ -1609,6 +1623,7 @@ def compute_aggregates(
         for item in records
         if item.get("recordState") == "active"
         and item.get("attendanceStatus") == "attended"
+        and not is_attendance_excluded(item)
     ]
     daily: dict[str, dict[str, Any]] = {}
     monthly: dict[str, dict[str, Any]] = {}
@@ -1879,6 +1894,7 @@ def build_read_model(
         item
         for item in ledger.get("records", [])
         if item.get("recordState") == "active"
+        and not is_attendance_excluded(item)
     ]
     records.sort(
         key=lambda item: (item.get("date", ""), item.get("startTime", "")),

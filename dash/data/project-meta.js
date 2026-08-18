@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-17 23:37",
-  "version": "1.0.10.22",
-  "versionLabel": "v1.0.10.22",
-  "branch": "main",
-  "commit": "55289c2",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "main · commit 55289c2 · 干净",
+  "updatedAt": "2026-08-19 00:03",
+  "version": "1.0.10.23",
+  "versionLabel": "v1.0.10.23",
+  "branch": "bugfix/exclude-aug18-transferred-class",
+  "commit": "8758c10",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/exclude-aug18-transferred-class · commit 8758c10 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-19",
+      "title": "排除已转出但仍被闻道记为已上课的单节课程",
+      "summary": "将 2026-08-18 19:45–21:15 大教室的「芭蕾L1-入门」按日期、起止时间、课程名和教室精确排除出公开上课历史与全部训练统计；该课已转出且没有实际上课，闻道实时查询与私有账本仍保留源站事实，其他课程及未来同名课程不受影响。"
+    },
     {
       "date": "2026-08-17",
       "title": "上课历史改为紧凑悬浮层",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-17",
       "title": "训练记录默认展示全部",
       "summary": "芭蕾“训练记录”初次打开默认选中“全部”，主数字、课型、级别、老师、历年趋势与上课历史直接采用完整记录口径；仍可手动切换“本月 / 今年”。异常回退同样回到“全部”，避免刷新后重新缩到本月。"
-    },
-    {
-      "date": "2026-08-17",
-      "title": "周安排按真实空档与空教室自适应压缩",
-      "summary": "周安排不再只折叠完整整点小时：整周连续至少 60 分钟无课时，直接按上一节结束分钟到下一节开始分钟压缩；示例 `12:30–18:45` 空档只保留 `13:00` 刻度，并把释放的高度分配给有课时段。"
     }
   ]
 };

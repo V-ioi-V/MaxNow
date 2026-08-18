@@ -23,6 +23,7 @@ def detail_html(
     day: str,
     time_text: str = "10:00~11:30",
     teacher: str = "测试老师",
+    venue: str = "测试教室",
     status: str = "已上课",
     cancel_rule: str = "课前11小时前可取消",
 ) -> str:
@@ -31,7 +32,7 @@ def detail_html(
         ("课程日期", f"{day} 周日"),
         ("课程时间", time_text),
         ("教师名称", teacher),
-        ("场地名称", "测试教室"),
+        ("场地名称", venue),
         ("门店名称", "测试芭蕾工作室"),
         ("预约状态", status),
         ("取消时间", cancel_rule),
@@ -502,6 +503,55 @@ class BalletSyncTests(unittest.TestCase):
         self.assertEqual(ballet._public_record(record)["teacher"], "王嘉豪")
         summary, _ = ballet.compute_aggregates([record], NOW)
         self.assertEqual(summary["byTeacher"][0]["label"], "王嘉豪")
+
+    def test_owner_confirmed_transferred_class_is_excluded_from_statistics(self):
+        transferred = ballet.normalize_attendance(
+            ballet.parse_detail(
+                detail_html(
+                    course="芭蕾L1-入门",
+                    day="2026-08-18",
+                    time_text="19:45~21:15",
+                    teacher="申昊清",
+                    venue="大教室",
+                ),
+                "10007",
+            ),
+            "2026-08-19T00:10:00+08:00",
+        )
+        attended = ballet.normalize_attendance(
+            ballet.parse_detail(
+                detail_html(
+                    course="软开课",
+                    day="2026-08-18",
+                    time_text="18:45~19:45",
+                    teacher="申昊清",
+                ),
+                "10008",
+            ),
+            "2026-08-19T00:10:00+08:00",
+        )
+        ledger = ballet.empty_ledger()
+        ledger["records"] = [transferred, attended]
+        model = ballet.build_read_model(
+            ledger,
+            ballet.empty_booking(),
+            ballet.empty_membership(),
+            ballet.empty_timetable(),
+            ballet.empty_sync_state(),
+            datetime.fromisoformat("2026-08-19T00:10:00+08:00"),
+        )
+
+        self.assertTrue(ballet.is_attendance_excluded(transferred))
+        self.assertFalse(ballet.is_attendance_excluded(attended))
+        self.assertEqual(model["summary"]["classes"], 1)
+        self.assertEqual(model["summary"]["minutes"], 60)
+        self.assertEqual(
+            [item["courseName"] for item in model["records"]],
+            ["软开课"],
+        )
+
+        same_course_next_day = {**transferred, "date": "2026-08-19"}
+        self.assertFalse(ballet.is_attendance_excluded(same_course_next_day))
 
     def test_sunday_publish_window_keeps_today_and_adds_next_week(self):
         with tempfile.TemporaryDirectory() as directory:
