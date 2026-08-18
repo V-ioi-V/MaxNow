@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-19 00:03",
+  "updatedAt": "2026-08-19 00:04",
   "version": "1.0.10.23",
   "versionLabel": "v1.0.10.23",
-  "branch": "bugfix/exclude-aug18-transferred-class",
-  "commit": "8758c10",
+  "branch": "main",
+  "commit": "55fe864",
   "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/exclude-aug18-transferred-class · commit 8758c10 · 有未提交代码改动",
+  "dirtyLevel": "generated",
+  "deployNote": "main · commit 55fe864 · 运行数据已更新",
   "recentUpdates": [
     {
       "date": "2026-08-19",
