@@ -3346,7 +3346,7 @@ function createBalletPlanWeekCourse(record = {}, options = {}) {
         durationMinutes: record.durationMinutes || (interval ? interval.end - interval.start : undefined),
       },
       false,
-      { includeVenue: false },
+      { includeVenue: false, includeCounts: false },
     );
     course.classList.add("is-plan");
     return course;
@@ -5292,7 +5292,9 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
     ? [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补"
     : balletTeacher(record) || "老师待确认";
   detail.textContent = detailText;
-  const counts = getBalletTimetableCounts(record);
+  const counts = options.includeCounts === false
+    ? null
+    : getBalletTimetableCounts(record);
   if (counts) {
     const capacity = document.createElement("span");
     capacity.className = "ballet-timetable-capacity";

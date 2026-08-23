@@ -1614,7 +1614,8 @@ def check_secondary_view_style():
         or 'roomHeader.classList.add("ballet-plan-week-room")' not in dashboard_js
         or 'balletTimetableRoomKey(record) === room.key' not in dashboard_js
         or 'room.key === "unknown"' not in dashboard_js
-        or '{ includeVenue: false }' not in dashboard_js
+        or '{ includeVenue: false, includeCounts: false }' not in dashboard_js
+        or "const counts = options.includeCounts === false" not in dashboard_js
         or '.ballet-plan-week-cell[data-room="small"] {' not in dashboard_css
         or 'grid-template-columns: 64px var(--ballet-plan-room-columns' not in dashboard_css
         or 'align-items: flex-start;\n  flex-direction: column;' not in dashboard_css
