@@ -2631,6 +2631,19 @@ automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 ac
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-08-23 已部署抢课摘要高度与文字居中优化：
+
+```text
+deployed source commit: 4f5ccc5 fix(ballet): compact booking summaries
+version: 1.0.10.29
+changes: “抢课助手 / 本次抢课”内部指标卡统一为 96px 最小高度和标题 / 数值 / 说明三行网格，两侧外框同步缩短约 16px，短说明与换行说明均围绕卡片中心排列
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260823-162328-ballet-booking-summary-height；部署 stash predeploy-ballet-booking-summary-height-20260823-162328 保留
+browser verification: 1920 / 1501 / 1500 / 1280 / 860 / 390px 整页横向溢出均为 0；桌面两侧外框 top / bottom / height 差值均为 0，7 张指标卡等高，文字组中心最大偏差 3px
+server verification: scripts/check.py 与 nginx -t 全部通过；styles.css?v=255 生效；服务器 HEAD 与 origin/main 一致；匿名首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
+
 2026-08-23 已部署周安排课程人数隐藏：
 
 ```text

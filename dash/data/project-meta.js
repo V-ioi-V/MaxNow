@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 16:17",
+  "updatedAt": "2026-08-23 16:24",
   "version": "1.0.10.29",
   "versionLabel": "v1.0.10.29",
   "branch": "bugfix/ballet-booking-summary-height",
-  "commit": "6aa3afa",
+  "commit": "4f5ccc5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-booking-summary-height · commit 6aa3afa · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-booking-summary-height · commit 4f5ccc5 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-23",
