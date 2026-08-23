@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 17:59",
+  "updatedAt": "2026-08-23 18:01",
   "version": "1.0.10.33",
   "versionLabel": "v1.0.10.33",
   "branch": "bugfix/ballet-compact-secondary-only",
-  "commit": "a65b903",
+  "commit": "887a3fa",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-compact-secondary-only · commit a65b903 · 干净",
+  "deployNote": "bugfix/ballet-compact-secondary-only · commit 887a3fa · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-23",
