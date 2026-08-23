@@ -96,12 +96,13 @@ For these configured recurring targets only, `allowWaitlist=true` authorizes the
 Current recurring rules are:
 
 - Monday through Friday: every standard ballet L1 occurrence starting at or after 18:40, any teacher.
+- Monday through Friday: every standard ballet L1.5 occurrence starting at or after 18:40, any teacher.
 - Monday through Friday: only a course whose normalized name is exactly `软开` or `软开课` and starts at or after 18:40, any teacher.
-- Saturday, all day: the same standard ballet L1 and exact-name `软开` / `软开课` rules.
+- Saturday, all day: the same standard ballet L1, standard ballet L1.5, and exact-name `软开` / `软开课` rules.
 - Sunday courses are excluded. `软开专项`, `软开专项【前后腿】`, `软开-胯`, and any other merely soft-open-classified near match are excluded.
 - For the same occurrence, prefer `大教室`; use `小教室` only when the large-room tier has no match. The selected tier must contain exactly one course.
 
-For the Sunday fast path, process every ballet L1 target before any `软开` / `软开课` target. Within each course tier, process Saturday first, then Monday through Friday, and sort by start time within a day. Timetable GETs may run with at most three workers and share a page by date; card/rules preflight may run with at most two workers and expires after eight seconds. Actual booking or waitlist mutations must remain strictly serial in that priority order. Final booking-detail verification may use at most three read-only workers.
+For the Sunday fast path, process every ballet L1 target first, every ballet L1.5 target second, and any `软开` / `软开课` target last. Within each course tier, process Saturday first, then Monday through Friday, and sort by start time within a day. Timetable GETs may run with at most three workers and share a page by date; card/rules preflight may run with at most two workers and expires after eight seconds. Actual booking or waitlist mutations must remain strictly serial in that priority order. Final booking-detail verification may use at most three read-only workers.
 
 To query the automation plan and safe result ledger, run:
 

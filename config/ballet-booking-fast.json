@@ -21,6 +21,10 @@
       "level": "L1"
     },
     {
+      "courseType": "ballet",
+      "level": "L1.5"
+    },
+    {
       "courseType": "soft_open",
       "level": "none"
     }
@@ -50,6 +54,13 @@
       "weekdays": [0, 1, 2, 3, 4, 5],
       "courseType": "ballet",
       "level": "L1",
+      "exactCourseNames": null
+    },
+    {
+      "key": "ballet-l1-5",
+      "weekdays": [0, 1, 2, 3, 4, 5],
+      "courseType": "ballet",
+      "level": "L1.5",
       "exactCourseNames": null
     }
   ]

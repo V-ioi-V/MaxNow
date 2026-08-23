@@ -75,6 +75,7 @@ class FakeFastSource:
                         ("软开专项", "11:00", "12:00", "李俊"),
                         ("软开-胯", "12:00", "13:00", "李俊"),
                         ("芭蕾 L1", "13:00", "14:30", "王嘉豪"),
+                        ("芭蕾 L1.5", "14:30", "16:00", "李俊"),
                     ]
                     if day == 5
                     else [
@@ -89,6 +90,7 @@ class FakeFastSource:
                             "李俊",
                         ),
                         ("芭蕾 L1", "19:45", "21:15", "王嘉豪"),
+                        ("芭蕾 L1.5", "21:15", "22:45", "李俊"),
                     ]
                     if day in {0, 1, 2, 3, 4}
                     else [("肌肉素质", "19:00", "20:00", "戴俊瑶")]
@@ -96,7 +98,9 @@ class FakeFastSource:
                 pages = []
                 for index, (course, start, end, teacher) in enumerate(courses, start=1):
                     rule_key = (
-                        "ballet-l1"
+                        "ballet-l1-5"
+                        if "L1.5" in course
+                        else "ballet-l1"
                         if course.startswith("芭蕾")
                         else "soft-open"
                     )
@@ -311,6 +315,12 @@ class FastBookingTests(unittest.TestCase):
                 "ballet-l1-2",
                 "ballet-l1-3",
                 "ballet-l1-4",
+                "ballet-l1-5-5",
+                "ballet-l1-5-0",
+                "ballet-l1-5-1",
+                "ballet-l1-5-2",
+                "ballet-l1-5-3",
+                "ballet-l1-5-4",
                 "soft-open-5",
                 "soft-open-0",
                 "soft-open-1",
@@ -322,6 +332,12 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(
             [target["date"] for target in targets],
             [
+                "2026-08-08",
+                "2026-08-03",
+                "2026-08-04",
+                "2026-08-05",
+                "2026-08-06",
+                "2026-08-07",
                 "2026-08-08",
                 "2026-08-03",
                 "2026-08-04",
@@ -347,10 +363,10 @@ class FastBookingTests(unittest.TestCase):
             for target in planned
         }
         targets = fast.discover_targets(config(), planned, pages)
-        self.assertEqual(len(targets), 12)
+        self.assertEqual(len(targets), 18)
         self.assertEqual(
             {target["_courseName"] for target in targets},
-            {"软开", "软开课", "芭蕾 L1"},
+            {"软开", "软开课", "芭蕾 L1", "芭蕾 L1.5"},
         )
         self.assertNotIn("软开专项", {target["_courseName"] for target in targets})
         self.assertNotIn("软开-胯", {target["_courseName"] for target in targets})
@@ -471,14 +487,14 @@ class FastBookingTests(unittest.TestCase):
             self.release,
             execute=True,
         )
-        self.assertEqual(source.mutation_count, 12)
+        self.assertEqual(source.mutation_count, 18)
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["booked"] * 12,
+            ["booked"] * 18,
         )
-        self.assertEqual(state["totalBooked"], 12)
+        self.assertEqual(state["totalBooked"], 18)
         self.assertEqual(state["totalRuns"], 1)
-        self.assertEqual(result["requestsMade"], 43)
+        self.assertEqual(result["requestsMade"], 61)
         self.assertEqual(
             source.mutation_order,
             [
@@ -488,6 +504,12 @@ class FastBookingTests(unittest.TestCase):
                 "ballet-l1-2026-08-05-1945-2115-0",
                 "ballet-l1-2026-08-06-1945-2115-0",
                 "ballet-l1-2026-08-07-1945-2115-0",
+                "ballet-l1-5-2026-08-08-1430-1600-0",
+                "ballet-l1-5-2026-08-03-2115-2245-0",
+                "ballet-l1-5-2026-08-04-2115-2245-0",
+                "ballet-l1-5-2026-08-05-2115-2245-0",
+                "ballet-l1-5-2026-08-06-2115-2245-0",
+                "ballet-l1-5-2026-08-07-2115-2245-0",
                 "soft-open-2026-08-08-1000-1100-0",
                 "soft-open-2026-08-03-1845-1945-0",
                 "soft-open-2026-08-04-1845-1945-0",
@@ -511,13 +533,13 @@ class FastBookingTests(unittest.TestCase):
             [record["status"] for record in result["records"]],
             [
                 "unknown_result",
-                *(["booked"] * 11),
+                *(["booked"] * 17),
             ],
         )
-        self.assertEqual(source.mutation_count, 12)
+        self.assertEqual(source.mutation_count, 18)
         self.assertEqual(result["records"][0]["attempts"], 1)
         self.assertEqual(result["status"], "partial")
-        self.assertEqual(state["totalBooked"], 11)
+        self.assertEqual(state["totalBooked"], 17)
 
     def test_transient_preflight_failures_recover_and_book(self):
         source = FakeFastSource(timetable_failures=2)
@@ -531,11 +553,11 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["booked"] * 12,
+            ["booked"] * 18,
         )
         self.assertTrue(all(record["attempts"] == 1 for record in result["records"]))
-        self.assertEqual(source.mutation_count, 12)
-        self.assertEqual(state["totalBooked"], 12)
+        self.assertEqual(source.mutation_count, 18)
+        self.assertEqual(state["totalBooked"], 18)
 
     def test_retries_explicit_notopen_without_blocking_later_courses(self):
         source = FakeFastSource(notopen_mutations=3)
@@ -549,11 +571,11 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["booked"] * 12,
+            ["booked"] * 18,
         )
         self.assertEqual(result["records"][0]["attempts"], 4)
-        self.assertEqual(source.mutation_count, 15)
-        self.assertEqual(state["totalBooked"], 12)
+        self.assertEqual(source.mutation_count, 21)
+        self.assertEqual(state["totalBooked"], 18)
 
     def test_dry_run_never_mutates(self):
         source = FakeFastSource()
@@ -567,7 +589,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(source.mutation_count, 0)
         self.assertEqual(
             [record["status"] for record in result["records"]],
-            ["ready"] * 12,
+            ["ready"] * 18,
         )
         self.assertEqual(state["totalRuns"], 0)
 
@@ -582,12 +604,12 @@ class FastBookingTests(unittest.TestCase):
             self.release,
             execute=True,
         )
-        self.assertEqual(source.mutation_count, 12)
+        self.assertEqual(source.mutation_count, 18)
         self.assertEqual(result["records"][0]["status"], "waitlisted")
         self.assertEqual(result["records"][0]["bookingStatus"], "waitlist")
         self.assertEqual(result["records"][0]["waitlistPosition"], 3)
         self.assertTrue(result["records"][0]["verified"])
-        self.assertEqual(state["totalBooked"], 11)
+        self.assertEqual(state["totalBooked"], 17)
         self.assertEqual(state["totalWaitlisted"], 1)
 
     def test_queue_available_target_is_ready_in_dry_run(self):
@@ -619,10 +641,10 @@ class FastBookingTests(unittest.TestCase):
             self.release,
             execute=True,
         )
-        self.assertEqual(source.mutation_count, 11)
+        self.assertEqual(source.mutation_count, 17)
         self.assertEqual(result["records"][0]["status"], "not_available")
         self.assertEqual(result["records"][0]["availability"], "queue_available")
-        self.assertEqual(state["totalBooked"], 11)
+        self.assertEqual(state["totalBooked"], 17)
         self.assertEqual(state["totalWaitlisted"], 0)
 
     def test_read_and_preflight_are_bounded_concurrent_but_mutation_is_serial(self):
@@ -638,7 +660,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(source.max_active_timetable, 3)
         self.assertEqual(source.max_active_preflight, 2)
         self.assertEqual(source.max_active_mutation, 1)
-        self.assertEqual(source.request_count, 43)
+        self.assertEqual(source.request_count, 61)
 
     def test_persistent_source_reuses_connection_and_requests_keep_alive(self):
         connection = FakeHttpConnection(

@@ -336,6 +336,7 @@ def load_config(path: Path) -> dict[str, Any]:
     course_priorities = data["priorityCourses"]
     expected_course_priorities = [
         {"courseType": "ballet", "level": "L1"},
+        {"courseType": "ballet", "level": "L1.5"},
         {"courseType": "soft_open", "level": "none"},
     ]
     if course_priorities != expected_course_priorities:
@@ -1272,10 +1273,10 @@ def build_public(
         "waitlistEnabled": config["allowWaitlist"],
         "schedule": "每周日 14:20（北京时间）",
         "planMode": "weekly-rules",
-        "coursePriorityOrder": ["芭蕾 L1", "软开 / 软开课"],
+        "coursePriorityOrder": ["芭蕾 L1", "芭蕾 L1.5", "软开 / 软开课"],
         "priorityOrder": ["周六", "周一", "周二", "周三", "周四", "周五"],
         "prioritySummary": (
-            "芭蕾 L1 > 软开 / 软开课；每类先周六，再周一至周五；"
+            "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类先周六，再周一至周五；"
             "工作日仅 18:40 后、周六全天；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         ),

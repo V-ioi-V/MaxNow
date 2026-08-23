@@ -347,6 +347,7 @@ def check_ballet_booking_fast():
         or config.get("priorityCourses")
         != [
             {"courseType": "ballet", "level": "L1"},
+            {"courseType": "ballet", "level": "L1.5"},
             {"courseType": "soft_open", "level": "none"},
         ]
         or config.get("priorityWeekdays") != [5, 0, 1, 2, 3, 4]
@@ -382,18 +383,19 @@ def check_ballet_booking_fast():
         != {"不限老师"}
         or data.get("priorityOrder")
         != ["周六", "周一", "周二", "周三", "周四", "周五"]
-        or data.get("coursePriorityOrder") != ["芭蕾 L1", "软开 / 软开课"]
+        or data.get("coursePriorityOrder")
+        != ["芭蕾 L1", "芭蕾 L1.5", "软开 / 软开课"]
         or data.get("prioritySummary")
         != (
-            "芭蕾 L1 > 软开 / 软开课；每类先周六，再周一至周五；"
+            "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类先周六，再周一至周五；"
             "工作日仅 18:40 后、周六全天；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         )
         or {item.get("venue") for item in data.get("targets", [])}
         != {"大教室优先，小教室兜底"}
-        or len(data.get("targets", [])) != 12
+        or len(data.get("targets", [])) != 18
         or {item.get("course") for item in data.get("targets", [])}
-        != {"软开", "芭蕾 L1"}
+        != {"软开", "芭蕾 L1", "芭蕾 L1.5"}
         or {item.get("startTime") for item in data.get("targets", [])}
         != {"全天", "18:40 后"}
     ):
