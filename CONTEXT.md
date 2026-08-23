@@ -122,7 +122,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `dash/data/ballet-session.json`：Cloud 页“芭蕾 Session 实验”折叠详情的本地 / Git 安全 fallback；生产同 schema 状态由专用非 root 用户写入 `/var/lib/maxnow-ballet-session-status/public`，经已有登录校验的 nginx alias 提供。它只保存已确认时长、时间、间隔、样本计数和安全状态；不改变 `ballet.json` 的课程新鲜度，也不保存 Session、指纹、unit、日志路径或响应摘要。
 - `dash/data/ballet-booking-fast.json`：芭蕾“抢课”工作区与 Cloud 自动抢课运维卡共用的安全 fallback；生产状态由周日 fast-path service 写入独立 public 目录，经登录校验和 `no-store` exact alias 提供。芭蕾页用它渲染累计已抢到、累计候补、上次执行关键路径总耗时与逐目标平均值，并同时渲染脱敏代抢目标和上次抢课结果两个独立列表；累计值分别读取 `totalBooked` / `totalWaitlisted`，不与 `ballet.json` 当前未来预约 / 候补列表数量混用。Cloud 读取启用状态、优先级、上次 / 下次执行和累计数；该数据不作为课程余位事实源。
 - `dash/assets/ballet-week-cover/digits/`：芭蕾小红书周记录封面的长期手绘数字资产。`digit-0.png` 至 `digit-9.png` 是统一酒红色、统一高度与基线的透明 PNG，宽度按字形自然变化；`manifest.json` 保存脚本拼接所需尺寸，`digits-preview.png` 只用于验收。数字资产不依赖系统字体，也不要求每周重新生成图片。
-- `dash/assets/ballet-week-cover/brief-template-v1.png`：训练周简报的高质量源底图，保留标题、“第 / 周”、六个指标名和装饰；浏览器实际加载同名 `.webp` 并只填会变化的周数、日期与六项数据。动态值固定使用更端正、圆润和可爱的 `Ma Shan Zheng`，运行时文件为 `dash/assets/fonts/ma-shan-zheng/MaShanZheng-Weekly.woff2`，并由画布增加同色轻量圆润描边；完整 TTF 和 `OFL.txt` 作为源文件与许可保留。
+- `dash/assets/ballet-week-cover/brief-template-v1.png`：训练周简报的高质量源底图，保留标题、“第 / 周”、六个指标名和装饰；浏览器实际加载同名 `.webp` 并只填会变化的周数、日期与六项数据。动态数字使用无描边、常规字重的 UI 字体；动态课程名使用更端正、圆润和可爱的 `Ma Shan Zheng`，运行时文件为 `dash/assets/fonts/ma-shan-zheng/MaShanZheng-Weekly.woff2`，并由画布增加同色轻量圆润描边；完整 TTF 和 `OFL.txt` 作为源文件与许可保留。
 - `dash/data/ballet.js`：从 `ballet.json` 生成的浏览器 wrapper。
 - `dash/login.html` / `dash/login.js`：MaxNow 私人访问入口；只提交用户名和密码到同源 `/auth/login`，不在浏览器保存或读取会话 Cookie。
 - `scripts/maxnow_auth_service.py`：服务器本机认证服务；读取 htpasswd、签发和校验 7 天 HttpOnly 会话，不读取 Dashboard 数据。
@@ -260,7 +260,7 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - 2026-08-02 训练趋势图标题移入左侧完整卡片，并增加 `Training trend` 眉题；左侧趋势卡与右侧历史卡共用边框、圆角、渐变和 hover，桌面同顶同底，内部热力图 / 折线图取消第二层卡片外框。
 - 2026-08-02 课表当前时间标签从横跨课程区的时间线子元素拆为独立网格项：数字固定在第 1 列时间轴，细线只跨第 2 列至末列，消除 17:30 等课程被当前时间文字盖住的问题。
 - 2026-08-16 Owner 将旧“代抢 / 逐课结果”双区收敛进三周周安排与总体结果：待抢规则只在下周课表出现，执行后由真实状态替换；上次抢课不再展开具体课程，只显示成功、候补、未抢到总体数量。
-- 2026-08-02 Owner 确认芭蕾每周小红书图片采用固定粉色手作系列。顶部 `week N` 入口位于“已同步”右侧；弹窗内可点击或左右滑动切换 `week N` 封面与训练周简报。封面继续按 `2026-07-27` 至 `2026-08-02 = week 2` 的北京时间周一边界计算；周简报以每周期最后一节结束时间为统计截止，结束后 10 分钟刷新全部芭蕾数据、20 分钟在浏览器生成，复用训练概览六项口径。两张图都在浏览器本地生成、缓存、下载或复制，不上传成品；页面未打开时不在服务器生成 PNG，下次进入再生成。`template.json` 是两张运行时 WebP 底图版本、文件名和动态字位置的唯一配置。周简报固定字保留在底图，周数、日期与六项值统一使用项目内置 Ma Shan Zheng WOFF2 子集并增加同色轻量圆润描边。
+- 2026-08-02 Owner 确认芭蕾每周小红书图片采用固定粉色手作系列。顶部 `week N` 入口位于“已同步”右侧；弹窗内可点击或左右滑动切换 `week N` 封面与训练周简报。封面继续按 `2026-07-27` 至 `2026-08-02 = week 2` 的北京时间周一边界计算；周简报以每周期最后一节结束时间为统计截止，结束后 10 分钟刷新全部芭蕾数据、20 分钟在浏览器生成，复用训练概览六项口径。两张图都在浏览器本地生成、缓存、下载或复制，不上传成品；页面未打开时不在服务器生成 PNG，下次进入再生成。`template.json` 是两张运行时 WebP 底图版本、文件名和动态字位置的唯一配置。周简报固定字保留在底图；动态周数、日期、次数与时长使用无描边 UI 字体，动态课程名使用项目内置 Ma Shan Zheng WOFF2 子集并增加同色轻量圆润描边。
 - 2026-08-01 Owner 已把“动态调整自动抢课方式”加入正式待办：目标是让稳定执行引擎与可变课程配置分离，Owner 可在 MaxNow 中增删目标、调整优先级、逐课设置候补、配置单周覆盖或暂停，而不再每次请 Codex 修改脚本。推荐由服务器版本化运行配置作为唯一可编辑来源，前端通过独立低权限的最小配置接口读写；接口不能访问闻道凭据、网络或预约执行能力。周日任务在 14:19:35 前冻结配置快照，配置管理不能进入 14:20 关键路径；详细任务与验收边界以 `ROADMAP.md` Next 为准，当前功能尚未实现。
 
 ## 上下文更新规则

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "templateVersion": "v1",
   "templateFile": "template-v1.webp",
-  "briefTemplateVersion": "v2",
+  "briefTemplateVersion": "v3",
   "briefTemplateFile": "brief-template-v1.webp",
   "briefDataRefreshDelayMinutes": 10,
   "briefGenerateDelayMinutes": 20,

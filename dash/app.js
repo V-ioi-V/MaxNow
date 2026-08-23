@@ -15,7 +15,7 @@ const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json";
 const BALLET_WEEK_TEMPLATE_URL = "./assets/ballet-week-cover/template.json";
 const BALLET_WEEK_FALLBACK_CONFIG = {
   templateVersion: "v1",
-  briefTemplateVersion: "v2",
+  briefTemplateVersion: "v3",
   briefTemplateFile: "brief-template-v1.webp",
   briefDataRefreshDelayMinutes: 10,
   briefGenerateDelayMinutes: 20,
@@ -517,21 +517,28 @@ function formatBalletBriefDuration(minutes = 0) {
   return `${String(hours).padStart(2, "0")}:${String(safeMinutes % 60).padStart(2, "0")}`;
 }
 
-function drawBalletBriefText(context, value, x, y, maxWidth, fontSize, minFontSize = 32) {
+function drawBalletBriefText(context, value, x, y, maxWidth, fontSize, minFontSize = 32, options = {}) {
   const text = String(value || "暂无");
   let size = fontSize;
+  const numeric = options.numeric === true;
+  const fontFamily = numeric
+    ? '"Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei", sans-serif'
+    : '"MaxNow Week Hand", "KaiTi", cursive';
+  const fontWeight = 400;
   context.textAlign = "center";
   context.textBaseline = "alphabetic";
   context.fillStyle = "#6b202a";
   while (size > minFontSize) {
-    context.font = `${size}px "MaxNow Week Hand", "KaiTi", cursive`;
+    context.font = `${fontWeight} ${size}px ${fontFamily}`;
     if (context.measureText(text).width <= maxWidth) break;
     size -= 2;
   }
-  context.lineJoin = "round";
-  context.lineWidth = Math.max(1, size * 0.018);
-  context.strokeStyle = context.fillStyle;
-  context.strokeText(text, x, y, maxWidth);
+  if (!numeric) {
+    context.lineJoin = "round";
+    context.lineWidth = Math.max(1, size * 0.018);
+    context.strokeStyle = context.fillStyle;
+    context.strokeText(text, x, y, maxWidth);
+  }
   context.fillText(text, x, y, maxWidth);
 }
 
@@ -578,6 +585,7 @@ async function buildBalletWeekBrief() {
       88,
       72,
       48,
+      { numeric: true },
     );
     drawBalletBriefText(
       context,
@@ -587,12 +595,13 @@ async function buildBalletWeekBrief() {
       440,
       38,
       28,
+      { numeric: true },
     );
-    drawBalletBriefText(context, String(summary.week.classes).padStart(2, "0"), columns[0], firstY, 250, 104, 72);
-    drawBalletBriefText(context, formatBalletBriefDuration(summary.week.minutes), columns[1], firstY, 300, 88, 58);
+    drawBalletBriefText(context, String(summary.week.classes).padStart(2, "0"), columns[0], firstY, 250, 104, 72, { numeric: true });
+    drawBalletBriefText(context, formatBalletBriefDuration(summary.week.minutes), columns[1], firstY, 300, 88, 58, { numeric: true });
     drawBalletBriefText(context, summary.week.favorite?.label || "暂无", columns[2], firstY, 300, 62, 38);
-    drawBalletBriefText(context, String(summary.total.classes).padStart(2, "0"), columns[0], secondY, 250, 104, 72);
-    drawBalletBriefText(context, formatBalletBriefDuration(summary.total.minutes), columns[1], secondY, 300, 88, 58);
+    drawBalletBriefText(context, String(summary.total.classes).padStart(2, "0"), columns[0], secondY, 250, 104, 72, { numeric: true });
+    drawBalletBriefText(context, formatBalletBriefDuration(summary.total.minutes), columns[1], secondY, 300, 88, 58, { numeric: true });
     drawBalletBriefText(context, summary.total.favorite?.label || "暂无", columns[2], secondY, 300, 62, 38);
 
     await new Promise((resolve) => requestAnimationFrame(resolve));

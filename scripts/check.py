@@ -1791,6 +1791,8 @@ def check_secondary_view_style():
         'return `${format(info.monday)}–${format(info.sunday)}`;',
         "const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;",
         'document.fonts?.load?.(\'80px "MaxNow Week Hand"\', "芭蕾周简报0123456789")',
+        '\"Segoe UI Variable Text\", \"Segoe UI\", \"Microsoft YaHei\", sans-serif',
+        "if (!numeric) {",
         'context.lineJoin = "round";',
         'context.strokeText(text, x, y, maxWidth);',
     )
@@ -1814,7 +1816,7 @@ def check_secondary_view_style():
         or cover_config.get("briefDataRefreshDelayMinutes") != 10
         or cover_config.get("briefGenerateDelayMinutes") != 20
         or cover_config.get("briefWeekNumberBaselineY") != 390
-        or cover_config.get("briefTemplateVersion") != "v2"
+        or cover_config.get("briefTemplateVersion") != "v3"
         or cover_config.get("templateFile") != "template-v1.webp"
         or cover_config.get("briefTemplateFile") != "brief-template-v1.webp"
     ):
@@ -1860,7 +1862,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=261" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=221" not in dashboard_html
+        or "app.js?v=222" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2086,7 +2088,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=221" not in dashboard_html:
+    if "app.js?v=222" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
