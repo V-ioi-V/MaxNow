@@ -2618,6 +2618,20 @@ automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 ac
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-08-23 已部署 Fast Path 芭蕾 L1.5 长期规则：
+
+```text
+deployed source commit: 2b6ed10 chore: finalize L1.5 project metadata
+version: 1.0.10.24
+changes: 在原有周一至周五 18:40 后、周六全天的规则中加入标准芭蕾 L1.5；课程层顺序为 L1 → L1.5 → 软开 / 软开课，日期、老师、教室、候补与失败关闭边界不变
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260823-140009-ballet-fast-l15；部署 stash predeploy-ballet-fast-l15-20260823-140009 保留
+preview verification: 生产安全计划共 18 个槽位，按 6 条 L1、6 条 L1.5、6 条软开排列；保留累计运行 / 预约 / 候补 3 / 12 / 2
+live dry-run: 受保护 transient unit 完成 24 次课表 GET，status=success、mutationAttempts=0；14:20 放课前没有发现匹配记录，该空结果不代表课程不可用
+server verification: scripts/check.py 与 nginx -t 通过；HEAD 与 origin/main 均为 2b6ed10；匿名首页 / 登录页 / Fast Path 状态为 302 / 200 / 401
+automation state: Fast Path timer 为 enabled / active，下一次仍为 2026-08-23 14:19:35；Fast Path service 为 inactive，验收未手动启动 execute
+safety: preview 不加载凭据；live dry-run 仅访问课表并保持 mutationAttempts=0，未执行预约、候补、取消或转课 mutation
+```
+
 2026-08-17 已部署上课历史紧凑悬浮层：
 
 ```text
