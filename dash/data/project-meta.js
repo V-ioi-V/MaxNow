@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 15:05",
+  "updatedAt": "2026-08-23 15:06",
   "version": "1.0.10.26",
   "versionLabel": "v1.0.10.26",
   "branch": "bugfix/ballet-fast-progressive-release",
-  "commit": "34c29e5",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-fast-progressive-release · commit 34c29e5 · 有未提交代码改动",
+  "commit": "f57b235",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-fast-progressive-release · commit f57b235 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-23",
