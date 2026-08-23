@@ -5872,13 +5872,13 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] strong {
   flex: 0 0 auto;
-  font-size: 10px;
-  line-height: 1.15;
+  font-size: 9px;
+  line-height: 1.1;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] small {
-  font-size: 8px;
-  line-height: 1.1;
+  font-size: 7px;
+  line-height: 1.08;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-teacher {
@@ -5904,7 +5904,14 @@ body[data-view="ricky"] .topbar-ricky-status {
   flex: 0 0 auto;
   flex-wrap: nowrap;
   gap: 2px;
-  font-size: 8px;
+  font-size: 7px;
+}
+
+.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-availability="booked"] > div {
+  margin-top: auto;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-time-range {
@@ -5916,8 +5923,10 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-state {
-  min-height: 14px;
-  padding-inline: 4px;
+  min-height: 12px;
+  padding-inline: 3px;
+  font-size: 7px;
+  line-height: 1;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-overlap="true"] strong {
@@ -5942,6 +5951,24 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-timetable-grid > .ballet-timetable-course[data-overlap="true"] .ballet-timetable-state {
   min-height: 14px;
   padding-inline: 4px;
+}
+
+.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-overlap="true"] strong {
+  font-size: 9px;
+  line-height: 1.1;
+}
+
+.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-overlap="true"] small,
+.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-overlap="true"] > div {
+  font-size: 7px;
+  line-height: 1.08;
+}
+
+.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-overlap="true"] .ballet-timetable-state {
+  min-height: 12px;
+  padding-inline: 3px;
+  font-size: 7px;
+  line-height: 1;
 }
 
 .ballet-timetable-cell[data-row-type="gap"] {

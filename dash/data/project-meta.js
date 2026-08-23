@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 16:32",
-  "version": "1.0.10.30",
-  "versionLabel": "v1.0.10.30",
-  "branch": "bugfix/ballet-compact-hour-cards",
-  "commit": "eac742e",
+  "updatedAt": "2026-08-23 16:41",
+  "version": "1.0.10.31",
+  "versionLabel": "v1.0.10.31",
+  "branch": "bugfix/ballet-compact-card-layout",
+  "commit": "65d3c3c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-compact-hour-cards · commit eac742e · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-compact-card-layout · commit 65d3c3c · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "放松一小时紧凑卡的内部排版",
+      "summary": "保持完整课程表及一小时卡现有紧凑高度不变，将 60 分钟及以下课程的课程名缩至 `9px`、老师 / 人数 / 时间缩至 `7px`；“已预约”从时间右侧移到卡片最底部，左对齐独占一行，解决宽屏半宽教室列中的横向拥挤。"
+    },
     {
       "date": "2026-08-23",
       "title": "恢复课程表紧凑高度并缩小一小时卡字体",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-23",
       "title": "统一隐藏周安排课程人数",
       "summary": "“课程计划 / 周安排”中的真实预约与候补课程卡统一隐藏报名人数、容量和全班候补人数，只保留课程、老师、时间及个人预约 / 候补状态；下方完整课程表继续正常展示人数统计。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "修复分批放课漏课并优化整批抢课流水线",
-      "summary": "Fast Path 不再在日期页出现任意目标后停止刷新：第一轮课表完成后立即串行处理已发现 L1，同时在放课后第 2 / 6 / 10 秒以最多 2 路只读 GET 后台刷新六个日期；稳定快照补入稍后发布的课程后，再保持 `L1 → L1.5 → 软开` 完成整批提交。"
     }
   ]
 };
