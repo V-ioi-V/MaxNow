@@ -5851,17 +5851,19 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] {
-  --ballet-compact-secondary-size: 6.5px;
+  --ballet-compact-secondary-size: 5px;
   gap: 1px;
-  padding-block: 3px;
+  padding-block: 2px;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] strong {
   flex: 0 0 auto;
+  line-height: 1.1;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-teacher {
   flex: 0 0 auto;
+  line-height: 1.15;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-meta {

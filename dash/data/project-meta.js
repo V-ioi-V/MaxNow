@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 18:44",
-  "version": "1.0.11.01",
-  "versionLabel": "v1.0.11.01",
-  "branch": "feature/ballet-brief-cute-font",
-  "commit": "c406566",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-brief-cute-font · commit c406566 · 有未提交代码改动",
+  "updatedAt": "2026-08-23 18:56",
+  "version": "1.0.11.02",
+  "versionLabel": "v1.0.11.02",
+  "branch": "bugfix/ballet-hour-card-content-fit",
+  "commit": "ea5e62f",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-hour-card-content-fit · commit ea5e62f · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "修复一小时课程卡底部状态裁切",
+      "summary": "正式课表实测发现部分 60 分钟课程内容仍比卡片高 `4px`；统一将一小时卡的报名 / 排队与完整时间缩至 `5px`，上下内边距收至 `2px` 并压紧行高，保证状态标签在最底部完整显示。"
+    },
     {
       "date": "2026-08-23",
       "title": "周简报动态字改为端正可爱的马善政字体",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-23",
       "title": "统一一小时紧凑卡的复用规则",
       "summary": "撤回仅针对“已预约”的局部排版补丁：完整课程表中所有 60 分钟及以下课程统一复用同一套紧凑卡变量，课程名缩至 `8px`，老师 / 人数 / 时间 / 状态缩至 `6.5px`；可约、可排队、已满、已预约等全部状态统一放到完整时间下方、卡片最底部独占一行，卡片高度和课表时间尺度不变。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "放松一小时紧凑卡的内部排版",
-      "summary": "保持完整课程表及一小时卡现有紧凑高度不变，将 60 分钟及以下课程的课程名缩至 `9px`、老师 / 人数 / 时间缩至 `7px`；“已预约”从时间右侧移到卡片最底部，左对齐独占一行，解决宽屏半宽教室列中的横向拥挤。"
     }
   ]
 };

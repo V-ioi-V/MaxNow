@@ -1858,13 +1858,14 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=260" not in dashboard_html
+        "styles.css?v=261" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=221" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
-        "--ballet-compact-secondary-size: 6.5px;" not in dashboard_css
+        "--ballet-compact-secondary-size: 5px;" not in dashboard_css
+        or "padding-block: 2px;" not in dashboard_css
         or "--ballet-compact-title-size:" in dashboard_css
         or "--ballet-compact-status-height:" in dashboard_css
         or '[data-compact="true"][data-availability="booked"] > div' in dashboard_css
