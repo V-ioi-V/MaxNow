@@ -4690,13 +4690,14 @@ body[data-view="ricky"] .topbar-ricky-status {
   --card-border: var(--ballet-border);
   min-width: 0;
   display: grid;
-  grid-template-rows: 18px 36px 34px;
+  grid-template-rows: 16px 30px 28px;
   align-content: center;
   justify-items: center;
-  gap: 8px;
+  gap: 4px;
+  min-height: 96px;
   border: 1px solid color-mix(in srgb, var(--card-color) 22%, var(--line));
   border-radius: var(--radius);
-  padding: 12px 14px;
+  padding: 10px 14px;
   background: color-mix(in srgb, var(--card-color) 4%, #ffffff);
   text-align: center;
 }
@@ -4723,7 +4724,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-booking-summary-card[data-tone="status"] > strong {
   font-size: 16px;
-  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .ballet-plan-week-switcher {
@@ -5179,11 +5180,12 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-booking-result-summary > article {
   --result-color: var(--ballet);
   display: grid;
+  grid-template-rows: 16px 30px 28px;
   align-content: center;
   justify-items: center;
-  gap: 7px;
-  min-height: 112px;
-  padding: 14px 10px;
+  gap: 4px;
+  min-height: 96px;
+  padding: 10px;
   border: 1px solid color-mix(in srgb, var(--result-color) 22%, var(--line));
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--result-color) 4%, #ffffff);
@@ -5200,29 +5202,33 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-booking-result-summary span,
 .ballet-booking-result-summary small {
+  align-self: center;
   color: var(--muted);
   font-size: 10px;
   font-weight: 750;
 }
 
 .ballet-booking-result-summary strong {
+  align-self: center;
   color: var(--result-color);
   font-size: 24px;
+  line-height: 30px;
   font-variant-numeric: tabular-nums;
 }
 
 .ballet-booking-summary-card > span,
 .ballet-booking-summary-card > small {
-  align-self: start;
+  align-self: center;
   color: var(--muted);
   font-size: 11px;
   font-weight: 750;
 }
 
 .ballet-booking-summary-card > strong {
-  align-self: start;
+  align-self: center;
   color: var(--card-color);
   font-size: 22px;
+  line-height: 30px;
   font-variant-numeric: tabular-nums;
 }
 

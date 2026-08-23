@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 16:09",
-  "version": "1.0.10.28",
-  "versionLabel": "v1.0.10.28",
-  "branch": "bugfix/ballet-hour-card-density",
-  "commit": "6ac3927",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-hour-card-density · commit 6ac3927 · 干净",
+  "updatedAt": "2026-08-23 16:17",
+  "version": "1.0.10.29",
+  "versionLabel": "v1.0.10.29",
+  "branch": "bugfix/ballet-booking-summary-height",
+  "commit": "6aa3afa",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-booking-summary-height · commit 6aa3afa · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "压缩抢课摘要并统一文字居中",
+      "summary": "“抢课助手 / 本次抢课”两组指标卡统一为相同的标题、数值、说明三行网格与 `96px` 最小高度，外框同步缩短约 `16px`；两组文字围绕卡片中心对称排列，长说明仍保留完整显示。"
+    },
     {
       "date": "2026-08-23",
       "title": "放松一小时课程卡的排版密度",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-23",
       "title": "补抢漏掉的周六 L1.5 并刷新芭蕾数据",
       "summary": "对 2026-08-29 15:30–17:00 徐老师大教室「芭蕾L1.5 - 入门+」完成实时唯一匹配 dry-run，确认 `status=ready`、`mutationAttempts=0` 后按 Owner 授权提交一次；runner 返回 `status=booked`、`bookingStatus=booked`、`mutationAttempts=1`，独立实时预约查询再次确认成功。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "自动抢课加入芭蕾 L1.5",
-      "summary": "在现有长期周规则中加入全部标准芭蕾 L1.5，课程优先级调整为 `芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课`。"
     }
   ]
 };
