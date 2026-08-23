@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 15:13",
-  "version": "1.0.10.26",
-  "versionLabel": "v1.0.10.26",
-  "branch": "bugfix/ballet-fast-progressive-release",
-  "commit": "89aa514",
+  "updatedAt": "2026-08-23 15:58",
+  "version": "1.0.10.27",
+  "versionLabel": "v1.0.10.27",
+  "branch": "bugfix/ballet-plan-hide-counts",
+  "commit": "1344b53",
   "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-fast-progressive-release · commit 89aa514 · 有未提交代码改动",
+  "dirtyLevel": "generated",
+  "deployNote": "bugfix/ballet-plan-hide-counts · commit 1344b53 · 运行数据已更新",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "统一隐藏周安排课程人数",
+      "summary": "“课程计划 / 周安排”中的真实预约与候补课程卡统一隐藏报名人数、容量和全班候补人数，只保留课程、老师、时间及个人预约 / 候补状态；下方完整课程表继续正常展示人数统计。"
+    },
     {
       "date": "2026-08-23",
       "title": "修复分批放课漏课并优化整批抢课流水线",
@@ -28,11 +33,6 @@
       "date": "2026-08-19",
       "title": "排除已转出但仍被闻道记为已上课的单节课程",
       "summary": "将 2026-08-18 19:45–21:15 大教室的「芭蕾L1-入门」按日期、起止时间、课程名和教室精确排除出公开上课历史与全部训练统计；该课已转出且没有实际上课，闻道实时查询与私有账本仍保留源站事实，其他课程及未来同名课程不受影响。"
-    },
-    {
-      "date": "2026-08-17",
-      "title": "上课历史改为紧凑悬浮层",
-      "summary": "“查看更多”整宽底栏改为历史标题区的紧凑“全部记录”按钮；点击后在当前页面中央打开限高悬浮层，全部课程仅在浮层内部纵向滚动，不再占用整页高的右侧抽屉。"
     }
   ]
 }
