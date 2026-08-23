@@ -1,27 +1,20 @@
 {
   "schemaVersion": 1,
   "source": "ROADMAP.md",
-  "sourceUpdatedAt": "2026-08-23 14:33",
-  "generatedAt": "2026-08-23 14:33",
+  "sourceUpdatedAt": "2026-08-23 15:03",
+  "generatedAt": "2026-08-23 15:04",
   "staleAfterHours": 168,
-  "sourceFingerprint": "629452edf3b9150d107ab6060b04820e9bcf8270a276997e4badb795286d6be6",
+  "sourceFingerprint": "7c89e8c70fa6f22645fee4eac33058ccf9cd630e39003319dac9ae7308a472cd",
   "mainlines": [
-    {
-      "title": "修复自动抢课在分批放课时漏课",
-      "note": "来源：2026-08-23 Fast Path 在 14:20 执行时漏掉周四晚与周六下午的 L1.5；当天只要先出现任意 L1 / 软开，日期级预取就提前收口，没有等待同日课程发布稳定。",
-      "label": "Now",
-      "status": "active",
-      "sourceArea": "Now"
-    }
-  ],
-  "actions": [
     {
       "title": "规划个人博客发布链路",
       "note": "建议分支：`feature/blog-module-plan`",
       "label": "Now",
       "status": "active",
       "sourceArea": "Now"
-    },
+    }
+  ],
+  "actions": [
     {
       "title": "让芭蕾自动抢课支持动态配置",
       "note": "来源：2026-08-01 Owner 希望以后改课不再由 Codex 修改脚本，而是在 MaxNow 中动态调整抢课方式。",
@@ -31,6 +24,13 @@
     },
     {
       "title": "补齐前端自动测试、无障碍与移动端验证",
+      "note": "来源：2026-07-10 MaxNow 整体体检。",
+      "label": "Next",
+      "status": "waiting",
+      "sourceArea": "Next"
+    },
+    {
+      "title": "收紧外部依赖和链接安全",
       "note": "来源：2026-07-10 MaxNow 整体体检。",
       "label": "Next",
       "status": "waiting",

@@ -83,6 +83,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/sync_weather.py`：从 Open-Meteo 的中国气象局 CMA / GRAPES 模型刷新北京市海淀区天气，写入 `dash/data/dashboard.*` 的 `weather` 字段，并用当前降水量修正漏报为云的天气码。
 - `scripts/sync_market_indices.py`：从腾讯公开行情接口刷新纳指100、标普500、上证指数、深证成指和创业板指，生成 Home 市场涨幅卡读取的 `dash/data/market-indices.*`。
 - `SERVER_RUNBOOK.md`：服务器操作和部署排障手册，改服务器前先读。
+- 芭蕾 Fast Path 当前使用分批放课流水线：14:20 第一轮课表后立即处理已发现 L1，后台在第 2 / 6 / 10 秒继续刷新六个目标日期，再按稳定快照完成 L1.5 与软开；真实预约 / 候补始终单线程，未知 mutation 不重复提交，只在第 0.8 / 2 / 4 秒追加限定日期的只读核验。配置与实现入口为 `config/ballet-booking-fast.json`、`scripts/book_ballet_fast.py`，生产操作以 `WENDA_BOOKING_AGENT.md` 和 `SERVER_RUNBOOK.md` 为准。
 
 维护方式：
 

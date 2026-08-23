@@ -342,7 +342,7 @@ def check_ballet_booking_fast():
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     rules = config.get("selectionRules", [])
     if (
-        config.get("schemaVersion") != 5
+        config.get("schemaVersion") != 6
         or not rules
         or config.get("priorityCourses")
         != [
@@ -352,6 +352,8 @@ def check_ballet_booking_fast():
         ]
         or config.get("priorityWeekdays") != [5, 0, 1, 2, 3, 4]
         or config.get("venuePriority") != ["大教室", "小教室"]
+        or config.get("discoveryRefreshSeconds") != [2, 6, 10]
+        or config.get("unknownVerificationSeconds") != [0.8, 2, 4]
         or any(
             rule.get("weekdays") != [0, 1, 2, 3, 4, 5]
             or "teacher" in rule
@@ -441,7 +443,10 @@ def check_ballet_booking_fast():
         "class PersistentWendaBookingSource",
         "PREFETCH_WORKERS = 3",
         "PREFLIGHT_WORKERS = 2",
-        "PREFLIGHT_TTL_SECONDS = 8",
+        "DISCOVERY_WORKERS = 2",
+        "PREFLIGHT_TTL_SECONDS = 15",
+        'config["discoveryRefreshSeconds"]',
+        'config["unknownVerificationSeconds"]',
         "Actual booking or waitlist mutations must remain strictly serial",
         "ConditionPathExists=/etc/maxnow-ballet/enable-fast-booking",
         "OnSuccess=maxnow-ballet-sync.service",

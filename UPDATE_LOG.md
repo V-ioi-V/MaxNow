@@ -11,6 +11,14 @@
 
 ## 2026-08-23
 
+### 修复分批放课漏课并优化整批抢课流水线
+
+- Fast Path 不再在日期页出现任意目标后停止刷新：第一轮课表完成后立即串行处理已发现 L1，同时在放课后第 2 / 6 / 10 秒以最多 2 路只读 GET 后台刷新六个日期；稳定快照补入稍后发布的课程后，再保持 `L1 → L1.5 → 软开` 完成整批提交。
+- 课程卡与规则预检有效期由 8 秒调整为 15 秒，使已完成预检可以跨越 10 秒发现窗口复用；真实 mutation 仍严格串行，新增 `lastMutationAtMilliseconds` 与 `discoveryWallMilliseconds` 以区分全部提交完成和最终核验耗时。
+- `unknown_result` 继续禁止重复 POST；统一核验未命中后，仅在提交后第 0.8 / 2 / 4 秒查询目标日期的预约详情，迟到可见的预约 / 候补可回填状态与 `verificationAttempts`。
+- 新增分批发布、未知候补延迟可见和“L1 提交早于发现窗口结束”回归；96 项芭蕾测试通过，其中 Fast Path 22 项。部署验收只允许 preview、dry-run 和只读状态检查，不手动启动 execute。
+- 版本提升到 `1.0.10.26`。
+
 ### 补抢漏掉的周六 L1.5 并刷新芭蕾数据
 
 - 对 2026-08-29 15:30–17:00 徐老师大教室「芭蕾L1.5 - 入门+」完成实时唯一匹配 dry-run，确认 `status=ready`、`mutationAttempts=0` 后按 Owner 授权提交一次；runner 返回 `status=booked`、`bookingStatus=booked`、`mutationAttempts=1`，独立实时预约查询再次确认成功。

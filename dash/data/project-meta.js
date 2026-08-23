@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 14:33",
-  "version": "1.0.10.25",
-  "versionLabel": "v1.0.10.25",
+  "updatedAt": "2026-08-23 15:05",
+  "version": "1.0.10.26",
+  "versionLabel": "v1.0.10.26",
   "branch": "bugfix/ballet-fast-progressive-release",
-  "commit": "763c871",
+  "commit": "34c29e5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-fast-progressive-release · commit 763c871 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-fast-progressive-release · commit 34c29e5 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "修复分批放课漏课并优化整批抢课流水线",
+      "summary": "Fast Path 不再在日期页出现任意目标后停止刷新：第一轮课表完成后立即串行处理已发现 L1，同时在放课后第 2 / 6 / 10 秒以最多 2 路只读 GET 后台刷新六个日期；稳定快照补入稍后发布的课程后，再保持 `L1 → L1.5 → 软开` 完成整批提交。"
+    },
     {
       "date": "2026-08-23",
       "title": "补抢漏掉的周六 L1.5 并刷新芭蕾数据",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-17",
       "title": "上课历史改为紧凑悬浮层",
       "summary": "“查看更多”整宽底栏改为历史标题区的紧凑“全部记录”按钮；点击后在当前页面中央打开限高悬浮层，全部课程仅在浮层内部纵向滚动，不再占用整页高的右侧抽屉。"
-    },
-    {
-      "date": "2026-08-17",
-      "title": "移除周安排的冗余时间标签",
-      "summary": "周安排左侧时间轴不再显示压缩空档中的 `13:00` 和底部收口处的 `21:15`；压缩斜纹、课程分钟位置和末课结束处的精准收口均保持不变，课程卡内完整起止时间继续显示。"
     }
   ]
 };

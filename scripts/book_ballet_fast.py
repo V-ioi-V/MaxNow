@@ -34,8 +34,9 @@ COURSE_TYPE_LABELS = {
 MAX_RETRIES = 3
 RETRY_DELAYS_SECONDS = (0.08, 0.16, 0.32)
 PREFETCH_WORKERS = 3
+DISCOVERY_WORKERS = 2
 PREFLIGHT_WORKERS = 2
-PREFLIGHT_TTL_SECONDS = 8
+PREFLIGHT_TTL_SECONDS = 15
 MAX_DISCOVERED_TARGETS = 30
 RETRIABLE_PREFLIGHT_CODES = {
     "card_not_open",
@@ -314,11 +315,13 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 5
+        or data.get("schemaVersion") != 6
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
         or not isinstance(data.get("release"), dict)
+        or not isinstance(data.get("discoveryRefreshSeconds"), list)
+        or not isinstance(data.get("unknownVerificationSeconds"), list)
         or data["release"].get("weekday") != 6
         or not isinstance(data.get("priorityWeekdays"), list)
         or not isinstance(data.get("priorityCourses"), list)
@@ -330,6 +333,22 @@ def load_config(path: Path) -> dict[str, Any]:
     ):
         raise FastBookingFailure("configuration_error")
     parse_hhmm(data["release"].get("time"))
+    discovery_refresh_seconds = data["discoveryRefreshSeconds"]
+    unknown_verification_seconds = data["unknownVerificationSeconds"]
+    if (
+        discovery_refresh_seconds != sorted(discovery_refresh_seconds)
+        or unknown_verification_seconds != sorted(unknown_verification_seconds)
+        or not 1 <= len(discovery_refresh_seconds) <= 5
+        or not 1 <= len(unknown_verification_seconds) <= 5
+        or any(
+            not isinstance(value, (int, float))
+            or isinstance(value, bool)
+            or value < 0
+            or value > 15
+            for value in discovery_refresh_seconds + unknown_verification_seconds
+        )
+    ):
+        raise FastBookingFailure("configuration_error")
     priorities = data["priorityWeekdays"]
     if priorities != [5, 0, 1, 2, 3, 4]:
         raise FastBookingFailure("configuration_error")
@@ -663,7 +682,9 @@ def prepare_candidate(
 
 
 def query_bookings_parallel(
-    source: Any, max_workers: int = PREFETCH_WORKERS
+    source: Any,
+    max_workers: int = PREFETCH_WORKERS,
+    target_dates: set[str] | None = None,
 ) -> dict[str, Any]:
     html = source.request(ballet.BOOKING_PATH, "约课记录")
     index = ballet.parse_index(html, "booking")
@@ -671,6 +692,7 @@ def query_bookings_parallel(
         item
         for item in index
         if item.get("status") in {"已预约", "排队中", "候补中"}
+        and (target_dates is None or item.get("date") in target_dates)
     ]
     if len(active) > live.MAX_DETAIL_RECORDS:
         raise ballet.SyncFailure("source_changed")
@@ -764,6 +786,7 @@ def safe_record(target: dict[str, Any], status: str, **extra: Any) -> dict[str, 
             "waitlistPosition",
             "elapsedMilliseconds",
             "verified",
+            "verificationAttempts",
         }
     }
     return {**public_target(target), "status": status, **allowed_extra}
@@ -796,6 +819,7 @@ def run_fast(
     newly_waitlisted_occurrences: set[str] = set()
     global_stop_reason = ""
     mutation_wall_milliseconds = 0
+    last_mutation_at_milliseconds = 0
 
     prefetch_started = time.monotonic()
     unique_dates = list(
@@ -804,22 +828,11 @@ def run_fast(
     prefetched_pages: dict[str, str | Exception] = {}
 
     def fetch_date(target_date: str) -> str:
-        date_rules = [
-            target for target in planned_targets if target["date"] == target_date
-        ]
         for attempt in range(1, MAX_RETRIES + 2):
             try:
-                text = source.request(
+                return source.request(
                     f"{ballet.TIMETABLE_PATH}/{target_date}", "classtable"
                 )
-                entries = parse_timetable_entries(text, target_date)
-                if any(
-                    rule_matches(entry["record"], rule)
-                    for entry in entries
-                    for rule in date_rules
-                ) or attempt > MAX_RETRIES:
-                    return text
-                sleeper(RETRY_DELAYS_SECONDS[attempt - 1])
             except (booking.BookingFailure, ballet.SyncFailure) as failure:
                 if (
                     getattr(failure, "code", "")
@@ -829,6 +842,50 @@ def run_fast(
                     raise
                 sleeper(RETRY_DELAYS_SECONDS[attempt - 1])
         raise FastBookingFailure("network_error")
+
+    def page_target_count(target_date: str, page: str) -> int:
+        date_rules = [
+            target for target in planned_targets if target["date"] == target_date
+        ]
+        return sum(
+            1
+            for entry in parse_timetable_entries(page, target_date)
+            if any(rule_matches(entry["record"], rule) for rule in date_rules)
+        )
+
+    def refresh_discovery_pages(
+        initial_pages: dict[str, str | Exception],
+    ) -> dict[str, str | Exception]:
+        pages = dict(initial_pages)
+        refresh_started = time.monotonic()
+        for offset in config["discoveryRefreshSeconds"]:
+            sleeper(
+                max(
+                    0.0,
+                    float(offset) - (time.monotonic() - refresh_started),
+                )
+            )
+            with ThreadPoolExecutor(
+                max_workers=min(DISCOVERY_WORKERS, len(unique_dates))
+            ) as refresh_pool:
+                futures = {
+                    target_date: refresh_pool.submit(fetch_date, target_date)
+                    for target_date in unique_dates
+                }
+                for target_date, future in futures.items():
+                    try:
+                        refreshed = future.result()
+                        current = pages.get(target_date)
+                        if (
+                            isinstance(current, Exception)
+                            or page_target_count(target_date, refreshed)
+                            >= page_target_count(target_date, current)
+                        ):
+                            pages[target_date] = refreshed
+                    except (booking.BookingFailure, ballet.SyncFailure) as failure:
+                        if isinstance(pages.get(target_date), Exception):
+                            pages[target_date] = failure
+        return pages
 
     with ThreadPoolExecutor(
         max_workers=min(PREFETCH_WORKERS, len(unique_dates))
@@ -844,6 +901,11 @@ def run_fast(
                 prefetched_pages[target_date] = failure
     prefetch_wall_milliseconds = round(
         (time.monotonic() - prefetch_started) * 1000
+    )
+    discovery_executor = ThreadPoolExecutor(max_workers=1)
+    discovery_started = time.monotonic()
+    discovery_future = discovery_executor.submit(
+        refresh_discovery_pages, prefetched_pages
     )
     targets = discover_targets(config, planned_targets, prefetched_pages)
 
@@ -877,7 +939,71 @@ def run_fast(
         except (booking.BookingFailure, ballet.SyncFailure) as failure:
             cached_candidates[target["key"]] = failure
 
-    for target in targets:
+    target_index = 0
+    discovery_settled = False
+    discovery_wall_milliseconds = 0
+    while True:
+        needs_settle = not discovery_settled and (
+            target_index >= len(targets)
+            or course_priority_rank(
+                targets[target_index], config["priorityCourses"]
+            )
+            != 0
+        )
+        if needs_settle:
+            settled_pages = discovery_future.result()
+            discovery_executor.shutdown(wait=True, cancel_futures=True)
+            discovery_wall_milliseconds = round(
+                (time.monotonic() - discovery_started) * 1000
+            )
+            discovery_settled = True
+            processed_keys = {record["key"] for record in records}
+            targets = [
+                target
+                for target in discover_targets(
+                    config, planned_targets, settled_pages
+                )
+                if target["key"] not in processed_keys
+            ]
+            target_index = 0
+            for target in targets:
+                if target.get("_discoveryFailure") is not None:
+                    cached_candidates[target["key"]] = target[
+                        "_discoveryFailure"
+                    ]
+                    continue
+                occurrence = occurrence_key(target)
+                if occurrence in booked_occurrences:
+                    continue
+                page = settled_pages[target["date"]]
+                if isinstance(page, Exception):
+                    cached_candidates[target["key"]] = page
+                    continue
+                try:
+                    candidates = timetable_candidates(source, target, page)
+                    cached_candidates[target["key"]] = candidates
+                    if len(candidates) != 1:
+                        continue
+                    availability = candidates[0]["record"]["availability"]
+                    actionable = availability == "available" or (
+                        availability == "queue_available"
+                        and config["allowWaitlist"]
+                    )
+                    if actionable and target["key"] not in preflight_futures:
+                        preflight_futures[target["key"]] = (
+                            preflight_executor.submit(
+                                prepare_candidate, source, candidates[0]
+                            )
+                        )
+                except (booking.BookingFailure, ballet.SyncFailure) as failure:
+                    cached_candidates[target["key"]] = failure
+            continue
+
+        if target_index >= len(targets):
+            break
+        target = targets[target_index]
+        target_index += 1
+
         target_started = time.monotonic()
         if global_stop_reason:
             records.append(
@@ -1031,6 +1157,9 @@ def run_fast(
                     mutation_wall_milliseconds += round(
                         (time.monotonic() - mutation_started) * 1000
                     )
+                    last_mutation_at_milliseconds = round(
+                        (time.monotonic() - run_started) * 1000
+                    )
                 if (
                     isinstance(mutation, int)
                     and not isinstance(mutation, bool)
@@ -1141,14 +1270,54 @@ def run_fast(
                     )
                 break
 
+    if not discovery_settled:
+        discovery_future.result()
+        discovery_executor.shutdown(wait=True, cancel_futures=True)
+        discovery_wall_milliseconds = round(
+            (time.monotonic() - discovery_started) * 1000
+        )
     preflight_executor.shutdown(wait=True, cancel_futures=True)
     critical_path_milliseconds = round((time.monotonic() - run_started) * 1000)
     verification_error = ""
     verification_started = time.monotonic()
     if execute and verification_targets:
-        try:
-            bookings = query_bookings_parallel(source)["records"]
-            for index, target, acknowledged, intended_outcome in verification_targets:
+        unresolved = list(verification_targets)
+        verification_retry_started = time.monotonic()
+        verification_offsets = [0.0, *config["unknownVerificationSeconds"]]
+        for verification_attempt, offset in enumerate(
+            verification_offsets, start=1
+        ):
+            if verification_attempt > 1:
+                retryable = [item for item in unresolved if not item[2]]
+                if not retryable:
+                    break
+                sleeper(
+                    max(
+                        0.0,
+                        float(offset)
+                        - (time.monotonic() - verification_retry_started),
+                    )
+                )
+                selected = retryable
+                target_dates = {item[1]["date"] for item in selected}
+            else:
+                selected = unresolved
+                target_dates = None
+            try:
+                bookings = query_bookings_parallel(
+                    source, target_dates=target_dates
+                )["records"]
+            except (booking.BookingFailure, ballet.SyncFailure):
+                continue
+            remaining = []
+            selected_indexes = {item[0] for item in selected}
+            for index, target, acknowledged, intended_outcome in unresolved:
+                if index not in selected_indexes:
+                    remaining.append(
+                        (index, target, acknowledged, intended_outcome)
+                    )
+                    continue
+                records[index]["verificationAttempts"] = verification_attempt
                 matched = existing_booking_matches(bookings, target)
                 verified = matched is not None
                 records[index]["verified"] = verified
@@ -1173,14 +1342,17 @@ def run_fast(
                     else:
                         newly_waitlisted_occurrences.discard(occurrence)
                         newly_booked_occurrences.add(occurrence)
-                elif not acknowledged:
-                    records[index]["status"] = "unknown_result"
-            if any(
-                not records[index]["verified"]
-                for index, _, _, _ in verification_targets
-            ):
-                verification_error = "verification_unavailable"
-        except (booking.BookingFailure, ballet.SyncFailure):
+                else:
+                    remaining.append(
+                        (index, target, acknowledged, intended_outcome)
+                    )
+                    if not acknowledged:
+                        records[index]["status"] = "unknown_result"
+            unresolved = remaining
+        if any(
+            not records[index]["verified"]
+            for index, _, _, _ in verification_targets
+        ):
             verification_error = "verification_unavailable"
     verification_wall_milliseconds = round(
         (time.monotonic() - verification_started) * 1000
@@ -1220,7 +1392,9 @@ def run_fast(
         "totalMilliseconds": round((time.monotonic() - run_started) * 1000),
         "timings": {
             "prefetchWallMilliseconds": prefetch_wall_milliseconds,
+            "discoveryWallMilliseconds": discovery_wall_milliseconds,
             "mutationWallMilliseconds": mutation_wall_milliseconds,
+            "lastMutationAtMilliseconds": last_mutation_at_milliseconds,
             "verificationWallMilliseconds": verification_wall_milliseconds,
             "requestsByStage": (
                 source.timing_summary()

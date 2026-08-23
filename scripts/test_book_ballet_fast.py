@@ -15,11 +15,14 @@ from test_sync_ballet import detail_html, index_html, timetable_html
 
 
 def config():
-    return fast.load_config(
+    data = fast.load_config(
         Path(__file__).resolve().parents[1]
         / "config"
         / "ballet-booking-fast.json"
     )
+    data["discoveryRefreshSeconds"] = [0, 0, 0]
+    data["unknownVerificationSeconds"] = [0, 0, 0]
+    return data
 
 
 class FakeFastSource:
@@ -30,6 +33,9 @@ class FakeFastSource:
         notopen_mutations=0,
         queue_target_keys=None,
         request_delay=0,
+        progressive_l15_after_requests=None,
+        unknown_commits=False,
+        verification_visibility_delay=0,
     ):
         self.request_count = 0
         self.post_count = 0
@@ -42,6 +48,13 @@ class FakeFastSource:
         self.course_by_class_table_id = {}
         self.waitlisted_records = []
         self.request_delay = request_delay
+        self.progressive_l15_after_requests = dict(
+            progressive_l15_after_requests or {}
+        )
+        self.timetable_requests_by_date = {}
+        self.unknown_commits = unknown_commits
+        self.verification_visibility_delay = verification_visibility_delay
+        self.booking_query_count = 0
         self.active_timetable = 0
         self.max_active_timetable = 0
         self.active_preflight = 0
@@ -49,6 +62,7 @@ class FakeFastSource:
         self.active_mutation = 0
         self.max_active_mutation = 0
         self.mutation_order = []
+        self.mutation_timestamps = []
 
     def request(self, path, marker):
         with self.lock:
@@ -68,6 +82,13 @@ class FakeFastSource:
                 if should_fail:
                     raise ballet.SyncFailure("network_error")
                 active_date = path.rsplit("/", 1)[-1]
+                with self.lock:
+                    date_request_count = (
+                        self.timetable_requests_by_date.get(active_date, 0) + 1
+                    )
+                    self.timetable_requests_by_date[active_date] = (
+                        date_request_count
+                    )
                 day = datetime.fromisoformat(active_date).weekday()
                 courses = (
                     [
@@ -95,6 +116,10 @@ class FakeFastSource:
                     if day in {0, 1, 2, 3, 4}
                     else [("肌肉素质", "19:00", "20:00", "戴俊瑶")]
                 )
+                if date_request_count <= self.progressive_l15_after_requests.get(
+                    active_date, 0
+                ):
+                    courses = [course for course in courses if "L1.5" not in course[0]]
                 pages = []
                 for index, (course, start, end, teacher) in enumerate(courses, start=1):
                     rule_key = (
@@ -152,11 +177,16 @@ class FakeFastSource:
                 with self.lock:
                     self.active_timetable -= 1
         if path == ballet.BOOKING_PATH:
+            with self.lock:
+                self.booking_query_count += 1
+                visible = (
+                    self.booking_query_count > self.verification_visibility_delay
+                )
             return index_html(
                 "约课记录",
                 [
                     (record["id"], record["course"], record["date"], "排队中")
-                    for record in self.waitlisted_records
+                    for record in self.waitlisted_records if visible
                 ],
             )
         detail_prefix = f"/gm/weixin/my/bookrecordone/{ballet.STORE_ID}/"
@@ -198,6 +228,7 @@ class FakeFastSource:
             if path == booking.BOOKING_SUBMIT_PATH and mutation:
                 with self.lock:
                     self.mutation_count += 1
+                    self.mutation_timestamps.append(time.monotonic())
                     mutation_count = self.mutation_count
                     selected = self.course_by_class_table_id[
                         str(fields["classtableid"])
@@ -208,6 +239,11 @@ class FakeFastSource:
                     if notopen:
                         self.notopen_mutations -= 1
                 if unknown:
+                    if self.unknown_commits and selected["key"] in self.queue_target_keys:
+                        with self.lock:
+                            self.waitlisted_records.append(
+                                {**selected, "id": str(92000 + mutation_count)}
+                            )
                     return json.dumps({"changed": True})
                 if notopen:
                     return json.dumps("NOTOPEN")
@@ -494,7 +530,7 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(state["totalBooked"], 18)
         self.assertEqual(state["totalRuns"], 1)
-        self.assertEqual(result["requestsMade"], 61)
+        self.assertEqual(result["requestsMade"], 79)
         self.assertEqual(
             source.mutation_order,
             [
@@ -540,6 +576,79 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(result["records"][0]["attempts"], 1)
         self.assertEqual(result["status"], "partial")
         self.assertEqual(state["totalBooked"], 17)
+
+    def test_unknown_result_is_verified_later_without_duplicate_mutation(self):
+        target_key = "ballet-l1-2026-08-08-1300-1430-0"
+        source = FakeFastSource(
+            unknown_on_mutation=1,
+            queue_target_keys={target_key},
+            unknown_commits=True,
+            verification_visibility_delay=2,
+        )
+        result, state = fast.run_fast(
+            source,
+            config(),
+            fast.default_state(),
+            self.release,
+            execute=True,
+            sleeper=lambda _: None,
+        )
+        self.assertEqual(source.mutation_count, 18)
+        self.assertEqual(result["records"][0]["status"], "waitlisted")
+        self.assertEqual(result["records"][0]["verificationAttempts"], 3)
+        self.assertTrue(result["records"][0]["verified"])
+        self.assertEqual(state["totalWaitlisted"], 1)
+
+    def test_progressive_release_discovers_late_l15_before_soft_open(self):
+        source = FakeFastSource(
+            progressive_l15_after_requests={
+                "2026-08-06": 1,
+                "2026-08-08": 1,
+            }
+        )
+        result, _ = fast.run_fast(
+            source,
+            config(),
+            fast.default_state(),
+            self.release,
+            execute=True,
+            sleeper=lambda _: None,
+        )
+        self.assertEqual(source.mutation_count, 18)
+        self.assertEqual([record["status"] for record in result["records"]], ["booked"] * 18)
+        first_soft = next(
+            index
+            for index, key in enumerate(source.mutation_order)
+            if key.startswith("soft-open-")
+        )
+        self.assertTrue(
+            all(
+                index < first_soft
+                for index, key in enumerate(source.mutation_order)
+                if key.startswith("ballet-l1-5-")
+            )
+        )
+
+    def test_l1_mutation_pipeline_starts_before_discovery_settles(self):
+        settings = config()
+        settings["discoveryRefreshSeconds"] = [0.08, 0.1, 0.12]
+        source = FakeFastSource(request_delay=0.002)
+        started = time.monotonic()
+        result, _ = fast.run_fast(
+            source,
+            settings,
+            fast.default_state(),
+            self.release,
+            execute=True,
+        )
+        first_mutation_milliseconds = round(
+            (source.mutation_timestamps[0] - started) * 1000
+        )
+        self.assertLess(
+            first_mutation_milliseconds,
+            result["timings"]["discoveryWallMilliseconds"],
+        )
+        self.assertEqual(source.max_active_mutation, 1)
 
     def test_transient_preflight_failures_recover_and_book(self):
         source = FakeFastSource(timetable_failures=2)
@@ -660,7 +769,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(source.max_active_timetable, 3)
         self.assertEqual(source.max_active_preflight, 2)
         self.assertEqual(source.max_active_mutation, 1)
-        self.assertEqual(source.request_count, 61)
+        self.assertEqual(source.request_count, 79)
 
     def test_persistent_source_reuses_connection_and_requests_keep_alive(self):
         connection = FakeHttpConnection(
