@@ -2618,6 +2618,19 @@ automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 ac
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-08-23 已部署完整课程表一小时卡密度优化：
+
+```text
+deployed source commit: 8b8b9cc chore: align project metadata after merge（功能提交 8f57213）
+version: 1.0.10.28
+changes: 完整 60 分钟课程不再进入短课紧凑模式，并提高宽屏分钟刻度；一小时卡恢复标准字号、内边距和信息层级，不足 60 分钟的短课继续紧凑显示，长空档仍独立压缩
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260823-161110-ballet-hour-card-density/runtime-data.tgz；部署 stash predeploy-ballet-hour-card-density-20260823-161110 保留
+browser verification: 2048 / 1920 / 1501 / 1500 / 1101 / 390px 共 55 张脱敏课程卡无内容裁切；桌面课表与整页横向溢出均为 0，晚间一小时卡视觉间距正常
+server verification: scripts/check.py 与 nginx -t 全部通过；styles.css?v=254、app.js?v=218 生效；服务器 HEAD 与 origin/main 一致；匿名首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
+
 2026-08-23 已部署周安排课程人数隐藏：
 
 ```text
