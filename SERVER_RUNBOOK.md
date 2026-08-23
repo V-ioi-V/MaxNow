@@ -2657,6 +2657,19 @@ automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 ac
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-08-23 已部署一小时卡仅缩小次级数字信息：
+
+```text
+deployed source commits: a65b903 fix(ballet): shrink compact secondary details only + 15c371a chore: refresh project metadata
+version: 1.0.10.33
+changes: 60 分钟及以下课程仅把报名 / 容量 / 全班排队人数行和完整起止时间缩至 6.5px；课程名、老师和状态标签恢复继承同轨 90 分钟课程的字号、最小高度与横向内边距，状态继续位于时间下方独占底行，卡片高度和课表时间尺度不变
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260823-180113-ballet-compact-secondary-only
+browser verification: 当前完整课表 23 张一小时紧凑卡在 2048 / 1920 / 1800 / 1501 / 1500 / 1101px 下课程名 11px、老师与状态文字 9px、状态标签 min-height 16px / padding-inline 5px，与同轨 90 分钟卡完全一致；人数 / 排队行和时间均为 6.5px，全部内容无裁切，桌面断点与 390px 整页横向溢出均为 0
+server verification: 18:00 计划内 rolling 只读同步先自然完成为 success / 0 后再部署；scripts/check.py 与 nginx -t 全部通过，styles.css?v=259 生效，服务器 HEAD 与 origin/main 一致；匿名首页 / 登录页 / 芭蕾数据为 302 / 200 / 401
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 部署未手动启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课；ballet.json / ballet.js 备份恢复后哈希一致
+```
+
 2026-08-23 已部署全量一小时紧凑卡复用修复：
 
 ```text
