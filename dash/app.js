@@ -15,7 +15,7 @@ const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json";
 const BALLET_WEEK_TEMPLATE_URL = "./assets/ballet-week-cover/template.json";
 const BALLET_WEEK_FALLBACK_CONFIG = {
   templateVersion: "v1",
-  briefTemplateVersion: "v1",
+  briefTemplateVersion: "v2",
   briefTemplateFile: "brief-template-v1.webp",
   briefDataRefreshDelayMinutes: 10,
   briefGenerateDelayMinutes: 20,

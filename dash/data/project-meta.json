@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 18:31",
-  "version": "1.0.11.00",
-  "versionLabel": "v1.0.11.00",
-  "branch": "feature/ballet-dynamic-week-closeout",
-  "commit": "1bddd75",
+  "updatedAt": "2026-08-23 18:40",
+  "version": "1.0.11.01",
+  "versionLabel": "v1.0.11.01",
+  "branch": "feature/ballet-brief-cute-font",
+  "commit": "fdf9ea0",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-dynamic-week-closeout · commit 1bddd75 · 干净",
+  "deployNote": "feature/ballet-brief-cute-font · commit fdf9ea0 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "周简报动态字改为端正可爱的马善政字体",
+      "summary": "按 Owner 反馈只替换周简报中动态填写的周数、日期、次数、时长和课程名：由歪斜感较强的 Long Cang 改为更端正、圆润和可爱的项目内置 Ma Shan Zheng；底图标题、六项指标名、数据位置、字号和颜色保持不变。"
+    },
     {
       "date": "2026-08-23",
       "title": "周简报改为按每周期最后一节动态结算",
@@ -28,11 +33,6 @@
       "date": "2026-08-23",
       "title": "放松一小时紧凑卡的内部排版",
       "summary": "保持完整课程表及一小时卡现有紧凑高度不变，将 60 分钟及以下课程的课程名缩至 `9px`、老师 / 人数 / 时间缩至 `7px`；“已预约”从时间右侧移到卡片最底部，左对齐独占一行，解决宽屏半宽教室列中的横向拥挤。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "恢复课程表紧凑高度并缩小一小时卡字体",
-      "summary": "按 Owner 反馈撤回一小时课程增高方案：完整课程表恢复原有宽屏分钟刻度，60 分钟及以下课程重新使用紧凑卡片字号、行高、间距和内边距；课程名、老师、人数、完整时间与状态继续保留，90 分钟课程仍按真实时长更高，长空档继续压缩。"
     }
   ]
 }
