@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-19 00:04",
-  "version": "1.0.10.23",
-  "versionLabel": "v1.0.10.23",
-  "branch": "main",
-  "commit": "55fe864",
+  "updatedAt": "2026-08-23 13:55",
+  "version": "1.0.10.24",
+  "versionLabel": "v1.0.10.24",
+  "branch": "feature/ballet-fast-l15",
+  "commit": "07babe5",
   "dirty": true,
   "dirtyLevel": "generated",
-  "deployNote": "main · commit 55fe864 · 运行数据已更新",
+  "deployNote": "feature/ballet-fast-l15 · commit 07babe5 · 运行数据已更新",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "自动抢课加入芭蕾 L1.5",
+      "summary": "在现有长期周规则中加入全部标准芭蕾 L1.5，课程优先级调整为 `芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课`。"
+    },
     {
       "date": "2026-08-19",
       "title": "排除已转出但仍被闻道记为已上课的单节课程",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-17",
       "title": "校正 7 月 30 日软开课老师",
       "summary": "将 2026-07-30 18:45–19:45 软开课的历史老师明确校正为“王嘉豪”。该校正按日期、起止时间和课程名精确命中，只作用于历史公开记录与老师聚合，不改变其他软开课、未来课表、预约或候补。"
-    },
-    {
-      "date": "2026-08-17",
-      "title": "训练记录默认展示全部",
-      "summary": "芭蕾“训练记录”初次打开默认选中“全部”，主数字、课型、级别、老师、历年趋势与上课历史直接采用完整记录口径；仍可手动切换“本月 / 今年”。异常回退同样回到“全部”，避免刷新后重新缩到本月。"
     }
   ]
 };
