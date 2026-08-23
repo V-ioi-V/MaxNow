@@ -5278,7 +5278,7 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
   article.className = mobile ? "ballet-timetable-course is-mobile" : "ballet-timetable-course";
   article.dataset.courseType = String(record.courseType || "other").toLowerCase();
   article.dataset.level = String(record.level || "none").toLowerCase();
-  article.dataset.compact = Number(record.durationMinutes) <= 60 ? "true" : "false";
+  article.dataset.compact = Number(record.durationMinutes) < 60 ? "true" : "false";
   const status = getBalletTimetableStatus(record);
   article.dataset.availability = status.key;
 

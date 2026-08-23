@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 15:13",
-  "version": "1.0.10.26",
-  "versionLabel": "v1.0.10.26",
-  "branch": "bugfix/ballet-fast-progressive-release",
-  "commit": "89aa514",
+  "updatedAt": "2026-08-23 16:05",
+  "version": "1.0.10.28",
+  "versionLabel": "v1.0.10.28",
+  "branch": "bugfix/ballet-hour-card-density",
+  "commit": "cfb4760",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-fast-progressive-release · commit 89aa514 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-hour-card-density · commit cfb4760 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "放松一小时课程卡的排版密度",
+      "summary": "本周课程表不再把完整 60 分钟课程压成短课紧凑模式，并适度放大宽屏分钟刻度；一小时课程获得约 `99px` 的真实高度并恢复标准字号、内边距和状态信息层级，只有不足 60 分钟的课程继续使用紧凑排版，长空档仍按原规则压缩。"
+    },
     {
       "date": "2026-08-23",
       "title": "修复分批放课漏课并优化整批抢课流水线",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-19",
       "title": "排除已转出但仍被闻道记为已上课的单节课程",
       "summary": "将 2026-08-18 19:45–21:15 大教室的「芭蕾L1-入门」按日期、起止时间、课程名和教室精确排除出公开上课历史与全部训练统计；该课已转出且没有实际上课，闻道实时查询与私有账本仍保留源站事实，其他课程及未来同名课程不受影响。"
-    },
-    {
-      "date": "2026-08-17",
-      "title": "上课历史改为紧凑悬浮层",
-      "summary": "“查看更多”整宽底栏改为历史标题区的紧凑“全部记录”按钮；点击后在当前页面中央打开限高悬浮层，全部课程仅在浮层内部纵向滚动，不再占用整页高的右侧抽屉。"
     }
   ]
 };

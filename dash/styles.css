@@ -5614,7 +5614,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-timetable-grid {
   --ballet-day-count: 7;
-  --ballet-minute-height: clamp(1.28px, calc(2.14px - 0.04vw), 1.48px);
+  --ballet-minute-height: clamp(1.65px, calc(2.65px - 0.05vw), 1.92px);
   --ballet-day-divider: #dfccd4;
   --ballet-room-divider: #f4eef1;
   width: 100%;
@@ -5639,7 +5639,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 @media (min-width: 1101px) and (max-width: 1500px) {
   .ballet-timetable-grid {
-    --ballet-minute-height: clamp(1.65px, calc(3.26px - 0.1vw), 2.02px);
+    --ballet-minute-height: clamp(1.9px, calc(2.65px - 0.05vw), 2.08px);
   }
 
   .ballet-timetable-course {
