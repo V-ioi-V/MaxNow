@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 16:58",
-  "version": "1.0.10.32",
-  "versionLabel": "v1.0.10.32",
-  "branch": "bugfix/ballet-shared-compact-layout",
-  "commit": "559fb2a",
+  "updatedAt": "2026-08-23 17:57",
+  "version": "1.0.10.33",
+  "versionLabel": "v1.0.10.33",
+  "branch": "bugfix/ballet-compact-secondary-only",
+  "commit": "7af2297",
   "dirty": true,
-  "dirtyLevel": "generated",
-  "deployNote": "bugfix/ballet-shared-compact-layout · commit 559fb2a · 运行数据已更新",
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-compact-secondary-only · commit 7af2297 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "只缩小一小时卡的次级数字信息",
+      "summary": "60 分钟及以下紧凑卡不再整体缩字：课程名、老师与状态标签恢复继承同轨 90 分钟课程的字号和标签尺寸，仅将“报名 / 容量 / 全班排队人数”行与完整起止时间缩至 `6.5px`；状态继续在时间下方独占底行，卡片高度和课表时间尺度不变。"
+    },
     {
       "date": "2026-08-23",
       "title": "统一一小时紧凑卡的复用规则",
@@ -28,11 +33,6 @@
       "date": "2026-08-23",
       "title": "压缩抢课摘要并统一文字居中",
       "summary": "“抢课助手 / 本次抢课”两组指标卡统一为相同的标题、数值、说明三行网格与 `96px` 最小高度，外框同步缩短约 `16px`；两组文字围绕卡片中心对称排列，长说明仍保留完整显示。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "放松一小时课程卡的排版密度",
-      "summary": "本周课程表不再把完整 60 分钟课程压成短课紧凑模式，并适度放大宽屏分钟刻度；一小时课程获得约 `99px` 的真实高度并恢复标准字号、内边距和状态信息层级，只有不足 60 分钟的课程继续使用紧凑排版，长空档仍按原规则压缩。"
     }
   ]
 }

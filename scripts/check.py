@@ -1835,17 +1835,18 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=258" not in dashboard_html
+        "styles.css?v=259" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=219" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
-        "--ballet-compact-title-size: 8px;" not in dashboard_css
-        or "--ballet-compact-detail-size: 6.5px;" not in dashboard_css
+        "--ballet-compact-secondary-size: 6.5px;" not in dashboard_css
+        or "--ballet-compact-title-size:" in dashboard_css
+        or "--ballet-compact-status-height:" in dashboard_css
         or '[data-compact="true"][data-availability="booked"] > div' in dashboard_css
     ):
-        raise ValueError("ballet: compact timetable cards must share one typography and status-row contract")
+        raise ValueError("ballet: compact timetable cards must shrink only metadata and time")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
     if "grid-column: auto;" not in cloud_session_rule:
         raise ValueError("secondary views: Cloud ballet operation cards must share one desktop row")
