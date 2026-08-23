@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 19:27",
+  "updatedAt": "2026-08-23 19:32",
   "version": "1.0.11.04",
   "versionLabel": "v1.0.11.04",
   "branch": "feature/ballet-saturday-teacher-priority",
-  "commit": "2c92ca3",
+  "commit": "dbb32c5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-saturday-teacher-priority · commit 2c92ca3 · 有未提交代码改动",
+  "deployNote": "feature/ballet-saturday-teacher-priority · commit dbb32c5 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-23",

@@ -2753,6 +2753,21 @@ automation state: timer enabled / active，下次 2026-08-30 14:19:35；Fast Pat
 safety: preview 不加载凭据；live dry-run mutationAttempts=0，未执行预约、候补、取消或转课 mutation
 ```
 
+2026-08-23 已部署 Fast Path 工作日李俊老师优先级：
+
+```text
+deployed source commit: dbb32c5 Prioritize Li Jun in weekday ballet booking
+version: 1.0.11.04
+changes: 课程层继续为 L1 → L1.5 → 软开；每层改为周六全部、工作日李俊（老师空白按李俊）、工作日其他老师，各组内保留原日期和开始时间顺序；周六不按老师分层，教室、候补、幂等和 mutation 协议不变
+runtime and private backup: /home/ubuntu/maxnow-deploy-backups/20260823-192951-ballet-teacher-priority
+fixture verification: Fast Path 23 项通过；覆盖周六不分老师、工作日空老师按李俊、李俊小教室优先于其他老师大教室、无李俊时兜底其他老师
+live dry-run: 受保护 transient unit 完成 24 次课表 GET，status=success、records=0、mutationAttempts=0、totalMilliseconds=13230；空记录只表示下一轮课程尚未发布
+state preservation: totalRuns=4、totalBooked=17、totalWaitlisted=5 保持不变；preview 未写入真实运行计数
+server verification: scripts/check.py、nginx -t 通过；HEAD 与 origin/main 均为 dbb32c5；匿名首页 / app.js?v=223 / Blog 为 302 / 302 / 200
+automation state: Fast Path timer enabled / active，下次 2026-08-30 14:19:35；Fast Path service inactive，部署未启动 execute
+safety: preview 不加载凭据；live dry-run mutationAttempts=0，未执行预约、候补、取消或转课 mutation
+```
+
 2026-08-17 已部署上课历史紧凑悬浮层：
 
 ```text
