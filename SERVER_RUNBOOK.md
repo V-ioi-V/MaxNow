@@ -2793,3 +2793,16 @@ server verification: HEAD 与 origin/main 均为 c406566；scripts/check.py 与 
 automation state: rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 本次为静态字体和缓存部署，未访问闻道，未启动芭蕾同步，未执行预约、候补、取消或转课
 ```
+
+2026-08-23 已部署一小时课程卡完整显示修复：
+
+```text
+deployed source commit: b5b92bb Ensure one-hour ballet cards fit
+version: 1.0.11.02
+changes: 60 分钟及以下课程统一将报名 / 排队与完整时间缩至 5px，上下内边距收至 2px 并压紧行高；课程名、老师、状态标签和其他时长课程字号不变
+runtime backup: /tmp/maxnow-data-hour-card-20260823-1900；拉取前备份并在拉取后恢复服务器权威 dash/data，再重新生成 project-meta.*
+browser verification: 使用生产脱敏 70 节课表验证；其中 31 张一小时卡在 1101 / 1500 / 1501 / 1697 / 1920 / 2048 / 2200 / 2500 / 3395px 均无内容裁切，全部 70 张卡在截图对应 1697px 宽度 bad=0，页面横向溢出为 0；390px 页面横向溢出为 0
+server verification: HEAD 与 origin/main 均为 b5b92bb；scripts/check.py 与 nginx -t 通过；styles.css?v=261 与 5px 紧凑次级字号生效；未认证首页 / 芭蕾数据为 302 / 401
+automation state: rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 本次仅部署静态 CSS 与缓存版本，未访问闻道，未启动芭蕾同步，未执行预约、候补、取消或转课
+```

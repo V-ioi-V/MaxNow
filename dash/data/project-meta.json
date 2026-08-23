@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 18:56",
+  "updatedAt": "2026-08-23 18:58",
   "version": "1.0.11.02",
   "versionLabel": "v1.0.11.02",
   "branch": "bugfix/ballet-hour-card-content-fit",
-  "commit": "ea5e62f",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-hour-card-content-fit · commit ea5e62f · 干净",
+  "commit": "b5b92bb",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-hour-card-content-fit · commit b5b92bb · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-23",
