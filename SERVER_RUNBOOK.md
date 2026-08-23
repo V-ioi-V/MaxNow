@@ -2632,6 +2632,18 @@ automation state: Fast Path timer 为 enabled / active，下一次仍为 2026-08
 safety: preview 不加载凭据；live dry-run 仅访问课表并保持 mutationAttempts=0，未执行预约、候补、取消或转课 mutation
 ```
 
+2026-08-23 已补抢 Fast Path 漏掉的周六 L1.5 并刷新芭蕾数据：
+
+```text
+target: 2026-08-29 15:30–17:00，芭蕾L1.5 - 入门+，徐老师，大教室
+preflight: 受保护 booking runner 实时唯一匹配为 ready，mutationAttempts=0
+execute: Owner 明确要求补抢后只提交一次；status=booked、bookingStatus=booked、mutationAttempts=1
+independent verification: 2026-08-23 14:31:11+08:00 实时 bookings 再次唯一确认目标为 booked
+dashboard refresh: maxnow-ballet-sync.service Result=success / ExecMainStatus=0；dataAsOf 与 lastSuccessAt 为 2026-08-23T14:31:23+08:00，cacheState=fresh
+public result: upcoming.records 与 timetable.days 均包含该课并显示 bookingStatus / availability=booked；匿名 ballet.json 继续返回 401
+remaining issue: 14:20 日期页在出现任意匹配目标后过早停止刷新，可能漏掉同日稍后发布的 L1.5；修复已记录到 ROADMAP Now，本次未热改 Fast Path
+```
+
 2026-08-17 已部署上课历史紧凑悬浮层：
 
 ```text

@@ -11,6 +11,13 @@
 
 ## 2026-08-23
 
+### 补抢漏掉的周六 L1.5 并刷新芭蕾数据
+
+- 对 2026-08-29 15:30–17:00 徐老师大教室「芭蕾L1.5 - 入门+」完成实时唯一匹配 dry-run，确认 `status=ready`、`mutationAttempts=0` 后按 Owner 授权提交一次；runner 返回 `status=booked`、`bookingStatus=booked`、`mutationAttempts=1`，独立实时预约查询再次确认成功。
+- 随后启动既有 GET-only rolling 同步，`Result=success`、`ExecMainStatus=0`；`dash/data/ballet.*` 于 14:31:23 刷新为 `fresh`，预约列表与周课表均已显示该课为 booked。
+- 同时记录 Fast Path 分批放课缺口：日期页出现任意目标后过早停止刷新，可能漏掉稍后发布的同日 L1.5；修复已加入 Roadmap Now，本次未改动自动化代码。
+- 版本提升到 `1.0.10.25`。
+
 ### 自动抢课加入芭蕾 L1.5
 
 - 在现有长期周规则中加入全部标准芭蕾 L1.5，课程优先级调整为 `芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课`。

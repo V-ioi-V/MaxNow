@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 14:02",
-  "version": "1.0.10.24",
-  "versionLabel": "v1.0.10.24",
-  "branch": "feature/ballet-fast-l15",
-  "commit": "2b6ed10",
+  "updatedAt": "2026-08-23 14:33",
+  "version": "1.0.10.25",
+  "versionLabel": "v1.0.10.25",
+  "branch": "bugfix/ballet-fast-progressive-release",
+  "commit": "763c871",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-fast-l15 · commit 2b6ed10 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-fast-progressive-release · commit 763c871 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "补抢漏掉的周六 L1.5 并刷新芭蕾数据",
+      "summary": "对 2026-08-29 15:30–17:00 徐老师大教室「芭蕾L1.5 - 入门+」完成实时唯一匹配 dry-run，确认 `status=ready`、`mutationAttempts=0` 后按 Owner 授权提交一次；runner 返回 `status=booked`、`bookingStatus=booked`、`mutationAttempts=1`，独立实时预约查询再次确认成功。"
+    },
     {
       "date": "2026-08-23",
       "title": "自动抢课加入芭蕾 L1.5",
@@ -28,11 +33,6 @@
       "date": "2026-08-17",
       "title": "移除周安排的冗余时间标签",
       "summary": "周安排左侧时间轴不再显示压缩空档中的 `13:00` 和底部收口处的 `21:15`；压缩斜纹、课程分钟位置和末课结束处的精准收口均保持不变，课程卡内完整起止时间继续显示。"
-    },
-    {
-      "date": "2026-08-17",
-      "title": "校正 7 月 30 日软开课老师",
-      "summary": "将 2026-07-30 18:45–19:45 软开课的历史老师明确校正为“王嘉豪”。该校正按日期、起止时间和课程名精确命中，只作用于历史公开记录与老师聚合，不改变其他软开课、未来课表、预约或候补。"
     }
   ]
 }
