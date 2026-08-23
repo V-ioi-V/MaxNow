@@ -2657,6 +2657,19 @@ automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 ac
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-08-23 已部署全量一小时紧凑卡复用修复：
+
+```text
+deployed source commit: 51ccd58 fix(ballet): unify compact timetable cards
+version: 1.0.10.32
+changes: 撤回仅针对“已预约”的局部补丁；完整课程表全部 60 分钟及以下课程统一复用 8px 课程名、6.5px 老师 / 人数 / 时间 / 状态变量，可约、可排队、已满、已预约等所有状态都固定在完整时间下方独占一行，卡片高度和课表分钟刻度不变
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260823-165635-ballet-shared-compact-layout；部署 stash predeploy-ballet-shared-compact-layout-${stamp} 保留
+browser verification: 当前完整课表 23 张一小时紧凑卡覆盖 attended / available / booked / cancelled / full / past / queue_available 七类状态；2048 / 1920 / 1800 / 1501 / 1500 / 1101px 下全部计算字号为 8px / 6.5px、时间与状态为统一纵向底栏、所有内容无裁切，390px 移动布局与全部桌面断点整页横向溢出均为 0
+server verification: scripts/check.py 与 nginx -t 全部通过；styles.css?v=258 生效；服务器功能提交 HEAD 与 origin/main 一致；匿名首页 / 登录页 / 芭蕾数据为 302 / 200 / 401
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课；ballet.json / ballet.js 部署前后哈希一致
+```
+
 2026-08-23 已部署一小时紧凑卡字体与已预约底行优化：
 
 ```text
