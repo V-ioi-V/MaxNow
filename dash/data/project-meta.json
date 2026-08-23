@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 18:23",
+  "updatedAt": "2026-08-23 18:31",
   "version": "1.0.11.00",
   "versionLabel": "v1.0.11.00",
   "branch": "feature/ballet-dynamic-week-closeout",
-  "commit": "d97c760",
+  "commit": "1bddd75",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-dynamic-week-closeout · commit d97c760 · 干净",
+  "deployNote": "feature/ballet-dynamic-week-closeout · commit 1bddd75 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-23",

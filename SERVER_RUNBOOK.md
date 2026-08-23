@@ -2766,3 +2766,17 @@ server verification: scripts/check.py 与 nginx -t 全部通过；styles.css?v=2
 automation state: rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-23 已部署芭蕾周简报动态周期收尾：
+
+```text
+deployed source commit: f14ebbc Generate ballet briefs after weekly closeout
+version: 1.0.11.00
+changes: 周简报不再按固定周日时刻结算；脱敏 read model 发布每周期最后一节结束、+10 分钟刷新和 +20 分钟生成时间，浏览器到点自动生成或下次进入补生成，PNG 仍不上传服务器
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260823-1826-ballet-dynamic-closeout/dash-data.tgz；部署 stash deploy-ballet-dynamic-closeout 保留
+production cycle proof: 2026-08-17 周期最后一节 2026-08-22 12:30，refreshAt=12:40，generateAt=12:50；下一周期当前最后一节为 2026-08-29 17:00，对应 17:10 / 17:20
+automation proof: maxnow-ballet-week-closeout.timer enabled / active，首次 2026-08-23 18:30 自动触发，service Result=success / ExecMainStatus=0，输出 already_refreshed，下一次 18:35
+read-only refresh: maxnow-ballet-sync.service Result=success / ExecMainStatus=0，dataAsOf=2026-08-23T18:26:37+08:00，发布 weeklyBrief 周期契约
+verification: 本地 29 项同步测试、5 项 closeout 测试、全仓 scripts/check.py 与 1920×1080 / 390×844 浏览器溢出检查通过；服务器 unit cmp、systemd-analyze verify、scripts/check.py、nginx -t 通过；匿名首页 / 芭蕾数据 / Blog 为 302 / 401 / 200
+safety: closeout 检查器 RestrictAddressFamilies=AF_UNIX，不读取 Session、不访问网络，每周期最多 3 次；本次仅执行一次完整只读刷新，未执行预约、候补、取消或转课 mutation
+```
