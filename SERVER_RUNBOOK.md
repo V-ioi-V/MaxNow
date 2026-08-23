@@ -2806,3 +2806,16 @@ server verification: HEAD 与 origin/main 均为 b5b92bb；scripts/check.py 与 
 automation state: rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 本次仅部署静态 CSS 与缓存版本，未访问闻道，未启动芭蕾同步，未执行预约、候补、取消或转课
 ```
+
+2026-08-23 已部署周简报数字常规字重修复：
+
+```text
+deployed source commit: e3201eb Use normal-weight numbers in ballet briefs
+version: 1.0.11.03
+changes: 周简报动态周数、日期、训练次数和时长改用 400 常规字重 UI 字体并完全取消描边；最爱课程名继续使用 Ma Shan Zheng 与原轻描边，底图、字号、坐标、颜色和统计逻辑不变
+runtime backup: /tmp/maxnow-data-brief-numbers-20260823-1912；拉取前备份并在拉取后恢复服务器权威 dash/data，再重新生成 project-meta.*
+browser verification: 使用生产脱敏 week 5 数据生成真实周简报，06 / 07:00 / 19 / 23:30 为正常无描边数字，软开课继续保持可爱字体；390×844 下 Canvas 内部分辨率 1280×1710、渲染约 314×419.5，页面横向溢出为 0
+server verification: HEAD 与 origin/main 均为 e3201eb；scripts/check.py 与 nginx -t 通过；app.js?v=222 与 briefTemplateVersion=v3 生效
+automation state: rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 本次仅部署静态脚本和缓存版本，未访问闻道，未启动芭蕾同步，未执行预约、候补、取消或转课
+```
