@@ -68,6 +68,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `openclaw/last-30/SKILL.md`：OpenClaw 更新 Last-30 滚动记忆时的执行规则。
 - `scripts/check.py`：本地一致性校验脚本。
 - `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态和项目元信息，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新独立的 Home 项目状态数据。
+- 芭蕾公开 read model 属于服务器权威运行时数据；部署不得宽泛恢复整个 `dash/data`，必须按 `SERVER_RUNBOOK.md` 成对保护并复核 `ballet.json` / `.js`，否则仓库兜底快照会覆盖真实训练记录。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。
 - `scripts/sync_system_status.py`：采集 nginx、HTTPS、git commit、磁盘、内存、11 个 Owner 可见数据源状态和关键自动化连续失败次数，只刷新 dashboard 的 `automation` / `system` 字段；Home 系统状态卡作为入口，云服务页复用同一份快照展示更完整的服务器状态。
 - `scripts/sync_openclaw_usage.py`：只读服务器 `/root/.openclaw` 轨迹，生成 OpenClaw Token 用量账本和 OpenRouter 等价费用估算。

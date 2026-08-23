@@ -324,6 +324,8 @@ current state -> 代码 / page 已部署；已保留 2 条 Owner 手工软开课
 experiment status -> v7 每 20 分钟课程列表探针无限期运行；2026-07-27 12:01 曾执行一次额外预约 / 上课记录只读同步；本地 exporter / status timer 每 5 分钟转存并发布 ballet-session.*，不访问闻道
 ```
 
+部署芭蕾相关代码时，`dash/data/ballet.json` 与 `dash/data/ballet.js` 是服务器权威运行时数据，不是可以随代码回退的普通仓库文件。任何 `git pull` / 部署前必须把这两个文件成对备份；禁止使用 `git restore dash/data`、`git checkout -- dash/data` 等宽泛命令清理整个数据目录。拉取完成后必须恢复这对文件，并同时核对 `records` 数量、`summary.classes`、`summary.hours`、`dataAsOf` 以及 JSON / JS wrapper 完全一致；任一项与部署前不一致即停止发布并从备份恢复。2026-08-23 19:33 曾因并行部署遗漏这一边界，把 19 节 / 23.5 小时的 18:26 权威快照覆盖成 4 节 / 5 小时的 7 月 30 日兜底数据；19 节快照随后已从 `/tmp/maxnow-data-brief-numbers-record-20260823-1916` 恢复，全仓检查通过。
+
 同步器只允许已确认的闻道只读 GET 页面：
 
 - 上课记录索引：`/gm/weixin/my/checkrecord/54114`
