@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 16:41",
+  "updatedAt": "2026-08-23 16:45",
   "version": "1.0.10.31",
   "versionLabel": "v1.0.10.31",
   "branch": "bugfix/ballet-compact-card-layout",
-  "commit": "65d3c3c",
+  "commit": "91b30d6",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-compact-card-layout · commit 65d3c3c · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-compact-card-layout · commit 91b30d6 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-23",
