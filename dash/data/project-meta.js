@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 17:57",
+  "updatedAt": "2026-08-23 17:59",
   "version": "1.0.10.33",
   "versionLabel": "v1.0.10.33",
   "branch": "bugfix/ballet-compact-secondary-only",
-  "commit": "7af2297",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-compact-secondary-only · commit 7af2297 · 有未提交代码改动",
+  "commit": "a65b903",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-compact-secondary-only · commit a65b903 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-23",
