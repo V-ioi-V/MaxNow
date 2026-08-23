@@ -975,7 +975,7 @@
                     <h2 id="ballet-week-dialog-title">芭蕾周记录</h2>
                     <p class="ballet-week-dialog-meta">
                       <span>week <strong id="ballet-week-dialog-number">2</strong> · 每周一切换</span>
-                      <span id="ballet-week-brief-refresh">周简报 · 每周日 18:00 刷新</span>
+                      <span id="ballet-week-brief-refresh">周简报 · 每周期最后一节后 20 分钟生成</span>
                     </p>
                     <p class="ballet-week-dialog-range" id="ballet-week-dialog-range">本周 · 周一至周日</p>
                   </div>
@@ -1114,15 +1114,15 @@
             <article class="panel cloud-card" data-tone="purple">
               <header class="panel-head">
                 <div>
-                  <p class="eyebrow">Daily 09 / 12 / 15 / 18 / 22 · Sunday 14:30 · Post-booking · Monthly 00:47</p>
+                  <p class="eyebrow">Daily 09 / 12 / 15 / 18 / 22 · Dynamic closeout · Sunday 14:30 · Monthly 00:47</p>
                   <h2>芭蕾只读同步</h2>
                 </div>
                 <span class="status-pill">只读同步已启用</span>
               </header>
-              <p class="item-copy">每天五次只读刷新预约、候补、上课记录、课程卡与周课表；自动抢课每次执行结束后立即追加一次整体刷新，周日 14:30 仍额外检查下周课表，18:00 刷新本周训练简报数据，每月另执行全量校验。登录失效后停止网络请求并保留最后成功缓存。</p>
+              <p class="item-copy">每天五次只读刷新预约、候补、上课记录、课程卡与周课表；每周期最后一节结束后 10 分钟追加一次整体刷新，再过 10 分钟由浏览器生成周简报。自动抢课结束后仍立即刷新，周日 14:30 检查下周课表，每月另执行全量校验。登录失效后停止网络请求并保留最后成功缓存。</p>
               <dl class="cloud-meta">
                 <div><dt>日常</dt><dd>09:00 / 12:00 / 15:00 / 18:00 / 22:00 整体刷新</dd></div>
-                <div><dt>周日</dt><dd>14:30 检查下周课表；18:00 刷新训练周简报</dd></div>
+                <div><dt>周期收尾</dt><dd>最后一节结束后 10 分钟刷新全部芭蕾数据；再过 10 分钟生成周简报</dd></div>
                 <div><dt>抢课后</dt><dd>执行结束立即刷新芭蕾面板</dd></div>
                 <div><dt>月度</dt><dd>每月 1 日 00:47 全量校验</dd></div>
                 <div><dt>失败</dt><dd>保留最后成功缓存并提示重新登录</dd></div>
@@ -1403,6 +1403,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=219"></script>
+    <script src="./app.js?v=220"></script>
   </body>
 </html>

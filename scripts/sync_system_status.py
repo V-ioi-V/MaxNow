@@ -49,6 +49,7 @@ KNOWN_TIMER_UNITS = [
     "maxnow-system-status.timer",
     "maxnow-dashboard-sync.timer",
     "maxnow-ballet-sync.timer",
+    "maxnow-ballet-week-closeout.timer",
     "maxnow-ballet-full-sync.timer",
 ]
 KNOWN_SERVICE_UNITS = [
@@ -56,6 +57,7 @@ KNOWN_SERVICE_UNITS = [
     "maxnow-system-status.service",
     "maxnow-dashboard-sync.service",
     "maxnow-ballet-sync.service",
+    "maxnow-ballet-week-closeout.service",
     "maxnow-ballet-full-sync.service",
 ]
 GENERATED_DATA_PATHS = {

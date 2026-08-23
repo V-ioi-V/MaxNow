@@ -51,6 +51,9 @@ MAX_ATTENDANCE_RECORDS = 500
 MAX_ATTENDANCE_PAGES = 50
 ROLLING_DAYS = 60
 CACHE_TTL_HOURS = 36
+WEEKLY_BRIEF_REFRESH_DELAY_MINUTES = 10
+WEEKLY_BRIEF_GENERATE_DELAY_MINUTES = 20
+WEEKLY_BRIEF_CYCLE_LIMIT = 12
 DEFAULT_ATTENDANCE_TEACHER = "李俊"
 ATTENDANCE_TEACHER_OVERRIDES = {
     ("2026-07-30", "18:45", "19:45", "软开课"): "王嘉豪",
@@ -1759,6 +1762,56 @@ def compute_week_summary(
     }
 
 
+def build_weekly_brief_schedule(
+    records: list[dict[str, Any]],
+    upcoming: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Publish safe closeout times without exposing private source identifiers."""
+    cycle_ends: dict[date, datetime] = {}
+    candidates = [*records]
+    candidates.extend(
+        item for item in upcoming if item.get("bookingStatus") == "booked"
+    )
+    for item in candidates:
+        try:
+            course_date = date.fromisoformat(str(item.get("date", "")))
+            hour, minute = (int(value) for value in str(item.get("endTime", "")).split(":"))
+            course_end = datetime(
+                course_date.year,
+                course_date.month,
+                course_date.day,
+                hour,
+                minute,
+                tzinfo=TIMEZONE,
+            )
+        except (TypeError, ValueError):
+            continue
+        week_start = course_date - timedelta(days=course_date.weekday())
+        if course_end > cycle_ends.get(week_start, datetime.min.replace(tzinfo=TIMEZONE)):
+            cycle_ends[week_start] = course_end
+
+    cycles = []
+    for week_start, last_course_end in sorted(cycle_ends.items())[-WEEKLY_BRIEF_CYCLE_LIMIT:]:
+        cycles.append(
+            {
+                "weekStart": week_start.isoformat(),
+                "weekEnd": (week_start + timedelta(days=6)).isoformat(),
+                "lastCourseEndAt": iso_now(last_course_end),
+                "refreshAt": iso_now(
+                    last_course_end + timedelta(minutes=WEEKLY_BRIEF_REFRESH_DELAY_MINUTES)
+                ),
+                "generateAt": iso_now(
+                    last_course_end + timedelta(minutes=WEEKLY_BRIEF_GENERATE_DELAY_MINUTES)
+                ),
+            }
+        )
+    return {
+        "refreshDelayMinutes": WEEKLY_BRIEF_REFRESH_DELAY_MINUTES,
+        "generateDelayMinutes": WEEKLY_BRIEF_GENERATE_DELAY_MINUTES,
+        "cycles": cycles,
+    }
+
+
 def _round_pace(value: float) -> float:
     return round(value + 1e-9, 1)
 
@@ -1950,6 +2003,7 @@ def build_read_model(
             "records": [_public_upcoming(item) for item in upcoming],
         },
         "week": compute_week_summary(records, upcoming, now),
+        "weeklyBrief": build_weekly_brief_schedule(records, upcoming),
         "membership": build_membership_view(membership, now),
         "timetable": timetable,
         "learningLogs": [],
@@ -1987,14 +2041,38 @@ def validate_read_model(model: dict[str, Any]) -> None:
     if summary.get("minutes") != expected_minutes:
         raise SyncFailure("parse_error")
     week = model.get("week")
+    weekly_brief = model.get("weeklyBrief")
     membership = model.get("membership")
     timetable = model.get("timetable")
     if (
         not isinstance(week, dict)
+        or not isinstance(weekly_brief, dict)
         or not isinstance(membership, dict)
         or not isinstance(timetable, dict)
     ):
         raise SyncFailure("parse_error")
+    cycles = weekly_brief.get("cycles")
+    if (
+        weekly_brief.get("refreshDelayMinutes") != WEEKLY_BRIEF_REFRESH_DELAY_MINUTES
+        or weekly_brief.get("generateDelayMinutes") != WEEKLY_BRIEF_GENERATE_DELAY_MINUTES
+        or not isinstance(cycles, list)
+    ):
+        raise SyncFailure("parse_error")
+    previous_week = ""
+    for cycle in cycles:
+        week_start = str(cycle.get("weekStart") or "")
+        last_course_end = parse_iso(cycle.get("lastCourseEndAt"))
+        refresh_at = parse_iso(cycle.get("refreshAt"))
+        generate_at = parse_iso(cycle.get("generateAt"))
+        if (
+            not week_start
+            or week_start <= previous_week
+            or last_course_end is None
+            or refresh_at != last_course_end + timedelta(minutes=WEEKLY_BRIEF_REFRESH_DELAY_MINUTES)
+            or generate_at != last_course_end + timedelta(minutes=WEEKLY_BRIEF_GENERATE_DELAY_MINUTES)
+        ):
+            raise SyncFailure("parse_error")
+        previous_week = week_start
     cards = membership.get("cards")
     if not isinstance(cards, list):
         raise SyncFailure("parse_error")

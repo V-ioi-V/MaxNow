@@ -131,6 +131,8 @@ def check_required_files():
         "scripts/run_ballet_cancellation.sh",
         "scripts/test_cancel_ballet.py",
         "scripts/test_sync_ballet.py",
+        "scripts/ballet_week_closeout.py",
+        "scripts/test_ballet_week_closeout.py",
         "scripts/query_ballet_live.py",
         "scripts/run_ballet_live_query.sh",
         "scripts/test_query_ballet_live.py",
@@ -147,6 +149,8 @@ def check_required_files():
         "server/maxnow-auth.service",
         "server/maxnow-ballet-sync.service",
         "server/maxnow-ballet-sync.timer",
+        "server/maxnow-ballet-week-closeout.service",
+        "server/maxnow-ballet-week-closeout.timer",
         "server/maxnow-ballet-full-sync.service",
         "server/maxnow-ballet-full-sync.timer",
         "server/maxnow-ballet-session-status.service",
@@ -236,6 +240,19 @@ def check_ballet_sync():
     if result.returncode != 0:
         raise ValueError(
             "ballet sync: fixture self-test failed: " + result.stdout.strip()
+        )
+    closeout_result = subprocess.run(
+        [sys.executable, "-B", str(ROOT / "scripts/test_ballet_week_closeout.py")],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=20,
+        check=False,
+    )
+    if closeout_result.returncode != 0:
+        raise ValueError(
+            "ballet weekly closeout: self-test failed: " + closeout_result.stdout.strip()
         )
     return (
         "ballet sync: read-only allowlist, private ledger, idempotent upsert, "
@@ -769,6 +786,8 @@ def check_ballet_read_model():
     ):
         raise ValueError("ballet: runtime ownership and visible sync-failure contract is incomplete")
     timer = (ROOT / "server/maxnow-ballet-sync.timer").read_text(encoding="utf-8")
+    closeout_timer = (ROOT / "server/maxnow-ballet-week-closeout.timer").read_text(encoding="utf-8")
+    closeout_service = (ROOT / "server/maxnow-ballet-week-closeout.service").read_text(encoding="utf-8")
     expected_ballet_sync_times = ("09", "12", "15", "18", "22")
     if (
         any(
@@ -779,7 +798,10 @@ def check_ballet_read_model():
         or "OnCalendar=Sun *-*-* 14:30:00 Asia/Shanghai" not in timer
         or "OnCalendar=Sun *-*-* 20:00:00 Asia/Shanghai" in timer
         or "Sunday 14:30" not in dashboard_html
-        or "18:00 刷新训练周简报" not in dashboard_html
+        or "最后一节结束后 10 分钟刷新全部芭蕾数据" not in dashboard_html
+        or "OnCalendar=*-*-* *:00/5:00 Asia/Shanghai" not in closeout_timer
+        or "scripts/ballet_week_closeout.py" not in closeout_service
+        or "RestrictAddressFamilies=AF_UNIX" not in closeout_service
         or "周日 14:30 检查下周课表" not in dashboard_js
         or "09:00 / 12:00 / 15:00 / 18:00 / 22:00 整体刷新" not in dashboard_html
         or "每天 09 / 12 / 15 / 18 / 22 点更新" not in dashboard_js
@@ -1763,7 +1785,9 @@ def check_secondary_view_style():
         '"ClipboardItem" in window',
         'anchorMonday: "2026-07-27"',
         "anchorWeek: 2",
-        "briefRefreshHour: 18",
+        "briefDataRefreshDelayMinutes: 10",
+        "briefGenerateDelayMinutes: 20",
+        "function scheduleBalletWeeklyBriefGeneration()",
         'return `${format(info.monday)}–${format(info.sunday)}`;',
         "const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;",
         'document.fonts?.load?.(\'80px "MaxNow Week Hand"\', "芭蕾周简报0123456789")',
@@ -1787,8 +1811,8 @@ def check_secondary_view_style():
         or cover_config.get("timezone") != "Asia/Shanghai"
         or cover_config.get("anchorMonday") != "2026-07-27"
         or cover_config.get("anchorWeek") != 2
-        or cover_config.get("briefRefreshWeekday") != 7
-        or cover_config.get("briefRefreshHour") != 18
+        or cover_config.get("briefDataRefreshDelayMinutes") != 10
+        or cover_config.get("briefGenerateDelayMinutes") != 20
         or cover_config.get("briefWeekNumberBaselineY") != 390
         or cover_config.get("briefTemplateVersion") != "v1"
         or cover_config.get("templateFile") != "template-v1.webp"
@@ -1837,7 +1861,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=259" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=219" not in dashboard_html
+        or "app.js?v=220" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2062,7 +2086,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=219" not in dashboard_html:
+    if "app.js?v=220" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

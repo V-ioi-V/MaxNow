@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 18:01",
-  "version": "1.0.10.33",
-  "versionLabel": "v1.0.10.33",
-  "branch": "bugfix/ballet-compact-secondary-only",
-  "commit": "887a3fa",
+  "updatedAt": "2026-08-23 18:23",
+  "version": "1.0.11.00",
+  "versionLabel": "v1.0.11.00",
+  "branch": "feature/ballet-dynamic-week-closeout",
+  "commit": "d97c760",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-compact-secondary-only · commit 887a3fa · 干净",
+  "deployNote": "feature/ballet-dynamic-week-closeout · commit d97c760 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "周简报改为按每周期最后一节动态结算",
+      "summary": "脱敏芭蕾 read model 新增周期最后一节结束、收尾刷新和周简报生成时间：最后一节结束后 10 分钟刷新预约、候补、上课记录、课程卡和课表，再过 10 分钟生成本周期周简报；不再依赖固定周日 18:00。"
+    },
     {
       "date": "2026-08-23",
       "title": "只缩小一小时卡的次级数字信息",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-23",
       "title": "恢复课程表紧凑高度并缩小一小时卡字体",
       "summary": "按 Owner 反馈撤回一小时课程增高方案：完整课程表恢复原有宽屏分钟刻度，60 分钟及以下课程重新使用紧凑卡片字号、行高、间距和内边距；课程名、老师、人数、完整时间与状态继续保留，90 分钟课程仍按真实时长更高，长空档继续压缩。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "压缩抢课摘要并统一文字居中",
-      "summary": "“抢课助手 / 本次抢课”两组指标卡统一为相同的标题、数值、说明三行网格与 `96px` 最小高度，外框同步缩短约 `16px`；两组文字围绕卡片中心对称排列，长说明仍保留完整显示。"
     }
   ]
 };

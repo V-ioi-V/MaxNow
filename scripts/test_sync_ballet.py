@@ -195,6 +195,26 @@ class AuthFailureSource:
 
 
 class BalletSyncTests(unittest.TestCase):
+    def test_weekly_brief_schedule_uses_latest_booked_or_completed_course(self):
+        schedule = ballet.build_weekly_brief_schedule(
+            [
+                {"date": "2026-08-28", "endTime": "21:15"},
+                {"date": "2026-08-29", "endTime": "11:30"},
+            ],
+            [
+                {"date": "2026-08-29", "endTime": "12:30", "bookingStatus": "booked"},
+                {"date": "2026-08-30", "endTime": "21:15", "bookingStatus": "waitlist"},
+            ],
+        )
+        self.assertEqual(schedule["refreshDelayMinutes"], 10)
+        self.assertEqual(schedule["generateDelayMinutes"], 20)
+        self.assertEqual(len(schedule["cycles"]), 1)
+        cycle = schedule["cycles"][0]
+        self.assertEqual(cycle["weekStart"], "2026-08-24")
+        self.assertEqual(cycle["lastCourseEndAt"], "2026-08-29T12:30:00+08:00")
+        self.assertEqual(cycle["refreshAt"], "2026-08-29T12:40:00+08:00")
+        self.assertEqual(cycle["generateAt"], "2026-08-29T12:50:00+08:00")
+
     def test_allowlist_contains_only_read_paths(self):
         accepted = (
             ballet.ATTENDANCE_PATH,

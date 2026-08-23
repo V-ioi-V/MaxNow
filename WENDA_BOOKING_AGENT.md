@@ -13,6 +13,7 @@
 ## 当前入口与能力边界
 
 - `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：使用服务器保存的 Session 做最小范围实时只读查询和写后复核。上课记录允许跟随官方首屏脚本调用固定 `newcheckrecord/{storeId}/{offset}` 分页 POST；该请求只加载历史摘要，不是预约类 mutation，其他未列明 POST 仍禁止。
+- `scripts/ballet_week_closeout.py` / `server/maxnow-ballet-week-closeout.*`：每 5 分钟只读取公开脱敏 `ballet.json`，按本周期最后一节已预约或实际完成课程结束时间判断收尾；到结束后 10 分钟才启动一次既有 `maxnow-ballet-sync.service` 完整只读刷新。该调度器不读取 Session、不访问网络、不生成或保存周简报 PNG；登录失效和连续失败均关闭重试。
 - 实时上课记录与 Dashboard 同步共用同一老师归一化规则：实际上课历史的老师字段为空时默认补为“李俊”；Owner 明确校正 2026-07-30 18:45–19:45 软开课为“王嘉豪”、2026-08-07 19:45–21:15 芭蕾 L1 为“张瀚泽”。Dashboard 另按 Owner 确认的日期、起止时间、课程名和教室精确排除 2026-08-18 19:45–21:15 大教室芭蕾 L1（已转出、未实际上课）；闻道实时查询仍如实返回源站记录，私有账本也保留该源事实。历史校正与排除不影响课表、当前预约和候补。
 - `scripts/book_ballet.py` / `scripts/run_ballet_booking.sh`：Owner 显式指定课程后的普通预约入口；课程与按钮必须在同一 `.classtable` 块内原子绑定。
 - `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`：Owner 显式指定当前预约后的单课取消入口；先精确匹配唯一活动预约并校验该详情页的官方取消 contract，dry-run 只调用非变更规则检查，execute 重检后最多一次取消 mutation，再以实时预约列表确认目标消失。mutation 结果未知时不得重试。
@@ -28,6 +29,8 @@
 - `AGENTS.md` 只保留指向本文件的条件路由，不在总入口重复展开本文件内容。
 
 ## 变更记录
+
+- 2026-08-23：周简报结算从固定周日时刻改为动态课程周期收尾；新增无网络、无凭据的本地检查器，在最后一节结束后 10 分钟复用既有完整只读同步，浏览器再于结束后 20 分钟生成周简报。预约、候补、取消、转课与 Fast Path mutation 边界均未改变。
 
 - 2026-08-23：修复日期页出现任意目标后提前停止、漏掉稍后发布 L1.5 的问题；改为初始读取与 2 / 6 / 10 秒后台刷新流水线，已发现 L1 可在发现窗口结束前串行提交，后续课程仍按 L1 → L1.5 → 软开处理。未知 mutation 继续禁止重复提交，并增加 0.8 / 2 / 4 秒脱敏只读复核。
 
