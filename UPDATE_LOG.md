@@ -17,6 +17,7 @@
 - 课程卡与规则预检有效期由 8 秒调整为 15 秒，使已完成预检可以跨越 10 秒发现窗口复用；真实 mutation 仍严格串行，新增 `lastMutationAtMilliseconds` 与 `discoveryWallMilliseconds` 以区分全部提交完成和最终核验耗时。
 - `unknown_result` 继续禁止重复 POST；统一核验未命中后，仅在提交后第 0.8 / 2 / 4 秒查询目标日期的预约详情，迟到可见的预约 / 候补可回填状态与 `verificationAttempts`。
 - 新增分批发布、未知候补延迟可见和“L1 提交早于发现窗口结束”回归；96 项芭蕾测试通过，其中 Fast Path 22 项。部署验收只允许 preview、dry-run 和只读状态检查，不手动启动 execute。
+- 功能提交 `89aa514` 已部署，备份位于 `/home/ubuntu/maxnow-deploy-backups/20260823-150939-ballet-fast-progressive`；服务器 Fast Path 22 项测试、完整检查和 `nginx -t` 通过。受保护生产 dry-run 读取下一轮六个目标日期共 24 次、`mutationAttempts=0`，约 12.985 秒完成；私有累计运行数和今天 14:20 的最后执行记录保持不变，timer 继续 `enabled / active`，下次为 2026-08-30 14:19:35。
 - 版本提升到 `1.0.10.26`。
 
 ### 补抢漏掉的周六 L1.5 并刷新芭蕾数据

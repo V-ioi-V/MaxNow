@@ -2644,6 +2644,21 @@ public result: upcoming.records 与 timetable.days 均包含该课并显示 book
 remaining issue: 14:20 日期页在出现任意匹配目标后过早停止刷新，可能漏掉同日稍后发布的 L1.5；修复已记录到 ROADMAP Now，本次未热改 Fast Path
 ```
 
+2026-08-23 已部署 Fast Path 分批放课修复与整批速度优化：
+
+```text
+deployed source commit: 89aa514 chore: refresh project metadata（功能提交 d44a771）
+version: 1.0.10.26
+changes: 第一轮课表后立即处理已发现 L1；后台在放课后第 2 / 6 / 10 秒以最多 2 路 GET 刷新六个日期，稳定快照补齐稍后发布课程；unknown mutation 不重复 POST，统一核验未命中后于第 0.8 / 2 / 4 秒限定日期只读复核
+runtime and private backup: /home/ubuntu/maxnow-deploy-backups/20260823-150939-ballet-fast-progressive
+fixture verification: Fast Path 22 项、全芭蕾 96 项通过；分批 fixture 最终发现 18 节且全部 L1.5 先于软开，未知候补第三次可见时仍只有一次对应 mutation
+live dry-run: 受保护 transient unit 读取下一轮六个日期共 24 次，status=success、records=0、mutationAttempts=0、criticalPathMilliseconds=12985；空记录只表示 2026-08-30 放课前下一轮课程尚未发布
+state preservation: totalRuns=4、lastAttemptAt=2026-08-23T14:20:26+08:00 保持不变；未覆盖今天真实 Fast Path 账本
+server verification: scripts/check.py、nginx -t 通过；匿名 Fast Path 状态为 401，nginx active
+automation state: timer enabled / active，下次 2026-08-30 14:19:35；Fast Path service inactive，部署未启动 execute
+safety: preview 不加载凭据；live dry-run mutationAttempts=0，未执行预约、候补、取消或转课 mutation
+```
+
 2026-08-17 已部署上课历史紧凑悬浮层：
 
 ```text

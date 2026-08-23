@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 15:06",
+  "updatedAt": "2026-08-23 15:13",
   "version": "1.0.10.26",
   "versionLabel": "v1.0.10.26",
   "branch": "bugfix/ballet-fast-progressive-release",
-  "commit": "f57b235",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-fast-progressive-release · commit f57b235 · 干净",
+  "commit": "89aa514",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-fast-progressive-release · commit 89aa514 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-23",
