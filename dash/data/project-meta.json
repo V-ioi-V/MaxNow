@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 16:07",
+  "updatedAt": "2026-08-23 16:09",
   "version": "1.0.10.28",
   "versionLabel": "v1.0.10.28",
   "branch": "bugfix/ballet-hour-card-density",
-  "commit": "2e337f2",
+  "commit": "6ac3927",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-hour-card-density · commit 2e337f2 · 干净",
+  "deployNote": "bugfix/ballet-hour-card-density · commit 6ac3927 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-23",
