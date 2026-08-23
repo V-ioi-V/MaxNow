@@ -2780,3 +2780,16 @@ read-only refresh: maxnow-ballet-sync.service Result=success / ExecMainStatus=0�
 verification: 本地 29 项同步测试、5 项 closeout 测试、全仓 scripts/check.py 与 1920×1080 / 390×844 浏览器溢出检查通过；服务器 unit cmp、systemd-analyze verify、scripts/check.py、nginx -t 通过；匿名首页 / 芭蕾数据 / Blog 为 302 / 401 / 200
 safety: closeout 检查器 RestrictAddressFamilies=AF_UNIX，不读取 Session、不访问网络，每周期最多 3 次；本次仅执行一次完整只读刷新，未执行预约、候补、取消或转课 mutation
 ```
+
+2026-08-23 已部署周简报动态字字体调整：
+
+```text
+deployed source commit: c406566 Use a cuter font for ballet weekly briefs
+version: 1.0.11.01
+changes: 仅将周简报 Canvas 动态填写的周数、日期、次数、时长和课程名由 Long Cang 替换为项目内置 Ma Shan Zheng；底图固定标题、六项指标名、数据坐标、字号和颜色保持不变
+runtime backup: /tmp/maxnow-data-font-20260823-1845；拉取前备份并在拉取后恢复服务器权威 dash/data，再重新生成 project-meta.*
+visual verification: 使用生产脱敏 week 5 数据生成真实周简报；桌面与 390×844 下动态字更端正圆润且无裁切，移动端 Canvas 保持 1280×1710 内部分辨率、页面横向溢出为 0，字体文件请求成功且控制台无错误
+server verification: HEAD 与 origin/main 均为 c406566；scripts/check.py 与 nginx -t 通过；styles.css?v=260、app.js?v=221 和 MaShanZheng-Weekly.woff2 路径生效；未认证首页 / 芭蕾数据为 302 / 401
+automation state: rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 本次为静态字体和缓存部署，未访问闻道，未启动芭蕾同步，未执行预约、候补、取消或转课
+```
