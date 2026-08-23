@@ -5652,21 +5652,6 @@ body[data-view="ricky"] .topbar-ricky-status {
     padding-inline: 5px;
   }
 
-  .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] > div {
-    margin-top: 0;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0;
-  }
-}
-
-@media (min-width: 1501px) and (max-width: 1800px) {
-  .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] > div {
-    margin-top: 0;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0;
-  }
 }
 
 .ballet-timetable-corner,
@@ -5866,19 +5851,22 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] {
+  --ballet-compact-title-size: 8px;
+  --ballet-compact-detail-size: 6.5px;
+  --ballet-compact-status-height: 11px;
   gap: 1px;
   padding-block: 3px;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] strong {
   flex: 0 0 auto;
-  font-size: 9px;
-  line-height: 1.1;
+  font-size: var(--ballet-compact-title-size);
+  line-height: 1.08;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] small {
-  font-size: 7px;
-  line-height: 1.08;
+  font-size: var(--ballet-compact-detail-size);
+  line-height: 1.05;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-teacher {
@@ -5902,16 +5890,13 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] > div {
   flex: 0 0 auto;
-  flex-wrap: nowrap;
-  gap: 2px;
-  font-size: 7px;
-}
-
-.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-availability="booked"] > div {
   margin-top: auto;
   align-items: flex-start;
   flex-direction: column;
+  flex-wrap: nowrap;
   gap: 1px;
+  font-size: var(--ballet-compact-detail-size);
+  line-height: 1.05;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-time-range {
@@ -5923,9 +5908,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-state {
-  min-height: 12px;
+  min-height: var(--ballet-compact-status-height);
   padding-inline: 3px;
-  font-size: 7px;
+  font-size: var(--ballet-compact-detail-size);
   line-height: 1;
 }
 
@@ -5954,20 +5939,20 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-overlap="true"] strong {
-  font-size: 9px;
-  line-height: 1.1;
+  font-size: var(--ballet-compact-title-size);
+  line-height: 1.08;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-overlap="true"] small,
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-overlap="true"] > div {
-  font-size: 7px;
-  line-height: 1.08;
+  font-size: var(--ballet-compact-detail-size);
+  line-height: 1.05;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"][data-overlap="true"] .ballet-timetable-state {
-  min-height: 12px;
+  min-height: var(--ballet-compact-status-height);
   padding-inline: 3px;
-  font-size: 7px;
+  font-size: var(--ballet-compact-detail-size);
   line-height: 1;
 }
 

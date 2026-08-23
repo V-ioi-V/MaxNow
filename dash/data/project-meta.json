@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 16:45",
-  "version": "1.0.10.31",
-  "versionLabel": "v1.0.10.31",
-  "branch": "bugfix/ballet-compact-card-layout",
-  "commit": "91b30d6",
+  "updatedAt": "2026-08-23 16:54",
+  "version": "1.0.10.32",
+  "versionLabel": "v1.0.10.32",
+  "branch": "bugfix/ballet-shared-compact-layout",
+  "commit": "ac8595f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-compact-card-layout · commit 91b30d6 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-shared-compact-layout · commit ac8595f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "统一一小时紧凑卡的复用规则",
+      "summary": "撤回仅针对“已预约”的局部排版补丁：完整课程表中所有 60 分钟及以下课程统一复用同一套紧凑卡变量，课程名缩至 `8px`，老师 / 人数 / 时间 / 状态缩至 `6.5px`；可约、可排队、已满、已预约等全部状态统一放到完整时间下方、卡片最底部独占一行，卡片高度和课表时间尺度不变。"
+    },
     {
       "date": "2026-08-23",
       "title": "放松一小时紧凑卡的内部排版",
@@ -28,11 +33,6 @@
       "date": "2026-08-23",
       "title": "放松一小时课程卡的排版密度",
       "summary": "本周课程表不再把完整 60 分钟课程压成短课紧凑模式，并适度放大宽屏分钟刻度；一小时课程获得约 `99px` 的真实高度并恢复标准字号、内边距和状态信息层级，只有不足 60 分钟的课程继续使用紧凑排版，长空档仍按原规则压缩。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "统一隐藏周安排课程人数",
-      "summary": "“课程计划 / 周安排”中的真实预约与候补课程卡统一隐藏报名人数、容量和全班候补人数，只保留课程、老师、时间及个人预约 / 候补状态；下方完整课程表继续正常展示人数统计。"
     }
   ]
 }
