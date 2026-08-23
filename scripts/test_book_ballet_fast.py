@@ -629,6 +629,47 @@ class FastBookingTests(unittest.TestCase):
             )
         )
 
+    def test_teacher_priority_applies_only_after_saturday_with_blank_as_li_jun(self):
+        planned = fast.materialize_targets(config(), self.release)
+        pages = {
+            target["date"]: "<html><body>classtable</body></html>"
+            for target in planned
+        }
+
+        def course_page(teacher, venue, start="19:45", end="21:15"):
+            return timetable_html(
+                course="芭蕾 L1",
+                time_text=f"{start} ~ {end}",
+                teacher=teacher,
+                venue=venue,
+                status="4 / 10",
+            )
+
+        # 周一只有其他老师；周二同一时段李俊未标注的小教室优先于其他老师大教室。
+        pages["2026-08-03"] = course_page("王嘉豪", "大教室")
+        pages["2026-08-04"] = (
+            course_page("王嘉豪", "大教室")
+            + course_page("", "小教室")
+        )
+        # 周六不分老师，继续先选大教室。
+        pages["2026-08-08"] = (
+            course_page("李俊", "小教室", "13:00", "14:30")
+            + course_page("王嘉豪", "大教室", "13:00", "14:30")
+        )
+
+        targets = fast.discover_targets(config(), planned, pages)
+        self.assertEqual(
+            [(item["date"], item["_selectedVenue"]) for item in targets],
+            [
+                ("2026-08-08", "大教室"),
+                ("2026-08-04", "小教室"),
+                ("2026-08-03", "大教室"),
+            ],
+        )
+        self.assertIsNone(targets[0]["_selectedTeacherRank"])
+        self.assertEqual(targets[1]["_selectedTeacherRank"], 0)
+        self.assertEqual(targets[2]["_selectedTeacherRank"], 1)
+
     def test_l1_mutation_pipeline_starts_before_discovery_settles(self):
         settings = config()
         settings["discoveryRefreshSeconds"] = [0.08, 0.1, 0.12]
@@ -840,7 +881,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(public["totalWaitlisted"], 0)
         self.assertEqual(
             {target["teacher"] for target in public["targets"]},
-            {"不限老师"},
+            {"周六不限老师", "李俊优先（含未标注）"},
         )
         self.assertEqual(
             {target["venue"] for target in public["targets"]},

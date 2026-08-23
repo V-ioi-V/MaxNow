@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 19:08",
-  "version": "1.0.11.03",
-  "versionLabel": "v1.0.11.03",
-  "branch": "bugfix/ballet-brief-normal-numbers",
-  "commit": "e3201eb",
+  "updatedAt": "2026-08-23 19:27",
+  "version": "1.0.11.04",
+  "versionLabel": "v1.0.11.04",
+  "branch": "feature/ballet-saturday-teacher-priority",
+  "commit": "2c92ca3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-brief-normal-numbers · commit e3201eb · 有未提交代码改动",
+  "deployNote": "feature/ballet-saturday-teacher-priority · commit 2c92ca3 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-23",
+      "title": "自动抢课加入工作日李俊老师优先级",
+      "summary": "保持课程优先级 `L1 > L1.5 > 软开` 不变；每一课程层内调整为周六全部课程、周一至周五李俊课程、周一至周五其他老师课程，老师字段为空按李俊处理，各组内继续按原日期与开始时间排序。"
+    },
     {
       "date": "2026-08-23",
       "title": "周简报数字改为正常常规字重",
@@ -28,11 +33,6 @@
       "date": "2026-08-23",
       "title": "周简报改为按每周期最后一节动态结算",
       "summary": "脱敏芭蕾 read model 新增周期最后一节结束、收尾刷新和周简报生成时间：最后一节结束后 10 分钟刷新预约、候补、上课记录、课程卡和课表，再过 10 分钟生成本周期周简报；不再依赖固定周日 18:00。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "只缩小一小时卡的次级数字信息",
-      "summary": "60 分钟及以下紧凑卡不再整体缩字：课程名、老师与状态标签恢复继承同轨 90 分钟课程的字号和标签尺寸，仅将“报名 / 容量 / 全班排队人数”行与完整起止时间缩至 `6.5px`；状态继续在时间下方独占底行，卡片高度和课表时间尺度不变。"
     }
   ]
 }

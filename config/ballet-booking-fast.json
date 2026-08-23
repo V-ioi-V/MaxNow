@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 6,
+  "schemaVersion": 7,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -35,6 +35,10 @@
     "大教室",
     "小教室"
   ],
+  "teacherPriority": [
+    "李俊"
+  ],
+  "emptyTeacherAs": "李俊",
   "weekdayStartTimes": {
     "0": "18:40",
     "1": "18:40",

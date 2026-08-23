@@ -315,7 +315,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 6
+        or data.get("schemaVersion") != 7
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
@@ -326,6 +326,8 @@ def load_config(path: Path) -> dict[str, Any]:
         or not isinstance(data.get("priorityWeekdays"), list)
         or not isinstance(data.get("priorityCourses"), list)
         or not isinstance(data.get("venuePriority"), list)
+        or not isinstance(data.get("teacherPriority"), list)
+        or not isinstance(data.get("emptyTeacherAs"), str)
         or not isinstance(data.get("weekdayStartTimes"), dict)
         or not isinstance(data.get("selectionRules"), list)
         or not data["selectionRules"]
@@ -361,6 +363,8 @@ def load_config(path: Path) -> dict[str, Any]:
     if course_priorities != expected_course_priorities:
         raise FastBookingFailure("configuration_error")
     if data["venuePriority"] != ["大教室", "小教室"]:
+        raise FastBookingFailure("configuration_error")
+    if data["teacherPriority"] != ["李俊"] or data["emptyTeacherAs"] != "李俊":
         raise FastBookingFailure("configuration_error")
     expected_start_times = {
         "0": "18:40",
@@ -440,6 +444,35 @@ def course_priority_rank(
     return len(priorities)
 
 
+def effective_teacher(record: dict[str, Any], target: dict[str, Any]) -> str:
+    teacher = ballet.normalize_space(str(record.get("teacher", "")))
+    return teacher or ballet.normalize_space(str(target["emptyTeacherAs"]))
+
+
+def teacher_priority_rank(record: dict[str, Any], target: dict[str, Any]) -> int:
+    teacher = effective_teacher(record, target)
+    preferred = {
+        ballet.normalize_space(str(item)) for item in target["teacherPriority"]
+    }
+    return 0 if teacher in preferred else 1
+
+
+def target_priority_key(
+    target: dict[str, Any], config: dict[str, Any]
+) -> tuple[Any, ...]:
+    weekday = target["weekday"]
+    teacher_tier = 0 if weekday == 5 else 1 + int(
+        target.get("_selectedTeacherRank", 0)
+    )
+    return (
+        course_priority_rank(target, config["priorityCourses"]),
+        teacher_tier,
+        priority_rank(weekday, config["priorityWeekdays"]),
+        target.get("startTime", ""),
+        target["_order"],
+    )
+
+
 def next_release_at(now: datetime, config: dict[str, Any]) -> datetime:
     local_now = now.astimezone(ballet.TIMEZONE)
     hour, minute = parse_hhmm(config["release"]["time"])
@@ -477,6 +510,8 @@ def materialize_targets(
                     "exactCourseNames": configured["exactCourseNames"],
                     "_notBeforeTime": config["weekdayStartTimes"][str(weekday)],
                     "venuePriority": list(config["venuePriority"]),
+                    "teacherPriority": list(config["teacherPriority"]),
+                    "emptyTeacherAs": config["emptyTeacherAs"],
                     "date": target_date(
                         release_at.astimezone(ballet.TIMEZONE).date(), weekday
                     ).isoformat(),
@@ -487,13 +522,7 @@ def materialize_targets(
                 }
             )
             order += 1
-    targets.sort(
-        key=lambda item: (
-            course_priority_rank(item, config["priorityCourses"]),
-            priority_rank(item["weekday"], config["priorityWeekdays"]),
-            item["_order"],
-        )
-    )
+    targets.sort(key=lambda item: target_priority_key(item, config))
     return targets
 
 
@@ -553,17 +582,35 @@ def discover_targets(
         ):
             selected: list[dict[str, Any]] = []
             selected_venue = ""
-            for venue in planned["venuePriority"]:
-                selected = [
-                    entry
-                    for entry in entries
-                    if ballet.normalize_space(
-                        str(entry["record"].get("venue", ""))
-                    )
-                    == ballet.normalize_space(venue)
-                ]
+            selected_teacher_rank: int | None = None
+            teacher_ranks: tuple[int | None, ...] = (
+                (None,) if planned["weekday"] == 5 else (0, 1)
+            )
+            for teacher_rank in teacher_ranks:
+                teacher_entries = (
+                    entries
+                    if teacher_rank is None
+                    else [
+                        entry
+                        for entry in entries
+                        if teacher_priority_rank(entry["record"], planned)
+                        == teacher_rank
+                    ]
+                )
+                for venue in planned["venuePriority"]:
+                    selected = [
+                        entry
+                        for entry in teacher_entries
+                        if ballet.normalize_space(
+                            str(entry["record"].get("venue", ""))
+                        )
+                        == ballet.normalize_space(venue)
+                    ]
+                    if selected:
+                        selected_venue = venue
+                        selected_teacher_rank = teacher_rank
+                        break
                 if selected:
-                    selected_venue = venue
                     break
             if not selected:
                 continue
@@ -579,18 +626,12 @@ def discover_targets(
                     "endTime": end_time,
                     "_courseName": course_name,
                     "_selectedVenue": selected_venue,
+                    "_selectedTeacherRank": selected_teacher_rank,
                 }
             )
     if len(targets) > MAX_DISCOVERED_TARGETS:
         raise FastBookingFailure("source_changed")
-    targets.sort(
-        key=lambda item: (
-            course_priority_rank(item, config["priorityCourses"]),
-            priority_rank(item["weekday"], config["priorityWeekdays"]),
-            item["startTime"],
-            item["_order"],
-        )
-    )
+    targets.sort(key=lambda item: target_priority_key(item, config))
     return targets
 
 
@@ -609,7 +650,19 @@ def public_target(target: dict[str, Any]) -> dict[str, Any]:
         ),
         "endTime": target["endTime"],
         "course": course,
-        "teacher": "不限老师",
+        "teacher": (
+            "周六不限老师"
+            if target["weekday"] == 5
+            else (
+                "李俊优先（含未标注）"
+                if "_selectedTeacherRank" not in target
+                else (
+                    "李俊（含未标注）"
+                    if target["_selectedTeacherRank"] == 0
+                    else "其他老师兜底"
+                )
+            )
+        ),
         "venue": target.get("_selectedVenue") or "大教室优先，小教室兜底",
     }
 
@@ -630,6 +683,11 @@ def record_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
             not target.get("_selectedVenue")
             or ballet.normalize_space(str(record.get("venue", "")))
             == ballet.normalize_space(str(target["_selectedVenue"]))
+        )
+        and (
+            target.get("_selectedTeacherRank") is None
+            or teacher_priority_rank(record, target)
+            == target["_selectedTeacherRank"]
         )
     )
 
@@ -1450,7 +1508,8 @@ def build_public(
         "coursePriorityOrder": ["芭蕾 L1", "芭蕾 L1.5", "软开 / 软开课"],
         "priorityOrder": ["周六", "周一", "周二", "周三", "周四", "周五"],
         "prioritySummary": (
-            "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类先周六，再周一至周五；"
+            "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类按周六 > "
+            "周一至周五李俊（老师空白按李俊）> 周一至周五其他老师；"
             "工作日仅 18:40 后、周六全天；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         ),
