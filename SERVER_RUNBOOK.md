@@ -2644,6 +2644,19 @@ automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 ac
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-08-23 已按 Owner 反馈恢复完整课程表紧凑高度：
+
+```text
+deployed source commit: eac742e fix(ballet): restore compact hour cards
+version: 1.0.10.30
+changes: 撤回完整一小时课程增高方案，恢复原宽屏分钟刻度；60 分钟及以下课程重新使用 10px 课程名、8px 老师 / 人数 / 时间和紧凑间距，1101–1800px 将完整时间与状态上下排列，90 / 120 分钟课程继续按真实时长更高
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260823-163212-ballet-compact-hour-cards；部署 stash predeploy-ballet-compact-hour-cards-20260823-163212 保留
+browser verification: 2048px 下一小时卡约 75px、90 分钟约 115px；1920px 下一小时约 79px、90 分钟约 120px；2048 / 1920 / 1801 / 1800 / 1501 / 1500 / 1101 / 390px 共 55 张课程卡的课程名、老师、完整时间和状态无裁切，整页横向溢出为 0
+server verification: scripts/check.py 与 nginx -t 全部通过；styles.css?v=256、app.js?v=219 生效；服务器 HEAD 与 origin/main 一致；匿名首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
+
 2026-08-23 已部署周安排课程人数隐藏：
 
 ```text

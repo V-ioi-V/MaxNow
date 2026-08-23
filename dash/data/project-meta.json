@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 16:27",
+  "updatedAt": "2026-08-23 16:32",
   "version": "1.0.10.30",
   "versionLabel": "v1.0.10.30",
   "branch": "bugfix/ballet-compact-hour-cards",
-  "commit": "d041204",
+  "commit": "eac742e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-compact-hour-cards · commit d041204 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-compact-hour-cards · commit eac742e · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-08-23",
