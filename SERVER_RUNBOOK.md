@@ -2618,6 +2618,19 @@ automation state: nginx、maxnow-auth、rolling / full / Fast Path timers 均 ac
 safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-08-23 已部署周安排课程人数隐藏：
+
+```text
+deployed source commit: 5a4f96a chore: refresh project metadata（功能提交 1344b53）
+version: 1.0.10.27
+changes: “课程计划 / 周安排”统一隐藏报名人数、容量和全班候补人数，只保留课程、老师、时间及个人预约 / 候补状态；下方完整课程表继续展示人数统计
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260823-1605-ballet-plan-hide-counts/dash-data
+browser verification: 线上当前周 6 张周安排真实课程卡的人数 / 排队总人数节点均为 0；下方完整课表仍有 62 个人数节点和 22 个排队人数节点；整页横向溢出为 0
+server verification: scripts/check.py 与 nginx -t 全部通过；app.js?v=217 生效；服务器 HEAD 与 origin/main 一致
+automation state: rolling / full / Fast Path timers 均 active；Fast Path service inactive
+safety: 静态 UI 部署和验收未访问闻道、未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
+
 2026-08-23 已部署 Fast Path 芭蕾 L1.5 长期规则：
 
 ```text
