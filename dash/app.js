@@ -3458,24 +3458,22 @@ function createBalletPlanWeekCourse(record = {}, options = {}) {
 
   const title = document.createElement("strong");
   title.textContent = balletCourseName(record);
-  const time = document.createElement("span");
-  time.textContent = options.planned
-    ? String(record.startTime || "全天")
-    : record.endTime
-    ? `${balletStartTime(record) || "--"}–${balletEndTime(record)}`
-    : balletStartTime(record) || "全天";
+  const timeText = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–")
+    || String(record.startTime || "时间待确认");
   const detail = document.createElement("small");
-  detail.textContent = options.planned
-    ? status.label
-    : [balletTeacher(record), record.venue, status.label].filter(Boolean).join(" · ");
-  article.append(title, time, detail);
+  detail.textContent = [balletTeacher(record) || "老师待确认", timeText].join(" · ");
+  const state = document.createElement("span");
+  state.className = "ballet-plan-week-state";
+  state.textContent = status.label;
+  article.append(title, detail);
 
   if (options.priority) {
     const priority = document.createElement("em");
     priority.textContent = `优先 ${String(options.priority).padStart(2, "0")}`;
     article.appendChild(priority);
   }
-  article.title = [title.textContent, time.textContent, detail.textContent].filter(Boolean).join(" · ");
+  article.appendChild(state);
+  article.title = [title.textContent, detail.textContent, record.venue, state.textContent].filter(Boolean).join(" · ");
   return article;
 }
 
@@ -3606,7 +3604,7 @@ function renderBalletPlanWeekTimeline(container, weekDates, actualRecords) {
     "--ballet-plan-time-rows",
     rows
       .map((row) => row.type === "gap"
-        ? "38px"
+        ? "24px"
         : `repeat(${row.trackCount}, var(--ballet-plan-minute-height))`)
       .join(" "),
   );
@@ -5384,9 +5382,8 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
   meta.className = "ballet-timetable-meta";
   const detail = document.createElement("small");
   detail.className = "ballet-timetable-meta-detail ballet-timetable-teacher";
-  const detailText = mobile || options.includeVenue
-    ? [balletTeacher(record), record.venue].filter(Boolean).join(" · ") || "课程详情待补"
-    : balletTeacher(record) || "老师待确认";
+  const timeText = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–") || "时间待确认";
+  const detailText = [balletTeacher(record) || "老师待确认", timeText].join(" · ");
   detail.textContent = detailText;
   const counts = options.includeCounts === false
     ? null
@@ -5404,14 +5401,11 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
     }
   }
   const foot = document.createElement("div");
-  const time = document.createElement("span");
-  time.className = "ballet-timetable-time-range";
-  time.textContent = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–");
   const state = document.createElement("span");
   state.className = "ballet-timetable-state";
   state.textContent = status.label;
   state.dataset.availability = status.key;
-  foot.append(time, state);
+  foot.append(state);
   article.append(title, detail);
   if (counts) {
     article.append(meta);
@@ -5419,7 +5413,7 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
   article.append(foot);
   article.title = [
     balletCourseName(record),
-    [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–"),
+    timeText,
     balletTeacher(record),
     record.venue,
     counts?.accessible,

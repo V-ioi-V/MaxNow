@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-24 22:20",
-  "version": "1.0.11.06",
-  "versionLabel": "v1.0.11.06",
-  "branch": "bugfix/ballet-timetable-card-labels",
-  "commit": "cbfcdc2",
+  "updatedAt": "2026-08-24 23:43",
+  "version": "1.0.11.07",
+  "versionLabel": "v1.0.11.07",
+  "branch": "bugfix/ballet-timetable-status-row",
+  "commit": "d2f6390",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-timetable-card-labels · commit cbfcdc2 · 干净",
+  "deployNote": "bugfix/ballet-timetable-status-row · commit d2f6390 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-24",
+      "title": "统一课表信息顺序并压缩周安排高度",
+      "summary": "完整课表、移动课表和周安排中的实际课程统一为“课程名 / 老师 · 上课时间 / 人数信息 / 底部状态标签”，上课时间不再单独占用卡片底行；可约、可排队、已满、已预约、排队中、已上完、已取消等状态标签固定沉底独占一排。"
+    },
     {
       "date": "2026-08-24",
       "title": "确保一小时课程卡状态标签始终可见",
@@ -28,11 +33,6 @@
       "date": "2026-08-23",
       "title": "周简报数字改为正常常规字重",
       "summary": "周简报的动态周数、日期、训练次数和时长不再使用偏粗的毛笔字与同色描边，改为常规字重的 UI 字体直接填色，数字更正常、清爽。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "修复一小时课程卡底部状态裁切",
-      "summary": "正式课表实测发现部分 60 分钟课程内容仍比卡片高 `4px`；统一将一小时卡的报名 / 排队与完整时间缩至 `5px`，上下内边距收至 `2px` 并压紧行高，保证状态标签在最底部完整显示。"
     }
   ]
 }

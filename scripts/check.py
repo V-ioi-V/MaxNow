@@ -1649,6 +1649,7 @@ def check_secondary_view_style():
         or '"--ballet-plan-room-columns", roomColumns.join(" ")' not in dashboard_js
         or 'for (let minute = 0; minute <= row.trackCount; minute += 1)' not in dashboard_js
         or 'minuteGridLines.set(row.startMinute + minute, startLine + minute);' not in dashboard_js
+        or '? "24px"' not in dashboard_js
         or 'row.type === "time" && Number.isFinite(row.labelMinute)' not in dashboard_js
         or 'const finalMinute = finalRow.endMinute;' in dashboard_js
         or 'terminal.appendChild(label);' in dashboard_js
@@ -1863,19 +1864,28 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=262" not in dashboard_html
+        "styles.css?v=263" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=223" not in dashboard_html
+        or "app.js?v=224" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
-        "--ballet-compact-secondary-size: 4.5px;" not in dashboard_css
+        "--ballet-compact-secondary-size: 4px;" not in dashboard_css
         or "padding-block: 2px;" not in dashboard_css
+        or '.ballet-timetable-grid > .ballet-timetable-course > div {' not in dashboard_css
+        or '.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-state {' not in dashboard_css
+        or '--ballet-plan-minute-height: 1px;' not in dashboard_css
+        or 'grid-template-rows: 40px 17px' not in dashboard_css
+        or 'const timeText = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–") || "时间待确认";' not in dashboard_js
+        or 'const detailText = [balletTeacher(record) || "老师待确认", timeText].join(" · ");' not in dashboard_js
+        or 'foot.append(state);' not in dashboard_js
+        or 'foot.append(time, state);' in dashboard_js
+        or '.ballet-timetable-time-range {' in dashboard_css
         or "--ballet-compact-title-size:" in dashboard_css
         or "--ballet-compact-status-height:" in dashboard_css
         or '[data-compact="true"][data-availability="booked"] > div' in dashboard_css
     ):
-        raise ValueError("ballet: compact timetable cards must shrink only metadata and time")
+        raise ValueError("ballet: timetable cards must combine teacher and time, keep status on the bottom row, and use the compact weekly scale")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
     if "grid-column: auto;" not in cloud_session_rule:
         raise ValueError("secondary views: Cloud ballet operation cards must share one desktop row")
@@ -2091,7 +2101,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=223" not in dashboard_html:
+    if "app.js?v=224" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
