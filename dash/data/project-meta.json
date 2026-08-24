@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-23 19:56",
-  "version": "1.0.11.05",
-  "versionLabel": "v1.0.11.05",
-  "branch": "bugfix/preserve-ballet-runtime",
-  "commit": "4493ec9",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/preserve-ballet-runtime · commit 4493ec9 · 有未提交代码改动",
+  "updatedAt": "2026-08-24 22:20",
+  "version": "1.0.11.06",
+  "versionLabel": "v1.0.11.06",
+  "branch": "bugfix/ballet-timetable-card-labels",
+  "commit": "cbfcdc2",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-timetable-card-labels · commit cbfcdc2 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-24",
+      "title": "确保一小时课程卡状态标签始终可见",
+      "summary": "继续保留“已预约 / 已约”等状态标签；将 60 分钟及以下卡片的报名 / 排队与完整时间字号由 `5px` 收至 `4.5px`，并收紧内部行间距，避免短课卡底部再次被裁切。"
+    },
     {
       "date": "2026-08-23",
       "title": "修复部署覆盖芭蕾训练记录",
@@ -28,11 +33,6 @@
       "date": "2026-08-23",
       "title": "修复一小时课程卡底部状态裁切",
       "summary": "正式课表实测发现部分 60 分钟课程内容仍比卡片高 `4px`；统一将一小时卡的报名 / 排队与完整时间缩至 `5px`，上下内边距收至 `2px` 并压紧行高，保证状态标签在最底部完整显示。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "周简报动态字改为端正可爱的马善政字体",
-      "summary": "按 Owner 反馈只替换周简报中动态填写的周数、日期、次数、时长和课程名：由歪斜感较强的 Long Cang 改为更端正、圆润和可爱的项目内置 Ma Shan Zheng；底图标题、六项指标名、数据位置、字号和颜色保持不变。"
     }
   ]
 }

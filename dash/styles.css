@@ -5851,8 +5851,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] {
-  --ballet-compact-secondary-size: 5px;
-  gap: 1px;
+  --ballet-compact-secondary-size: 4.5px;
+  gap: 0;
   padding-block: 2px;
 }
 
@@ -5889,7 +5889,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   align-items: flex-start;
   flex-direction: column;
   flex-wrap: nowrap;
-  gap: 1px;
+  gap: 0;
 }
 
 .ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-time-range {
