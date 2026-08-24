@@ -2862,3 +2862,16 @@ server verification: HEAD 与 origin/main 均为 92a1581；scripts/check.py 与 
 automation state: nginx、maxnow-auth、rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-25 已部署课表状态标签对齐与紧凑文字舒展优化：
+
+```text
+deployed source commit: 4e5b61b Relax compact ballet card labels
+version: 1.0.11.08
+changes: 完整桌面课表的可约、可排队、已满、已预约等状态标签统一按最大规格显示为 9px 字号、16px 最小高度和 5px 水平内边距；60 分钟紧凑卡人数 / 排队文字由 4px 提升至 7px，并增加卡片内间距、上下内边距和正文行高，真实时间尺度与课程卡高度保持不变；样式缓存提升到 styles.css?v=264
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260825-000121-ballet-status-size/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.* / token-usage.*
+browser verification: 使用服务器当前 58 节脱敏课表本地回环验证；3458 / 2048 / 1752 / 1500px 下全部状态标签均为 9px 字号、16px 高度和 5px 水平内边距，课程卡裁切与页面横向溢出均为 0；1280px 下长排队标签允许自然换行以避免裁切，1101px 切换移动列表
+server verification: HEAD 与 origin/main 均为 4e5b61b；scripts/check.py 与 nginx -t 通过；styles.css?v=264、app.js?v=224 生效；部署前后 ballet.json / ballet.js 的 SHA-256、21 条训练记录、58 节课程与 dataAsOf=2026-08-24T22:00:01+08:00 均保持不变；未认证首页 / 芭蕾数据为 302 / 401
+automation state: nginx、maxnow-auth、rolling / week-closeout / full timers 均 active；Fast Path timer 当前 inactive，部署未改变其状态
+safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
