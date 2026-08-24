@@ -2836,3 +2836,16 @@ server verification: HEAD 与 origin/main 均为 e3201eb；scripts/check.py 与 
 automation state: rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 本次仅部署静态脚本和缓存版本，未访问闻道，未启动芭蕾同步，未执行预约、候补、取消或转课
 ```
+
+2026-08-24 已部署一小时课程卡状态标签稳固修复：
+
+```text
+deployed source commit: e11cc8b fix(ballet): keep compact course statuses visible
+version: 1.0.11.06
+changes: 保留“已预约 / 已约”等状态标签；60 分钟及以下课程只将报名 / 排队与完整时间由 5px 收至 4.5px，并收紧内部行间距，课程名、老师、状态标签、卡片高度和课表时间尺度不变；样式缓存提升到 styles.css?v=262
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260824-222206-ballet-card-labels/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.* / token-usage.*
+browser verification: 使用服务器当前 2026-08-24 22:00 脱敏课表本地回环验证；26 张一小时卡在 3505 / 1752 / 1600 / 1501 / 1500 / 1280 / 1101px 均无内容裁切和整页横向溢出；截图对应“14/10 人 排队 5 / 17:45–18:45”完整显示，3 张一小时正式预约卡的“已预约”标签均位于卡片边界内
+server verification: HEAD 与 origin/main 均为 e11cc8b；scripts/check.py 与 nginx -t 通过；部署前后 ballet.json / ballet.js 的 SHA-256、21 条训练记录和 dataAsOf=2026-08-24T22:00:01+08:00 均保持不变；未认证首页 / 芭蕾数据 / Blog 为 302 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步，未执行预约、候补、取消或转课
+```
