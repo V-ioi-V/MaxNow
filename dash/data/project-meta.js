@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-24 23:43",
-  "version": "1.0.11.07",
-  "versionLabel": "v1.0.11.07",
-  "branch": "bugfix/ballet-timetable-status-row",
-  "commit": "d2f6390",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-timetable-status-row · commit d2f6390 · 干净",
+  "updatedAt": "2026-08-24 23:56",
+  "version": "1.0.11.08",
+  "versionLabel": "v1.0.11.08",
+  "branch": "bugfix/ballet-status-size",
+  "commit": "56dcbd6",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-status-size · commit 56dcbd6 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-24",
+      "title": "统一完整课表状态标签尺寸并放松紧凑文字",
+      "summary": "完整课表中的可约、可排队、已满、已预约、排队中、已上完、已取消等状态标签统一采用原较大规格 `9px / 16px`，60 分钟卡和重叠卡不再使用独立小号标签。"
+    },
     {
       "date": "2026-08-24",
       "title": "统一课表信息顺序并压缩周安排高度",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-23",
       "title": "自动抢课加入工作日李俊老师优先级",
       "summary": "保持课程优先级 `L1 > L1.5 > 软开` 不变；每一课程层内调整为周六全部课程、周一至周五李俊课程、周一至周五其他老师课程，老师字段为空按李俊处理，各组内继续按原日期与开始时间排序。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "周简报数字改为正常常规字重",
-      "summary": "周简报的动态周数、日期、训练次数和时长不再使用偏粗的毛笔字与同色描边，改为常规字重的 UI 字体直接填色，数字更正常、清爽。"
     }
   ]
 };

@@ -1864,16 +1864,19 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=263" not in dashboard_html
+        "styles.css?v=264" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=224" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
-        "--ballet-compact-secondary-size: 4px;" not in dashboard_css
-        or "padding-block: 2px;" not in dashboard_css
+        "--ballet-compact-secondary-size: 7px;" not in dashboard_css
+        or "padding-block: 3px;" not in dashboard_css
         or '.ballet-timetable-grid > .ballet-timetable-course > div {' not in dashboard_css
-        or '.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-state {' not in dashboard_css
+        or '.ballet-timetable-grid > .ballet-timetable-course .ballet-timetable-state {' not in dashboard_css
+        or 'font-size: 9px;\n  line-height: 1.15;' not in dashboard_css
+        or '.ballet-timetable-grid > .ballet-timetable-course[data-compact="true"] .ballet-timetable-state {' in dashboard_css
+        or '.ballet-timetable-grid > .ballet-timetable-course[data-overlap="true"] .ballet-timetable-state {' in dashboard_css
         or '--ballet-plan-minute-height: 1px;' not in dashboard_css
         or 'grid-template-rows: 40px 17px' not in dashboard_css
         or 'const timeText = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–") || "时间待确认";' not in dashboard_js
@@ -1885,7 +1888,7 @@ def check_secondary_view_style():
         or "--ballet-compact-status-height:" in dashboard_css
         or '[data-compact="true"][data-availability="booked"] > div' in dashboard_css
     ):
-        raise ValueError("ballet: timetable cards must combine teacher and time, keep status on the bottom row, and use the compact weekly scale")
+        raise ValueError("ballet: timetable cards must keep readable compact text and use one full-size bottom status label")
     cloud_session_rule = dashboard_css.split("#cloud-view .ballet-session-card {", 1)[1].split("}", 1)[0]
     if "grid-column: auto;" not in cloud_session_rule:
         raise ValueError("secondary views: Cloud ballet operation cards must share one desktop row")
