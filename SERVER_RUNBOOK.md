@@ -2849,3 +2849,16 @@ server verification: HEAD 与 origin/main 均为 e11cc8b；scripts/check.py 与 
 automation state: nginx、maxnow-auth、rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
 safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步，未执行预约、候补、取消或转课
 ```
+
+2026-08-24 已部署课表卡信息顺序与周安排高度优化：
+
+```text
+deployed source commit: 92a1581 Polish ballet timetable cards
+version: 1.0.11.07
+changes: 完整课表、移动课表、周安排实际课程与“准备抢”计划卡统一在课程名下显示“老师 · 上课时间”，时间不再单独占底行；人数保持独立信息行，所有状态标签固定在卡片最底部；周安排分钟比例由 1.35px 收至 1px，空档由 38px 收至 24px，并同步压缩日期 / 教室表头与卡片内边距
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260824-234449-ballet-timetable-card-layout/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.* / token-usage.*
+browser verification: 使用服务器当前 58 节脱敏课表本地回环验证；周安排时间区约 506px，下一周 18 张计划卡全部以“老师 / 规则 · 时间”显示且“准备抢”位于最后一行；3493 / 1752 / 1500 / 1280 / 1101px 下课程卡和页面横向溢出均为 0，旧独立时间节点为 0；1101px 移动课表 58 张卡全部严格为“老师 · 上课时间”
+server verification: HEAD 与 origin/main 均为 92a1581；scripts/check.py 与 nginx -t 通过；styles.css?v=263、app.js?v=224 生效；部署前后 ballet.json / ballet.js 的 SHA-256、21 条训练记录、58 节课程与 dataAsOf=2026-08-24T22:00:01+08:00 均保持不变；未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / week-closeout / full / Fast Path timers 均 active；rolling / full / Fast Path service 均 inactive
+safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
