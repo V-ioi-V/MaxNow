@@ -5259,10 +5259,6 @@ function createBalletUpcomingItem(record, isNearest = false) {
       tags.appendChild(span);
     });
   if (isNearest) {
-    const nearest = document.createElement("span");
-    nearest.className = "ballet-upcoming-nearest";
-    nearest.textContent = "最近一节";
-    tags.prepend(nearest);
     article.classList.add("is-nearest");
   }
   article.append(main, tags, cancellation);

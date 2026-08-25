@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-25 10:59",
-  "version": "1.0.11.11",
-  "versionLabel": "v1.0.11.11",
-  "branch": "bugfix/ballet-booking-tags-row",
-  "commit": "3e56713a",
+  "updatedAt": "2026-08-25 11:17",
+  "version": "1.0.11.12",
+  "versionLabel": "v1.0.11.12",
+  "branch": "bugfix/ballet-nearest-card-emphasis",
+  "commit": "5999b67b",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-booking-tags-row · commit 3e56713a · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-nearest-card-emphasis · commit 5999b67b · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-25",
+      "title": "最近课程改用深色卡面并让标签按整卡居中",
+      "summary": "课程预约右侧标签组改为跨越课程信息与取消提示两行，桌面端以整张课程小卡为基准上下居中；预约 / 候补与级别标签继续保持横向单排。"
+    },
     {
       "date": "2026-08-25",
       "title": "课程预约标签单行居中",
@@ -28,11 +33,6 @@
       "date": "2026-08-24",
       "title": "统一完整课表状态标签尺寸并放松紧凑文字",
       "summary": "完整课表中的可约、可排队、已满、已预约、排队中、已上完、已取消等状态标签统一采用原较大规格 `9px / 16px`，60 分钟卡和重叠卡不再使用独立小号标签。"
-    },
-    {
-      "date": "2026-08-24",
-      "title": "统一课表信息顺序并压缩周安排高度",
-      "summary": "完整课表、移动课表和周安排中的实际课程统一为“课程名 / 老师 · 上课时间 / 人数信息 / 底部状态标签”，上课时间不再单独占用卡片底行；可约、可排队、已满、已预约、排队中、已上完、已取消等状态标签固定沉底独占一排。"
     }
   ]
 }

@@ -8566,25 +8566,21 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-plan-group .ballet-upcoming-item .ballet-history-meta {
+  grid-column: 2;
+  grid-row: 1 / -1;
   align-self: center;
   flex-wrap: nowrap;
   white-space: nowrap;
 }
 
 .ballet-plan-group .ballet-upcoming-item.is-nearest {
-  border-color: color-mix(in srgb, var(--ballet) 42%, var(--line));
-  background: linear-gradient(135deg, #fff0f5, #ffffff 72%);
-  box-shadow: 0 9px 24px color-mix(in srgb, var(--ballet) 13%, transparent);
-}
-
-.ballet-upcoming-nearest {
-  border-color: var(--ballet) !important;
-  background: var(--ballet) !important;
-  color: #ffffff !important;
+  border-color: color-mix(in srgb, var(--ballet) 52%, var(--line));
+  background: linear-gradient(135deg, #ffe2ec, #fff2f6 72%);
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--ballet) 16%, transparent);
 }
 
 .ballet-upcoming-note {
-  grid-column: 1 / -1;
+  grid-column: 1;
   grid-row: 2;
   color: var(--ballet) !important;
   font-size: 10px;
