@@ -2901,3 +2901,16 @@ server verification: HEAD 与 origin/main 均为 6831bfc6；scripts/check.py 与
 automation state: nginx、maxnow-auth、rolling / week-closeout / full timers 均 active；Fast Path timer 当前 inactive，部署未改变其状态
 safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-25 已部署课程预约标签单行居中：
+
+```text
+deployed source commit: 9a755bd9 fix: keep ballet booking tags on one row
+version: 1.0.11.11
+changes: 课程预约小卡右侧移除 118px 标签组宽度限制，预约 / 候补、级别与“最近一节”统一保持横向单排，并在课程信息行内上下居中；样式缓存提升到 styles.css?v=267，脚本缓存保持 app.js?v=225
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260825-110453-ballet-booking-tags-row/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.* / token-usage.*
+browser verification: 使用与线上同一份 styles.css?v=267 和截图中的真实标签组合构造聚焦 DOM 验收；2048px 下“最近一节 / 已预约 / 软开”与“排队第 4 位 / L1”两组标签 top 偏差均为 0px、标签组无溢出且与课程信息垂直中心重合；390x844 下两组标签继续单排，标签组与整页横向溢出均为 0
+server verification: HEAD 与 origin/main 均为 9a755bd9；scripts/check.py 与 nginx -t 通过；styles.css?v=267、app.js?v=225 生效且线上样式文件与部署文件完全一致；部署前后 ballet.json / ballet.js 的 SHA-256 均保持 899230c54acc8253eebf6fc659c3d99caf34a8d832d997c83fcafc543c96ae4b / a7e3547efdc5d0900babb039bf9477d9645d109bc584da4e9bb08865ee03ff88，21 节 / 26 小时、9 条后续课程与 dataAsOf=2026-08-25T09:00:01+08:00 均保持不变；未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / week-closeout / full / Session 状态 / Fast Path timer 均 active；rolling / full / Fast Path service 均 inactive
+safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
