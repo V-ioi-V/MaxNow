@@ -2875,3 +2875,16 @@ server verification: HEAD 与 origin/main 均为 4e5b61b；scripts/check.py 与 
 automation state: nginx、maxnow-auth、rolling / week-closeout / full timers 均 active；Fast Path timer 当前 inactive，部署未改变其状态
 safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-25 已部署课程预约按日期合并展示：
+
+```text
+deployed source commit: 6831bfc6 Group ballet bookings by date
+version: 1.0.11.09
+changes: 课程预约按日期生成外层大卡，左侧日期轨道统一显示 M.D / 星期并贯穿当天全部课程，右侧按时间顺序纵向放置每节课程小卡；最近一节只高亮对应课程小卡，课程信息、取消截止和预约 / 候补状态保持不变；资源缓存提升到 styles.css?v=265、app.js?v=225
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260825-104050-ballet-booking-date-groups/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.* / token-usage.*
+browser verification: 使用服务器当前 58 节脱敏课表本地回环验证；8.25 星期二只生成 1 个日期轨道并包含 2 张纵向课程小卡，日期轨道高度覆盖两课；2048 / 1500 / 1320 / 860 / 560 / 390px 下分组、课程内容和页面横向溢出均为 0，浏览器控制台无 warning / error
+server verification: HEAD 与 origin/main 均为 6831bfc6；scripts/check.py 与 nginx -t 通过；styles.css?v=265、app.js?v=225 生效；部署前后 ballet.json / ballet.js 的 SHA-256、21 条训练记录、58 节课程与 dataAsOf=2026-08-25T09:00:01+08:00 均保持不变；未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / week-closeout / full timers 均 active；Fast Path timer 当前 inactive，部署未改变其状态
+safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
