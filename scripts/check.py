@@ -714,11 +714,18 @@ def check_ballet_read_model():
     if (
         'date.className = "ballet-upcoming-date"' not in dashboard_js
         or 'weekday: "long"' not in dashboard_js
+        or 'function createBalletUpcomingDayGroup(dateText, records, nearestRecord)' not in dashboard_js
+        or 'courses.className = "ballet-upcoming-day-courses"' not in dashboard_js
+        or 'const dayGroups = new Map();' not in dashboard_js
+        or 'dayGroups.get(dateText).push(record);' not in dashboard_js
         or 'const venue = String(record.venue || "").trim();' not in dashboard_js
         or "span.dataset.bookingStatus = item.status" not in dashboard_js
         or '[data-booking-status="waitlist"]' not in dashboard_css
+        or ".ballet-upcoming-day-group {" not in dashboard_css
+        or ".ballet-upcoming-day-courses {" not in dashboard_css
+        or "grid-template-columns: 1fr;\n  gap: 8px;\n}\n\n.ballet-plan-group .ballet-upcoming-item" not in dashboard_css
     ):
-        raise ValueError("ballet: booking weekday or status color contract is incomplete")
+        raise ValueError("ballet: booking date grouping, weekday, or status color contract is incomplete")
     if (
         "function formatBalletCancellation(" not in dashboard_js
         or "function renderBalletMembership()" not in dashboard_js
@@ -1543,6 +1550,8 @@ def check_secondary_view_style():
         ".secondary-page-head {",
         ".ballet-overview-grid {",
         ".ballet-course-plan-grid {",
+        ".ballet-upcoming-day-group {",
+        ".ballet-upcoming-day-courses {",
         ".ballet-upcoming-item.is-nearest {",
         ".ballet-upcoming-nearest {",
         ".ballet-upcoming-note {",
@@ -1661,16 +1670,18 @@ def check_secondary_view_style():
     ):
         raise ValueError("secondary views: ballet three-week course plan contract is incomplete")
     if (
-        "function createBalletUpcomingItem(record)" not in dashboard_js
+        "function createBalletUpcomingItem(record, isNearest = false)" not in dashboard_js
+        or "function createBalletUpcomingDayGroup(dateText, records, nearestRecord)" not in dashboard_js
         or "getBalletCancellationDisplay(record)" not in dashboard_js
-        or "const items = records.map(createBalletUpcomingItem);" not in dashboard_js
+        or "const dayGroups = new Map();" not in dashboard_js
+        or "createBalletUpcomingDayGroup(dateText, dayRecords, nearestRecord)" not in dashboard_js
         or 'class="panel ballet-course-plan-panel"' not in ballet_view_markup
-        or 'items[nearestIndex].classList.add("is-nearest")' not in dashboard_js
+        or 'article.classList.add("is-nearest")' not in dashboard_js
         or 'nearest.textContent = "最近一节"' not in dashboard_js
         or 'cancellation.className = "ballet-upcoming-note"' not in dashboard_js
         or "is-featured" in dashboard_js
     ):
-        raise ValueError("secondary views: nearest booking, course plan, or cancellation deadlines are incomplete")
+        raise ValueError("secondary views: grouped bookings, nearest booking, or cancellation deadlines are incomplete")
     if any(retired in ballet_view_markup for retired in ("ballet-next-panel", 'id="ballet-next-class"', 'id="ballet-next-status"')):
         raise ValueError("secondary views: retired standalone next-class panel remains")
     if (
@@ -1864,9 +1875,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=264" not in dashboard_html
+        "styles.css?v=265" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=224" not in dashboard_html
+        or "app.js?v=225" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2104,7 +2115,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=224" not in dashboard_html:
+    if "app.js?v=225" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")

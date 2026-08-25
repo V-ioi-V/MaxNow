@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-24 23:56",
-  "version": "1.0.11.08",
-  "versionLabel": "v1.0.11.08",
-  "branch": "bugfix/ballet-status-size",
-  "commit": "56dcbd6",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-status-size · commit 56dcbd6 · 有未提交代码改动",
+  "updatedAt": "2026-08-25 10:39",
+  "version": "1.0.11.09",
+  "versionLabel": "v1.0.11.09",
+  "branch": "feature/ballet-booking-date-groups",
+  "commit": "609792ae",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "feature/ballet-booking-date-groups · commit 609792ae · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-08-25",
+      "title": "课程预约按日期合并展示",
+      "summary": "课程预约从逐课独立行改为日期分组大卡：左侧统一显示 `M.D / 星期`，右侧用独立课程小卡完整承载同日所有预约或候补，周二两节课不再重复两次日期。"
+    },
     {
       "date": "2026-08-24",
       "title": "统一完整课表状态标签尺寸并放松紧凑文字",
@@ -28,11 +33,6 @@
       "date": "2026-08-23",
       "title": "修复部署覆盖芭蕾训练记录",
       "summary": "19:33 的并行代码部署将服务器运行时 `ballet.json` / `.js` 覆盖为仓库内 7 月 30 日兜底快照，页面因此从 19 节 / 23.5 小时回退为 4 节 / 5 小时；课程源记录和私有账本没有丢失。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "自动抢课加入工作日李俊老师优先级",
-      "summary": "保持课程优先级 `L1 > L1.5 > 软开` 不变；每一课程层内调整为周六全部课程、周一至周五李俊课程、周一至周五其他老师课程，老师字段为空按李俊处理，各组内继续按原日期与开始时间排序。"
     }
   ]
 }

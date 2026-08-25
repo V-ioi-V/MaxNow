@@ -8437,8 +8437,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   }
 }
 
-.ballet-history-item,
-.ballet-upcoming-item {
+.ballet-history-item {
   --card-color: var(--ballet);
   --card-border: var(--ballet-border);
   min-width: 0;
@@ -8457,7 +8456,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-history-item time,
-.ballet-upcoming-item time {
+.ballet-upcoming-date {
   color: var(--ballet);
   font-size: 13px;
   font-weight: 850;
@@ -8483,7 +8482,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-history-item > div:nth-child(2),
-.ballet-upcoming-item > div:nth-child(2) {
+.ballet-upcoming-main {
   min-width: 0;
   display: grid;
   gap: 4px;
@@ -8526,15 +8525,47 @@ body[data-view="ricky"] .topbar-ricky-status {
   color: #b85f18;
 }
 
-.ballet-plan-group .ballet-upcoming-item {
-  grid-template-columns: 70px minmax(0, 1fr) auto;
-  grid-template-rows: auto auto;
-  gap: 10px;
-  padding: 9px 11px;
+.ballet-upcoming-day-group {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #fff8fb, #ffffff 74%);
 }
 
-.ballet-plan-group .ballet-upcoming-date {
-  grid-row: 1 / span 2;
+.ballet-upcoming-day-group > .ballet-upcoming-date {
+  padding-right: 10px;
+  border-right: 1px solid #f0dce4;
+}
+
+.ballet-upcoming-day-courses {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.ballet-plan-group .ballet-upcoming-item {
+  --card-color: var(--ballet);
+  --card-border: var(--ballet-border);
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-items: start;
+  gap: 8px 10px;
+  padding: 10px 11px;
+  border: 1px solid #f0dce4;
+  border-radius: calc(var(--radius) - 4px);
+  background: #ffffff;
+}
+
+.ballet-plan-group .ballet-upcoming-item .ballet-history-meta {
+  max-width: 118px;
+  align-self: start;
 }
 
 .ballet-plan-group .ballet-upcoming-item.is-nearest {
@@ -8550,7 +8581,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-upcoming-note {
-  grid-column: 2 / -1;
+  grid-column: 1 / -1;
   grid-row: 2;
   color: var(--ballet) !important;
   font-size: 10px;
@@ -9403,6 +9434,24 @@ body[data-view="ricky"] .topbar-ricky-status {
   .ballet-plan-group .ballet-upcoming-item {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
+  }
+
+  .ballet-upcoming-day-group {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .ballet-upcoming-day-group > .ballet-upcoming-date {
+    grid-template-columns: auto auto;
+    justify-content: start;
+    align-items: baseline;
+    padding: 0 0 8px;
+    border-right: 0;
+    border-bottom: 1px solid #f0dce4;
+  }
+
+  .ballet-upcoming-day-courses {
+    grid-template-columns: 1fr;
   }
 
   .ballet-plan-group .ballet-upcoming-date,

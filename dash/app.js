@@ -5219,24 +5219,11 @@ function renderBalletHistory() {
   container.append(...records.map(createBalletHistoryItem));
 }
 
-function createBalletUpcomingItem(record) {
+function createBalletUpcomingItem(record, isNearest = false) {
   const article = document.createElement("article");
   article.className = "ballet-upcoming-item";
-  const date = document.createElement("time");
-  const dateText = balletRecordDate(record);
-  const parsedDate = parseLocalDateTime(dateText);
-  date.className = "ballet-upcoming-date";
-  if (dateText) date.dateTime = dateText;
-  const dateLabel = document.createElement("strong");
-  const weekdayLabel = document.createElement("span");
-  dateLabel.textContent = dateText
-    ? `${Number(dateText.slice(5, 7))}月${Number(dateText.slice(8, 10))}日`
-    : "--";
-  weekdayLabel.textContent = parsedDate
-    ? new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(parsedDate)
-    : "--";
-  date.append(dateLabel, weekdayLabel);
   const main = document.createElement("div");
+  main.className = "ballet-upcoming-main";
   const title = document.createElement("strong");
   const meta = document.createElement("small");
   title.textContent = balletCourseName(record);
@@ -5271,8 +5258,38 @@ function createBalletUpcomingItem(record) {
       if (item.status) span.dataset.bookingStatus = item.status;
       tags.appendChild(span);
     });
-  article.append(date, main, cancellation, tags);
+  if (isNearest) {
+    const nearest = document.createElement("span");
+    nearest.className = "ballet-upcoming-nearest";
+    nearest.textContent = "最近一节";
+    tags.prepend(nearest);
+    article.classList.add("is-nearest");
+  }
+  article.append(main, tags, cancellation);
   return article;
+}
+
+function createBalletUpcomingDayGroup(dateText, records, nearestRecord) {
+  const group = document.createElement("article");
+  group.className = "ballet-upcoming-day-group";
+  const date = document.createElement("time");
+  const parsedDate = parseLocalDateTime(dateText);
+  date.className = "ballet-upcoming-date";
+  if (dateText) date.dateTime = dateText;
+  const dateLabel = document.createElement("strong");
+  const weekdayLabel = document.createElement("span");
+  dateLabel.textContent = dateText
+    ? `${Number(dateText.slice(5, 7))}.${Number(dateText.slice(8, 10))}`
+    : "--";
+  weekdayLabel.textContent = parsedDate
+    ? new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(parsedDate)
+    : "--";
+  date.append(dateLabel, weekdayLabel);
+  const courses = document.createElement("div");
+  courses.className = "ballet-upcoming-day-courses";
+  courses.append(...records.map((record) => createBalletUpcomingItem(record, record === nearestRecord)));
+  group.append(date, courses);
+  return group;
 }
 
 function renderBalletUpcoming() {
@@ -5287,19 +5304,20 @@ function renderBalletUpcoming() {
     container.appendChild(emptyTemplate.content.cloneNode(true));
     return;
   }
-  const items = records.map(createBalletUpcomingItem);
-  const nearestIndex = records.findIndex((record) => {
+  const nearestRecord = records.find((record) => {
     const boundary = balletClassBoundary(record);
     return !Number.isFinite(boundary) || boundary >= Date.now();
   });
-  if (nearestIndex >= 0) {
-    const nearest = document.createElement("span");
-    nearest.className = "ballet-upcoming-nearest";
-    nearest.textContent = "最近一节";
-    items[nearestIndex].classList.add("is-nearest");
-    items[nearestIndex].querySelector(".ballet-history-meta")?.prepend(nearest);
-  }
-  container.append(...items);
+  const dayGroups = new Map();
+  records.forEach((record) => {
+    const dateText = balletRecordDate(record);
+    if (!dayGroups.has(dateText)) dayGroups.set(dateText, []);
+    dayGroups.get(dateText).push(record);
+  });
+  container.append(
+    ...[...dayGroups.entries()].map(([dateText, dayRecords]) =>
+      createBalletUpcomingDayGroup(dateText, dayRecords, nearestRecord)),
+  );
 }
 
 function getBalletTimetableDayState(dateText) {
