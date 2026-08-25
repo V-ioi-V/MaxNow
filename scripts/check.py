@@ -723,6 +723,8 @@ def check_ballet_read_model():
         or '[data-booking-status="waitlist"]' not in dashboard_css
         or ".ballet-upcoming-day-group {" not in dashboard_css
         or ".ballet-upcoming-day-courses {" not in dashboard_css
+        or "justify-items: center;\n  text-align: center;\n  padding-right: 10px;" not in dashboard_css
+        or ".ballet-plan-group .ballet-upcoming-day-group > .ballet-upcoming-date {\n    justify-content: center;" not in dashboard_css
         or "grid-template-columns: 1fr;\n  gap: 8px;\n}\n\n.ballet-plan-group .ballet-upcoming-item" not in dashboard_css
     ):
         raise ValueError("ballet: booking date grouping, weekday, or status color contract is incomplete")
@@ -1875,7 +1877,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=265" not in dashboard_html
+        "styles.css?v=266" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=225" not in dashboard_html
     ):

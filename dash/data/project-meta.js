@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-25 10:39",
-  "version": "1.0.11.09",
-  "versionLabel": "v1.0.11.09",
-  "branch": "feature/ballet-booking-date-groups",
-  "commit": "609792ae",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-booking-date-groups · commit 609792ae · 干净",
+  "updatedAt": "2026-08-25 10:46",
+  "version": "1.0.11.10",
+  "versionLabel": "v1.0.11.10",
+  "branch": "bugfix/ballet-booking-date-center",
+  "commit": "42d83123",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-booking-date-center · commit 42d83123 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-25",
+      "title": "居中课程预约日期轨道",
+      "summary": "课程预约日期大卡左侧的 `M.D / 星期` 改为在日期轨道内水平、垂直居中，不再贴近左边；`560px` 以下日期移到课程上方后，日期与星期继续作为一组居中。"
+    },
     {
       "date": "2026-08-25",
       "title": "课程预约按日期合并展示",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-24",
       "title": "确保一小时课程卡状态标签始终可见",
       "summary": "继续保留“已预约 / 已约”等状态标签；将 60 分钟及以下卡片的报名 / 排队与完整时间字号由 `5px` 收至 `4.5px`，并收紧内部行间距，避免短课卡底部再次被裁切。"
-    },
-    {
-      "date": "2026-08-23",
-      "title": "修复部署覆盖芭蕾训练记录",
-      "summary": "19:33 的并行代码部署将服务器运行时 `ballet.json` / `.js` 覆盖为仓库内 7 月 30 日兜底快照，页面因此从 19 节 / 23.5 小时回退为 4 节 / 5 小时；课程源记录和私有账本没有丢失。"
     }
   ]
 };
