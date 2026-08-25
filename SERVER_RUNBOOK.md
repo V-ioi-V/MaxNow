@@ -2863,6 +2863,19 @@ automation state: nginx、maxnow-auth、rolling / week-closeout / full / Fast Pa
 safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-08-25 已部署课程预约日期轨道居中：
+
+```text
+deployed source commit: 7bb21adc Center ballet booking dates
+version: 1.0.11.10
+changes: 课程预约日期大卡左侧的 M.D / 星期改为在日期轨道内水平、垂直居中；560px 以下日期移到课程上方后继续整组居中；课程小卡宽度、内容和同日分组结构保持不变；样式缓存提升到 styles.css?v=266，脚本缓存保持 app.js?v=225
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260825-1052-ballet-booking-date-center/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.* / token-usage.*
+browser verification: 使用服务器当前脱敏课表本地回环验证；2048px 下三组日期的内容垂直中心误差小于 0.001px、水平中心误差小于 0.34px，390px 下日期与星期组合中心和日期栏中心完全重合；两个尺寸的页面横向溢出均为 0
+server verification: HEAD 与 origin/main 均为 7bb21adc；scripts/check.py 与 nginx -t 通过；styles.css?v=266、app.js?v=225 生效；部署前后 ballet.json / ballet.js 的 SHA-256 均保持 899230c54acc8253eebf6fc659c3d99caf34a8d832d997c83fcafc543c96ae4b / a7e3547efdc5d0900babb039bf9477d9645d109bc584da4e9bb08865ee03ff88，dataAsOf 保持 2026-08-25T09:00:01+08:00；未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: rolling / full / Session 状态 / Fast Path timer 均 active；rolling service 为 inactive，部署未触发同步或抢课
+safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
+
 2026-08-25 已部署课表状态标签对齐与紧凑文字舒展优化：
 
 ```text
