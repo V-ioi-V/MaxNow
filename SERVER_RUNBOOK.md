@@ -2914,3 +2914,16 @@ server verification: HEAD 与 origin/main 均为 9a755bd9；scripts/check.py 与
 automation state: nginx、maxnow-auth、rolling / week-closeout / full / Session 状态 / Fast Path timer 均 active；rolling / full / Fast Path service 均 inactive
 safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-08-25 已部署最近课程卡面加深与标签整卡居中：
+
+```text
+deployed source commit: e7626d03 fix: center booking tags across the full card
+version: 1.0.11.12
+changes: 删除“最近一节”文字标签，最近课程仅用更深的粉色卡面区分；桌面端预约 / 候补与课程级别标签跨越课程信息和取消提示两行，按整张课程小卡的完整高度垂直居中并保持单排；560px 以下继续自然堆叠；资源缓存提升到 styles.css?v=268、app.js?v=226
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260825-112134-ballet-card-center；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.* / token-usage.*
+browser verification: 使用与线上相同资源和真实标签组合进行聚焦 DOM 验收；2048x896 下“已预约 / 软开”和“排队第 4 位 / L1”两组标签相对整卡垂直中心误差均小于 0.001px，标签顶部偏差为 0、页面及卡片横向溢出均为 0；390x844 下两组标签继续单排且无卡片或整页横向溢出；“最近一节”文字节点数量为 0，最近卡计算背景为更深的粉色渐变
+server verification: 功能提交部署后 HEAD 与 origin/main 均为 e7626d03；scripts/check.py 与 nginx -t 通过；styles.css?v=268、app.js?v=226 生效；部署前后 ballet.json / ballet.js 的 SHA-256 均保持 899230c54acc8253eebf6fc659c3d99caf34a8d832d997c83fcafc543c96ae4b / a7e3547efdc5d0900babb039bf9477d9645d109bc584da4e9bb08865ee03ff88，21 节 / 26 小时、9 条后续课程与 dataAsOf=2026-08-25T09:00:01+08:00 均保持不变
+automation state: nginx、maxnow-auth、rolling / week-closeout / full / Session 状态 / Fast Path timer 均 active；rolling / full / Fast Path service 均 inactive
+safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
