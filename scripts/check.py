@@ -1877,7 +1877,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=266" not in dashboard_html
+        "styles.css?v=267" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=225" not in dashboard_html
     ):

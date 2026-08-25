@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-25 10:46",
-  "version": "1.0.11.10",
-  "versionLabel": "v1.0.11.10",
-  "branch": "bugfix/ballet-booking-date-center",
-  "commit": "42d83123",
+  "updatedAt": "2026-08-25 10:59",
+  "version": "1.0.11.11",
+  "versionLabel": "v1.0.11.11",
+  "branch": "bugfix/ballet-booking-tags-row",
+  "commit": "3e56713a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-booking-date-center · commit 42d83123 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-booking-tags-row · commit 3e56713a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-25",
+      "title": "课程预约标签单行居中",
+      "summary": "课程预约小卡右侧的“最近一节”、预约 / 候补状态与课程级别标签统一保持横向单排，不再让稍长的候补排位标签独占一行。"
+    },
     {
       "date": "2026-08-25",
       "title": "居中课程预约日期轨道",
@@ -28,11 +33,6 @@
       "date": "2026-08-24",
       "title": "统一课表信息顺序并压缩周安排高度",
       "summary": "完整课表、移动课表和周安排中的实际课程统一为“课程名 / 老师 · 上课时间 / 人数信息 / 底部状态标签”，上课时间不再单独占用卡片底行；可约、可排队、已满、已预约、排队中、已上完、已取消等状态标签固定沉底独占一排。"
-    },
-    {
-      "date": "2026-08-24",
-      "title": "确保一小时课程卡状态标签始终可见",
-      "summary": "继续保留“已预约 / 已约”等状态标签；将 60 分钟及以下卡片的报名 / 排队与完整时间字号由 `5px` 收至 `4.5px`，并收紧内部行间距，避免短课卡底部再次被裁切。"
     }
   ]
 }

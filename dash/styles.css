@@ -8566,8 +8566,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-plan-group .ballet-upcoming-item .ballet-history-meta {
-  max-width: 118px;
-  align-self: start;
+  align-self: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .ballet-plan-group .ballet-upcoming-item.is-nearest {
