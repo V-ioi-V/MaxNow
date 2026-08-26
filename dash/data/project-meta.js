@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-25 11:17",
-  "version": "1.0.11.12",
-  "versionLabel": "v1.0.11.12",
-  "branch": "bugfix/ballet-nearest-card-emphasis",
-  "commit": "5999b67b",
+  "updatedAt": "2026-08-26 20:42",
+  "version": "1.0.11.13",
+  "versionLabel": "v1.0.11.13",
+  "branch": "bugfix/ballet-week-cancelled-state",
+  "commit": "a05fd04c",
   "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-nearest-card-emphasis · commit 5999b67b · 有未提交代码改动",
+  "dirtyLevel": "generated",
+  "deployNote": "bugfix/ballet-week-cancelled-state · commit a05fd04c · 运行数据已更新",
   "recentUpdates": [
+    {
+      "date": "2026-08-26",
+      "title": "周安排不再回填已取消课程的旧抢课状态",
+      "summary": "周安排比较芭蕾业务快照与 Fast Path 上次执行时间；当 `ballet.json` 已有更晚的成功同步时，预约、候补、完成与取消状态统一以该业务快照为准。"
+    },
     {
       "date": "2026-08-25",
       "title": "最近课程改用深色卡面并让标签按整卡居中",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-25",
       "title": "课程预约按日期合并展示",
       "summary": "课程预约从逐课独立行改为日期分组大卡：左侧统一显示 `M.D / 星期`，右侧用独立课程小卡完整承载同日所有预约或候补，周二两节课不再重复两次日期。"
-    },
-    {
-      "date": "2026-08-24",
-      "title": "统一完整课表状态标签尺寸并放松紧凑文字",
-      "summary": "完整课表中的可约、可排队、已满、已预约、排队中、已上完、已取消等状态标签统一采用原较大规格 `9px / 16px`，60 分钟卡和重叠卡不再使用独立小号标签。"
     }
   ]
 };
