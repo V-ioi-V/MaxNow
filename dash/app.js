@@ -3418,7 +3418,14 @@ function getBalletPlanActualRecords() {
   const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
     ? balletBookingFastData.lastRun.records
     : [];
-  lastRecords.forEach((record) => add(record, "last-run"));
+  const balletSnapshotAt = Date.parse(String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || ""));
+  const fastRunAt = Date.parse(String(
+    balletBookingFastData?.lastRun?.attemptedAt || balletBookingFastData?.lastAttemptAt || "",
+  ));
+  const fastRunIsCurrent = !Number.isFinite(balletSnapshotAt)
+    || !Number.isFinite(fastRunAt)
+    || fastRunAt >= balletSnapshotAt;
+  if (fastRunIsCurrent) lastRecords.forEach((record) => add(record, "last-run"));
 
   const unique = new Map();
   records.forEach((record) => {
