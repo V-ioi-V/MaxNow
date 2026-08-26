@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-26 20:42",
+  "updatedAt": "2026-08-26 20:44",
   "version": "1.0.11.13",
   "versionLabel": "v1.0.11.13",
   "branch": "bugfix/ballet-week-cancelled-state",
-  "commit": "a05fd04c",
-  "dirty": true,
-  "dirtyLevel": "generated",
-  "deployNote": "bugfix/ballet-week-cancelled-state · commit a05fd04c · 运行数据已更新",
+  "commit": "2152190e",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-week-cancelled-state · commit 2152190e · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-26",
