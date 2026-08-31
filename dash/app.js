@@ -4400,6 +4400,67 @@ function fillBalletDays(entries, month) {
   });
 }
 
+function balletIsoWeek(dateKey) {
+  const date = parseLocalDateTime(dateKey);
+  if (!date) return null;
+  date.setHours(12, 0, 0, 0);
+  const weekday = (date.getDay() + 6) % 7;
+  const weekStart = addLocalDays(date, -weekday);
+  const weekThursday = addLocalDays(weekStart, 3);
+  const isoYear = weekThursday.getFullYear();
+  const firstThursday = new Date(isoYear, 0, 4, 12, 0, 0, 0);
+  const firstWeekStart = addLocalDays(firstThursday, -((firstThursday.getDay() + 6) % 7));
+  const weekNumber = Math.floor((weekStart - firstWeekStart) / 604800000) + 1;
+  return {
+    year: isoYear,
+    week: weekNumber,
+    startDate: localDateKey(weekStart),
+    endDate: localDateKey(addLocalDays(weekStart, 6)),
+  };
+}
+
+function aggregateBalletWeeks(coverageDate) {
+  const buckets = new Map();
+  aggregateBalletRecords("day").forEach((entry) => {
+    const week = balletIsoWeek(entry.date);
+    if (!week) return;
+    const bucket = buckets.get(week.startDate) || { ...week, date: week.startDate, classes: 0, minutes: 0 };
+    bucket.classes += entry.classes;
+    bucket.minutes += entry.minutes;
+    buckets.set(week.startDate, bucket);
+  });
+  if (!buckets.size) return [];
+
+  const populated = [...buckets.values()].sort((a, b) => a.startDate.localeCompare(b.startDate));
+  const grouped = new Map();
+  populated.forEach((entry) => {
+    const group = grouped.get(entry.year) || [];
+    group.push(entry);
+    grouped.set(entry.year, group);
+  });
+  const coverageWeek = balletIsoWeek(coverageDate);
+  const latestYear = populated.at(-1)?.year;
+  const weeks = [];
+
+  [...grouped.entries()].sort(([a], [b]) => a - b).forEach(([year, entries]) => {
+    const first = entries[0];
+    const finalPopulated = entries.at(-1);
+    const finalStart = year === latestYear && coverageWeek?.year === year
+      ? [finalPopulated.startDate, coverageWeek.startDate].sort().at(-1)
+      : finalPopulated.startDate;
+    for (
+      let cursor = parseLocalDateTime(first.startDate);
+      cursor && localDateKey(cursor) <= finalStart;
+      cursor = addLocalDays(cursor, 7)
+    ) {
+      const key = localDateKey(cursor);
+      const week = balletIsoWeek(key);
+      weeks.push(buckets.get(key) || { ...week, date: key, classes: 0, minutes: 0 });
+    }
+  });
+  return weeks;
+}
+
 function getBalletTrend() {
   const aggregates = balletData.aggregates || {};
   const today = localDateKey();
@@ -4425,11 +4486,9 @@ function getBalletTrend() {
     title = `${year} 年`;
     xFormatter = (record) => `${Number(record.date.slice(5, 7))}月`;
   } else {
-    const yearly = normalizeBalletTrendEntries(aggregates.yearly, "year");
-    entries = (yearly.length ? yearly : aggregateBalletRecords("year"))
-      .filter((entry) => entry.classes > 0 || entry.minutes > 0);
-    xFormatter = (record) => record.date;
-    title = "历年";
+    entries = aggregateBalletWeeks(coverageDate);
+    title = "每周";
+    chartType = "weekly-heatmap";
   }
 
   return { entries, title, xFormatter, chartType, coverageDate, month };
@@ -4486,6 +4545,60 @@ function createBalletMonthHeatmap(records, options = {}) {
   `;
 }
 
+function createBalletWeeklyHeatmap(records, options = {}) {
+  const maxValue = Math.max(...records.map((record) => Number(record.value) || 0), 0);
+  const isClasses = options.metric === "classes";
+  const formatValue = (value) => isClasses
+    ? `${Math.round(value)} 节`
+    : `${value.toFixed(value >= 10 ? 1 : 2).replace(/\.?0+$/, "")} h`;
+  const groups = new Map();
+  records.forEach((record) => {
+    const group = groups.get(record.year) || [];
+    group.push(record);
+    groups.set(record.year, group);
+  });
+
+  const sections = [...groups.entries()].sort(([a], [b]) => a - b).map(([year, weeks]) => {
+    const totalClasses = weeks.reduce((total, week) => total + balletNumber(week.classes), 0);
+    const totalMinutes = weeks.reduce((total, week) => total + balletNumber(week.minutes), 0);
+    const totalValue = isClasses ? totalClasses : totalMinutes / 60;
+    const populatedWeeks = weeks.filter((week) => week.classes > 0 || week.minutes > 0).length;
+    const cells = weeks.map((record) => {
+      const level = balletHeatmapLevel(record.value, maxValue);
+      const range = `${formatDateShort(record.startDate)}–${formatDateShort(record.endDate)}`;
+      const label = `${year} 年第 ${record.week} 周，${range}，${formatValue(record.value)}`;
+      const current = record.startDate <= localDateKey() && record.endDate >= localDateKey();
+      return `
+        <span class="ballet-week-heatmap-cell" data-level="${level}"${current ? ' data-current="true"' : ""} tabindex="0" title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">
+          <span>${escapeHtml(formatDateShort(record.startDate))}</span>
+          <strong>${escapeHtml(formatValue(record.value))}</strong>
+        </span>
+      `;
+    }).join("");
+    return `
+      <section class="ballet-week-heatmap-year" aria-label="${year} 年每周训练">
+        <header>
+          <strong>${year}</strong>
+          <span>${populatedWeeks} 个训练周 · ${escapeHtml(formatValue(totalValue))}</span>
+        </header>
+        <div class="ballet-week-heatmap-grid">${cells}</div>
+      </section>
+    `;
+  }).join("");
+
+  return `
+    <div class="ballet-week-heatmap" role="group" aria-label="${escapeHtml(options.title)}">
+      ${sections}
+      <div class="ballet-heatmap-legend" aria-hidden="true">
+        <span>0</span>
+        ${Array.from({ length: 5 }, (_, index) => `<i data-level="${index + 1}"></i>`).join("")}
+        <span>多</span>
+        <em>每格为周一至周日</em>
+      </div>
+    </div>
+  `;
+}
+
 function renderBalletTrend() {
   qsa("[data-ballet-period]").forEach((button) => {
     const active = button.dataset.balletPeriod === activeBalletPeriod;
@@ -4509,26 +4622,28 @@ function renderBalletTrend() {
     || aggregateBalletRecords("day").length > 0;
   const trend = qs("#ballet-training-trend");
   const placeholder = qs("#ballet-trend-placeholder");
-  const showTrend = chartType === "heatmap" ? hasTrainingRecords : sampleCount > 0;
+  const isHeatmap = chartType === "heatmap" || chartType === "weekly-heatmap";
+  const showTrend = isHeatmap ? hasTrainingRecords : sampleCount > 0;
   if (trend) trend.hidden = !showTrend;
   if (placeholder) {
     placeholder.hidden = showTrend;
-    placeholder.textContent = chartType === "heatmap"
-      ? "当前还没有可用于月度热力图的上课记录。"
+    placeholder.textContent = isHeatmap
+      ? "当前还没有可用于热力图的上课记录。"
       : "当前时间范围还没有可用于曲线图的上课记录。";
   }
   const label = isClasses ? "上课节数" : "训练小时";
-  const chartTitle = `${title}${label}${chartType === "heatmap" ? "热力图" : ""}`;
+  const chartTitle = `${title}${label}${isHeatmap ? "热力图" : ""}`;
   setText("#ballet-trend-title", chartTitle);
   const chart = qs("#ballet-trend-chart");
   const detailGrid = qs(".ballet-training-detail-grid");
-  const compactChartWidth = chartType === "heatmap"
+  const compactChartWidth = isHeatmap
     ? 840
     : Math.min(840, Math.max(420, records.length * 84 + 104));
   detailGrid?.style.setProperty("--ballet-training-chart-column-width", `${compactChartWidth}px`);
   if (!chart || !showTrend) return;
   chart.classList.toggle("is-heatmap", chartType === "heatmap");
-  chart.classList.toggle("is-compact-line", chartType !== "heatmap");
+  chart.classList.toggle("is-week-heatmap", chartType === "weekly-heatmap");
+  chart.classList.toggle("is-compact-line", !isHeatmap);
   if (!records.length) {
     chart.innerHTML = `<p class="empty-state">当前时间范围还没有可用统计。</p>`;
     return;
@@ -4539,6 +4654,14 @@ function renderBalletTrend() {
       title: chartTitle,
       month,
       coverageDate,
+      metric: activeBalletMetric,
+    });
+    return;
+  }
+  if (chartType === "weekly-heatmap") {
+    chart.style.removeProperty("--ballet-trend-chart-width");
+    chart.innerHTML = createBalletWeeklyHeatmap(records, {
+      title: chartTitle,
       metric: activeBalletMetric,
     });
     return;

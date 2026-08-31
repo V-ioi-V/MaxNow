@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-26 20:44",
-  "version": "1.0.11.13",
-  "versionLabel": "v1.0.11.13",
-  "branch": "bugfix/ballet-week-cancelled-state",
-  "commit": "2152190e",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-week-cancelled-state · commit 2152190e · 干净",
+  "updatedAt": "2026-08-31 22:47",
+  "version": "1.0.11.14",
+  "versionLabel": "v1.0.11.14",
+  "branch": "feature/weekly-training-heatmap",
+  "commit": "8084329a",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "feature/weekly-training-heatmap · commit 8084329a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-08-31",
+      "title": "全部训练记录改为每周热力图",
+      "summary": "“全部”范围把辨识度较低的历年单点折线改为周一至周日聚合的热力图，按年份分组并补齐首个训练周到最近成功同步周之间的零课周。"
+    },
     {
       "date": "2026-08-26",
       "title": "周安排不再回填已取消课程的旧抢课状态",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-25",
       "title": "居中课程预约日期轨道",
       "summary": "课程预约日期大卡左侧的 `M.D / 星期` 改为在日期轨道内水平、垂直居中，不再贴近左边；`560px` 以下日期移到课程上方后，日期与星期继续作为一组居中。"
-    },
-    {
-      "date": "2026-08-25",
-      "title": "课程预约按日期合并展示",
-      "summary": "课程预约从逐课独立行改为日期分组大卡：左侧统一显示 `M.D / 星期`，右侧用独立课程小卡完整承载同日所有预约或候补，周二两节课不再重复两次日期。"
     }
   ]
 };
