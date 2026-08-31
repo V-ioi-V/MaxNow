@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-31 19:00",
+  "updatedAt": "2026-08-31 20:00",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
@@ -7,29 +7,29 @@
   "pricingStale": false,
   "sinceDays": 3650,
   "summary": {
-    "inputTokens": 5344814792,
-    "outputTokens": 18282454,
-    "cacheReadTokens": 5069958619,
-    "cacheBaseTokens": 5344814792,
-    "totalTokens": 5363097246,
-    "estimatedCostUsd": 4457.525108,
-    "runs": 1185,
-    "activeSeconds": 770113,
-    "completedTurns": 6513
+    "inputTokens": 5353279596,
+    "outputTokens": 18317036,
+    "cacheReadTokens": 5078183515,
+    "cacheBaseTokens": 5353279596,
+    "totalTokens": 5371596632,
+    "estimatedCostUsd": 4463.874556,
+    "runs": 1186,
+    "activeSeconds": 771516,
+    "completedTurns": 6522
   },
   "sources": [
     {
       "key": "codex-macos",
       "label": "Codex macOS",
-      "inputTokens": 5344814792,
-      "outputTokens": 18282454,
-      "cacheReadTokens": 5069958619,
-      "cacheBaseTokens": 5344814792,
-      "totalTokens": 5363097246,
-      "estimatedCostUsd": 4457.525108,
-      "runs": 1185,
-      "activeSeconds": 770113,
-      "completedTurns": 6513
+      "inputTokens": 5353279596,
+      "outputTokens": 18317036,
+      "cacheReadTokens": 5078183515,
+      "cacheBaseTokens": 5353279596,
+      "totalTokens": 5371596632,
+      "estimatedCostUsd": 4463.874556,
+      "runs": 1186,
+      "activeSeconds": 771516,
+      "completedTurns": 6522
     }
   ],
   "days": [
@@ -38,29 +38,29 @@
       "sources": [
         "codex-macos"
       ],
-      "inputTokens": 74406759,
-      "outputTokens": 207909,
-      "cacheReadTokens": 71937024,
-      "cacheBaseTokens": 74406759,
-      "totalTokens": 74614668,
-      "estimatedCostUsd": 54.554457,
-      "runs": 16,
-      "activeSeconds": 10908,
-      "completedTurns": 97,
+      "inputTokens": 82871563,
+      "outputTokens": 242491,
+      "cacheReadTokens": 80161920,
+      "cacheBaseTokens": 82871563,
+      "totalTokens": 83114054,
+      "estimatedCostUsd": 60.903905,
+      "runs": 17,
+      "activeSeconds": 12311,
+      "completedTurns": 106,
       "byModel": [
         {
           "model": "gpt-5.5",
           "provider": "openai",
           "openrouterModel": null,
-          "inputTokens": 74406759,
-          "outputTokens": 207909,
-          "cacheReadTokens": 71937024,
-          "cacheBaseTokens": 74406759,
-          "totalTokens": 74614668,
-          "estimatedCostUsd": 54.554457,
-          "runs": 16,
-          "activeSeconds": 10908,
-          "completedTurns": 97,
+          "inputTokens": 82871563,
+          "outputTokens": 242491,
+          "cacheReadTokens": 80161920,
+          "cacheBaseTokens": 82871563,
+          "totalTokens": 83114054,
+          "estimatedCostUsd": 60.903905,
+          "runs": 17,
+          "activeSeconds": 12311,
+          "completedTurns": 106,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -70,15 +70,15 @@
           "kind": "codex-session",
           "label": "xs_fm_android",
           "model": "gpt-5.5",
-          "inputTokens": 60853687,
-          "outputTokens": 179202,
-          "cacheReadTokens": 58865408,
-          "cacheBaseTokens": 60853687,
-          "totalTokens": 61032889,
-          "estimatedCostUsd": 44.750159,
-          "runs": 15,
-          "activeSeconds": 9540,
-          "completedTurns": 90,
+          "inputTokens": 69318491,
+          "outputTokens": 213784,
+          "cacheReadTokens": 67090304,
+          "cacheBaseTokens": 69318491,
+          "totalTokens": 69532275,
+          "estimatedCostUsd": 51.099607,
+          "runs": 16,
+          "activeSeconds": 10943,
+          "completedTurns": 99,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         },
@@ -5453,6 +5453,38 @@
   "recentRuns": [
     {
       "date": "2026-08-31",
+      "timestamp": "2026-08-31T19:59:47+08:00",
+      "source": "codex-macos",
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "openrouterModel": null,
+      "sessionId": "01a0578d-b24f-7df3-8c0f-18ec9cb0e615",
+      "runId": "01a0578d-b24f-7df3-8c0f-18ec9cb0e615:2026-08-31",
+      "kind": "codex-session",
+      "label": "xs_fm_android",
+      "inputTokens": 8464804,
+      "outputTokens": 34582,
+      "cacheReadTokens": 8224896,
+      "cacheBaseTokens": 8464804,
+      "reasoningOutputTokens": 15347,
+      "totalTokens": 8499386,
+      "pricingEstimated": true,
+      "pricingModel": "gpt-5.5",
+      "contextWindow": 258400,
+      "tokenCountEvents": 74,
+      "activeSeconds": 1403,
+      "completedTurns": 9,
+      "activeByDate": [
+        {
+          "date": "2026-08-31",
+          "activeSeconds": 1403,
+          "completedTurns": 9
+        }
+      ],
+      "estimatedCostUsd": 6.349448
+    },
+    {
+      "date": "2026-08-31",
       "timestamp": "2026-08-31T17:42:03+08:00",
       "source": "codex-macos",
       "provider": "openai",
@@ -6378,38 +6410,6 @@
         }
       ],
       "estimatedCostUsd": 0.662567
-    },
-    {
-      "date": "2026-08-28",
-      "timestamp": "2026-08-28T16:51:02+08:00",
-      "source": "codex-macos",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "01a0478f-d937-7a13-b1c2-ced37761fe8e",
-      "runId": "01a0478f-d937-7a13-b1c2-ced37761fe8e:2026-08-28",
-      "kind": "codex-session",
-      "label": "xs_fm_android",
-      "inputTokens": 407079,
-      "outputTokens": 1819,
-      "cacheReadTokens": 387840,
-      "cacheBaseTokens": 407079,
-      "reasoningOutputTokens": 587,
-      "totalTokens": 408898,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 258400,
-      "tokenCountEvents": 9,
-      "activeSeconds": 58,
-      "completedTurns": 1,
-      "activeByDate": [
-        {
-          "date": "2026-08-28",
-          "activeSeconds": 58,
-          "completedTurns": 1
-        }
-      ],
-      "estimatedCostUsd": 0.344685
     }
   ],
   "pricingSnapshot": [
