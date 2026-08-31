@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-31 22:47",
+  "updatedAt": "2026-08-31 22:48",
   "version": "1.0.11.14",
   "versionLabel": "v1.0.11.14",
   "branch": "feature/weekly-training-heatmap",
-  "commit": "8084329a",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/weekly-training-heatmap · commit 8084329a · 有未提交代码改动",
+  "commit": "5c61e5a1",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "feature/weekly-training-heatmap · commit 5c61e5a1 · 干净",
   "recentUpdates": [
     {
       "date": "2026-08-31",
