@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08 19:34",
+  "updatedAt": "2026-09-08 19:42",
   "version": "1.0.11.15",
   "versionLabel": "v1.0.11.15",
   "branch": "bugfix/dounai-auth-fail-closed",
-  "commit": "bfac2d85",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/dounai-auth-fail-closed · commit bfac2d85 · 干净",
+  "commit": "f1e88296",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/dounai-auth-fail-closed · commit f1e88296 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-08",
