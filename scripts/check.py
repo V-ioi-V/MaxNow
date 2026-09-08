@@ -1412,7 +1412,8 @@ def check_special_dates():
         "getHolidayLabels(candidate)",
         "occurrence > today",
         'setText("#next-special-label", formatNextSpecialDate(now))',
-        "projectStatusData = projectStatus;\n    updateClock();",
+        "assign: (data) => { projectStatusData = data; },",
+        "async function loadHomeData(options = {})",
     )
     combined = "\n".join((dashboard_html, dashboard_css, dashboard_js))
     if any(value not in combined for value in required_frontend):
@@ -1885,7 +1886,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=269" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=229" not in dashboard_html
+        or "app.js?v=230" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2123,8 +2124,16 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=229" not in dashboard_html:
+    if "app.js?v=230" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
+    if (
+        'cache: force ? "no-store" : "default"' not in dashboard_js
+        or "const DATA_SOURCE_REUSE_MS = 60 * 1000;" not in dashboard_js
+        or 'return loadDataSources(["ballet", "ballet-session", "ballet-booking-fast"], options);' not in dashboard_js
+        or 'setView(location.hash.replace("#", ""));' not in dashboard_js
+        or 'loadHomeData().then(() => setView' in dashboard_js
+    ):
+        raise ValueError("data health: initial route must load only its own data sources")
     if "CONSECUTIVE_FAILURE_THRESHOLD = 3" not in system_status or '"data-health"' not in system_status:
         raise ValueError("data health: server source summary or failure threshold is missing")
     update_data = (ROOT / "scripts/update_data.py").read_text(encoding="utf-8")

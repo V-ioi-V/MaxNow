@@ -26,6 +26,7 @@ const BALLET_WEEK_FALLBACK_CONFIG = {
 const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const DATA_SOURCE_REUSE_MS = 60 * 1000;
 const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;
 const BALLET_SESSION_PUBLISH_STALE_MS = 15 * 60 * 1000;
 const BALLET_SESSION_NEXT_RUN_INTERVAL_MINUTES = 20;
@@ -168,10 +169,7 @@ let rickyMap = null;
 let rickyMarkerLayer = null;
 let lifePickTimer = 0;
 let lifeWheelAnimations = [];
-let homeDataPromise = null;
-let tokenDataPromise = null;
-let rickyDataPromise = null;
-let lifeDataPromise = null;
+const dataSourcePromises = new Map();
 let leafletPromise = null;
 let balletWeekConfigPromise = null;
 let balletWeekCoverCache = null;
@@ -6122,6 +6120,24 @@ function renderHome() {
 
   clearAndFill(qs("#action-list"), createTask, actions);
   const systemItems = dashboardData.system || [];
+  clearAndFill(qs("#system-list"), createSystemItem, systemItems);
+  setText("#project-version", projectMetaData.versionLabel || "v--");
+  setText("#project-version-note", projectMetaData.deployNote || projectMetaData.updatedAt || copy.sync);
+  clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
+  renderCheckin();
+  renderBalletHome();
+  renderWikiTodos(openTodos);
+  renderLast30Column("today", "#last30-today-list");
+  renderLast30Column("week", "#last30-week-list");
+  renderLast30Column("mainlines", "#last30-mainline-list");
+}
+
+function renderCloud() {
+  const automation = dashboardData.automation || {};
+  const automationStatus = automation.status || copy.waiting;
+  const automationHealth = getAutomationHealth(automationStatus);
+  qs("#system-panel")?.setAttribute("data-health", automationHealth);
+
   const cloudSystemItems = [
     {
       key: "host",
@@ -6135,21 +6151,11 @@ function renderHome() {
       value: "dash / blog",
       note: "dash.maxnow.cn / blog.maxnow.cn",
     },
-    ...systemItems,
+    ...(dashboardData.system || []),
   ];
-  clearAndFill(qs("#system-list"), createSystemItem, systemItems);
   clearAndFill(qs("#cloud-system-list"), createCloudSystemItem, cloudSystemItems);
-  setText("#project-version", projectMetaData.versionLabel || "v--");
-  setText("#project-version-note", projectMetaData.deployNote || projectMetaData.updatedAt || copy.sync);
-  clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
-  renderCheckin();
-  renderBalletHome();
   renderBalletBookingFast();
   renderBalletSessionExperiment();
-  renderWikiTodos(openTodos);
-  renderLast30Column("today", "#last30-today-list");
-  renderLast30Column("week", "#last30-week-list");
-  renderLast30Column("mainlines", "#last30-mainline-list");
 }
 
 function createRangeButton(range) {
@@ -6398,9 +6404,9 @@ function createSessionItem(session) {
   return article;
 }
 
-async function readJson(url, fallback, sourceKey) {
+async function readJson(url, fallback, sourceKey, { force = false } = {}) {
   try {
-    const response = await fetch(url, { cache: "no-cache" });
+    const response = await fetch(url, { cache: force ? "no-store" : "default" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     if (sourceKey) {
@@ -6416,8 +6422,8 @@ async function readJson(url, fallback, sourceKey) {
   }
 }
 
-async function readWikiTodo() {
-  const data = await readJson(WIKI_TODO_URL, fallbackWikiTodo, "wiki");
+async function readWikiTodo(options = {}) {
+  const data = await readJson(WIKI_TODO_URL, fallbackWikiTodo, "wiki", options);
   const health = browserDataHealth.get("wiki");
   wikiTodoError = health?.status === "failed"
     ? health.updatedAt
@@ -6433,7 +6439,8 @@ function getActiveView() {
 
 function renderActiveView() {
   const view = getActiveView();
-  if (view === "home" || view === "cloud") renderHome();
+  if (view === "home") renderHome();
+  if (view === "cloud") renderCloud();
   if (view === "dounai") renderDounai();
   if (view === "tokens") renderTokens();
   if (view === "ballet") renderBallet();
@@ -6441,63 +6448,110 @@ function renderActiveView() {
   if (view === "life") renderLife();
 }
 
-async function loadHomeData({ force = false } = {}) {
-  if (!force && homeDataPromise) return homeDataPromise;
+const dataSources = {
+  dashboard: {
+    load: (options) => readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData, "weather", options),
+    assign: (data) => { dashboardData = data; },
+  },
+  last30: {
+    load: (options) => readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30, "last30", options),
+    assign: (data) => { last30Data = data; },
+  },
+  wiki: {
+    load: (options) => readWikiTodo(options),
+    assign: (data) => { wikiTodoData = data; },
+  },
+  dounai: {
+    load: (options) => readJson(CHECKIN_URL, fallbackCheckin, "dounai", options),
+    assign: (data) => { checkinData = data; },
+  },
+  market: {
+    load: (options) => readJson(MARKET_INDICES_URL, window.MAXNOW_MARKET_INDICES_DATA || fallbackMarketIndices, "market", options),
+    assign: (data) => { marketIndicesData = data; },
+  },
+  version: {
+    load: (options) => readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta, "version", options),
+    assign: (data) => { projectMetaData = data; },
+  },
+  roadmap: {
+    load: (options) => readJson(PROJECT_STATUS_URL, window.MAXNOW_PROJECT_STATUS_DATA || fallbackProjectStatus, "roadmap", options),
+    assign: (data) => { projectStatusData = data; },
+  },
+  ballet: {
+    load: (options) => readJson(BALLET_URL, window.MAXNOW_BALLET_DATA || fallbackBallet, "ballet", options),
+    assign: (data) => { balletData = data; },
+  },
+  "ballet-session": {
+    load: (options) => readJson(BALLET_SESSION_URL, window.MAXNOW_BALLET_SESSION_DATA || fallbackBalletSession, "ballet-session", options),
+    assign: (data) => { balletSessionData = data; },
+  },
+  "ballet-booking-fast": {
+    load: (options) => readJson(BALLET_BOOKING_FAST_URL, window.MAXNOW_BALLET_BOOKING_FAST_DATA || fallbackBalletBookingFast, "ballet-booking-fast", options),
+    assign: (data) => { balletBookingFastData = data; },
+  },
+  token: {
+    load: (options) => readJson(TOKEN_USAGE_URL, window.MAXNOW_TOKEN_USAGE_DATA || fallbackTokenUsage, "token", options),
+    assign: (data) => { tokenUsageData = data; },
+  },
+  openclaw: {
+    load: (options) => readJson(OPENCLAW_USAGE_URL, window.MAXNOW_OPENCLAW_USAGE_DATA || fallbackOpenclawUsage, null, options),
+    assign: (data) => { openclawUsageData = data; },
+  },
+  ricky: {
+    load: (options) => readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky, "ricky", options),
+    assign: (data) => { rickyData = data; },
+  },
+  life: {
+    load: (options) => readJson(LIFE_FOODS_URL, window.MAXNOW_LIFE_FOODS_DATA || fallbackLifeFoods, "life", options),
+    assign: (data) => { lifeFoodsData = data; },
+  },
+};
 
-  homeDataPromise = Promise.all([
-    readJson(DATA_URL, window.MAXNOW_DASHBOARD_DATA || fallbackData, "weather"),
-    readJson(LAST30_URL, window.MAXNOW_LAST30_DATA || fallbackLast30, "last30"),
-    readWikiTodo(),
-    readJson(CHECKIN_URL, fallbackCheckin, "dounai"),
-    readJson(MARKET_INDICES_URL, window.MAXNOW_MARKET_INDICES_DATA || fallbackMarketIndices, "market"),
-    readJson(PROJECT_META_URL, window.MAXNOW_PROJECT_META_DATA || fallbackProjectMeta, "version"),
-    readJson(PROJECT_STATUS_URL, window.MAXNOW_PROJECT_STATUS_DATA || fallbackProjectStatus, "roadmap"),
-    readJson(BALLET_URL, window.MAXNOW_BALLET_DATA || fallbackBallet, "ballet"),
-    readJson(
-      BALLET_SESSION_URL,
-      window.MAXNOW_BALLET_SESSION_DATA || fallbackBalletSession,
-      "ballet-session",
-    ),
-    readJson(
-      BALLET_BOOKING_FAST_URL,
-      window.MAXNOW_BALLET_BOOKING_FAST_DATA || fallbackBalletBookingFast,
-      "ballet-booking-fast",
-    ),
-  ]).then(([dashboard, last30, wikiTodo, checkin, marketIndices, projectMeta, projectStatus, ballet, balletSession, balletBookingFast]) => {
-    dashboardData = dashboard;
-    last30Data = last30;
-    wikiTodoData = wikiTodo;
-    checkinData = checkin;
-    marketIndicesData = marketIndices;
-    projectMetaData = projectMeta;
-    balletData = ballet;
-    balletSessionData = balletSession;
-    balletBookingFastData = balletBookingFast;
-    projectStatusData = projectStatus;
-    updateClock();
-    renderHome();
-    if (getActiveView() === "dounai") renderDounai();
-    if (getActiveView() === "ballet") renderBallet();
+function loadDataSource(key, { force = false } = {}) {
+  const cached = dataSourcePromises.get(key);
+  if (!force && cached && Date.now() - cached.requestedAt < DATA_SOURCE_REUSE_MS) {
+    return cached.promise;
+  }
+  const source = dataSources[key];
+  if (!source) return Promise.resolve(null);
+  const promise = source.load({ force }).then((data) => {
+    source.assign(data);
+    return data;
   });
-
-  return homeDataPromise;
+  dataSourcePromises.set(key, { promise, requestedAt: Date.now() });
+  return promise;
 }
 
-async function loadTokenData({ force = false } = {}) {
-  if (!force && tokenDataPromise) return tokenDataPromise;
+function loadDataSources(keys, options = {}) {
+  return Promise.all(keys.map((key) => loadDataSource(key, options)));
+}
 
-  tokenDataPromise = readJson(TOKEN_USAGE_URL, window.MAXNOW_TOKEN_USAGE_DATA || fallbackTokenUsage, "token")
-    .then(async (tokenUsage) => {
-      tokenUsageData = tokenUsage;
-      if (!Array.isArray(tokenUsageData.days) || !tokenUsageData.days.length) {
-        openclawUsageData = await readJson(OPENCLAW_USAGE_URL, window.MAXNOW_OPENCLAW_USAGE_DATA || fallbackOpenclawUsage);
-      }
-      if (getActiveView() === "tokens") renderTokens();
-      if (getActiveView() === "home") renderHome();
-      if (getActiveView() !== "tokens") updateSidebarTokenSummary("7d");
-    });
+async function loadHomeData(options = {}) {
+  await Promise.all([
+    loadDataSources(["dashboard", "last30", "wiki", "dounai", "market", "version", "roadmap", "ballet"], options),
+    loadTokenData(options),
+  ]);
+  updateClock();
+}
 
-  return tokenDataPromise;
+async function loadTokenData(options = {}) {
+  await loadDataSource("token", options);
+  if (!Array.isArray(tokenUsageData.days) || !tokenUsageData.days.length) {
+    await loadDataSource("openclaw", options);
+  }
+  if (getActiveView() !== "tokens") updateSidebarTokenSummary("7d");
+}
+
+function loadBalletData(options = {}) {
+  return loadDataSources(["ballet", "ballet-session", "ballet-booking-fast"], options);
+}
+
+function loadCloudData(options = {}) {
+  return loadDataSources(["dashboard", "ballet", "ballet-session", "ballet-booking-fast"], options);
+}
+
+function loadDounaiData(options = {}) {
+  return loadDataSource("dounai", options);
 }
 
 function loadStylesheetOnce(id, url) {
@@ -6537,48 +6591,30 @@ async function ensureRickyMapAssets() {
 }
 
 async function loadRickyData({ force = false } = {}) {
-  if (!force && rickyDataPromise) return rickyDataPromise;
-
-  rickyDataPromise = readJson(RICKY_URL, window.MAXNOW_RICKY_DATA || fallbackRicky, "ricky")
-    .then(async (ricky) => {
-      rickyData = ricky;
-      renderRicky();
-      if (getMappableRickyPlaces(rickyData.places || []).length) {
-        await ensureRickyMapAssets();
-        renderRicky();
-      }
-    });
-
-  return rickyDataPromise;
+  await loadDataSource("ricky", { force });
+  if (getMappableRickyPlaces(rickyData.places || []).length) {
+    await ensureRickyMapAssets();
+  }
 }
 
 async function loadLifeData({ force = false } = {}) {
-  if (!force && lifeDataPromise) return lifeDataPromise;
-
-  lifeDataPromise = readJson(LIFE_FOODS_URL, window.MAXNOW_LIFE_FOODS_DATA || fallbackLifeFoods, "life")
-    .then((lifeFoods) => {
-      lifeFoodsData = lifeFoods;
-      renderLife();
-    });
-
-  return lifeDataPromise;
+  await loadDataSource("life", { force });
 }
 
 async function loadViewData(view = getActiveView(), options = {}) {
-  if (view === "tokens") return loadTokenData(options);
-  if (view === "ricky") return loadRickyData(options);
-  if (view === "life") return loadLifeData(options);
-  return loadHomeData(options);
+  if (view === "home") await loadHomeData(options);
+  if (view === "dounai") await loadDounaiData(options);
+  if (view === "tokens") await loadTokenData(options);
+  if (view === "ballet") await loadBalletData(options);
+  if (view === "cloud") await loadCloudData(options);
+  if (view === "ricky") await loadRickyData(options);
+  if (view === "life") await loadLifeData(options);
+  if (getActiveView() === view) renderActiveView();
 }
 
 async function loadData(options = {}) {
   const view = getActiveView();
-  await loadHomeData(options);
-  if (view === "tokens") await loadTokenData(options);
-  if (view === "ricky") await loadRickyData(options);
-  if (view === "life") await loadLifeData(options);
-  if (view === "home") await loadTokenData(options);
-  renderActiveView();
+  await loadViewData(view, options);
 }
 
 function setView(view) {
@@ -6606,7 +6642,8 @@ function setView(view) {
                 ? copy.dounaiTitle
                 : copy.today;
   }
-  if (nextView === "home" || nextView === "cloud") requestAnimationFrame(renderHome);
+  if (nextView === "home") requestAnimationFrame(renderHome);
+  if (nextView === "cloud") requestAnimationFrame(renderCloud);
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
   if (nextView === "ballet") {
     requestAnimationFrame(renderBallet);
@@ -6616,7 +6653,6 @@ function setView(view) {
   if (nextView === "life") requestAnimationFrame(renderLife);
   if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));
   loadViewData(nextView);
-  if (nextView === "home") loadTokenData();
   if (nextView !== "tokens") updateSidebarTokenSummary("7d");
   if (location.hash !== `#${nextView}`) location.hash = nextView;
   window.scrollTo({ top: 0, behavior: "auto" });
@@ -7193,5 +7229,5 @@ window.addEventListener("resize", () => {
 
 updateClock();
 setInterval(updateClock, 30000);
-loadHomeData().then(() => setView(location.hash.replace("#", "")));
+setView(location.hash.replace("#", ""));
 setInterval(() => loadData({ force: true }), DATA_AUTO_REFRESH_INTERVAL_MS);

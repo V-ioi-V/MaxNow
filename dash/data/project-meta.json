@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08 20:30",
-  "version": "1.0.11.18",
-  "versionLabel": "v1.0.11.18",
-  "branch": "bugfix/dounai-readonly-readback",
-  "commit": "4bd0b943",
+  "updatedAt": "2026-09-08 22:13",
+  "version": "1.0.11.19",
+  "versionLabel": "v1.0.11.19",
+  "branch": "feature/lazy-dashboard-data",
+  "commit": "168f26df",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/dounai-readonly-readback · commit 4bd0b943 · 有未提交代码改动",
+  "deployNote": "feature/lazy-dashboard-data · commit 168f26df · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-08",
+      "title": "按当前页面懒加载 Dashboard 数据",
+      "summary": "修复直接打开 `#ballet`、Token、豆奶等二级页时仍先等待整套 Home 数据的问题；现在先显示目标页，再只读取该页所需的数据源，芭蕾首开由 10 份数据请求收敛为 3 份，Token / 豆奶 / 生活各为 1 份。"
+    },
     {
       "date": "2026-09-08",
       "title": "修复手动签到后豆奶页面未更新",
@@ -28,11 +33,6 @@
       "date": "2026-09-08",
       "title": "恢复豆奶登录态并让流量同步失败关闭",
       "summary": "排查确认豆奶登录态于 9 月初失效，00:05 流量日结把 HTTP 401 页面解析成 0 条记录并继续写入新时间，导致“更新时间正常、实际流量停在 9 月 3 日”且 60 天历史逐日缩短。"
-    },
-    {
-      "date": "2026-08-31",
-      "title": "全部训练记录改为每周热力图",
-      "summary": "“全部”范围把辨识度较低的历年单点折线改为周一至周日聚合的热力图，按年份分组并补齐首个训练周到最近成功同步周之间的零课周。"
     }
   ]
 }
