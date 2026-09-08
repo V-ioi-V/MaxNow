@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-31 22:48",
-  "version": "1.0.11.14",
-  "versionLabel": "v1.0.11.14",
-  "branch": "feature/weekly-training-heatmap",
-  "commit": "5c61e5a1",
+  "updatedAt": "2026-09-08 19:34",
+  "version": "1.0.11.15",
+  "versionLabel": "v1.0.11.15",
+  "branch": "bugfix/dounai-auth-fail-closed",
+  "commit": "bfac2d85",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/weekly-training-heatmap · commit 5c61e5a1 · 干净",
+  "deployNote": "bugfix/dounai-auth-fail-closed · commit bfac2d85 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-09-08",
+      "title": "恢复豆奶登录态并让流量同步失败关闭",
+      "summary": "排查确认豆奶登录态于 9 月初失效，00:05 流量日结把 HTTP 401 页面解析成 0 条记录并继续写入新时间，导致“更新时间正常、实际流量停在 9 月 3 日”且 60 天历史逐日缩短。"
+    },
     {
       "date": "2026-08-31",
       "title": "全部训练记录改为每周热力图",
@@ -28,11 +33,6 @@
       "date": "2026-08-25",
       "title": "课程预约标签单行居中",
       "summary": "课程预约小卡右侧的“最近一节”、预约 / 候补状态与课程级别标签统一保持横向单排，不再让稍长的候补排位标签独占一行。"
-    },
-    {
-      "date": "2026-08-25",
-      "title": "居中课程预约日期轨道",
-      "summary": "课程预约日期大卡左侧的 `M.D / 星期` 改为在日期轨道内水平、垂直居中，不再贴近左边；`560px` 以下日期移到课程上方后，日期与星期继续作为一组居中。"
     }
   ]
 }
