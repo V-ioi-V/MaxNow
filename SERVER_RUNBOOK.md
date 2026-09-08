@@ -1399,9 +1399,9 @@ python3 scripts/sync_system_status.py --dry-run
 git checkout -- dash/data/wiki-todos.json dash/data/wiki-todos.js dash/data/dashboard.json dash/data/dashboard.js
 ```
 
-## 豆奶签到数据同步
+## 豆奶签到与流量数据同步
 
-豆奶签到自动化不由 `ubuntu` 用户的 `MAXNOW-DASHBOARD-SYNC` cron 直接执行；它由 root/OpenClaw 侧脚本维护：
+豆奶签到由 Owner 手动完成；服务器不再运行定时签到、签到预检或验证码提醒。root/OpenClaw 侧只维护只读流量日结和数据生成：
 
 ```bash
 sudo crontab -l
@@ -1413,11 +1413,11 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 
 日常预期：
 
-- 签到脚本先更新 `/root/.openclaw/dounai_weekly.json`。
+- Owner 手动签到；`/root/.openclaw/dounai_cron.sh` 和 `dounai_checkin.py` 不在 crontab 中运行。
 - `gen_checkin_data.py` 从 weekly 数据生成最近 60 天的 `dounai_checkin.json`。
 - 同一份结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 - `gen_checkin_data.py` 还会抓取豆奶用户面板上的剩余流量和有效期，写入 `account` 字段，并维护最近 60 天 `account_history`；如果抓取失败，会尽量保留上一份 `account` 和 `account_history`，并标记 `stale` / `last_error`。
-- root crontab 里有两个豆奶任务：09:00 的 `MAXNOW-DOUNAL-CHECKIN` 负责签到、账号快照和完整生成；00:05 的 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT` 只运行 `gen_checkin_data.py --traffic-only --exclude-today`，专门更新昨天及更早的真实流量使用量。
+- root crontab 只保留一个豆奶任务：00:05 的 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT` 运行 `gen_checkin_data.py --traffic-only --exclude-today`，专门更新昨天及更早的真实流量使用量。
 - 线上 `dash.maxnow.cn` 读取 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 
 2026-09-08 豆奶站点新增登录计算验证码，并在签到页增加独立的 `checkin_captcha_code`。当前运行边界：
@@ -1425,7 +1425,7 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 - 登录 Cookie 失效时，可用服务器既有 `dounai_creds.json` 配合一次人工确认的登录验证码刷新；账号、密码、Cookie 和验证码不得写入仓库、日志或聊天。
 - `gen_checkin_data.py` 必须把 HTTP 401 / 403、登录页标题、非 200 状态、0 条日用量以及账号余量 / 有效期关键字段缺失视为失败。失败时保留上次 `traffic_usage` / `traffic_usage_history` 或完整账号快照，写入安全的 `stale / last_error`，并保留上次成功时间；不得用空账号字段推进伪成功状态。
 - `dounai_checkin.py` 在页面存在 `checkin_captcha_code` 时必须在签到 POST 前停止。不要重复手工调用签到接口；站点会限制验证码尝试次数。
-- 09:00 cron 继续运行 `/root/.openclaw/dounai_cron.sh`：正常签到时按原流程更新数据和发送成功摘要；需要验证码时刷新 `--traffic-only --exclude-today` 并通过微信提醒 Owner 打开豆奶用户中心手动完成。`dounai_cron.sh` 必须显式捕获签到退出码，不能让 `set -e` 在通知分支前提前退出。
+- 09:00 `MAXNOW-DOUNAL-CHECKIN` cron 已移除；服务器不再运行 `/root/.openclaw/dounai_cron.sh`，也不发送验证码提醒。变更前 root crontab 备份为 `/root/.openclaw/root-crontab-20260908-manual-checkin.bak`。
 - 00:05 的 `--traffic-only --exclude-today` 仍为只读并可无人值守运行。2026-09-08 已补抓 9 月 4–7 日，线上流量历史恢复到 60 条。
 - `/root/.openclaw/dounai_auth.json` 与 `dounai_creds.json` 固定为 `root:root 0600`；`dounai_checkin.py` 与 `gen_checkin_data.py` 固定为 `root:root 0700`。
 
@@ -1460,7 +1460,7 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 # END MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT
 ```
 
-- 00:05 traffic closeout 会从 `traffic_usage.daily` 和 `traffic_usage_history` 中剔除当天，只保留昨天及更早日期；每日 9 点豆奶自动化仍可用于签到和账号快照。前端实际使用量图也会排除当天。
+- 00:05 traffic closeout 会从 `traffic_usage.daily` 和 `traffic_usage_history` 中剔除当天，只保留昨天及更早日期；签到由 Owner 手动完成。前端实际使用量图也会排除当天。
 - 账号余量差分口径只作为缺数据时的兜底估算说明；真实使用量展示优先使用 `traffic_usage_history`。
 
 验证今天是否进入线上页面：

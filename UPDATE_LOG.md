@@ -11,6 +11,12 @@
 
 ## 2026-09-08
 
+### 豆奶改为手动签到并仅保留流量统计
+
+- 按 Owner 决定移除 root crontab 的 09:00 `MAXNOW-DOUNAL-CHECKIN`，服务器不再尝试签到或发送验证码提醒；原 crontab 已备份为 `/root/.openclaw/root-crontab-20260908-manual-checkin.bak`。
+- 保留每天 00:05 的 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT`，继续以 `--traffic-only --exclude-today` 只读统计昨天及更早的真实流量；立即手动刷新后，流量历史为 60 条、最新完整日期为 9 月 7 日且无 stale / last_error。
+- Cloud 页、产品规格、上下文、路线图和服务器手册同步改为“Owner 手动签到 / 服务器只读流量日结”。版本提升到 `1.0.11.17`。
+
 ### 恢复豆奶 09:00 签到预检与人工提醒
 
 - 修复 `/root/.openclaw/dounai_cron.sh` 在 `set -e` 下提前退出、验证码异常提醒无法可靠送达的问题；脚本现在显式保留签到退出码，再按成功、已签到、需要验证码和其他异常分别处理。

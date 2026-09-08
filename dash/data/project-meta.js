@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08 19:53",
-  "version": "1.0.11.16",
-  "versionLabel": "v1.0.11.16",
-  "branch": "bugfix/dounai-checkin-reminder",
-  "commit": "195a7cd9",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/dounai-checkin-reminder · commit 195a7cd9 · 有未提交代码改动",
+  "updatedAt": "2026-09-08 20:10",
+  "version": "1.0.11.17",
+  "versionLabel": "v1.0.11.17",
+  "branch": "bugfix/dounai-traffic-only",
+  "commit": "bc1dd0eb",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/dounai-traffic-only · commit bc1dd0eb · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-09-08",
+      "title": "豆奶改为手动签到并仅保留流量统计",
+      "summary": "按 Owner 决定移除 root crontab 的 09:00 `MAXNOW-DOUNAL-CHECKIN`，服务器不再尝试签到或发送验证码提醒；原 crontab 已备份为 `/root/.openclaw/root-crontab-20260908-manual-checkin.bak`。"
+    },
     {
       "date": "2026-09-08",
       "title": "恢复豆奶 09:00 签到预检与人工提醒",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-08-26",
       "title": "周安排不再回填已取消课程的旧抢课状态",
       "summary": "周安排比较芭蕾业务快照与 Fast Path 上次执行时间；当 `ballet.json` 已有更晚的成功同步时，预约、候补、完成与取消状态统一以该业务快照为准。"
-    },
-    {
-      "date": "2026-08-25",
-      "title": "最近课程改用深色卡面并让标签按整卡居中",
-      "summary": "课程预约右侧标签组改为跨越课程信息与取消提示两行，桌面端以整张课程小卡为基准上下居中；预约 / 候补与级别标签继续保持横向单排。"
     }
   ]
 };

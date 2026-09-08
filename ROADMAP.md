@@ -264,9 +264,9 @@
 - 已在服务器备份 `/root/.openclaw/gen_checkin_data.py` 到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-usage`，并扩展生成脚本。
 - 已在服务器继续备份 `/root/.openclaw/gen_checkin_data.py` 到 `/root/.openclaw/gen_checkin_data.py.bak-20260705-traffic-closeout`，新增 `--traffic-only --exclude-today` 模式。
 - root crontab 已新增 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT`：每天 00:05 只刷新昨天及更早的真实流量使用量，避免当天 00:05 的不完整值污染历史。
-- 线上 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json` 已新增 `traffic_usage` 和 `traffic_usage_history`；每天 9 点签到任务仍可刷新账号快照，00:05 日结任务负责真实使用量口径。
+- 线上 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json` 已新增 `traffic_usage` 和 `traffic_usage_history`；签到改由 Owner 手动完成，服务器仅保留 00:05 日结任务维护真实使用量口径。
 - 豆奶详情页已新增“近 30 天实际使用流量”图，放在“近 30 天日均可用流量”前面，前端默认排除当天。
-- 云服务 tab 已补充豆奶 09:00 签到和 00:05 traffic closeout 两个 root 定时任务。
+- 云服务 tab 已同步当前豆奶边界：仅列出 00:05 traffic closeout root 定时任务，并明确签到由 Owner 手动完成。
 - 云服务 tab 已移除顶部重复摘要卡；Host 信息合并进“系统状态”模块，任务频率保留在各自详情卡中。
 - 云服务 tab 已进一步收敛为“系统与托管”后自然排列任务卡：TLS / nginx 不再单独占任务卡，也不再插入独立“定时任务”标题；系统列表保留 Host、站点域名和运行状态，隐藏部署根目录、nginx 配置路径、托管检查采集器说明等低频实现细节。
 
