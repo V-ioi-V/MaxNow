@@ -2872,6 +2872,19 @@ automation state: nginx、maxnow-auth、rolling / week-closeout / full / Fast Pa
 safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
 
+2026-09-08 已部署 Dashboard 按页数据懒加载：
+
+```text
+deployed source commit: a63c6d86 perf: lazy load dashboard data by view
+version: 1.0.11.19
+changes: 启动先按 URL hash 激活目标页，再只读取当前页数据；芭蕾首开从 10 份数据请求降为 3 份，Token / 豆奶 / 生活各为 1 份，Cloud 为 4 份，Home 为 9 份；60 秒内切页复用请求，手动刷新和 5 分钟自动刷新只强制更新当前页；脚本缓存提升到 app.js?v=230
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260908-221816-lazy-dashboard-data/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 token-usage.* / project-meta.*；确认压缩备份有效后删除本次临时 Git stash
+browser verification: 本地 Chrome headless 逐页验证芭蕾 / Token / 豆奶 / Cloud / 生活 / 同行记 / Home 的数据请求集合分别为 3 / 1 / 1 / 4 / 1 / 1 / 9，页面均可见且控制台无 error；切页 60 秒内不重复请求，手动刷新只重取芭蕾 3 份数据
+server verification: HEAD 与 origin/main 均为 a63c6d86；scripts/check.py 与 nginx -t 通过；app.js?v=230 生效；部署前后 ballet.json / ballet.js 的 SHA-256 保持 af4d0777e696d117b3e74df99c961db1545c3201e0367b3e86cdf202c4d4e007 / 9dcc1dce3815dfc9c537d45fed82a3135bc0403417d4c063c92a4381b5801941，26 节 / 32.5 小时与 dataAsOf=2026-09-08T22:00:02+08:00 均不变；未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path / week-closeout / Session 状态 timers 均 active
+safety: 本次仅部署静态页面加载逻辑、缓存版本和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
+
 2026-08-25 已部署课程预约日期轨道居中：
 
 ```text
