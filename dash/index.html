@@ -1102,9 +1102,9 @@
                 </div>
                 <span class="status-pill">root</span>
               </header>
-              <p class="item-copy">root / OpenClaw 侧只读统计昨日及更早的真实流量；豆奶签到由 Owner 手动完成，服务器不再尝试签到或发送验证码提醒。结果双写到 OpenClaw 工作区和线上部署目录。</p>
+              <p class="item-copy">豆奶签到由 Owner 手动完成；root / OpenClaw 只读回读签到变更记录、账号余量和昨日及更早的真实流量，不提交签到、不发送验证码提醒。结果双写到 OpenClaw 工作区和线上部署目录。</p>
               <dl class="cloud-meta">
-                <div><dt>&#27969;&#37327;&#26085;&#32467;</dt><dd>00:05 gen_checkin_data.py --traffic-only --exclude-today</dd></div>
+                <div><dt>&#21482;&#35835;&#26085;&#32467;</dt><dd>00:05 --traffic-only --include-account --include-manual-checkin --exclude-today</dd></div>
                 <div><dt>签到</dt><dd>Owner 手动完成；无服务器定时签到任务</dd></div>
                 <div><dt>&#29983;&#25104;</dt><dd>/root/.openclaw/gen_checkin_data.py</dd></div>
                 <div><dt>&#20889;&#20837;</dt><dd>/var/www/maxnow-dashboard/dash/data/dounai_checkin.json</dd></div>
@@ -1403,6 +1403,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=228"></script>
+    <script src="./app.js?v=229"></script>
   </body>
 </html>

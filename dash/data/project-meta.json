@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08 20:10",
-  "version": "1.0.11.17",
-  "versionLabel": "v1.0.11.17",
-  "branch": "bugfix/dounai-traffic-only",
-  "commit": "bc1dd0eb",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/dounai-traffic-only · commit bc1dd0eb · 干净",
+  "updatedAt": "2026-09-08 20:30",
+  "version": "1.0.11.18",
+  "versionLabel": "v1.0.11.18",
+  "branch": "bugfix/dounai-readonly-readback",
+  "commit": "4bd0b943",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/dounai-readonly-readback · commit 4bd0b943 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-08",
+      "title": "修复手动签到后豆奶页面未更新",
+      "summary": "确认 Owner 已于 20:03 手动签到；豆奶 `/user/record` 的只读变更记录显示本次获得 865 MB、1 豆丁，基础与 VIP 有效期各延长 1.07 小时。"
+    },
     {
       "date": "2026-09-08",
       "title": "豆奶改为手动签到并仅保留流量统计",
@@ -28,11 +33,6 @@
       "date": "2026-08-31",
       "title": "全部训练记录改为每周热力图",
       "summary": "“全部”范围把辨识度较低的历年单点折线改为周一至周日聚合的热力图，按年份分组并补齐首个训练周到最近成功同步周之间的零课周。"
-    },
-    {
-      "date": "2026-08-26",
-      "title": "周安排不再回填已取消课程的旧抢课状态",
-      "summary": "周安排比较芭蕾业务快照与 Fast Path 上次执行时间；当 `ballet.json` 已有更晚的成功同步时，预约、候补、完成与取消状态统一以该业务快照为准。"
     }
   ]
 }

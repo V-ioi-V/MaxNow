@@ -2274,6 +2274,11 @@ function getCheckinRecords(limit = 30) {
   return Array.isArray(checkinData.records) ? checkinData.records.slice(0, limit).reverse() : [];
 }
 
+function getTodayCheckin() {
+  const record = checkinData.today;
+  return record?.date === getLocalDateKey() ? record : {};
+}
+
 function getAccountHistoryRecords(limit = 30) {
   const history = Array.isArray(checkinData.account_history) ? checkinData.account_history : [];
   const records = history
@@ -2436,7 +2441,7 @@ function createLineChart(records, options) {
 }
 
 function renderCheckin() {
-  const today = checkinData.today || {};
+  const today = getTodayCheckin();
   const total = checkinData.total || {};
 
   setText("#checkin-today", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
@@ -2450,7 +2455,7 @@ function renderCheckin() {
 }
 
 function renderDounai() {
-  const today = checkinData.today || {};
+  const today = getTodayCheckin();
   const total = checkinData.total || {};
   const account = checkinData.account || {};
   const records = getCheckinRecords(30);

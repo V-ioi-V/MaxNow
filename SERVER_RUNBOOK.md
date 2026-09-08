@@ -1408,16 +1408,16 @@ sudo crontab -l
 sudo tail -120 /root/.openclaw/checkin.log
 sudo tail -120 /root/.openclaw/traffic_closeout.log
 sudo python3 /root/.openclaw/gen_checkin_data.py
-sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
+sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --include-account --include-manual-checkin --exclude-today
 ```
 
 日常预期：
 
 - Owner 手动签到；`/root/.openclaw/dounai_cron.sh` 和 `dounai_checkin.py` 不在 crontab 中运行。
-- `gen_checkin_data.py` 从 weekly 数据生成最近 60 天的 `dounai_checkin.json`。
+- `gen_checkin_data.py` 优先以线上部署文件作为 Owner 可见的 last-good 基线，避免旧 OpenClaw 工作区反向覆盖较新的线上记录；从 `/user/record` GET-only 回读最新手动签到变更并幂等合并。
 - 同一份结果同时写入 `/root/MaxNow/dash/data/dounai_checkin.json` 和 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 - `gen_checkin_data.py` 还会抓取豆奶用户面板上的剩余流量和有效期，写入 `account` 字段，并维护最近 60 天 `account_history`；如果抓取失败，会尽量保留上一份 `account` 和 `account_history`，并标记 `stale` / `last_error`。
-- root crontab 只保留一个豆奶任务：00:05 的 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT` 运行 `gen_checkin_data.py --traffic-only --exclude-today`，专门更新昨天及更早的真实流量使用量。
+- root crontab 只保留一个豆奶任务：00:05 的 `MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT` 运行 `gen_checkin_data.py --traffic-only --include-account --include-manual-checkin --exclude-today`，只读回读手动签到变更、账号余量和昨天及更早的真实流量使用量。
 - 线上 `dash.maxnow.cn` 读取 `/var/www/maxnow-dashboard/dash/data/dounai_checkin.json`。
 
 2026-09-08 豆奶站点新增登录计算验证码，并在签到页增加独立的 `checkin_captcha_code`。当前运行边界：
@@ -1426,7 +1426,7 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 - `gen_checkin_data.py` 必须把 HTTP 401 / 403、登录页标题、非 200 状态、0 条日用量以及账号余量 / 有效期关键字段缺失视为失败。失败时保留上次 `traffic_usage` / `traffic_usage_history` 或完整账号快照，写入安全的 `stale / last_error`，并保留上次成功时间；不得用空账号字段推进伪成功状态。
 - `dounai_checkin.py` 在页面存在 `checkin_captcha_code` 时必须在签到 POST 前停止。不要重复手工调用签到接口；站点会限制验证码尝试次数。
 - 09:00 `MAXNOW-DOUNAL-CHECKIN` cron 已移除；服务器不再运行 `/root/.openclaw/dounai_cron.sh`，也不发送验证码提醒。变更前 root crontab 备份为 `/root/.openclaw/root-crontab-20260908-manual-checkin.bak`。
-- 00:05 的 `--traffic-only --exclude-today` 仍为只读并可无人值守运行。2026-09-08 已补抓 9 月 4–7 日，线上流量历史恢复到 60 条。
+- 00:05 的组合参数仍为只读并可无人值守运行。账号页不再显示有效期时，从标准 `subscription-userinfo` 的 `expire` 读取账号到期时间；VIP 到期时间仅在发现晚于上次账号快照的手动签到记录时按该次 VIP 延长小时幂等推进。2026-09-08 已补抓 9 月 4–7 日，并回读当天手动签到记录。
 - `/root/.openclaw/dounai_auth.json` 与 `dounai_creds.json` 固定为 `root:root 0600`；`dounai_checkin.py` 与 `gen_checkin_data.py` 固定为 `root:root 0700`。
 
 2026-07-21 已把账号余量和日均可用预算切换为字节级精确口径：
@@ -1456,7 +1456,7 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 
 ```cron
 # BEGIN MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT
-5 0 * * * cd /root/.openclaw && /usr/bin/flock -n /tmp/maxnow-dounai-traffic-closeout.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] dounai traffic closeout start"; python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today; chown ubuntu:www-data /var/www/maxnow-dashboard/dash/data/dounai_checkin.json; echo "[$(date -Is)] dounai traffic closeout ok"' >> /root/.openclaw/traffic_closeout.log 2>&1
+5 0 * * * cd /root/.openclaw && /usr/bin/flock -n /tmp/maxnow-dounai-traffic-closeout.lock /bin/bash -lc 'set -o pipefail; echo "[$(date -Is)] dounai traffic closeout start"; python3 /root/.openclaw/gen_checkin_data.py --traffic-only --include-account --include-manual-checkin --exclude-today; chown ubuntu:www-data /var/www/maxnow-dashboard/dash/data/dounai_checkin.json; echo "[$(date -Is)] dounai traffic closeout ok"' >> /root/.openclaw/traffic_closeout.log 2>&1
 # END MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT
 ```
 

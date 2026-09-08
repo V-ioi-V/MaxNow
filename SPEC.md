@@ -376,7 +376,7 @@ UPDATE_LOG.md
 
 `dash/data/dounai_checkin.json` 负责豆奶每日签到记录、账号余量快照、账号日均可用历史和真实流量使用记录，由 OpenClaw / root 侧豆奶自动化更新；前端只读取流量、豆丁、账号有效期延长时长、累计签到天数、近 30 天 records、剩余可用流量、有效期、每日可用预算、`account_history`、`traffic_usage` 和 `traffic_usage_history`，不编辑、不回写，也不修改签到脚本或 cron。
 
-豆奶签到由 Owner 手动完成，服务器不再定时提交签到或发送验证码提醒。root 仅在每天 00:05 运行 `gen_checkin_data.py --traffic-only --exclude-today`，只读统计昨天及更早的完整流量使用量；登录 Cookie 只用于访问只读数据，不代表自动签到授权。
+豆奶签到由 Owner 手动完成，服务器不再定时提交签到或发送验证码提醒。root 每天 00:05 运行 `gen_checkin_data.py --traffic-only --include-account --include-manual-checkin --exclude-today`：从 `/user/record` 只读回读最新“每日签到”变更、从订阅 `subscription-userinfo` 更新精确余量和账号到期时间，并统计昨天及更早的完整流量使用量；登录 Cookie 只用于访问这些只读数据，不代表自动签到授权。当天没有匹配日期的签到记录时，前端今日指标必须显示 `--`，不能把上一条签到伪装成今天。
 
 账号余量快照每天优先从现有专属订阅响应的标准 `subscription-userinfo` header 读取精确到字节的 `total`、`upload` 和 `download`，用 `total - upload - download` 生成 `remaining_flow_bytes`，再换算 `remaining_flow_mb`。日均可用预算使用快照时刻到有效期的精确剩余时长：`remaining_days_exact = remaining_seconds / 86400`，`daily_available_mb = remaining_flow_mb / remaining_days_exact`；`days_remaining` 只保留为整天摘要，不得再作为日均预算分母，避免有效期延长后整天数未变化造成锯齿式假下降。成功时 `remaining_flow_precision` 固定为 `byte`，`source` 标记为 `dounai.pro/subscription-userinfo`；订阅地址、查询参数和令牌不得写入日志、数据文件或前端。只有精确响应头不可用时，才允许降级解析用户面板两位 TB / GB 标签，并把 `remaining_flow_precision` 标记为 `rounded-label`。`account_history` 从 2026-07-21 起保存同样的余量精度字段，从 2026-07-26 起保存 `remaining_days_exact`；更早的粗略历史不伪造精确值。
 
