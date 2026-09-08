@@ -1425,7 +1425,8 @@ sudo python3 /root/.openclaw/gen_checkin_data.py --traffic-only --exclude-today
 - 登录 Cookie 失效时，可用服务器既有 `dounai_creds.json` 配合一次人工确认的登录验证码刷新；账号、密码、Cookie 和验证码不得写入仓库、日志或聊天。
 - `gen_checkin_data.py` 必须把 HTTP 401 / 403、登录页标题、非 200 状态、0 条日用量以及账号余量 / 有效期关键字段缺失视为失败。失败时保留上次 `traffic_usage` / `traffic_usage_history` 或完整账号快照，写入安全的 `stale / last_error`，并保留上次成功时间；不得用空账号字段推进伪成功状态。
 - `dounai_checkin.py` 在页面存在 `checkin_captcha_code` 时必须在签到 POST 前停止。不要重复手工调用签到接口；站点会限制验证码尝试次数。
-- 09:00 签到暂时需要人工验证码，00:05 的 `--traffic-only --exclude-today` 仍为只读并可无人值守运行。2026-09-08 已补抓 9 月 4–7 日，线上流量历史恢复到 60 条。
+- 09:00 cron 继续运行 `/root/.openclaw/dounai_cron.sh`：正常签到时按原流程更新数据和发送成功摘要；需要验证码时刷新 `--traffic-only --exclude-today` 并通过微信提醒 Owner 打开豆奶用户中心手动完成。`dounai_cron.sh` 必须显式捕获签到退出码，不能让 `set -e` 在通知分支前提前退出。
+- 00:05 的 `--traffic-only --exclude-today` 仍为只读并可无人值守运行。2026-09-08 已补抓 9 月 4–7 日，线上流量历史恢复到 60 条。
 - `/root/.openclaw/dounai_auth.json` 与 `dounai_creds.json` 固定为 `root:root 0600`；`dounai_checkin.py` 与 `gen_checkin_data.py` 固定为 `root:root 0700`。
 
 2026-07-21 已把账号余量和日均可用预算切换为字节级精确口径：

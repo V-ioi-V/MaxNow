@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08 19:42",
-  "version": "1.0.11.15",
-  "versionLabel": "v1.0.11.15",
-  "branch": "bugfix/dounai-auth-fail-closed",
-  "commit": "f1e88296",
+  "updatedAt": "2026-09-08 19:53",
+  "version": "1.0.11.16",
+  "versionLabel": "v1.0.11.16",
+  "branch": "bugfix/dounai-checkin-reminder",
+  "commit": "195a7cd9",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/dounai-auth-fail-closed · commit f1e88296 · 有未提交代码改动",
+  "deployNote": "bugfix/dounai-checkin-reminder · commit 195a7cd9 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-08",
+      "title": "恢复豆奶 09:00 签到预检与人工提醒",
+      "summary": "修复 `/root/.openclaw/dounai_cron.sh` 在 `set -e` 下提前退出、验证码异常提醒无法可靠送达的问题；脚本现在显式保留签到退出码，再按成功、已签到、需要验证码和其他异常分别处理。"
+    },
     {
       "date": "2026-09-08",
       "title": "恢复豆奶登录态并让流量同步失败关闭",
@@ -28,11 +33,6 @@
       "date": "2026-08-25",
       "title": "最近课程改用深色卡面并让标签按整卡居中",
       "summary": "课程预约右侧标签组改为跨越课程信息与取消提示两行，桌面端以整张课程小卡为基准上下居中；预约 / 候补与级别标签继续保持横向单排。"
-    },
-    {
-      "date": "2026-08-25",
-      "title": "课程预约标签单行居中",
-      "summary": "课程预约小卡右侧的“最近一节”、预约 / 候补状态与课程级别标签统一保持横向单排，不再让稍长的候补排位标签独占一行。"
     }
   ]
 }
