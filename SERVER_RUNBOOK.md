@@ -2951,3 +2951,16 @@ server verification: 功能提交部署后 HEAD 与 origin/main 均为 e7626d03�
 automation state: nginx、maxnow-auth、rolling / week-closeout / full / Session 状态 / Fast Path timer 均 active；rolling / full / Fast Path service 均 inactive
 safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-11 已部署上课历史卡片内滑动：
+
+```text
+deployed feature commit: ebfbe428 fix(ballet): make history preview scrollable
+version: 1.0.11.22
+changes: 训练记录右侧上课历史改为渲染当前筛选范围的全部记录，并在卡片内部纵向滑动；宽桌面继续与左侧图表同顶、同底、等高，1500px 以下限制列表最大高度，560px 以下改为单列；列表支持键盘 focus ring，完整标签浮层继续保留
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260911-230155-ballet-history-scroll/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.*，确认备份与恢复数据一致后删除本次临时 stash
+browser verification: 30 条聚焦测试数据在 1280px 下 scrollHeight=978、clientHeight=374，实际滚动后 scrollTop 从 0 变为 603；1920px 下历史卡与图表 top / bottom / height 差均不超过 1px；390×844 下单列 scrollHeight=1953、clientHeight=360，页面横向溢出为 0
+server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=271、app.js?v=233 和全量 records 渲染已生效；部署前后 ballet.json / ballet.js SHA-256 保持 d29ba1042f38824a995cc83dad8f736c60c8188e2adf99beeca2f4cc61d0fd0b / 91d668d7622e717d0f3d2a7f3524689cd6863134edf2a5c72831c9976f8a3fe7，30 节 / 38 小时与 dataAsOf=2026-09-11T22:00:02+08:00 均不变；未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path / week-closeout / Session 状态 timers 均 active；rolling / full / Fast Path services 均 inactive
+safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
