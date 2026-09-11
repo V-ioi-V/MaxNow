@@ -4952,16 +4952,121 @@ function createBalletMembershipItem(card = {}) {
   return article;
 }
 
+function balletMembershipCardPriority(card = {}) {
+  return card.cardStatus === "expired" ? 1 : 0;
+}
+
+function updateBalletMembershipCarousel(index = 0, cardCount = 0) {
+  const previous = qs("#ballet-membership-previous");
+  const next = qs("#ballet-membership-next");
+  const counter = qs("#ballet-membership-counter");
+  const dots = qsa("#ballet-membership-dots button");
+  const safeIndex = Math.max(0, Math.min(Math.floor(balletNumber(index)), Math.max(0, cardCount - 1)));
+  if (previous) previous.disabled = safeIndex <= 0;
+  if (next) next.disabled = safeIndex >= cardCount - 1;
+  if (counter) counter.textContent = cardCount ? `${safeIndex + 1} / ${cardCount}` : "";
+  dots.forEach((dot, dotIndex) => {
+    dot.dataset.active = dotIndex === safeIndex ? "true" : "false";
+    if (dotIndex === safeIndex) dot.setAttribute("aria-current", "true");
+    else dot.removeAttribute("aria-current");
+  });
+}
+
+function getBalletMembershipCarouselIndex(container) {
+  if (!container) return 0;
+  const cards = [...container.querySelectorAll(".ballet-membership-item")];
+  const firstOffset = cards[0]?.offsetLeft || 0;
+  return cards.reduce((nearestIndex, card, index) => (
+    Math.abs((card.offsetLeft - firstOffset) - container.scrollLeft)
+      < Math.abs((cards[nearestIndex].offsetLeft - firstOffset) - container.scrollLeft)
+      ? index
+      : nearestIndex
+  ), 0);
+}
+
+function scrollBalletMembershipTo(index, behavior = "smooth") {
+  const container = qs("#ballet-membership-list");
+  const cards = container ? [...container.querySelectorAll(".ballet-membership-item")] : [];
+  if (!container || !cards.length) return;
+  const safeIndex = Math.max(0, Math.min(Math.floor(balletNumber(index)), cards.length - 1));
+  const resolvedBehavior = behavior === "smooth"
+    && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "auto"
+    : behavior;
+  container.scrollTo({
+    left: cards[safeIndex].offsetLeft - cards[0].offsetLeft,
+    behavior: resolvedBehavior,
+  });
+  updateBalletMembershipCarousel(safeIndex, cards.length);
+}
+
 function renderBalletMembership() {
   const cards = Array.isArray(balletData.membership?.cards) ? balletData.membership.cards : [];
   const container = qs("#ballet-membership-list");
+  const controls = qs("#ballet-membership-controls");
+  const previous = qs("#ballet-membership-previous");
+  const next = qs("#ballet-membership-next");
+  const dots = qs("#ballet-membership-dots");
   if (!container) return;
   container.replaceChildren();
+  if (dots) dots.replaceChildren();
   if (!cards.length) {
     container.appendChild(emptyTemplate.content.cloneNode(true));
+    container.removeAttribute("tabindex");
+    if (controls) controls.hidden = true;
     return;
   }
-  container.append(...cards.map((card) => createBalletMembershipItem(card)));
+  const orderedCards = cards
+    .map((card, sourceIndex) => ({ card, sourceIndex }))
+    .sort((left, right) => (
+      balletMembershipCardPriority(left.card) - balletMembershipCardPriority(right.card)
+      || left.sourceIndex - right.sourceIndex
+    ));
+  const items = orderedCards.map(({ card }, index) => {
+    const item = createBalletMembershipItem(card);
+    item.setAttribute("role", "group");
+    item.setAttribute("aria-roledescription", "幻灯片");
+    item.setAttribute("aria-label", `${index + 1} / ${orderedCards.length}，${balletMembershipDisplayName(card)}`);
+    return item;
+  });
+  container.append(...items);
+  container.scrollLeft = 0;
+  if (orderedCards.length > 1) container.setAttribute("tabindex", "0");
+  else container.removeAttribute("tabindex");
+  if (controls) controls.hidden = orderedCards.length <= 1;
+  if (dots) {
+    orderedCards.forEach(({ card }, index) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.setAttribute("aria-label", `查看${balletMembershipDisplayName(card)}`);
+      dot.addEventListener("click", () => scrollBalletMembershipTo(index));
+      dots.appendChild(dot);
+    });
+  }
+  if (previous) previous.onclick = () => {
+    const currentIndex = getBalletMembershipCarouselIndex(container);
+    scrollBalletMembershipTo(currentIndex - 1);
+  };
+  if (next) next.onclick = () => {
+    const currentIndex = getBalletMembershipCarouselIndex(container);
+    scrollBalletMembershipTo(currentIndex + 1);
+  };
+  container.onkeydown = (event) => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    const currentIndex = getBalletMembershipCarouselIndex(container);
+    scrollBalletMembershipTo(currentIndex + (event.key === 'ArrowRight' ? 1 : -1));
+  };
+  let scrollFrame = 0;
+  container.onscroll = () => {
+    if (scrollFrame) return;
+    scrollFrame = window.requestAnimationFrame(() => {
+      scrollFrame = 0;
+      const currentIndex = getBalletMembershipCarouselIndex(container);
+      updateBalletMembershipCarousel(currentIndex, orderedCards.length);
+    });
+  };
+  updateBalletMembershipCarousel(0, orderedCards.length);
 }
 
 function balletTrainingCompletedAt(record = {}) {

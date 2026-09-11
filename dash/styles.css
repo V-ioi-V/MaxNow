@@ -6594,7 +6594,30 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-overview-grid .ballet-membership-list {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   min-height: 0;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: inline mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+}
+
+.ballet-overview-grid .ballet-membership-list::-webkit-scrollbar {
+  display: none;
+}
+
+.ballet-overview-grid .ballet-membership-list:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--membership-rose) 34%, transparent);
+  outline-offset: 4px;
+  border-radius: 28px 28px 22px 22px;
 }
 
 .ballet-overview-grid .ballet-membership-item {
@@ -6612,6 +6635,92 @@ body[data-view="ricky"] .topbar-ricky-status {
     inset 0 0 0 3px rgba(255, 255, 255, 0.72),
     inset 0 0 0 4px rgba(215, 176, 111, 0.08),
     0 15px 30px rgba(115, 71, 66, 0.12);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.ballet-membership-carousel-controls {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.ballet-membership-carousel-controls[hidden] {
+  display: none;
+}
+
+.ballet-membership-carousel-button,
+.ballet-membership-carousel-dots button {
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--membership-gold) 55%, #f3d8d4);
+  background: rgba(255, 250, 245, 0.96);
+  color: var(--membership-rose-deep);
+  box-shadow: 0 4px 10px rgba(157, 82, 98, 0.06);
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.ballet-membership-carousel-button {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.ballet-membership-carousel-button:hover:not(:disabled),
+.ballet-membership-carousel-button:focus-visible,
+.ballet-membership-carousel-dots button:hover,
+.ballet-membership-carousel-dots button:focus-visible {
+  border-color: var(--membership-rose);
+  background: #fff4f2;
+  box-shadow: 0 7px 16px rgba(157, 82, 98, 0.12);
+  transform: translateY(-1px);
+}
+
+.ballet-membership-carousel-button:focus-visible,
+.ballet-membership-carousel-dots button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--membership-rose) 28%, transparent);
+  outline-offset: 2px;
+}
+
+.ballet-membership-carousel-button:disabled {
+  cursor: default;
+  opacity: 0.38;
+}
+
+.ballet-membership-carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ballet-membership-carousel-dots button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.ballet-membership-carousel-dots button[data-active="true"] {
+  width: 22px;
+  border-color: var(--membership-rose);
+  background: var(--membership-rose);
+}
+
+.ballet-membership-carousel-counter {
+  min-width: 31px;
+  color: var(--membership-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+  text-align: center;
 }
 
 .ballet-membership-ticket-head {
