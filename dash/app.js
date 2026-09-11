@@ -5003,6 +5003,7 @@ function scrollBalletMembershipTo(index, behavior = "smooth") {
 function renderBalletMembership() {
   const cards = Array.isArray(balletData.membership?.cards) ? balletData.membership.cards : [];
   const container = qs("#ballet-membership-list");
+  const membershipCard = container?.closest(".ballet-membership-card");
   const controls = qs("#ballet-membership-controls");
   const previous = qs("#ballet-membership-previous");
   const next = qs("#ballet-membership-next");
@@ -5010,6 +5011,7 @@ function renderBalletMembership() {
   if (!container) return;
   container.replaceChildren();
   if (dots) dots.replaceChildren();
+  membershipCard?.classList.remove("has-carousel");
   if (!cards.length) {
     container.appendChild(emptyTemplate.content.cloneNode(true));
     container.removeAttribute("tabindex");
@@ -5033,6 +5035,7 @@ function renderBalletMembership() {
   container.scrollLeft = 0;
   if (orderedCards.length > 1) container.setAttribute("tabindex", "0");
   else container.removeAttribute("tabindex");
+  membershipCard?.classList.toggle("has-carousel", orderedCards.length > 1);
   if (controls) controls.hidden = orderedCards.length <= 1;
   if (dots) {
     orderedCards.forEach(({ card }, index) => {

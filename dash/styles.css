@@ -6589,6 +6589,8 @@ body[data-view="ricky"] .topbar-ricky-status {
   --membership-gold: #d7b06f;
   --membership-line: #e6c99f;
   --membership-muted: #85777a;
+  position: relative;
+  min-height: 0;
   container-type: inline-size;
   background: transparent;
 }
@@ -6597,6 +6599,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   position: relative;
   width: 100%;
   max-width: 100%;
+  height: 100%;
   min-width: 0;
   min-height: 0;
   grid-auto-flow: column;
@@ -6639,13 +6642,29 @@ body[data-view="ricky"] .topbar-ricky-status {
   scroll-snap-stop: always;
 }
 
+.ballet-overview-grid .ballet-membership-card.has-carousel .ballet-membership-item {
+  padding-bottom: 68px;
+}
+
 .ballet-membership-carousel-controls {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 13px;
   min-height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-  margin-top: 10px;
+  width: max-content;
+  max-width: calc(100% - 28px);
+  margin: 0;
+  padding: 3px 5px;
+  border: 1px solid color-mix(in srgb, var(--membership-gold) 36%, #f4dfd7);
+  border-radius: 999px;
+  background: rgba(254, 250, 244, 0.94);
+  box-shadow: 0 7px 18px rgba(115, 71, 66, 0.09);
+  transform: translateX(-50%);
 }
 
 .ballet-membership-carousel-controls[hidden] {
