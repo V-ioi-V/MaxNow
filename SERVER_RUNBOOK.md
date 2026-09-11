@@ -2964,3 +2964,16 @@ server verification: scripts/check.py 与 nginx -t 通过；styles.css?v=271、a
 automation state: nginx、maxnow-auth、rolling / full / Fast Path / week-closeout / Session 状态 timers 均 active；rolling / full / Fast Path services 均 inactive
 safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-11 已部署课程卡填满概览格与内置滑动标识：
+
+```text
+deployed feature commit: b8e57d59 feat(ballet): move course card controls inside
+version: 1.0.11.23
+changes: 多张课程票券继续按单卡宽度横向吸附；票券本体填满顶部概览格，上一张 / 下一张按钮、圆点和页码收进票券底部的轻量胶囊，卡内预留 68px 底部空间避免覆盖计划结论；样式缓存提升到 styles.css?v=272，脚本缓存提升到 app.js?v=234
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260911-233000-ballet-card-controls/dash-data.tgz；拉取前暂存服务器运行态 dash/data，拉取后完整恢复并重新生成 project-meta.*，确认备份与恢复数据一致后删除本次临时 stash，压缩备份继续保留
+browser verification: 本地双卡聚焦验收中，2560px 桌面票券与所在格同顶同底，控制胶囊完全位于票券边框内且与计划结论间距 18.3px；点击下一张后页码变为 2 / 2、活动圆点与前后按钮状态同步。390×844 下控制胶囊仍在票券内，与结论间距 22.3px；两个尺寸页面横向溢出均为 0
+server verification: 部署时 HEAD 与 origin/main 均为 2caa2d1e；scripts/check.py 与 nginx -t 通过；styles.css?v=272、app.js?v=234 和 has-carousel 内置控制逻辑已生效；部署前后 ballet.json / ballet.js SHA-256 保持 d29ba1042f38824a995cc83dad8f736c60c8188e2adf99beeca2f4cc61d0fd0b / 91d668d7622e717d0f3d2a7f3524689cd6863134edf2a5c72831c9976f8a3fe7，30 条训练记录与 dataAsOf=2026-09-11T22:00:02+08:00 均不变；未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path / week-closeout / Session 状态 timers 均 active
+safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
