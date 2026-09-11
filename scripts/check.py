@@ -624,6 +624,17 @@ def check_ballet_read_model():
             "pace",
         }.issubset(card):
             raise ValueError("ballet: membership card fields are incomplete")
+        card_status = card.get("cardStatus")
+        if card_status not in {None, "active", "expired"}:
+            raise ValueError("ballet: membership card status is invalid")
+        total_classes = card["totalClasses"]
+        used_classes = card["usedClasses"]
+        if (total_classes is None or used_classes is None) and not (
+            card_status == "expired"
+            and total_classes is None
+            and used_classes is None
+        ):
+            raise ValueError("ballet: incomplete usage is only allowed for expired cards")
         pace = card["pace"]
         if not isinstance(pace, dict) or not {
             "validityDays",
@@ -1886,9 +1897,17 @@ def check_secondary_view_style():
     if (
         "styles.css?v=269" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=230" not in dashboard_html
+        or "app.js?v=231" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
+    if (
+        'const cardStatus = card.cardStatus === "expired" ? "expired" : "active";'
+        not in dashboard_js
+        or 'ticketStatus.textContent = isExpired ? "已失效" : "使用中";'
+        not in dashboard_js
+        or '"闻道未提供总次数"' not in dashboard_js
+    ):
+        raise ValueError("secondary views: expired membership card display is incomplete")
     if (
         "--ballet-compact-secondary-size: 7px;" not in dashboard_css
         or "padding-block: 3px;" not in dashboard_css
@@ -2124,7 +2143,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=230" not in dashboard_html:
+    if "app.js?v=231" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

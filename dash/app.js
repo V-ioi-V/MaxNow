@@ -4745,9 +4745,12 @@ function balletMembershipDisplayName(card = {}) {
   return /^芭蕾/.test(formatted) ? formatted : `芭蕾${formatted}`;
 }
 
-function createBalletMembershipItem(card = {}, activeCardCount = 1) {
+function createBalletMembershipItem(card = {}) {
   const article = document.createElement("article");
   article.className = "ballet-membership-item";
+  const cardStatus = card.cardStatus === "expired" ? "expired" : "active";
+  const isExpired = cardStatus === "expired";
+  article.dataset.cardStatus = cardStatus;
 
   const ticketHead = document.createElement("div");
   ticketHead.className = "ballet-membership-ticket-head";
@@ -4760,7 +4763,7 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   ticketTitle.append(ticketEyebrow, ticketHeading);
   const ticketStatus = document.createElement("span");
   ticketStatus.className = "status-pill";
-  ticketStatus.textContent = `${activeCardCount} 张有效卡`;
+  ticketStatus.textContent = isExpired ? "已失效" : "使用中";
   ticketHead.append(ticketTitle, ticketStatus);
 
   const artwork = document.createElement("div");
@@ -4776,7 +4779,7 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   const name = document.createElement("h3");
   const period = document.createElement("small");
   eyebrow.className = "eyebrow";
-  eyebrow.textContent = "Active Card";
+  eyebrow.textContent = isExpired ? "Expired Card" : "Active Card";
   name.textContent = balletMembershipDisplayName(card);
   period.className = "ballet-membership-period";
   period.textContent = card.validFrom ? `${formatDateOnly(card.validFrom)} 开卡` : "开卡日期待同步";
@@ -4786,14 +4789,27 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   validity.append(
     createBalletCalendarIcon(),
     document.createTextNode(
-      card.validThrough ? `有效至 ${String(card.validThrough).slice(0, 10)}` : "有效期待同步",
+      card.validThrough
+        ? `${isExpired ? "已于" : "有效至"} ${String(card.validThrough).slice(0, 10)}${isExpired ? " 到期" : ""}`
+        : "有效期待同步",
     ),
   );
   header.append(title, validity);
 
   const pace = card.pace || {};
-  const usedClasses = Math.max(0, Math.floor(balletNumber(card.usedClasses)));
-  const totalClasses = Math.max(0, Math.floor(balletNumber(card.totalClasses)));
+  const hasKnownUsage = card.usedClasses !== null
+    && card.usedClasses !== undefined
+    && card.totalClasses !== null
+    && card.totalClasses !== undefined
+    && Number.isFinite(Number(card.usedClasses))
+    && Number.isFinite(Number(card.totalClasses))
+    && Number(card.totalClasses) > 0;
+  const usedClasses = hasKnownUsage
+    ? Math.max(0, Math.floor(balletNumber(card.usedClasses)))
+    : 0;
+  const totalClasses = hasKnownUsage
+    ? Math.max(0, Math.floor(balletNumber(card.totalClasses)))
+    : 0;
   const remainingClasses = Math.max(0, Math.floor(balletNumber(card.remainingClasses)));
   const openDayNumber = Math.max(0, Math.floor(balletNumber(pace.openDayNumber)));
   const validityDays = Math.max(0, Math.floor(balletNumber(pace.validityDays)));
@@ -4809,13 +4825,18 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   usageLabel.textContent = "课程使用";
   const usageValue = document.createElement("div");
   usageValue.className = "ballet-membership-usage-value";
-  usageValue.setAttribute("aria-label", `已用 ${usedClasses} / ${totalClasses} 节`);
+  usageValue.setAttribute(
+    "aria-label",
+    hasKnownUsage
+      ? `已用 ${usedClasses} / ${totalClasses} 节`
+      : `剩余 ${remainingClasses} 节，总次数未提供`,
+  );
   const usagePrefix = document.createElement("b");
-  usagePrefix.textContent = "已用";
+  usagePrefix.textContent = hasKnownUsage ? "已用" : "剩余";
   const usageCurrent = document.createElement("strong");
-  usageCurrent.textContent = String(usedClasses);
+  usageCurrent.textContent = String(hasKnownUsage ? usedClasses : remainingClasses);
   const usageTotal = document.createElement("b");
-  usageTotal.textContent = `/ ${totalClasses} 节`;
+  usageTotal.textContent = hasKnownUsage ? `/ ${totalClasses} 节` : "节";
   usageValue.append(usagePrefix, usageCurrent, usageTotal);
   const usageTrack = document.createElement("div");
   usageTrack.className = "ballet-membership-usage-track";
@@ -4829,8 +4850,10 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   usageFill.style.minWidth = usageProgress > 0 ? "8px" : "0";
   usageTrack.appendChild(usageFill);
   const usageDetail = document.createElement("small");
-  usageDetail.textContent = `剩余 ${remainingClasses} 节`;
-  usage.append(usageLabel, usageValue, usageTrack, usageDetail);
+  usageDetail.textContent = hasKnownUsage ? `剩余 ${remainingClasses} 节` : "闻道未提供总次数";
+  usage.append(usageLabel, usageValue);
+  if (hasKnownUsage) usage.appendChild(usageTrack);
+  usage.appendChild(usageDetail);
 
   const validityMetric = document.createElement("section");
   validityMetric.className = "ballet-membership-validity-metric";
@@ -4838,10 +4861,14 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   const validityCopy = document.createElement("div");
   validityCopy.className = "ballet-membership-validity-copy";
   const validityLabel = document.createElement("span");
-  validityLabel.textContent = "有效进度";
+  validityLabel.textContent = isExpired ? "有效状态" : "有效进度";
   const validityValue = document.createElement("div");
   validityValue.className = "ballet-membership-day-value";
-  if (openDayNumber > 0) {
+  if (isExpired) {
+    const expired = document.createElement("b");
+    expired.textContent = "已失效";
+    validityValue.appendChild(expired);
+  } else if (openDayNumber > 0) {
     const dayPrefix = document.createElement("b");
     dayPrefix.textContent = "第";
     const dayCurrent = document.createElement("strong");
@@ -4857,13 +4884,20 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
     validityValue.appendChild(unopened);
   }
   const validityDetail = document.createElement("small");
-  validityDetail.textContent = `到期前需 ${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`;
+  validityDetail.textContent = isExpired
+    ? (card.validThrough ? `已于 ${formatDateOnly(card.validThrough)} 到期` : "到期日期待同步")
+    : `到期前需 ${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`;
   validityCopy.append(validityLabel, validityValue, validityDetail);
   const validityRing = document.createElement("div");
   validityRing.className = "ballet-membership-day-ring";
   validityRing.style.setProperty("--membership-day-progress", `${validityProgress}%`);
   validityRing.setAttribute("role", "img");
-  validityRing.setAttribute("aria-label", `课程卡有效期第 ${openDayNumber} / ${validityDays} 天`);
+  validityRing.setAttribute(
+    "aria-label",
+    isExpired
+      ? `课程卡有效期已结束，共 ${validityDays} 天`
+      : `课程卡有效期第 ${openDayNumber} / ${validityDays} 天`,
+  );
   const ringCurrent = document.createElement("strong");
   ringCurrent.textContent = String(openDayNumber);
   const ringTotal = document.createElement("small");
@@ -4882,7 +4916,13 @@ function createBalletMembershipItem(card = {}, activeCardCount = 1) {
   const verdictTitle = document.createElement("strong");
   const verdictCopy = document.createElement("p");
   const plannedRate = Math.max(0, Math.floor(balletNumber(pace.recommendedWholeClassesPerWeek)));
-  if (!remainingClasses) {
+  if (isExpired) {
+    verdict.dataset.state = "attention";
+    verdictTitle.textContent = "课程卡已失效";
+    verdictCopy.textContent = remainingClasses
+      ? `失效时显示剩余 ${remainingClasses} 节；总次数未提供。`
+      : "作为历史课程卡保留展示。";
+  } else if (!remainingClasses) {
     verdict.dataset.state = "success";
     verdictTitle.textContent = "课程卡课次已用完";
     verdictCopy.textContent = "当前没有剩余课次需要安排。";
@@ -4921,7 +4961,7 @@ function renderBalletMembership() {
     container.appendChild(emptyTemplate.content.cloneNode(true));
     return;
   }
-  container.append(...cards.map((card) => createBalletMembershipItem(card, cards.length)));
+  container.append(...cards.map((card) => createBalletMembershipItem(card)));
 }
 
 function balletTrainingCompletedAt(record = {}) {

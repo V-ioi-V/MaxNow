@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-08 22:13",
-  "version": "1.0.11.19",
-  "versionLabel": "v1.0.11.19",
-  "branch": "feature/lazy-dashboard-data",
-  "commit": "168f26df",
+  "updatedAt": "2026-09-11 18:57",
+  "version": "1.0.11.20",
+  "versionLabel": "v1.0.11.20",
+  "branch": "bugfix/ballet-expired-membership-card",
+  "commit": "07f4e3fe",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/lazy-dashboard-data · commit 168f26df · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-expired-membership-card · commit 07f4e3fe · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-11",
+      "title": "课程卡支持展示已失效旧卡",
+      "summary": "修复闻道会员卡页同时返回使用中卡与已失效旧卡时，旧卡缺少总次数导致全部芭蕾数据同步失败的问题。"
+    },
     {
       "date": "2026-09-08",
       "title": "按当前页面懒加载 Dashboard 数据",
@@ -28,11 +33,6 @@
       "date": "2026-09-08",
       "title": "恢复豆奶 09:00 签到预检与人工提醒",
       "summary": "修复 `/root/.openclaw/dounai_cron.sh` 在 `set -e` 下提前退出、验证码异常提醒无法可靠送达的问题；脚本现在显式保留签到退出码，再按成功、已签到、需要验证码和其他异常分别处理。"
-    },
-    {
-      "date": "2026-09-08",
-      "title": "恢复豆奶登录态并让流量同步失败关闭",
-      "summary": "排查确认豆奶登录态于 9 月初失效，00:05 流量日结把 HTTP 401 页面解析成 0 条记录并继续写入新时间，导致“更新时间正常、实际流量停在 9 月 3 日”且 60 天历史逐日缩短。"
     }
   ]
 }

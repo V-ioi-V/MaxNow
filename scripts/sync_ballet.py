@@ -1070,6 +1070,14 @@ def parse_membership(text: str) -> list[dict[str, Any]]:
     cards: list[dict[str, Any]] = []
     for parts in parser.cards:
         combined = normalize_space(" ".join(parts))
+        card_status = next(
+            (
+                status
+                for label, status in (("使用中", "active"), ("已失效", "expired"))
+                if any(normalize_space(part) == label for part in parts)
+            ),
+            None,
+        )
         validity = re.search(
             r"有效期\s*[:：]?\s*(20\d{2}-\d{2}-\d{2})"
             r"\s*[~～—–]\s*(20\d{2}-\d{2}-\d{2})",
@@ -1079,33 +1087,50 @@ def parse_membership(text: str) -> list[dict[str, Any]]:
             r"卡内余\s*[:：]?\s*(\d+)\s*次\s*/\s*总\s*(\d+)\s*次",
             combined,
         )
+        remaining_balance = re.search(
+            r"卡内余\s*[:：]?\s*(\d+)\s*次",
+            combined,
+        )
         name = next(
             (
                 part
                 for part in parts
-                if "有效期" not in part and "卡内余" not in part
+                if "有效期" not in part
+                and "卡内余" not in part
+                and normalize_space(part) not in {"使用中", "已失效"}
             ),
             "",
         )
-        if not name or not validity or not balance:
+        if not name or not validity or not remaining_balance:
+            raise SyncFailure("source_changed")
+        if card_status is None:
+            card_status = "active" if balance else None
+        if card_status is None or (card_status == "active" and not balance):
             raise SyncFailure("source_changed")
         valid_from, valid_through = validity.groups()
-        remaining, total = (int(value) for value in balance.groups())
+        remaining = int(remaining_balance.group(1))
+        total = int(balance.group(2)) if balance else None
+        used = total - remaining if total is not None else None
         try:
             date.fromisoformat(valid_from)
             date.fromisoformat(valid_through)
         except ValueError:
             raise SyncFailure("parse_error")
-        if valid_through < valid_from or remaining < 0 or total <= 0 or remaining > total:
+        if (
+            valid_through < valid_from
+            or remaining < 0
+            or (total is not None and (total <= 0 or remaining > total))
+        ):
             raise SyncFailure("parse_error")
         cards.append(
             {
                 "name": name,
+                "cardStatus": card_status,
                 "validFrom": valid_from,
                 "validThrough": valid_through,
                 "remainingClasses": remaining,
                 "totalClasses": total,
-                "usedClasses": total - remaining,
+                "usedClasses": used,
             }
         )
     return cards
@@ -1825,6 +1850,11 @@ def build_membership_view(
     for card in membership.get("cards", []):
         valid_from = date.fromisoformat(card["validFrom"])
         valid_through = date.fromisoformat(card["validThrough"])
+        card_status = (
+            "expired"
+            if card.get("cardStatus") == "expired" or today > valid_through
+            else "active"
+        )
         validity_days = max(1, (valid_through - valid_from).days + 1)
         elapsed_days = (
             0
@@ -1835,10 +1865,15 @@ def build_membership_view(
         remaining_days = max(0, (valid_through - forecast_start).days + 1)
         remaining_weeks = remaining_days / 7
         remaining_classes = int(card["remainingClasses"])
-        used_classes = int(card["usedClasses"])
+        used_classes = (
+            int(card["usedClasses"])
+            if card.get("usedClasses") is not None
+            else None
+        )
+        planning_enabled = card_status == "active" and used_classes is not None
         required_rate = (
             remaining_classes / remaining_weeks
-            if remaining_classes and remaining_weeks > 0
+            if planning_enabled and remaining_classes and remaining_weeks > 0
             else 0
         )
         recommended_rate = math.ceil(required_rate) if required_rate > 0 else 0
@@ -1852,10 +1887,10 @@ def build_membership_view(
             if planned_days
             else None
         )
-        sample_sufficient = elapsed_days >= 28
+        sample_sufficient = planning_enabled and elapsed_days >= 28
         observed_rate = (
             used_classes / elapsed_days * 7
-            if sample_sufficient and elapsed_days > 0
+            if sample_sufficient and elapsed_days > 0 and used_classes is not None
             else None
         )
         observed_capacity = (
@@ -1877,6 +1912,7 @@ def build_membership_view(
         cards.append(
             {
                 **card,
+                "cardStatus": card_status,
                 "pace": {
                     "validityDays": validity_days,
                     "elapsedDays": elapsed_days,
@@ -2078,6 +2114,27 @@ def validate_read_model(model: dict[str, Any]) -> None:
         raise SyncFailure("parse_error")
     for card in cards:
         if not isinstance(card, dict):
+            raise SyncFailure("parse_error")
+        card_status = card.get("cardStatus")
+        if card_status not in {None, "active", "expired"}:
+            raise SyncFailure("parse_error")
+        remaining = card.get("remainingClasses")
+        total = card.get("totalClasses")
+        used = card.get("usedClasses")
+        if isinstance(remaining, bool) or not isinstance(remaining, int) or remaining < 0:
+            raise SyncFailure("parse_error")
+        if total is None or used is None:
+            if card_status != "expired" or total is not None or used is not None:
+                raise SyncFailure("parse_error")
+        elif (
+            isinstance(total, bool)
+            or isinstance(used, bool)
+            or not isinstance(total, int)
+            or not isinstance(used, int)
+            or total <= 0
+            or used < 0
+            or remaining + used != total
+        ):
             raise SyncFailure("parse_error")
     timetable_days = timetable.get("days")
     if not isinstance(timetable_days, list) or len(timetable_days) > 8:

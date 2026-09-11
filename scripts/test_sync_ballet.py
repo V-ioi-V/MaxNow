@@ -109,6 +109,24 @@ def membership_html() -> str:
     )
 
 
+def membership_html_with_expired_card() -> str:
+    return (
+        "<html><title>我的会员卡</title><body>"
+        f'<a href="/gm/weixin/my/mycardone/{ballet.STORE_ID}/90000">'
+        "<strong>乔迁10次特惠</strong>"
+        "<span>已失效</span>"
+        "<span>有效期 : 2026-03-01~2026-09-10</span>"
+        "<span>卡内余 : 0 次</span>"
+        "</a>"
+        f'<a href="/gm/weixin/my/mycardone/{ballet.STORE_ID}/90001">'
+        "<strong>半年卡-40次</strong>"
+        "<span>使用中</span>"
+        "<span>有效期 : 2026-07-26~2027-01-23</span>"
+        "<span>卡内余 : 39 次 / 总40 次</span>"
+        "</a></body></html>"
+    )
+
+
 def timetable_html(
     *,
     course: str = "芭蕾L1-入门",
@@ -412,6 +430,7 @@ class BalletSyncTests(unittest.TestCase):
             [
                 {
                     "name": "半年卡-40次",
+                    "cardStatus": "active",
                     "validFrom": "2026-07-26",
                     "validThrough": "2027-01-23",
                     "remainingClasses": 39,
@@ -420,6 +439,32 @@ class BalletSyncTests(unittest.TestCase):
                 }
             ],
         )
+
+    def test_expired_membership_card_without_total_is_kept(self):
+        cards = ballet.parse_membership(membership_html_with_expired_card())
+        self.assertEqual(len(cards), 2)
+        self.assertEqual(
+            cards[0],
+            {
+                "name": "乔迁10次特惠",
+                "cardStatus": "expired",
+                "validFrom": "2026-03-01",
+                "validThrough": "2026-09-10",
+                "remainingClasses": 0,
+                "totalClasses": None,
+                "usedClasses": None,
+            },
+        )
+        self.assertEqual(cards[1]["cardStatus"], "active")
+
+    def test_active_membership_card_without_total_still_fails_closed(self):
+        html = membership_html().replace(
+            "<span>卡内余 : 39 次 / 总40 次</span>",
+            "<span>使用中</span><span>卡内余 : 39 次</span>",
+        )
+        with self.assertRaises(ballet.SyncFailure) as context:
+            ballet.parse_membership(html)
+        self.assertEqual(context.exception.code, "source_changed")
 
     def test_timetable_course_is_parsed_into_safe_fields(self):
         parsed = ballet.parse_timetable(
@@ -616,6 +661,7 @@ class BalletSyncTests(unittest.TestCase):
             "cards": [
                 {
                     "name": "新卡",
+                    "cardStatus": "active",
                     "validFrom": "2026-07-26",
                     "validThrough": "2027-01-23",
                     "remainingClasses": 39,
@@ -624,6 +670,7 @@ class BalletSyncTests(unittest.TestCase):
                 },
                 {
                     "name": "旧卡",
+                    "cardStatus": "active",
                     "validFrom": "2026-06-01",
                     "validThrough": "2026-11-30",
                     "remainingClasses": 32,
@@ -662,6 +709,27 @@ class BalletSyncTests(unittest.TestCase):
         self.assertEqual(late_card["pace"]["openDayNumber"], 181)
         self.assertTrue(late_card["pace"]["sampleSufficient"])
         self.assertEqual(late_card["pace"]["remainingDays"], 2)
+
+        expired_card = ballet.build_membership_view(
+            {
+                "cards": [
+                    {
+                        "name": "已失效卡",
+                        "cardStatus": "expired",
+                        "validFrom": "2026-03-01",
+                        "validThrough": "2026-09-10",
+                        "remainingClasses": 0,
+                        "totalClasses": None,
+                        "usedClasses": None,
+                    }
+                ]
+            },
+            datetime.fromisoformat("2026-09-11T18:00:00+08:00"),
+        )["cards"][0]
+        self.assertEqual(expired_card["cardStatus"], "expired")
+        self.assertEqual(expired_card["pace"]["remainingDays"], 0)
+        self.assertFalse(expired_card["pace"]["sampleSufficient"])
+        self.assertIsNone(expired_card["pace"]["observedClassesPerWeek"])
 
     def test_fixture_full_sync_is_idempotent_and_public_data_is_redacted(self):
         with tempfile.TemporaryDirectory() as directory:
