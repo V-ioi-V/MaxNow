@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-11 18:57",
+  "updatedAt": "2026-09-11 18:59",
   "version": "1.0.11.20",
   "versionLabel": "v1.0.11.20",
   "branch": "bugfix/ballet-expired-membership-card",
-  "commit": "07f4e3fe",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-expired-membership-card · commit 07f4e3fe · 有未提交代码改动",
+  "commit": "a47db689",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-expired-membership-card · commit a47db689 · 干净",
   "recentUpdates": [
     {
       "date": "2026-09-11",
