@@ -5476,7 +5476,7 @@ function renderBalletHistory() {
       empty.textContent = `${periodLabel}暂无上课记录`;
       preview.appendChild(empty);
     } else {
-      preview.append(...records.slice(0, previewLimit).map(createBalletHistoryPreviewItem));
+      preview.append(...records.map(createBalletHistoryPreviewItem));
     }
   }
 

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-11 19:18",
-  "version": "1.0.11.21",
-  "versionLabel": "v1.0.11.21",
-  "branch": "feature/ballet-membership-card-slider",
-  "commit": "3e0b3497",
+  "updatedAt": "2026-09-11 22:59",
+  "version": "1.0.11.22",
+  "versionLabel": "v1.0.11.22",
+  "branch": "bugfix/ballet-history-scroll",
+  "commit": "ad45c5da",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-membership-card-slider · commit 3e0b3497 · 干净",
+  "deployNote": "bugfix/ballet-history-scroll · commit ad45c5da · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-09-11",
+      "title": "上课历史预览支持卡片内滑动",
+      "summary": "芭蕾训练记录右侧的上课历史不再只渲染最近 8 条；当前筛选范围的全部记录都会进入紧凑列表，并在保持与左侧图表同高的卡片内纵向滑动。"
+    },
     {
       "date": "2026-09-11",
       "title": "多张课程卡改为有效卡优先横向滑动",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-08",
       "title": "修复手动签到后豆奶页面未更新",
       "summary": "确认 Owner 已于 20:03 手动签到；豆奶 `/user/record` 的只读变更记录显示本次获得 865 MB、1 豆丁，基础与 VIP 有效期各延长 1.07 小时。"
-    },
-    {
-      "date": "2026-09-08",
-      "title": "豆奶改为手动签到并仅保留流量统计",
-      "summary": "按 Owner 决定移除 root crontab 的 09:00 `MAXNOW-DOUNAL-CHECKIN`，服务器不再尝试签到或发送验证码提醒；原 crontab 已备份为 `/root/.openclaw/root-crontab-20260908-manual-checkin.bak`。"
     }
   ]
 };

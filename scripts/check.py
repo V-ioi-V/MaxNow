@@ -1766,11 +1766,13 @@ def check_secondary_view_style():
         or 'height: min(72dvh, 680px);' not in dashboard_css
         or '.ballet-history-dialog .ballet-history-list {' not in dashboard_css
         or 'overflow-y: auto;' not in dashboard_css
+        or '.ballet-history-preview-list:focus-visible {' not in dashboard_css
         or '.ballet-history-drawer' in dashboard_css
         or 'function getBalletHistoryRecords()' not in dashboard_js
         or 'const previewLimit = window.matchMedia("(max-width: 560px)").matches ? 3 : 8;' not in dashboard_js
-        or 'records.slice(0, previewLimit).map(createBalletHistoryPreviewItem)' not in dashboard_js
+        or 'records.map(createBalletHistoryPreviewItem)' not in dashboard_js
         or 'openButton.hidden = !hasMore;' not in dashboard_js
+        or 'aria-label="上课历史列表，可上下滑动"' not in ballet_view_markup
         or 'balletHistoryDialog.showModal()' not in dashboard_js
         or 'renderBalletHistory();' not in dashboard_js.split('qsa("[data-ballet-period]")', 1)[1]
         or 'let activeBalletPeriod = "all";' not in dashboard_js
@@ -1895,9 +1897,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=270" not in dashboard_html
+        "styles.css?v=271" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=232" not in dashboard_html
+        or "app.js?v=233" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2148,7 +2150,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=232" not in dashboard_html:
+    if "app.js?v=233" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js
