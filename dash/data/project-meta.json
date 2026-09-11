@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-11 19:00",
-  "version": "1.0.11.20",
-  "versionLabel": "v1.0.11.20",
-  "branch": "bugfix/ballet-expired-membership-card",
-  "commit": "2b4774dd",
+  "updatedAt": "2026-09-11 19:18",
+  "version": "1.0.11.21",
+  "versionLabel": "v1.0.11.21",
+  "branch": "feature/ballet-membership-card-slider",
+  "commit": "3e0b3497",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-expired-membership-card · commit 2b4774dd · 干净",
+  "deployNote": "feature/ballet-membership-card-slider · commit 3e0b3497 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-09-11",
+      "title": "多张课程卡改为有效卡优先横向滑动",
+      "summary": "芭蕾顶部课程卡从纵向堆叠改为一次展示一张的横向吸附轨道；使用中的卡固定排在已失效卡之前，手机可左右滑动，桌面可通过前后按钮、圆点和键盘方向键切换。"
+    },
     {
       "date": "2026-09-11",
       "title": "课程卡支持展示已失效旧卡",
@@ -28,11 +33,6 @@
       "date": "2026-09-08",
       "title": "豆奶改为手动签到并仅保留流量统计",
       "summary": "按 Owner 决定移除 root crontab 的 09:00 `MAXNOW-DOUNAL-CHECKIN`，服务器不再尝试签到或发送验证码提醒；原 crontab 已备份为 `/root/.openclaw/root-crontab-20260908-manual-checkin.bak`。"
-    },
-    {
-      "date": "2026-09-08",
-      "title": "恢复豆奶 09:00 签到预检与人工提醒",
-      "summary": "修复 `/root/.openclaw/dounai_cron.sh` 在 `set -e` 下提前退出、验证码异常提醒无法可靠送达的问题；脚本现在显式保留签到退出码，再按成功、已签到、需要验证码和其他异常分别处理。"
     }
   ]
 }
