@@ -2977,3 +2977,15 @@ server verification: 部署时 HEAD 与 origin/main 均为 2caa2d1e；scripts/ch
 automation state: nginx、maxnow-auth、rolling / full / Fast Path / week-closeout / Session 状态 timers 均 active
 safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-13 已手动补录当天芭蕾 L1 上课记录：
+
+```text
+course: 2026-09-13 10:00–11:30；芭蕾L1-入门；李俊；大教室；90 分钟；已上课
+record origin: manual 稳定键；写入前服务器私有台账和公开历史均无目标记录，当前课表唯一匹配
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260913-102847-manual-attendance-20260913-l1/ballet-runtime.tgz
+runtime result: 累计由 32 节 / 2430 分钟 / 40.5 小时更新为 33 节 / 2520 分钟 / 42 小时；手工记录由 2 条增加到 3 条；公开记录唯一命中 recordOrigin=manual / durationMinutes=90
+permissions: attendance-ledger.json 保持 ubuntu:www-data 0600；以 ubuntu:www-data 服务身份完成 ledger、read model、目标唯一性和汇总增量复验
+verification: 服务器 scripts/check.py 通过；写入后 ballet.json / ballet.js SHA-256 为 ba541897ab5c131bdd9628d70bb537fb877d2399b75a7dc494c505f75afbe49c / 7dad03a3a11169b9a1ee59dc176c48eb49994d1d4a394642be2ef4e288231a6f
+safety: 未访问闻道、未读取 PHPSESSID、未启动同步或 Fast Path，未执行预约、候补、取消或转课
+```

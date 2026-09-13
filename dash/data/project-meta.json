@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-11 23:23",
-  "version": "1.0.11.23",
-  "versionLabel": "v1.0.11.23",
-  "branch": "feature/ballet-card-controls-inside",
-  "commit": "b8e57d59",
+  "updatedAt": "2026-09-13 10:31",
+  "version": "1.0.11.24",
+  "versionLabel": "v1.0.11.24",
+  "branch": "feature/manual-ballet-attendance-20260913",
+  "commit": "1ca916d6",
   "dirty": true,
-  "dirtyLevel": "generated",
-  "deployNote": "feature/ballet-card-controls-inside · commit b8e57d59 · 运行数据已更新",
+  "dirtyLevel": "code",
+  "deployNote": "feature/manual-ballet-attendance-20260913 · commit 1ca916d6 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-13",
+      "title": "手动补录 9 月 13 日芭蕾 L1",
+      "summary": "按 Owner 提供的课表截图，手动补录 `2026-09-13 10:00–11:30` 李俊老师大教室“芭蕾L1-入门”，记录状态为已上课，并使用 `manual` 稳定键保存在服务器私有上课台账中。"
+    },
     {
       "date": "2026-09-11",
       "title": "课程卡填满概览格并内置滑动标识",
@@ -28,11 +33,6 @@
       "date": "2026-09-11",
       "title": "课程卡支持展示已失效旧卡",
       "summary": "修复闻道会员卡页同时返回使用中卡与已失效旧卡时，旧卡缺少总次数导致全部芭蕾数据同步失败的问题。"
-    },
-    {
-      "date": "2026-09-08",
-      "title": "按当前页面懒加载 Dashboard 数据",
-      "summary": "修复直接打开 `#ballet`、Token、豆奶等二级页时仍先等待整套 Home 数据的问题；现在先显示目标页，再只读取该页所需的数据源，芭蕾首开由 10 份数据请求收敛为 3 份，Token / 豆奶 / 生活各为 1 份。"
     }
   ]
 }
