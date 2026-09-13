@@ -1,19 +1,14 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 10:05",
-  "version": "1.0.11.25",
-  "versionLabel": "v1.0.11.25",
-  "branch": "feature/ballet-course-guide",
-  "commit": "40f07bc5",
+  "updatedAt": "2026-09-11 23:23",
+  "version": "1.0.11.23",
+  "versionLabel": "v1.0.11.23",
+  "branch": "feature/ballet-card-controls-inside",
+  "commit": "b8e57d59",
   "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "feature/ballet-course-guide · commit 40f07bc5 · 有未提交代码改动",
+  "dirtyLevel": "generated",
+  "deployNote": "feature/ballet-card-controls-inside · commit b8e57d59 · 运行数据已更新",
   "recentUpdates": [
-    {
-      "date": "2026-09-13",
-      "title": "芭蕾页保存课程类型与选课指南",
-      "summary": "保存 Owner 提供的李俊芭蕾《课程类型与选课指南》完整原图，并在芭蕾顶部状态区新增低权重“选课指南”入口，点击后可放大查看或另存。"
-    },
     {
       "date": "2026-09-11",
       "title": "课程卡填满概览格并内置滑动标识",
@@ -33,6 +28,11 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-11",
       "title": "课程卡支持展示已失效旧卡",
       "summary": "修复闻道会员卡页同时返回使用中卡与已失效旧卡时，旧卡缺少总次数导致全部芭蕾数据同步失败的问题。"
+    },
+    {
+      "date": "2026-09-08",
+      "title": "按当前页面懒加载 Dashboard 数据",
+      "summary": "修复直接打开 `#ballet`、Token、豆奶等二级页时仍先等待整套 Home 数据的问题；现在先显示目标页，再只读取该页所需的数据源，芭蕾首开由 10 份数据请求收敛为 3 份，Token / 豆奶 / 生活各为 1 份。"
     }
   ]
 };

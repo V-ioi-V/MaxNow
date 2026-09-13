@@ -782,12 +782,10 @@ body[data-view="tokens"] .topbar-token-ranges {
   color: var(--accent-strong);
 }
 
-.ballet-guide-link,
 .ballet-week-trigger {
   display: none;
   min-height: 30px;
   align-items: center;
-  justify-content: center;
   gap: 4px;
   border: 1px solid color-mix(in srgb, var(--status-accent) 26%, #dbe7f4);
   border-radius: 999px;
@@ -797,8 +795,6 @@ body[data-view="tokens"] .topbar-token-ranges {
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
   transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
@@ -811,12 +807,10 @@ body[data-view="tokens"] .topbar-token-ranges {
   line-height: inherit;
 }
 
-body[data-view="ballet"] .ballet-guide-link,
 body[data-view="ballet"] .ballet-week-trigger {
   display: inline-flex;
 }
 
-.ballet-guide-link:hover,
 .ballet-week-trigger:hover {
   border-color: color-mix(in srgb, var(--ballet) 48%, #ffffff);
   background: color-mix(in srgb, var(--ballet) 13%, #ffffff);
@@ -824,7 +818,6 @@ body[data-view="ballet"] .ballet-week-trigger {
   transform: translateY(-1px);
 }
 
-.ballet-guide-link:focus-visible,
 .ballet-week-trigger:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--ballet) 24%, transparent);
   outline-offset: 2px;
@@ -9826,7 +9819,6 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ballet-guide-link,
   .ballet-week-trigger,
   .ballet-week-switch button,
   .ballet-week-action,
