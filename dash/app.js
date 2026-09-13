@@ -3481,8 +3481,13 @@ function createBalletPlanWeekCourse(record = {}, options = {}) {
 
   const title = document.createElement("strong");
   title.textContent = balletCourseName(record);
-  const timeText = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–")
-    || String(record.startTime || "时间待确认");
+  const plannedTimeLabel = String(record.startTime || "").trim();
+  const timeText = options.planned
+    ? (record.weekday === "周六" && (!plannedTimeLabel || plannedTimeLabel === "全天")
+      ? "18:00 前"
+      : plannedTimeLabel || "时间待确认")
+    : [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–")
+      || String(record.startTime || "时间待确认");
   const detail = document.createElement("small");
   detail.textContent = [balletTeacher(record) || "老师待确认", timeText].join(" · ");
   const state = document.createElement("span");

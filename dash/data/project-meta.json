@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 16:49",
-  "version": "1.0.11.30",
-  "versionLabel": "v1.0.11.30",
-  "branch": "bugfix/ballet-booking-equal-width",
-  "commit": "9646361b",
+  "updatedAt": "2026-09-13 18:28",
+  "version": "1.0.11.31",
+  "versionLabel": "v1.0.11.31",
+  "branch": "bugfix/ballet-plan-rule-time-label",
+  "commit": "f7bfe744",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-booking-equal-width · commit 9646361b · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-plan-rule-time-label · commit f7bfe744 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-13",
+      "title": "周安排准备抢卡显示完整时间边界",
+      "summary": "准备抢卡保留公开目标中的规则时段文案，工作日显示“18:40 后”、周六显示“18:00 前”，不再把规则边界裁成普通钟点。"
+    },
     {
       "date": "2026-09-13",
       "title": "抢课双栏及八张指标卡统一尺寸",
@@ -28,11 +33,6 @@
       "date": "2026-09-13",
       "title": "抢课平均耗时与本次耗时分开展示",
       "summary": "“抢课助手”的“上次抢课耗时”改为“抢课平均耗时”，读取历次真实 Fast Path 执行关键路径耗时的平均值并显示累计样本数。"
-    },
-    {
-      "date": "2026-09-13",
-      "title": "周安排支持前后五周切换",
-      "summary": "周安排从上周 / 本周 / 下周三档扩展为两周前 / 上周 / 本周 / 下周 / 两周后五档，默认仍定位本周，左右箭头在窗口两端自动禁用并同步更新无障碍说明。"
     }
   ]
 }
