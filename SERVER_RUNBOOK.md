@@ -3056,3 +3056,16 @@ server verification: 服务器通过校验过的完整 Git bundle 从 7f0e7497 �
 automation state: rolling / full / Fast Path service 均保持 inactive；rolling / full / Fast Path / week-closeout timer 均保持 active
 safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-13 已部署周安排规则时间边界显示修复：
+
+```text
+deployed commit: 7780a7c8 fix: show ballet booking time boundaries
+version: 1.0.11.31
+changes: 周安排“准备抢”卡保留规则时段的完整文案，工作日显示“18:40 后”、周六显示“18:00 前”；兼容旧的最后成功缓存，把历史周六“全天”按现行规则显示为“18:00 前”；自动抢课目标和执行逻辑没有变化；脚本缓存提升到 app.js?v=239
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260913-1838-ballet-plan-rule-time-label；包含完整 dash/data、部署前 Git 状态和 ballet.json / ballet.js 哈希；运行态 dash/data 在快进前另存为可恢复 Git stash
+browser verification: 仅使用 Codex 内置浏览器验收本地同版本页面；切到“两周后 09/21–09/27”后，工作日 15 张准备抢卡均显示“18:40 后”，周六 3 张均显示“18:00 前”，页面中没有“全天”，控制台无 warning / error
+server verification: 服务器通过校验过的完整 Git bundle 从 f7bfe744 快进到 7780a7c8，HEAD 与 origin/main 一致；scripts/check.py、git diff --check 和 nginx -t 通过，VERSION=1.0.11.31、app.js?v=239 生效；部署前后 ballet.json / ballet.js SHA-256 保持 fc487e0bb832991ced87e01eb047887d482e378cc49c46f60a0a8d88add164b7 / ff6d9abbfa1c37d54d0d0757208a464c1a429a6e4a0d6c6e60b4888b8774f296；受保护的公开 Fast Path 文件中 3 个周六目标均为“18:00 前”；未认证首页 / 登录页 / Fast Path 数据 / Blog 为 302 / 200 / 401 / 200
+automation state: rolling / full / Fast Path timer 均保持 active，相关 service 均保持 inactive；week-closeout timer 也保持 active
+safety: 本次仅部署静态页面逻辑、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
