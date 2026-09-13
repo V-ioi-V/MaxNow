@@ -2977,3 +2977,16 @@ server verification: 部署时 HEAD 与 origin/main 均为 2caa2d1e；scripts/ch
 automation state: nginx、maxnow-auth、rolling / full / Fast Path / week-closeout / Session 状态 timers 均 active
 safety: 本次仅部署静态页面代码、样式和发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-13 已保存并部署芭蕾课程类型与选课指南：
+
+```text
+deployed feature commits: 40f07bc5 feat: save ballet course guide；577423cd fix: protect ballet course guide asset
+version: 1.0.11.25
+changes: 保存 Owner 提供的 2500×13750 李俊芭蕾《课程类型与选课指南》完整原图；芭蕾顶部状态区新增“选课指南”胶囊入口，与 week N 同高并支持 hover / focus；原图最终移动到受登录保护的 dash/private-assets/ballet/，公开 assets 旧路径已删除；样式缓存提升到 styles.css?v=273，app.js 保持 v234
+runtime backups: /home/ubuntu/maxnow-deploy-backups/20260913-100205-ballet-course-guide/dash-data.tgz；/home/ubuntu/maxnow-deploy-backups/20260913-100845-ballet-course-guide-private/dash-data.tgz；两次部署均精确恢复服务器运行态并重新生成 project-meta.*，临时 stash 在验证后删除
+browser verification: 本地 1280×720 下“选课指南”与 week N 的 top / bottom / height 完全一致；390×844 下两者完整位于视口内，body scrollWidth 与 clientWidth 均为 375；入口实际打开 2500×13750 原图，控制台无 warning / error
+server verification: 最终页面提交部署时 HEAD 与 origin/main 均为 577423cd；scripts/check.py 与 nginx -t 通过；styles.css?v=273 和 9,142,011 字节原图生效；受保护指南匿名访问 302 到登录页，旧公开路径 404；部署前后 ballet.json / ballet.js SHA-256 均保持 c40297bef2c79857cef51300878f8ff5db570abda52944fb976676186e709236 / 3bba036de58f2884d419fe5c1804e8d3c30f80052b5160bcda3335da43de9031，32 节 / 40.5 小时与 dataAsOf=2026-09-13T09:00:00+08:00 均不变；未认证首页 / 登录页 / 芭蕾数据 / 私有指南 / 旧公开指南 / Blog 为 302 / 200 / 401 / 302 / 404 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path / week-closeout / Session 状态 timers 均 active；rolling / full / Fast Path services 均 inactive
+safety: 本次只部署静态参考图、页面入口、样式和发布记录；未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
