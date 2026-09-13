@@ -359,7 +359,7 @@ def check_ballet_booking_fast():
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     rules = config.get("selectionRules", [])
     if (
-        config.get("schemaVersion") != 7
+        config.get("schemaVersion") != 8
         or not rules
         or config.get("priorityCourses")
         != [
@@ -373,6 +373,7 @@ def check_ballet_booking_fast():
         or config.get("emptyTeacherAs") != "李俊"
         or config.get("discoveryRefreshSeconds") != [2, 6, 10]
         or config.get("unknownVerificationSeconds") != [0.8, 2, 4]
+        or config.get("weekdayEndTimes") != {"5": "18:00"}
         or any(
             rule.get("weekdays") != [0, 1, 2, 3, 4, 5]
             or "teacher" in rule
@@ -410,7 +411,7 @@ def check_ballet_booking_fast():
         != (
             "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类按周六 > "
             "周一至周五李俊（老师空白按李俊）> 周一至周五其他老师；"
-            "工作日仅 18:40 后、周六全天；"
+            "工作日仅 18:40 后、周六仅 18:00 前；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         )
         or {item.get("venue") for item in data.get("targets", [])}
@@ -419,7 +420,7 @@ def check_ballet_booking_fast():
         or {item.get("course") for item in data.get("targets", [])}
         != {"软开", "芭蕾 L1", "芭蕾 L1.5"}
         or {item.get("startTime") for item in data.get("targets", [])}
-        != {"全天", "18:40 后"}
+        != {"18:00 前", "18:40 后"}
     ):
         raise ValueError("ballet fast booking: public plan or priority is invalid")
     serialized = json.dumps(data, ensure_ascii=False)
@@ -1899,7 +1900,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=272" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=234" not in dashboard_html
+        or "app.js?v=235" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2153,7 +2154,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=234" not in dashboard_html:
+    if "app.js?v=235" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

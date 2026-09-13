@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 7,
+  "schemaVersion": 8,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -46,6 +46,9 @@
     "3": "18:40",
     "4": "18:40",
     "5": "00:00"
+  },
+  "weekdayEndTimes": {
+    "5": "18:00"
   },
   "selectionRules": [
     {

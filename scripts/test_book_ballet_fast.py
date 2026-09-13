@@ -408,10 +408,38 @@ class FastBookingTests(unittest.TestCase):
         self.assertNotIn("软开-胯", {target["_courseName"] for target in targets})
         self.assertTrue(
             all(
-                target["weekday"] == 5 or target["startTime"] >= "18:40"
+                (
+                    target["startTime"] < "18:00"
+                    if target["weekday"] == 5
+                    else target["startTime"] >= "18:40"
+                )
                 for target in targets
             )
         )
+
+    def test_saturday_cutoff_includes_before_1800_and_excludes_1800(self):
+        target = fast.materialize_targets(config(), self.release)[0]
+        record = {
+            "date": target["date"],
+            "courseType": "ballet",
+            "level": "L1",
+            "courseName": "芭蕾 L1",
+        }
+
+        self.assertTrue(fast.rule_matches({**record, "startTime": "17:59"}, target))
+        self.assertFalse(fast.rule_matches({**record, "startTime": "18:00"}, target))
+
+    def test_weekday_cutoff_still_includes_1840(self):
+        target = fast.materialize_targets(config(), self.release)[1]
+        record = {
+            "date": target["date"],
+            "courseType": "ballet",
+            "level": "L1",
+            "courseName": "芭蕾 L1",
+        }
+
+        self.assertFalse(fast.rule_matches({**record, "startTime": "18:39"}, target))
+        self.assertTrue(fast.rule_matches({**record, "startTime": "18:40"}, target))
 
     def test_target_matches_when_teacher_changes(self):
         target = fast.materialize_targets(config(), self.release)[0]
