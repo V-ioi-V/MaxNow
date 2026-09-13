@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 16:30",
+  "updatedAt": "2026-09-13 16:35",
   "version": "1.0.11.29",
   "versionLabel": "v1.0.11.29",
   "branch": "bugfix/ballet-future-plan-fallback",
-  "commit": "4ae76ef1",
+  "commit": "b9ac5ffc",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-future-plan-fallback · commit 4ae76ef1 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-future-plan-fallback · commit b9ac5ffc · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-13",

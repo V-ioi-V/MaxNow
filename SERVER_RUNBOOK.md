@@ -3030,3 +3030,16 @@ sync verification: rolling 只读同步于 16:18:48 启动、16:19:52 成功结�
 checks: 本地与服务器各 69 项相关测试、scripts/check.py、git diff --check 和 nginx -t 通过；三个相关 service 回到 inactive
 safety: 部署、实时复核与同步没有提交预约、候补、取消或转课；除官方固定列表分页 POST 外均为 GET
 ```
+
+2026-09-13 已部署两周后周安排的准备抢兜底：
+
+```text
+deployed commit: b9ac5ffc fix: show future ballet booking plans
+version: 1.0.11.29
+changes: 移除准备抢仅限固定下周偏移的判断；五周窗口内任一未来周只要存在日期属于该周的公开 Fast Path 目标、没有真实课程且尚无同周执行结果，就展示准备抢卡；真实预约、候补或完成事实继续整周优先，不和计划混排
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260913-163202-future-plan-fallback；包含整份 dash/data、部署前 app.js、index.html 和 VERSION；运行态 dash/data 在拉取前另存为可恢复 Git stash
+browser verification: 本地浏览器使用与生产同结构的 18 个 2026-09-21 至 2026-09-26 公开目标验收；切到“两周后 09/21–09/27”后渲染 18 张准备抢卡及优先 01–18，周日保留单个暂无安排；658px 窄视口整页 scrollWidth=clientWidth=658，周安排仅在卡内横向浏览
+server verification: 服务器从 4ae76ef1 快进到目标提交，VERSION=1.0.11.29、app.js?v=238 与新的未来周判断生效；scripts/check.py、git diff --check 和 nginx -t 通过；部署前后 ballet.json SHA-256 均为 9ab25331f3fcccabd9ed0773cc339ca68ef7e61ec301f3579c571e2f6384e600，33 节 / 42 小时、11 条活动预约和 18 个公开目标保持不变
+automation state: rolling / full / Fast Path service 部署前均为 inactive；本次没有安装或修改 unit
+safety: 仅部署静态页面逻辑，没有访问闻道、启动同步或 Fast Path，也没有执行预约、候补、取消或转课
+```
