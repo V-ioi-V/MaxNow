@@ -101,36 +101,22 @@ def query_timetable(
 def query_bookings(
     source: ballet.WendaSource | ballet.FixtureSource,
 ) -> dict[str, Any]:
-    html = source.request(ballet.BOOKING_PATH, "约课记录")
-    index = ballet.parse_index(html, "booking")
-    active = [
-        item
-        for item in index
-        if item.get("status") in {"已预约", "排队中", "候补中"}
+    records = [
+        public_record(
+            record,
+            (
+                "bookingStatus",
+                "waitlistPosition",
+                "cancelRuleText",
+                "cancelHoursBefore",
+                "cancelDeadlineAt",
+            ),
+        )
+        for record in ballet.fetch_active_bookings(
+            source,
+            max_records=MAX_DETAIL_RECORDS,
+        )
     ]
-    if len(active) > MAX_DETAIL_RECORDS:
-        raise ballet.SyncFailure("source_changed")
-    records = []
-    for item in active:
-        detail_html = source.request(item["detailPath"], "约课记录明细")
-        detail = ballet.parse_detail(detail_html, item["sourceRecordId"])
-        normalized = ballet.normalize_upcoming(detail)
-        if normalized is not None:
-            records.append(
-                public_record(
-                    normalized,
-                    (
-                        "bookingStatus",
-                        "waitlistPosition",
-                        "cancelRuleText",
-                        "cancelHoursBefore",
-                        "cancelDeadlineAt",
-                    ),
-                )
-            )
-    records.sort(
-        key=lambda item: (item["date"], item["startTime"], item["courseName"])
-    )
     return {"records": records}
 
 

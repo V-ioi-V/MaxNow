@@ -254,9 +254,25 @@ def check_ballet_sync():
         raise ValueError(
             "ballet weekly closeout: self-test failed: " + closeout_result.stdout.strip()
         )
+    sync_source = (ROOT / "scripts/sync_ballet.py").read_text(encoding="utf-8")
+    live_source = (ROOT / "scripts/query_ballet_live.py").read_text(encoding="utf-8")
+    fast_source = (ROOT / "scripts/book_ballet_fast.py").read_text(encoding="utf-8")
+    if (
+        'BOOKING_MORE_PREFIX = f"/gm/weixin/my/newbookrecord/{STORE_ID}/"'
+        not in sync_source
+        or "def fetch_active_booking_index(" not in sync_source
+        or "def fetch_active_bookings(" not in sync_source
+        or "upcoming = fetch_active_bookings(" not in sync_source
+        or "for record in ballet.fetch_active_bookings(" not in live_source
+        or "for record in ballet.fetch_active_bookings(" not in fast_source
+    ):
+        raise ValueError(
+            "ballet sync: active booking pagination is not shared by all readers"
+        )
     return (
-        "ballet sync: read-only allowlist, private ledger, idempotent upsert, "
-        "safe auth failure, aggregates, redaction, and dry-run are valid"
+        "ballet sync: read-only allowlist, shared active-booking pagination, "
+        "private ledger, idempotent upsert, safe auth failure, aggregates, "
+        "redaction, and dry-run are valid"
     )
 
 

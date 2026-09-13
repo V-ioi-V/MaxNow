@@ -86,6 +86,23 @@ def paginated_attendance_html(
     return base.replace("</body>", f"{script}</body>")
 
 
+def paginated_booking_html(
+    rows: list[tuple[str, str, str, str]], total: int
+) -> str:
+    base = index_html("约课记录", rows)
+    script = (
+        "<script>"
+        "var totalbook = $('.weui-cell').length;"
+        f"if (totalbook < {total}) {{"
+        "$.ajax({"
+        f"url:'{ballet.BASE_URL}{ballet.BOOKING_MORE_PREFIX}'+totalbook,"
+        "type:'post',data:{customerid:'1234567'}"
+        "});}"
+        "</script>"
+    )
+    return base.replace("</body>", f"{script}</body>")
+
+
 def attendance_summary_html(rows: list[tuple[str, str]]) -> str:
     return "".join(
         (
@@ -267,6 +284,20 @@ class BalletSyncTests(unittest.TestCase):
             with self.subTest(path=path), self.assertRaises(ballet.SyncFailure):
                 ballet.validate_attendance_page_path(path)
 
+        booking_page_path = f"{ballet.BOOKING_MORE_PREFIX}10"
+        self.assertEqual(
+            ballet.validate_booking_page_path(booking_page_path),
+            booking_page_path,
+        )
+        for path in (
+            f"{ballet.BOOKING_MORE_PREFIX}0",
+            f"{ballet.BOOKING_MORE_PREFIX}501",
+            f"{ballet.BOOKING_MORE_PREFIX}10?customerid=1",
+            f"/gm/weixin/my/newbookrecord/54115/10",
+        ):
+            with self.subTest(path=path), self.assertRaises(ballet.SyncFailure):
+                ballet.validate_booking_page_path(path)
+
     def test_attendance_page_post_is_exact_and_read_only(self):
         class Response:
             status = 200
@@ -297,6 +328,71 @@ class BalletSyncTests(unittest.TestCase):
         self.assertEqual(request.data, b"customerid=1234567")
         self.assertEqual(
             request.headers["X-requested-with"], "XMLHttpRequest"
+        )
+
+    def test_booking_page_post_is_exact_and_read_only(self):
+        class Response:
+            status = 200
+            headers = {}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self, size):
+                return index_html(
+                    "约课记录",
+                    [("10004", "软开课", "2026-09-15", "排队中")],
+                ).encode("utf-8")
+
+        source = ballet.WendaSource(
+            ballet.Credentials(SESSION, USER_AGENT), retries=0
+        )
+        source.opener.open = mock.Mock(return_value=Response())
+        source.request_booking_page(10, "1234567")
+        request = source.opener.open.call_args.args[0]
+        self.assertEqual(request.get_method(), "POST")
+        self.assertEqual(
+            request.full_url,
+            f"{ballet.BASE_URL}{ballet.BOOKING_MORE_PREFIX}10",
+        )
+        self.assertEqual(request.data, b"customerid=1234567")
+        self.assertEqual(request.headers["Referer"], ballet.BASE_URL + ballet.BOOKING_PATH)
+        self.assertEqual(request.headers["X-requested-with"], "XMLHttpRequest")
+
+    def test_active_booking_index_reads_later_pages_and_deduplicates(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "booking-pages").mkdir()
+            (root / "booking.html").write_text(
+                paginated_booking_html(
+                    [
+                        ("10001", "芭蕾L1", "2026-09-14", "已预约"),
+                        ("10002", "芭蕾L1.5", "2026-09-15", "已预约"),
+                    ],
+                    4,
+                ),
+                encoding="utf-8",
+            )
+            (root / "booking-pages" / "2.html").write_text(
+                index_html(
+                    "约课记录",
+                    [
+                        ("10002", "芭蕾L1.5", "2026-09-15", "已预约"),
+                        ("10003", "软开课", "2026-09-15", "排队中"),
+                    ],
+                ),
+                encoding="utf-8",
+            )
+            source = ballet.FixtureSource(root)
+            active = ballet.fetch_active_booking_index(source)
+
+        self.assertEqual(source.request_count, 2)
+        self.assertEqual(
+            [(item["sourceRecordId"], item["status"]) for item in active],
+            [("10001", "已预约"), ("10002", "已预约"), ("10003", "排队中")],
         )
 
     def test_credentials_are_minimal_and_never_logged(self):
@@ -829,6 +925,54 @@ class BalletSyncTests(unittest.TestCase):
             )
             if os.name != "nt":
                 self.assertEqual(stat.S_IMODE(paths.ledger.stat().st_mode), 0o600)
+
+    def test_sync_publishes_waitlist_from_later_booking_page(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixtures"
+            output = root / "public" / "ballet.json"
+            write_fixture(fixture)
+            (fixture / "booking-pages").mkdir()
+            (fixture / "booking.html").write_text(
+                paginated_booking_html(
+                    [("10003", "芭蕾L2", "2026-08-02", "已预约")],
+                    2,
+                ),
+                encoding="utf-8",
+            )
+            (fixture / "booking-pages" / "1.html").write_text(
+                index_html(
+                    "约课记录",
+                    [("10004", "软开课", "2026-08-04", "排队中")],
+                ),
+                encoding="utf-8",
+            )
+            (fixture / "details" / "10004.html").write_text(
+                detail_html(
+                    course="软开课",
+                    day="2026-08-04",
+                    time_text="18:45~19:45",
+                    status="等候中, 排队序号 4",
+                ),
+                encoding="utf-8",
+            )
+            result = ballet.synchronize(
+                ballet.build_paths(root / "private", output),
+                ballet.FixtureSource(fixture),
+                "full",
+                NOW,
+            )
+            model = json.loads(output.read_text(encoding="utf-8"))
+
+        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(len(model["upcoming"]["records"]), 2)
+        waitlist = next(
+            item
+            for item in model["upcoming"]["records"]
+            if item["courseName"] == "软开课"
+        )
+        self.assertEqual(waitlist["bookingStatus"], "waitlist")
+        self.assertEqual(waitlist["waitlistPosition"], 4)
 
     def test_auth_failure_keeps_last_good_data_and_exposes_safe_reason(self):
         with tempfile.TemporaryDirectory() as directory:

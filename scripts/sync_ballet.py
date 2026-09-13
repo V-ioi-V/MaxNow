@@ -16,6 +16,7 @@ import tempfile
 import time
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -32,6 +33,7 @@ HOME_PATH = f"/gm/weixin/home/index/{STORE_ID}"
 ATTENDANCE_PATH = f"/gm/weixin/my/checkrecord/{STORE_ID}"
 ATTENDANCE_MORE_PREFIX = f"/gm/weixin/my/newcheckrecord/{STORE_ID}/"
 BOOKING_PATH = f"/gm/weixin/my/bookrecord/{STORE_ID}"
+BOOKING_MORE_PREFIX = f"/gm/weixin/my/newbookrecord/{STORE_ID}/"
 MEMBERSHIP_PATH = f"/gm/weixin/my/mycard/{STORE_ID}"
 TIMETABLE_PATH = f"/gm/weixin/classtable/simpleclass/{STORE_ID}/430"
 DETAIL_PATH_PATTERN = re.compile(
@@ -49,6 +51,8 @@ GLOBAL_NAME = "MAXNOW_BALLET_DATA"
 MAX_RESPONSE_BYTES = 2_000_000
 MAX_ATTENDANCE_RECORDS = 500
 MAX_ATTENDANCE_PAGES = 50
+MAX_BOOKING_RECORDS = 500
+MAX_BOOKING_PAGES = 50
 ROLLING_DAYS = 60
 CACHE_TTL_HOURS = 36
 WEEKLY_BRIEF_REFRESH_DELAY_MINUTES = 10
@@ -347,6 +351,15 @@ def validate_attendance_page_path(path: str) -> str:
     return path
 
 
+def validate_booking_page_path(path: str) -> str:
+    match = re.fullmatch(
+        re.escape(BOOKING_MORE_PREFIX) + r"([1-9][0-9]{0,2})", path
+    )
+    if not match or int(match.group(1)) > MAX_BOOKING_RECORDS:
+        raise SyncFailure("configuration_error")
+    return path
+
+
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
@@ -473,10 +486,12 @@ class WendaSource:
             raise SyncFailure("network_error")
         raise SyncFailure("http_error")
 
-    def request_attendance_page(self, offset: int, customer_id: str) -> str:
-        if not isinstance(offset, int):
-            raise SyncFailure("configuration_error")
-        path = validate_attendance_page_path(f"{ATTENDANCE_MORE_PREFIX}{offset}")
+    def _request_index_page(
+        self,
+        path: str,
+        referer_path: str,
+        customer_id: str,
+    ) -> str:
         if not re.fullmatch(r"[1-9][0-9]{0,19}", customer_id):
             raise SyncFailure("configuration_error")
         body = urlencode({"customerid": customer_id}).encode("ascii")
@@ -487,7 +502,7 @@ class WendaSource:
             headers.update(
                 {
                     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                    "Referer": BASE_URL + ATTENDANCE_PATH,
+                    "Referer": BASE_URL + referer_path,
                     "X-Requested-With": "XMLHttpRequest",
                 }
             )
@@ -529,6 +544,18 @@ class WendaSource:
             raise SyncFailure("network_error")
         raise SyncFailure("http_error")
 
+    def request_attendance_page(self, offset: int, customer_id: str) -> str:
+        if not isinstance(offset, int):
+            raise SyncFailure("configuration_error")
+        path = validate_attendance_page_path(f"{ATTENDANCE_MORE_PREFIX}{offset}")
+        return self._request_index_page(path, ATTENDANCE_PATH, customer_id)
+
+    def request_booking_page(self, offset: int, customer_id: str) -> str:
+        if not isinstance(offset, int):
+            raise SyncFailure("configuration_error")
+        path = validate_booking_page_path(f"{BOOKING_MORE_PREFIX}{offset}")
+        return self._request_index_page(path, BOOKING_PATH, customer_id)
+
 
 class FixtureSource:
     def __init__(self, fixture_dir: Path):
@@ -569,6 +596,18 @@ class FixtureSource:
         self.request_count += 1
         try:
             return (self.fixture_dir / "attendance-pages" / f"{offset}.html").read_text(
+                encoding="utf-8"
+            )
+        except OSError:
+            raise SyncFailure("parse_error")
+
+    def request_booking_page(self, offset: int, customer_id: str) -> str:
+        validate_booking_page_path(f"{BOOKING_MORE_PREFIX}{offset}")
+        if not re.fullmatch(r"[1-9][0-9]{0,19}", customer_id):
+            raise SyncFailure("configuration_error")
+        self.request_count += 1
+        try:
+            return (self.fixture_dir / "booking-pages" / f"{offset}.html").read_text(
                 encoding="utf-8"
             )
         except OSError:
@@ -897,6 +936,82 @@ def parse_index(text: str, kind: str) -> list[dict[str, str]]:
         unique[source_id] = item
 
     return list(unique.values())
+
+
+def parse_booking_pagination_contract(
+    text: str,
+) -> tuple[int, str] | None:
+    if "newbookrecord" not in text.lower():
+        return None
+    endpoint = re.search(
+        r"url\s*:\s*['\"](?:"
+        + re.escape(BASE_URL)
+        + r")?"
+        + re.escape(BOOKING_MORE_PREFIX)
+        + r"['\"]\s*\+\s*totalbook\b",
+        text,
+        re.IGNORECASE,
+    )
+    total_match = re.search(
+        r"\btotalbook\s*<\s*(0|[1-9][0-9]{0,2})\b",
+        text,
+        re.IGNORECASE,
+    )
+    customer_match = re.search(
+        r"['\"]?customerid['\"]?\s*:\s*['\"]?([1-9][0-9]{0,19})['\"]?",
+        text,
+        re.IGNORECASE,
+    )
+    if not endpoint or not total_match or not customer_match:
+        raise SyncFailure("source_changed")
+    total = int(total_match.group(1))
+    if total > MAX_BOOKING_RECORDS:
+        raise SyncFailure("source_changed")
+    return total, customer_match.group(1)
+
+
+def fetch_active_booking_index(
+    source: WendaSource | FixtureSource,
+) -> list[dict[str, str]]:
+    html_text = source.request(BOOKING_PATH, "约课记录")
+    first_page = parse_index(html_text, "booking")
+    contract = parse_booking_pagination_contract(html_text)
+    if contract is None:
+        if len(first_page) >= 10 and hasattr(source, "request_booking_page"):
+            raise SyncFailure("source_changed")
+        all_records = first_page
+    else:
+        total, customer_id = contract
+        if len(first_page) > total:
+            raise SyncFailure("source_changed")
+        loaded_count = len(first_page)
+        pages = 0
+        unique = {item["sourceRecordId"]: item for item in first_page}
+        while loaded_count < total:
+            pages += 1
+            if pages > MAX_BOOKING_PAGES:
+                raise SyncFailure("source_changed")
+            page_text = source.request_booking_page(loaded_count, customer_id)
+            page_records = parse_index(page_text, "booking")
+            if not page_records:
+                raise SyncFailure("source_changed")
+            loaded_count += len(page_records)
+            if loaded_count > total:
+                raise SyncFailure("source_changed")
+            for item in page_records:
+                source_id = item["sourceRecordId"]
+                existing = unique.get(source_id)
+                if existing is not None and existing != item:
+                    raise SyncFailure("source_changed")
+                unique.setdefault(source_id, item)
+        if loaded_count != total:
+            raise SyncFailure("source_changed")
+        all_records = list(unique.values())
+    return [
+        item
+        for item in all_records
+        if item.get("status") in {"已预约", "排队中", "候补中"}
+    ]
 
 
 def parse_attendance_total(text: str) -> int:
@@ -1408,6 +1523,55 @@ def normalize_upcoming(detail: dict[str, Any]) -> dict[str, Any] | None:
         ),
         **cancellation,
     }
+
+
+def fetch_active_bookings(
+    source: Any,
+    *,
+    target_dates: set[str] | None = None,
+    detail_cache: dict[str, dict[str, Any]] | None = None,
+    max_records: int = MAX_BOOKING_RECORDS,
+    max_workers: int = 1,
+) -> list[dict[str, Any]]:
+    if (
+        not isinstance(max_records, int)
+        or isinstance(max_records, bool)
+        or max_records < 1
+        or not isinstance(max_workers, int)
+        or isinstance(max_workers, bool)
+        or not 1 <= max_workers <= 8
+    ):
+        raise SyncFailure("configuration_error")
+    active = [
+        item
+        for item in fetch_active_booking_index(source)
+        if target_dates is None or item.get("date") in target_dates
+    ]
+    if len(active) > max_records:
+        raise SyncFailure("source_changed")
+
+    def load_detail(item: dict[str, str]) -> dict[str, Any] | None:
+        source_id = item["sourceRecordId"]
+        detail = detail_cache.get(source_id) if detail_cache is not None else None
+        if detail is None:
+            detail_html = source.request(item["detailPath"], "约课记录明细")
+            detail = parse_detail(detail_html, source_id)
+            if detail_cache is not None:
+                detail_cache[source_id] = detail
+        return normalize_upcoming(detail)
+
+    if max_workers == 1 or len(active) < 2:
+        records = [load_detail(item) for item in active]
+    else:
+        with ThreadPoolExecutor(
+            max_workers=min(max_workers, len(active))
+        ) as executor:
+            records = list(executor.map(load_detail, active))
+    normalized = [record for record in records if record is not None]
+    normalized.sort(
+        key=lambda item: (item["date"], item["startTime"], item["courseName"])
+    )
+    return normalized
 
 
 def empty_ledger() -> dict[str, Any]:
@@ -2499,24 +2663,10 @@ def synchronize(
         proposed_ledger["contentFingerprint"] = fingerprint
         validate_ledger(proposed_ledger)
 
-        booking_html = source.request(BOOKING_PATH, "约课记录")
-        booking_index = parse_index(booking_html, "booking")
-        active_index = [
-            item
-            for item in booking_index
-            if item.get("status") in {"已预约", "排队中", "候补中"}
-        ]
-        upcoming: list[dict[str, Any]] = []
-        for item in active_index:
-            source_id = item["sourceRecordId"]
-            detail = detail_cache.get(source_id)
-            if detail is None:
-                detail_html = source.request(item["detailPath"], "约课记录明细")
-                detail = parse_detail(detail_html, source_id)
-                detail_cache[source_id] = detail
-            normalized = normalize_upcoming(detail)
-            if normalized:
-                upcoming.append(normalized)
+        upcoming = fetch_active_bookings(
+            source,
+            detail_cache=detail_cache,
+        )
         proposed_booking = {
             "schemaVersion": SCHEMA_VERSION,
             "timezone": "Asia/Shanghai",

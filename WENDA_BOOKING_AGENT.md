@@ -12,13 +12,14 @@
 
 ## 当前入口与能力边界
 
-- `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：使用服务器保存的 Session 做最小范围实时只读查询和写后复核。上课记录允许跟随官方首屏脚本调用固定 `newcheckrecord/{storeId}/{offset}` 分页 POST；该请求只加载历史摘要，不是预约类 mutation，其他未列明 POST 仍禁止。
+- `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：使用服务器保存的 Session 做最小范围实时只读查询和写后复核。上课记录允许跟随官方首屏脚本调用固定 `newcheckrecord/{storeId}/{offset}` 分页 POST；活动预约允许跟随官方预约页脚本调用固定 `newbookrecord/{storeId}/{offset}` 分页 POST。两者都只加载列表分页，不是预约类 mutation，其他未列明 POST 仍禁止。
+- `scripts/sync_ballet.py`、实时查询与 Fast Path 写后复核共用同一个活动预约分页读取器：先读 `bookrecord` 首页并校验页面声明的总数、固定分页路径和 `customerid` contract，再按当前已加载条数翻页，跨页按源记录 ID 合并去重，最后只对“已预约 / 排队中 / 候补中”记录读取详情。分页为空、越界、contract 变化或同 ID 事实冲突时必须失败关闭；不得退回只看首页，也不得把分页 POST 当作预约、候补或取消授权。
 - `scripts/sync_ballet.py` 的会员卡只读解析支持同页多卡及“使用中 / 已失效”状态；已失效卡缺少闻道总次数时保留展示名称、有效期和剩余课次，不猜测总次数或已用课次，也不阻断其他卡与整次同步。使用中卡缺少完整次数仍按页面结构变化失败关闭。
 - `scripts/ballet_week_closeout.py` / `server/maxnow-ballet-week-closeout.*`：每 5 分钟只读取公开脱敏 `ballet.json`，按本周期最后一节已预约或实际完成课程结束时间判断收尾；到结束后 10 分钟才启动一次既有 `maxnow-ballet-sync.service` 完整只读刷新。该调度器不读取 Session、不访问网络、不生成或保存周简报 PNG；登录失效和连续失败均关闭重试。
 - 实时上课记录与 Dashboard 同步共用同一老师归一化规则：实际上课历史的老师字段为空时默认补为“李俊”；Owner 明确校正 2026-07-30 18:45–19:45 软开课为“王嘉豪”、2026-08-07 19:45–21:15 芭蕾 L1 为“张瀚泽”。Dashboard 另按 Owner 确认的日期、起止时间、课程名和教室精确排除 2026-08-18 19:45–21:15 大教室芭蕾 L1（已转出、未实际上课）；闻道实时查询仍如实返回源站记录，私有账本也保留该源事实。历史校正与排除不影响课表、当前预约和候补。
 - `scripts/book_ballet.py` / `scripts/run_ballet_booking.sh`：Owner 显式指定课程后的普通预约入口；课程与按钮必须在同一 `.classtable` 块内原子绑定。
 - `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`：Owner 显式指定当前预约后的单课取消入口；先精确匹配唯一活动预约并校验该详情页的官方取消 contract，dry-run 只调用非变更规则检查，execute 重检后最多一次取消 mutation，再以实时预约列表确认目标消失。mutation 结果未知时不得重试。
-- `scripts/book_ballet_fast.py` / `scripts/run_ballet_booking_fast.sh`：周日 14:20 自动抢课入口；读取版本化长期规则，第一轮日期页读取后立即处理已发现的 L1，同时在放课后第 2 / 6 / 10 秒以最多 2 路 GET 后台刷新完整日期集合，最终按稳定快照补入后发布的 L1 / L1.5 / 软开。真实 mutation 始终严格串行；结果未知时不重复 POST，统一核验未命中后再于第 0.8 / 2 / 4 秒只读复核。生产 systemd 单元在每次执行结束后，无论主流程成功或失败，都立即触发一次独立的业务只读 rolling 同步，刷新 MaxNow 芭蕾面板；同步只允许 GET 与上述固定上课历史分页 POST，结果不覆盖抢课单元自身结果。
+- `scripts/book_ballet_fast.py` / `scripts/run_ballet_booking_fast.sh`：周日 14:20 自动抢课入口；读取版本化长期规则，第一轮日期页读取后立即处理已发现的 L1，同时在放课后第 2 / 6 / 10 秒以最多 2 路 GET 后台刷新完整日期集合，最终按稳定快照补入后发布的 L1 / L1.5 / 软开。真实 mutation 始终严格串行；结果未知时不重复 POST，统一核验与第 0.8 / 2 / 4 秒追加复核都通过共用活动预约分页读取器确认首页之后的候补。生产 systemd 单元在每次执行结束后，无论主流程成功或失败，都立即触发一次独立的业务只读 rolling 同步，刷新 MaxNow 芭蕾面板；同步只允许 GET 与上述两个固定列表分页 POST，结果不覆盖抢课单元自身结果。
 - Fast Path 每次真实执行把执行时间与 `criticalPathMilliseconds` 追加到私有状态耗时历史；前端公开状态只发布历次平均值、样本数和最后一次耗时，不发布完整历史、源记录标识或响应内容。旧状态缺少历史时可用现有 `lastRun` 关键路径作为首个样本；`preview` / `dry-run` 和执行窗口外失败不得进入平均值。
 - `config/ballet-booking-fast.json`、`server/maxnow-ballet-booking-fast.*`：Fast Path 的目标与调度入口，不得绕过 Session、时间窗、唯一匹配、幂等和失败关闭边界。
 - 当前 Fast Path 每周扫描放课后的周一至周六课表：周一至周五只处理 18:40（含）后开始的课，周六只处理 18:00 前开始的课；动态处理所有标准芭蕾 L1、标准芭蕾 L1.5 与课程名严格等于“软开”或“软开课”的课程，周日不进入目标。软开专项、软开-胯及其他只因分类器含“软开”而归入同类的近似课程必须排除。课程层固定为全部 L1、全部 L1.5、全部软开 / 软开课；每层依次处理周六、周一至周五李俊（老师字段为空也按李俊）、周一至周五其他老师，各组内仍按周一至周五与开始时间排序。周六不按老师分层；工作日同一日期、课程名与时间先选择李俊老师层，未命中才选择其他老师层，每个老师层内仍按大教室优先、小教室兜底并要求唯一匹配；可预约则预约、仅可排队且 `allowWaitlist=true` 时才候补。
@@ -31,6 +32,8 @@
 - `AGENTS.md` 只保留指向本文件的条件路由，不在总入口重复展开本文件内容。
 
 ## 变更记录
+
+- 2026-09-13：活动预约读取改为共用分页：同步、实时查询和 Fast Path 复核统一校验预约页 `newbookrecord/{storeId}/{offset}` contract，读取全部分页后合并去重并筛选活动记录，修复候补落在首页 10 条之后时无法进入周安排或即时复核的问题。该分页 POST 只加载预约列表，不扩大任何 mutation 授权。
 
 - 2026-09-13：Fast Path 开始持久记录每次真实执行的关键路径耗时；芭蕾页“抢课助手”显示历次平均值，“本次抢课”单独显示最近一次耗时。公开状态仅发布平均值与样本数，完整耗时历史保留在私有状态。
 

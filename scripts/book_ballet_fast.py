@@ -6,6 +6,7 @@ import http.client
 import json
 import os
 import queue
+import re
 import ssl
 import sys
 import threading
@@ -117,7 +118,7 @@ class PersistentWendaBookingSource:
             return "card"
         if path.startswith(booking.CHECK_RULES_PREFIX):
             return "rules"
-        if path == ballet.BOOKING_PATH:
+        if path == ballet.BOOKING_PATH or path.startswith(ballet.BOOKING_MORE_PREFIX):
             return "verificationIndex"
         if path.startswith(f"/gm/weixin/my/bookrecordone/{ballet.STORE_ID}/"):
             return "verificationDetail"
@@ -223,6 +224,41 @@ class PersistentWendaBookingSource:
             raise ballet.SyncFailure("http_error")
         if expected_marker not in text:
             raise ballet.SyncFailure("source_changed")
+        return text
+
+    def request_booking_page(self, offset: int, customer_id: str) -> str:
+        if not isinstance(offset, int):
+            raise ballet.SyncFailure("configuration_error")
+        path = ballet.validate_booking_page_path(
+            f"{ballet.BOOKING_MORE_PREFIX}{offset}"
+        )
+        if not re.fullmatch(r"[1-9][0-9]{0,19}", customer_id):
+            raise ballet.SyncFailure("configuration_error")
+        body = urllib.parse.urlencode({"customerid": customer_id}).encode("ascii")
+        headers = {
+            **self._headers(path),
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "Content-Length": str(len(body)),
+            "Referer": ballet.BASE_URL + ballet.BOOKING_PATH,
+            "X-Requested-With": "XMLHttpRequest",
+        }
+        try:
+            status, response_headers, response_body = self._perform(
+                "POST",
+                path,
+                headers,
+                body,
+                mutation=False,
+            )
+        except (OSError, TimeoutError, http.client.HTTPException):
+            raise ballet.SyncFailure("network_error")
+        with self._credential_lock:
+            self.reader._update_session_in_memory(response_headers)
+        text = response_body.decode("utf-8", "replace")
+        if ballet._is_auth_response(status, response_headers, text):
+            raise ballet.SyncFailure("auth_required")
+        if status != 200:
+            raise ballet.SyncFailure("http_error")
         return text
 
     def post_fields(
@@ -759,25 +795,9 @@ def query_bookings_parallel(
     max_workers: int = PREFETCH_WORKERS,
     target_dates: set[str] | None = None,
 ) -> dict[str, Any]:
-    html = source.request(ballet.BOOKING_PATH, "约课记录")
-    index = ballet.parse_index(html, "booking")
-    active = [
-        item
-        for item in index
-        if item.get("status") in {"已预约", "排队中", "候补中"}
-        and (target_dates is None or item.get("date") in target_dates)
-    ]
-    if len(active) > live.MAX_DETAIL_RECORDS:
-        raise ballet.SyncFailure("source_changed")
-
-    def load_detail(item: dict[str, Any]) -> dict[str, Any] | None:
-        detail_html = source.request(item["detailPath"], "约课记录明细")
-        detail = ballet.parse_detail(detail_html, item["sourceRecordId"])
-        normalized = ballet.normalize_upcoming(detail)
-        if normalized is None:
-            return None
-        return live.public_record(
-            normalized,
+    records = [
+        live.public_record(
+            record,
             (
                 "bookingStatus",
                 "waitlistPosition",
@@ -786,18 +806,13 @@ def query_bookings_parallel(
                 "cancelDeadlineAt",
             ),
         )
-
-    with ThreadPoolExecutor(
-        max_workers=min(max_workers, max(1, len(active)))
-    ) as executor:
-        records = [
-            record
-            for record in executor.map(load_detail, active)
-            if record is not None
-        ]
-    records.sort(
-        key=lambda item: (item["date"], item["startTime"], item["courseName"])
-    )
+        for record in ballet.fetch_active_bookings(
+            source,
+            target_dates=target_dates,
+            max_records=live.MAX_DETAIL_RECORDS,
+            max_workers=max_workers,
+        )
+    ]
     return {"records": records}
 
 

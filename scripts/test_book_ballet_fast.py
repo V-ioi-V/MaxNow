@@ -11,7 +11,12 @@ import book_ballet as booking
 import book_ballet_fast as fast
 import sync_ballet as ballet
 from test_book_ballet import timetable_with_reordered_controls
-from test_sync_ballet import detail_html, index_html, timetable_html
+from test_sync_ballet import (
+    detail_html,
+    index_html,
+    paginated_booking_html,
+    timetable_html,
+)
 
 
 def config():
@@ -874,6 +879,30 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(source.request_count, 2)
         self.assertEqual(source.timing_summary()["timetable"]["count"], 2)
 
+    def test_persistent_source_reads_booking_pages_with_non_mutating_post(self):
+        connection = FakeHttpConnection(
+            [FakeHttpResponse(index_html("约课记录", []))]
+        )
+        source = fast.PersistentWendaBookingSource(
+            ballet.Credentials("a" * 16, "test-agent"),
+            pool_size=1,
+            connection_factory=lambda: connection,
+        )
+        try:
+            source.request_booking_page(10, "1234567")
+        finally:
+            source.close()
+        method, path, body, headers = connection.requests[0]
+        self.assertEqual(method, "POST")
+        self.assertEqual(path, f"{ballet.BOOKING_MORE_PREFIX}10")
+        self.assertEqual(body, b"customerid=1234567")
+        self.assertEqual(headers["X-Requested-With"], "XMLHttpRequest")
+        self.assertEqual(source.mutation_count, 0)
+        self.assertEqual(source.request_count, 1)
+        self.assertEqual(
+            source.timing_summary()["verificationIndex"]["count"], 1
+        )
+
     def test_persistent_source_never_retries_mutation_transport_failure(self):
         connections = []
 
@@ -905,6 +934,43 @@ class FastBookingTests(unittest.TestCase):
         result = fast.query_bookings_parallel(source)
         self.assertEqual(len(result["records"]), 3)
         self.assertEqual(source.max_active_details, 3)
+
+    def test_final_verification_finds_waitlist_beyond_first_page(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "details").mkdir()
+            (root / "booking-pages").mkdir()
+            (root / "booking.html").write_text(
+                paginated_booking_html(
+                    [("93001", "芭蕾 L1", "2026-09-14", "已预约")],
+                    2,
+                ),
+                encoding="utf-8",
+            )
+            (root / "booking-pages" / "1.html").write_text(
+                index_html(
+                    "约课记录",
+                    [("93002", "软开课", "2026-09-15", "排队中")],
+                ),
+                encoding="utf-8",
+            )
+            (root / "details" / "93002.html").write_text(
+                detail_html(
+                    course="软开课",
+                    day="2026-09-15",
+                    time_text="18:45~19:45",
+                    status="等候中, 排队序号 4",
+                ).replace("测试教室", "大教室"),
+                encoding="utf-8",
+            )
+            result = fast.query_bookings_parallel(
+                ballet.FixtureSource(root),
+                target_dates={"2026-09-15"},
+            )
+
+        self.assertEqual(len(result["records"]), 1)
+        self.assertEqual(result["records"][0]["bookingStatus"], "waitlist")
+        self.assertEqual(result["records"][0]["waitlistPosition"], 4)
 
     def test_public_output_exposes_no_booking_identifiers(self):
         state = fast.default_state()

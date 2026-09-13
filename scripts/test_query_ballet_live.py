@@ -15,6 +15,7 @@ from test_sync_ballet import (
     index_html,
     membership_html,
     paginated_attendance_html,
+    paginated_booking_html,
     timetable_html,
 )
 
@@ -133,6 +134,55 @@ class BalletLiveQueryTests(unittest.TestCase):
             "attended",
         )
         self.assertEqual(results[2]["data"]["cards"][0]["remainingClasses"], 39)
+
+    def test_bookings_returns_active_waitlist_beyond_first_ten_rows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_fixture(root)
+            first_page = [
+                (str(11000 + index), "芭蕾L1-入门", f"2026-09-{14 + index:02d}", "已预约")
+                for index in range(10)
+            ]
+            later_page = [
+                ("12001", "软开课", "2026-09-15", "排队中"),
+                *[
+                    (str(12001 + index), "芭蕾L1-入门", "2026-08-01", "已上课")
+                    for index in range(1, 10)
+                ],
+            ]
+            (root / "booking-pages").mkdir()
+            (root / "booking.html").write_text(
+                paginated_booking_html(first_page, 20),
+                encoding="utf-8",
+            )
+            (root / "booking-pages" / "10.html").write_text(
+                index_html("约课记录", later_page),
+                encoding="utf-8",
+            )
+            for source_id, course, day, status in [*first_page, later_page[0]]:
+                (root / "details" / f"{source_id}.html").write_text(
+                    detail_html(
+                        course=course,
+                        day=day,
+                        time_text="18:45~19:45",
+                        status=("等候中, 排队序号 4" if status == "排队中" else status),
+                    ),
+                    encoding="utf-8",
+                )
+
+            result = live.run_query(
+                ballet.FixtureSource(root), "bookings", None, None, NOW
+            )
+
+        self.assertEqual(len(result["data"]["records"]), 11)
+        waitlist = next(
+            item
+            for item in result["data"]["records"]
+            if item["courseName"] == "软开课"
+        )
+        self.assertEqual(waitlist["bookingStatus"], "waitlist")
+        self.assertEqual(waitlist["waitlistPosition"], 4)
+        self.assertEqual(result["requestsMade"], 13)
 
     def test_invalid_or_large_ranges_fail_closed(self):
         source = ballet.FixtureSource(Path("/nonexistent"))
