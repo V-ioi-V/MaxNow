@@ -558,6 +558,15 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(state["totalBooked"], 18)
         self.assertEqual(state["totalRuns"], 1)
+        self.assertEqual(len(state["runTimingHistory"]), 1)
+        self.assertEqual(
+            state["runTimingHistory"][0]["attemptedAt"],
+            result["attemptedAt"],
+        )
+        self.assertEqual(
+            state["runTimingHistory"][0]["criticalPathMilliseconds"],
+            result["criticalPathMilliseconds"],
+        )
         self.assertEqual(result["requestsMade"], 79)
         self.assertEqual(
             source.mutation_order,
@@ -898,15 +907,28 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(source.max_active_details, 3)
 
     def test_public_output_exposes_no_booking_identifiers(self):
+        state = fast.default_state()
+        state["runTimingHistory"] = [
+            {
+                "attemptedAt": "2026-08-02T14:21:17+08:00",
+                "criticalPathMilliseconds": 20_000,
+            },
+            {
+                "attemptedAt": "2026-08-09T14:20:17+08:00",
+                "criticalPathMilliseconds": 40_000,
+            },
+        ]
         public = fast.build_public(
             config(),
-            fast.default_state(),
+            state,
             datetime(2026, 7, 28, 12, 0, tzinfo=ballet.TIMEZONE),
         )
         serialized = json.dumps(public, ensure_ascii=False)
         self.assertEqual(public["nextRunAt"], "2026-08-02T14:20:00+08:00")
         self.assertTrue(public["waitlistEnabled"])
         self.assertEqual(public["totalWaitlisted"], 0)
+        self.assertEqual(public["timingSampleCount"], 2)
+        self.assertEqual(public["averageCriticalPathMilliseconds"], 30_000)
         self.assertEqual(
             {target["teacher"] for target in public["targets"]},
             {"周六不限老师", "李俊优先（含未标注）"},
@@ -924,6 +946,21 @@ class FastBookingTests(unittest.TestCase):
             "/var/lib/",
         ):
             self.assertNotIn(marker, serialized)
+
+    def test_legacy_last_run_seeds_timing_average(self):
+        state = fast.default_state()
+        state["lastRun"] = {
+            "status": "success",
+            "attemptedAt": "2026-09-13T14:21:17+08:00",
+            "criticalPathMilliseconds": 75_319,
+        }
+        public = fast.build_public(
+            config(),
+            state,
+            datetime(2026, 9, 13, 15, 0, tzinfo=ballet.TIMEZONE),
+        )
+        self.assertEqual(public["timingSampleCount"], 1)
+        self.assertEqual(public["averageCriticalPathMilliseconds"], 75_319)
 
     def test_preview_writes_matching_json_and_wrapper(self):
         with tempfile.TemporaryDirectory() as directory:

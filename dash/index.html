@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <link rel="stylesheet" href="./styles.css?v=272" />
+    <link rel="stylesheet" href="./styles.css?v=273" />
   </head>
   <body>
     <div class="app-shell">
@@ -798,9 +798,9 @@
                         <small>自动候补成功</small>
                       </article>
                       <article class="ballet-booking-summary-card" data-tone="cyan">
-                        <span>上次抢课耗时</span>
+                        <span>抢课平均耗时</span>
                         <strong id="ballet-booking-average">--</strong>
-                        <small id="ballet-booking-average-detail">暂无有效执行耗时</small>
+                        <small id="ballet-booking-average-detail">暂无历史耗时</small>
                       </article>
                       <article class="ballet-booking-summary-card" data-tone="status">
                         <span>运行状态</span>
@@ -836,6 +836,11 @@
                         <span>未抢到</span>
                         <strong id="ballet-booking-result-missed">0 节</strong>
                         <small>需人工关注</small>
+                      </article>
+                      <article data-result="timing">
+                        <span>抢课耗时</span>
+                        <strong id="ballet-booking-result-duration">--</strong>
+                        <small id="ballet-booking-result-duration-detail">暂无有效执行耗时</small>
                       </article>
                     </div>
                   </section>
@@ -1418,6 +1423,6 @@
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>
     </template>
 
-    <script src="./app.js?v=236"></script>
+    <script src="./app.js?v=237"></script>
   </body>
 </html>

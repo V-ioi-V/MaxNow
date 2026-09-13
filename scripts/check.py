@@ -401,6 +401,16 @@ def check_ballet_booking_fast():
         or data.get("planMode") != "weekly-rules"
         or data.get("waitlistEnabled") is not True
         or not isinstance(data.get("totalWaitlisted"), int)
+        or not isinstance(data.get("timingSampleCount"), int)
+        or data.get("timingSampleCount") < 0
+        or (
+            data.get("averageCriticalPathMilliseconds") is not None
+            and (
+                not isinstance(data.get("averageCriticalPathMilliseconds"), int)
+                or isinstance(data.get("averageCriticalPathMilliseconds"), bool)
+                or data.get("averageCriticalPathMilliseconds") <= 0
+            )
+        )
         or {item.get("teacher") for item in data.get("targets", [])}
         != {"周六不限老师", "李俊优先（含未标注）"}
         or data.get("priorityOrder")
@@ -480,6 +490,8 @@ def check_ballet_booking_fast():
         "function renderBalletBookingFast()",
         "function getBalletBookingTiming(lastRun = {})",
         "function formatBalletBookingDuration(milliseconds)",
+        '"runTimingHistory": []',
+        '"averageCriticalPathMilliseconds": average_critical_path_milliseconds',
         'id="ballet-booking-fast-next"',
         "cloud-ballet-fast-card",
         'id="ballet-booking-workspace-title">抢课助手',
@@ -488,11 +500,14 @@ def check_ballet_booking_fast():
         'Math.floor(balletNumber(balletBookingFastData?.totalWaitlisted))',
         'id="ballet-booking-average"',
         'id="ballet-booking-average-detail"',
+        '>抢课平均耗时</span>',
         '<p class="eyebrow">This Run</p>',
         'id="ballet-booking-results-title">本次抢课',
         'id="ballet-booking-result-booked"',
         'id="ballet-booking-result-waitlist"',
         'id="ballet-booking-result-missed"',
+        'id="ballet-booking-result-duration"',
+        'id="ballet-booking-result-duration-detail"',
         ".ballet-booking-summary {",
         ".ballet-booking-result-summary {",
         "function getBalletBookingResultSummary(records = [])",
@@ -1903,9 +1918,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=272" not in dashboard_html
+        "styles.css?v=273" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=236" not in dashboard_html
+        or "app.js?v=237" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2159,7 +2174,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=236" not in dashboard_html:
+    if "app.js?v=237" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

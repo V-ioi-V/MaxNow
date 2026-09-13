@@ -3874,6 +3874,13 @@ function renderBalletBookingFast() {
     Math.floor(balletNumber(balletBookingFastData?.totalWaitlisted)),
   );
   const timing = getBalletBookingTiming(balletBookingFastData?.lastRun);
+  const timingSampleCount = Math.max(
+    0,
+    Math.floor(balletNumber(balletBookingFastData?.timingSampleCount)),
+  );
+  const averageCriticalPathMilliseconds = Number(
+    balletBookingFastData?.averageCriticalPathMilliseconds,
+  );
   const resultSummary = getBalletBookingResultSummary(lastRecords);
   setText("#ballet-booking-result-count", `${lastRecords.length} 节课程`);
   setText(
@@ -3885,6 +3892,16 @@ function renderBalletBookingFast() {
   setText("#ballet-booking-result-booked", `${resultSummary.booked} 节`);
   setText("#ballet-booking-result-waitlist", `${resultSummary.waitlist} 节`);
   setText("#ballet-booking-result-missed", `${resultSummary.missed} 节`);
+  setText(
+    "#ballet-booking-result-duration",
+    formatBalletBookingDuration(timing.totalMilliseconds),
+  );
+  setText(
+    "#ballet-booking-result-duration-detail",
+    timing.targetCount && Number.isFinite(timing.averageMilliseconds)
+      ? `${timing.targetCount} 个目标 · 平均 ${formatBalletBookingDuration(timing.averageMilliseconds)}/节`
+      : "暂无有效执行耗时",
+  );
   setText(
     "#ballet-booking-result-waitlist-detail",
     resultSummary.positions.length
@@ -3904,13 +3921,13 @@ function renderBalletBookingFast() {
   );
   setText(
     "#ballet-booking-average",
-    formatBalletBookingDuration(timing.totalMilliseconds),
+    formatBalletBookingDuration(averageCriticalPathMilliseconds),
   );
   setText(
     "#ballet-booking-average-detail",
-    timing.targetCount && Number.isFinite(timing.averageMilliseconds)
-      ? `${timing.targetCount} 个目标 · 平均 ${formatBalletBookingDuration(timing.averageMilliseconds)}/节`
-      : "暂无有效执行耗时",
+    timingSampleCount
+      ? `累计 ${timingSampleCount} 次真实抢课`
+      : "暂无历史耗时",
   );
   setText(
     "#ballet-course-plan-count",

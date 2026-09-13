@@ -822,6 +822,7 @@ def default_state() -> dict[str, Any]:
         "totalRuns": 0,
         "totalBooked": 0,
         "totalWaitlisted": 0,
+        "runTimingHistory": [],
         "lastAttemptAt": None,
         "lastSuccessAt": None,
         "bookedOccurrences": [],
@@ -842,9 +843,66 @@ def load_state(path: Path) -> dict[str, Any]:
         or state.get("schemaVersion") != 1
         or not isinstance(state.get("bookedOccurrences"), list)
         or not isinstance(state.get("terminalOutcomes", {}), dict)
+        or not isinstance(state.get("runTimingHistory", []), list)
+        or any(
+            not isinstance(item, dict)
+            or not isinstance(item.get("attemptedAt"), str)
+            or not isinstance(item.get("criticalPathMilliseconds"), int)
+            or isinstance(item.get("criticalPathMilliseconds"), bool)
+            or item["criticalPathMilliseconds"] <= 0
+            for item in state.get("runTimingHistory", [])
+        )
     ):
         raise FastBookingFailure("configuration_error")
     return {**default_state(), **state}
+
+
+def run_timing_history(state: dict[str, Any]) -> list[dict[str, Any]]:
+    history = [dict(item) for item in state.get("runTimingHistory", [])]
+    if history:
+        return history
+    last_run = state.get("lastRun")
+    if not isinstance(last_run, dict):
+        return []
+    attempted_at = last_run.get("attemptedAt")
+    milliseconds = last_run.get("criticalPathMilliseconds")
+    if (
+        not isinstance(attempted_at, str)
+        or not isinstance(milliseconds, int)
+        or isinstance(milliseconds, bool)
+        or milliseconds <= 0
+    ):
+        return []
+    return [
+        {
+            "attemptedAt": attempted_at,
+            "criticalPathMilliseconds": milliseconds,
+        }
+    ]
+
+
+def append_run_timing(
+    state: dict[str, Any], result: dict[str, Any]
+) -> list[dict[str, Any]]:
+    history = run_timing_history(state)
+    attempted_at = result.get("attemptedAt")
+    milliseconds = result.get("criticalPathMilliseconds")
+    if (
+        not isinstance(attempted_at, str)
+        or not isinstance(milliseconds, int)
+        or isinstance(milliseconds, bool)
+        or milliseconds <= 0
+    ):
+        return history
+    history = [item for item in history if item["attemptedAt"] != attempted_at]
+    history.append(
+        {
+            "attemptedAt": attempted_at,
+            "criticalPathMilliseconds": milliseconds,
+        }
+    )
+    history.sort(key=lambda item: item["attemptedAt"])
+    return history
 
 
 def safe_record(target: dict[str, Any], status: str, **extra: Any) -> dict[str, Any]:
@@ -1491,6 +1549,7 @@ def run_fast(
             + len(newly_booked_occurrences),
             "totalWaitlisted": int(state.get("totalWaitlisted", 0))
             + len(newly_waitlisted_occurrences),
+            "runTimingHistory": append_run_timing(state, result),
             "lastAttemptAt": now_text,
             "lastSuccessAt": (
                 now_text
@@ -1513,6 +1572,15 @@ def build_public(
     next_run = next_release_at(now, config)
     targets = materialize_targets(config, next_run)
     last_run = state.get("lastRun")
+    timing_history = run_timing_history(state)
+    average_critical_path_milliseconds = (
+        round(
+            sum(item["criticalPathMilliseconds"] for item in timing_history)
+            / len(timing_history)
+        )
+        if timing_history
+        else None
+    )
     return {
         "schemaVersion": 1,
         "timezone": "Asia/Shanghai",
@@ -1534,6 +1602,8 @@ def build_public(
         "totalRuns": int(state.get("totalRuns", 0)),
         "totalBooked": int(state.get("totalBooked", 0)),
         "totalWaitlisted": int(state.get("totalWaitlisted", 0)),
+        "timingSampleCount": len(timing_history),
+        "averageCriticalPathMilliseconds": average_critical_path_milliseconds,
         "lastStatus": (
             last_run.get("status")
             if isinstance(last_run, dict)

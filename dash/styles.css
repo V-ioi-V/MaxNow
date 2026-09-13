@@ -5172,7 +5172,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-booking-result-summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   height: 100%;
 }
@@ -5200,6 +5200,10 @@ body[data-view="ricky"] .topbar-ricky-status {
   --result-color: var(--muted);
 }
 
+.ballet-booking-result-summary > article[data-result="timing"] {
+  --result-color: var(--cyan);
+}
+
 .ballet-booking-result-summary span,
 .ballet-booking-result-summary small {
   align-self: center;
@@ -5214,6 +5218,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   font-size: 24px;
   line-height: 30px;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .ballet-booking-summary-card > span,

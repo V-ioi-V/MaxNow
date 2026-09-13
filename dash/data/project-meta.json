@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 15:31",
-  "version": "1.0.11.26",
-  "versionLabel": "v1.0.11.26",
-  "branch": "feature/ballet-five-week-schedule",
-  "commit": "90c7b6cc",
+  "updatedAt": "2026-09-13 15:41",
+  "version": "1.0.11.27",
+  "versionLabel": "v1.0.11.27",
+  "branch": "feature/ballet-booking-average-timing",
+  "commit": "bbd4e48a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-five-week-schedule · commit 90c7b6cc · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-average-timing · commit bbd4e48a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-13",
+      "title": "抢课平均耗时与本次耗时分开展示",
+      "summary": "“抢课助手”的“上次抢课耗时”改为“抢课平均耗时”，读取历次真实 Fast Path 执行关键路径耗时的平均值并显示累计样本数。"
+    },
     {
       "date": "2026-09-13",
       "title": "周安排支持前后五周切换",
@@ -28,11 +33,6 @@
       "date": "2026-09-11",
       "title": "课程卡填满概览格并内置滑动标识",
       "summary": "芭蕾顶部课程卡票券改为填满所在概览格，多张卡仍保持一次一张的横向吸附滑动。"
-    },
-    {
-      "date": "2026-09-11",
-      "title": "上课历史预览支持卡片内滑动",
-      "summary": "芭蕾训练记录右侧的上课历史不再只渲染最近 8 条；当前筛选范围的全部记录都会进入紧凑列表，并在保持与左侧图表同高的卡片内纵向滑动。"
     }
   ]
 }
