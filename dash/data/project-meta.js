@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 16:35",
-  "version": "1.0.11.29",
-  "versionLabel": "v1.0.11.29",
-  "branch": "bugfix/ballet-future-plan-fallback",
-  "commit": "b9ac5ffc",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-future-plan-fallback · commit b9ac5ffc · 有未提交代码改动",
+  "updatedAt": "2026-09-13 16:45",
+  "version": "1.0.11.30",
+  "versionLabel": "v1.0.11.30",
+  "branch": "bugfix/ballet-booking-equal-width",
+  "commit": "29ff8a18",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "bugfix/ballet-booking-equal-width · commit 29ff8a18 · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-09-13",
+      "title": "抢课双栏及八张指标卡统一尺寸",
+      "summary": "“抢课助手 / 本次抢课”由原来的约 `56% / 44%` 改为严格各占一半，两张大卡同宽、同高。"
+    },
     {
       "date": "2026-09-13",
       "title": "两周后周安排复用准备抢兜底",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-13",
       "title": "周安排支持前后五周切换",
       "summary": "周安排从上周 / 本周 / 下周三档扩展为两周前 / 上周 / 本周 / 下周 / 两周后五档，默认仍定位本周，左右箭头在窗口两端自动禁用并同步更新无障碍说明。"
-    },
-    {
-      "date": "2026-09-13",
-      "title": "周六自动抢课收窄至 18:00 前",
-      "summary": "Fast Path 新增周六结束门槛：只处理开课时间严格早于 18:00 的标准芭蕾 L1、L1.5 与精确“软开 / 软开课”，18:00 整及之后的周六课程一律排除。"
     }
   ]
 };

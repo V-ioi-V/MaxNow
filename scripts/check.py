@@ -524,8 +524,11 @@ def check_ballet_booking_fast():
         'id="ballet-booking-result-missed"',
         'id="ballet-booking-result-duration"',
         'id="ballet-booking-result-duration-detail"',
-        ".ballet-booking-summary {",
+        ".ballet-course-plan-summary {\n  min-width: 0;\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));",
+        ".ballet-booking-summary,\n.ballet-booking-result-summary {",
         ".ballet-booking-result-summary {",
+        "grid-auto-rows: minmax(96px, 1fr);",
+        ".ballet-booking-summary-card,\n.ballet-booking-result-summary > article {",
         "function getBalletBookingResultSummary(records = [])",
         "function renderBalletPlanWeek()",
         "const BALLET_PLAN_WEEK_MIN_OFFSET = -2",
@@ -1936,7 +1939,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=273" not in dashboard_html
+        "styles.css?v=274" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=238" not in dashboard_html
     ):
