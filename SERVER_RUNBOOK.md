@@ -2989,3 +2989,16 @@ permissions: attendance-ledger.json 保持 ubuntu:www-data 0600；以 ubuntu:www
 verification: 服务器 scripts/check.py 通过；写入后 ballet.json / ballet.js SHA-256 为 ba541897ab5c131bdd9628d70bb537fb877d2399b75a7dc494c505f75afbe49c / 7dad03a3a11169b9a1ee59dc176c48eb49994d1d4a394642be2ef4e288231a6f
 safety: 未访问闻道、未读取 PHPSESSID、未启动同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-13 已部署周六 18:00 前抢课规则与五周周安排：
+
+```text
+deployed commits: 72cf49bd feat: limit Saturday fast booking before 18:00；90c7b6cc feat: expand ballet schedule to five weeks
+version: 1.0.11.26
+changes: Fast Path 周六只处理 18:00 前开始的标准芭蕾 L1、L1.5 与精确“软开 / 软开课”，18:00 整及之后排除，工作日 18:40（含）后门槛不变；周安排支持两周前、上周、本周、下周、两周后五周切换，并在两端禁用对应箭头；脚本缓存提升到 app.js?v=236
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260913-152830-saturday-cutoff-five-week；整份 dash/data、Fast Path 私有 / 公开状态、部署前 Git 状态和 ballet.json / ballet.js 哈希均已备份；运行态 dash/data 的部署 stash 为 5ece1ffa2a8e44193899a09516ff8ac4f1a9e49e
+browser verification: 本地 1280px 聚焦验收逐一切换五周，日期范围与两端按钮禁用状态正确，页面及周安排卡片无横向溢出，控制台无错误
+server verification: 功能部署时 HEAD 与 origin/main 均为 90c7b6cc；25 项 Fast Path 测试、scripts/check.py、git diff --check 与 nginx -t 通过；app.js?v=236、五周偏移 -2 至 2 和公开摘要“周六仅 18:00 前”均已生效；部署前后 ballet.json / ballet.js SHA-256 保持 4ecf678cb79c2b83fb8b234880434062a76abd166fe1fdd699d6c55ae6a96543 / 9eac5c05e1c63f4c2ee98e0eee188aa2e475bed7dbc2a4d282f38c39c050ea7b，33 节 / 42 小时与 dataAsOf=2026-09-13T15:00:00+08:00 均不变；未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: nginx、maxnow-auth、rolling / full / Fast Path timer 均 active；rolling / full / Fast Path service 均 inactive
+safety: 仅运行无网络的 Fast Path preview 更新脱敏公开摘要；Fast Path totalRuns / totalBooked / totalWaitlisted / lastAttemptAt 保持 7 / 37 / 8 / 2026-09-13T14:21:17+08:00，未访问闻道，未启动同步或 Fast Path，未执行预约、候补、取消或转课
+```
