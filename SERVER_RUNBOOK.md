@@ -3043,3 +3043,16 @@ server verification: 服务器从 4ae76ef1 快进到目标提交，VERSION=1.0.1
 automation state: rolling / full / Fast Path service 部署前均为 inactive；本次没有安装或修改 unit
 safety: 仅部署静态页面逻辑，没有访问闻道、启动同步或 Fast Path，也没有执行预约、候补、取消或转课
 ```
+
+2026-09-13 已部署抢课双栏与八张指标卡等尺寸布局：
+
+```text
+deployed commit: 9646361b fix: equalize ballet booking cards
+version: 1.0.11.30
+changes: “抢课助手 / 本次抢课”由约 56% / 44% 改为严格各半；两组各四张指标卡共用相同四等分列、96px 最小行高、三行网格和 10px 内边距；移除仅作用于左组及本次抢课标题的旧窄屏覆盖，使桌面和手机的大卡、小卡都保持同尺寸；样式缓存提升到 styles.css?v=274
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260913-164844-ballet-booking-equal-width；包含完整 dash/data、部署前 styles.css、index.html、VERSION、Git 状态和 ballet.json / ballet.js 哈希；运行态 dash/data 在快进前另存为可恢复 Git stash
+browser verification: 1600px 宽桌面下两张大卡 top / bottom / height 差均为 0，宽度与八张小卡仅有不超过 0.007px 的浏览器子像素舍入，高度差为 0；520px 与 390px 下大小卡宽高差均为 0，标题和整页横向溢出均为 0
+server verification: 服务器通过校验过的完整 Git bundle 从 7f0e7497 快进到 9646361b，HEAD 与 origin/main 一致；scripts/check.py、git diff --check 和 nginx -t 通过，VERSION=1.0.11.30、styles.css?v=274 生效；部署前后 ballet.json / ballet.js SHA-256 保持 9ab25331f3fcccabd9ed0773cc339ca68ef7e61ec301f3579c571e2f6384e600 / 876978ed1430e9e7c0726dd2d3ed5d1b58a691d9136f796b8283ff7b4766780e，未认证首页 / 登录页 / 芭蕾数据 / Blog 为 302 / 200 / 401 / 200
+automation state: rolling / full / Fast Path service 均保持 inactive；rolling / full / Fast Path / week-closeout timer 均保持 active
+safety: 本次仅部署静态 CSS、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
+```
