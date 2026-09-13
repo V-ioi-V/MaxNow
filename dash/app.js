@@ -180,6 +180,15 @@ let balletWeekWarmupHandle = 0;
 let balletWeekBriefScheduleHandle = 0;
 let balletWeekActiveSlide = "cover";
 let balletWeekCarouselFrame = 0;
+const BALLET_PLAN_WEEK_MIN_OFFSET = -2;
+const BALLET_PLAN_WEEK_MAX_OFFSET = 2;
+const BALLET_PLAN_WEEK_LABELS = new Map([
+  [-2, "两周前"],
+  [-1, "上周"],
+  [0, "本周"],
+  [1, "下周"],
+  [2, "两周后"],
+]);
 let balletPlanWeekOffset = 0;
 const browserDataHealth = new Map();
 
@@ -3313,6 +3322,10 @@ function getBalletPlanWeekDates(offset = balletPlanWeekOffset) {
   });
 }
 
+function getBalletPlanWeekLabel(offset = balletPlanWeekOffset) {
+  return BALLET_PLAN_WEEK_LABELS.get(offset) || "本周";
+}
+
 function getBalletPlanRecordStatus(record = {}) {
   const bookingStatus = String(
     record.bookingStatus || record.status || record.availability || record.attendanceStatus || "",
@@ -3770,7 +3783,7 @@ function renderBalletPlanWeek() {
   const hasRunForWeek = lastRecords.some((record) => dateSet.has(balletRecordDate(record)));
   const showTargets = balletPlanWeekOffset === 1 && weekTargets.length && !hasRunForWeek;
 
-  const weekLabel = balletPlanWeekOffset === -1 ? "上周" : balletPlanWeekOffset === 1 ? "下周" : "本周";
+  const weekLabel = getBalletPlanWeekLabel();
   setText("#ballet-plan-week-label", weekLabel);
   setText(
     "#ballet-plan-week-range",
@@ -3778,8 +3791,20 @@ function renderBalletPlanWeek() {
   );
   const previous = qs("#ballet-plan-week-prev");
   const next = qs("#ballet-plan-week-next");
-  if (previous) previous.disabled = balletPlanWeekOffset <= -1;
-  if (next) next.disabled = balletPlanWeekOffset >= 1;
+  if (previous) {
+    previous.disabled = balletPlanWeekOffset <= BALLET_PLAN_WEEK_MIN_OFFSET;
+    previous.setAttribute(
+      "aria-label",
+      previous.disabled ? "已经是最早一周" : `查看${getBalletPlanWeekLabel(balletPlanWeekOffset - 1)}`,
+    );
+  }
+  if (next) {
+    next.disabled = balletPlanWeekOffset >= BALLET_PLAN_WEEK_MAX_OFFSET;
+    next.setAttribute(
+      "aria-label",
+      next.disabled ? "已经是最晚一周" : `查看${getBalletPlanWeekLabel(balletPlanWeekOffset + 1)}`,
+    );
+  }
 
   container.replaceChildren();
   if (showTargets) renderBalletPlanWeekTargets(container, weekDates, weekTargets, targets);
@@ -7152,12 +7177,12 @@ qs("#home-ballet-card")?.addEventListener("keydown", (event) => {
 });
 
 qs("#ballet-plan-week-prev")?.addEventListener("click", () => {
-  balletPlanWeekOffset = Math.max(-1, balletPlanWeekOffset - 1);
+  balletPlanWeekOffset = Math.max(BALLET_PLAN_WEEK_MIN_OFFSET, balletPlanWeekOffset - 1);
   renderBalletPlanWeek();
 });
 
 qs("#ballet-plan-week-next")?.addEventListener("click", () => {
-  balletPlanWeekOffset = Math.min(1, balletPlanWeekOffset + 1);
+  balletPlanWeekOffset = Math.min(BALLET_PLAN_WEEK_MAX_OFFSET, balletPlanWeekOffset + 1);
   renderBalletPlanWeek();
 });
 

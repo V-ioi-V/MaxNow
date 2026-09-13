@@ -497,6 +497,10 @@ def check_ballet_booking_fast():
         ".ballet-booking-result-summary {",
         "function getBalletBookingResultSummary(records = [])",
         "function renderBalletPlanWeek()",
+        "const BALLET_PLAN_WEEK_MIN_OFFSET = -2",
+        "const BALLET_PLAN_WEEK_MAX_OFFSET = 2",
+        '[-2, "两周前"]',
+        '[2, "两周后"]',
         "const showTargets = balletPlanWeekOffset === 1",
         'priority.textContent = `优先 ${String(options.priority).padStart(2, "0")}`',
         'ready_waitlist: "可排队"',
@@ -832,8 +836,9 @@ def check_ballet_read_model():
         or "function renderBalletPlanWeek()" not in dashboard_js
         or "const BALLET_PLAN_WEEKDAYS" not in dashboard_js
         or "getBalletPlanWeekStart(offset = balletPlanWeekOffset)" not in dashboard_js
-        or "balletPlanWeekOffset = Math.max(-1" not in dashboard_js
-        or "balletPlanWeekOffset = Math.min(1" not in dashboard_js
+        or "balletPlanWeekOffset = Math.max(BALLET_PLAN_WEEK_MIN_OFFSET" not in dashboard_js
+        or "balletPlanWeekOffset = Math.min(BALLET_PLAN_WEEK_MAX_OFFSET" not in dashboard_js
+        or 'aria-label="切换前后五周课程"' not in dashboard_html
         or 'id="ballet-plan-week-days"' not in dashboard_html
         or 'id="ballet-plan-week-prev"' not in dashboard_html
         or 'id="ballet-plan-week-next"' not in dashboard_html
@@ -1900,7 +1905,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=272" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=235" not in dashboard_html
+        or "app.js?v=236" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2154,7 +2159,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=235" not in dashboard_html:
+    if "app.js?v=236" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

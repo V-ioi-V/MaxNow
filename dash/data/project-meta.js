@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 15:11",
-  "version": "1.0.11.25",
-  "versionLabel": "v1.0.11.25",
-  "branch": "feature/saturday-before-1800",
-  "commit": "4acd1ecd",
+  "updatedAt": "2026-09-13 15:18",
+  "version": "1.0.11.26",
+  "versionLabel": "v1.0.11.26",
+  "branch": "feature/ballet-five-week-schedule",
+  "commit": "72cf49bd",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/saturday-before-1800 · commit 4acd1ecd · 有未提交代码改动",
+  "deployNote": "feature/ballet-five-week-schedule · commit 72cf49bd · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-13",
+      "title": "周安排支持前后五周切换",
+      "summary": "周安排从上周 / 本周 / 下周三档扩展为两周前 / 上周 / 本周 / 下周 / 两周后五档，默认仍定位本周，左右箭头在窗口两端自动禁用并同步更新无障碍说明。"
+    },
     {
       "date": "2026-09-13",
       "title": "周六自动抢课收窄至 18:00 前",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-11",
       "title": "上课历史预览支持卡片内滑动",
       "summary": "芭蕾训练记录右侧的上课历史不再只渲染最近 8 条；当前筛选范围的全部记录都会进入紧凑列表，并在保持与左侧图表同高的卡片内纵向滑动。"
-    },
-    {
-      "date": "2026-09-11",
-      "title": "多张课程卡改为有效卡优先横向滑动",
-      "summary": "芭蕾顶部课程卡从纵向堆叠改为一次展示一张的横向吸附轨道；使用中的卡固定排在已失效卡之前，手机可左右滑动，桌面可通过前后按钮、圆点和键盘方向键切换。"
     }
   ]
 };
