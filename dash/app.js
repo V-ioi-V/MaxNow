@@ -3781,7 +3781,10 @@ function renderBalletPlanWeek() {
     ? balletBookingFastData.lastRun.records
     : [];
   const hasRunForWeek = lastRecords.some((record) => dateSet.has(balletRecordDate(record)));
-  const showTargets = balletPlanWeekOffset === 1 && weekTargets.length && !hasRunForWeek;
+  const showTargets = balletPlanWeekOffset > 0
+    && actualRecords.length === 0
+    && weekTargets.length > 0
+    && !hasRunForWeek;
 
   const weekLabel = getBalletPlanWeekLabel();
   setText("#ballet-plan-week-label", weekLabel);

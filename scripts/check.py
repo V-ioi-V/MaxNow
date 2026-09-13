@@ -532,7 +532,9 @@ def check_ballet_booking_fast():
         "const BALLET_PLAN_WEEK_MAX_OFFSET = 2",
         '[-2, "两周前"]',
         '[2, "两周后"]',
-        "const showTargets = balletPlanWeekOffset === 1",
+        "const showTargets = balletPlanWeekOffset > 0",
+        "actualRecords.length === 0",
+        "weekTargets.length > 0",
         'priority.textContent = `优先 ${String(options.priority).padStart(2, "0")}`',
         'ready_waitlist: "可排队"',
         "allowWaitlist=true",
@@ -1721,7 +1723,7 @@ def check_secondary_view_style():
         or "ballet-plan-week-note" in dashboard_js
         or ".ballet-booking-result-summary {" not in dashboard_css
     ):
-        raise ValueError("secondary views: ballet three-week course plan contract is incomplete")
+        raise ValueError("secondary views: ballet five-week course plan contract is incomplete")
     if (
         "function createBalletUpcomingItem(record, isNearest = false)" not in dashboard_js
         or "function createBalletUpcomingDayGroup(dateText, records, nearestRecord)" not in dashboard_js
@@ -1936,7 +1938,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=273" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=237" not in dashboard_html
+        or "app.js?v=238" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2190,7 +2192,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=237" not in dashboard_html:
+    if "app.js?v=238" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

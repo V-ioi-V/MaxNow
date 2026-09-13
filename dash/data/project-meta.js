@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 16:20",
-  "version": "1.0.11.28",
-  "versionLabel": "v1.0.11.28",
-  "branch": "bugfix/ballet-active-booking-pagination",
-  "commit": "78234080",
+  "updatedAt": "2026-09-13 16:30",
+  "version": "1.0.11.29",
+  "versionLabel": "v1.0.11.29",
+  "branch": "bugfix/ballet-future-plan-fallback",
+  "commit": "4ae76ef1",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-active-booking-pagination · commit 78234080 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-future-plan-fallback · commit 4ae76ef1 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-13",
+      "title": "两周后周安排复用准备抢兜底",
+      "summary": "移除“准备抢”仅限固定下周偏移的前端判断；五周窗口内任一未来周只要存在日期属于该周的公开 Fast Path 目标、没有真实课程且尚无同周结果，就展示对应准备抢卡。"
+    },
     {
       "date": "2026-09-13",
       "title": "活动预约统一读取全部分页",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-13",
       "title": "周六自动抢课收窄至 18:00 前",
       "summary": "Fast Path 新增周六结束门槛：只处理开课时间严格早于 18:00 的标准芭蕾 L1、L1.5 与精确“软开 / 软开课”，18:00 整及之后的周六课程一律排除。"
-    },
-    {
-      "date": "2026-09-13",
-      "title": "手动补录 9 月 13 日芭蕾 L1",
-      "summary": "按 Owner 提供的课表截图，手动补录 `2026-09-13 10:00–11:30` 李俊老师大教室“芭蕾L1-入门”，记录状态为已上课，并使用 `manual` 稳定键保存在服务器私有上课台账中。"
     }
   ]
 };
