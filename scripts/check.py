@@ -715,14 +715,14 @@ def check_ballet_read_model():
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     sync_script = (ROOT / "scripts/sync_ballet.py").read_text(encoding="utf-8")
     membership_art = ROOT / "dash/assets/ballet/membership-ballerina.webp"
-    course_guide_art = ROOT / "dash/assets/ballet/lijun-course-guide-2026-09.jpg"
+    course_guide_art = ROOT / "dash/private-assets/ballet/lijun-course-guide-2026-09.jpg"
     if not membership_art.exists() or membership_art.stat().st_size <= 0:
         raise ValueError("ballet: membership ballerina artwork is missing")
     if (
         not course_guide_art.exists()
         or course_guide_art.stat().st_size <= 0
         or course_guide_art.read_bytes()[:2] != b"\xff\xd8"
-        or './assets/ballet/lijun-course-guide-2026-09.jpg' not in dashboard_html
+        or './private-assets/ballet/lijun-course-guide-2026-09.jpg' not in dashboard_html
     ):
         raise ValueError("ballet: Li Jun course guide artwork is missing or invalid")
     if (

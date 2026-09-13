@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 09:45",
-  "version": "1.0.11.24",
-  "versionLabel": "v1.0.11.24",
+  "updatedAt": "2026-09-13 10:05",
+  "version": "1.0.11.25",
+  "versionLabel": "v1.0.11.25",
   "branch": "feature/ballet-course-guide",
-  "commit": "c3c616c0",
+  "commit": "40f07bc5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-course-guide · commit c3c616c0 · 有未提交代码改动",
+  "deployNote": "feature/ballet-course-guide · commit 40f07bc5 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-13",
