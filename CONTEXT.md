@@ -69,6 +69,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `scripts/check.py`：本地一致性校验脚本。
 - Dashboard 前端采用按页数据加载：启动先依据 URL hash 激活页面，Home、豆奶、Token、芭蕾、Cloud、生活和同行记只读取各自数据组；60 秒内切页复用请求，超过窗口重新校验，手动刷新与 5 分钟自动刷新只强制更新当前页。不要恢复“先 `loadHomeData()` 再切页”的旧入口，也不要让 Cloud 复用整套 Home 渲染。
 - 芭蕾课程卡支持多卡横向吸附展示：使用中的卡稳定优先，已失效卡靠后；票券本体填满顶部概览格，切换按钮、圆点和页码固定在票券底部内侧；触屏左右滑动，桌面也可使用按钮或键盘方向键切换，不得恢复为纵向堆叠或票券外置控制行。
+- 芭蕾顶部状态区保存李俊芭蕾《课程类型与选课指南》完整原图入口；它是静态参考资产，只在 Owner 点击后加载，不属于闻道运行态数据，也不改变 Fast Path 规则。
 - `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态和项目元信息，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新独立的 Home 项目状态数据。
 - 芭蕾公开 read model 属于服务器权威运行时数据；部署不得宽泛恢复整个 `dash/data`，必须按 `SERVER_RUNBOOK.md` 成对保护并复核 `ballet.json` / `.js`，否则仓库兜底快照会覆盖真实训练记录。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。

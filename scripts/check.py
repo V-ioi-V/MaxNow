@@ -715,8 +715,16 @@ def check_ballet_read_model():
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     sync_script = (ROOT / "scripts/sync_ballet.py").read_text(encoding="utf-8")
     membership_art = ROOT / "dash/assets/ballet/membership-ballerina.webp"
+    course_guide_art = ROOT / "dash/assets/ballet/lijun-course-guide-2026-09.jpg"
     if not membership_art.exists() or membership_art.stat().st_size <= 0:
         raise ValueError("ballet: membership ballerina artwork is missing")
+    if (
+        not course_guide_art.exists()
+        or course_guide_art.stat().st_size <= 0
+        or course_guide_art.read_bytes()[:2] != b"\xff\xd8"
+        or './assets/ballet/lijun-course-guide-2026-09.jpg' not in dashboard_html
+    ):
+        raise ValueError("ballet: Li Jun course guide artwork is missing or invalid")
     if (
         "function balletClassBoundary" not in dashboard_js
         or "boundary >= Date.now()" not in dashboard_js
@@ -1897,7 +1905,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=272" not in dashboard_html
+        "styles.css?v=273" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=234" not in dashboard_html
     ):
