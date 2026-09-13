@@ -3016,3 +3016,17 @@ server verification: HEAD 与 origin/main 均为 4f2fe9f8；26 项 Fast Path 测
 automation state: Fast Path timer 保持 enabled / active，Fast Path service 保持 inactive；部署和迁移未启动 execute
 safety: 本次只部署代码并在本地从既有脱敏日志回填耗时，没有访问闻道、读取 PHPSESSID、启动芭蕾同步或 Fast Path，也没有执行预约、候补、取消或转课
 ```
+
+2026-09-13 已部署活动预约统一分页读取：
+
+```text
+deployed commit: 78234080 fix: paginate active ballet bookings
+version: 1.0.11.28
+changes: 同步、实时查询与 Fast Path 复核共用活动预约读取器；校验预约页声明的 newbookrecord/{storeId}/{offset}、总数和 customerid，按已加载条数读取全部分页，跨页合并去重后再加载活动详情；分页 POST 只读取列表
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260913-161450-active-booking-pagination；包含整份 dash/data、芭蕾私有账本以及 Fast Path 私有 / 公开状态；运行态 dash/data 在拉取前另存为可恢复 Git stash
+deployment transport: 服务器 GitHub SSH 443 当前没有可用公钥，本次使用本地验证过的完整 Git bundle 将服务器从 aac49c2f 快进到目标提交；恢复运行时数据后重新生成 project-meta.* 并合并 token-usage.*
+live verification: 闻道预约索引共 42 条；新版实时 bookings 查询发出 16 次只读请求后得到 11 条活动记录（10 条 booked、1 条 waitlist），其中 2026-09-15 18:45–19:45 李俊软开课为候补第 7 位
+sync verification: rolling 只读同步于 16:18:48 启动、16:19:52 成功结束，upcoming 发布为同样的 11 条，dataAsOf 更新为 2026-09-13T16:18:48+08:00；历史仍为 33 节 / 42 小时
+checks: 本地与服务器各 69 项相关测试、scripts/check.py、git diff --check 和 nginx -t 通过；三个相关 service 回到 inactive
+safety: 部署、实时复核与同步没有提交预约、候补、取消或转课；除官方固定列表分页 POST 外均为 GET
+```

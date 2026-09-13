@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 16:13",
+  "updatedAt": "2026-09-13 16:20",
   "version": "1.0.11.28",
   "versionLabel": "v1.0.11.28",
   "branch": "bugfix/ballet-active-booking-pagination",
-  "commit": "f451dd20",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-active-booking-pagination · commit f451dd20 · 干净",
+  "commit": "78234080",
+  "dirty": true,
+  "dirtyLevel": "code",
+  "deployNote": "bugfix/ballet-active-booking-pagination · commit 78234080 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-13",
