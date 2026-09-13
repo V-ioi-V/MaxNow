@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 15:41",
+  "updatedAt": "2026-09-13 15:52",
   "version": "1.0.11.27",
   "versionLabel": "v1.0.11.27",
   "branch": "feature/ballet-booking-average-timing",
-  "commit": "bbd4e48a",
+  "commit": "4f2fe9f8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-booking-average-timing · commit bbd4e48a · 有未提交代码改动",
+  "deployNote": "feature/ballet-booking-average-timing · commit 4f2fe9f8 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-13",

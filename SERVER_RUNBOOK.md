@@ -3002,3 +3002,17 @@ server verification: 功能部署时 HEAD 与 origin/main 均为 90c7b6cc；25 �
 automation state: nginx、maxnow-auth、rolling / full / Fast Path timer 均 active；rolling / full / Fast Path service 均 inactive
 safety: 仅运行无网络的 Fast Path preview 更新脱敏公开摘要；Fast Path totalRuns / totalBooked / totalWaitlisted / lastAttemptAt 保持 7 / 37 / 8 / 2026-09-13T14:21:17+08:00，未访问闻道，未启动同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-13 已部署 Fast Path 本次耗时与历史平均耗时：
+
+```text
+deployed feature commit: 4f2fe9f8 feat: track ballet booking timing average
+version: 1.0.11.27
+changes: 抢课助手原“上次抢课耗时”改为“抢课平均耗时”，按私有 runTimingHistory 中全部真实 execute 关键路径计算；“本次抢课”增加独立抢课耗时卡，读取 lastRun.criticalPathMilliseconds；预览、dry-run 和时间窗外失败不纳入平均值；资源缓存提升到 styles.css?v=273、app.js?v=237
+runtime migration: 从既有脱敏 systemd 执行日志恢复 2026-08-02 至 2026-09-13 共 7 次关键路径耗时，写入 root-only 私有状态并原子重建公开摘要；样本平均值为 34196ms（页面 34.2s），最近一次为 75319ms（页面 75.3s）；totalRuns / totalBooked / totalWaitlisted / lastAttemptAt 保持 7 / 37 / 8 / 2026-09-13T14:21:17+08:00
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260913-154949-ballet-booking-average-timing；包含完整 dash/data、Fast Path 私有状态和公开状态；运行态 dash/data 在拉取前另存为可恢复 Git stash
+browser verification: 本地使用生产同结构的 7 次耗时摘要验收；1280px 下左右两组均为四张同顶、同底、等高卡片，390px 下均为两列；修正 75.3 s 在窄卡中换行后，两种尺寸的卡片和整页横向溢出均为 0，控制台无错误
+server verification: HEAD 与 origin/main 均为 4f2fe9f8；26 项 Fast Path 测试、scripts/check.py、git diff --check 与 nginx -t 通过；styles.css?v=273、app.js?v=237 和本次耗时节点已生效；部署前后 ballet.json / ballet.js SHA-256 保持 4ecf678cb79c2b83fb8b234880434062a76abd166fe1fdd699d6c55ae6a96543 / 9eac5c05e1c63f4c2ee98e0eee188aa2e475bed7dbc2a4d282f38c39c050ea7b；未认证首页 / 登录页 / Fast Path 状态为 302 / 200 / 401
+automation state: Fast Path timer 保持 enabled / active，Fast Path service 保持 inactive；部署和迁移未启动 execute
+safety: 本次只部署代码并在本地从既有脱敏日志回填耗时，没有访问闻道、读取 PHPSESSID、启动芭蕾同步或 Fast Path，也没有执行预约、候补、取消或转课
+```
