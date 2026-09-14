@@ -3082,3 +3082,13 @@ server verification: 功能部署时 HEAD 与 origin/main 均为 c1d96e93；28 �
 automation state: Fast Path timer 保持 active，Fast Path service 保持 inactive；rolling / full service 也保持 inactive
 safety: 仅运行无网络的 Fast Path preview 更新脱敏公开摘要；Fast Path totalRuns / totalBooked / totalWaitlisted / lastAttemptAt 保持 7 / 37 / 8 / 2026-09-13T14:21:17+08:00，未访问闻道，未启动实际 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-14 已核对圈选课程的取消状态并刷新页面：
+
+```text
+requested scope: 2026-09-19 周六下午三节与 2026-09-20 周日晚间两节；圈外 2026-09-19 10:00–11:30 芭蕾 L1 保留
+live verification: 21:37 实时活动预约查询成功，返回 9 条；圈选的五节均已不在活动预约 / 候补列表，只有圈外周六 10:00–11:30 徐老师小教室芭蕾 L1 仍为已预约
+mutation result: 因五个目标在 mutation 前均不存在，没有调用取消 runner，也没有提交 do_cancel
+dashboard refresh: 启动一次既有 rolling 只读同步并成功结束；dataAsOf=2026-09-14T21:37:48+08:00，upcoming=9，周末只保留圈外周六上午课；同步后 scripts/check.py 通过，service 回到 inactive / success / exit 0
+safety: 实时查询和 rolling 同步仅使用既有活动预约 GET 与固定列表分页读取；未执行预约、候补、取消或转课 mutation
+```
