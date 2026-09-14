@@ -3069,3 +3069,16 @@ server verification: 服务器通过校验过的完整 Git bundle 从 f7bfe744 �
 automation state: rolling / full / Fast Path timer 均保持 active，相关 service 均保持 inactive；week-closeout timer 也保持 active
 safety: 本次仅部署静态页面逻辑、缓存版本与发布记录，未访问闻道，未启动芭蕾同步或 Fast Path，未执行预约、候补、取消或转课
 ```
+
+2026-09-14 已部署周六按课程结束时间筛选的 Fast Path 修正：
+
+```text
+deployed commits: e2cfb08b fix: apply Saturday booking cutoff to end time；c1d96e93 chore: refresh project metadata
+version: 1.0.11.32
+changes: Fast Path 周六改为按课程 endTime 筛选，只有结束时间严格早于 18:00 的标准芭蕾 L1、L1.5 与精确“软开 / 软开课”才进入目标；18:00 整结束及更晚结束均排除，缺失或非法结束时间按安全失败排除；工作日仍按 startTime 18:40（含）后筛选；公开摘要与周安排统一显示“18:00 前结束”；配置 schema 提升到 9，脚本缓存提升到 app.js?v=240
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260914-212654-saturday-end-time-cutoff；包含完整 dash/data、Fast Path 私有 / 公开状态、部署前 Git 状态和 ballet.json / ballet.js 哈希
+browser verification: 仅使用 Codex 内置浏览器验收；1600×900 下周六准备抢卡以“18:00 前结束”开头并保持可见，390×844 下页面横向溢出为 0、周安排只在卡片内部横向浏览，控制台无 warning / error
+server verification: 功能部署时 HEAD 与 origin/main 均为 c1d96e93；28 项 Fast Path 测试、scripts/check.py、git diff --check 与 nginx -t 通过；受保护公开 Fast Path 状态的摘要为“周六仅 18:00 前结束”，全部周六目标标签均为“18:00 前结束”；部署前后 ballet.json / ballet.js SHA-256 保持 d31ade7c6928a3f48d56a7448dc05a35aa26f648c64aebcb2107d75f23df9043 / 4d63bfa7e8b52861dba52e8e6579a372dacc98d59b496a33130574e80062f8be
+automation state: Fast Path timer 保持 active，Fast Path service 保持 inactive；rolling / full service 也保持 inactive
+safety: 仅运行无网络的 Fast Path preview 更新脱敏公开摘要；Fast Path totalRuns / totalBooked / totalWaitlisted / lastAttemptAt 保持 7 / 37 / 8 / 2026-09-13T14:21:17+08:00，未访问闻道，未启动实际 Fast Path，未执行预约、候补、取消或转课
+```
