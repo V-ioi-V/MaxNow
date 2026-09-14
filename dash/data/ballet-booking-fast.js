@@ -18,7 +18,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
     "周四",
     "周五"
   ],
-  "prioritySummary": "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类按周六 > 周一至周五李俊（老师空白按李俊）> 周一至周五其他老师；工作日仅 18:40 后、周六仅 18:00 前；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底",
+  "prioritySummary": "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类按周六 > 周一至周五李俊（老师空白按李俊）> 周一至周五其他老师；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底",
   "lastAttemptAt": null,
   "lastSuccessAt": null,
   "nextRunAt": "2026-09-20T14:20:00+08:00",
@@ -33,7 +33,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "key": "ballet-l1-5",
       "weekday": "周六",
       "date": "2026-09-26",
-      "startTime": "18:00 前",
+      "startTime": "18:00 前结束",
       "endTime": "",
       "course": "芭蕾 L1",
       "teacher": "周六不限老师",
@@ -93,7 +93,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "key": "ballet-l1-5-5",
       "weekday": "周六",
       "date": "2026-09-26",
-      "startTime": "18:00 前",
+      "startTime": "18:00 前结束",
       "endTime": "",
       "course": "芭蕾 L1.5",
       "teacher": "周六不限老师",
@@ -153,7 +153,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "key": "soft-open-5",
       "weekday": "周六",
       "date": "2026-09-26",
-      "startTime": "18:00 前",
+      "startTime": "18:00 前结束",
       "endTime": "",
       "course": "软开",
       "teacher": "周六不限老师",
@@ -212,5 +212,5 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
   ],
   "lastRun": null,
   "preview": null,
-  "generatedAt": "2026-09-13T16:00:00+08:00"
+  "generatedAt": "2026-09-14T21:30:00+08:00"
 };

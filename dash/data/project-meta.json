@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-13 18:28",
-  "version": "1.0.11.31",
-  "versionLabel": "v1.0.11.31",
-  "branch": "bugfix/ballet-plan-rule-time-label",
-  "commit": "f7bfe744",
+  "updatedAt": "2026-09-14 21:21",
+  "version": "1.0.11.32",
+  "versionLabel": "v1.0.11.32",
+  "branch": "bugfix/saturday-end-time-cutoff",
+  "commit": "c9386193",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-plan-rule-time-label · commit f7bfe744 · 有未提交代码改动",
+  "deployNote": "bugfix/saturday-end-time-cutoff · commit c9386193 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-14",
+      "title": "周六抢课门槛改按结束时间判断",
+      "summary": "根据 Owner 澄清，周六“18:00 前”改为检查课程结束时间：仅结束时间严格早于 18:00 的标准芭蕾 L1、L1.5 与精确“软开 / 软开课”进入 Fast Path，18:00 整结束也排除。"
+    },
     {
       "date": "2026-09-13",
       "title": "周安排准备抢卡显示完整时间边界",
@@ -28,11 +33,6 @@
       "date": "2026-09-13",
       "title": "活动预约统一读取全部分页",
       "summary": "同步、实时查询和 Fast Path 写后复核统一调用活动预约分页读取器：先校验预约页声明的总数与固定 `newbookrecord` contract，再按已加载条数翻页、跨页合并去重，最后只读取预约 / 候补详情。"
-    },
-    {
-      "date": "2026-09-13",
-      "title": "抢课平均耗时与本次耗时分开展示",
-      "summary": "“抢课助手”的“上次抢课耗时”改为“抢课平均耗时”，读取历次真实 Fast Path 执行关键路径耗时的平均值并显示累计样本数。"
     }
   ]
 }

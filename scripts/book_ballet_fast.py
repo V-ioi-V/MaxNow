@@ -351,7 +351,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 8
+        or data.get("schemaVersion") != 9
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
@@ -550,7 +550,7 @@ def materialize_targets(
                     "level": configured["level"],
                     "exactCourseNames": configured["exactCourseNames"],
                     "_notBeforeTime": config["weekdayStartTimes"][str(weekday)],
-                    "_beforeTime": config["weekdayEndTimes"].get(str(weekday)),
+                    "_endBeforeTime": config["weekdayEndTimes"].get(str(weekday)),
                     "venuePriority": list(config["venuePriority"]),
                     "teacherPriority": list(config["teacherPriority"]),
                     "emptyTeacherAs": config["emptyTeacherAs"],
@@ -578,14 +578,21 @@ def rule_matches(record: dict[str, Any], target: dict[str, Any]) -> bool:
     try:
         record_start = parse_hhmm(str(record.get("startTime", "")))
         not_before = parse_hhmm(str(target["_notBeforeTime"]))
-        before = (
-            parse_hhmm(str(target["_beforeTime"]))
-            if target.get("_beforeTime")
+        end_before = (
+            parse_hhmm(str(target["_endBeforeTime"]))
+            if target.get("_endBeforeTime")
+            else None
+        )
+        record_end = (
+            parse_hhmm(str(record.get("endTime", "")))
+            if end_before is not None
             else None
         )
     except FastBookingFailure:
         return False
-    if record_start < not_before or (before is not None and record_start >= before):
+    if record_start < not_before or (
+        end_before is not None and record_end is not None and record_end >= end_before
+    ):
         return False
     exact_names = target.get("exactCourseNames")
     return exact_names is None or (
@@ -691,8 +698,8 @@ def public_target(target: dict[str, Any]) -> dict[str, Any]:
         "weekday": WEEKDAY_LABELS[target["weekday"]],
         "date": target.get("date"),
         "startTime": target["startTime"] or (
-            f"{target.get('_beforeTime')} 前"
-            if target.get("_beforeTime")
+            f"{target.get('_endBeforeTime')} 前结束"
+            if target.get("_endBeforeTime")
             else (
                 "全天"
                 if target.get("_notBeforeTime") == "00:00"
@@ -1608,7 +1615,7 @@ def build_public(
         "prioritySummary": (
             "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类按周六 > "
             "周一至周五李俊（老师空白按李俊）> 周一至周五其他老师；"
-            "工作日仅 18:40 后、周六仅 18:00 前；"
+            "工作日仅 18:40 后、周六仅 18:00 前结束；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         ),
         "lastAttemptAt": state.get("lastAttemptAt"),

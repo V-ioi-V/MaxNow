@@ -143,7 +143,7 @@ const fallbackBalletBookingFast =
     planMode: "weekly-rules",
     coursePriorityOrder: ["芭蕾 L1", "芭蕾 L1.5", "软开 / 软开课"],
     priorityOrder: ["周六", "周一", "周二", "周三", "周四", "周五"],
-    prioritySummary: "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类按周六 > 周一至周五李俊（老师空白按李俊）> 周一至周五其他老师；工作日仅 18:40 后、周六仅 18:00 前；软开严格排除软开专项 / 软开-胯",
+    prioritySummary: "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类按周六 > 周一至周五李俊（老师空白按李俊）> 周一至周五其他老师；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯",
     targets: [],
     lastStatus: "waiting",
   };
@@ -3483,13 +3483,14 @@ function createBalletPlanWeekCourse(record = {}, options = {}) {
   title.textContent = balletCourseName(record);
   const plannedTimeLabel = String(record.startTime || "").trim();
   const timeText = options.planned
-    ? (record.weekday === "周六" && (!plannedTimeLabel || plannedTimeLabel === "全天")
-      ? "18:00 前"
+    ? (record.weekday === "周六" && (!plannedTimeLabel || plannedTimeLabel === "全天" || plannedTimeLabel === "18:00 前")
+      ? "18:00 前结束"
       : plannedTimeLabel || "时间待确认")
     : [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–")
       || String(record.startTime || "时间待确认");
   const detail = document.createElement("small");
-  detail.textContent = [balletTeacher(record) || "老师待确认", timeText].join(" · ");
+  const teacherText = balletTeacher(record) || "老师待确认";
+  detail.textContent = (options.planned ? [timeText, teacherText] : [teacherText, timeText]).join(" · ");
   const state = document.createElement("span");
   state.className = "ballet-plan-week-state";
   state.textContent = status.label;

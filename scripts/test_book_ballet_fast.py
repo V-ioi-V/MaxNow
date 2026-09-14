@@ -414,7 +414,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertTrue(
             all(
                 (
-                    target["startTime"] < "18:00"
+                    target["endTime"] < "18:00"
                     if target["weekday"] == 5
                     else target["startTime"] >= "18:40"
                 )
@@ -422,7 +422,7 @@ class FastBookingTests(unittest.TestCase):
             )
         )
 
-    def test_saturday_cutoff_includes_before_1800_and_excludes_1800(self):
+    def test_saturday_cutoff_uses_end_time_before_1800(self):
         target = fast.materialize_targets(config(), self.release)[0]
         record = {
             "date": target["date"],
@@ -431,8 +431,24 @@ class FastBookingTests(unittest.TestCase):
             "courseName": "芭蕾 L1",
         }
 
-        self.assertTrue(fast.rule_matches({**record, "startTime": "17:59"}, target))
-        self.assertFalse(fast.rule_matches({**record, "startTime": "18:00"}, target))
+        self.assertTrue(
+            fast.rule_matches(
+                {**record, "startTime": "16:30", "endTime": "17:59"}, target
+            )
+        )
+        self.assertFalse(
+            fast.rule_matches(
+                {**record, "startTime": "16:30", "endTime": "18:00"}, target
+            )
+        )
+        self.assertFalse(
+            fast.rule_matches(
+                {**record, "startTime": "17:00", "endTime": "18:30"}, target
+            )
+        )
+        self.assertFalse(
+            fast.rule_matches({**record, "startTime": "16:30"}, target)
+        )
 
     def test_weekday_cutoff_still_includes_1840(self):
         target = fast.materialize_targets(config(), self.release)[1]
@@ -441,6 +457,7 @@ class FastBookingTests(unittest.TestCase):
             "courseType": "ballet",
             "level": "L1",
             "courseName": "芭蕾 L1",
+            "endTime": "20:00",
         }
 
         self.assertFalse(fast.rule_matches({**record, "startTime": "18:39"}, target))
