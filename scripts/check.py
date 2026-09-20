@@ -131,8 +131,6 @@ def check_required_files():
         "scripts/run_ballet_cancellation.sh",
         "scripts/test_cancel_ballet.py",
         "scripts/test_sync_ballet.py",
-        "scripts/ballet_week_closeout.py",
-        "scripts/test_ballet_week_closeout.py",
         "scripts/query_ballet_live.py",
         "scripts/run_ballet_live_query.sh",
         "scripts/test_query_ballet_live.py",
@@ -149,8 +147,6 @@ def check_required_files():
         "server/maxnow-auth.service",
         "server/maxnow-ballet-sync.service",
         "server/maxnow-ballet-sync.timer",
-        "server/maxnow-ballet-week-closeout.service",
-        "server/maxnow-ballet-week-closeout.timer",
         "server/maxnow-ballet-full-sync.service",
         "server/maxnow-ballet-full-sync.timer",
         "server/maxnow-ballet-session-status.service",
@@ -240,19 +236,6 @@ def check_ballet_sync():
     if result.returncode != 0:
         raise ValueError(
             "ballet sync: fixture self-test failed: " + result.stdout.strip()
-        )
-    closeout_result = subprocess.run(
-        [sys.executable, "-B", str(ROOT / "scripts/test_ballet_week_closeout.py")],
-        cwd=ROOT,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        timeout=20,
-        check=False,
-    )
-    if closeout_result.returncode != 0:
-        raise ValueError(
-            "ballet weekly closeout: self-test failed: " + closeout_result.stdout.strip()
         )
     sync_source = (ROOT / "scripts/sync_ballet.py").read_text(encoding="utf-8")
     live_source = (ROOT / "scripts/query_ballet_live.py").read_text(encoding="utf-8")
@@ -851,8 +834,6 @@ def check_ballet_read_model():
     ):
         raise ValueError("ballet: runtime ownership and visible sync-failure contract is incomplete")
     timer = (ROOT / "server/maxnow-ballet-sync.timer").read_text(encoding="utf-8")
-    closeout_timer = (ROOT / "server/maxnow-ballet-week-closeout.timer").read_text(encoding="utf-8")
-    closeout_service = (ROOT / "server/maxnow-ballet-week-closeout.service").read_text(encoding="utf-8")
     expected_ballet_sync_times = ("09", "12", "15", "18", "22")
     if (
         any(
@@ -863,10 +844,6 @@ def check_ballet_read_model():
         or "OnCalendar=Sun *-*-* 14:30:00 Asia/Shanghai" not in timer
         or "OnCalendar=Sun *-*-* 20:00:00 Asia/Shanghai" in timer
         or "Sunday 14:30" not in dashboard_html
-        or "最后一节结束后 10 分钟刷新全部芭蕾数据" not in dashboard_html
-        or "OnCalendar=*-*-* *:00/5:00 Asia/Shanghai" not in closeout_timer
-        or "scripts/ballet_week_closeout.py" not in closeout_service
-        or "RestrictAddressFamilies=AF_UNIX" not in closeout_service
         or "周日 14:30 检查下周课表" not in dashboard_js
         or "09:00 / 12:00 / 15:00 / 18:00 / 22:00 整体刷新" not in dashboard_html
         or "每天 09 / 12 / 15 / 18 / 22 点更新" not in dashboard_js
@@ -1833,53 +1810,25 @@ def check_secondary_view_style():
     if any(retired in dashboard_html for retired in ("ballet-page-head", "ballet-sync-status", "Ballet Progress")):
         raise ValueError("secondary views: retired ballet title tab remains")
     weekly_cover_markup = (
-        'id="ballet-week-trigger"',
-        'id="ballet-week-dialog"',
-        'id="ballet-week-canvas"',
-        'id="ballet-week-brief-canvas"',
-        'id="ballet-week-carousel"',
-        'id="ballet-week-cover-tab"',
-        'id="ballet-week-brief-tab"',
-        'id="ballet-week-copy"',
+        'id="ballet-week-trigger"', 'id="ballet-week-dialog"',
+        'id="ballet-week-canvas"', 'id="ballet-week-copy"',
         'id="ballet-week-download"',
     )
     weekly_cover_css = (
-        ".ballet-week-trigger {",
-        ".ballet-week-dialog {",
-        ".ballet-week-canvas {",
-        ".ballet-week-carousel {",
-        ".ballet-week-switch {",
-        '@font-face {',
-        'font-family: "MaxNow Week Hand";',
-        'MaShanZheng-Weekly.woff2',
+        ".ballet-week-trigger {", ".ballet-week-dialog {", ".ballet-week-canvas {",
     )
     weekly_cover_js = (
-        "const BALLET_WEEK_TEMPLATE_URL",
-        "function getBalletWeekInfo(",
-        "async function buildBalletWeekCover()",
-        "async function buildBalletWeekBrief()",
-        "function getBalletWeeklyBriefInfo(",
-        "function getBalletWeeklyBriefSummary(",
-        "function selectBalletWeekSlide(",
-        "function renderBalletWeekCover()",
-        "function renderBalletWeekBrief()",
-        "function scheduleBalletWeekCoverWarmup()",
+        "const BALLET_WEEK_TEMPLATE_URL", "function getBalletWeekInfo(",
+        "async function buildBalletWeekCover()", "function renderBalletWeekCover()",
+        "function scheduleBalletWeekCoverWarmup()", "scheduleBalletWeekCoverWarmup();",
         "if (balletWeekCoverPromise) return balletWeekCoverPromise;",
-        "scheduleBalletWeekCoverWarmup();",
-        '"ClipboardItem" in window',
-        'anchorMonday: "2026-07-27"',
-        "anchorWeek: 2",
-        "briefDataRefreshDelayMinutes: 10",
-        "briefGenerateDelayMinutes: 20",
-        "function scheduleBalletWeeklyBriefGeneration()",
-        'return `${format(info.monday)}–${format(info.sunday)}`;',
+        '"ClipboardItem" in window', 'anchorMonday: "2026-07-27"', "anchorWeek: 2",
         "const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;",
-        'document.fonts?.load?.(\'80px "MaxNow Week Hand"\', "芭蕾周简报0123456789")',
-        '\"Segoe UI Variable Text\", \"Segoe UI\", \"Microsoft YaHei\", sans-serif',
-        "if (!numeric) {",
-        'context.lineJoin = "round";',
-        'context.strokeText(text, x, y, maxWidth);',
     )
+    if any(marker in dashboard_js + dashboard_html for marker in (
+        "ballet-week-brief", "BalletWeekBrief", "BalletWeeklyBrief", "ballet-week-carousel",
+    )):
+        raise ValueError("secondary views: retired ballet weekly brief remains")
     if (
         any(marker not in dashboard_html for marker in weekly_cover_markup)
         or any(rule not in dashboard_css for rule in weekly_cover_css)
@@ -1897,28 +1846,17 @@ def check_secondary_view_style():
         or cover_config.get("timezone") != "Asia/Shanghai"
         or cover_config.get("anchorMonday") != "2026-07-27"
         or cover_config.get("anchorWeek") != 2
-        or cover_config.get("briefDataRefreshDelayMinutes") != 10
-        or cover_config.get("briefGenerateDelayMinutes") != 20
-        or cover_config.get("briefWeekNumberBaselineY") != 390
-        or cover_config.get("briefTemplateVersion") != "v3"
         or cover_config.get("templateFile") != "template-v1.webp"
-        or cover_config.get("briefTemplateFile") != "brief-template-v1.webp"
     ):
         raise ValueError("secondary views: ballet weekly cover dimensions or week anchor are invalid")
     template_path = cover_root / cover_config["templateFile"]
-    brief_template_path = cover_root / cover_config["briefTemplateFile"]
     digits_manifest_path = cover_root / cover_config["digitsManifest"]
-    weekly_font_root = ROOT / "dash/assets/fonts/ma-shan-zheng"
     if (
         not template_path.is_file()
-        or not brief_template_path.is_file()
         or not digits_manifest_path.is_file()
-        or not (weekly_font_root / "MaShanZheng-Weekly.woff2").is_file()
-        or not (weekly_font_root / "MaShanZheng-Regular.ttf").is_file()
-        or not (weekly_font_root / "OFL.txt").is_file()
     ):
         raise ValueError("secondary views: ballet weekly image template, font, license, or digit manifest is missing")
-    for image_path in (template_path, brief_template_path):
+    for image_path in (template_path,):
         template_header = image_path.read_bytes()[:16]
         if template_header[:4] != b"RIFF" or template_header[8:12] != b"WEBP":
             raise ValueError("secondary views: ballet weekly runtime template is not WebP")
@@ -1932,10 +1870,6 @@ def check_secondary_view_style():
         template_height = int.from_bytes(source_header[20:24], "big")
         if (template_width, template_height) != (1280, 1710):
             raise ValueError("secondary views: ballet weekly image template must be 1280x1710")
-    if (weekly_font_root / "MaShanZheng-Weekly.woff2").stat().st_size > 100_000:
-        raise ValueError("secondary views: ballet weekly runtime font exceeds 100 KB")
-    if "Promise.all([renderBalletWeekCover(), renderBalletWeekBrief()])" in dashboard_js:
-        raise ValueError("secondary views: ballet weekly images must load only for the active slide")
     digits_manifest = json.loads(digits_manifest_path.read_text(encoding="utf-8"))
     digits = digits_manifest.get("digits", {})
     if set(digits) != set("0123456789"):
@@ -1944,9 +1878,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=274" not in dashboard_html
+        "styles.css?v=275" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=241" not in dashboard_html
+        or "app.js?v=242" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2200,7 +2134,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=241" not in dashboard_html:
+    if "app.js?v=242" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

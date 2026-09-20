@@ -15,7 +15,6 @@
 - `scripts/query_ballet_live.py` / `scripts/run_ballet_live_query.sh`：使用服务器保存的 Session 做最小范围实时只读查询和写后复核。上课记录允许跟随官方首屏脚本调用固定 `newcheckrecord/{storeId}/{offset}` 分页 POST；活动预约允许跟随官方预约页脚本调用固定 `newbookrecord/{storeId}/{offset}` 分页 POST。两者都只加载列表分页，不是预约类 mutation，其他未列明 POST 仍禁止。
 - `scripts/sync_ballet.py`、实时查询与 Fast Path 写后复核共用同一个活动预约分页读取器：先读 `bookrecord` 首页并校验页面声明的总数、固定分页路径和 `customerid` contract，再按当前已加载条数翻页，跨页按源记录 ID 合并去重，最后只对“已预约 / 排队中 / 候补中”记录读取详情。分页为空、越界、contract 变化或同 ID 事实冲突时必须失败关闭；不得退回只看首页，也不得把分页 POST 当作预约、候补或取消授权。
 - `scripts/sync_ballet.py` 的会员卡只读解析支持同页多卡及“使用中 / 已失效”状态；已失效卡缺少闻道总次数时保留展示名称、有效期和剩余课次，不猜测总次数或已用课次，也不阻断其他卡与整次同步。使用中卡缺少完整次数仍按页面结构变化失败关闭。
-- `scripts/ballet_week_closeout.py` / `server/maxnow-ballet-week-closeout.*`：每 5 分钟只读取公开脱敏 `ballet.json`，按本周期最后一节已预约或实际完成课程结束时间判断收尾；到结束后 10 分钟才启动一次既有 `maxnow-ballet-sync.service` 完整只读刷新。该调度器不读取 Session、不访问网络、不生成或保存周简报 PNG；登录失效和连续失败均关闭重试。
 - 实时上课记录与 Dashboard 同步共用同一老师归一化规则：实际上课历史的老师字段为空时默认补为“李俊”；Owner 明确校正 2026-07-30 18:45–19:45 软开课为“王嘉豪”、2026-08-07 19:45–21:15 芭蕾 L1 为“张瀚泽”。Dashboard 另按 Owner 确认的日期、起止时间、课程名和教室精确排除 2026-08-18 19:45–21:15 大教室芭蕾 L1（已转出、未实际上课）；闻道实时查询仍如实返回源站记录，私有账本也保留该源事实。历史校正与排除不影响课表、当前预约和候补。
 - `scripts/book_ballet.py` / `scripts/run_ballet_booking.sh`：Owner 显式指定课程后的普通预约入口；课程与按钮必须在同一 `.classtable` 块内原子绑定。
 - `scripts/cancel_ballet.py` / `scripts/run_ballet_cancellation.sh`：Owner 显式指定当前预约后的单课取消入口；先精确匹配唯一活动预约并校验该详情页的官方取消 contract，dry-run 只调用非变更规则检查，execute 重检后最多一次取消 mutation，再以实时预约列表确认目标消失。mutation 结果未知时不得重试。
@@ -32,6 +31,8 @@
 - `AGENTS.md` 只保留指向本文件的条件路由，不在总入口重复展开本文件内容。
 
 ## 变更记录
+
+- 2026-09-20：Owner 停用周简报；删除浏览器简报生成与专用周期收尾调度器、systemd service / timer，以及同步器的 weeklyBrief 派生字段。日常五次 rolling、周日 14:30、每月 full 和抢课结束后的同步保持原有边界，所有预约类入口与手工上课记录不变。
 
 - 2026-09-20：Owner 将抢课改为日期优先：周六 → 周二 → 周五 → 周一 → 周三 → 周四，每天内部 L1 → L1.5 → 软开。只允许周六 L1 在首轮发现后提前提交，其余目标等待发现窗口结束后按新顺序处理，避免旧整周 L1 流水线越过高优先级日期；schema v10，时间门槛、老师 / 教室选择、串行 mutation 与幂等边界不变。
 

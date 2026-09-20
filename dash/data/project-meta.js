@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-20 19:30",
-  "version": "1.0.11.33",
-  "versionLabel": "v1.0.11.33",
-  "branch": "feature/ballet-day-priority",
-  "commit": "774bb266",
+  "updatedAt": "2026-09-20 19:51",
+  "version": "1.0.11.34",
+  "versionLabel": "v1.0.11.34",
+  "branch": "feature/remove-ballet-week-brief",
+  "commit": "ccbf1953",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-day-priority · commit 774bb266 · 有未提交代码改动",
+  "deployNote": "feature/remove-ballet-week-brief · commit ccbf1953 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-20",
+      "title": "移除芭蕾周简报",
+      "summary": "根据 Owner 要求删除周简报切换、定时生成、画布绘制和专用模板 / 字体；芭蕾周记录弹窗回到单张 `week N` 封面，继续支持复制和下载 PNG。"
+    },
     {
       "date": "2026-09-20",
       "title": "抢课改为按天优先",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-13",
       "title": "抢课双栏及八张指标卡统一尺寸",
       "summary": "“抢课助手 / 本次抢课”由原来的约 `56% / 44%` 改为严格各占一半，两张大卡同宽、同高。"
-    },
-    {
-      "date": "2026-09-13",
-      "title": "两周后周安排复用准备抢兜底",
-      "summary": "移除“准备抢”仅限固定下周偏移的前端判断；五周窗口内任一未来周只要存在日期属于该周的公开 Fast Path 目标、没有真实课程且尚无同周结果，就展示对应准备抢卡。"
     }
   ]
 };

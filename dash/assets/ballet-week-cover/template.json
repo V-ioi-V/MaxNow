@@ -2,10 +2,6 @@
   "schemaVersion": 1,
   "templateVersion": "v1",
   "templateFile": "template-v1.webp",
-  "briefTemplateVersion": "v3",
-  "briefTemplateFile": "brief-template-v1.webp",
-  "briefDataRefreshDelayMinutes": 10,
-  "briefGenerateDelayMinutes": 20,
   "width": 1280,
   "height": 1710,
   "timezone": "Asia/Shanghai",
@@ -15,12 +11,5 @@
   "numberBaselineY": 1146,
   "digitScale": 0.4,
   "digitGap": 0,
-  "briefWeekNumberCenterX": 353,
-  "briefWeekNumberBaselineY": 390,
-  "briefDateCenterX": 704,
-  "briefDateBaselineY": 377,
-  "briefColumnCenters": [240, 632, 1030],
-  "briefFirstRowValueBaselineY": 846,
-  "briefSecondRowValueBaselineY": 1450,
   "digitsManifest": "digits/manifest.json"
 }

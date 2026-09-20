@@ -15,10 +15,6 @@ const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json";
 const BALLET_WEEK_TEMPLATE_URL = "./assets/ballet-week-cover/template.json";
 const BALLET_WEEK_FALLBACK_CONFIG = {
   templateVersion: "v1",
-  briefTemplateVersion: "v3",
-  briefTemplateFile: "brief-template-v1.webp",
-  briefDataRefreshDelayMinutes: 10,
-  briefGenerateDelayMinutes: 20,
   timezone: "Asia/Shanghai",
   anchorMonday: "2026-07-27",
   anchorWeek: 2,
@@ -174,12 +170,7 @@ let leafletPromise = null;
 let balletWeekConfigPromise = null;
 let balletWeekCoverCache = null;
 let balletWeekCoverPromise = null;
-let balletWeekBriefCache = null;
-let balletWeekBriefPromise = null;
 let balletWeekWarmupHandle = 0;
-let balletWeekBriefScheduleHandle = 0;
-let balletWeekActiveSlide = "cover";
-let balletWeekCarouselFrame = 0;
 const BALLET_PLAN_WEEK_MIN_OFFSET = -2;
 const BALLET_PLAN_WEEK_MAX_OFFSET = 2;
 const BALLET_PLAN_WEEK_LABELS = new Map([
@@ -244,130 +235,19 @@ function getBalletWeekInfo(config = BALLET_WEEK_FALLBACK_CONFIG, date = new Date
   };
 }
 
-function timePartsInTimeZone(date = new Date(), timeZone = "Asia/Shanghai") {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  return {
-    dateKey: `${values.year}-${values.month}-${values.day}`,
-    hour: Number(values.hour),
-    minute: Number(values.minute),
-  };
-}
-
-function getBalletBriefCycles(config = BALLET_WEEK_FALLBACK_CONFIG) {
-  const published = balletData.weeklyBrief?.cycles;
-  if (Array.isArray(published) && published.length) return published;
-  const refreshDelay = Number(config.briefDataRefreshDelayMinutes ?? 10);
-  const generateDelay = Number(config.briefGenerateDelayMinutes ?? 20);
-  const ends = new Map();
-  const candidates = [
-    ...(Array.isArray(balletData.records) ? balletData.records : []),
-    ...(Array.isArray(balletData.upcoming?.records)
-      ? balletData.upcoming.records.filter((record) => record.bookingStatus === "booked")
-      : []),
-  ];
-  candidates.forEach((record) => {
-    const dateKey = balletRecordDate(record);
-    const endTime = balletEndTime(record);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey) || !/^\d{2}:\d{2}$/.test(endTime)) return;
-    const day = utcDayFromDateKey(dateKey);
-    const weekday = new Date(day).getUTCDay() || 7;
-    const monday = dateKeyFromUtcDay(day - (weekday - 1) * 86400000);
-    const endAt = `${dateKey}T${endTime}:00+08:00`;
-    if (!ends.has(monday) || Date.parse(endAt) > Date.parse(ends.get(monday))) ends.set(monday, endAt);
-  });
-  return [...ends.entries()].sort(([left], [right]) => left.localeCompare(right)).map(([monday, lastCourseEndAt]) => ({
-    weekStart: monday,
-    weekEnd: dateKeyFromUtcDay(utcDayFromDateKey(monday) + 6 * 86400000),
-    lastCourseEndAt,
-    refreshAt: new Date(Date.parse(lastCourseEndAt) + refreshDelay * 60000).toISOString(),
-    generateAt: new Date(Date.parse(lastCourseEndAt) + generateDelay * 60000).toISOString(),
-  }));
-}
-
-function getBalletBriefCycleInfo(cycle, config = BALLET_WEEK_FALLBACK_CONFIG) {
-  const anchor = getBalletWeekInfo(config, new Date(`${cycle.weekStart}T12:00:00+08:00`));
-  return {
-    week: anchor.week,
-    monday: cycle.weekStart,
-    sunday: cycle.weekEnd,
-    lastCourseEndAt: cycle.lastCourseEndAt,
-    refreshAt: cycle.refreshAt,
-    generateAt: cycle.generateAt,
-    cutoff: Date.parse(cycle.lastCourseEndAt),
-  };
-}
-
-function getBalletWeeklyBriefInfo(config = BALLET_WEEK_FALLBACK_CONFIG, date = new Date()) {
-  const cycles = getBalletBriefCycles(config).filter((cycle) => Date.parse(cycle.generateAt) <= date.getTime());
-  if (cycles.length) return getBalletBriefCycleInfo(cycles.at(-1), config);
-  const current = getBalletWeekInfo(config, date);
-  return { ...current, lastCourseEndAt: null, refreshAt: null, generateAt: null, cutoff: Number.NEGATIVE_INFINITY };
-}
-
-function getCurrentBalletBriefCycle(config = BALLET_WEEK_FALLBACK_CONFIG, date = new Date()) {
-  const dateKey = timePartsInTimeZone(date, config.timezone || "Asia/Shanghai").dateKey;
-  const cycle = getBalletBriefCycles(config).find((item) => item.weekStart <= dateKey && dateKey <= item.weekEnd);
-  return cycle ? getBalletBriefCycleInfo(cycle, config) : null;
-}
-
-function formatBalletBriefSchedule(isoValue) {
-  const parsed = new Date(isoValue);
-  if (!Number.isFinite(parsed.getTime())) return "最后一节后 20 分钟生成";
-  const parts = new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Shanghai",
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(parsed);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  return `${values.weekday} ${values.hour}:${values.minute} 生成`;
-}
-
-function formatBalletBriefDateRange(info = {}) {
-  const format = (dateKey) => {
-    const match = String(dateKey || "").match(/^\d{4}-(\d{2})-(\d{2})$/);
-    return match ? `${match[1]}.${match[2]}` : "";
-  };
-  return `${format(info.monday)}–${format(info.sunday)}`;
-}
-
 function updateBalletWeekDialogRange(config = BALLET_WEEK_FALLBACK_CONFIG) {
-  const coverInfo = getBalletWeekInfo(config);
-  const briefInfo = getBalletWeeklyBriefInfo(config);
-  const range = balletWeekActiveSlide === "brief"
-    ? `周简报 week ${briefInfo.week} · ${formatBalletWeekDate(briefInfo.monday)}–${formatBalletWeekDate(briefInfo.sunday)}`
-    : `${formatBalletWeekDate(coverInfo.monday)}–${formatBalletWeekDate(coverInfo.sunday)} · 周一至周日`;
-  setText("#ballet-week-dialog-range", range);
+  const info = getBalletWeekInfo(config);
+  setText("#ballet-week-dialog-range", `${formatBalletWeekDate(info.monday)}–${formatBalletWeekDate(info.sunday)} · 周一至周日`);
 }
 
 function updateBalletWeekTrigger(config = BALLET_WEEK_FALLBACK_CONFIG) {
   const info = getBalletWeekInfo(config);
-  const briefInfo = getBalletWeeklyBriefInfo(config);
-  const currentCycle = getCurrentBalletBriefCycle(config);
   if (balletWeekCoverCache && balletWeekCoverCache.week !== info.week) balletWeekCoverCache = null;
-  if (balletWeekBriefCache && balletWeekBriefCache.week !== briefInfo.week) balletWeekBriefCache = null;
   setText("#ballet-week-trigger-number", info.week);
   setText("#ballet-week-dialog-number", info.week);
-  setText("#ballet-week-tab-number", info.week);
-  setText(
-    "#ballet-week-brief-refresh",
-    currentCycle
-      ? `周简报 week ${currentCycle.week} · ${formatBalletBriefSchedule(currentCycle.generateAt)}`
-      : "周简报 · 每周期最后一节后 20 分钟生成",
-  );
   updateBalletWeekDialogRange(config);
   const trigger = qs("#ballet-week-trigger");
-  if (trigger) trigger.setAttribute("aria-label", `打开芭蕾周记录 week ${info.week} 封面和周简报`);
+  if (trigger) trigger.setAttribute("aria-label", `打开芭蕾周记录 week ${info.week} 封面`);
   return info;
 }
 
@@ -382,7 +262,6 @@ async function loadBalletWeekConfig({ force = false } = {}) {
     .then((config) => {
       if (
         !config.templateFile
-        || !config.briefTemplateFile
         || !config.digitsManifest
         || !Number(config.width)
         || !Number(config.height)
@@ -434,23 +313,23 @@ function setBalletWeekActionsDisabled(disabled) {
   });
 }
 
-function setBalletWeekStatus(type, message) {
+function setBalletWeekStatus(message) {
   const status = qs("#ballet-week-status");
-  if (status && balletWeekActiveSlide === type) status.textContent = message;
+  if (status) status.textContent = message;
 }
 
 async function buildBalletWeekCover() {
   const canvas = qs("#ballet-week-canvas");
   if (!canvas) return null;
   setBalletWeekActionsDisabled(true);
-  setBalletWeekStatus("cover", "正在加载本周封面素材…");
+  setBalletWeekStatus("正在加载本周封面素材…");
 
   try {
     const config = await loadBalletWeekConfig();
     const info = updateBalletWeekTrigger(config);
     const cacheKey = `${config.templateVersion}:${info.week}`;
     if (balletWeekCoverCache?.key === cacheKey) {
-      setBalletWeekStatus("cover", "已从本页缓存读取 · 1280 × 1710 PNG");
+      setBalletWeekStatus("已从本页缓存读取 · 1280 × 1710 PNG");
       setBalletWeekActionsDisabled(false);
       return balletWeekCoverCache;
     }
@@ -499,12 +378,12 @@ async function buildBalletWeekCover() {
       week: info.week,
       filename: `芭蕾周记录-week-${info.week}.png`,
     };
-    setBalletWeekStatus("cover", "已生成 · 1280 × 1710 PNG · 本周结果仅在当前页面缓存");
+    setBalletWeekStatus("已生成 · 1280 × 1710 PNG · 本周结果仅在当前页面缓存");
     setBalletWeekActionsDisabled(false);
     return balletWeekCoverCache;
   } catch (error) {
     balletWeekCoverCache = null;
-    setBalletWeekStatus("cover", `生成失败：${error.message || error}`);
+    setBalletWeekStatus(`生成失败：${error.message || error}`);
     setBalletWeekActionsDisabled(false);
     return null;
   }
@@ -516,133 +395,6 @@ function renderBalletWeekCover() {
     balletWeekCoverPromise = null;
   });
   return balletWeekCoverPromise;
-}
-
-function formatBalletBriefDuration(minutes = 0) {
-  const safeMinutes = Math.max(0, Math.round(Number(minutes) || 0));
-  const hours = Math.floor(safeMinutes / 60);
-  return `${String(hours).padStart(2, "0")}:${String(safeMinutes % 60).padStart(2, "0")}`;
-}
-
-function drawBalletBriefText(context, value, x, y, maxWidth, fontSize, minFontSize = 32, options = {}) {
-  const text = String(value || "暂无");
-  let size = fontSize;
-  const numeric = options.numeric === true;
-  const fontFamily = numeric
-    ? '"Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei", sans-serif'
-    : '"MaxNow Week Hand", "KaiTi", cursive';
-  const fontWeight = 400;
-  context.textAlign = "center";
-  context.textBaseline = "alphabetic";
-  context.fillStyle = "#6b202a";
-  while (size > minFontSize) {
-    context.font = `${fontWeight} ${size}px ${fontFamily}`;
-    if (context.measureText(text).width <= maxWidth) break;
-    size -= 2;
-  }
-  if (!numeric) {
-    context.lineJoin = "round";
-    context.lineWidth = Math.max(1, size * 0.018);
-    context.strokeStyle = context.fillStyle;
-    context.strokeText(text, x, y, maxWidth);
-  }
-  context.fillText(text, x, y, maxWidth);
-}
-
-async function buildBalletWeekBrief() {
-  const canvas = qs("#ballet-week-brief-canvas");
-  if (!canvas) return null;
-  setBalletWeekActionsDisabled(true);
-  setBalletWeekStatus("brief", "正在加载本周训练简报素材…");
-
-  try {
-    const config = await loadBalletWeekConfig();
-    const summary = getBalletWeeklyBriefSummary(config);
-    if (!summary.info.lastCourseEndAt) throw new Error("本周期还没有可结算课程");
-    if (!summary.sourceReachedCutoff) throw new Error("等待本周期收尾刷新完成");
-    const cacheKey = `${config.briefTemplateVersion}:${summary.info.week}:${summary.sourceAsOf}:${summary.completedRecords}`;
-    if (balletWeekBriefCache?.key === cacheKey) {
-      setBalletWeekStatus("brief", balletWeekBriefCache.statusMessage);
-      setBalletWeekActionsDisabled(false);
-      return balletWeekBriefCache;
-    }
-
-    const configUrl = new URL(BALLET_WEEK_TEMPLATE_URL, window.location.href);
-    const templateUrl = new URL(config.briefTemplateFile, configUrl);
-    const [templateImage] = await Promise.all([
-      loadBalletWeekImage(templateUrl),
-      document.fonts?.load?.('80px "MaxNow Week Hand"', "芭蕾周简报0123456789") || Promise.resolve(),
-    ]);
-
-    canvas.width = Number(config.width);
-    canvas.height = Number(config.height);
-    const context = canvas.getContext("2d", { alpha: false });
-    if (!context) throw new Error("浏览器不支持图片合成");
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(templateImage, 0, 0, canvas.width, canvas.height);
-
-    const columns = Array.isArray(config.briefColumnCenters) ? config.briefColumnCenters.map(Number) : [240, 632, 1030];
-    const firstY = Number(config.briefFirstRowValueBaselineY || 846);
-    const secondY = Number(config.briefSecondRowValueBaselineY || 1450);
-    drawBalletBriefText(
-      context,
-      summary.info.week,
-      Number(config.briefWeekNumberCenterX || 353),
-      Number(config.briefWeekNumberBaselineY || 390),
-      88,
-      72,
-      48,
-      { numeric: true },
-    );
-    drawBalletBriefText(
-      context,
-      formatBalletBriefDateRange(summary.info),
-      Number(config.briefDateCenterX || 704),
-      Number(config.briefDateBaselineY || 377),
-      440,
-      38,
-      28,
-      { numeric: true },
-    );
-    drawBalletBriefText(context, String(summary.week.classes).padStart(2, "0"), columns[0], firstY, 250, 104, 72, { numeric: true });
-    drawBalletBriefText(context, formatBalletBriefDuration(summary.week.minutes), columns[1], firstY, 300, 88, 58, { numeric: true });
-    drawBalletBriefText(context, summary.week.favorite?.label || "暂无", columns[2], firstY, 300, 62, 38);
-    drawBalletBriefText(context, String(summary.total.classes).padStart(2, "0"), columns[0], secondY, 250, 104, 72, { numeric: true });
-    drawBalletBriefText(context, formatBalletBriefDuration(summary.total.minutes), columns[1], secondY, 300, 88, 58, { numeric: true });
-    drawBalletBriefText(context, summary.total.favorite?.label || "暂无", columns[2], secondY, 300, 62, 38);
-
-    await new Promise((resolve) => requestAnimationFrame(resolve));
-    const blob = await canvasToPngBlob(canvas);
-    const statusMessage = `已生成 · week ${summary.info.week} · 最后一节 ${formatBalletDateTime(summary.info.lastCourseEndAt)} · 数据已于 ${formatBalletDateTime(summary.info.refreshAt)} 后刷新`;
-    balletWeekBriefCache = {
-      key: cacheKey,
-      blob,
-      week: summary.info.week,
-      sourceAsOf: summary.sourceAsOf,
-      statusMessage,
-      filename: `芭蕾周简报-week-${summary.info.week}.png`,
-    };
-    setBalletWeekStatus("brief", statusMessage);
-    setBalletWeekActionsDisabled(false);
-    return balletWeekBriefCache;
-  } catch (error) {
-    balletWeekBriefCache = null;
-    setBalletWeekStatus("brief", `周简报生成失败：${error.message || error}`);
-    setBalletWeekActionsDisabled(false);
-    return null;
-  }
-}
-
-function renderBalletWeekBrief() {
-  if (balletWeekBriefPromise) return balletWeekBriefPromise;
-  balletWeekBriefPromise = buildBalletWeekBrief().finally(() => {
-    balletWeekBriefPromise = null;
-  });
-  return balletWeekBriefPromise;
-}
-
-function renderBalletWeekAsset(type = balletWeekActiveSlide) {
-  return type === "brief" ? renderBalletWeekBrief() : renderBalletWeekCover();
 }
 
 function warmBalletWeekCover() {
@@ -657,36 +409,6 @@ function scheduleBalletWeekCoverWarmup() {
     return;
   }
   balletWeekWarmupHandle = window.setTimeout(warmBalletWeekCover, 120);
-}
-
-function scheduleBalletWeeklyBriefGeneration() {
-  if (balletWeekBriefScheduleHandle) window.clearTimeout(balletWeekBriefScheduleHandle);
-  balletWeekBriefScheduleHandle = 0;
-  loadBalletWeekConfig().then((config) => {
-    const cycle = getCurrentBalletBriefCycle(config);
-    if (!cycle?.generateAt) return;
-    const delay = Date.parse(cycle.generateAt) - Date.now();
-    if (delay > 0) {
-      balletWeekBriefScheduleHandle = window.setTimeout(
-        scheduleBalletWeeklyBriefGeneration,
-        Math.min(delay + 250, 2147483000),
-      );
-      return;
-    }
-    const summary = getBalletWeeklyBriefSummary(config);
-    if (summary.info.week !== cycle.week || !summary.sourceReachedCutoff) {
-      balletWeekBriefScheduleHandle = window.setTimeout(
-        scheduleBalletWeeklyBriefGeneration,
-        DATA_AUTO_REFRESH_INTERVAL_MS,
-      );
-      return;
-    }
-    if (balletWeekBriefCache?.week === cycle.week && balletWeekBriefCache?.sourceAsOf === summary.sourceAsOf) return;
-    balletWeekBriefScheduleHandle = window.setTimeout(() => {
-      balletWeekBriefScheduleHandle = 0;
-      renderBalletWeekBrief();
-    }, 250);
-  }).catch(() => {});
 }
 
 const weatherIcons = {
@@ -5178,25 +4900,6 @@ function summarizeBalletTraining(records = []) {
   };
 }
 
-function getBalletWeeklyBriefSummary(config = BALLET_WEEK_FALLBACK_CONFIG, date = new Date()) {
-  const info = getBalletWeeklyBriefInfo(config, date);
-  const sourceAsOf = String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || "");
-  const sourceCutoff = Date.parse(sourceAsOf);
-  const completedRecords = getBalletCompletedTrainingRecords(info.cutoff);
-  const weekRecords = completedRecords.filter((record) => {
-    const recordDate = balletRecordDate(record);
-    return recordDate >= info.monday && recordDate <= info.sunday;
-  });
-  return {
-    info,
-    sourceAsOf,
-    sourceReachedCutoff: Number.isFinite(sourceCutoff) && sourceCutoff >= Date.parse(info.refreshAt),
-    completedRecords: completedRecords.length,
-    week: summarizeBalletTraining(weekRecords),
-    total: summarizeBalletTraining(completedRecords),
-  };
-}
-
 function setBalletFavoriteCourse(valueSelector, metaSelector, favorite) {
   setText(valueSelector, favorite?.label || "暂无");
   setText(metaSelector, favorite ? `已上 ${favorite.classes} 次` : "暂无已上完课程");
@@ -5219,9 +4922,6 @@ function renderBalletWeek() {
     : [];
   const weekSummary = summarizeBalletTraining(weekRecords);
   const totalSummary = summarizeBalletTraining(completedRecords);
-  if (balletWeekBriefCache?.sourceAsOf !== String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || "")) {
-    balletWeekBriefCache = null;
-  }
   setText("#ballet-week-classes", `${weekSummary.classes} 次`);
   setText("#ballet-week-hours", `${formatBalletHours(weekSummary.minutes)} 小时`);
   setBalletFavoriteCourse(
@@ -6259,7 +5959,6 @@ function renderBallet() {
   renderBalletTraining();
   renderBalletHistory();
   renderBalletHome();
-  scheduleBalletWeeklyBriefGeneration();
 }
 
 function renderHome() {
@@ -7290,39 +6989,12 @@ balletHistoryDialog?.addEventListener("click", (event) => {
 });
 
 const balletWeekDialog = qs("#ballet-week-dialog");
-const balletWeekCarousel = qs("#ballet-week-carousel");
-
-function selectBalletWeekSlide(type, { scroll = true } = {}) {
-  const nextType = type === "brief" ? "brief" : "cover";
-  balletWeekActiveSlide = nextType;
-  const coverTab = qs("#ballet-week-cover-tab");
-  const briefTab = qs("#ballet-week-brief-tab");
-  [
-    [coverTab, nextType === "cover"],
-    [briefTab, nextType === "brief"],
-  ].forEach(([tab, active]) => {
-    if (!tab) return;
-    tab.classList.toggle("is-active", active);
-    tab.setAttribute("aria-selected", String(active));
-  });
-  if (scroll && balletWeekCarousel) {
-    const left = nextType === "brief" ? balletWeekCarousel.clientWidth : 0;
-    balletWeekCarousel.scrollTo({
-      left,
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-    });
-  }
-  loadBalletWeekConfig()
-    .then((config) => updateBalletWeekDialogRange(config))
-    .catch(() => updateBalletWeekDialogRange());
-  renderBalletWeekAsset(nextType);
-}
 
 qs("#ballet-week-trigger")?.addEventListener("click", () => {
   if (!balletWeekDialog) return;
   if (typeof balletWeekDialog.showModal === "function") balletWeekDialog.showModal();
   else balletWeekDialog.setAttribute("open", "");
-  selectBalletWeekSlide(balletWeekActiveSlide, { scroll: false });
+  renderBalletWeekCover();
 });
 
 qs("#ballet-week-trigger")?.addEventListener("pointerenter", scheduleBalletWeekCoverWarmup);
@@ -7340,33 +7012,8 @@ balletWeekDialog?.addEventListener("click", (event) => {
   else balletWeekDialog.removeAttribute("open");
 });
 
-qs("#ballet-week-cover-tab")?.addEventListener("click", () => selectBalletWeekSlide("cover"));
-qs("#ballet-week-brief-tab")?.addEventListener("click", () => selectBalletWeekSlide("brief"));
-
-balletWeekCarousel?.addEventListener("scroll", () => {
-  if (balletWeekCarouselFrame) cancelAnimationFrame(balletWeekCarouselFrame);
-  balletWeekCarouselFrame = requestAnimationFrame(() => {
-    balletWeekCarouselFrame = 0;
-    const index = balletWeekCarousel.clientWidth
-      ? Math.round(balletWeekCarousel.scrollLeft / balletWeekCarousel.clientWidth)
-      : 0;
-    const nextType = index > 0 ? "brief" : "cover";
-    if (nextType !== balletWeekActiveSlide) selectBalletWeekSlide(nextType, { scroll: false });
-  });
-});
-
-balletWeekCarousel?.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowLeft") {
-    event.preventDefault();
-    selectBalletWeekSlide("cover");
-  } else if (event.key === "ArrowRight") {
-    event.preventDefault();
-    selectBalletWeekSlide("brief");
-  }
-});
-
 qs("#ballet-week-copy")?.addEventListener("click", async () => {
-  const cover = await renderBalletWeekAsset();
+  const cover = await renderBalletWeekCover();
   const status = qs("#ballet-week-status");
   if (!cover) return;
   if (!("ClipboardItem" in window) || !navigator.clipboard?.write) {
@@ -7382,7 +7029,7 @@ qs("#ballet-week-copy")?.addEventListener("click", async () => {
 });
 
 qs("#ballet-week-download")?.addEventListener("click", async () => {
-  const cover = await renderBalletWeekAsset();
+  const cover = await renderBalletWeekCover();
   if (!cover) return;
   const url = URL.createObjectURL(cover.blob);
   const anchor = document.createElement("a");
