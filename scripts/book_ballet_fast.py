@@ -351,7 +351,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 9
+        or data.get("schemaVersion") != 10
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
@@ -389,7 +389,7 @@ def load_config(path: Path) -> dict[str, Any]:
     ):
         raise FastBookingFailure("configuration_error")
     priorities = data["priorityWeekdays"]
-    if priorities != [5, 0, 1, 2, 3, 4]:
+    if priorities != [5, 1, 4, 0, 2, 3]:
         raise FastBookingFailure("configuration_error")
     course_priorities = data["priorityCourses"]
     expected_course_priorities = [
@@ -506,9 +506,9 @@ def target_priority_key(
         target.get("_selectedTeacherRank", 0)
     )
     return (
+        priority_rank(weekday, config["priorityWeekdays"]),
         course_priority_rank(target, config["priorityCourses"]),
         teacher_tier,
-        priority_rank(weekday, config["priorityWeekdays"]),
         target.get("startTime", ""),
         target["_order"],
     )
@@ -1098,6 +1098,9 @@ def run_fast(
     while True:
         needs_settle = not discovery_settled and (
             target_index >= len(targets)
+            # Only the first day's first course tier can run before discovery
+            # settles; later days must not overtake late higher-priority classes.
+            or targets[target_index]["weekday"] != config["priorityWeekdays"][0]
             or course_priority_rank(
                 targets[target_index], config["priorityCourses"]
             )
@@ -1611,10 +1614,11 @@ def build_public(
         "schedule": "每周日 14:20（北京时间）",
         "planMode": "weekly-rules",
         "coursePriorityOrder": ["芭蕾 L1", "芭蕾 L1.5", "软开 / 软开课"],
-        "priorityOrder": ["周六", "周一", "周二", "周三", "周四", "周五"],
+        "priorityOrder": ["周六", "周二", "周五", "周一", "周三", "周四"],
         "prioritySummary": (
-            "芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；每类按周六 > "
-            "周一至周五李俊（老师空白按李俊）> 周一至周五其他老师；"
+            "按天优先：周六 > 周二 > 周五 > 周一 > 周三 > 周四；"
+            "每天按芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；"
+            "工作日同课型李俊优先（老师空白按李俊），周六不限老师；"
             "工作日仅 18:40 后、周六仅 18:00 前结束；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         ),

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 9,
+  "schemaVersion": 10,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -11,11 +11,11 @@
   "unknownVerificationSeconds": [0.8, 2, 4],
   "priorityWeekdays": [
     5,
-    0,
     1,
+    4,
+    0,
     2,
-    3,
-    4
+    3
   ],
   "priorityCourses": [
     {

@@ -39,6 +39,7 @@ class FakeFastSource:
         queue_target_keys=None,
         request_delay=0,
         progressive_l15_after_requests=None,
+        progressive_all_after_requests=None,
         unknown_commits=False,
         verification_visibility_delay=0,
     ):
@@ -56,6 +57,7 @@ class FakeFastSource:
         self.progressive_l15_after_requests = dict(
             progressive_l15_after_requests or {}
         )
+        self.progressive_all_after_requests = dict(progressive_all_after_requests or {})
         self.timetable_requests_by_date = {}
         self.unknown_commits = unknown_commits
         self.verification_visibility_delay = verification_visibility_delay
@@ -125,6 +127,11 @@ class FakeFastSource:
                     active_date, 0
                 ):
                     courses = [course for course in courses if "L1.5" not in course[0]]
+                if date_request_count <= self.progressive_all_after_requests.get(
+                    active_date, 0
+                ):
+                    courses = [course for course in courses if course[0] not in
+                               {"芭蕾 L1", "芭蕾 L1.5", "软开", "软开课"}]
                 pages = []
                 for index, (course, start, end, teacher) in enumerate(courses, start=1):
                     rule_key = (
@@ -349,49 +356,14 @@ class FastBookingTests(unittest.TestCase):
         targets = fast.materialize_targets(config(), self.release)
         self.assertEqual(
             [target["key"] for target in targets],
-            [
-                "ballet-l1-5",
-                "ballet-l1-0",
-                "ballet-l1-1",
-                "ballet-l1-2",
-                "ballet-l1-3",
-                "ballet-l1-4",
-                "ballet-l1-5-5",
-                "ballet-l1-5-0",
-                "ballet-l1-5-1",
-                "ballet-l1-5-2",
-                "ballet-l1-5-3",
-                "ballet-l1-5-4",
-                "soft-open-5",
-                "soft-open-0",
-                "soft-open-1",
-                "soft-open-2",
-                "soft-open-3",
-                "soft-open-4",
-            ],
+            [f"{course}-{day}" for day in [5, 1, 4, 0, 2, 3]
+             for course in ["ballet-l1", "ballet-l1-5", "soft-open"]],
         )
         self.assertEqual(
             [target["date"] for target in targets],
-            [
-                "2026-08-08",
-                "2026-08-03",
-                "2026-08-04",
-                "2026-08-05",
-                "2026-08-06",
-                "2026-08-07",
-                "2026-08-08",
-                "2026-08-03",
-                "2026-08-04",
-                "2026-08-05",
-                "2026-08-06",
-                "2026-08-07",
-                "2026-08-08",
-                "2026-08-03",
-                "2026-08-04",
-                "2026-08-05",
-                "2026-08-06",
-                "2026-08-07",
-            ],
+            [day for day in ["2026-08-08", "2026-08-04", "2026-08-07",
+                             "2026-08-03", "2026-08-05", "2026-08-06"]
+             for _ in range(3)],
         )
 
     def test_discovery_selects_only_exact_soft_open_and_standard_l1(self):
@@ -451,7 +423,8 @@ class FastBookingTests(unittest.TestCase):
         )
 
     def test_weekday_cutoff_still_includes_1840(self):
-        target = fast.materialize_targets(config(), self.release)[1]
+        target = next(t for t in fast.materialize_targets(config(), self.release)
+                      if t["weekday"] == 0 and t["level"] == "L1")
         record = {
             "date": target["date"],
             "courseType": "ballet",
@@ -593,24 +566,16 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(
             source.mutation_order,
             [
-                "ballet-l1-2026-08-08-1300-1430-0",
-                "ballet-l1-2026-08-03-1945-2115-0",
-                "ballet-l1-2026-08-04-1945-2115-0",
-                "ballet-l1-2026-08-05-1945-2115-0",
-                "ballet-l1-2026-08-06-1945-2115-0",
-                "ballet-l1-2026-08-07-1945-2115-0",
-                "ballet-l1-5-2026-08-08-1430-1600-0",
-                "ballet-l1-5-2026-08-03-2115-2245-0",
-                "ballet-l1-5-2026-08-04-2115-2245-0",
-                "ballet-l1-5-2026-08-05-2115-2245-0",
-                "ballet-l1-5-2026-08-06-2115-2245-0",
-                "ballet-l1-5-2026-08-07-2115-2245-0",
-                "soft-open-2026-08-08-1000-1100-0",
-                "soft-open-2026-08-03-1845-1945-0",
-                "soft-open-2026-08-04-1845-1945-0",
-                "soft-open-2026-08-05-1845-1945-0",
-                "soft-open-2026-08-06-1845-1945-0",
-                "soft-open-2026-08-07-1845-1945-0",
+                f"{course}-{day}-{times}-0"
+                for day in ["2026-08-08", "2026-08-04", "2026-08-07",
+                            "2026-08-03", "2026-08-05", "2026-08-06"]
+                for course, times in (
+                    [("ballet-l1", "1300-1430"), ("ballet-l1-5", "1430-1600"),
+                     ("soft-open", "1000-1100")]
+                    if day == "2026-08-08" else
+                    [("ballet-l1", "1945-2115"), ("ballet-l1-5", "2115-2245"),
+                     ("soft-open", "1845-1945")]
+                )
             ],
         )
 
@@ -675,20 +640,42 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertEqual(source.mutation_count, 18)
         self.assertEqual([record["status"] for record in result["records"]], ["booked"] * 18)
-        first_soft = next(
-            index
-            for index, key in enumerate(source.mutation_order)
-            if key.startswith("soft-open-")
+        expected_days = ["2026-08-08", "2026-08-04", "2026-08-07",
+                         "2026-08-03", "2026-08-05", "2026-08-06"]
+        self.assertEqual(
+            [record["date"] for record in result["records"]],
+            [day for day in expected_days for _ in range(3)],
         )
-        self.assertTrue(
-            all(
-                index < first_soft
-                for index, key in enumerate(source.mutation_order)
-                if key.startswith("ballet-l1-5-")
-            )
-        )
+        for day in expected_days:
+            keys = [key for key in source.mutation_order if day in key]
+            self.assertTrue(keys[0].startswith("ballet-l1-" + day))
+            self.assertTrue(keys[1].startswith("ballet-l1-5-" + day))
+            self.assertTrue(keys[2].startswith("soft-open-" + day))
 
-    def test_teacher_priority_applies_only_after_saturday_with_blank_as_li_jun(self):
+    def test_late_saturday_l1_precedes_other_days_even_when_initially_absent(self):
+        source = FakeFastSource(
+            progressive_all_after_requests={"2026-08-08": 2},
+        )
+        result, _ = fast.run_fast(
+            source, config(), fast.default_state(), self.release,
+            execute=True, sleeper=lambda _: None,
+        )
+        self.assertEqual(source.mutation_count, 18)
+        self.assertEqual(len(set(source.mutation_order)), 18)
+        self.assertEqual(
+            [record["date"] for record in result["records"]],
+            [day for day in ["2026-08-08", "2026-08-04", "2026-08-07",
+                             "2026-08-03", "2026-08-05", "2026-08-06"]
+             for _ in range(3)],
+        )
+        self.assertEqual(source.mutation_order[:3], [
+            "ballet-l1-2026-08-08-1300-1430-0",
+            "ballet-l1-5-2026-08-08-1430-1600-0",
+            "soft-open-2026-08-08-1000-1100-0",
+        ])
+        self.assertEqual(source.max_active_mutation, 1)
+
+    def test_teacher_priority_stays_within_day_with_blank_as_li_jun(self):
         planned = fast.materialize_targets(config(), self.release)
         pages = {
             target["date"]: "<html><body>classtable</body></html>"
@@ -706,6 +693,8 @@ class FastBookingTests(unittest.TestCase):
 
         # 周一只有其他老师；周二同一时段李俊未标注的小教室优先于其他老师大教室。
         pages["2026-08-03"] = course_page("王嘉豪", "大教室")
+        pages["2026-08-07"] = course_page("王嘉豪", "大教室")
+        pages["2026-08-05"] = course_page("李俊", "大教室")
         pages["2026-08-04"] = (
             course_page("王嘉豪", "大教室")
             + course_page("", "小教室")
@@ -722,7 +711,9 @@ class FastBookingTests(unittest.TestCase):
             [
                 ("2026-08-08", "大教室"),
                 ("2026-08-04", "小教室"),
+                ("2026-08-07", "大教室"),
                 ("2026-08-03", "大教室"),
+                ("2026-08-05", "大教室"),
             ],
         )
         self.assertIsNone(targets[0]["_selectedTeacherRank"])
