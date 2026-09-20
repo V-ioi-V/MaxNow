@@ -3092,3 +3092,18 @@ mutation result: 因五个目标在 mutation 前均不存在，没有调用取�
 dashboard refresh: 启动一次既有 rolling 只读同步并成功结束；dataAsOf=2026-09-14T21:37:48+08:00，upcoming=9，周末只保留圈外周六上午课；同步后 scripts/check.py 通过，service 回到 inactive / success / exit 0
 safety: 实时查询和 rolling 同步仅使用既有活动预约 GET 与固定列表分页读取；未执行预约、候补、取消或转课 mutation
 ```
+
+
+2026-09-20 已部署按天优先的抢课规则：
+
+```text
+version: 1.0.11.33
+feature commit: 774bb266
+changes: 周六 → 周二 → 周五 → 周一 → 周三 → 周四；每天 L1 → L1.5 → 软开；首轮仅提前处理周六 L1，其他目标等待 2 / 6 / 10 秒发现窗口结束后按稳定快照排序；schema v10，app.js?v=241
+transport: 服务器 GitHub SSH 443 认证返回 Permission denied (publickey)，改用本机已推送 main 的增量 Git bundle；传输前后 SHA-256 一致，bundle verify 后快进，未更改 GitHub transport 或主机信任
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260920-day-priority；包含完整 dash/data、私有 / 公开 Fast Path 状态、部署前 Git 状态与哈希；运行态修改另存为 day-priority-runtime-backup stash
+verification: 29 项 Fast Path 测试、scripts/check.py、git diff --check、nginx -t 通过；内置浏览器确认 18 个准备抢编号，桌面七天同顶同底等高，桌面 / 窄屏无页面横向溢出、无控制台错误
+state preservation: ballet.json / ballet.js 与私有 Fast Path state.json 的 SHA-256 在部署前后完全一致；totalRuns / totalBooked / totalWaitlisted / lastAttemptAt 仍为 8 / 49 / 10 / 2026-09-20T14:20:53+08:00
+server verification: 功能部署时 HEAD 与 origin/main 均为 774bb266；公开状态已按新顺序发布，下次执行为 2026-09-27 14:20；未认证首页 / 登录页 / ballet.json / Fast Path 状态分别为 302 / 200 / 401 / 401
+safety: 本次只运行无网络 preview 发布计划，未访问闻道、读取凭据、手动启动同步或抢课，也未执行预约、候补、取消或转课；Fast Path timer active，service inactive
+```

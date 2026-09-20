@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-20 19:25",
+  "updatedAt": "2026-09-20 19:30",
   "version": "1.0.11.33",
   "versionLabel": "v1.0.11.33",
   "branch": "feature/ballet-day-priority",
-  "commit": "cecfc284",
+  "commit": "774bb266",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-day-priority · commit cecfc284 · 有未提交代码改动",
+  "deployNote": "feature/ballet-day-priority · commit 774bb266 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-20",
