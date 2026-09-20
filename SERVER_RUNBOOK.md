@@ -3104,3 +3104,18 @@ state preservation: ballet.json / ballet.js 与私有 Fast Path state.json 的 S
 server verification: 功能部署时 HEAD 与 origin/main 均为 774bb266；公开状态已按新顺序发布，下次执行为 2026-09-27 14:20；未认证首页 / 登录页 / ballet.json / Fast Path 状态分别为 302 / 200 / 401 / 401
 safety: 本次只运行无网络 preview 发布计划，未访问闻道、读取凭据、手动启动同步或抢课，也未执行预约、候补、取消或转课；Fast Path timer active，service inactive
 ```
+
+2026-09-20 已移除芭蕾周简报并完成上线：
+
+```text
+version: 1.0.11.34
+feature commit: ab170f7b
+changes: 删除周简报标签、绘图与导出逻辑、专用字体 / 模板、weeklyBrief 生成字段和 week-closeout 程序；保留 week 封面预览、复制与 PNG 下载；app.js?v=242、styles.css?v=275
+transport: 使用已推送 main 的增量 Git bundle，传输前后 SHA-256 一致，bundle verify 后从 ccbf1953 快进至 ab170f7b；未更改 GitHub SSH 443 配置
+runtime backup: /home/ubuntu/maxnow-deploy-backups/20260920-remove-week-brief；完整 dash/data、退休 unit 与私有 closeout 状态已备份，运行态修改另存为 remove-week-brief-runtime-backup stash
+automation: 已 disable --now 专用 maxnow-ballet-week-closeout.timer，删除其 timer / service 安装文件并 daemon-reload；两者 LoadState=not-found；rolling / full / Fast Path timers 均 active，相关 services 均 inactive
+state preservation: 仅离线移除公开 ballet.json 的 weeklyBrief 并重建 wrapper，其余全部字段与备份一致，dataAsOf 保持 2026-09-20T18:00:00+08:00；attendance-ledger.json 与 Fast Path 私有 state.json 哈希均不变
+browser verification: 内置浏览器本地同版本验收 1280×900 / 390×844；周记录只显示单张封面，没有周简报标签；PNG 下载成功，桌面按钮同顶同高、手机布局无页面横向溢出，控制台无 warning / error
+verification: 33 项芭蕾同步测试、29 项 Fast Path 测试、scripts/check.py、git diff --check、JavaScript 语法检查和 nginx -t 通过；功能部署后服务器 HEAD=origin/main=ab170f7b；未认证首页 / 登录页 / ballet.json 为 302 / 200 / 401
+safety: 未访问闻道、读取凭据、启动同步或抢课，也未执行预约、候补、取消或转课
+```
