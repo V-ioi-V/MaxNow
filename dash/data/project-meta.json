@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-20 19:59",
-  "version": "1.0.11.34",
-  "versionLabel": "v1.0.11.34",
-  "branch": "feature/remove-ballet-week-brief",
-  "commit": "ab170f7b",
+  "updatedAt": "2026-09-26 18:02",
+  "version": "1.0.11.35",
+  "versionLabel": "v1.0.11.35",
+  "branch": "feature/manual-ballet-20260926",
+  "commit": "fd9ef1e3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/remove-ballet-week-brief · commit ab170f7b · 有未提交代码改动",
+  "deployNote": "feature/manual-ballet-20260926 · commit fd9ef1e3 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-26",
+      "title": "手动录入王嘉豪老师芭蕾 L1 课程",
+      "summary": "根据 Owner 截图，唯一匹配并手动录入 `2026-09-26 17:30–19:00` 大教室「芭蕾L1-入门」，老师王嘉豪，时长 90 分钟。"
+    },
     {
       "date": "2026-09-20",
       "title": "移除芭蕾周简报",
@@ -28,11 +33,6 @@
       "date": "2026-09-13",
       "title": "周安排准备抢卡显示完整时间边界",
       "summary": "准备抢卡保留公开目标中的规则时段文案，工作日显示“18:40 后”、周六显示“18:00 前”，不再把规则边界裁成普通钟点。"
-    },
-    {
-      "date": "2026-09-13",
-      "title": "抢课双栏及八张指标卡统一尺寸",
-      "summary": "“抢课助手 / 本次抢课”由原来的约 `56% / 44%` 改为严格各占一半，两张大卡同宽、同高。"
     }
   ]
 }

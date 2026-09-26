@@ -3119,3 +3119,13 @@ browser verification: 内置浏览器本地同版本验收 1280×900 / 390×844�
 verification: 33 项芭蕾同步测试、29 项 Fast Path 测试、scripts/check.py、git diff --check、JavaScript 语法检查和 nginx -t 通过；功能部署后服务器 HEAD=origin/main=ab170f7b；未认证首页 / 登录页 / ballet.json 为 302 / 200 / 401
 safety: 未访问闻道、读取凭据、启动同步或抢课，也未执行预约、候补、取消或转课
 ```
+
+## 2026-09-26 手动课程记录
+
+根据 Owner 截图，唯一匹配并离线录入 `2026-09-26 17:30–19:00` 王嘉豪「芭蕾L1-入门」（大教室 / 90 分钟）。写入前私有台账与公开历史均无目标；使用既有 `normalize_manual_attendance()` 生成稳定 manual 键。
+
+- 备份：`/home/ubuntu/maxnow-deploy-backups/20260926-180129-manual-attendance-20260926-l1/ballet-runtime.tgz`。
+- 结果：累计 41 → 42 节、3180 → 3270 分钟、53 → 54.5 小时；目标在台账与公开历史均唯一，`recordOrigin=manual`。
+- 写入身份与权限：`ubuntu:www-data` / `0600`，服务用户完成 schema、唯一性、统计增量与 JSON/JS 一致性复验；借用既有 `/run/maxnow-ballet/sync.lock` 防并发写入。
+- 公开数据仅调整 records / summary / aggregates / week；保留自动定时任务已更新的 `dataAsOf=2026-09-26T18:00:01+08:00` 和其余字段。
+- 本次未读取凭据、访问闻道、启动同步或 Fast Path，也未执行预约、候补、取消或转课。
