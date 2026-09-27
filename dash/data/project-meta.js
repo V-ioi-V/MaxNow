@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-27 20:05",
+  "updatedAt": "2026-09-27 20:09",
   "version": "1.0.11.36",
   "versionLabel": "v1.0.11.36",
   "branch": "feature/tuesday-booking-priority",
-  "commit": "e9ef3031",
+  "commit": "80986cee",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/tuesday-booking-priority · commit e9ef3031 · 有未提交代码改动",
+  "deployNote": "feature/tuesday-booking-priority · commit 80986cee · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-27",

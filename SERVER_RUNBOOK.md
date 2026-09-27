@@ -3129,3 +3129,11 @@ safety: 未访问闻道、读取凭据、启动同步或抢课，也未执行预
 - 写入身份与权限：`ubuntu:www-data` / `0600`，服务用户完成 schema、唯一性、统计增量与 JSON/JS 一致性复验；借用既有 `/run/maxnow-ballet/sync.lock` 防并发写入。
 - 公开数据仅调整 records / summary / aggregates / week；保留自动定时任务已更新的 `dataAsOf=2026-09-26T18:00:01+08:00` 和其余字段。
 - 本次未读取凭据、访问闻道、启动同步或 Fast Path，也未执行预约、候补、取消或转课。
+
+## 2026-09-27 周二优先抢课
+
+- 功能提交 `80986cee`，版本 `1.0.11.36`，配置 schema v11，页面 `app.js?v=243`；日期顺序为周二 → 周六 → 周五 → 周一 → 周三 → 周四，每天 L1 → L1.5 → 软开。
+- 服务器 GitHub SSH 443 认证不可用，使用 SHA-256 校验一致的增量 Git bundle 快进部署；备份位于 `/home/ubuntu/maxnow-deploy-backups/20260927-tuesday-priority`，包含完整 `dash/data`、私有 / 公开 Fast Path 状态和 Git 状态。
+- 29 项 Fast Path 回归测试、全仓检查、`git diff --check` 与 `nginx -t` 通过；内置浏览器确认 10/05–10/11 周二编号 01–03、周六 04–06，其余不变。未认证首页 / Fast Path 数据为 302 / 401。
+- 仅用无网络 preview 从私有状态副本刷新公开计划；课程 JSON / JS 和原始 Fast Path 私有状态哈希保持一致，累计运行 / 预约 / 候补仍为 9 / 61 / 12，最后执行仍为 2026-09-27 14:20:28。timer active、service inactive，下次执行 2026-10-04 14:20。
+- 本次优先级部署未访问闻道、触发同步或真实抢课，没有新增预约、候补、取消或转课；此前单独授权的课程取消不属于本次部署。
