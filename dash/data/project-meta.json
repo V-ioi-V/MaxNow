@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-27 20:09",
-  "version": "1.0.11.36",
-  "versionLabel": "v1.0.11.36",
-  "branch": "feature/tuesday-booking-priority",
-  "commit": "80986cee",
+  "updatedAt": "2026-09-27 20:39",
+  "version": "1.0.11.37",
+  "versionLabel": "v1.0.11.37",
+  "branch": "bugfix/ballet-level-count-order",
+  "commit": "c92ea314",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/tuesday-booking-priority · commit 80986cee · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-level-count-order · commit c92ea314 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-27",
+      "title": "课程级别按上课次数排序",
+      "summary": "训练记录的课程级别改为按所选本月 / 今年 / 全部范围的上课次数从多到少排列；次数相同保留原级别顺序。"
+    },
     {
       "date": "2026-09-27",
       "title": "抢课优先周二，其次周六",
@@ -28,11 +33,6 @@
       "date": "2026-09-20",
       "title": "抢课改为按天优先",
       "summary": "日期顺序改为周六 → 周二 → 周五 → 周一 → 周三 → 周四，每天内部依次 L1 → L1.5 → 软开；周安排准备抢的 18 个优先级编号与实际提交排序一致。"
-    },
-    {
-      "date": "2026-09-14",
-      "title": "周六抢课门槛改按结束时间判断",
-      "summary": "根据 Owner 澄清，周六“18:00 前”改为检查课程结束时间：仅结束时间严格早于 18:00 的标准芭蕾 L1、L1.5 与精确“软开 / 软开课”进入 Fast Path，18:00 整结束也排除。"
     }
   ]
 }

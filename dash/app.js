@@ -3996,7 +3996,7 @@ function normalizeBalletDistribution(source, kind) {
       .map((label, index) => [label, index]),
   );
   return normalized.sort(
-    (a, b) => (order.get(a.label) ?? 99) - (order.get(b.label) ?? 99) || b.classes - a.classes,
+    (a, b) => b.classes - a.classes || (order.get(a.label) ?? 99) - (order.get(b.label) ?? 99),
   );
 }
 
