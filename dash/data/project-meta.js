@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-26 18:02",
-  "version": "1.0.11.35",
-  "versionLabel": "v1.0.11.35",
-  "branch": "feature/manual-ballet-20260926",
-  "commit": "fd9ef1e3",
+  "updatedAt": "2026-09-27 20:05",
+  "version": "1.0.11.36",
+  "versionLabel": "v1.0.11.36",
+  "branch": "feature/tuesday-booking-priority",
+  "commit": "e9ef3031",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/manual-ballet-20260926 · commit fd9ef1e3 · 有未提交代码改动",
+  "deployNote": "feature/tuesday-booking-priority · commit e9ef3031 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-27",
+      "title": "抢课优先周二，其次周六",
+      "summary": "日期顺序调整为周二 → 周六 → 周五 → 周一 → 周三 → 周四；每天仍为 L1 → L1.5 → 软开。周安排中周二为优先 01–03、周六为 04–06，其他日期编号保持不变。"
+    },
     {
       "date": "2026-09-26",
       "title": "手动录入王嘉豪老师芭蕾 L1 课程",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-14",
       "title": "周六抢课门槛改按结束时间判断",
       "summary": "根据 Owner 澄清，周六“18:00 前”改为检查课程结束时间：仅结束时间严格早于 18:00 的标准芭蕾 L1、L1.5 与精确“软开 / 软开课”进入 Fast Path，18:00 整结束也排除。"
-    },
-    {
-      "date": "2026-09-13",
-      "title": "周安排准备抢卡显示完整时间边界",
-      "summary": "准备抢卡保留公开目标中的规则时段文案，工作日显示“18:40 后”、周六显示“18:00 前”，不再把规则边界裁成普通钟点。"
     }
   ]
 };

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 10,
+  "schemaVersion": 11,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -10,8 +10,8 @@
   "discoveryRefreshSeconds": [2, 6, 10],
   "unknownVerificationSeconds": [0.8, 2, 4],
   "priorityWeekdays": [
-    5,
     1,
+    5,
     4,
     0,
     2,

@@ -351,7 +351,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 10
+        or data.get("schemaVersion") != 11
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
@@ -389,7 +389,7 @@ def load_config(path: Path) -> dict[str, Any]:
     ):
         raise FastBookingFailure("configuration_error")
     priorities = data["priorityWeekdays"]
-    if priorities != [5, 1, 4, 0, 2, 3]:
+    if priorities != [1, 5, 4, 0, 2, 3]:
         raise FastBookingFailure("configuration_error")
     course_priorities = data["priorityCourses"]
     expected_course_priorities = [
@@ -1614,9 +1614,9 @@ def build_public(
         "schedule": "每周日 14:20（北京时间）",
         "planMode": "weekly-rules",
         "coursePriorityOrder": ["芭蕾 L1", "芭蕾 L1.5", "软开 / 软开课"],
-        "priorityOrder": ["周六", "周二", "周五", "周一", "周三", "周四"],
+        "priorityOrder": ["周二", "周六", "周五", "周一", "周三", "周四"],
         "prioritySummary": (
-            "按天优先：周六 > 周二 > 周五 > 周一 > 周三 > 周四；"
+            "按天优先：周二 > 周六 > 周五 > 周一 > 周三 > 周四；"
             "每天按芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；"
             "工作日同课型李俊优先（老师空白按李俊），周六不限老师；"
             "工作日仅 18:40 后、周六仅 18:00 前结束；"
