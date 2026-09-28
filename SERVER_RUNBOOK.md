@@ -2,6 +2,13 @@
 
 这个文件记录 MaxNow 服务器的 SSH 连接方式、前端静态站部署方式和常用排障命令。
 
+## 2026-09-28 圈选课程取消复核
+
+- Owner 截图指定的五节课已逐项精确匹配日期、起止时间、课程、老师和教室：9 月 29 日李俊大教室软开课及芭蕾 L1 两节候补；10 月 1 日、2 日张瀚泽小教室芭蕾 L1.5，以及 10 月 2 日晚软开课三节预约。
+- 复用既有受保护 Session 和单课取消 runner；每节先 `ready / mutationAttempts=0`，后单次 execute 得到 `cancelled / mutationAttempts=1`。各次独立 bookings 查询通过，最终 `2026-09-28T22:46:26+08:00` 活动列表为空。
+- 随后仅启动一次既有 rolling 业务只读同步，服务回到 `inactive / success / exit 0`；公开 `dataAsOf=2026-09-28T22:46:50+08:00`、`upcoming.records=[]`、JSON / JS 完全一致，历史仍为 44 节 / 57 小时，同步 `changedRecords=0`。
+- 没有修改脚本、凭据、自动抢课规则或 timer，也没有新增预约、候补或转课。
+
 ## 服务器
 
 ```text

@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-27 20:39",
-  "version": "1.0.11.37",
-  "versionLabel": "v1.0.11.37",
-  "branch": "bugfix/ballet-level-count-order",
-  "commit": "c92ea314",
+  "updatedAt": "2026-09-28 22:48",
+  "version": "1.0.11.38",
+  "versionLabel": "v1.0.11.38",
+  "branch": "bugfix/ballet-cancel-selected",
+  "commit": "fe5f6964",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-level-count-order · commit c92ea314 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-cancel-selected · commit fe5f6964 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-28",
+      "title": "取消截图圈选的五节预约与候补",
+      "summary": "按 Owner 红框逐项精确核对并取消：9 月 29 日李俊大教室 18:45–19:45 软开课、19:45–21:15 芭蕾 L1 两节候补；10 月 1 日及 2 日张瀚泽小教室 18:45–20:15 芭蕾 L1.5，以及 10 月 2 日 20:15–21:15 软开课三节预约。"
+    },
     {
       "date": "2026-09-27",
       "title": "课程级别按上课次数排序",
@@ -28,11 +33,6 @@
       "date": "2026-09-20",
       "title": "移除芭蕾周简报",
       "summary": "根据 Owner 要求删除周简报切换、定时生成、画布绘制和专用模板 / 字体；芭蕾周记录弹窗回到单张 `week N` 封面，继续支持复制和下载 PNG。"
-    },
-    {
-      "date": "2026-09-20",
-      "title": "抢课改为按天优先",
-      "summary": "日期顺序改为周六 → 周二 → 周五 → 周一 → 周三 → 周四，每天内部依次 L1 → L1.5 → 软开；周安排准备抢的 18 个优先级编号与实际提交排序一致。"
     }
   ]
 }
