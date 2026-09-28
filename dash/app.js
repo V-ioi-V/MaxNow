@@ -3988,6 +3988,11 @@ function normalizeBalletDistribution(source, kind) {
     })
     .filter((item) => item.classes > 0 || Number(item.minutes) > 0);
 
+  if (kind === "courseType" && activeBalletMetric === "hours") {
+    return normalized.sort(
+      (a, b) => (b.minutes || 0) - (a.minutes || 0) || b.classes - a.classes || a.label.localeCompare(b.label, "zh-CN"),
+    );
+  }
   if (kind !== "level" && kind !== "levelDisplay") {
     return normalized.sort((a, b) => b.classes - a.classes || a.label.localeCompare(b.label, "zh-CN"));
   }

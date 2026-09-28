@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-28 22:48",
-  "version": "1.0.11.38",
-  "versionLabel": "v1.0.11.38",
-  "branch": "bugfix/ballet-cancel-selected",
-  "commit": "fe5f6964",
+  "updatedAt": "2026-09-28 22:53",
+  "version": "1.0.11.39",
+  "versionLabel": "v1.0.11.39",
+  "branch": "bugfix/ballet-course-type-time-sort",
+  "commit": "953b0231",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-cancel-selected · commit fe5f6964 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-course-type-time-sort · commit 953b0231 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-28",
+      "title": "课程类型跟随时间指标排序",
+      "summary": "训练记录选择“时间”时，课程类型按当前范围的累计上课分钟数从多到少排列；选择“节数”时继续按课次排列。同值时以课次和名称稳定排序，课程级别及授课老师的排序不变。"
+    },
     {
       "date": "2026-09-28",
       "title": "取消截图圈选的五节预约与候补",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-26",
       "title": "手动录入王嘉豪老师芭蕾 L1 课程",
       "summary": "根据 Owner 截图，唯一匹配并手动录入 `2026-09-26 17:30–19:00` 大教室「芭蕾L1-入门」，老师王嘉豪，时长 90 分钟。"
-    },
-    {
-      "date": "2026-09-20",
-      "title": "移除芭蕾周简报",
-      "summary": "根据 Owner 要求删除周简报切换、定时生成、画布绘制和专用模板 / 字体；芭蕾周记录弹窗回到单张 `week N` 封面，继续支持复制和下载 PNG。"
     }
   ]
 };
