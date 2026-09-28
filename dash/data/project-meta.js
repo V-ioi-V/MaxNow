@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-28 23:21",
+  "updatedAt": "2026-09-28 23:25",
   "version": "1.0.11.41",
   "versionLabel": "v1.0.11.41",
   "branch": "bugfix/dashboard-startup",
-  "commit": "5306db0f",
+  "commit": "a3cf1aaf",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/dashboard-startup · commit 5306db0f · 有未提交代码改动",
+  "deployNote": "bugfix/dashboard-startup · commit a3cf1aaf · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-28",
