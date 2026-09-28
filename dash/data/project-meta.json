@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-28 23:05",
+  "updatedAt": "2026-09-28 23:09",
   "version": "1.0.11.40",
   "versionLabel": "v1.0.11.40",
   "branch": "bugfix/ballet-time-distribution-sort",
-  "commit": "22081a92",
+  "commit": "7dbbbc20",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-time-distribution-sort · commit 22081a92 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-time-distribution-sort · commit 7dbbbc20 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-09-28",
