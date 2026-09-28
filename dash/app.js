@@ -23,6 +23,7 @@ const LEAFLET_CSS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS_URL = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 const DATA_AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 const DATA_SOURCE_REUSE_MS = 60 * 1000;
+const DATA_REQUEST_TIMEOUT_MS = 12000;
 const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;
 const BALLET_SESSION_PUBLISH_STALE_MS = 15 * 60 * 1000;
 const BALLET_SESSION_NEXT_RUN_INTERVAL_MINUTES = 20;
@@ -399,6 +400,7 @@ function renderBalletWeekCover() {
 
 function warmBalletWeekCover() {
   balletWeekWarmupHandle = 0;
+  if (getActiveView() !== "ballet") return;
   if (!balletWeekCoverCache && !balletWeekCoverPromise) renderBalletWeekCover();
 }
 
@@ -1145,13 +1147,16 @@ function getDataSyncStatus() {
   const unhealthy = items.filter((item) => ["failed", "stale", "unsynced"].includes(item.status));
   const failed = unhealthy.filter((item) => item.status === "failed");
   const empty = items.filter((item) => item.status === "empty");
+  const pending = items.filter((item) => item.status === "cached");
   const firstIssue = failed[0] || unhealthy[0];
-  const label = unhealthy.length ? `${unhealthy.length} 个异常` : `${items.length}/${items.length} 正常`;
+  const label = unhealthy.length ? `${unhealthy.length} 个异常` : pending.length ? "更新中" : `${items.length}/${items.length} 正常`;
   const note = firstIssue
     ? `${firstIssue.label} ${firstIssue.statusLabel}${firstIssue.updatedAt ? ` · 保留 ${formatSourceUpdatedAt(firstIssue.updatedAt)}` : ""}`
-    : empty.length
-      ? `${empty[0].label} 暂无记录（同步正常）`
-      : "关键数据源已刷新";
+    : pending.length
+      ? "正在校验缓存，保留上次成功数据"
+      : empty.length
+        ? `${empty[0].label} 暂无记录（同步正常）`
+        : "关键数据源已刷新";
   return { label, note, health: failed.length ? "bad" : unhealthy.length ? "unknown" : "ok", items };
 }
 
@@ -3880,6 +3885,10 @@ function getBalletUiState() {
     };
   }
 
+  if (browserHealth?.status === "cached") {
+    return { key: "waiting", label: "缓存待校验", title: "", message: "", hasCachedData };
+  }
+
   if (sync.lastSuccessAt || balletData.dataAsOf || cacheState === "fresh") {
     return { key: "success", label: "已同步", title: "", message: "", hasCachedData };
   }
@@ -6305,8 +6314,10 @@ function createSessionItem(session) {
 }
 
 async function readJson(url, fallback, sourceKey, { force = false } = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), DATA_REQUEST_TIMEOUT_MS);
   try {
-    const response = await fetch(url, { cache: force ? "no-store" : "default" });
+    const response = await fetch(url, { cache: force ? "no-store" : "default", signal: controller.signal });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     if (sourceKey) {
@@ -6319,6 +6330,8 @@ async function readJson(url, fallback, sourceKey, { force = false } = {}) {
     const data = cached || fallback;
     if (sourceKey) updateBrowserDataHealth(sourceKey, data, error.message || String(error));
     return data;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -6407,18 +6420,56 @@ const dataSources = {
   },
 };
 
+const VIEW_DATA_SOURCES = {
+  home: ["dashboard", "last30", "wiki", "dounai", "market", "version", "roadmap", "ballet", "token", "openclaw"],
+  ballet: ["ballet", "ballet-session", "ballet-booking-fast"],
+  cloud: ["dashboard", "ballet", "ballet-session", "ballet-booking-fast"],
+  tokens: ["token", "openclaw"],
+  dounai: ["dounai"],
+  ricky: ["ricky"],
+  life: ["life"],
+};
+let dataRenderFrame = 0;
+
+function scheduleDataRender(key) {
+  if (!VIEW_DATA_SOURCES[getActiveView()]?.includes(key) || dataRenderFrame) return;
+  dataRenderFrame = requestAnimationFrame(() => {
+    dataRenderFrame = 0;
+    renderActiveView();
+  });
+}
+
+function restoreCachedView(view) {
+  for (const key of VIEW_DATA_SOURCES[view] || []) {
+    if (dataSourcePromises.has(key)) continue;
+    const cacheKey = key === "dashboard" ? "weather" : key;
+    const data = readLastGood(cacheKey);
+    if (!data || typeof data !== "object" || Array.isArray(data)) continue;
+    dataSources[key].assign(data);
+    updateBrowserDataHealth(cacheKey, data);
+    const health = browserDataHealth.get(cacheKey);
+    if (health?.status === "fresh") {
+      health.status = "cached";
+      health.statusLabel = "缓存待校验";
+    }
+  }
+}
+
 function loadDataSource(key, { force = false } = {}) {
   const cached = dataSourcePromises.get(key);
-  if (!force && cached && Date.now() - cached.requestedAt < DATA_SOURCE_REUSE_MS) {
+  if (cached && (cached.pending || (!force && Date.now() - cached.requestedAt < DATA_SOURCE_REUSE_MS))) {
     return cached.promise;
   }
   const source = dataSources[key];
   if (!source) return Promise.resolve(null);
   const promise = source.load({ force }).then((data) => {
     source.assign(data);
+    scheduleDataRender(key);
     return data;
+  }).finally(() => {
+    dataSourcePromises.get(key).pending = false;
   });
-  dataSourcePromises.set(key, { promise, requestedAt: Date.now() });
+  dataSourcePromises.set(key, { promise, requestedAt: Date.now(), pending: true });
   return promise;
 }
 
@@ -6509,7 +6560,10 @@ async function loadViewData(view = getActiveView(), options = {}) {
   if (view === "cloud") await loadCloudData(options);
   if (view === "ricky") await loadRickyData(options);
   if (view === "life") await loadLifeData(options);
-  if (getActiveView() === view) renderActiveView();
+  if (getActiveView() === view) {
+    renderActiveView();
+    if (view === "ballet") scheduleBalletWeekCoverWarmup();
+  }
 }
 
 async function loadData(options = {}) {
@@ -6520,6 +6574,7 @@ async function loadData(options = {}) {
 function setView(view) {
   const nextView = ["home", "ricky", "life", "tokens", "ballet", "cloud", "dounai"].includes(view) ? view : "home";
   document.body.dataset.view = nextView;
+  restoreCachedView(nextView);
   qsa("[data-view-panel]").forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.viewPanel === nextView);
   });
@@ -6547,7 +6602,6 @@ function setView(view) {
   if (nextView === "dounai") requestAnimationFrame(renderDounai);
   if (nextView === "ballet") {
     requestAnimationFrame(renderBallet);
-    scheduleBalletWeekCoverWarmup();
   }
   if (nextView === "ricky") requestAnimationFrame(renderRicky);
   if (nextView === "life") requestAnimationFrame(renderLife);
@@ -7046,10 +7100,13 @@ qs("#ballet-week-download")?.addEventListener("click", async () => {
 refreshButton?.addEventListener("click", async () => {
   refreshButton.disabled = true;
   refreshButton.dataset.state = "loading";
-  await loadData({ force: true });
-  refreshButton.dataset.state = "success";
-  refreshButton.disabled = false;
-  setTimeout(() => refreshButton.removeAttribute("data-state"), 900);
+  try {
+    await loadData({ force: true });
+    refreshButton.dataset.state = "success";
+  } finally {
+    refreshButton.disabled = false;
+    setTimeout(() => refreshButton.removeAttribute("data-state"), 900);
+  }
 });
 
 window.addEventListener("hashchange", () => {

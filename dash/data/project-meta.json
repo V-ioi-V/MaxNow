@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-28 23:09",
-  "version": "1.0.11.40",
-  "versionLabel": "v1.0.11.40",
-  "branch": "bugfix/ballet-time-distribution-sort",
-  "commit": "7dbbbc20",
+  "updatedAt": "2026-09-28 23:21",
+  "version": "1.0.11.41",
+  "versionLabel": "v1.0.11.41",
+  "branch": "bugfix/dashboard-startup",
+  "commit": "5306db0f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-time-distribution-sort · commit 7dbbbc20 · 有未提交代码改动",
+  "deployNote": "bugfix/dashboard-startup · commit 5306db0f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-28",
+      "title": "缩短打开与刷新时的占位等待",
+      "summary": "主脚本提前到 head 并行下载；当前页先展示浏览器最后成功数据，各数据源到达后及时更新，不再被最慢的一项拖住。缓存保留原更新时间并标记待校验，失败继续保留最后成功数据。"
+    },
     {
       "date": "2026-09-28",
       "title": "修正训练分布的时间排序",
@@ -28,11 +33,6 @@
       "date": "2026-09-27",
       "title": "课程级别按上课次数排序",
       "summary": "训练记录的课程级别改为按所选本月 / 今年 / 全部范围的上课次数从多到少排列；次数相同保留原级别顺序。"
-    },
-    {
-      "date": "2026-09-27",
-      "title": "抢课优先周二，其次周六",
-      "summary": "日期顺序调整为周二 → 周六 → 周五 → 周一 → 周三 → 周四；每天仍为 L1 → L1.5 → 软开。周安排中周二为优先 01–03、周六为 04–06，其他日期编号保持不变。"
     }
   ]
 }
