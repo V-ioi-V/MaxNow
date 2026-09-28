@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-28 22:59",
-  "version": "1.0.11.39",
-  "versionLabel": "v1.0.11.39",
-  "branch": "bugfix/ballet-course-type-time-sort",
-  "commit": "6cc813e7",
+  "updatedAt": "2026-09-28 23:05",
+  "version": "1.0.11.40",
+  "versionLabel": "v1.0.11.40",
+  "branch": "bugfix/ballet-time-distribution-sort",
+  "commit": "22081a92",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-course-type-time-sort · commit 6cc813e7 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-time-distribution-sort · commit 22081a92 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-09-28",
+      "title": "修正训练分布的时间排序",
+      "summary": "根据 Owner 截图修正上一版遗漏：选择“时间”时，课程类型、课程级别和授课老师三张卡都按当前范围的累计小时数从高到低排列；选择“节数”时三张卡都按课次数排列。同值先比较课次数，再沿用各卡原有名称 / 级别顺序。"
+    },
     {
       "date": "2026-09-28",
       "title": "课程类型跟随时间指标排序",
@@ -28,11 +33,6 @@
       "date": "2026-09-27",
       "title": "抢课优先周二，其次周六",
       "summary": "日期顺序调整为周二 → 周六 → 周五 → 周一 → 周三 → 周四；每天仍为 L1 → L1.5 → 软开。周安排中周二为优先 01–03、周六为 04–06，其他日期编号保持不变。"
-    },
-    {
-      "date": "2026-09-26",
-      "title": "手动录入王嘉豪老师芭蕾 L1 课程",
-      "summary": "根据 Owner 截图，唯一匹配并手动录入 `2026-09-26 17:30–19:00` 大教室「芭蕾L1-入门」，老师王嘉豪，时长 90 分钟。"
     }
   ]
 }

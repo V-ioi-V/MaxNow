@@ -3988,20 +3988,17 @@ function normalizeBalletDistribution(source, kind) {
     })
     .filter((item) => item.classes > 0 || Number(item.minutes) > 0);
 
-  if (kind === "courseType" && activeBalletMetric === "hours") {
-    return normalized.sort(
-      (a, b) => (b.minutes || 0) - (a.minutes || 0) || b.classes - a.classes || a.label.localeCompare(b.label, "zh-CN"),
-    );
-  }
-  if (kind !== "level" && kind !== "levelDisplay") {
-    return normalized.sort((a, b) => b.classes - a.classes || a.label.localeCompare(b.label, "zh-CN"));
-  }
   const order = new Map(
     ["L1", "L1.5", "L2", "L3", "L4", "L5", "芭蕾", "软开", "肌肉素质", "技术技巧", "其他"]
       .map((label, index) => [label, index]),
   );
   return normalized.sort(
-    (a, b) => b.classes - a.classes || (order.get(a.label) ?? 99) - (order.get(b.label) ?? 99),
+    (a, b) =>
+      (activeBalletMetric === "hours" ? (b.minutes || 0) - (a.minutes || 0) : 0) ||
+      b.classes - a.classes ||
+      (kind === "level" || kind === "levelDisplay"
+        ? (order.get(a.label) ?? 99) - (order.get(b.label) ?? 99)
+        : a.label.localeCompare(b.label, "zh-CN")),
   );
 }
 
