@@ -9,6 +9,13 @@
 - 随后仅启动一次既有 rolling 业务只读同步，服务回到 `inactive / success / exit 0`；公开 `dataAsOf=2026-09-28T22:46:50+08:00`、`upcoming.records=[]`、JSON / JS 完全一致，历史仍为 44 节 / 57 小时，同步 `changedRecords=0`。
 - 没有修改脚本、凭据、自动抢课规则或 timer，也没有新增预约、候补或转课。
 
+## 2026-09-28 课程类型时间排序上线
+
+- 将训练记录“课程类型”在时间指标下改为按累计分钟数降序；节数指标仍按课次降序，课程级别和老师排序不变。版本 `1.0.11.39`，页面脚本 `app.js?v=245`。
+- 从主分支提交 `6cc813e7` 制作并校验 Git bundle，服务器从 `fe5f6964` 快进；部署备份 `/home/ubuntu/maxnow-deploy-backups/20260928-course-type-time-sort` 保存完整 `dash/data`、运行态修改清单和芭蕾 JSON / JS 哈希，运行态 stash 为 `67e5825c2028b1ccd241c8de7693c0c3e23d1def`。恢复运行态数据后重新生成项目元信息。
+- 本地和服务器 `scripts/check.py`、`git diff --check` 与 `nginx -t` 检查通过；服务器 `ballet.json` / `ballet.js` SHA-256 与部署前一致，线上页面文件的新脚本条件和 `app.js?v=245` 已确认。未认证首页仍返回 302，芭蕾预约快照仍为空。
+- 只部署静态代码与仓库文档，没有访问闻道，也没有触发芭蕾同步、自动抢课、预约、候补或取消。
+
 ## 服务器
 
 ```text
