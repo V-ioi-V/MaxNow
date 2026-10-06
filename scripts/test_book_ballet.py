@@ -3,7 +3,12 @@ import unittest
 
 import book_ballet as booking
 import sync_ballet as ballet
-from test_sync_ballet import detail_html, index_html, timetable_html
+from test_sync_ballet import (
+    detail_html,
+    index_html,
+    paginated_booking_html,
+    timetable_html,
+)
 
 
 TARGET = {
@@ -158,6 +163,47 @@ class FakeSource:
 
 
 class BalletBookingTests(unittest.TestCase):
+    def test_live_booking_source_reads_later_booking_pages(self):
+        class PaginatedReader:
+            request_count = 0
+
+            def request(self, path, expected_marker):
+                self.request_count += 1
+                if path == ballet.BOOKING_PATH:
+                    historical = [
+                        (str(10001 + index), "历史课", "2026-07-01", "已取消")
+                        for index in range(10)
+                    ]
+                    return paginated_booking_html(historical, 11)
+                if path.endswith("/20001"):
+                    return detail_html(
+                        course=TARGET["courseName"],
+                        day=TARGET["date"],
+                        time_text=f"{TARGET['startTime']}~{TARGET['endTime']}",
+                        teacher=TARGET["teacher"],
+                        venue=TARGET["venue"],
+                        status="已预约",
+                    )
+                raise AssertionError(path)
+
+            def request_booking_page(self, offset, customer_id):
+                self.request_count += 1
+                assert (offset, customer_id) == (10, "1234567")
+                return index_html(
+                    "约课记录",
+                    [("20001", TARGET["courseName"], TARGET["date"], "已预约")],
+                )
+
+        source = booking.WendaBookingSource(
+            ballet.Credentials("a" * 32, "Synthetic-WeChat-Fixture-Agent/1.0")
+        )
+        source.reader = PaginatedReader()
+        existing = booking.current_booking(source, TARGET)
+        self.assertIsNotNone(existing)
+        self.assertEqual(existing["bookingStatus"], "booked")
+        self.assertEqual(source.request_count, 3)
+        self.assertEqual(source.mutation_count, 0)
+
     def test_course_control_binding_survives_source_order_changes(self):
         for reverse in (False, True):
             with self.subTest(reverse=reverse):

@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-28 23:25",
-  "version": "1.0.11.41",
-  "versionLabel": "v1.0.11.41",
-  "branch": "bugfix/dashboard-startup",
-  "commit": "a3cf1aaf",
+  "updatedAt": "2026-10-06 22:19",
+  "version": "1.0.11.42",
+  "versionLabel": "v1.0.11.42",
+  "branch": "bugfix/ballet-booking-pagination",
+  "commit": "f9fdc3ff",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/dashboard-startup · commit a3cf1aaf · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-booking-pagination · commit f9fdc3ff · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-06",
+      "title": "取消三节晚课并预约两节周三上午课",
+      "summary": "按 Owner 截图与闻道实时预约逐项精确匹配并取消：10 月 7 日张瀚泽小教室 19:00–20:00 软开课、大教室 20:00–21:30 芭蕾 L1.5，以及 10 月 8 日李俊大教室 18:45–19:45 软开课候补。每节均先通过零 mutation 预检、单次取消，再以独立实时列表确认消失；同时间的张瀚泽 L1.5 预约保留。"
+    },
     {
       "date": "2026-09-28",
       "title": "缩短打开与刷新时的占位等待",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-09-28",
       "title": "取消截图圈选的五节预约与候补",
       "summary": "按 Owner 红框逐项精确核对并取消：9 月 29 日李俊大教室 18:45–19:45 软开课、19:45–21:15 芭蕾 L1 两节候补；10 月 1 日及 2 日张瀚泽小教室 18:45–20:15 芭蕾 L1.5，以及 10 月 2 日 20:15–21:15 软开课三节预约。"
-    },
-    {
-      "date": "2026-09-27",
-      "title": "课程级别按上课次数排序",
-      "summary": "训练记录的课程级别改为按所选本月 / 今年 / 全部范围的上课次数从多到少排列；次数相同保留原级别顺序。"
     }
   ]
 };

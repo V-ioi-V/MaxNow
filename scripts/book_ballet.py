@@ -401,6 +401,9 @@ class WendaBookingSource:
     def request(self, path: str, expected_marker: str) -> str:
         return self.reader.request(path, expected_marker)
 
+    def request_booking_page(self, offset: int, customer_id: str) -> str:
+        return self.reader.request_booking_page(offset, customer_id)
+
     def post_fields(
         self,
         path: str,
