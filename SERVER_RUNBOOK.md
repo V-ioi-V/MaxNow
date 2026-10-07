@@ -2,6 +2,13 @@
 
 这个文件记录 MaxNow 服务器的 SSH 连接方式、前端静态站部署方式和常用排障命令。
 
+## 2026-10-07 芭蕾课程卡样式收敛上线
+
+- UI 提交 `87d9c3cf` 已经由校验哈希的 Git bundle 快进部署到服务器；版本 `1.0.11.43`，页面引用 `styles.css?v=276` 和 `app.js?v=248`。课程卡改用芭蕾页其他模块的白底、细边框、轻阴影和紧凑进度信息。
+- 部署前完整备份服务器运行数据至 `/home/ubuntu/maxnow-deploy-backups/20261007-2203-ballet-card-ui/dash-data.tgz`，部署后恢复；芭蕾 `ballet.json` 与 `ballet.js` 的 SHA-256 和部署前一致，`dataAsOf=2026-10-07T22:00:00+08:00`，训练累计 48 节 / 62 小时。同步更新已提交的 macOS Codex 用量源数据，并重新生成 Token 汇总与项目元信息。
+- 服务器 `scripts/check.py`、`git diff --check`、`nginx -t` 通过；nginx 与认证服务 active，芭蕾相关 timer 保持原状态。未认证首页 / 登录页 / 芭蕾数据返回 `302 / 200 / 401`。本地预览在 390、1800、2100 CSS 像素宽度下无横向溢出，桌面端顶部三列同高；线上认证后的浏览器视觉检查因浏览器连接不可用未完成。
+- 本次仅部署静态页面与文档，没有手动访问闻道或触发芭蕾同步、抢课、预约、候补、取消、转课。
+
 ## 2026-10-06 课程取消、预约与预约分页入口修复
 
 - Owner 红框中的三节活动记录逐项实时匹配：10 月 7 日 19:00–20:00 张瀚泽小教室软开课、20:00–21:30 张瀚泽大教室芭蕾 L1.5，以及 10 月 8 日 18:45–19:45 李俊大教室软开课候补第 4 位。三节各经 `ready / mutationAttempts=0` 预检与单次取消，并逐节用独立 `bookings` 查询确认消失；同时间张瀚泽小教室 L1.5 预约仍在。
@@ -81,7 +88,7 @@ blog.maxnow.cn -> /var/www/maxnow-dashboard/blog
 Git 来源：
 
 ```text
-https://github.com/V-ioi-V/MaxNow.git
+ssh://git@ssh.github.com:443/V-ioi-V/MaxNow.git
 branch: main
 ```
 
