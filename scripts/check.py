@@ -739,9 +739,6 @@ def check_ballet_read_model():
     dashboard_html = (ROOT / "dash/index.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     sync_script = (ROOT / "scripts/sync_ballet.py").read_text(encoding="utf-8")
-    membership_art = ROOT / "dash/assets/ballet/membership-ballerina.webp"
-    if not membership_art.exists() or membership_art.stat().st_size <= 0:
-        raise ValueError("ballet: membership ballerina artwork is missing")
     if (
         "function balletClassBoundary" not in dashboard_js
         or "boundary >= Date.now()" not in dashboard_js
@@ -802,10 +799,9 @@ def check_ballet_read_model():
         or ".ballet-membership-card {" not in dashboard_css
         or "function createBalletCalendarIcon(" not in dashboard_js
         or "function balletMembershipDisplayName(" not in dashboard_js
-        or "./assets/ballet/membership-ballerina.webp" not in dashboard_js
-        or ".ballet-membership-artwork {" not in dashboard_css
-        or ".ballet-membership-day-ring {" not in dashboard_css
-        or "@container (max-width: 399px)" not in dashboard_css
+        or 'article.className = "panel ballet-membership-item";' not in dashboard_js
+        or ".ballet-membership-validity-track {" not in dashboard_css
+        or "@container (max-width: 520px)" not in dashboard_css
         or ".ballet-week-grid {" not in dashboard_css
     ):
         raise ValueError("ballet: membership or weekly frontend contract is incomplete")
@@ -1878,9 +1874,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=275" not in dashboard_html
+        "styles.css?v=276" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=247" not in dashboard_html
+        or "app.js?v=248" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -1894,7 +1890,7 @@ def check_secondary_view_style():
         or 'classList.toggle("has-carousel", orderedCards.length > 1)' not in dashboard_js
         or "scroll-snap-type: inline mandatory;" not in dashboard_css
         or ".ballet-overview-grid .ballet-membership-card.has-carousel .ballet-membership-item" not in dashboard_css
-        or "position: absolute;\n  z-index: 4;\n  left: 50%;\n  bottom: 13px;" not in dashboard_css
+        or "position: absolute;\n  z-index: 4;\n  left: 50%;\n  bottom: 14px;" not in dashboard_css
         or 'id="ballet-membership-controls"' not in dashboard_html
         or 'id="ballet-membership-dots"' not in dashboard_html
     ):
@@ -2134,7 +2130,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=247" not in dashboard_html:
+    if "app.js?v=248" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js
