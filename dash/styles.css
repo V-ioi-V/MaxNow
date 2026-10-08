@@ -635,16 +635,6 @@ a {
   color: var(--ballet);
 }
 
-.nav-ricky .nav-icon {
-  background: #fff0f6;
-  color: var(--pink);
-}
-
-.nav-life .nav-icon {
-  background: #f0fbf4;
-  color: var(--ok);
-}
-
 .nav-cloud .nav-icon {
   background: #fff4e6;
   color: var(--orange);
@@ -681,14 +671,6 @@ a {
 
 .nav-ballet {
   --nav-color: var(--ballet);
-}
-
-.nav-ricky {
-  --nav-color: var(--pink);
-}
-
-.nav-life {
-  --nav-color: var(--ok);
 }
 
 .nav-cloud {

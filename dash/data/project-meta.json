@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-07 21:51",
-  "version": "1.0.11.43",
-  "versionLabel": "v1.0.11.43",
-  "branch": "feature/ballet-card-ui",
-  "commit": "369613cb",
+  "updatedAt": "2026-10-08 22:47",
+  "version": "1.0.11.44",
+  "versionLabel": "v1.0.11.44",
+  "branch": "bugfix/remove-life-ricky-tabs",
+  "commit": "9bec0a9a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-card-ui · commit 369613cb · 有未提交代码改动",
+  "deployNote": "bugfix/remove-life-ricky-tabs · commit 9bec0a9a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-08",
+      "title": "暂时下线生活与同行记入口",
+      "summary": "左侧导航移除“生活 / 吃啥”和“同行记 / 我和 Ricky”；旧 hash 链接回首页。页面实现与数据同步保留，方便日后恢复。"
+    },
     {
       "date": "2026-10-07",
       "title": "芭蕾课程卡收敛到统一面板样式",
@@ -28,11 +33,6 @@
       "date": "2026-09-28",
       "title": "修正训练分布的时间排序",
       "summary": "根据 Owner 截图修正上一版遗漏：选择“时间”时，课程类型、课程级别和授课老师三张卡都按当前范围的累计小时数从高到低排列；选择“节数”时三张卡都按课次数排列。同值先比较课次数，再沿用各卡原有名称 / 级别顺序。"
-    },
-    {
-      "date": "2026-09-28",
-      "title": "课程类型跟随时间指标排序",
-      "summary": "训练记录选择“时间”时，课程类型按当前范围的累计上课分钟数从多到少排列；选择“节数”时继续按课次排列。同值时以课次和名称稳定排序，课程级别及授课老师的排序不变。"
     }
   ]
 }

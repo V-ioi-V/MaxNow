@@ -6557,7 +6557,7 @@ async function loadData(options = {}) {
 }
 
 function setView(view) {
-  const nextView = ["home", "ricky", "life", "tokens", "ballet", "cloud", "dounai"].includes(view) ? view : "home";
+  const nextView = ["home", "tokens", "ballet", "cloud", "dounai"].includes(view) ? view : "home";
   document.body.dataset.view = nextView;
   restoreCachedView(nextView);
   qsa("[data-view-panel]").forEach((panel) => {

@@ -26,7 +26,7 @@
 - 内容源使用 private personal-wiki 的 `raw/blog-vioiv`：当前已归档旧 Hexo Markdown 211 篇，图片缓存 167 个。
 - MaxNow 仓库负责发布层：构建脚本、公开文章数据、静态页面、归档、标签、RSS、部署说明和 dashboard 发布状态入口。
 - `dash.maxnow.cn` 继续作为私人状态工作站；最多显示博客发布进度、待筛选数量和跳转入口，不承载完整博客阅读体验。
-- `dash.maxnow.cn` 顶部右侧已预留 `Blog` 弱外链，指向 `https://blog.maxnow.cn`；左侧导航只保留 Dash 内部页面：首页、豆奶、Token、芭蕾、云服务、生活、同行记。
+- `dash.maxnow.cn` 顶部右侧已预留 `Blog` 弱外链，指向 `https://blog.maxnow.cn`；左侧导航当前只保留 Dash 内部页面：首页、豆奶、Token、芭蕾、云服务。
 - 第一阶段先做只读静态博客：筛选 public/published 文章，转换 front matter，复制必要图片，生成 `blog.maxnow.cn` 页面。
 - 首页预览页：`blog/index.html`，用于确认文章流首页的信息架构和视觉风格，首页按文章预览卡片持续向下浏览。
 - 文章 cell 交互：整张文章卡片都可点击进入文章详情，桌面端文章流按一行两篇展示。
@@ -54,7 +54,7 @@
 
 - 来源：2026-07-10 MaxNow 整体体检。
 - 建议分支：`feature/frontend-smoke-tests`
-- 在 CI 或本地统一命令中启动静态服务，检查 Dash 七个 tab、Blog 主要页面、控制台错误、失效资源和关键交互。
+- 在 CI 或本地统一命令中启动静态服务，检查 Dash 当前五个 tab、Blog 主要页面、控制台错误、失效资源和关键交互。
 - 增加 JavaScript 语法检查和关键数据新鲜度 / Roadmap 一致性检查；自动测试环境中本地服务不可达应判失败，不再仅显示 skipped。
 - 为 Home 同行卡、Today Status 时间轴和主要网格增加桌面 / 手机几何断言，检查同排卡片上下边缘、高度和水平溢出。
 - 为侧栏当前页面补 `aria-current`，为 Token 范围补完整 tab 语义、`aria-selected` 和键盘行为。
@@ -278,7 +278,11 @@
 - macOS 上报已支持生成提交分叉自愈和并发 push 有限重试；只有提交标题与改动文件都严格落在 macOS 源账本边界内才允许自动 reset，人工提交继续要求手工处理。
 - 服务器 root crontab 使用 `MAXNOW-TOKEN-SOURCE-REFRESH` 每小时 `:05` 刷新 OpenClaw / Codex server 源账本；ubuntu 使用 `MAXNOW-TOKEN-USAGE-REFRESH` 每小时 `:10` 拉取并发布统一总账。
 
-### 已完成的同行记入口
+### 已完成的入口调整（2026-10-08）
+
+- 暂时移除左侧“生活”和“同行记”两个 tab；旧 `#life` / `#ricky` 链接回首页，页面实现与数据同步保留以供以后恢复。
+
+### 已完成的同行记入口（现暂时下线）
 
 - 左侧导航新增“同行记”tab，副标题为“我和 Ricky”，放在最后一个一级入口。
 - 新增只读页面展示真实地图和统计卡片，地点与旅行记录暂时只进入地图 marker / popup，不单独铺列表。
@@ -286,7 +290,7 @@
 - 新增 `scripts/sync_ricky_travel.py` 和 `python scripts/update_data.py ricky-travel`，把 personal-wiki 的结构化旅行数据同步成 `dash/data/ricky.json` / `dash/data/ricky.js`。
 - `scripts/update_data.py wrap all` 和 `scripts/check.py` 已纳入 `ricky` wrapper 校验；当前同步得到 12 个地点和 4 条记录。
 
-### 已完成的生活入口和吃啥工具
+### 已完成的生活入口和吃啥工具（现暂时下线）
 
 - 左侧导航新增“生活”tab，副标题为“吃啥”，放在云服务和同行记之间。
 - personal-wiki 新增 `wiki/life/food-picker.md`，当前候选为粉面菜蛋、红烧牛肉面、满小饱肥汁土豆粉、糟粕醋米粉。
