@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08 23:10",
+  "updatedAt": "2026-10-08 23:23",
   "version": "1.0.11.46",
   "versionLabel": "v1.0.11.46",
   "branch": "feature/ballet-training-record-layout",
-  "commit": "0ce0dd51",
+  "commit": "7a3a2b61",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-training-record-layout · commit 0ce0dd51 · 有未提交代码改动",
+  "deployNote": "feature/ballet-training-record-layout · commit 7a3a2b61 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-10-08",
