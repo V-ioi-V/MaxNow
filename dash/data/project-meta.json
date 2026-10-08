@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08 23:00",
-  "version": "1.0.11.45",
-  "versionLabel": "v1.0.11.45",
-  "branch": "feature/ballet-membership-rail",
-  "commit": "4bf76646",
+  "updatedAt": "2026-10-08 23:10",
+  "version": "1.0.11.46",
+  "versionLabel": "v1.0.11.46",
+  "branch": "feature/ballet-training-record-layout",
+  "commit": "0ce0dd51",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-membership-rail · commit 4bf76646 · 有未提交代码改动",
+  "deployNote": "feature/ballet-training-record-layout · commit 0ce0dd51 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-08",
+      "title": "训练记录同时展示时间与节数",
+      "summary": "移除训练记录里的上课历史卡和完整记录弹窗；底层已完成课程数据继续参与统计。"
+    },
     {
       "date": "2026-10-08",
       "title": "课程卡增加会员卡类型列表",
@@ -28,11 +33,6 @@
       "date": "2026-10-06",
       "title": "取消三节晚课并预约两节周三上午课",
       "summary": "按 Owner 截图与闻道实时预约逐项精确匹配并取消：10 月 7 日张瀚泽小教室 19:00–20:00 软开课、大教室 20:00–21:30 芭蕾 L1.5，以及 10 月 8 日李俊大教室 18:45–19:45 软开课候补。每节均先通过零 mutation 预检、单次取消，再以独立实时列表确认消失；同时间的张瀚泽 L1.5 预约保留。"
-    },
-    {
-      "date": "2026-09-28",
-      "title": "缩短打开与刷新时的占位等待",
-      "summary": "主脚本提前到 head 并行下载；当前页先展示浏览器最后成功数据，各数据源到达后及时更新，不再被最慢的一项拖住。缓存保留原更新时间并标记待校验，失败继续保留最后成功数据。"
     }
   ]
 }

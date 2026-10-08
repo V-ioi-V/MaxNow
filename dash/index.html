@@ -6,8 +6,8 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=250" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=278" />
+    <script src="./app.js?v=251" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=279" />
   </head>
   <body>
     <div class="app-shell">
@@ -859,19 +859,18 @@
                 <button class="ballet-segment-button" type="button" data-ballet-period="year">今年</button>
                 <button class="ballet-segment-button is-active" type="button" data-ballet-period="all">全部</button>
               </div>
-              <div class="ballet-segmented" role="group" aria-label="统计指标">
-                <button class="ballet-segment-button is-active" type="button" data-ballet-metric="classes">节数</button>
-                <button class="ballet-segment-button" type="button" data-ballet-metric="hours">时间</button>
-              </div>
             </div>
             <div class="ballet-training-overview">
               <section class="ballet-training-total" aria-live="polite">
                 <span id="ballet-training-period">全部上课</span>
-                <div>
-                  <strong id="ballet-training-value">0</strong>
-                  <small id="ballet-training-unit">节</small>
+                <div class="ballet-training-total-metric">
+                  <strong id="ballet-training-hours">0</strong>
+                  <small>小时</small>
                 </div>
-                <p id="ballet-training-secondary">共 0 节 · 0 小时</p>
+                <div class="ballet-training-total-metric is-secondary">
+                  <strong id="ballet-training-classes">0</strong>
+                  <small>节</small>
+                </div>
               </section>
               <div class="ballet-breakdown-grid">
                 <section class="ballet-breakdown-section">
@@ -907,66 +906,28 @@
               </div>
             </div>
             <div class="ballet-training-detail-grid">
-              <div class="ballet-training-chart-column">
-                <section class="ballet-training-trend" id="ballet-training-trend">
-                  <header>
-                    <div>
-                      <p class="eyebrow">Training trend</p>
-                      <h3 id="ballet-trend-title">每周上课节数热力图</h3>
-                    </div>
-                  </header>
-                  <div class="line-chart ballet-line-chart" id="ballet-trend-chart"></div>
-                </section>
-                <p class="ballet-trend-placeholder" id="ballet-trend-placeholder" hidden>
-                  记录达到 5 节后显示趋势；当前先保留准确的总数、分类和历史。
-                </p>
-              </div>
-              <div class="ballet-history-preview-slot">
-                <aside class="ballet-history-preview" aria-labelledby="ballet-history-title">
-                  <header>
-                    <div>
-                      <p class="eyebrow">Attendance</p>
-                      <h3 id="ballet-history-title">上课历史</h3>
-                    </div>
-                    <div class="ballet-history-preview-actions">
-                      <span class="status-pill" id="ballet-history-count">共 0 节</span>
-                      <button
-                        class="ballet-history-open"
-                        id="ballet-history-open"
-                        type="button"
-                        aria-haspopup="dialog"
-                        aria-controls="ballet-history-dialog"
-                        hidden
-                      >
-                        全部记录 <span aria-hidden="true">↗</span>
-                      </button>
-                    </div>
-                  </header>
-                  <div
-                    class="ballet-history-preview-list"
-                    id="ballet-history-preview"
-                    tabindex="0"
-                    aria-label="上课历史列表，可上下滑动"
-                  ></div>
-                </aside>
-              </div>
-            </div>
-
-            <dialog class="ballet-history-dialog" id="ballet-history-dialog" aria-labelledby="ballet-history-dialog-title">
-              <div class="ballet-history-dialog-shell">
-                <header class="ballet-history-dialog-head">
+              <section class="ballet-training-trend" id="ballet-training-time-trend">
+                <header>
                   <div>
-                    <p class="eyebrow">Attendance History</p>
-                    <h2 id="ballet-history-dialog-title">全部上课记录</h2>
-                    <p id="ballet-history-dialog-summary">本月 · 共 0 节</p>
+                    <p class="eyebrow">Training time</p>
+                    <h3 id="ballet-time-trend-title">每周训练时间热力图</h3>
                   </div>
-                  <button class="ballet-history-close" id="ballet-history-close" type="button" aria-label="关闭上课历史">
-                    <span aria-hidden="true">×</span>
-                  </button>
                 </header>
-                <div class="ballet-history-list" id="ballet-history"></div>
-              </div>
-            </dialog>
+                <div class="line-chart ballet-line-chart" id="ballet-time-trend-chart"></div>
+              </section>
+              <section class="ballet-training-trend" id="ballet-training-classes-trend">
+                <header>
+                  <div>
+                    <p class="eyebrow">Class count</p>
+                    <h3 id="ballet-classes-trend-title">每周上课节数热力图</h3>
+                  </div>
+                </header>
+                <div class="line-chart ballet-line-chart" id="ballet-classes-trend-chart"></div>
+              </section>
+              <p class="ballet-trend-placeholder" id="ballet-trend-placeholder" hidden>
+                当前时间范围还没有可用于趋势图的上课记录。
+              </p>
+            </div>
 
             <dialog class="ballet-week-dialog" id="ballet-week-dialog" aria-labelledby="ballet-week-dialog-title">
               <div class="ballet-week-dialog-shell">

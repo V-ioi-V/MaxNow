@@ -1751,50 +1751,35 @@ def check_secondary_view_style():
         or "function createBalletWeeklyHeatmap(records, options = {})" not in dashboard_js
         or "function fillBalletMonths(entries, year, monthCount = 12)" not in dashboard_js
         or "fillBalletMonths(entries, year, Number(month.slice(5, 7)))" not in dashboard_js
-        or 'const showTrend = isHeatmap ? hasTrainingRecords : sampleCount > 0;' not in dashboard_js
+        or 'const showTrend = sampleCount > 0;' not in dashboard_js
         or ".ballet-line-chart.is-heatmap {" not in dashboard_css
         or ".ballet-line-chart.is-week-heatmap {" not in dashboard_css
         or ".ballet-week-heatmap-grid {" not in dashboard_css
-        or "width: min(100%, 840px);" not in dashboard_css
+        or ".ballet-line-chart.is-heatmap {\n  width: 100%;" not in dashboard_css
+        or ".ballet-line-chart.is-week-heatmap {\n  width: 100%;" not in dashboard_css
         or ".ballet-line-chart.is-compact-line {" not in dashboard_css
-        or "width: min(100%, var(--ballet-trend-chart-width, 840px));" not in dashboard_css
+        or ".ballet-line-chart.is-compact-line {\n  width: 100%;" not in dashboard_css
         or 'chart.classList.toggle("is-compact-line", !isHeatmap);' not in dashboard_js
-        or 'const compactChartWidth = isHeatmap' not in dashboard_js
-        or '? 840' not in dashboard_js
-        or ': Math.min(840, Math.max(420, records.length * 84 + 104));' not in dashboard_js
-        or 'detailGrid?.style.setProperty("--ballet-training-chart-column-width", `${compactChartWidth}px`);' not in dashboard_js
-        or "width: compactChartWidth," not in dashboard_js
+        or 'const chartWidth = Math.max(420, Math.round(chart.clientWidth || 840));' not in dashboard_js
+        or "width: chartWidth," not in dashboard_js
         or ".ballet-heatmap-grid {" not in dashboard_css
         or '.ballet-heatmap-cell[data-uncovered="true"] {' not in dashboard_css
         or '.ballet-heatmap-cell[data-uncovered="true"] strong {' not in dashboard_css
         or 'class="ballet-training-detail-grid"' not in ballet_view_markup
-        or '<p class="eyebrow">Training trend</p>' not in ballet_view_markup
-        or 'class="ballet-history-preview-slot"' not in ballet_view_markup
-        or 'id="ballet-history-preview"' not in ballet_view_markup
-        or 'id="ballet-history-dialog"' not in ballet_view_markup
-        or 'class="ballet-history-preview-actions"' not in ballet_view_markup
-        or 'aria-controls="ballet-history-dialog"' not in ballet_view_markup
-        or 'id="ballet-trend-unit"' in ballet_view_markup
-        or '.ballet-history-preview-slot {' not in dashboard_css
+        or 'id="ballet-training-time-trend"' not in ballet_view_markup
+        or 'id="ballet-training-classes-trend"' not in ballet_view_markup
+        or 'id="ballet-time-trend-chart"' not in ballet_view_markup
+        or 'id="ballet-classes-trend-chart"' not in ballet_view_markup
+        or 'id="ballet-training-hours"' not in ballet_view_markup
+        or 'id="ballet-training-classes"' not in ballet_view_markup
+        or 'data-ballet-metric=' in ballet_view_markup
+        or 'id="ballet-history-preview"' in ballet_view_markup
+        or 'id="ballet-history-dialog"' in ballet_view_markup
+        or 'renderBalletHistory();' in dashboard_js
+        or 'row.className = "ballet-bar-metric";' not in dashboard_js
         or '.ballet-training-trend .ballet-line-chart,' not in dashboard_css
-        or 'position: absolute;' not in dashboard_css
-        or 'grid-template-columns: minmax(0, var(--ballet-training-chart-column-width)) minmax(0, 1fr);' not in dashboard_css
-        or '@media (max-width: 1500px)' not in dashboard_css
+        or '.ballet-training-detail-grid {\n  min-width: 0;\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);' not in dashboard_css
         or 'grid-template-columns: repeat(2, minmax(0, 1fr));' not in dashboard_css
-        or '.ballet-history-open[hidden] {' not in dashboard_css
-        or '.ballet-history-dialog {' not in dashboard_css
-        or 'height: min(72dvh, 680px);' not in dashboard_css
-        or '.ballet-history-dialog .ballet-history-list {' not in dashboard_css
-        or 'overflow-y: auto;' not in dashboard_css
-        or '.ballet-history-preview-list:focus-visible {' not in dashboard_css
-        or '.ballet-history-drawer' in dashboard_css
-        or 'function getBalletHistoryRecords()' not in dashboard_js
-        or 'const previewLimit = window.matchMedia("(max-width: 560px)").matches ? 3 : 8;' not in dashboard_js
-        or 'records.map(createBalletHistoryPreviewItem)' not in dashboard_js
-        or 'openButton.hidden = !hasMore;' not in dashboard_js
-        or 'aria-label="上课历史列表，可上下滑动"' not in ballet_view_markup
-        or 'balletHistoryDialog.showModal()' not in dashboard_js
-        or 'renderBalletHistory();' not in dashboard_js.split('qsa("[data-ballet-period]")', 1)[1]
         or 'let activeBalletPeriod = "all";' not in dashboard_js
         or 'button.dataset.balletPeriod || "all"' not in dashboard_js
         or 'class="ballet-segment-button is-active" type="button" data-ballet-period="all"' not in ballet_view_markup
@@ -1874,9 +1859,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=278" not in dashboard_html
+        "styles.css?v=279" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=250" not in dashboard_html
+        or "app.js?v=251" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2132,7 +2117,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=250" not in dashboard_html:
+    if "app.js?v=251" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js
