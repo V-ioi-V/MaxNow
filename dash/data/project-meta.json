@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09 00:03",
-  "version": "1.0.11.48",
-  "versionLabel": "v1.0.11.48",
-  "branch": "bugfix/ballet-training-label-size",
-  "commit": "4df96a53",
+  "updatedAt": "2026-10-09 00:10",
+  "version": "1.0.11.49",
+  "versionLabel": "v1.0.11.49",
+  "branch": "feature/ballet-cancel-oct09-oct10",
+  "commit": "cf954cb3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-training-label-size · commit 4df96a53 · 有未提交代码改动",
+  "deployNote": "feature/ballet-cancel-oct09-oct10 · commit cf954cb3 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-09",
+      "title": "取消三节晚课并刷新芭蕾面板",
+      "summary": "按 Owner 截图与闻道实时活动预约精确核对，取消 10 月 9 日申昊清小教室 18:45–20:15 芭蕾 L1.5－入门+、20:15–21:15 软开课，以及 10 月 10 日张瀚泽小教室 19:00–20:00 舞姿（基础）。三节均先通过零 mutation 预检，再分别单次取消并以独立实时查询复核；最终活动预约列表为空。"
+    },
     {
       "date": "2026-10-09",
       "title": "芭蕾训练分布名称字号收紧",
@@ -28,11 +33,6 @@
       "date": "2026-10-08",
       "title": "课程卡增加会员卡类型列表",
       "summary": "芭蕾顶部课程卡在宽屏略微加宽，右侧成长等级和课程等级面板相应收窄，三列仍同顶同底。"
-    },
-    {
-      "date": "2026-10-08",
-      "title": "暂时下线生活与同行记入口",
-      "summary": "左侧导航移除“生活 / 吃啥”和“同行记 / 我和 Ricky”；旧 hash 链接回首页。页面实现与数据同步保留，方便日后恢复。"
     }
   ]
 }

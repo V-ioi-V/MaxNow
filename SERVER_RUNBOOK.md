@@ -2,6 +2,12 @@
 
 这个文件记录 MaxNow 服务器的 SSH 连接方式、前端静态站部署方式和常用排障命令。
 
+## 2026-10-09 截图圈选三节课程取消
+
+- Owner 红框指定的三节活动预约在 00:06:30 的闻道实时列表中逐项精确匹配：10 月 9 日 18:45–20:15 芭蕾 L1.5－入门+ / 申昊清 / 小教室，10 月 9 日 20:15–21:15 软开课 / 申昊清 / 小教室，10 月 10 日 19:00–20:00 舞姿（基础） / 张瀚泽 / 小教室；三节均为已预约，且均在官方取消截止时间之前。
+- 每节分别得到 `ready / mutationAttempts=0` 的 dry-run，execute 各只产生一次取消 mutation 并返回 `cancelled`。每节后独立调用无日期范围的实时活动预约查询确认目标消失，00:08:51 的最终活动列表为空；没有替换为相似课程或重试未知结果。
+- `maxnow-ballet-sync.service` 随后以 `Result=success / ExecMainStatus=0` 完成一次业务只读同步；公开面板 `dataAsOf=2026-10-09T00:09:06+08:00`、`cacheState=fresh`、`upcoming.records=[]`，JSON / JS 包装一致，`scripts/check.py` 通过。未修改闻道凭据、抢课规则或定时器。
+
 ## 2026-10-09 芭蕾训练分布名称字号收紧上线
 
 - 版本 `1.0.11.48`，`styles.css?v=281`；训练记录的课程类型、课程级别与授课老师名称统一为 `12px`，总量数字和图表未调整。本机通过 GitHub SSH 443 合入 `origin/main`；服务器用 SHA-256 校验并通过 `git bundle verify` 的增量 bundle 从 `e8b667c3` 快进到 `4df96a53`，同时包含并行上报的 macOS Codex 用量提交。
