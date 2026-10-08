@@ -4572,7 +4572,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 @media (min-width: 1501px) {
   .ballet-overview-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.22fr) minmax(0, 0.77fr);
   }
 }
 
@@ -6562,6 +6562,13 @@ body[data-view="ricky"] .topbar-ricky-status {
   container-type: inline-size;
 }
 
+.ballet-membership-card.has-card-types {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 154px;
+  grid-template-rows: auto;
+  gap: 10px;
+}
+
 .ballet-overview-grid .ballet-membership-list {
   position: relative;
   width: 100%;
@@ -6605,10 +6612,6 @@ body[data-view="ricky"] .topbar-ricky-status {
   box-shadow: var(--shadow);
   scroll-snap-align: start;
   scroll-snap-stop: always;
-}
-
-.ballet-overview-grid .ballet-membership-card.has-carousel .ballet-membership-item {
-  padding-bottom: 64px;
 }
 
 .ballet-membership-ticket-head.panel-head {
@@ -6828,108 +6831,114 @@ body[data-view="ricky"] .topbar-ricky-status {
   overflow-wrap: anywhere;
 }
 
-.ballet-membership-carousel-controls {
+.ballet-membership-types {
   position: absolute;
-  z-index: 4;
-  left: 50%;
-  bottom: 14px;
-  min-height: 32px;
+  inset: 0 0 0 auto;
+  width: 154px;
+  min-width: 0;
+  min-height: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: max-content;
-  max-width: calc(100% - 28px);
-  margin: 0;
-  padding: 2px 5px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 10px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: var(--shadow-soft);
-  transform: translateX(-50%);
+  box-shadow: var(--shadow);
 }
 
-.ballet-membership-carousel-controls[hidden] {
+.ballet-membership-types[hidden] {
   display: none;
 }
 
-.ballet-membership-carousel-button,
-.ballet-membership-carousel-dots button {
+.ballet-membership-types-label {
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.ballet-membership-type-list {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ballet-border) transparent;
+}
+
+.ballet-membership-type {
   appearance: none;
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 68px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
   border: 1px solid var(--line);
+  border-radius: 11px;
   background: var(--surface-soft);
-  color: var(--ballet);
+  color: var(--text);
+  text-align: left;
   cursor: pointer;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.ballet-membership-carousel-button {
-  width: 27px;
-  height: 27px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border-radius: 50%;
-  font-size: 15px;
-  line-height: 1;
+.ballet-membership-type strong {
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
-.ballet-membership-carousel-button:hover:not(:disabled),
-.ballet-membership-carousel-button:focus-visible,
-.ballet-membership-carousel-dots button:hover,
-.ballet-membership-carousel-dots button:focus-visible {
+.ballet-membership-type small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.ballet-membership-type:hover {
   border-color: var(--ballet-border);
   box-shadow: var(--shadow-soft);
   transform: translateY(-1px);
 }
 
-.ballet-membership-carousel-button:focus-visible,
-.ballet-membership-carousel-dots button:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--ballet) 20%, transparent);
+.ballet-membership-type[aria-pressed="true"] {
+  border-color: var(--ballet-border);
+  background: #fff4f8;
+  box-shadow: inset 3px 0 0 var(--ballet), var(--shadow-soft);
+}
+
+.ballet-membership-type:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ballet) 25%, transparent);
   outline-offset: 2px;
 }
 
-.ballet-membership-carousel-button:disabled {
-  cursor: default;
-  opacity: 0.4;
-}
+@media (max-width: 620px) {
+  .ballet-membership-card.has-card-types {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+  }
 
-.ballet-membership-carousel-dots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+  .ballet-membership-types {
+    position: static;
+    width: 100%;
+    padding: 12px;
+  }
 
-.ballet-membership-carousel-dots button {
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  border-radius: 999px;
-}
-
-.ballet-membership-carousel-dots button[data-active="true"] {
-  width: 18px;
-  border-color: var(--ballet);
-  background: var(--ballet);
-}
-
-.ballet-membership-carousel-counter {
-  min-width: 31px;
-  color: var(--muted);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  text-align: center;
+  .ballet-membership-type-list {
+    max-height: 152px;
+  }
 }
 
 @container (max-width: 520px) {
   .ballet-overview-grid .ballet-membership-item {
     gap: 12px;
     padding: 16px;
-  }
-
-  .ballet-overview-grid .ballet-membership-card.has-carousel .ballet-membership-item {
-    padding-bottom: 60px;
   }
 
   .ballet-overview-grid .ballet-membership-metrics {

@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08 22:47",
-  "version": "1.0.11.44",
-  "versionLabel": "v1.0.11.44",
-  "branch": "bugfix/remove-life-ricky-tabs",
-  "commit": "9bec0a9a",
+  "updatedAt": "2026-10-08 23:00",
+  "version": "1.0.11.45",
+  "versionLabel": "v1.0.11.45",
+  "branch": "feature/ballet-membership-rail",
+  "commit": "4bf76646",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/remove-life-ricky-tabs · commit 9bec0a9a · 有未提交代码改动",
+  "deployNote": "feature/ballet-membership-rail · commit 4bf76646 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-08",
+      "title": "课程卡增加会员卡类型列表",
+      "summary": "芭蕾顶部课程卡在宽屏略微加宽，右侧成长等级和课程等级面板相应收窄，三列仍同顶同底。"
+    },
     {
       "date": "2026-10-08",
       "title": "暂时下线生活与同行记入口",
@@ -28,11 +33,6 @@
       "date": "2026-09-28",
       "title": "缩短打开与刷新时的占位等待",
       "summary": "主脚本提前到 head 并行下载；当前页先展示浏览器最后成功数据，各数据源到达后及时更新，不再被最慢的一项拖住。缓存保留原更新时间并标记待校验，失败继续保留最后成功数据。"
-    },
-    {
-      "date": "2026-09-28",
-      "title": "修正训练分布的时间排序",
-      "summary": "根据 Owner 截图修正上一版遗漏：选择“时间”时，课程类型、课程级别和授课老师三张卡都按当前范围的累计小时数从高到低排列；选择“节数”时三张卡都按课次数排列。同值先比较课次数，再沿用各卡原有名称 / 级别顺序。"
     }
   ]
 }

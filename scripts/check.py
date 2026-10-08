@@ -1874,9 +1874,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=277" not in dashboard_html
+        "styles.css?v=278" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=249" not in dashboard_html
+        or "app.js?v=250" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -1889,12 +1889,14 @@ def check_secondary_view_style():
         or "function scrollBalletMembershipTo(" not in dashboard_js
         or 'classList.toggle("has-carousel", orderedCards.length > 1)' not in dashboard_js
         or "scroll-snap-type: inline mandatory;" not in dashboard_css
-        or ".ballet-overview-grid .ballet-membership-card.has-carousel .ballet-membership-item" not in dashboard_css
-        or "position: absolute;\n  z-index: 4;\n  left: 50%;\n  bottom: 14px;" not in dashboard_css
-        or 'id="ballet-membership-controls"' not in dashboard_html
-        or 'id="ballet-membership-dots"' not in dashboard_html
+        or ".ballet-membership-card.has-card-types {" not in dashboard_css
+        or ".ballet-membership-type-list {" not in dashboard_css
+        or '.ballet-membership-type[aria-pressed="true"] {' not in dashboard_css
+        or 'id="ballet-membership-type-list"' not in dashboard_html
+        or 'button.setAttribute("aria-pressed", String(selected));' not in dashboard_js
+        or 'typeList.onkeydown = (event) =>' not in dashboard_js
     ):
-        raise ValueError("secondary views: membership card status or carousel display is incomplete")
+        raise ValueError("secondary views: membership card status or type switcher is incomplete")
     if (
         "--ballet-compact-secondary-size: 7px;" not in dashboard_css
         or "padding-block: 3px;" not in dashboard_css
@@ -2130,7 +2132,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=249" not in dashboard_html:
+    if "app.js?v=250" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js
