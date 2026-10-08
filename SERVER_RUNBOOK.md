@@ -2,6 +2,12 @@
 
 这个文件记录 MaxNow 服务器的 SSH 连接方式、前端静态站部署方式和常用排障命令。
 
+## 2026-10-09 芭蕾训练分布名称字号收紧上线
+
+- 版本 `1.0.11.48`，`styles.css?v=281`；训练记录的课程类型、课程级别与授课老师名称统一为 `12px`，总量数字和图表未调整。本机通过 GitHub SSH 443 合入 `origin/main`；服务器用 SHA-256 校验并通过 `git bundle verify` 的增量 bundle 从 `e8b667c3` 快进到 `4df96a53`，同时包含并行上报的 macOS Codex 用量提交。
+- 备份位于 `/home/ubuntu/maxnow-deploy-backups/20261009-ballet-label-size-4df96a53`，包含完整 `dash/data`、部署前修改清单、芭蕾数据对哈希及部署脚本。只暂存并恢复原本修改的运行数据文件，再生成项目元信息和 Token 汇总。芭蕾 `ballet.json` / `.js` 的 SHA-256 保持 `3fb2c313...4aab474` / `46bbb4bc...e4cf4`，`dataAsOf=2026-10-08T22:00:01+08:00`、49 节、3810 分钟未变。
+- 服务器 `scripts/check.py`、`git diff --check`、`nginx -t` 通过；nginx、认证服务及四个芭蕾 timer 均 active，匿名首页 / 登录页 / 芭蕾数据返回 `302 / 200 / 401`。未手动访问闻道或触发预约、候补、取消、转课、抢课；未取得带登录会话的线上视觉验收。
+
 ## 2026-10-08 芭蕾卡片与训练指标布局修正上线
 
 - `326b3258` 经本机 GitHub SSH 443 推送到 `origin/main`，再用两端 SHA-256 一致并通过 `git bundle verify` 的增量 bundle 快进部署到服务器。版本 `1.0.11.47`，页面引用 `app.js?v=252`、`styles.css?v=280`：右侧会员卡类型点击即时切换；训练次数与时间拆成上、下两排独立统计卡；宽桌面趋势图左时间、右次数。

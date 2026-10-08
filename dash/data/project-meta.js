@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09 00:00",
+  "updatedAt": "2026-10-09 00:03",
   "version": "1.0.11.48",
   "versionLabel": "v1.0.11.48",
   "branch": "bugfix/ballet-training-label-size",
-  "commit": "e8b667c3",
+  "commit": "4df96a53",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-training-label-size · commit e8b667c3 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-training-label-size · commit 4df96a53 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-10-09",
