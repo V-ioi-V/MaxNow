@@ -7671,8 +7671,11 @@ body[data-view="ricky"] .topbar-ricky-status {
   grid-column: 1 / -1;
 }
 
-.ballet-bar-item strong {
+.ballet-bar-item > strong {
   color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
   overflow-wrap: anywhere;
 }
 

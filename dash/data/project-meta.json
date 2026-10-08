@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08 23:55",
-  "version": "1.0.11.47",
-  "versionLabel": "v1.0.11.47",
-  "branch": "feature/ballet-record-metric-layout",
-  "commit": "326b3258",
+  "updatedAt": "2026-10-09 00:00",
+  "version": "1.0.11.48",
+  "versionLabel": "v1.0.11.48",
+  "branch": "bugfix/ballet-training-label-size",
+  "commit": "e8b667c3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-record-metric-layout · commit 326b3258 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-training-label-size · commit e8b667c3 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-09",
+      "title": "芭蕾训练分布名称字号收紧",
+      "summary": "训练记录的课程类型、级别与授课老师名称统一调整为 `12px`，恢复紧凑信息层级；只影响分布小卡的名称，不改变总量数字和图表。样式缓存更新为 `styles.css?v=281`，版本提升为 `1.0.11.48`。"
+    },
     {
       "date": "2026-10-08",
       "title": "芭蕾卡片与训练指标布局修正",
@@ -28,11 +33,6 @@
       "date": "2026-10-08",
       "title": "暂时下线生活与同行记入口",
       "summary": "左侧导航移除“生活 / 吃啥”和“同行记 / 我和 Ricky”；旧 hash 链接回首页。页面实现与数据同步保留，方便日后恢复。"
-    },
-    {
-      "date": "2026-10-07",
-      "title": "芭蕾课程卡收敛到统一面板样式",
-      "summary": "顶部课程卡移除票券插画、暖象牙背景、金色描边、衬线标题和有效期圆环，改用与训练概览相同的白色面板、轻边框与阴影；课程使用和有效期采用并列指标及细进度条，计划结论改为低权重信息区。"
     }
   ]
 }
