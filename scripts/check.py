@@ -1770,6 +1770,7 @@ def check_secondary_view_style():
         or 'class="ballet-training-detail-grid"' not in ballet_view_markup
         or 'id="ballet-training-time-trend"' not in ballet_view_markup
         or 'id="ballet-training-classes-trend"' not in ballet_view_markup
+        or ballet_view_markup.index('id="ballet-training-classes-trend"') > ballet_view_markup.index('id="ballet-training-time-trend"')
         or 'id="ballet-time-trend-chart"' not in ballet_view_markup
         or 'id="ballet-classes-trend-chart"' not in ballet_view_markup
         or 'id="ballet-training-hours"' not in ballet_view_markup
@@ -1868,7 +1869,7 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=281" not in dashboard_html
+        "styles.css?v=282" not in dashboard_html
         or "styles.css?v=127" not in login_html
         or "app.js?v=252" not in dashboard_html
     ):

@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09 00:10",
-  "version": "1.0.11.49",
-  "versionLabel": "v1.0.11.49",
-  "branch": "feature/ballet-cancel-oct09-oct10",
-  "commit": "cf954cb3",
+  "updatedAt": "2026-10-09 00:19",
+  "version": "1.0.11.50",
+  "versionLabel": "v1.0.11.50",
+  "branch": "bugfix/ballet-trend-order",
+  "commit": "31287743",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-cancel-oct09-oct10 · commit cf954cb3 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-trend-order · commit 31287743 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-09",
+      "title": "训练趋势图左右顺序调整",
+      "summary": "按 Owner 更正，训练记录底部两张趋势图在宽屏改为左侧上课节数、右侧训练时间；窄屏沿用节数在前、时间在后的单列顺序。上方统计卡继续保持上排节数、下排时间。"
+    },
     {
       "date": "2026-10-09",
       "title": "取消三节晚课并刷新芭蕾面板",
@@ -28,11 +33,6 @@
       "date": "2026-10-08",
       "title": "训练记录同时展示时间与节数",
       "summary": "移除训练记录里的上课历史卡和完整记录弹窗；底层已完成课程数据继续参与统计。"
-    },
-    {
-      "date": "2026-10-08",
-      "title": "课程卡增加会员卡类型列表",
-      "summary": "芭蕾顶部课程卡在宽屏略微加宽，右侧成长等级和课程等级面板相应收窄，三列仍同顶同底。"
     }
   ]
 }

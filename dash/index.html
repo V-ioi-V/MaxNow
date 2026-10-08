@@ -7,7 +7,7 @@
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
     <script src="./app.js?v=252" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=281" />
+    <link rel="stylesheet" href="./styles.css?v=282" />
   </head>
   <body>
     <div class="app-shell">
@@ -909,15 +909,6 @@
               </div>
             </div>
             <div class="ballet-training-detail-grid">
-              <section class="ballet-training-trend" id="ballet-training-time-trend">
-                <header>
-                  <div>
-                    <p class="eyebrow">Training time</p>
-                    <h3 id="ballet-time-trend-title">每周训练时间热力图</h3>
-                  </div>
-                </header>
-                <div class="line-chart ballet-line-chart" id="ballet-time-trend-chart"></div>
-              </section>
               <section class="ballet-training-trend" id="ballet-training-classes-trend">
                 <header>
                   <div>
@@ -926,6 +917,15 @@
                   </div>
                 </header>
                 <div class="line-chart ballet-line-chart" id="ballet-classes-trend-chart"></div>
+              </section>
+              <section class="ballet-training-trend" id="ballet-training-time-trend">
+                <header>
+                  <div>
+                    <p class="eyebrow">Training time</p>
+                    <h3 id="ballet-time-trend-title">每周训练时间热力图</h3>
+                  </div>
+                </header>
+                <div class="line-chart ballet-line-chart" id="ballet-time-trend-chart"></div>
               </section>
               <p class="ballet-trend-placeholder" id="ballet-trend-placeholder" hidden>
                 当前时间范围还没有可用于趋势图的上课记录。
