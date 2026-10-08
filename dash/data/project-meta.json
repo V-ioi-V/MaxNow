@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08 23:23",
-  "version": "1.0.11.46",
-  "versionLabel": "v1.0.11.46",
-  "branch": "feature/ballet-training-record-layout",
-  "commit": "7a3a2b61",
+  "updatedAt": "2026-10-08 23:49",
+  "version": "1.0.11.47",
+  "versionLabel": "v1.0.11.47",
+  "branch": "feature/ballet-record-metric-layout",
+  "commit": "df0dd289",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-training-record-layout · commit 7a3a2b61 · 有未提交代码改动",
+  "deployNote": "feature/ballet-record-metric-layout · commit df0dd289 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-08",
+      "title": "芭蕾卡片与训练指标布局修正",
+      "summary": "右侧会员卡类型点击后立即切换课程卡详情，取消横向平滑切换动画；仍可手动横向滑动。"
+    },
     {
       "date": "2026-10-08",
       "title": "训练记录同时展示时间与节数",
@@ -28,11 +33,6 @@
       "date": "2026-10-07",
       "title": "芭蕾课程卡收敛到统一面板样式",
       "summary": "顶部课程卡移除票券插画、暖象牙背景、金色描边、衬线标题和有效期圆环，改用与训练概览相同的白色面板、轻边框与阴影；课程使用和有效期采用并列指标及细进度条，计划结论改为低权重信息区。"
-    },
-    {
-      "date": "2026-10-06",
-      "title": "取消三节晚课并预约两节周三上午课",
-      "summary": "按 Owner 截图与闻道实时预约逐项精确匹配并取消：10 月 7 日张瀚泽小教室 19:00–20:00 软开课、大教室 20:00–21:30 芭蕾 L1.5，以及 10 月 8 日李俊大教室 18:45–19:45 软开课候补。每节均先通过零 mutation 预检、单次取消，再以独立实时列表确认消失；同时间的张瀚泽 L1.5 预约保留。"
     }
   ]
 }

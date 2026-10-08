@@ -3971,7 +3971,7 @@ function getBalletSummary() {
   };
 }
 
-function normalizeBalletDistribution(source, kind) {
+function normalizeBalletDistribution(source, kind, metric = "hours") {
   const items = Array.isArray(source)
     ? source
     : source && typeof source === "object"
@@ -4003,8 +4003,8 @@ function normalizeBalletDistribution(source, kind) {
   );
   return normalized.sort(
     (a, b) =>
-      (b.minutes || 0) - (a.minutes || 0) ||
-      b.classes - a.classes ||
+      (metric === "classes" ? b.classes - a.classes : (b.minutes || 0) - (a.minutes || 0)) ||
+      (metric === "classes" ? (b.minutes || 0) - (a.minutes || 0) : b.classes - a.classes) ||
       (kind === "level" || kind === "levelDisplay"
         ? (order.get(a.label) ?? 99) - (order.get(b.label) ?? 99)
         : a.label.localeCompare(b.label, "zh-CN")),
@@ -4062,45 +4062,42 @@ function getBalletTrainingBreakdowns(aggregate = {}) {
   };
 }
 
-function createBalletBarItem(item, maxMinutes, maxClasses) {
+function createBalletBarItem(item, maxAmount, metric) {
   const article = document.createElement("article");
   article.className = "ballet-bar-item";
   const label = document.createElement("strong");
   label.textContent = item.label;
   article.appendChild(label);
-  [
-    { label: "时间", value: `${formatBalletHours(item.minutes)} 小时`, amount: item.minutes || 0, max: maxMinutes },
-    { label: "节数", value: `${item.classes} 节`, amount: item.classes, max: maxClasses },
-  ].forEach((metric) => {
-    const row = document.createElement("div");
-    row.className = "ballet-bar-metric";
-    const caption = document.createElement("span");
-    caption.textContent = metric.label;
-    const value = document.createElement("span");
-    value.textContent = metric.value;
-    const track = document.createElement("div");
-    track.className = "ballet-bar-track";
-    const fill = document.createElement("span");
-    fill.style.width = `${metric.amount > 0 ? Math.max(4, metric.amount / Math.max(1, metric.max) * 100) : 0}%`;
-    track.append(fill);
-    row.append(caption, value, track);
-    article.appendChild(row);
-  });
+  const display = metric === "classes"
+    ? { label: "节数", value: `${item.classes} 节`, amount: item.classes }
+    : { label: "时间", value: `${formatBalletHours(item.minutes)} 小时`, amount: item.minutes || 0 };
+  const row = document.createElement("div");
+  row.className = "ballet-bar-metric";
+  const caption = document.createElement("span");
+  caption.textContent = display.label;
+  const value = document.createElement("span");
+  value.textContent = display.value;
+  const track = document.createElement("div");
+  track.className = "ballet-bar-track";
+  const fill = document.createElement("span");
+  fill.style.width = `${display.amount > 0 ? Math.max(4, display.amount / Math.max(1, maxAmount) * 100) : 0}%`;
+  track.append(fill);
+  row.append(caption, value, track);
+  article.appendChild(row);
   return article;
 }
 
-function renderBalletDistribution(selector, source, kind) {
+function renderBalletDistribution(selector, source, kind, metric) {
   const container = qs(selector);
   if (!container) return [];
-  const items = normalizeBalletDistribution(source, kind);
+  const items = normalizeBalletDistribution(source, kind, metric);
   container.replaceChildren();
   if (!items.length) {
     container.appendChild(emptyTemplate.content.cloneNode(true));
     return items;
   }
-  const maxMinutes = Math.max(...items.map((item) => item.minutes || 0), 1);
-  const maxClasses = Math.max(...items.map((item) => item.classes), 1);
-  container.append(...items.map((item) => createBalletBarItem(item, maxMinutes, maxClasses)));
+  const maxAmount = Math.max(...items.map((item) => metric === "classes" ? item.classes : item.minutes || 0), 1);
+  container.append(...items.map((item) => createBalletBarItem(item, maxAmount, metric)));
   return items;
 }
 
@@ -4460,27 +4457,24 @@ function renderBalletTraining() {
   }[activeBalletPeriod] || "全部";
   const classes = balletNumber(aggregate.classes);
   const minutes = balletNumber(aggregate.minutes);
-  setText("#ballet-training-period", `${periodLabel}上课`);
+  setText("#ballet-training-period", `${periodLabel}上课次数`);
+  setText("#ballet-training-time-period", `${periodLabel}训练时间`);
   setText("#ballet-training-hours", formatBalletHours(minutes));
   setText("#ballet-training-classes", classes);
-  const courseTypes = renderBalletDistribution(
-    "#ballet-course-types",
-    aggregate.byCourseType,
-    "courseType",
-  );
-  const levels = renderBalletDistribution(
-    "#ballet-levels",
-    breakdowns.levels,
-    "levelDisplay",
-  );
-  const teachers = renderBalletDistribution(
-    "#ballet-teachers",
-    breakdowns.teachers,
-    "teacher",
-  );
-  setText("#ballet-course-type-count", `${courseTypes.length} 类`);
-  setText("#ballet-level-count", `${levels.length} 项`);
-  setText("#ballet-teacher-count", `${teachers.length} 位`);
+  ["classes", "hours"].forEach((metric) => {
+    const courseTypes = renderBalletDistribution(
+      `#ballet-course-types-${metric}`, aggregate.byCourseType, "courseType", metric,
+    );
+    const levels = renderBalletDistribution(
+      `#ballet-levels-${metric}`, breakdowns.levels, "levelDisplay", metric,
+    );
+    const teachers = renderBalletDistribution(
+      `#ballet-teachers-${metric}`, breakdowns.teachers, "teacher", metric,
+    );
+    setText(`#ballet-course-type-count-${metric}`, `${courseTypes.length} 类`);
+    setText(`#ballet-level-count-${metric}`, `${levels.length} 项`);
+    setText(`#ballet-teacher-count-${metric}`, `${teachers.length} 位`);
+  });
   renderBalletTrend();
 }
 
@@ -4741,18 +4735,14 @@ function getBalletMembershipCarouselIndex(container) {
   ), 0);
 }
 
-function scrollBalletMembershipTo(index, behavior = "smooth") {
+function scrollBalletMembershipTo(index) {
   const container = qs("#ballet-membership-list");
   const cards = container ? [...container.querySelectorAll(".ballet-membership-item")] : [];
   if (!container || !cards.length) return;
   const safeIndex = Math.max(0, Math.min(Math.floor(balletNumber(index)), cards.length - 1));
-  const resolvedBehavior = behavior === "smooth"
-    && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ? "auto"
-    : behavior;
   container.scrollTo({
     left: cards[safeIndex].offsetLeft - cards[0].offsetLeft,
-    behavior: resolvedBehavior,
+    behavior: "auto",
   });
   updateBalletMembershipCarousel(safeIndex, cards.length);
 }

@@ -6,8 +6,8 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=251" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=279" />
+    <script src="./app.js?v=252" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=280" />
   </head>
   <body>
     <div class="app-shell">
@@ -659,7 +659,7 @@
               <div
                 class="ballet-membership-list"
                 id="ballet-membership-list"
-                aria-label="课程卡详情，可左右滑动切换"
+                aria-label="课程卡详情，可通过右侧会员卡列表直接切换，也可左右滑动"
               ></div>
               <nav class="ballet-membership-types" id="ballet-membership-types" aria-label="会员卡类型" hidden>
                 <span class="ballet-membership-types-label">会员卡</span>
@@ -861,48 +861,51 @@
               </div>
             </div>
             <div class="ballet-training-overview">
-              <section class="ballet-training-total" aria-live="polite">
-                <span id="ballet-training-period">全部上课</span>
-                <div class="ballet-training-total-metric">
-                  <strong id="ballet-training-hours">0</strong>
-                  <small>小时</small>
+              <div class="ballet-training-metric-row" aria-label="上课次数统计">
+                <section class="ballet-training-total" aria-live="polite">
+                  <span id="ballet-training-period">全部上课次数</span>
+                  <div class="ballet-training-total-metric">
+                    <strong id="ballet-training-classes">0</strong>
+                    <small>节</small>
+                  </div>
+                </section>
+                <div class="ballet-breakdown-grid">
+                  <section class="ballet-breakdown-section">
+                    <header><div><p class="eyebrow">Class count · Course type</p><h3>课程类型</h3></div><span class="status-pill" id="ballet-course-type-count-classes">0 类</span></header>
+                    <div class="ballet-bar-list" id="ballet-course-types-classes"></div>
+                  </section>
+                  <section class="ballet-breakdown-section">
+                    <header><div><p class="eyebrow">Class count · Level</p><h3>课程级别</h3></div><span class="status-pill" id="ballet-level-count-classes">0 项</span></header>
+                    <div class="ballet-bar-list" id="ballet-levels-classes"></div>
+                  </section>
+                  <section class="ballet-breakdown-section">
+                    <header><div><p class="eyebrow">Class count · Teacher</p><h3>授课老师</h3></div><span class="status-pill" id="ballet-teacher-count-classes">0 位</span></header>
+                    <div class="ballet-bar-list" id="ballet-teachers-classes"></div>
+                  </section>
                 </div>
-                <div class="ballet-training-total-metric is-secondary">
-                  <strong id="ballet-training-classes">0</strong>
-                  <small>节</small>
+              </div>
+              <div class="ballet-training-metric-row" aria-label="训练时间统计">
+                <section class="ballet-training-total" aria-live="polite">
+                  <span id="ballet-training-time-period">全部训练时间</span>
+                  <div class="ballet-training-total-metric">
+                    <strong id="ballet-training-hours">0</strong>
+                    <small>小时</small>
+                  </div>
+                </section>
+                <div class="ballet-breakdown-grid">
+                  <section class="ballet-breakdown-section">
+                    <header><div><p class="eyebrow">Training time · Course type</p><h3>课程类型</h3></div><span class="status-pill" id="ballet-course-type-count-hours">0 类</span></header>
+                    <div class="ballet-bar-list" id="ballet-course-types-hours"></div>
+                  </section>
+                  <section class="ballet-breakdown-section">
+                    <header><div><p class="eyebrow">Training time · Level</p><h3>课程级别</h3></div><span class="status-pill" id="ballet-level-count-hours">0 项</span></header>
+                    <div class="ballet-bar-list" id="ballet-levels-hours"></div>
+                  </section>
+                  <section class="ballet-breakdown-section">
+                    <header><div><p class="eyebrow">Training time · Teacher</p><h3>授课老师</h3></div><span class="status-pill" id="ballet-teacher-count-hours">0 位</span></header>
+                    <div class="ballet-bar-list" id="ballet-teachers-hours"></div>
+                  </section>
                 </div>
-              </section>
-              <div class="ballet-breakdown-grid">
-                <section class="ballet-breakdown-section">
-                  <header>
-                    <div>
-                      <p class="eyebrow">Course Type</p>
-                      <h3>课程类型</h3>
-                    </div>
-                    <span class="status-pill" id="ballet-course-type-count">0 类</span>
-                  </header>
-                  <div class="ballet-bar-list" id="ballet-course-types"></div>
-                </section>
-                <section class="ballet-breakdown-section">
-                  <header>
-                    <div>
-                      <p class="eyebrow">Level</p>
-                      <h3>课程级别</h3>
-                    </div>
-                    <span class="status-pill" id="ballet-level-count">0 级</span>
-                  </header>
-                  <div class="ballet-bar-list" id="ballet-levels"></div>
-                </section>
-                <section class="ballet-breakdown-section">
-                  <header>
-                    <div>
-                      <p class="eyebrow">Teacher</p>
-                      <h3>授课老师</h3>
-                    </div>
-                    <span class="status-pill" id="ballet-teacher-count">0 位</span>
-                  </header>
-                  <div class="ballet-bar-list" id="ballet-teachers"></div>
-                </section>
               </div>
             </div>
             <div class="ballet-training-detail-grid">

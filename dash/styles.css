@@ -6574,7 +6574,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   align-items: stretch;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scroll-snap-type: inline mandatory;
   scrollbar-width: none;
   overscroll-behavior-inline: contain;
@@ -7314,9 +7314,16 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-training-overview {
   display: grid;
-  grid-template-columns: minmax(210px, 0.32fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--page-grid-gap);
   margin-bottom: var(--page-grid-gap);
+}
+
+.ballet-training-metric-row {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(210px, 0.32fr) minmax(0, 1fr);
+  gap: var(--page-grid-gap);
 }
 
 .ballet-training-total,
@@ -7458,7 +7465,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-training-detail-grid {
   min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--page-grid-gap);
 }
 
@@ -7907,7 +7914,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-week-heatmap-grid {
   display: grid;
-  grid-template-columns: repeat(13, minmax(42px, 1fr));
+  grid-template-columns: repeat(13, minmax(0, 1fr));
   gap: 6px;
 }
 
@@ -8443,6 +8450,10 @@ body[data-view="ricky"] .topbar-ricky-status {
     grid-template-columns: 1fr;
   }
 
+  .ballet-training-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .home-widgets {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -8686,7 +8697,7 @@ body[data-view="ricky"] .topbar-ricky-status {
     grid-template-columns: 1fr;
   }
 
-  .ballet-training-overview,
+  .ballet-training-metric-row,
   .ballet-breakdown-grid {
     grid-template-columns: 1fr;
   }
