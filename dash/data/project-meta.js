@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-09 00:19",
-  "version": "1.0.11.50",
-  "versionLabel": "v1.0.11.50",
-  "branch": "bugfix/ballet-trend-order",
-  "commit": "31287743",
+  "updatedAt": "2026-10-10 22:17",
+  "version": "1.0.11.51",
+  "versionLabel": "v1.0.11.51",
+  "branch": "bugfix/ballet-card-layout",
+  "commit": "95f80925",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-trend-order · commit 31287743 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-card-layout · commit 95f80925 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-10",
+      "title": "课程卡合并为单一面板",
+      "summary": "移除课程卡右侧独立会员卡列表，选卡入口收进标题栏原生下拉框；卡名与状态并排、开卡与到期日期降为次级信息，指标底色淡化，计划区改为细分隔线与紧凑文字，消除两个并列模块的视觉感。"
+    },
     {
       "date": "2026-10-09",
       "title": "训练趋势图左右顺序调整",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-08",
       "title": "芭蕾卡片与训练指标布局修正",
       "summary": "右侧会员卡类型点击后立即切换课程卡详情，取消横向平滑切换动画；仍可手动横向滑动。"
-    },
-    {
-      "date": "2026-10-08",
-      "title": "训练记录同时展示时间与节数",
-      "summary": "移除训练记录里的上课历史卡和完整记录弹窗；底层已完成课程数据继续参与统计。"
     }
   ]
 };

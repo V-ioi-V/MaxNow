@@ -4509,19 +4509,9 @@ function createBalletMembershipItem(card = {}) {
   const isExpired = cardStatus === "expired";
   article.dataset.cardStatus = cardStatus;
 
-  const ticketHead = document.createElement("div");
-  ticketHead.className = "panel-head ballet-membership-ticket-head";
-  const ticketTitle = document.createElement("div");
-  const ticketEyebrow = document.createElement("p");
-  ticketEyebrow.className = "eyebrow";
-  ticketEyebrow.textContent = "Course Card";
-  const ticketHeading = document.createElement("h2");
-  ticketHeading.textContent = "课程卡";
-  ticketTitle.append(ticketEyebrow, ticketHeading);
   const ticketStatus = document.createElement("span");
   ticketStatus.className = "status-pill";
   ticketStatus.textContent = isExpired ? "已失效" : "使用中";
-  ticketHead.append(ticketTitle, ticketStatus);
 
   const header = document.createElement("header");
   const title = document.createElement("div");
@@ -4530,7 +4520,8 @@ function createBalletMembershipItem(card = {}) {
   name.textContent = balletMembershipDisplayName(card);
   period.className = "ballet-membership-period";
   period.textContent = card.validFrom ? `${formatDateOnly(card.validFrom)} 开卡` : "开卡日期待同步";
-  title.append(name, period);
+  title.className = "ballet-membership-name";
+  title.append(name, ticketStatus);
   const validity = document.createElement("span");
   validity.className = "ballet-membership-validity";
   validity.append(
@@ -4541,7 +4532,10 @@ function createBalletMembershipItem(card = {}) {
         : "有效期待同步",
     ),
   );
-  header.append(title, validity);
+  const dates = document.createElement("div");
+  dates.className = "ballet-membership-dates";
+  dates.append(period, validity);
+  header.append(title, dates);
 
   const pace = card.pace || {};
   const hasKnownUsage = card.usedClasses !== null
@@ -4684,13 +4678,13 @@ function createBalletMembershipItem(card = {}) {
         : `开卡后实际 ${observedRate} 节/周，到期预计约剩 ${Math.floor(balletNumber(pace.observedProjectedRemainingAtExpiry))} 节。`;
       verdictBody.append(verdictTitle, verdictCopy, observed);
       verdict.appendChild(verdictBody);
-      article.append(ticketHead, header, metrics, verdict);
+      article.append(header, metrics, verdict);
       return article;
     }
   }
   verdictBody.append(verdictTitle, verdictCopy);
   verdict.appendChild(verdictBody);
-  article.append(ticketHead, header, metrics, verdict);
+  article.append(header, metrics, verdict);
   return article;
 }
 
@@ -4705,22 +4699,11 @@ function balletMembershipCardKey(card = {}) {
 }
 
 function updateBalletMembershipCarousel(index = 0, cardCount = 0) {
-  const typeList = qs("#ballet-membership-type-list");
-  const buttons = qsa("#ballet-membership-type-list button");
+  const select = qs("#ballet-membership-select");
   const safeIndex = Math.max(0, Math.min(Math.floor(balletNumber(index)), Math.max(0, cardCount - 1)));
-  buttons.forEach((button, buttonIndex) => {
-    const selected = buttonIndex === safeIndex;
-    button.setAttribute("aria-pressed", String(selected));
-    if (selected) selectedBalletMembershipKey = button.dataset.cardKey || "";
-  });
-  const selectedButton = buttons[safeIndex];
-  if (!typeList || !selectedButton) return;
-  const top = selectedButton.offsetTop;
-  const bottom = top + selectedButton.offsetHeight;
-  if (top < typeList.scrollTop) typeList.scrollTop = top;
-  else if (bottom > typeList.scrollTop + typeList.clientHeight) {
-    typeList.scrollTop = bottom - typeList.clientHeight;
-  }
+  if (!select) return;
+  select.value = String(safeIndex);
+  selectedBalletMembershipKey = select.options[safeIndex]?.dataset.cardKey || "";
 }
 
 function getBalletMembershipCarouselIndex(container) {
@@ -4752,7 +4735,7 @@ function renderBalletMembership() {
   const container = qs("#ballet-membership-list");
   const membershipCard = container?.closest(".ballet-membership-card");
   const types = qs("#ballet-membership-types");
-  const typeList = qs("#ballet-membership-type-list");
+  const typeList = qs("#ballet-membership-select");
   if (!container || !typeList) return;
   container.replaceChildren();
   typeList.replaceChildren();
@@ -4784,19 +4767,11 @@ function renderBalletMembership() {
   membershipCard?.classList.toggle("has-carousel", orderedCards.length > 1);
   if (types) types.hidden = false;
   orderedCards.forEach(({ card }, index) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "ballet-membership-type";
-    button.dataset.cardKey = balletMembershipCardKey(card);
-    button.setAttribute("aria-controls", "ballet-membership-list");
-    button.setAttribute("aria-label", `查看${balletMembershipDisplayName(card)}`);
-    const name = document.createElement("strong");
-    name.textContent = balletMembershipDisplayName(card);
-    const status = document.createElement("small");
-    status.textContent = card.cardStatus === "expired" ? "已失效" : "使用中";
-    button.append(name, status);
-    button.addEventListener("click", () => scrollBalletMembershipTo(index));
-    typeList.appendChild(button);
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.dataset.cardKey = balletMembershipCardKey(card);
+    option.textContent = `${balletMembershipDisplayName(card)}${card.cardStatus === "expired" ? "（已失效）" : ""}`;
+    typeList.appendChild(option);
   });
   const selectedIndex = Math.max(0, orderedCards.findIndex(({ card }) => (
     balletMembershipCardKey(card) === selectedBalletMembershipKey
@@ -4808,16 +4783,7 @@ function renderBalletMembership() {
     const currentIndex = getBalletMembershipCarouselIndex(container);
     scrollBalletMembershipTo(currentIndex + (event.key === 'ArrowRight' ? 1 : -1));
   };
-  typeList.onkeydown = (event) => {
-    if (!["ArrowUp", "ArrowDown"].includes(event.key)) return;
-    const buttons = [...typeList.querySelectorAll("button")];
-    const currentIndex = buttons.indexOf(document.activeElement);
-    if (currentIndex < 0) return;
-    event.preventDefault();
-    const nextIndex = Math.max(0, Math.min(currentIndex + (event.key === "ArrowDown" ? 1 : -1), buttons.length - 1));
-    buttons[nextIndex].focus();
-    scrollBalletMembershipTo(nextIndex);
-  };
+  typeList.onchange = () => scrollBalletMembershipTo(Number(typeList.value));
   let scrollFrame = 0;
   container.onscroll = () => {
     if (scrollFrame) return;

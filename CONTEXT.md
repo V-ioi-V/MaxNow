@@ -74,7 +74,7 @@ MaxNow 当前使用一个 GitHub 仓库，同时维护两个站点出口：
 - `openclaw/last-30/SKILL.md`：OpenClaw 更新 Last-30 滚动记忆时的执行规则。
 - `scripts/check.py`：本地一致性校验脚本。
 - Dashboard 前端采用按页数据加载：启动先依据 URL hash 激活页面，当前 Home、豆奶、Token、芭蕾、Cloud 只读取各自数据组；生活和同行记入口下线后，其独立数据不由路由加载。60 秒内切页复用请求，超过窗口重新校验，手动刷新与 5 分钟自动刷新只强制更新当前页。不要恢复“先 `loadHomeData()` 再切页”的旧入口，也不要让 Cloud 复用整套 Home 渲染。
-- 芭蕾课程卡支持多卡横向吸附展示：使用中的卡稳定优先，已失效卡靠后；详情与右侧会员卡类型列表共同填满顶部概览格。类型列表独立纵向滚动，点击或键盘上下方向键切换；触屏左右滑动详情或键盘左右方向键时同步列表选中态。窄屏类型列表移到详情下方，不能造成整页横向溢出。
+- 课程卡使用单一白色面板，标题栏右侧通过原生下拉框选择会员卡；窄屏选择器自然换到下一行。卡名与使用状态并排，开卡与到期日期使用次级文字，两项指标保留浅底与细进度条，计划结论改为分隔线下的紧凑说明。使用中卡优先，已失效卡靠后；选卡即时切换，触屏横向滑动和键盘左右方向键继续保留，并同步下拉选择。总次数缺失时不猜测已用课次或绘制虚假进度。
 - `scripts/update_data.py`：统一数据更新入口；`runtime` 用于服务器定时刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态和项目元信息，`wrap all` 重生成 wrapper，`project-status` 显式从 `ROADMAP.md` 刷新独立的 Home 项目状态数据。
 - 芭蕾公开 read model 属于服务器权威运行时数据；部署不得宽泛恢复整个 `dash/data`，必须按 `SERVER_RUNBOOK.md` 成对保护并复核 `ballet.json` / `.js`，否则仓库兜底快照会覆盖真实训练记录。
 - `scripts/sync_wiki_todos.py`：通过 GitHub CLI 读取 private personal-wiki 并刷新 `dash/data/wiki-todos.*`。

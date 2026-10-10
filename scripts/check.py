@@ -801,7 +801,7 @@ def check_ballet_read_model():
         or "function balletMembershipDisplayName(" not in dashboard_js
         or 'article.className = "panel ballet-membership-item";' not in dashboard_js
         or ".ballet-membership-validity-track {" not in dashboard_css
-        or "@container (max-width: 520px)" not in dashboard_css
+        or "@container (max-width: 420px)" not in dashboard_css
         or ".ballet-week-grid {" not in dashboard_css
     ):
         raise ValueError("ballet: membership or weekly frontend contract is incomplete")
@@ -1648,7 +1648,7 @@ def check_secondary_view_style():
     layout_markers = (
         'class="ballet-overview-grid"',
         'class="panel ballet-week-panel"',
-        'class="ballet-membership-card"',
+        'class="ballet-membership-card panel"',
         'class="panel ballet-course-plan-panel"',
         'class="panel ballet-training-panel"',
     )
@@ -1869,9 +1869,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=282" not in dashboard_html
+        "styles.css?v=283" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=252" not in dashboard_html
+        or "app.js?v=253" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -1884,12 +1884,11 @@ def check_secondary_view_style():
         or "function scrollBalletMembershipTo(" not in dashboard_js
         or 'classList.toggle("has-carousel", orderedCards.length > 1)' not in dashboard_js
         or "scroll-snap-type: inline mandatory;" not in dashboard_css
-        or ".ballet-membership-card.has-card-types {" not in dashboard_css
-        or ".ballet-membership-type-list {" not in dashboard_css
-        or '.ballet-membership-type[aria-pressed="true"] {' not in dashboard_css
-        or 'id="ballet-membership-type-list"' not in dashboard_html
-        or 'button.setAttribute("aria-pressed", String(selected));' not in dashboard_js
-        or 'typeList.onkeydown = (event) =>' not in dashboard_js
+        or ".ballet-membership-select {" not in dashboard_css
+        or ".ballet-membership-select:focus-visible {" not in dashboard_css
+        or 'id="ballet-membership-select"' not in dashboard_html
+        or 'select.value = String(safeIndex);' not in dashboard_js
+        or 'typeList.onchange = () => scrollBalletMembershipTo(Number(typeList.value));' not in dashboard_js
     ):
         raise ValueError("secondary views: membership card status or type switcher is incomplete")
     if (
@@ -2127,7 +2126,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=252" not in dashboard_html:
+    if "app.js?v=253" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

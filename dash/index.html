@@ -6,8 +6,8 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=252" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=282" />
+    <script src="./app.js?v=253" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=283" />
   </head>
   <body>
     <div class="app-shell">
@@ -655,16 +655,14 @@
               </div>
             </article>
 
-            <article class="ballet-membership-card" aria-label="课程卡">
-              <div
-                class="ballet-membership-list"
-                id="ballet-membership-list"
-                aria-label="课程卡详情，可通过右侧会员卡列表直接切换，也可左右滑动"
-              ></div>
-              <nav class="ballet-membership-types" id="ballet-membership-types" aria-label="会员卡类型" hidden>
-                <span class="ballet-membership-types-label">会员卡</span>
-                <div class="ballet-membership-type-list" id="ballet-membership-type-list"></div>
-              </nav>
+            <article class="ballet-membership-card panel" aria-label="课程卡">
+              <header class="panel-head ballet-membership-head">
+                <div><p class="eyebrow">Course Card</p><h2>课程卡</h2></div>
+                <div class="ballet-membership-types" id="ballet-membership-types" hidden>
+                  <select class="ballet-membership-select" id="ballet-membership-select" aria-label="选择会员卡" aria-controls="ballet-membership-list"></select>
+                </div>
+              </header>
+              <div class="ballet-membership-list" id="ballet-membership-list" aria-label="课程卡详情，可通过标题栏选择会员卡，也可左右滑动"></div>
             </article>
 
             <div class="ballet-growth-modules" aria-label="成长等级与课程等级">

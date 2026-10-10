@@ -1500,7 +1500,6 @@ body[data-view="ballet"] .ballet-week-trigger {
     .ballet-breakdown-section:hover,
     .ballet-bar-item:hover,
     .ballet-training-trend:hover,
-    .ballet-membership-item:hover,
     .ballet-membership-metrics section:hover,
     .ballet-week-grid section:hover,
     .ballet-upcoming-item:hover,
@@ -6554,18 +6553,10 @@ body[data-view="ricky"] .topbar-ricky-status {
   container-type: inline-size;
 }
 
-.ballet-membership-card.has-card-types {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 154px;
-  grid-template-rows: auto;
-  gap: 10px;
-}
-
 .ballet-overview-grid .ballet-membership-list {
   position: relative;
   width: 100%;
   max-width: 100%;
-  height: 100%;
   min-width: 0;
   min-height: 0;
   flex: 1;
@@ -6596,12 +6587,14 @@ body[data-view="ricky"] .topbar-ricky-status {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 16px;
-  padding: 22px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--ballet) 1.8%, #ffffff), #ffffff 128px);
-  box-shadow: var(--shadow);
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -6787,11 +6780,12 @@ body[data-view="ricky"] .topbar-ricky-status {
   min-width: 0;
   min-height: 0;
   display: block;
-  margin: auto 0 0;
-  padding: 11px 13px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface-muted);
+  margin: 0;
+  padding: 14px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
 }
 
@@ -6823,123 +6817,60 @@ body[data-view="ricky"] .topbar-ricky-status {
   overflow-wrap: anywhere;
 }
 
-.ballet-membership-types {
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: 154px;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 16px 10px;
+.ballet-overview-grid .ballet-membership-card {
+  padding: 22px;
+  gap: 20px;
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--surface);
   box-shadow: var(--shadow);
 }
 
-.ballet-membership-types[hidden] {
-  display: none;
+.ballet-membership-head.panel-head {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
 }
 
-.ballet-membership-types-label {
-  color: var(--soft);
-  font-size: 12px;
-  font-weight: 750;
-}
-
-.ballet-membership-type-list {
-  position: relative;
-  min-height: 0;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--ballet-border) transparent;
-}
-
-.ballet-membership-type {
-  appearance: none;
-  flex: 0 0 auto;
-  width: 100%;
-  min-height: 68px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px;
+.ballet-membership-types { min-width: 0; max-width: 100%; }
+.ballet-membership-types[hidden] { display: none; }
+.ballet-membership-select {
+  max-width: 100%;
+  width: 230px;
+  padding: 9px 28px 9px 11px;
   border: 1px solid var(--line);
-  border-radius: 11px;
+  border-radius: 9px;
   background: var(--surface-soft);
-  color: var(--text);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-}
-
-.ballet-membership-type strong {
+  color: var(--soft);
+  font: inherit;
   font-size: 12px;
-  line-height: 1.35;
-  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
-
-.ballet-membership-type small {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 650;
-}
-
-.ballet-membership-type:hover {
-  border-color: var(--ballet-border);
-  box-shadow: var(--shadow-soft);
-  transform: translateY(-1px);
-}
-
-.ballet-membership-type[aria-pressed="true"] {
-  border-color: var(--ballet-border);
-  background: #fff4f8;
-  box-shadow: inset 3px 0 0 var(--ballet), var(--shadow-soft);
-}
-
-.ballet-membership-type:focus-visible {
+.ballet-membership-select:hover { border-color: var(--ballet-border); box-shadow: var(--shadow-soft); }
+.ballet-membership-select:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--ballet) 25%, transparent);
   outline-offset: 2px;
 }
-
-@media (max-width: 620px) {
-  .ballet-membership-card.has-card-types {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto;
-  }
-
-  .ballet-membership-types {
-    position: static;
-    width: 100%;
-    padding: 12px;
-  }
-
-  .ballet-membership-type-list {
-    max-height: 152px;
-  }
+.ballet-overview-grid .ballet-membership-item > header { flex-direction: column; gap: 8px; }
+.ballet-membership-name { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
+.ballet-membership-name .status-pill { font-size: 10px; padding: 3px 7px; }
+.ballet-membership-dates { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; }
+.ballet-membership-dates .ballet-membership-period { margin: 0; font-weight: 500; }
+.ballet-membership-dates .ballet-membership-validity {
+  min-height: 0; padding: 0; border: 0; background: none; color: var(--muted); font-size: 12px; font-weight: 500;
 }
-
-@container (max-width: 520px) {
-  .ballet-overview-grid .ballet-membership-item {
-    gap: 12px;
-    padding: 16px;
-  }
-
-  .ballet-overview-grid .ballet-membership-metrics {
-    grid-template-columns: 1fr;
-  }
-
-  .ballet-overview-grid .ballet-membership-metrics section {
-    min-height: 90px;
-  }
+.ballet-overview-grid .ballet-membership-metrics section {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--surface-soft) 65%, white);
+}
+.ballet-overview-grid .ballet-membership-verdict[data-state="attention"] { background: transparent; }
+@container (max-width: 420px) {
+  .ballet-membership-head.panel-head { align-items: flex-start; }
+  .ballet-membership-types, .ballet-membership-select { width: 100%; }
+  .ballet-overview-grid .ballet-membership-metrics { grid-template-columns: 1fr; }
+  .ballet-overview-grid .ballet-membership-metrics section { min-height: 108px; }
 }
 
 .ballet-growth-modules {
