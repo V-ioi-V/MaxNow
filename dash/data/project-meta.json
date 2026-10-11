@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10 22:17",
-  "version": "1.0.11.51",
-  "versionLabel": "v1.0.11.51",
+  "updatedAt": "2026-10-11 08:15",
+  "version": "1.0.11.52",
+  "versionLabel": "v1.0.11.52",
   "branch": "bugfix/ballet-card-layout",
-  "commit": "95f80925",
+  "commit": "cd4af41f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-card-layout · commit 95f80925 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-card-layout · commit cd4af41f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "课程卡单面板部署复验",
+      "summary": "标题栏选卡与单面板样式已在线上文件中生效；服务器一致性检查、nginx 配置、服务与认证边界通过，芭蕾运行数据对保持不变。"
+    },
     {
       "date": "2026-10-10",
       "title": "课程卡合并为单一面板",
@@ -28,11 +33,6 @@
       "date": "2026-10-09",
       "title": "芭蕾训练分布名称字号收紧",
       "summary": "训练记录的课程类型、级别与授课老师名称统一调整为 `12px`，恢复紧凑信息层级；只影响分布小卡的名称，不改变总量数字和图表。样式缓存更新为 `styles.css?v=281`，版本提升为 `1.0.11.48`。"
-    },
-    {
-      "date": "2026-10-08",
-      "title": "芭蕾卡片与训练指标布局修正",
-      "summary": "右侧会员卡类型点击后立即切换课程卡详情，取消横向平滑切换动画；仍可手动横向滑动。"
     }
   ]
 }
