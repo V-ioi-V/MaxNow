@@ -4,6 +4,8 @@ import stat
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from unittest import mock
 from datetime import datetime
@@ -752,6 +754,53 @@ class BalletSyncTests(unittest.TestCase):
 
         same_course_next_day = {**transferred, "date": "2026-08-19"}
         self.assertFalse(ballet.is_attendance_excluded(same_course_next_day))
+
+    def test_timetable_reads_overlap_with_at_most_three_workers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory)
+            write_fixture(fixture)
+            source = ballet.FixtureSource(fixture)
+            original = source.request
+            lock = threading.Lock()
+            barrier = threading.Barrier(3)
+            active = peak = entered = 0
+            def request(path, marker):
+                nonlocal active, peak, entered
+                with lock:
+                    active += 1
+                    entered += 1
+                    initial = entered <= 3
+                    peak = max(peak, active)
+                try:
+                    if initial:
+                        barrier.wait(timeout=2)
+                    time.sleep(0.01)
+                    return original(path, marker)
+                finally:
+                    with lock:
+                        active -= 1
+            source.request = request
+            snapshot = ballet.build_timetable_snapshot(source, NOW, NOW.isoformat())
+            self.assertEqual(peak, 3)
+            self.assertEqual([day["date"] for day in snapshot["days"]],
+                             ["2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-01", "2026-08-02"])
+            self.assertEqual(source.request_count, 7)
+
+    def test_auth_failure_blocks_remaining_read_requests(self):
+        class Response:
+            status = 200
+            headers = {}
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def read(self, size): return "请先登录".encode("utf-8")
+        source = ballet.WendaSource(ballet.Credentials(SESSION, USER_AGENT), retries=0)
+        source.opener.open = mock.Mock(return_value=Response())
+        for path in (ballet.MEMBERSHIP_PATH, ballet.ATTENDANCE_PATH):
+            with self.assertRaises(ballet.SyncFailure) as raised:
+                source.request(path, "test")
+            self.assertEqual(raised.exception.code, "auth_required")
+        self.assertEqual(source.opener.open.call_count, 1)
+        self.assertEqual(source.request_count, 1)
 
     def test_sunday_publish_window_keeps_today_and_adds_next_week(self):
         with tempfile.TemporaryDirectory() as directory:

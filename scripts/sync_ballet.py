@@ -13,11 +13,12 @@ import socket
 import stat
 import sys
 import tempfile
+import threading
 import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -148,6 +149,8 @@ class SyncResult:
     merged_records: int
     changed_records: int
     session_rotated: bool
+    timings: dict[str, float] = field(default_factory=dict)
+    requests_made: int = 0
 
 
 def iso_now(now: datetime | None = None) -> str:
@@ -399,6 +402,8 @@ class WendaSource:
         self.retries = retries
         self.session_rotated = False
         self.request_count = 0
+        self._state_lock = threading.RLock()
+        self._auth_failed = False
         self.opener = urllib.request.build_opener(
             urllib.request.ProxyHandler({}), NoRedirect()
         )
@@ -419,6 +424,10 @@ class WendaSource:
         }
 
     def _update_session_in_memory(self, headers: Any) -> None:
+        with self._state_lock:
+            self._update_session_locked(headers)
+
+    def _update_session_locked(self, headers: Any) -> None:
         values = []
         getter = getattr(headers, "get_all", None)
         if callable(getter):
@@ -443,7 +452,10 @@ class WendaSource:
         path = validate_read_only_path(path)
         last_network_failure = False
         for attempt in range(self.retries + 1):
-            self.request_count += 1
+            with self._state_lock:
+                if self._auth_failed:
+                    raise SyncFailure("auth_required")
+                self.request_count += 1
             request = urllib.request.Request(
                 BASE_URL + path,
                 headers=self._headers(path),
@@ -470,6 +482,8 @@ class WendaSource:
             self._update_session_in_memory(headers)
             text = body.decode("utf-8", "replace")
             if _is_auth_response(status, headers, text):
+                with self._state_lock:
+                    self._auth_failed = True
                 raise SyncFailure("auth_required")
             if status >= 500 and attempt < self.retries:
                 time.sleep(min(2**attempt, 3))
@@ -494,7 +508,10 @@ class WendaSource:
         body = urlencode({"customerid": customer_id}).encode("ascii")
         last_network_failure = False
         for attempt in range(self.retries + 1):
-            self.request_count += 1
+            with self._state_lock:
+                if self._auth_failed:
+                    raise SyncFailure("auth_required")
+                self.request_count += 1
             headers = self._headers(path)
             headers.update(
                 {
@@ -530,6 +547,8 @@ class WendaSource:
             self._update_session_in_memory(response_headers)
             text = response_body.decode("utf-8", "replace")
             if _is_auth_response(status, response_headers, text):
+                with self._state_lock:
+                    self._auth_failed = True
                 raise SyncFailure("auth_required")
             if status >= 500 and attempt < self.retries:
                 time.sleep(min(2**attempt, 3))
@@ -2440,19 +2459,19 @@ def build_timetable_snapshot(
     fetched_days: dict[date, dict[str, Any]] = {}
     selector_dates: set[str] = set()
 
-    def fetch_day(course_date: date) -> dict[str, Any]:
-        if course_date in fetched_days:
-            return fetched_days[course_date]
+    def read_day(course_date: date) -> dict[str, Any]:
         path = f"{TIMETABLE_PATH}/{course_date.isoformat()}"
-        html_text = source.request(path, "dateswiper")
-        parsed = parse_timetable(html_text, course_date.isoformat())
-        selector_dates.update(parsed["selectorDates"])
-        result = {
-            "date": parsed["date"],
-            "records": parsed["records"],
-        }
-        fetched_days[course_date] = result
-        return result
+        return parse_timetable(source.request(path, "dateswiper"), course_date.isoformat())
+
+    def fetch_days(dates: list[date]) -> list[dict[str, Any]]:
+        missing = [day for day in dates if day not in fetched_days]
+        if missing:
+            with ThreadPoolExecutor(max_workers=min(3, len(missing))) as executor:
+                parsed_days = list(executor.map(read_day, missing))
+            for day, parsed in zip(missing, parsed_days):
+                selector_dates.update(parsed["selectorDates"])
+                fetched_days[day] = {"date": parsed["date"], "records": parsed["records"]}
+        return [fetched_days[day] for day in dates]
 
     display_mode = "current_week"
     days = []
@@ -2464,16 +2483,13 @@ def build_timetable_snapshot(
     )
     if today.weekday() == 6 and now.astimezone(TIMEZONE) >= sunday_publish_time:
         next_week_start = current_week_end + timedelta(days=1)
-        next_week_days = [
-            fetch_day(next_week_start + timedelta(days=offset))
-            for offset in range(7)
-        ]
+        next_week_days = fetch_days([next_week_start + timedelta(days=offset) for offset in range(7)])
         if any(item["records"] for item in next_week_days):
-            days = [fetch_day(today), *next_week_days]
+            days = [*fetch_days([today]), *next_week_days]
             display_mode = "sunday_plus_next_week"
 
     if not days:
-        days = [fetch_day(week_start + timedelta(days=offset)) for offset in range(7)]
+        days = fetch_days([week_start + timedelta(days=offset) for offset in range(7)])
 
     booking_states = {
         (
@@ -2543,6 +2559,15 @@ def synchronize(
         if os.name != "nt":
             paths.state_dir.chmod(0o700)
 
+    began = time.perf_counter()
+    stage_started = began
+    timings: dict[str, float] = {}
+    def finish_stage(name: str) -> None:
+        nonlocal stage_started
+        current = time.perf_counter()
+        timings[name] = round(current - stage_started, 3)
+        stage_started = current
+
     ledger = safe_read_json(paths.ledger, empty_ledger())
     booking = safe_read_json(paths.booking, empty_booking())
     membership = safe_read_json(paths.membership, empty_membership())
@@ -2568,6 +2593,17 @@ def synchronize(
         seen_keys: set[str] = set()
         changed_records = 0
 
+        finish_stage("attendance_index")
+        detail_items = [item for item in attendance_index
+                        if item.get("summaryOnly") != "true"
+                        and _needs_detail(item, existing_by_id.get(item["sourceRecordId"]), mode, window)]
+        def read_attendance_detail(item):
+            source_id = item["sourceRecordId"]
+            return source_id, parse_detail(source.request(item["detailPath"], "约课记录明细"), source_id)
+        if detail_items:
+            with ThreadPoolExecutor(max_workers=min(3, len(detail_items))) as executor:
+                detail_cache.update(executor.map(read_attendance_detail, detail_items))
+
         for item in attendance_index:
             source_id = item["sourceRecordId"]
             existing = existing_by_id.get(source_id)
@@ -2579,9 +2615,7 @@ def synchronize(
                 normalized["missingFullSyncCount"] = 0
                 normalized["recordState"] = "active"
             elif _needs_detail(item, existing, mode, window):
-                detail_html = source.request(item["detailPath"], "约课记录明细")
-                detail = parse_detail(detail_html, source_id)
-                detail_cache[source_id] = detail
+                detail = detail_cache[source_id]
                 normalized = normalize_attendance(detail, observed_at, existing)
             elif existing:
                 normalized = dict(existing)
@@ -2636,10 +2670,13 @@ def synchronize(
         proposed_ledger["contentFingerprint"] = fingerprint
         validate_ledger(proposed_ledger)
 
+        finish_stage("attendance_details_and_merge")
         upcoming = fetch_active_bookings(
             source,
             detail_cache=detail_cache,
+            max_workers=3,
         )
+        finish_stage("bookings")
         proposed_booking = {
             "schemaVersion": SCHEMA_VERSION,
             "timezone": "Asia/Shanghai",
@@ -2655,6 +2692,7 @@ def synchronize(
             "dataAsOf": observed_at,
             "cards": parse_membership(membership_html),
         }
+        finish_stage("membership")
         proposed_timetable = build_timetable_snapshot(
             source,
             now,
@@ -2662,6 +2700,7 @@ def synchronize(
             proposed_booking["records"],
         )
 
+        finish_stage("timetable")
         last_data_change = old_state.get("lastDataChangeAt")
         previous_business = {
             "attendance": ledger.get("contentFingerprint"),
@@ -2711,9 +2750,13 @@ def synchronize(
             atomic_write_json(paths.timetable, proposed_timetable, mode=0o600)
             atomic_write_json(paths.sync_state, state, mode=0o600)
             _write_read_model(paths, model)
+        finish_stage("publish")
+        timings["total"] = round(time.perf_counter() - began, 3)
         return SyncResult(
             exit_code=0,
             status="success",
+            timings=timings,
+            requests_made=source.request_count,
             source_records=len(attendance_index),
             merged_records=len(merged_records),
             changed_records=changed_records,
@@ -2829,6 +2872,8 @@ def _safe_stdout(result: SyncResult, dry_run: bool) -> None:
                 "mergedRecords": result.merged_records,
                 "changedRecords": result.changed_records,
                 "sessionRotatedInMemory": result.session_rotated,
+                "phaseSeconds": result.timings,
+                "requestsMade": result.requests_made,
             },
             ensure_ascii=False,
             separators=(",", ":"),
