@@ -7339,16 +7339,16 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-training-summary {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
   margin: 0 0 24px;
-  padding: 22px 20px;
-  border-radius: 10px;
-  background: #f5f9fd;
+  padding: 12px 0 22px;
+  border-bottom: 1px solid var(--line);
 }
 
 .ballet-summary-group {
   min-width: 0;
-  padding: 0 22px;
+  padding: 0 0 0 24px;
   border-left: 1px solid var(--line);
 }
 
@@ -7379,12 +7379,26 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-summary-group strong {
   color: var(--text);
-  font-size: 26px;
+  font-size: 24px;
   font-variant-numeric: tabular-nums;
 }
 
 .ballet-summary-total strong {
   font-size: 34px;
+}
+
+.ballet-summary-total .ballet-training-manual {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.ballet-summary-total .ballet-training-manual strong {
+  color: inherit;
+  font-size: inherit;
+  font-weight: 500;
 }
 
 .ballet-training-averages[hidden], .ballet-training-manual[hidden],
@@ -7810,12 +7824,15 @@ body[data-view="ricky"] .topbar-ricky-status {
   }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 860px) {
   .ballet-training-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px 0;
+    gap: 20px 0;
   }
-  .ballet-summary-group:nth-child(3) {
+  .ballet-summary-total {
+    grid-column: 1 / -1;
+  }
+  .ballet-summary-group:nth-child(2) {
     border-left: 0;
     padding-left: 0;
   }
@@ -7835,7 +7852,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 @media (max-width: 560px) {
   .ballet-training-summary {
-    padding: 18px 14px;
+    padding: 8px 0 20px;
   }
   .ballet-distribution-columns {
     grid-template-columns: 20px minmax(0, 1fr) 38px 46px;
@@ -7854,17 +7871,16 @@ body[data-view="ricky"] .topbar-ricky-status {
     gap: 12px;
   }
   .ballet-summary-group {
-    padding: 0 12px;
+    padding: 0 0 0 16px;
   }
   .ballet-summary-group strong {
-    font-size: 24px;
+    font-size: 22px;
   }
   .ballet-summary-total strong {
-    font-size: 24px;
+    font-size: 30px;
   }
   .ballet-summary-group dd {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    display: flex;
     gap: 6px 12px;
   }
 }

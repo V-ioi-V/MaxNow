@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 10:09",
-  "version": "1.0.11.61",
-  "versionLabel": "v1.0.11.61",
-  "branch": "feature/training-record-polish",
-  "commit": "92d818e5",
+  "updatedAt": "2026-10-11 10:14",
+  "version": "1.0.11.62",
+  "versionLabel": "v1.0.11.62",
+  "branch": "bugfix/training-summary-balance",
+  "commit": "3695814a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/training-record-polish · commit 92d818e5 · 有未提交代码改动",
+  "deployNote": "bugfix/training-summary-balance · commit 3695814a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "训练摘要融入白色面板",
+      "summary": "移除训练摘要整条蓝底，累计 / 月均 / 周均三组与下方分类列对齐，底部细线分隔；累计保持主数字，均值降低一级。"
+    },
     {
       "date": "2026-10-11",
       "title": "训练记录视觉层级优化",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "修复未激活会员卡阻断课程同步",
       "summary": "闻道新增“未激活”卡，源有效期为空 `~` 且未提供总次数；解析新增明确的 `unactivated` 状态，只对该状态允许空日期 / 未知总次数，使用中卡完整性检查不变。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "训练分布进度条恢复原有厚度",
-      "summary": "三组分类进度条由 3px 恢复为原有 7px，同族圆润端头、浅色底轨与语义色保持一致；紧凑布局、双指标和独立排序继续保留。"
     }
   ]
 };
