@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 09:56",
-  "version": "1.0.11.59",
-  "versionLabel": "v1.0.11.59",
-  "branch": "feature/course-card-picker",
-  "commit": "a3ca5d41",
+  "updatedAt": "2026-10-11 10:03",
+  "version": "1.0.11.60",
+  "versionLabel": "v1.0.11.60",
+  "branch": "bugfix/card-picker-badges",
+  "commit": "78168f45",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/course-card-picker · commit a3ca5d41 · 有未提交代码改动",
+  "deployNote": "bugfix/card-picker-badges · commit 78168f45 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "课程卡选项状态标签质感对齐",
+      "summary": "切卡列表状态标签与主卡统一为 30px 最小高度、700 字重、细边框和浅底色；使用中蓝色、未激活橙色、已失效灰色继续区分。"
+    },
     {
       "date": "2026-10-11",
       "title": "课程卡主次层级与三卡切换列表",
@@ -28,11 +33,6 @@
       "date": "2026-10-11",
       "title": "训练记录轻量布局与独立排序",
       "summary": "将累计、月均、周均和手动补录的节数 / 小时合并成紧凑摘要；类型、级别、老师仅保留三组轻量列表，取消重复卡片与大块留白。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "登记手动待上课计划",
-      "summary": "Owner 将 10 月 11 日 10:00–11:30 李俊大教室「芭蕾L1-入门」先登记为待上课，90 分钟；不计入已上课次数 / 小时或手动补录累计，不代表闻道预约成功。"
     }
   ]
 }

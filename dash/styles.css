@@ -6912,9 +6912,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-card-option small { grid-column: 1 / 3; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .ballet-card-option::after { content: "✓"; grid-column: 3; grid-row: 1 / 3; visibility: hidden; color: var(--ballet); }
 .ballet-card-option[aria-pressed="true"]::after { visibility: visible; }
-.ballet-card-option-status { padding: 3px 6px; border-radius: 999px; font-size: 10px; color: #287fc5; background: #edf7ff; white-space: nowrap; }
-.ballet-card-option-status[data-state="unactivated"] { color: #ac641d; background: #fff4e3; }
-.ballet-card-option-status[data-state="expired"] { color: var(--muted); background: #f0f3f7; }
+.ballet-card-option-status { min-height: 30px; display: inline-flex; align-items: center; padding: 3px 7px; border: 1px solid #cfe8ff; border-radius: 999px; font-size: 10px; font-weight: 700; color: #1570be; background: #eef8ff; white-space: nowrap; }
+.ballet-card-option-status[data-state="unactivated"] { border-color: rgba(238, 154, 73, .38); color: #b85f18; background: #fff7ed; }
+.ballet-card-option-status[data-state="expired"] { border-color: #dce3ec; color: var(--muted); background: #f0f3f7; }
 .ballet-overview-grid .ballet-membership-metrics { gap: 20px; padding: 8px 0; }
 .ballet-overview-grid .ballet-membership-metrics section {
   padding: 0;
