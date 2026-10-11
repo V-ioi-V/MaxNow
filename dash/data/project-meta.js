@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 18:50",
+  "updatedAt": "2026-10-11 18:53",
   "version": "1.0.11.78",
   "versionLabel": "v1.0.11.78",
   "branch": "feature/remove-dounai",
-  "commit": "bc2edb14",
+  "commit": "aea6b733",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/remove-dounai · commit bc2edb14 · 有未提交代码改动",
+  "deployNote": "feature/remove-dounai · commit aea6b733 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-10-11",

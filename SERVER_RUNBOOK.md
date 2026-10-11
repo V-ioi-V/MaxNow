@@ -4,6 +4,9 @@
 
 豆奶功能已于 2026-10-11 按 Owner 要求下线：不展示、不采集、不保存当前账号、签到或流量数据，删除专用登录凭据和运行文件。旧 #dounai 链接回到首页，浏览器打开新版时清除原豆奶缓存。移除 root 00:05 MAXNOW-DOUNAI-TRAFFIC-CLOSEOUT 和专用运行文件；旧章节仅作操作历史，不再执行其登录、签到或补数命令。已清理 215 个专用 / 数据副本文件，并从 168 份混合部署归档逐项移除豆奶数据；保留条目 SHA-256 校验一致。历史 Git 对象与既有聊天审计不强制改写。
 
+- 静态发布版本 `1.0.11.78`，缓存 app.js?v=269 / styles.css?v=295；服务器通过校验 Git bundle 快进，备份 `/home/ubuntu/maxnow-deploy-backups/20261011-remove-dounai` 排除豆奶数据并保护其他运行数据，芭蕾 JSON / JS 哈希与发布前一致。
+- 本地 1600 / 390px 浏览器验证旧 hash 回首页、豆奶缓存清除、无豆奶请求、四个可见页可切换且无页面横向溢出 / JS 错误。服务器一致性、diff、nginx 与匿名 302 / 200 / 401 检查通过；没有登录后的线上视觉验收。
+
 ## 2026-10-11 手动待上课确认
 
 Owner 确认 10:00–11:30 李俊大教室芭蕾 L1 入门已完成。等待 `/run/maxnow-ballet/sync.lock` 后，在 `ubuntu:www-data` 身份下备份私有状态与公开 ballet 配对文件，使用既有归一化和校验函数复用同一 manual 键，将 planned 转为 active / attended，并离线重建公开模型。备份位于 `/home/ubuntu/maxnow-deploy-backups/manual-confirm-20261011-*`（0700），ledger 保持 0600；源快照与闻道 lastSuccessAt 不伪造更新。汇总增加 1 次 / 90 分钟，累计 50 次 / 65 小时，本周 6 次 / 8 小时；目标从 manualPlans 消失。未读取 Session、未发起闻道请求、未扣卡或提交任何预约类操作。
