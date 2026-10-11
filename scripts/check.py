@@ -810,10 +810,8 @@ def check_ballet_read_model():
         or "function getBalletTrainingBreakdowns(aggregate = {})" not in dashboard_js
         or "aggregate.byLevelDisplay" not in dashboard_js
         or "aggregate.byTeacher" not in dashboard_js
-        or 'id="ballet-teacher-count-classes"' not in dashboard_html
-        or 'id="ballet-teachers-classes"' not in dashboard_html
-        or 'id="ballet-teacher-count-hours"' not in dashboard_html
-        or 'id="ballet-teachers-hours"' not in dashboard_html
+        or 'id="ballet-teachers-count"' not in dashboard_html
+        or 'id="ballet-teachers"' not in dashboard_html
         or "grid-template-columns: repeat(3, minmax(0, 1fr));" not in dashboard_css
         or "#ballet-view > .ballet-timetable-panel" not in dashboard_css
         or "#ballet-view > .ballet-training-panel" not in dashboard_css
@@ -1783,11 +1781,11 @@ def check_secondary_view_style():
         or 'row.className = "ballet-bar-metric";' not in dashboard_js
         or '.ballet-training-trend .ballet-line-chart,' not in dashboard_css
         or '.ballet-training-detail-grid {\n  min-width: 0;\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));' not in dashboard_css
-        or 'class="ballet-training-metric-row" aria-label="上课次数统计"' not in ballet_view_markup
-        or 'class="ballet-training-metric-row" aria-label="训练时间统计"' not in ballet_view_markup
-        or ballet_view_markup.index('aria-label="上课次数统计"') > ballet_view_markup.index('aria-label="训练时间统计"')
-        or 'id="ballet-course-types-classes"' not in ballet_view_markup
-        or 'id="ballet-course-types-hours"' not in ballet_view_markup
+        or 'class="ballet-training-summary"' not in ballet_view_markup
+        or any(f'id="ballet-{name}"' not in ballet_view_markup for name in ("course-types", "levels", "teachers"))
+        or ballet_view_markup.count('data-ballet-sort="classes"') != 3
+        or ballet_view_markup.count('data-ballet-sort="hours"') != 3
+        or 'const balletDistributionSort =' not in dashboard_js
         or 'behavior: "auto",' not in dashboard_js
         or 'scroll-behavior: auto;' not in dashboard_css
         or 'grid-template-columns: repeat(2, minmax(0, 1fr));' not in dashboard_css
@@ -1795,7 +1793,7 @@ def check_secondary_view_style():
         or 'button.dataset.balletPeriod || "all"' not in dashboard_js
         or 'class="ballet-segment-button is-active" type="button" data-ballet-period="all"' not in ballet_view_markup
         or 'class="ballet-segment-button is-active" type="button" data-ballet-period="month"' in ballet_view_markup
-        or '<span id="ballet-training-period">全部上课次数</span>' not in ballet_view_markup
+        or '<span id="ballet-training-period">全部累计</span>' not in ballet_view_markup
         or "function renderBalletGrowth()" not in dashboard_js
     ):
         raise ValueError("secondary views: ballet learning layout or Cloud operations split is incomplete")
@@ -1870,9 +1868,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=286" not in dashboard_html
+        "styles.css?v=287" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=256" not in dashboard_html
+        or "app.js?v=257" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2127,7 +2125,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=256" not in dashboard_html:
+    if "app.js?v=257" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

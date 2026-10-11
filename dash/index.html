@@ -6,8 +6,8 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=256" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=286" />
+    <script src="./app.js?v=257" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=287" />
   </head>
   <body>
     <div class="app-shell">
@@ -854,74 +854,49 @@
                 <p class="eyebrow">Training Record</p>
                 <h2>训练记录</h2>
               </div>
+              <div class="ballet-chart-controls">
+                <div class="ballet-segmented" role="group" aria-label="统计时间范围">
+                  <button class="ballet-segment-button" type="button" data-ballet-period="month">本月</button>
+                  <button class="ballet-segment-button" type="button" data-ballet-period="year">今年</button>
+                  <button class="ballet-segment-button is-active" type="button" data-ballet-period="all">全部</button>
+                </div>
+              </div>
             </header>
-            <div class="ballet-chart-controls">
-              <div class="ballet-segmented" role="group" aria-label="统计时间范围">
-                <button class="ballet-segment-button" type="button" data-ballet-period="month">本月</button>
-                <button class="ballet-segment-button" type="button" data-ballet-period="year">今年</button>
-                <button class="ballet-segment-button is-active" type="button" data-ballet-period="all">全部</button>
-              </div>
-            </div>
             <div class="ballet-training-overview">
-              <div class="ballet-training-metric-row" aria-label="上课次数统计">
-                <section class="ballet-training-total" aria-live="polite">
-                  <span id="ballet-training-period">全部上课次数</span>
-                  <div class="ballet-training-total-metric">
-                    <strong id="ballet-training-classes">0</strong>
-                    <small>节</small>
+              <dl class="ballet-training-summary" aria-live="polite">
+                <div class="ballet-summary-group ballet-summary-total"><dt><span id="ballet-training-period">全部累计</span></dt><dd><span><strong id="ballet-training-classes">—</strong> 节</span><span><strong id="ballet-training-hours">—</strong> 小时</span></dd></div>
+                <div class="ballet-summary-group ballet-training-averages"><dt>平均每月</dt><dd><span><strong id="ballet-training-monthly-classes">—</strong> 节</span><span><strong id="ballet-training-monthly-hours">—</strong> 小时</span></dd></div>
+                <div class="ballet-summary-group ballet-training-averages"><dt>平均每周</dt><dd><span><strong id="ballet-training-weekly-classes">—</strong> 节</span><span><strong id="ballet-training-weekly-hours">—</strong> 小时</span></dd></div>
+                <div class="ballet-summary-group ballet-training-manual" title="已包含在累计值中；只统计手动补录的已上课记录。"><dt>其中手动补录</dt><dd><span><strong id="ballet-training-manual-classes">—</strong> 节</span><span><strong id="ballet-training-manual-hours">—</strong> 小时</span></dd></div>
+              </dl>
+              <div class="ballet-breakdown-grid">
+                <section class="ballet-breakdown-section" data-distribution="course-types">
+                  <header><h3>课程类型</h3><span class="ballet-breakdown-count" id="ballet-course-types-count">0 类</span></header>
+                  <div class="ballet-distribution-sort" role="group" aria-label="课程类型排序">
+                    <button type="button" data-ballet-sort="classes" data-ballet-distribution="course-types" aria-pressed="true">按次数</button>
+                    <button type="button" data-ballet-sort="hours" data-ballet-distribution="course-types" aria-pressed="false">按时间</button>
                   </div>
-                  <dl class="ballet-training-averages">
-                    <div><dt>平均每月</dt><dd><strong id="ballet-training-monthly-classes">—</strong><span>节/月</span></dd></div>
-                    <div><dt>平均每周</dt><dd><strong id="ballet-training-weekly-classes">—</strong><span>节/周</span></dd></div>
-                  </dl>
-                  <dl class="ballet-training-manual" title="已包含在全部累计值中；只统计手动补录的已上课记录。">
-                    <dt>其中手动补录</dt><dd><strong id="ballet-training-manual-classes">—</strong><span>节</span></dd>
-                  </dl>
+                  <div class="ballet-distribution-columns" aria-hidden="true"><span>名称</span><span>节数</span><span>小时</span></div>
+                  <div class="ballet-bar-list" id="ballet-course-types" aria-live="polite"></div>
                 </section>
-                <div class="ballet-breakdown-grid">
-                  <section class="ballet-breakdown-section">
-                    <header><div><p class="eyebrow">Class count · Course type</p><h3>课程类型</h3></div><span class="status-pill" id="ballet-course-type-count-classes">0 类</span></header>
-                    <div class="ballet-bar-list" id="ballet-course-types-classes"></div>
-                  </section>
-                  <section class="ballet-breakdown-section">
-                    <header><div><p class="eyebrow">Class count · Level</p><h3>课程级别</h3></div><span class="status-pill" id="ballet-level-count-classes">0 项</span></header>
-                    <div class="ballet-bar-list" id="ballet-levels-classes"></div>
-                  </section>
-                  <section class="ballet-breakdown-section">
-                    <header><div><p class="eyebrow">Class count · Teacher</p><h3>授课老师</h3></div><span class="status-pill" id="ballet-teacher-count-classes">0 位</span></header>
-                    <div class="ballet-bar-list" id="ballet-teachers-classes"></div>
-                  </section>
-                </div>
-              </div>
-              <div class="ballet-training-metric-row" aria-label="训练时间统计">
-                <section class="ballet-training-total" aria-live="polite">
-                  <span id="ballet-training-time-period">全部训练时间</span>
-                  <div class="ballet-training-total-metric">
-                    <strong id="ballet-training-hours">0</strong>
-                    <small>小时</small>
+                <section class="ballet-breakdown-section" data-distribution="levels">
+                  <header><h3>课程级别</h3><span class="ballet-breakdown-count" id="ballet-levels-count">0 项</span></header>
+                  <div class="ballet-distribution-sort" role="group" aria-label="课程级别排序">
+                    <button type="button" data-ballet-sort="classes" data-ballet-distribution="levels" aria-pressed="true">按次数</button>
+                    <button type="button" data-ballet-sort="hours" data-ballet-distribution="levels" aria-pressed="false">按时间</button>
                   </div>
-                  <dl class="ballet-training-averages">
-                    <div><dt>平均每月</dt><dd><strong id="ballet-training-monthly-hours">—</strong><span>小时/月</span></dd></div>
-                    <div><dt>平均每周</dt><dd><strong id="ballet-training-weekly-hours">—</strong><span>小时/周</span></dd></div>
-                  </dl>
-                  <dl class="ballet-training-manual" title="已包含在全部累计值中；只统计手动补录的已上课记录。">
-                    <dt>其中手动补录</dt><dd><strong id="ballet-training-manual-hours">—</strong><span>小时</span></dd>
-                  </dl>
+                  <div class="ballet-distribution-columns" aria-hidden="true"><span>名称</span><span>节数</span><span>小时</span></div>
+                  <div class="ballet-bar-list" id="ballet-levels" aria-live="polite"></div>
                 </section>
-                <div class="ballet-breakdown-grid">
-                  <section class="ballet-breakdown-section">
-                    <header><div><p class="eyebrow">Training time · Course type</p><h3>课程类型</h3></div><span class="status-pill" id="ballet-course-type-count-hours">0 类</span></header>
-                    <div class="ballet-bar-list" id="ballet-course-types-hours"></div>
-                  </section>
-                  <section class="ballet-breakdown-section">
-                    <header><div><p class="eyebrow">Training time · Level</p><h3>课程级别</h3></div><span class="status-pill" id="ballet-level-count-hours">0 项</span></header>
-                    <div class="ballet-bar-list" id="ballet-levels-hours"></div>
-                  </section>
-                  <section class="ballet-breakdown-section">
-                    <header><div><p class="eyebrow">Training time · Teacher</p><h3>授课老师</h3></div><span class="status-pill" id="ballet-teacher-count-hours">0 位</span></header>
-                    <div class="ballet-bar-list" id="ballet-teachers-hours"></div>
-                  </section>
-                </div>
+                <section class="ballet-breakdown-section" data-distribution="teachers">
+                  <header><h3>授课老师</h3><span class="ballet-breakdown-count" id="ballet-teachers-count">0 位</span></header>
+                  <div class="ballet-distribution-sort" role="group" aria-label="授课老师排序">
+                    <button type="button" data-ballet-sort="classes" data-ballet-distribution="teachers" aria-pressed="true">按次数</button>
+                    <button type="button" data-ballet-sort="hours" data-ballet-distribution="teachers" aria-pressed="false">按时间</button>
+                  </div>
+                  <div class="ballet-distribution-columns" aria-hidden="true"><span>名称</span><span>节数</span><span>小时</span></div>
+                  <div class="ballet-bar-list" id="ballet-teachers" aria-live="polite"></div>
+                </section>
               </div>
             </div>
             <p class="ballet-training-average-note" id="ballet-training-average-note"></p>

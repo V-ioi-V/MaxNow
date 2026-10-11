@@ -187,6 +187,7 @@ const browserDataHealth = new Map();
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
 let activeBalletPeriod = "all";
+const balletDistributionSort = { "course-types": "classes", levels: "classes", teachers: "classes" };
 
 const qs = (selector) => document.querySelector(selector);
 const qsa = (selector) => [...document.querySelectorAll(selector)];
@@ -4068,22 +4069,26 @@ function createBalletBarItem(item, maxAmount, metric) {
   const label = document.createElement("strong");
   label.textContent = item.label;
   article.appendChild(label);
-  const display = metric === "classes"
-    ? { label: "节数", value: `${item.classes} 节`, amount: item.classes }
-    : { label: "时间", value: `${formatBalletHours(item.minutes)} 小时`, amount: item.minutes || 0 };
   const row = document.createElement("div");
   row.className = "ballet-bar-metric";
-  const caption = document.createElement("span");
-  caption.textContent = display.label;
-  const value = document.createElement("span");
-  value.textContent = display.value;
+  const classes = document.createElement("span");
+  classes.textContent = item.classes;
+  classes.setAttribute("aria-label", `${item.classes} 节`);
+  const hours = document.createElement("span");
+  hours.textContent = item.minutes == null ? "—" : formatBalletHours(item.minutes);
+  hours.setAttribute("aria-label", `${hours.textContent} 小时`);
+  classes.classList.toggle("is-sorted", metric === "classes");
+  hours.classList.toggle("is-sorted", metric === "hours");
+  row.append(classes, hours);
+  article.appendChild(row);
   const track = document.createElement("div");
   track.className = "ballet-bar-track";
+  track.setAttribute("aria-hidden", "true");
   const fill = document.createElement("span");
-  fill.style.width = `${display.amount > 0 ? Math.max(4, display.amount / Math.max(1, maxAmount) * 100) : 0}%`;
+  const amount = metric === "classes" ? item.classes : item.minutes || 0;
+  fill.style.width = `${amount / Math.max(1, maxAmount) * 100}%`;
   track.append(fill);
-  row.append(caption, value, track);
-  article.appendChild(row);
+  article.appendChild(track);
   return article;
 }
 
@@ -4404,25 +4409,22 @@ function renderBalletTraining() {
   }[activeBalletPeriod] || "全部";
   const classes = balletNumber(aggregate.classes);
   const minutes = balletNumber(aggregate.minutes);
-  setText("#ballet-training-period", `${periodLabel}上课次数`);
-  setText("#ballet-training-time-period", `${periodLabel}训练时间`);
+  setText("#ballet-training-period", `${periodLabel}累计`);
   setText("#ballet-training-hours", formatBalletHours(minutes));
   setText("#ballet-training-classes", classes);
   renderBalletTrainingAverages(aggregate);
   renderBalletManualTraining(aggregate);
-  ["classes", "hours"].forEach((metric) => {
-    const courseTypes = renderBalletDistribution(
-      `#ballet-course-types-${metric}`, aggregate.byCourseType, "courseType", metric,
-    );
-    const levels = renderBalletDistribution(
-      `#ballet-levels-${metric}`, breakdowns.levels, "levelDisplay", metric,
-    );
-    const teachers = renderBalletDistribution(
-      `#ballet-teachers-${metric}`, breakdowns.teachers, "teacher", metric,
-    );
-    setText(`#ballet-course-type-count-${metric}`, `${courseTypes.length} 类`);
-    setText(`#ballet-level-count-${metric}`, `${levels.length} 项`);
-    setText(`#ballet-teacher-count-${metric}`, `${teachers.length} 位`);
+  [
+    ["course-types", aggregate.byCourseType, "courseType", "类"],
+    ["levels", breakdowns.levels, "levelDisplay", "项"],
+    ["teachers", breakdowns.teachers, "teacher", "位"],
+  ].forEach(([name, source, kind, unit]) => {
+    const metric = balletDistributionSort[name];
+    const items = renderBalletDistribution(`#ballet-${name}`, source, kind, metric);
+    setText(`#ballet-${name}-count`, `${items.length} ${unit}`);
+    qsa(`[data-ballet-distribution="${name}"]`).forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.balletSort === metric));
+    });
   });
   renderBalletTrend();
 }
@@ -6804,6 +6806,13 @@ qsa("[data-ballet-period]").forEach((button) => {
     activeBalletPeriod = button.dataset.balletPeriod || "all";
     renderBalletTraining();
     });
+});
+
+qsa("[data-ballet-sort]").forEach((button) => {
+  button.addEventListener("click", () => {
+    balletDistributionSort[button.dataset.balletDistribution] = button.dataset.balletSort;
+    renderBalletTraining();
+  });
 });
 
 const balletWeekDialog = qs("#ballet-week-dialog");

@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 09:27",
-  "version": "1.0.11.55",
-  "versionLabel": "v1.0.11.55",
-  "branch": "feature/manual-pending-class",
-  "commit": "9b337f45",
+  "updatedAt": "2026-10-11 09:37",
+  "version": "1.0.11.56",
+  "versionLabel": "v1.0.11.56",
+  "branch": "feature/training-summary",
+  "commit": "873d1f5a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/manual-pending-class · commit 9b337f45 · 有未提交代码改动",
+  "deployNote": "feature/training-summary · commit 873d1f5a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "训练记录轻量布局与独立排序",
+      "summary": "将累计、月均、周均和手动补录的节数 / 小时合并成紧凑摘要；类型、级别、老师仅保留三组轻量列表，取消重复卡片与大块留白。"
+    },
     {
       "date": "2026-10-11",
       "title": "登记手动待上课计划",
@@ -28,11 +33,6 @@
       "date": "2026-10-11",
       "title": "课程卡单面板部署复验",
       "summary": "标题栏选卡与单面板样式已在线上文件中生效；服务器一致性检查、nginx 配置、服务与认证边界通过，芭蕾运行数据对保持不变。"
-    },
-    {
-      "date": "2026-10-10",
-      "title": "课程卡合并为单一面板",
-      "summary": "移除课程卡右侧独立会员卡列表，选卡入口收进标题栏原生下拉框；卡名与状态并排、开卡与到期日期降为次级信息，指标底色淡化，计划区改为细分隔线与紧凑文字，消除两个并列模块的视觉感。"
     }
   ]
 }
