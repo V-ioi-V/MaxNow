@@ -2704,7 +2704,7 @@ def synchronize(
     window = _logical_window(now, mode)
     observed_at = iso_now(now)
 
-    timetable_executor = ThreadPoolExecutor(max_workers=1)
+    background_executor = ThreadPoolExecutor(max_workers=2)
     timetable_cached = mode == "smart" and reusable_timetable(timetable, now)
     def read_timetable():
         started = time.perf_counter()
@@ -2714,7 +2714,13 @@ def synchronize(
         else:
             snapshot = build_timetable_snapshot(source, now, observed_at)
         return snapshot, round(time.perf_counter() - started, 3)
-    timetable_future = timetable_executor.submit(read_timetable)
+    def read_bookings():
+        started = time.perf_counter()
+        # Keep this cache private: history merging may fill its own cache concurrently.
+        upcoming = fetch_active_bookings(source, max_workers=3)
+        return upcoming, round(time.perf_counter() - started, 3)
+    timetable_future = background_executor.submit(read_timetable)
+    booking_future = background_executor.submit(read_bookings)
     try:
         attendance_index = resolve_attendance_summaries(
             fetch_attendance_index(source), ledger.get("records", [])
@@ -2810,12 +2816,9 @@ def synchronize(
         validate_ledger(proposed_ledger)
 
         finish_stage("attendance_details_and_merge")
-        upcoming = fetch_active_bookings(
-            source,
-            detail_cache=detail_cache,
-            max_workers=3,
-        )
-        finish_stage("bookings")
+        upcoming, booking_seconds = booking_future.result()
+        finish_stage("bookings_join")
+        timings["bookings_wall"] = booking_seconds
         proposed_booking = {
             "schemaVersion": SCHEMA_VERSION,
             "timezone": "Asia/Shanghai",
@@ -2938,7 +2941,7 @@ def synchronize(
             session_rotated=source.session_rotated,
         )
     finally:
-        timetable_executor.shutdown(wait=True, cancel_futures=True)
+        background_executor.shutdown(wait=True, cancel_futures=True)
         if isinstance(source, WendaSource):
             source.opener.close()
 

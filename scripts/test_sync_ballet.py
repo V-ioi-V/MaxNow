@@ -877,6 +877,25 @@ class BalletSyncTests(unittest.TestCase):
         self.assertEqual(active, 0)
         pool.close()
 
+    def test_bookings_and_history_read_concurrently(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixture"
+            fixture.mkdir()
+            write_fixture(fixture)
+            source = ballet.FixtureSource(fixture)
+            original = source.request
+            index_barrier = threading.Barrier(2)
+            def request(path, marker):
+                if path in (ballet.ATTENDANCE_PATH, ballet.BOOKING_PATH):
+                    index_barrier.wait(timeout=2)
+                return original(path, marker)
+            source.request = request
+            result = ballet.synchronize(ballet.build_paths(root/"state", root/"ballet.json"), source, "full", NOW)
+            self.assertEqual(result.status, "success")
+            self.assertIn("bookings_wall", result.timings)
+            self.assertIn("bookings_join", result.timings)
+
     def test_timetable_starts_before_attendance_finishes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

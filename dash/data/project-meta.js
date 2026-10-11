@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 16:35",
-  "version": "1.0.11.74",
-  "versionLabel": "v1.0.11.74",
-  "branch": "feature/ballet-incremental-refresh",
-  "commit": "744bd871",
+  "updatedAt": "2026-10-11 16:41",
+  "version": "1.0.11.75",
+  "versionLabel": "v1.0.11.75",
+  "branch": "feature/ballet-overlap-bookings",
+  "commit": "8a9b78a8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-incremental-refresh · commit 744bd871 · 有未提交代码改动",
+  "deployNote": "feature/ballet-overlap-bookings · commit 8a9b78a8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "芭蕾历史与预约重叠读取",
+      "summary": "同步开始即并行读取历史、活动预约与课表，各任务仍共用最多 3 条 HTTPS 连接，不减少预约 / 历史索引 / 课程卡实时读取。"
+    },
     {
       "date": "2026-10-11",
       "title": "芭蕾减少重复历史详情与课表请求",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "芭蕾自动刷新仅限首次进入",
       "summary": "每次打开或重新加载 MaxNow，仅首次进入芭蕾页自动刷新；切到豆奶等页面再返回不重新同步。触发前记录当前页面内存标记，失败后切页也不重复触发。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "芭蕾定时刷新收敛为每周一次",
-      "summary": "按 Owner 要求，业务定时仅保留北京时间周日 14:30 抢课后的 rolling 同步；移除每日五次与周日晚间日程，停用月度 full timer，取消抢课成功 / 失败即时同步钩子。"
     }
   ]
 };

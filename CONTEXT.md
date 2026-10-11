@@ -2,6 +2,8 @@
 
 ## 芭蕾页面即时刷新（2026-10-11）
 
+历史列表 / 详情与活动预约列表 / 详情在同步开始时重叠读取，课表继续后台读取；所有读取共用最多 3 条 HTTPS 连接。预约使用独立详情缓存，避免并发修改历史缓存；全部成功并校验后才发布。安全日志 bookings_wall 是后台预约耗时，bookings_join 只记录历史完成后的等待，两者不能与其他重叠阶段直接相加；实时读取范围与五分钟课表缓存规则不变。
+
 刷新与数据连接共用 `ballet-connection-status`，移除重复刷新 pill 和通知；`balletRefreshUiState` 在普通数据重绘时保护运行 / 失败状态，成功释放覆盖恢复已同步。接口提供安全的 `finishedAt` 与 `durationSeconds`，不发布 unit、源标识或凭据。计时器必须在成功、失败和 finally 中清理。`build_timetable_snapshot` 周日下午先读下周，已发布时只补今天，未发布时完整回退本周；单次按日期复用已读页面，已发布情形从 14 次降为 8 次。
 
 `ballet_refresh_service.py` 是独立于认证服务的低权限回环 HTTP 入口（8766），nginx 对精确 `/api/ballet/refresh` 使用现有 auth_request。每次打开 MaxNow 后首次进入芭蕾自动 POST；当前页面内存中的 balletAutoRefreshStarted 在调用前置为 true，切页返回或失败不再自动触发，重新加载后重置；手动按钮使用同一路径；GET 轮询任务状态，结束后重读全部芭蕾展示源。单进程锁合并并发，完成后 60 秒复用结果；不会修改旧更新时间或清空最后成功内容。专用用户经精确 polkit 规则只允许 start `maxnow-ballet-full-sync.service`，不读取闻道凭据 / 私有账本，不参与抢课关键路径。
