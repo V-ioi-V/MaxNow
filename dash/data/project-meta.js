@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 18:35",
-  "version": "1.0.11.76",
-  "versionLabel": "v1.0.11.76",
-  "branch": "bugfix/ballet-booking-record-1011",
-  "commit": "fd7f1c5d",
+  "updatedAt": "2026-10-11 18:37",
+  "version": "1.0.11.77",
+  "versionLabel": "v1.0.11.77",
+  "branch": "bugfix/ballet-cancel-record-1011",
+  "commit": "b07044f3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-booking-record-1011 · commit fd7f1c5d · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-cancel-record-1011 · commit b07044f3 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "截图圈选周六课程取消",
+      "summary": "Owner 红框指定 10 月 17 日 15:30–17:00「芭蕾L1.5 - 入门+」，徐老师 / 大教室。实时活动预约唯一匹配，dry-run ready、mutationAttempts=0；单次取消 mutation 返回 cancelled，18:37:20 独立活动预约查询确认目标消失，周六上午 L1 预约仍在。"
+    },
     {
       "date": "2026-10-11",
       "title": "截图圈选两节课程预约",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "芭蕾刷新复用连接并重叠课表读取",
       "summary": "同次完整刷新共用最多 3 条固定站点 HTTPS 连接，服务端关闭或读取失败时重建；全局连接池限制各阶段合计并发，不扩大只读范围或重试次数。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "芭蕾整体刷新使用少量并行读取",
-      "summary": "历史详情、预约详情与每日课表最多 3 路并行，分页保留顺序，历史 / 课程卡 / 预约 / 课表范围不减少。共享 Session 和请求计数加锁，身份失效阻止后续网络尝试，真实约课提交仍串行。"
     }
   ]
 };
