@@ -69,7 +69,7 @@ class Refresh:
                     if current.get("ActiveState") == "inactive" and current.get("Result") == "success" and current.get("ExecMainStatus") == "0":
                         status, message = "success", "芭蕾整体数据已刷新"
                     break
-                self.sleep(2)
+                self.sleep(1)
             else:
                 message = "同步等待超时，仍显示上次成功的数据；可稍后刷新查看。"
         except (OSError, subprocess.SubprocessError):

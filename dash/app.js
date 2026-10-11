@@ -6469,7 +6469,7 @@ function refreshBalletData() {
       if (result.status === "running" && Number.isFinite(Date.parse(result.startedAt))) startedAt = Date.parse(result.startedAt);
       const deadline = Date.now() + 360000;
       while (result.status === "running" && Date.now() < deadline) {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         result = await requestBalletRefresh();
       }
       // Also reload safe failure metadata, while retaining the last-good content.

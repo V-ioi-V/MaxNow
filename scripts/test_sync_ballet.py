@@ -755,6 +755,98 @@ class BalletSyncTests(unittest.TestCase):
         same_course_next_day = {**transferred, "date": "2026-08-19"}
         self.assertFalse(ballet.is_attendance_excluded(same_course_next_day))
 
+    def test_connection_pool_reuses_connection_and_replaces_server_closed_one(self):
+        import urllib.request
+        created = []
+        class Response:
+            status = 200
+            headers = {}
+            will_close = False
+            def read(self, size): return b"ok"
+            def isclosed(self): return True
+            def close(self): pass
+        class Connection:
+            def __init__(self, timeout):
+                self.timeout = timeout
+                self.calls = []
+                self.closed = False
+                created.append(self)
+            def request(self, *args, **kwargs): self.calls.append((args, kwargs))
+            def getresponse(self): return Response()
+            def close(self): self.closed = True
+        pool = ballet.WendaConnectionPool(lambda: None, Connection)
+        def read():
+            with pool.open(urllib.request.Request(ballet.BASE_URL+ballet.MEMBERSHIP_PATH), 20) as response:
+                self.assertEqual(response.read(10), b"ok")
+        read(); read()
+        self.assertEqual(len(created), 1)
+        self.assertEqual(len(created[0].calls), 2)
+        self.assertEqual(created[0].calls[0][1]["headers"]["Connection"], "keep-alive")
+        Response.will_close = True
+        read()
+        self.assertTrue(created[0].closed)
+        read()
+        self.assertEqual(len(created), 2)
+        pool.close()
+
+    def test_pool_limits_overlapping_stages_to_three_connections(self):
+        import urllib.request
+        from concurrent.futures import ThreadPoolExecutor
+        lock = threading.Lock()
+        barrier = threading.Barrier(3)
+        active = peak = entered = 0
+        class Response:
+            status = 200
+            headers = {}
+            will_close = False
+            def read(self, size): return b"ok"
+            def isclosed(self): return True
+            def close(self):
+                nonlocal active
+                with lock: active -= 1
+        class Connection:
+            def __init__(self, timeout): self.timeout = timeout
+            def request(self, *args, **kwargs):
+                nonlocal active, peak, entered
+                with lock:
+                    active += 1
+                    entered += 1
+                    initial = entered <= 3
+                    peak = max(peak, active)
+                if initial: barrier.wait(timeout=2)
+                time.sleep(0.01)
+            def getresponse(self): return Response()
+            def close(self): pass
+        pool = ballet.WendaConnectionPool(lambda: None, Connection)
+        def read(_):
+            with pool.open(urllib.request.Request(ballet.BASE_URL+ballet.MEMBERSHIP_PATH), 20) as response:
+                response.read(10)
+        with ThreadPoolExecutor(max_workers=6) as executor:
+            list(executor.map(read, range(9)))
+        self.assertEqual(peak, 3)
+        self.assertEqual(entered, 9)
+        self.assertEqual(active, 0)
+        pool.close()
+
+    def test_timetable_starts_before_attendance_finishes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixture"
+            fixture.mkdir()
+            write_fixture(fixture)
+            source = ballet.FixtureSource(fixture)
+            original = source.request
+            timetable_started = threading.Event()
+            def request(path, marker):
+                if path.startswith(ballet.TIMETABLE_PATH): timetable_started.set()
+                if path == ballet.ATTENDANCE_PATH:
+                    self.assertTrue(timetable_started.wait(timeout=2))
+                return original(path, marker)
+            source.request = request
+            result = ballet.synchronize(ballet.build_paths(root/"state", root/"ballet.json"), source, "full", NOW)
+            self.assertEqual(result.status, "success")
+            self.assertIn("timetable_wall", result.timings)
+
     def test_timetable_reads_overlap_with_at_most_three_workers(self):
         with tempfile.TemporaryDirectory() as directory:
             fixture = Path(directory)

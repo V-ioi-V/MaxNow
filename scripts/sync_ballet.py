@@ -5,6 +5,8 @@ import hashlib
 import html
 from html.parser import HTMLParser
 import http.cookies
+import http.client
+import queue
 import json
 import math
 import os
@@ -151,6 +153,7 @@ class SyncResult:
     session_rotated: bool
     timings: dict[str, float] = field(default_factory=dict)
     requests_made: int = 0
+    connection_metrics: dict[str, int] = field(default_factory=dict)
 
 
 def iso_now(now: datetime | None = None) -> str:
@@ -390,6 +393,75 @@ def _is_auth_response(status: int, headers: Any, text: str) -> bool:
     )
 
 
+class PooledResponse:
+    def __init__(self, response, connection, pool):
+        self.response, self.connection, self.pool = response, connection, pool
+        self.status, self.headers = response.status, response.headers
+    def __enter__(self):
+        return self
+    def read(self, size):
+        return self.response.read(size)
+    def __exit__(self, exc_type, *_args):
+        reusable = exc_type is None and self.response.isclosed() and not self.response.will_close
+        try:
+            self.response.close()
+        finally:
+            try:
+                if not reusable:
+                    self.connection.close()
+            finally:
+                self.pool.put(self.connection if reusable else None)
+
+
+class WendaConnectionPool:
+    """Fixed-host HTTPS pool; never follows redirects or expands request allowlists."""
+    def __init__(self, guard, connection_factory=None):
+        self.guard = guard
+        self.factory = connection_factory or (lambda timeout: http.client.HTTPSConnection(urlsplit(BASE_URL).hostname, timeout=timeout))
+        self.metrics_lock = threading.Lock()
+        self.metrics = {"created": 0, "reused": 0}
+        self.pool = queue.LifoQueue(maxsize=3)
+        for _ in range(3):
+            self.pool.put(None)
+    def open(self, request, timeout):
+        url = urlsplit(request.full_url)
+        if url.scheme != "https" or url.netloc != urlsplit(BASE_URL).netloc:
+            raise SyncFailure("configuration_error")
+        connection = self.pool.get()
+        try:
+            self.guard()
+            if connection is None:
+                connection = self.factory(timeout)
+                with self.metrics_lock:
+                    self.metrics["created"] += 1
+            else:
+                with self.metrics_lock:
+                    self.metrics["reused"] += 1
+            connection.timeout = timeout
+            headers = dict(request.header_items())
+            headers["Connection"] = "keep-alive"
+            connection.request(request.get_method(), url.path + ("?" + url.query if url.query else ""), body=request.data, headers=headers)
+            response = connection.getresponse()
+            return PooledResponse(response, connection, self.pool)
+        except BaseException as error:
+            try:
+                if connection is not None:
+                    connection.close()
+            finally:
+                self.pool.put(None)
+            if isinstance(error, (OSError, http.client.HTTPException)):
+                raise urllib.error.URLError("transport_error") from None
+            raise
+    def close(self):
+        while True:
+            try:
+                connection = self.pool.get_nowait()
+            except queue.Empty:
+                break
+            if connection is not None:
+                connection.close()
+
+
 class WendaSource:
     def __init__(
         self,
@@ -404,9 +476,12 @@ class WendaSource:
         self.request_count = 0
         self._state_lock = threading.RLock()
         self._auth_failed = False
-        self.opener = urllib.request.build_opener(
-            urllib.request.ProxyHandler({}), NoRedirect()
-        )
+        self.opener = WendaConnectionPool(self._check_auth)
+
+    def _check_auth(self):
+        with self._state_lock:
+            if self._auth_failed:
+                raise SyncFailure("auth_required")
 
     def _headers(self, path: str) -> dict[str, str]:
         referer = (
@@ -472,7 +547,7 @@ class WendaSource:
                 status = int(error.code)
                 headers = error.headers
                 body = _read_limited(error)
-            except (urllib.error.URLError, TimeoutError, socket.timeout):
+            except (urllib.error.URLError, TimeoutError, socket.timeout, http.client.HTTPException, OSError):
                 last_network_failure = True
                 if attempt < self.retries:
                     time.sleep(min(2**attempt, 3))
@@ -537,7 +612,7 @@ class WendaSource:
                 status = int(error.code)
                 response_headers = error.headers
                 response_body = _read_limited(error)
-            except (urllib.error.URLError, TimeoutError, socket.timeout):
+            except (urllib.error.URLError, TimeoutError, socket.timeout, http.client.HTTPException, OSError):
                 last_network_failure = True
                 if attempt < self.retries:
                     time.sleep(min(2**attempt, 3))
@@ -2447,6 +2522,41 @@ def _make_failure_state(
     return state
 
 
+def apply_timetable_bookings(days, upcoming):
+    booking_states = {
+        (
+            item.get("date"),
+            item.get("startTime"),
+            item.get("endTime"),
+            normalize_course_name(item.get("courseName", "")),
+        ): {
+            "bookingStatus": item.get("bookingStatus"),
+            "waitlistPosition": item.get("waitlistPosition"),
+        }
+        for item in (upcoming or [])
+        if item.get("bookingStatus") in {"booked", "waitlist"}
+    }
+    for day in days:
+        for record in day["records"]:
+            booking_state = booking_states.get(
+                (
+                    record.get("date"),
+                    record.get("startTime"),
+                    record.get("endTime"),
+                    normalize_course_name(record.get("courseName", "")),
+                )
+            )
+            if booking_state:
+                record["availability"] = booking_state["bookingStatus"]
+                if (
+                    booking_state["bookingStatus"] == "waitlist"
+                    and isinstance(booking_state.get("waitlistPosition"), int)
+                    and booking_state["waitlistPosition"] > 0
+                ):
+                    record["waitlistPosition"] = booking_state["waitlistPosition"]
+
+
+
 def build_timetable_snapshot(
     source: WendaSource | FixtureSource,
     now: datetime,
@@ -2491,37 +2601,7 @@ def build_timetable_snapshot(
     if not days:
         days = fetch_days([week_start + timedelta(days=offset) for offset in range(7)])
 
-    booking_states = {
-        (
-            item.get("date"),
-            item.get("startTime"),
-            item.get("endTime"),
-            normalize_course_name(item.get("courseName", "")),
-        ): {
-            "bookingStatus": item.get("bookingStatus"),
-            "waitlistPosition": item.get("waitlistPosition"),
-        }
-        for item in (upcoming or [])
-        if item.get("bookingStatus") in {"booked", "waitlist"}
-    }
-    for day in days:
-        for record in day["records"]:
-            booking_state = booking_states.get(
-                (
-                    record.get("date"),
-                    record.get("startTime"),
-                    record.get("endTime"),
-                    normalize_course_name(record.get("courseName", "")),
-                )
-            )
-            if booking_state:
-                record["availability"] = booking_state["bookingStatus"]
-                if (
-                    booking_state["bookingStatus"] == "waitlist"
-                    and isinstance(booking_state.get("waitlistPosition"), int)
-                    and booking_state["waitlistPosition"] > 0
-                ):
-                    record["waitlistPosition"] = booking_state["waitlistPosition"]
+    apply_timetable_bookings(days, upcoming)
 
     available_dates = [
         item["date"]
@@ -2577,6 +2657,12 @@ def synchronize(
     window = _logical_window(now, mode)
     observed_at = iso_now(now)
 
+    timetable_executor = ThreadPoolExecutor(max_workers=1)
+    def read_timetable():
+        started = time.perf_counter()
+        snapshot = build_timetable_snapshot(source, now, observed_at)
+        return snapshot, round(time.perf_counter() - started, 3)
+    timetable_future = timetable_executor.submit(read_timetable)
     try:
         attendance_index = resolve_attendance_summaries(
             fetch_attendance_index(source), ledger.get("records", [])
@@ -2693,14 +2779,10 @@ def synchronize(
             "cards": parse_membership(membership_html),
         }
         finish_stage("membership")
-        proposed_timetable = build_timetable_snapshot(
-            source,
-            now,
-            observed_at,
-            proposed_booking["records"],
-        )
-
-        finish_stage("timetable")
+        proposed_timetable, timetable_seconds = timetable_future.result()
+        apply_timetable_bookings(proposed_timetable["days"], proposed_booking["records"])
+        finish_stage("timetable_join")
+        timings["timetable_wall"] = timetable_seconds
         last_data_change = old_state.get("lastDataChangeAt")
         previous_business = {
             "attendance": ledger.get("contentFingerprint"),
@@ -2757,6 +2839,7 @@ def synchronize(
             status="success",
             timings=timings,
             requests_made=source.request_count,
+            connection_metrics=(dict(source.opener.metrics) if isinstance(source, WendaSource) else {}),
             source_records=len(attendance_index),
             merged_records=len(merged_records),
             changed_records=changed_records,
@@ -2790,6 +2873,10 @@ def synchronize(
             changed_records=0,
             session_rotated=source.session_rotated,
         )
+    finally:
+        timetable_executor.shutdown(wait=True, cancel_futures=True)
+        if isinstance(source, WendaSource):
+            source.opener.close()
 
 
 def build_paths(state_dir: Path, output: Path) -> SyncPaths:
@@ -2874,6 +2961,7 @@ def _safe_stdout(result: SyncResult, dry_run: bool) -> None:
                 "sessionRotatedInMemory": result.session_rotated,
                 "phaseSeconds": result.timings,
                 "requestsMade": result.requests_made,
+                "connections": result.connection_metrics,
             },
             ensure_ascii=False,
             separators=(",", ":"),

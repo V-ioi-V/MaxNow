@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 16:15",
-  "version": "1.0.11.72",
-  "versionLabel": "v1.0.11.72",
-  "branch": "feature/ballet-parallel-refresh",
-  "commit": "2674ba8e",
+  "updatedAt": "2026-10-11 16:24",
+  "version": "1.0.11.73",
+  "versionLabel": "v1.0.11.73",
+  "branch": "feature/ballet-connection-reuse",
+  "commit": "5efc6b7f",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-parallel-refresh · commit 2674ba8e · 有未提交代码改动",
+  "deployNote": "feature/ballet-connection-reuse · commit 5efc6b7f · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "芭蕾刷新复用连接并重叠课表读取",
+      "summary": "同次完整刷新共用最多 3 条固定站点 HTTPS 连接，服务端关闭或读取失败时重建；全局连接池限制各阶段合计并发，不扩大只读范围或重试次数。"
+    },
     {
       "date": "2026-10-11",
       "title": "芭蕾整体刷新使用少量并行读取",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "确认手动待上课为已完成",
       "summary": "Owner 确认 10 月 11 日 10:00–11:30 李俊老师大教室「芭蕾 L1 入门」已上完；复用既有 manual 稳定键，由 planned 改为 active / attended，不新增第二条记录。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "芭蕾统一刷新状态与减少课表请求",
-      "summary": "实测页面同步 15:48:05–15:49:06 共 61 秒；顶部只保留一个状态，刷新时显示已等待时分秒，完成恢复已同步，失败显示刷新失败。取消重复状态和弹出通知；静态数据重新渲染不得覆盖正在刷新的状态，六分钟等待上限后明确报超时。"
     }
   ]
 };
