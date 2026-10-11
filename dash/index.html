@@ -6,8 +6,8 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=253" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=283" />
+    <script src="./app.js?v=254" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=284" />
   </head>
   <body>
     <div class="app-shell">
@@ -866,6 +866,10 @@
                     <strong id="ballet-training-classes">0</strong>
                     <small>节</small>
                   </div>
+                  <dl class="ballet-training-averages">
+                    <div><dt>平均每月</dt><dd><strong id="ballet-training-monthly-classes">—</strong><span>节/月</span></dd></div>
+                    <div><dt>平均每周</dt><dd><strong id="ballet-training-weekly-classes">—</strong><span>节/周</span></dd></div>
+                  </dl>
                 </section>
                 <div class="ballet-breakdown-grid">
                   <section class="ballet-breakdown-section">
@@ -889,6 +893,10 @@
                     <strong id="ballet-training-hours">0</strong>
                     <small>小时</small>
                   </div>
+                  <dl class="ballet-training-averages">
+                    <div><dt>平均每月</dt><dd><strong id="ballet-training-monthly-hours">—</strong><span>小时/月</span></dd></div>
+                    <div><dt>平均每周</dt><dd><strong id="ballet-training-weekly-hours">—</strong><span>小时/周</span></dd></div>
+                  </dl>
                 </section>
                 <div class="ballet-breakdown-grid">
                   <section class="ballet-breakdown-section">
@@ -906,12 +914,13 @@
                 </div>
               </div>
             </div>
-            <div class="ballet-training-detail-grid">
+            <p class="ballet-training-average-note" id="ballet-training-average-note"></p>
+            <div class="ballet-training-detail-grid" id="ballet-training-detail">
               <section class="ballet-training-trend" id="ballet-training-classes-trend">
                 <header>
                   <div>
                     <p class="eyebrow">Class count</p>
-                    <h3 id="ballet-classes-trend-title">每周上课节数热力图</h3>
+                    <h3 id="ballet-classes-trend-title">上课节数趋势</h3>
                   </div>
                 </header>
                 <div class="line-chart ballet-line-chart" id="ballet-classes-trend-chart"></div>
@@ -920,7 +929,7 @@
                 <header>
                   <div>
                     <p class="eyebrow">Training time</p>
-                    <h3 id="ballet-time-trend-title">每周训练时间热力图</h3>
+                    <h3 id="ballet-time-trend-title">训练时间趋势</h3>
                   </div>
                 </header>
                 <div class="line-chart ballet-line-chart" id="ballet-time-trend-chart"></div>

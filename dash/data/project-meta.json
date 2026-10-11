@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 08:15",
-  "version": "1.0.11.52",
-  "versionLabel": "v1.0.11.52",
-  "branch": "bugfix/ballet-card-layout",
-  "commit": "cd4af41f",
+  "updatedAt": "2026-10-11 08:43",
+  "version": "1.0.11.53",
+  "versionLabel": "v1.0.11.53",
+  "branch": "feature/ballet-training-averages",
+  "commit": "54063030",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-card-layout · commit cd4af41f · 有未提交代码改动",
+  "deployNote": "feature/ballet-training-averages · commit 54063030 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "全部训练统计增加月均与周均",
+      "summary": "移除“全部”范围底部的每周节数 / 时间热力图；累计次数卡加入月均、周均节数，累计时间卡加入月均、周均小时，与原有累计值合并呈现。本月日历热力图、今年月折线继续保留。"
+    },
     {
       "date": "2026-10-11",
       "title": "课程卡单面板部署复验",
@@ -28,11 +33,6 @@
       "date": "2026-10-09",
       "title": "取消三节晚课并刷新芭蕾面板",
       "summary": "按 Owner 截图与闻道实时活动预约精确核对，取消 10 月 9 日申昊清小教室 18:45–20:15 芭蕾 L1.5－入门+、20:15–21:15 软开课，以及 10 月 10 日张瀚泽小教室 19:00–20:00 舞姿（基础）。三节均先通过零 mutation 预检，再分别单次取消并以独立实时查询复核；最终活动预约列表为空。"
-    },
-    {
-      "date": "2026-10-09",
-      "title": "芭蕾训练分布名称字号收紧",
-      "summary": "训练记录的课程类型、级别与授课老师名称统一调整为 `12px`，恢复紧凑信息层级；只影响分布小卡的名称，不改变总量数字和图表。样式缓存更新为 `styles.css?v=281`，版本提升为 `1.0.11.48`。"
     }
   ]
 }
