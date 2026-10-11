@@ -3304,3 +3304,7 @@ safety: 未访问闻道、读取凭据、启动同步或抢课，也未执行预
 Owner 将无人值守业务刷新收敛为仅周日 14:30。安装仓库 maxnow-ballet-sync.timer（唯一 OnCalendar）及无 OnSuccess / OnFailure 的 maxnow-ballet-booking-fast.service；停止并禁用 maxnow-ballet-full-sync.timer。页面进入和手动刷新继续通过 broker 调用 full service。Session 探针 / 日志转存 / 状态发布不属于业务数据刷新，本次保持原调度。
 
 部署先停止 rolling timer，备份 dash/data 与旧 unit，安装 unit 后 daemon-reload；在重新启动 Persistent timer 前 touch /var/lib/systemd/timers/stamp-maxnow-ballet-sync.timer，避免补跑已过去的周日 14:30。验收 rolling timer 只有一条日程，下次为 2026-10-18 14:30；full timer disabled / inactive；Fast Path 的 OnSuccess / OnFailure 为空，抢课 timer 下次仍为 2026-10-18 14:19:35。不得为验收启动 sync 或 booking service。部署保留当前 50 次 / 65 小时、本周 6 次 / 8 小时的 runtime ballet 配对文件及私有账本。
+
+### 2026-10-11 芭蕾进入刷新仅限本次打开首次
+
+前端每次打开 / 重新加载 MaxNow 后，仅首次进入芭蕾页调用整体刷新；在当前页面内存记录已触发标记，切到豆奶再回来不重复触发，失败后切页也不重试。手动刷新仍可用，重新加载页面重置标记。仅发布前端与文档，不重启服务，不改周日 14:30 定时，不触发闻道请求；部署保护 runtime ballet 配对文件。版本 1.0.11.70，app.js?v=266。

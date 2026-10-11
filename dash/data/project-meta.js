@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 16:03",
-  "version": "1.0.11.69",
-  "versionLabel": "v1.0.11.69",
-  "branch": "feature/ballet-weekly-sync",
-  "commit": "2d7453fd",
+  "updatedAt": "2026-10-11 16:05",
+  "version": "1.0.11.70",
+  "versionLabel": "v1.0.11.70",
+  "branch": "bugfix/ballet-first-entry-refresh",
+  "commit": "b3503ec0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-weekly-sync · commit 2d7453fd · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-first-entry-refresh · commit b3503ec0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "芭蕾自动刷新仅限首次进入",
+      "summary": "每次打开或重新加载 MaxNow，仅首次进入芭蕾页自动刷新；切到豆奶等页面再返回不重新同步。触发前记录当前页面内存标记，失败后切页也不重复触发。"
+    },
     {
       "date": "2026-10-11",
       "title": "芭蕾定时刷新收敛为每周一次",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "芭蕾进入页面自动同步与手动整体刷新",
       "summary": "每次打开芭蕾页面或从其他页面进入时，自动同步课程卡、预约 / 候补、上课历史和课表；右上角刷新按钮触发同一同步，完成后重新读取全部芭蕾展示源。过程中保留最后成功数据，状态区显示刷新中 / 已刷新 / 刷新失败。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "接入多卡顺延与单次自动激活",
-      "summary": "普通约课与周日 Fast Path 共用选卡：真实到期日由近到远，明确规则拦截后换卡；每次预约前重检，避免先前预约占用旧卡额度。"
     }
   ]
 };

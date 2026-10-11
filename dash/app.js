@@ -6412,6 +6412,7 @@ async function loadData(options = {}) {
 }
 
 let balletRefreshPromise = null;
+let balletAutoRefreshStarted = false;
 let balletRefreshUiState = null;
 
 function balletRefreshDuration(seconds) {
@@ -6497,7 +6498,6 @@ function refreshBalletData() {
 }
 
 function setView(view) {
-  const previousView = getActiveView();
   const nextView = ["home", "tokens", "ballet", "cloud", "dounai"].includes(view) ? view : "home";
   document.body.dataset.view = nextView;
   restoreCachedView(nextView);
@@ -6535,7 +6535,10 @@ function setView(view) {
   loadViewData(nextView);
   refreshButton.title = nextView === "ballet" ? "刷新芭蕾整体数据" : "刷新页面数据";
   refreshButton.setAttribute("aria-label", refreshButton.title);
-  if (nextView === "ballet" && previousView !== "ballet") refreshBalletData();
+  if (nextView === "ballet" && !balletAutoRefreshStarted) {
+    balletAutoRefreshStarted = true;
+    refreshBalletData();
+  }
   if (nextView !== "tokens") updateSidebarTokenSummary("7d");
   if (location.hash !== `#${nextView}`) location.hash = nextView;
   window.scrollTo({ top: 0, behavior: "auto" });
