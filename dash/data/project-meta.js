@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 09:46",
-  "version": "1.0.11.58",
-  "versionLabel": "v1.0.11.58",
-  "branch": "bugfix/membership-sync",
-  "commit": "f30ee636",
+  "updatedAt": "2026-10-11 09:56",
+  "version": "1.0.11.59",
+  "versionLabel": "v1.0.11.59",
+  "branch": "feature/course-card-picker",
+  "commit": "a3ca5d41",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/membership-sync · commit f30ee636 · 有未提交代码改动",
+  "deployNote": "feature/course-card-picker · commit a3ca5d41 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "课程卡主次层级与三卡切换列表",
+      "summary": "按 Owner 确认的效果图突出剩余课次与到期日，使用 / 期限数值降为辅助，保留饱满进度轨道；预测收成清晰的主日期与次级节奏说明。"
+    },
     {
       "date": "2026-10-11",
       "title": "修复未激活会员卡阻断课程同步",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "登记手动待上课计划",
       "summary": "Owner 将 10 月 11 日 10:00–11:30 李俊大教室「芭蕾L1-入门」先登记为待上课，90 分钟；不计入已上课次数 / 小时或手动补录累计，不代表闻道预约成功。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "全部累计卡增加手动补录统计",
-      "summary": "Owner 明确统计口径为手动补录的上课记录；全部累计次数卡增加“其中手动补录”的节数，全部累计时间卡增加对应小时数，作为累计总量的子集展示，不重复相加。"
     }
   ]
 };
