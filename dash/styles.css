@@ -7684,7 +7684,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
 .ballet-bar-track {
   grid-column: 1 / -1;
-  height: 3px;
+  height: 7px;
   overflow: hidden;
   border-radius: 999px;
   background: color-mix(in srgb, var(--card-color) 10%, #eef3f8);

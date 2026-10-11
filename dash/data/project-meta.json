@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 09:37",
-  "version": "1.0.11.56",
-  "versionLabel": "v1.0.11.56",
-  "branch": "feature/training-summary",
-  "commit": "873d1f5a",
+  "updatedAt": "2026-10-11 09:42",
+  "version": "1.0.11.57",
+  "versionLabel": "v1.0.11.57",
+  "branch": "bugfix/training-bar-weight",
+  "commit": "bef15133",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/training-summary · commit 873d1f5a · 有未提交代码改动",
+  "deployNote": "bugfix/training-bar-weight · commit bef15133 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "训练分布进度条恢复原有厚度",
+      "summary": "三组分类进度条由 3px 恢复为原有 7px，同族圆润端头、浅色底轨与语义色保持一致；紧凑布局、双指标和独立排序继续保留。"
+    },
     {
       "date": "2026-10-11",
       "title": "训练记录轻量布局与独立排序",
@@ -28,11 +33,6 @@
       "date": "2026-10-11",
       "title": "全部训练统计增加月均与周均",
       "summary": "移除“全部”范围底部的每周节数 / 时间热力图；累计次数卡加入月均、周均节数，累计时间卡加入月均、周均小时，与原有累计值合并呈现。本月日历热力图、今年月折线继续保留。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "课程卡单面板部署复验",
-      "summary": "标题栏选卡与单面板样式已在线上文件中生效；服务器一致性检查、nginx 配置、服务与认证边界通过，芭蕾运行数据对保持不变。"
     }
   ]
 }
