@@ -1,4 +1,5 @@
 [Unit]
+# Legacy schedule: keep disabled; full-sync.service is used by page/manual refresh.
 Description=Run MaxNow ballet full reconciliation monthly at 00:47 Asia/Shanghai
 
 [Timer]

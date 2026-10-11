@@ -493,10 +493,7 @@ def check_ballet_booking_fast():
         'config["unknownVerificationSeconds"]',
         "Actual booking or waitlist mutations must remain strictly serial",
         "ConditionPathExists=/etc/maxnow-ballet/enable-fast-booking",
-        "OnSuccess=maxnow-ballet-sync.service",
-        "OnFailure=maxnow-ballet-sync.service",
-        "执行结束立即刷新芭蕾面板",
-        "抢课后</dt><dd>执行结束立即刷新芭蕾面板",
+        "周日 14:30 统一只读刷新芭蕾面板",
         "location = /data/ballet-booking-fast.json",
         "alias /var/lib/maxnow-ballet-booking-fast-public/ballet-booking-fast.json;",
         'const BALLET_BOOKING_FAST_URL = "./data/ballet-booking-fast.json"',
@@ -843,19 +840,17 @@ def check_ballet_read_model():
     ):
         raise ValueError("ballet: runtime ownership and visible sync-failure contract is incomplete")
     timer = (ROOT / "server/maxnow-ballet-sync.timer").read_text(encoding="utf-8")
-    expected_ballet_sync_times = ("09", "12", "15", "18", "22")
+    expected_ballet_sync_schedule = ["OnCalendar=Sun *-*-* 14:30:00 Asia/Shanghai"]
     if (
-        any(
-            f"OnCalendar=*-*-* {hour}:00:00 Asia/Shanghai" not in timer
-            for hour in expected_ballet_sync_times
-        )
+        [line for line in timer.splitlines() if line.startswith("OnCalendar=")] != expected_ballet_sync_schedule
+        or any(line.startswith(("OnSuccess=", "OnFailure=")) for line in (ROOT / "server/maxnow-ballet-booking-fast.service").read_text(encoding="utf-8").splitlines())
         or "OnCalendar=*-*-* 00:00:00 Asia/Shanghai" in timer
         or "OnCalendar=Sun *-*-* 14:30:00 Asia/Shanghai" not in timer
         or "OnCalendar=Sun *-*-* 20:00:00 Asia/Shanghai" in timer
         or "Sunday 14:30" not in dashboard_html
-        or "周日 14:30 检查下周课表" not in dashboard_js
-        or "09:00 / 12:00 / 15:00 / 18:00 / 22:00 整体刷新" not in dashboard_html
-        or "每天 09 / 12 / 15 / 18 / 22 点更新" not in dashboard_js
+        or "仅周日 14:30 定时更新" not in dashboard_js
+        or "仅周日 14:30 整体刷新" not in dashboard_html
+        or "打开页面或手动刷新同步整体数据" not in dashboard_js
         or "function renderBalletPlanWeek()" not in dashboard_js
         or "const BALLET_PLAN_WEEKDAYS" not in dashboard_js
         or "getBalletPlanWeekStart(offset = balletPlanWeekOffset)" not in dashboard_js
@@ -1883,7 +1878,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=294" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=264" not in dashboard_html
+        or "app.js?v=265" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2140,7 +2135,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=264" not in dashboard_html:
+    if "app.js?v=265" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

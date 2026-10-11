@@ -1,12 +1,7 @@
 [Unit]
-Description=Run MaxNow ballet rolling sync five times daily and for the Sunday timetable refresh
+Description=Run MaxNow ballet rolling sync only Sunday at 14:30 Asia/Shanghai
 
 [Timer]
-OnCalendar=*-*-* 09:00:00 Asia/Shanghai
-OnCalendar=*-*-* 12:00:00 Asia/Shanghai
-OnCalendar=*-*-* 15:00:00 Asia/Shanghai
-OnCalendar=*-*-* 18:00:00 Asia/Shanghai
-OnCalendar=*-*-* 22:00:00 Asia/Shanghai
 OnCalendar=Sun *-*-* 14:30:00 Asia/Shanghai
 Persistent=true
 AccuracySec=30s

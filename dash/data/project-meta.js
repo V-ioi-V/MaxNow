@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 15:58",
-  "version": "1.0.11.68",
-  "versionLabel": "v1.0.11.68",
-  "branch": "feature/ballet-confirm-attendance",
-  "commit": "2049c4b5",
+  "updatedAt": "2026-10-11 16:03",
+  "version": "1.0.11.69",
+  "versionLabel": "v1.0.11.69",
+  "branch": "feature/ballet-weekly-sync",
+  "commit": "2d7453fd",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-confirm-attendance · commit 2049c4b5 · 有未提交代码改动",
+  "deployNote": "feature/ballet-weekly-sync · commit 2d7453fd · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "芭蕾定时刷新收敛为每周一次",
+      "summary": "按 Owner 要求，业务定时仅保留北京时间周日 14:30 抢课后的 rolling 同步；移除每日五次与周日晚间日程，停用月度 full timer，取消抢课成功 / 失败即时同步钩子。"
+    },
     {
       "date": "2026-10-11",
       "title": "确认手动待上课为已完成",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "接入多卡顺延与单次自动激活",
       "summary": "普通约课与周日 Fast Path 共用选卡：真实到期日由近到远，明确规则拦截后换卡；每次预约前重检，避免先前预约占用旧卡额度。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "确认多卡约课与自动激活规则",
-      "summary": "使用中适用卡按最早到期 → 第二早到期 → 最晚到期逐卡预检；明确不可约才在提交前顺延，同到期日优先剩余课次少的卡。"
     }
   ]
 };

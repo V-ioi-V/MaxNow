@@ -433,19 +433,19 @@ python3 scripts/check.py
 
 两个 5 分钟任务只做本地脱敏日志转存和状态发布，不是 20 分钟闻道请求频率，也不是 Session 续期器。探针失效 / 延迟 / 中断后，页面冻结最后一次 `authenticated` 时长并显示安全原因。
 
-### 芭蕾生产只读同步（每日 / 月度定时已启用）
+### 芭蕾生产只读同步（仅周日 14:30 定时）
 
-芭蕾页面与脱敏缓存已经部署。生产 rolling timer 每天 09:00、12:00、15:00、18:00、22:00 刷新全部数据，并在周日 14:30 额外读取抢课后发布的下周课表。周简报专用的周期收尾 timer / service 已于 2026-09-20 停用并删除；不再进行最后一节结束后的额外刷新。周日 14:30 触发与 14:20 自动抢课关键窗口错开，原每日 00:00 和固定周简报触发均已移除。每月 1 日 00:47 继续执行 full 只读同步。长期 enable gate 为 root `0600`，rolling / full 两个只读相关 timer 均应保持 `enabled / active / waiting`。
+芭蕾页面与脱敏缓存已经部署。2026-10-11 起，生产业务定时只保留北京时间周日 14:30 rolling，错开 14:20 自动抢课窗口。每日五次、周日 20:00、月度 full、周简报收尾和抢课结束即时同步均停用。rolling timer 保持 enabled / active / waiting；full timer 必须 disabled / inactive，但 full service 保留供页面进入与手动刷新。长期 enable gate 为 root `0600`。
 
 目标运行边界：
 
 ```text
 service -> maxnow-ballet-sync.service
 timer -> maxnow-ballet-sync.timer
-schedule -> Asia/Shanghai 每天 09:00 / 12:00 / 15:00 / 18:00 / 22:00 + 周日 14:30
+schedule -> Asia/Shanghai 仅周日 14:30
 monthly service -> maxnow-ballet-full-sync.service
 monthly timer -> maxnow-ballet-full-sync.timer
-monthly schedule -> Asia/Shanghai 每月 1 日 00:47
+monthly schedule -> disabled / inactive；full service 保留供页面 / 手动刷新
 private state -> /var/lib/maxnow-ballet/
 credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 credential version -> /etc/maxnow-ballet/credential-version
@@ -544,7 +544,7 @@ PY
 1. 先按本节规则写入新的 host-bound 加密凭据，不复用实验 unit 的临时 `/run/credentials` 路径；若重建生命周期探针，按 Owner 最新要求使用 1200 秒（20 分钟），不要改写已结束 v5 的 1500 秒历史配置或日志。
 2. 用本地脱敏样本完成 parser / 去重测试；首次真实同步只允许已确认的 GET 路径。
 3. 检查私有账本 `0600`、read model 无敏感字段、重复同步不增加历史数量、失败时旧缓存仍在。
-4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，启用并启动 `maxnow-ballet-sync.timer` 与 `maxnow-ballet-full-sync.timer`。确认 rolling timer 包含每天 09:00、12:00、15:00、18:00、22:00 和周日额外 14:30，不再包含每日 00:00 或固定周简报触发；full timer 为每月 1 日 00:47。不要把测试性即时请求算作定时任务证据。
+4. 创建 root 管理的 `/etc/maxnow-ballet/enable-sync` 后，仅启用 `maxnow-ballet-sync.timer`，确认唯一 OnCalendar 为周日 14:30；`maxnow-ballet-full-sync.timer` 必须 disabled / inactive，但 full service 保留用于页面进入与手动刷新。不要把测试性即时请求算作定时任务证据。
 5. 更新 Cloud 页自动化清单和系统状态来源，并在 `UPDATE_LOG.md` 记录真实启用时间与脱敏结果。
 
 #### 芭蕾对话式实时查询
@@ -612,7 +612,7 @@ Owner 已单独批准长期周规则在北京时间每周日 14:20 无人值守�
 ```text
 service -> maxnow-ballet-booking-fast.service
 timer -> maxnow-ballet-booking-fast.timer
-post-run refresh -> OnSuccess / OnFailure: maxnow-ballet-sync.service（业务只读）
+post-run refresh -> 周日 14:30 timer；OnSuccess / OnFailure 钩子已移除
 arm -> Sunday 14:19:35 Asia/Shanghai
 submit -> script waits until 14:20:00 Asia/Shanghai
 enable gate -> /etc/maxnow-ballet/enable-fast-booking
@@ -629,7 +629,7 @@ credential -> /etc/credstore.encrypted/maxnow-ballet-wenda.cred
 
 每节是独立失败域：一节失败或 mutation 结果未知都继续后续目标。未知 mutation 可能已经被闻道接受，因此本节绝不重复 POST；全部课程提交后先统一查询实时预约记录，仍未命中的未知目标再按提交后第 0.8 / 2 / 4 秒进行限定目标日期的只读复核。若查到则按 `bookingStatus=booked` 或 `waitlist` 回填，并发布正整数候补位次与 `verificationAttempts`；始终未查到才保留“结果待确认”。只有 `auth_required`、配置错误或页面结构变化等全局问题才停止后续课程。fast path 单请求超时为 5 秒，避免一次网络故障长期占住后续高优先级目标。
 
-Fast Path 单元进入成功或失败终态后，systemd 分别通过 `OnSuccess=maxnow-ballet-sync.service` / `OnFailure=maxnow-ballet-sync.service` 立即排队一次既有 rolling 同步。该同步保持业务只读：除既有 GET allowlist 外，只允许闻道上课记录页面自身声明的固定 `newcheckrecord/{storeId}/{offset}` 与预约记录页面声明的固定 `newbookrecord/{storeId}/{offset}` 分页 POST；两个 POST 都只加载列表分页，不执行预约、候补、取消或转课。同步、实时查询和 Fast Path 复核共用活动预约分页读取器，校验总数、`customerid` 与路径 contract，按已加载条数翻页、跨页合并去重后才读取活动详情。同步负责刷新 `dash/data/ballet.*` 中的预约、候补、上课记录、课程卡与课表；它在真实 mutation 与统一核验之后运行，不占用 14:20 关键路径，也不改变 Fast Path 单元自身的 Result。若 rolling 同步已经运行，systemd 合并 start job，不并发启动第二个实例。部署验收不得手动启动 Fast Path；可用 `systemd-analyze verify` 和 unit 属性检查完成钩子，只有实际定时执行后才验收自动联动。
+历史联动（2026-10-11 已停用）：Fast Path 单元进入成功或失败终态后，systemd 分别通过 `OnSuccess=maxnow-ballet-sync.service` / `OnFailure=maxnow-ballet-sync.service` 立即排队一次既有 rolling 同步。该同步保持业务只读：除既有 GET allowlist 外，只允许闻道上课记录页面自身声明的固定 `newcheckrecord/{storeId}/{offset}` 与预约记录页面声明的固定 `newbookrecord/{storeId}/{offset}` 分页 POST；两个 POST 都只加载列表分页，不执行预约、候补、取消或转课。同步、实时查询和 Fast Path 复核共用活动预约分页读取器，校验总数、`customerid` 与路径 contract，按已加载条数翻页、跨页合并去重后才读取活动详情。同步负责刷新 `dash/data/ballet.*` 中的预约、候补、上课记录、课程卡与课表；它在真实 mutation 与统一核验之后运行，不占用 14:20 关键路径，也不改变 Fast Path 单元自身的 Result。若 rolling 同步已经运行，systemd 合并 start job，不并发启动第二个实例。部署验收不得手动启动 Fast Path；可用 `systemd-analyze verify` 和 unit 属性检查完成钩子，只有实际定时执行后才验收自动联动。
 
 私有 occurrence 哈希和 `terminalOutcomes` 只用于避免同一周目标重复提交并区分预约 / 候补结果；公开状态不得包含 course / class table / customer / card ID、PHPSESSID、响应正文、凭据路径、unit 名或日志路径。累计预约数与累计候补数分开记录，以闻道明确成功号或统一核验结果为准；统一核验不可用时页面显示“已提交，待核验”，不能重试。公开逐课结果可记录预约 / 候补状态、候补位次、尝试次数和脱敏耗时，不能保存请求 URL、源 ID 或响应正文。
 
@@ -3298,3 +3298,9 @@ safety: 未访问闻道、读取凭据、启动同步或抢课，也未执行预
 - 激活前先写 `activation.json` 并 fsync，状态为 attempted；单次 POST 后独立查询确认才改为 verified。未知尝试不得删除或清空；需要独立确认原目标卡已激活后才能标记 verified，不能用删除 journal 绕过幂等保护。源卡标识只留在私有 journal，不输出到 stdout / 公开状态。
 - 部署备份 `/home/ubuntu/maxnow-deploy-backups/20261011-card-policy` 成对保护芭蕾公开数据，并保存 Fast Path 私有 / 公开状态、安装 unit 与运行态修改清单。使用校验 Git bundle 快进，恢复原本修改的运行态路径，刷新 project-meta / project-status 并合并 Token 汇总；禁止以旧备份覆盖未修改的数据文件。
 - 13 项策略测试与原有 36 项约课 / Fast Path 测试通过；真实源只读预检确认旧卡规则拦截后可顺延新卡。只运行 preview 发布新规则摘要，不启动 execute 或 Fast Path，不激活 / 预约 / 候补 / 取消 / 转课。
+
+### 2026-10-11 芭蕾业务刷新仅保留周日 14:30
+
+Owner 将无人值守业务刷新收敛为仅周日 14:30。安装仓库 maxnow-ballet-sync.timer（唯一 OnCalendar）及无 OnSuccess / OnFailure 的 maxnow-ballet-booking-fast.service；停止并禁用 maxnow-ballet-full-sync.timer。页面进入和手动刷新继续通过 broker 调用 full service。Session 探针 / 日志转存 / 状态发布不属于业务数据刷新，本次保持原调度。
+
+部署先停止 rolling timer，备份 dash/data 与旧 unit，安装 unit 后 daemon-reload；在重新启动 Persistent timer 前 touch /var/lib/systemd/timers/stamp-maxnow-ballet-sync.timer，避免补跑已过去的周日 14:30。验收 rolling timer 只有一条日程，下次为 2026-10-18 14:30；full timer disabled / inactive；Fast Path 的 OnSuccess / OnFailure 为空，抢课 timer 下次仍为 2026-10-18 14:19:35。不得为验收启动 sync 或 booking service。部署保留当前 50 次 / 65 小时、本周 6 次 / 8 小时的 runtime ballet 配对文件及私有账本。
