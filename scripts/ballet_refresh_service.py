@@ -59,10 +59,12 @@ class Refresh:
             already_running = before.get("ActiveState") in ("activating", "active", "deactivating")
             if not already_running:
                 self.start()
+            started = already_running
             deadline = began + 330
             while self.clock() < deadline:
                 current = self.inspect()
-                started = already_running or current.get("ExecMainStartTimestampMonotonic") != before.get("ExecMainStartTimestampMonotonic")
+                stamp = current.get("ExecMainStartTimestampMonotonic")
+                started = started or current.get("ActiveState") in ("activating", "active", "deactivating") or (stamp not in (None, "", "0") and stamp != before.get("ExecMainStartTimestampMonotonic"))
                 if started and current.get("ActiveState") in ("inactive", "failed"):
                     if current.get("ActiveState") == "inactive" and current.get("Result") == "success" and current.get("ExecMainStatus") == "0":
                         status, message = "success", "芭蕾整体数据已刷新"

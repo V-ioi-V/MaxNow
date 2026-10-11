@@ -21,6 +21,13 @@ class RefreshTests(unittest.TestCase):
         start.assert_called_once_with()
         self.assertEqual(sleep.call_count, 2)
 
+    def test_completion_survives_systemd_timestamp_reset(self):
+        inspect = Mock(side_effect=[state(stamp="0"), state("activating", "2"), state(stamp="0")])
+        broker = service.Refresh(inspect, Mock(), sleep=Mock())
+        broker.run()
+        self.assertEqual(broker.snapshot()["status"], "success")
+        self.assertEqual(inspect.call_count, 3)
+
     def test_joins_existing_sync_without_starting_again(self):
         start = Mock()
         broker = service.Refresh(Mock(side_effect=[state("activating"), state()]), start)

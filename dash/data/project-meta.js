@@ -1,13 +1,13 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 16:12",
-  "version": "1.0.11.71",
-  "versionLabel": "v1.0.11.71",
+  "updatedAt": "2026-10-11 16:15",
+  "version": "1.0.11.72",
+  "versionLabel": "v1.0.11.72",
   "branch": "feature/ballet-parallel-refresh",
-  "commit": "ebc79354",
+  "commit": "2674ba8e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-parallel-refresh · commit ebc79354 · 有未提交代码改动",
+  "deployNote": "feature/ballet-parallel-refresh · commit 2674ba8e · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-10-11",
