@@ -11,6 +11,7 @@ OnFailure=maxnow-ballet-sync.service
 Type=oneshot
 User=root
 Group=www-data
+SupplementaryGroups=maxnow-ballet-cards
 WorkingDirectory=/var/www/maxnow-dashboard
 Environment=PYTHONDONTWRITEBYTECODE=1
 LoadCredentialEncrypted=wenda-session.json:/etc/credstore.encrypted/maxnow-ballet-wenda.cred

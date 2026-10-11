@@ -29,7 +29,7 @@ exec sudo -n systemd-run \
   --collect \
   --property=Type=oneshot \
   --property=User=ubuntu \
-  --property=Group=www-data \
+  --property=Group=maxnow-ballet-cards \
   --property=ReadWritePaths=/var/lib/maxnow-ballet-card-policy \
   --property=WorkingDirectory="$PROJECT_DIR" \
   --property=LoadCredentialEncrypted=wenda-session.json:/etc/credstore.encrypted/maxnow-ballet-wenda.cred \

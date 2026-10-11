@@ -6,7 +6,7 @@
 
 ## 当前目标
 
-- 2026-10-11 多卡策略已接入普通约课与 Fast Path，共享 `scripts/ballet_card_policy.py`。使用中卡按真实到期日由近到远预检，提交前重检规则；无可用卡时在串行执行阶段激活剩余课次最少的适用未激活卡。官方详情页已确认 getopencardinfo / opencard 协议。共享私有目录 `/var/lib/maxnow-ballet-card-policy` 由 ubuntu:www-data 管理，锁和持久 journal 防未知结果跨进程重复激活；不得删除 journal 来重试。dry-run / preview / 数据同步零激活。本次没有真实激活或约课验收。
+- 2026-10-11 多卡策略已接入普通约课与 Fast Path，共享 `scripts/ballet_card_policy.py`。使用中卡按真实到期日由近到远预检，提交前重检规则；无可用卡时在串行执行阶段激活剩余课次最少的适用未激活卡。官方详情页已确认 getopencardinfo / opencard 协议。共享私有目录 `/var/lib/maxnow-ballet-card-policy` 由 ubuntu:maxnow-ballet-cards 管理（2770 setgid），nginx 不属于该专用组，锁和持久 journal 防未知结果跨进程重复激活；不得删除 journal 来重试。dry-run / preview / 数据同步零激活。本次没有真实激活或约课验收。
 
 - 2026-10-11 课程卡改为状态列表浮层切换；隐藏 select 只作为轮播内部索引映射，用户通过 details / summary 与状态按钮选卡。主卡显示剩余课次和到期日，辅助使用 / 期限进度保留；三状态和空值规则沿用现有 read model，不修改任何课程数据。
 
