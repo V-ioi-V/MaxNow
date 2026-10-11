@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 16:44",
-  "version": "1.0.11.75",
-  "versionLabel": "v1.0.11.75",
-  "branch": "feature/ballet-overlap-bookings",
-  "commit": "baf178c0",
+  "updatedAt": "2026-10-11 18:35",
+  "version": "1.0.11.76",
+  "versionLabel": "v1.0.11.76",
+  "branch": "bugfix/ballet-booking-record-1011",
+  "commit": "fd7f1c5d",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-overlap-bookings · commit baf178c0 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-booking-record-1011 · commit fd7f1c5d · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "截图圈选两节课程预约",
+      "summary": "Owner 红框指定 10 月 13 日 18:45–20:15「芭蕾L2-零基础」和 10 月 14 日 19:00–20:00「软开课」，均为张瀚泽 / 小教室。实时课表唯一匹配，统一 dry-run 两节 ready、mutationAttempts=0；执行各一次预约，activationAttempts=0，独立活动预约查询均确认 booked。"
+    },
     {
       "date": "2026-10-11",
       "title": "芭蕾历史与预约重叠读取",
@@ -28,11 +33,6 @@
       "date": "2026-10-11",
       "title": "芭蕾整体刷新使用少量并行读取",
       "summary": "历史详情、预约详情与每日课表最多 3 路并行，分页保留顺序，历史 / 课程卡 / 预约 / 课表范围不减少。共享 Session 和请求计数加锁，身份失效阻止后续网络尝试，真实约课提交仍串行。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "芭蕾自动刷新仅限首次进入",
-      "summary": "每次打开或重新加载 MaxNow，仅首次进入芭蕾页自动刷新；切到豆奶等页面再返回不重新同步。触发前记录当前页面内存标记，失败后切页也不重复触发。"
     }
   ]
 }
