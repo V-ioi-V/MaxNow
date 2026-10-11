@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 16:41",
+  "updatedAt": "2026-10-11 16:44",
   "version": "1.0.11.75",
   "versionLabel": "v1.0.11.75",
   "branch": "feature/ballet-overlap-bookings",
-  "commit": "8a9b78a8",
+  "commit": "baf178c0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-overlap-bookings · commit 8a9b78a8 · 有未提交代码改动",
+  "deployNote": "feature/ballet-overlap-bookings · commit baf178c0 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-10-11",
