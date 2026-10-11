@@ -36,7 +36,7 @@ MAX_RETRIES = 3
 RETRY_DELAYS_SECONDS = (0.08, 0.16, 0.32)
 PREFETCH_WORKERS = 3
 DISCOVERY_WORKERS = 2
-PREFLIGHT_WORKERS = 2
+PREFLIGHT_WORKERS = 1
 PREFLIGHT_TTL_SECONDS = 15
 MAX_DISCOVERED_TARGETS = 30
 RETRIABLE_PREFLIGHT_CODES = {
@@ -52,6 +52,7 @@ GLOBAL_STOP_CODES = {
     "configuration_error",
     "parse_error",
     "source_changed",
+    "activation_unknown",
 }
 PUBLIC_ERROR_LABELS = {
     "auth_required": "闻道登录已失效，未执行预约。",
@@ -60,6 +61,7 @@ PUBLIC_ERROR_LABELS = {
     "outside_window": "不在周日抢课时间窗内，未执行预约。",
     "source_changed": "闻道页面结构发生变化，已停止后续课程。",
     "unknown_result": "预约结果无法安全确认，未重复提交该课。",
+    "activation_unknown": "课程卡激活结果待确认，已停止后续操作。",
 }
 
 
@@ -88,6 +90,7 @@ class PersistentWendaBookingSource:
         self.timeout_seconds = timeout_seconds
         self.post_count = 0
         self.mutation_count = 0
+        self.activation_count = 0
         self._counter_lock = threading.Lock()
         self._credential_lock = threading.Lock()
         self._timing_lock = threading.Lock()
@@ -204,7 +207,9 @@ class PersistentWendaBookingSource:
         raise OSError("unreachable")
 
     def request(self, path: str, expected_marker: str) -> str:
-        path = ballet.validate_read_only_path(path)
+        from ballet_card_policy import DETAIL_PREFIX
+        if not re.fullmatch(re.escape(DETAIL_PREFIX) + r"[1-9][0-9]{0,19}", path):
+            path = ballet.validate_read_only_path(path)
         try:
             status, headers, body = self._perform(
                 "GET",
@@ -225,6 +230,9 @@ class PersistentWendaBookingSource:
         if expected_marker not in text:
             raise ballet.SyncFailure("source_changed")
         return text
+
+    def request_card_detail(self, path: str) -> str:
+        return self.request(path, "opencard")
 
     def request_booking_page(self, offset: int, customer_id: str) -> str:
         if not isinstance(offset, int):
@@ -267,7 +275,10 @@ class PersistentWendaBookingSource:
         fields: dict[str, str],
         mutation: bool,
     ) -> str:
+        from ballet_card_policy import INFO_PATH, ACTIVATE_PREFIX
+        activation = bool(re.fullmatch(re.escape(ACTIVATE_PREFIX) + r"[1-9][0-9]{0,19}", path))
         allowed = {
+            INFO_PATH,
             booking.CARD_TYPE_PATH,
             booking.GET_USING_CARD_PATH,
             booking.BOOKING_SUBMIT_PATH,
@@ -277,17 +288,20 @@ class PersistentWendaBookingSource:
                 path.removeprefix(booking.CHECK_RULES_PREFIX).isdigit()
             )
             if path.startswith(booking.CHECK_RULES_PREFIX)
-            else path in allowed
+            else path in allowed or activation
         )
         if (
             not path_allowed
-            or not fields
-            or mutation != (path == booking.BOOKING_SUBMIT_PATH)
+            or (not fields and not activation)
+            or (activation and fields != {})
+            or mutation != (path == booking.BOOKING_SUBMIT_PATH or activation)
         ):
             raise booking.BookingFailure("configuration_error")
         if mutation:
             with self._counter_lock:
                 self.mutation_count += 1
+                if activation:
+                    self.activation_count += 1
         body = urllib.parse.urlencode(fields).encode("utf-8")
         headers = {
             **self._headers(path),
@@ -788,7 +802,6 @@ def prepare_candidate(
     started = time.monotonic()
     contract = booking.booking_contract(candidate)
     card_id = booking.eligible_card(source, contract)
-    booking.check_rules(source, contract, card_id)
     return {
         "contract": contract,
         "cardId": card_id,
@@ -1273,16 +1286,26 @@ def run_fast(
                     break
                 prepared = None
                 if attempt == 1 and target["key"] in preflight_futures:
-                    prepared = preflight_futures[target["key"]].result()
-                    if (
-                        time.monotonic() - prepared["completedAt"]
-                        > PREFLIGHT_TTL_SECONDS
-                    ):
+                    try:
+                        prepared = preflight_futures[target["key"]].result()
+                    except booking.BookingFailure as failure:
+                        if failure.code not in {"rules_blocked", "activation_required", "no_eligible_card"}:
+                            raise
+                    if prepared and time.monotonic() - prepared["completedAt"] > PREFLIGHT_TTL_SECONDS:
                         prepared = None
                 if prepared is None:
-                    prepared = prepare_candidate(source, candidate)
-                contract = prepared["contract"]
-                card_id = prepared["cardId"]
+                    contract = booking.booking_contract(candidate)
+                    card_id = booking.eligible_card(source, contract, allow_activation=execute)
+                else:
+                    contract = prepared["contract"]
+                    card_id = prepared["cardId"]
+                    # Revalidate reservable balance immediately before each submission.
+                    try:
+                        booking.check_rules(source, contract, card_id)
+                    except booking.BookingFailure as failure:
+                        if failure.code != "rules_blocked":
+                            raise
+                        card_id = booking.eligible_card(source, contract, allow_activation=execute)
                 if not execute:
                     records.append(
                         safe_record(
@@ -1620,7 +1643,8 @@ def build_public(
             "每天按芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；"
             "工作日同课型李俊优先（老师空白按李俊），周六不限老师；"
             "工作日仅 18:40 后、周六仅 18:00 前结束；"
-            "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
+            "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；"
+            "课程卡按到期日由近到远顺延；无可用卡时激活剩余课次最少的适用卡"
         ),
         "lastAttemptAt": state.get("lastAttemptAt"),
         "lastSuccessAt": state.get("lastSuccessAt"),

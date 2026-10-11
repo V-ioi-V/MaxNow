@@ -69,7 +69,7 @@ Only book when the owner explicitly asks to book one or more exact classes. An e
 scripts/run_ballet_booking.sh dry-run
 ```
 
-The preflight may use Wenda's fixed read-only POST checks for eligible cards and booking rules. It must never call `do_addbook`. Require `status=success`, `live=true`, every target record `status=ready` or `already_booked`, and `mutationAttempts=0`.
+The preflight may use Wenda's fixed read-only POST checks for eligible cards and booking rules. It must never call `do_addbook`. Require `live=true` and `mutationAttempts=0`; target records must be `ready`, `already_booked`, or `activation_required`. The last status means activation is planned but has not occurred; other preflight failures must not be bypassed.
 
 3. If the owner has explicitly requested those exact classes in the current request, change only `confirm` to `true` and run:
 
@@ -81,7 +81,7 @@ The runner performs a unified live preflight, then books courses sequentially. B
 
 For multiple exact classes without an owner-specified order, sort them by the permanent weekday priority `周六 > 周日 > 周五 > 其他日期`, then keep the original order within the same weekday.
 
-4. Report only the safe per-course result. A course is booked only when its result is `status=booked` and live verification returns `bookingStatus=booked`. If the command returns `card_selection_required`, ask the owner which eligible card to use; never choose a card silently.
+4. Report only the safe per-course result. A course is booked only when its result is `status=booked` and live verification returns `bookingStatus=booked`. Card choice follows the owner-approved expiry order through `ballet_card_policy.py`: earliest expiry first, then later expiries; a definite card/rules rejection advances before booking submission. When no active applicable card works, execution may activate the applicable unactivated card with the fewest remaining classes. Dry-run reports `activation_required` with zero mutations; it may proceed to execute only for owner-confirmed exact targets under this already-approved activation policy. Never bypass an `activation_unknown` result or delete the private journal to retry.
 
 ## Sunday Automatic Booking
 
@@ -98,11 +98,11 @@ Current recurring rules are:
 - Monday through Friday: every standard ballet L1 occurrence starting at or after 18:40, any teacher.
 - Monday through Friday: every standard ballet L1.5 occurrence starting at or after 18:40, any teacher.
 - Monday through Friday: only a course whose normalized name is exactly `软开` or `软开课` and starts at or after 18:40, any teacher.
-- Saturday, all day: the same standard ballet L1, standard ballet L1.5, and exact-name `软开` / `软开课` rules.
+- Saturday, only classes ending strictly before 18:00: the same standard ballet L1, standard ballet L1.5, and exact-name `软开` / `软开课` rules.
 - Sunday courses are excluded. `软开专项`, `软开专项【前后腿】`, `软开-胯`, and any other merely soft-open-classified near match are excluded.
 - For the same occurrence, prefer `大教室`; use `小教室` only when the large-room tier has no match. The selected tier must contain exactly one course.
 
-For the Sunday fast path, process every ballet L1 target first, every ballet L1.5 target second, and any `软开` / `软开课` target last. Within each course tier, process Saturday first, then Monday through Friday, and sort by start time within a day. Timetable GETs may run with at most three workers and share a page by date; card/rules preflight may run with at most two workers and expires after eight seconds. Actual booking or waitlist mutations must remain strictly serial in that priority order. Final booking-detail verification may use at most three read-only workers.
+For the Sunday fast path, process dates in the order Tuesday, Saturday, Friday, Monday, Wednesday, Thursday; within each day process L1, L1.5, then exact-name soft-open. Weekday selection prefers Li Jun (blank teacher treated as Li Jun); Saturday has no teacher tier. Teacher is excluded from the occurrence idempotency key. Timetable GETs may use at most three workers; one background card/rules worker plus the serial submission stage keep preflight concurrency at most two. Preflight expires after fifteen seconds, and the selected card rules are always rechecked immediately before submission. Actual booking or waitlist mutations must remain strictly serial. Activation may run only at that serial stage, at most one card per execution, with an independent live-card verification and a persistent private attempted/verified journal. Any unknown activation is a global stop across later courses and survives process restart. Final booking-detail verification may use at most three read-only workers.
 
 To query the automation plan and safe result ledger, run:
 
@@ -128,7 +128,7 @@ Do not manually start the production service or run `book_ballet_fast.py execute
 - Use only the repository runners. They create hardened transient systemd units, decrypt the host-bound credential into the unit credential directory, and remove that runtime directory when done.
 - Allow only the four scopes and ISO date arguments. A timetable request may span at most 14 days.
 - Never print, copy, inspect, hash, summarize, or ask the owner for PHPSESSID. Never read `/etc/credstore.encrypted` directly.
-- For ordinary queries, never use POST. For an explicitly confirmed booking, allow only the fixed card-eligibility check, booking-rules check, and one `do_addbook` request per exact course through `run_ballet_booking.sh`.
+- For ordinary queries, never use POST. For an explicitly confirmed booking, allow fixed card-eligibility and booking-rules checks, one `do_addbook` request per exact course, and the owner-approved single-card activation protocol through `run_ballet_booking.sh`. Activation is checked through the official card-detail button and `getopencardinfo`, submitted once through `opencard`, and independently verified. No buying, paying, renewing, or activating from queries / preview / dry-run is permitted.
 - Never use cancellation, transfer, payment, login, or arbitrary POST endpoints. Waitlist mutation is forbidden for ordinary queries and conversational booking; it is allowed only inside the enabled Sunday fast path for an exact configured target with `allowWaitlist=true`.
 - Never expose source record IDs, member identifiers, raw HTML, response bodies, Cookie headers, credential paths, unit names, or internal logs.
 - Treat `auth_required`, `source_changed`, `parse_error`, `unknown_result`, and ambiguous responses as fail-closed. If any mutation was attempted and the result is ambiguous, report that verification is required; never claim failure or retry.

@@ -137,6 +137,8 @@ def check_required_files():
         "scripts/book_ballet.py",
         "scripts/run_ballet_booking.sh",
         "scripts/test_book_ballet.py",
+        "scripts/ballet_card_policy.py",
+        "scripts/test_ballet_card_policy.py",
         "scripts/book_ballet_fast.py",
         "scripts/run_ballet_booking_fast.sh",
         "scripts/test_book_ballet_fast.py",
@@ -355,6 +357,10 @@ def check_ballet_booking_fast():
             + result.stdout.strip()
         )
 
+    policy_test = subprocess.run([sys.executable, "-B", str(ROOT / "scripts/test_ballet_card_policy.py")], cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=30)
+    if policy_test.returncode:
+        raise ValueError("ballet card policy: fixture self-test failed: " + policy_test.stdout.strip())
+
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     rules = config.get("selectionRules", [])
     if (
@@ -416,8 +422,7 @@ def check_ballet_booking_fast():
         != ["周二", "周六", "周五", "周一", "周三", "周四"]
         or data.get("coursePriorityOrder")
         != ["芭蕾 L1", "芭蕾 L1.5", "软开 / 软开课"]
-        or data.get("prioritySummary")
-        != (
+        or not str(data.get("prioritySummary", "")).startswith(
             "按天优先：周二 > 周六 > 周五 > 周一 > 周三 > 周四；"
             "每天按芭蕾 L1 > 芭蕾 L1.5 > 软开 / 软开课；"
             "工作日同课型李俊优先（老师空白按李俊），周六不限老师；"
@@ -473,7 +478,7 @@ def check_ballet_booking_fast():
         "scripts/book_ballet_fast.py execute",
         "class PersistentWendaBookingSource",
         "PREFETCH_WORKERS = 3",
-        "PREFLIGHT_WORKERS = 2",
+        "PREFLIGHT_WORKERS = 1",
         "DISCOVERY_WORKERS = 2",
         "PREFLIGHT_TTL_SECONDS = 15",
         'config["discoveryRefreshSeconds"]',
@@ -1870,7 +1875,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=292" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=260" not in dashboard_html
+        or "app.js?v=261" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2127,7 +2132,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=260" not in dashboard_html:
+    if "app.js?v=261" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

@@ -3274,3 +3274,12 @@ safety: 未访问闻道、读取凭据、启动同步或抢课，也未执行预
 - 版本 `1.0.11.62`，样式缓存 `styles.css?v=292`；三组白底摘要与分类列对齐，累计下方保留手动补录子集说明，手机累计独占一行、月均 / 周均两列。
 - 本地 1800 / 1280 / 860 / 390px 布局与独立排序、范围切换验收通过；桌面三组同顶同底同高，标签与分类标题左边缘对齐，无页面横向溢出。
 - 静态部署备份目录 `/home/ubuntu/maxnow-deploy-backups/20261011-training-summary-balance`；使用校验 Git bundle，成对保存并恢复芭蕾运行态，执行一致性、nginx 和认证边界检查。无登录后的线上视觉验收。
+
+## 2026-10-11 多卡顺延与单次自动激活
+
+- 版本 `1.0.11.64`，页面 `app.js?v=261`。普通约课与 Fast Path 共享 `ballet_card_policy.py`；使用中卡按真实到期日由近到远选择，规则明确不通过时顺延；无可用卡才激活源剩余次数最少的适用未激活卡。
+- 已从官方会员卡详情页只读确认激活协议：`.notopencard[cardid]` 绑定目标；`getopencardinfo` POST 只读返回预计到期日或 `NOSELLCARD`；`opencard/{storeId}/{cardId}` 空表单 POST 是激活 mutation，提交后独立查卡并核验状态与日期。只有这两个显式固定路径加入约课读取 / 写入 allowlist；同步器和实时只读查询 allowlist 不变。
+- 新私有状态目录 `/var/lib/maxnow-ballet-card-policy`，属主 `ubuntu:www-data`、模式 `0770`；预创建 `activation.lock` 为 `ubuntu:www-data 0660`，journal 为 `0660`。Fast Path 安装 unit 增加该目录 `ReadWritePaths`；普通 runner 改为 `User=ubuntu / Group=www-data` 并只为该目录增加写权限。不增加 timer、cron 或调度时间。
+- 激活前先写 `activation.json` 并 fsync，状态为 attempted；单次 POST 后独立查询确认才改为 verified。未知尝试不得删除或清空；需要独立确认原目标卡已激活后才能标记 verified，不能用删除 journal 绕过幂等保护。源卡标识只留在私有 journal，不输出到 stdout / 公开状态。
+- 部署备份 `/home/ubuntu/maxnow-deploy-backups/20261011-card-policy` 成对保护芭蕾公开数据，并保存 Fast Path 私有 / 公开状态、安装 unit 与运行态修改清单。使用校验 Git bundle 快进，恢复原本修改的运行态路径，刷新 project-meta / project-status 并合并 Token 汇总；禁止以旧备份覆盖未修改的数据文件。
+- 13 项策略测试与原有 36 项约课 / Fast Path 测试通过；真实源只读预检确认旧卡规则拦截后可顺延新卡。只运行 preview 发布新规则摘要，不启动 execute 或 Fast Path，不激活 / 预约 / 候补 / 取消 / 转课。

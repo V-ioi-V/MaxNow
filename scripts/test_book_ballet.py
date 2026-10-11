@@ -118,6 +118,8 @@ class FakeSource:
         self.fail_rules_after_first_mutation = False
 
     def request(self, path, expected_marker):
+        if path == ballet.MEMBERSHIP_PATH:
+            return '<a href="/gm/weixin/my/mycardone/54114/90002"><p>测试卡</p><p>使用中</p><p>有效期:2026-01-01 ~ 2027-12-31</p><p>卡内余:50次/总50次</p></a>'
         self.request_count += 1
         if path.startswith(ballet.TIMETABLE_PATH):
             self.active_date = path.rsplit("/", 1)[-1]
