@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 16:33",
+  "updatedAt": "2026-10-11 16:35",
   "version": "1.0.11.74",
   "versionLabel": "v1.0.11.74",
   "branch": "feature/ballet-incremental-refresh",
-  "commit": "5c5c2ed0",
+  "commit": "744bd871",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-incremental-refresh · commit 5c5c2ed0 · 有未提交代码改动",
+  "deployNote": "feature/ballet-incremental-refresh · commit 744bd871 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-10-11",
