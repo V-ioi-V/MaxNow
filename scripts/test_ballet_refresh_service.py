@@ -49,6 +49,12 @@ class RefreshTests(unittest.TestCase):
         broker.run()
         self.assertEqual(broker.snapshot()["status"], "error")
 
+    def test_completion_reports_real_duration(self):
+        broker = service.Refresh(Mock(side_effect=[state(), state(stamp="2")]), Mock(), clock=Mock(side_effect=[10, 11, 71]))
+        broker.run()
+        self.assertEqual(broker.snapshot()["durationSeconds"], 61)
+        self.assertIn("finishedAt", broker.snapshot())
+
     def test_http_rejects_cross_origin_and_arbitrary_payload(self):
         server = ThreadingHTTPServer(("127.0.0.1", 0), service.Handler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)

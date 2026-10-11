@@ -6,8 +6,8 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=262" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=292" />
+    <script src="./app.js?v=263" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=293" />
   </head>
   <body>
     <div class="app-shell">
@@ -1342,6 +1342,14 @@
         </section>
       </main>
     </div>
+
+    <aside class="panel ballet-refresh-notice" id="ballet-refresh-notice" role="status" aria-live="polite" hidden>
+      <div>
+        <strong id="ballet-refresh-notice-title">芭蕾刷新完成</strong>
+        <p id="ballet-refresh-notice-message"></p>
+      </div>
+      <button class="icon-button" id="ballet-refresh-notice-close" type="button" aria-label="关闭刷新通知" title="关闭刷新通知">×</button>
+    </aside>
 
     <template id="empty-template">
       <p class="empty-state">&#36825;&#37096;&#20998;&#36824;&#27809;&#26377;&#25968;&#25454;&#12290;</p>

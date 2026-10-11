@@ -7248,6 +7248,31 @@ body[data-view="ricky"] .topbar-ricky-status {
   display: none;
 }
 
+.ballet-refresh-notice {
+  position: fixed;
+  z-index: 100;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: min(360px, calc(100vw - 32px));
+  padding: 16px;
+  border-color: var(--green-border);
+}
+
+.ballet-refresh-notice[hidden] { display: none; }
+.ballet-refresh-notice[data-state="error"] { border-color: var(--red-border); }
+.ballet-refresh-notice > div { min-width: 0; flex: 1; }
+.ballet-refresh-notice strong { color: var(--ok); font-size: 14px; }
+.ballet-refresh-notice[data-state="error"] strong { color: var(--danger); }
+.ballet-refresh-notice p { margin: 6px 0 0; color: var(--soft); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.ballet-refresh-notice .icon-button { flex-shrink: 0; }
+
+@media (max-width: 600px) {
+  .ballet-refresh-notice { right: 16px; bottom: 16px; }
+}
+
 .ballet-sync-alert[data-state="auth"],
 .ballet-sync-alert[data-state="error"] {
   border-color: var(--red-border);

@@ -52,13 +52,14 @@ class Refresh:
             return dict(self.state)
 
     def run(self):
+        began = self.clock()
         status, message = "error", "同步失败，仍显示上次成功的数据；请稍后重试。"
         try:
             before = self.inspect()
             already_running = before.get("ActiveState") in ("activating", "active", "deactivating")
             if not already_running:
                 self.start()
-            deadline = self.clock() + 330
+            deadline = began + 330
             while self.clock() < deadline:
                 current = self.inspect()
                 started = already_running or current.get("ExecMainStartTimestampMonotonic") != before.get("ExecMainStartTimestampMonotonic")
@@ -72,8 +73,10 @@ class Refresh:
         except (OSError, subprocess.SubprocessError):
             pass
         with self.lock:
-            self.state = {**self.state, "status": status, "message": message}
             self.last_finished = self.clock()
+            self.state = {**self.state, "status": status, "message": message,
+                          "finishedAt": datetime.now(timezone.utc).isoformat(),
+                          "durationSeconds": max(0, int(self.last_finished - began))}
 
 
 refresh = Refresh()

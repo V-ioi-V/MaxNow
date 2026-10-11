@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 15:39",
-  "version": "1.0.11.65",
-  "versionLabel": "v1.0.11.65",
-  "branch": "feature/ballet-manual-refresh",
-  "commit": "95679932",
+  "updatedAt": "2026-10-11 15:51",
+  "version": "1.0.11.66",
+  "versionLabel": "v1.0.11.66",
+  "branch": "bugfix/ballet-refresh-feedback",
+  "commit": "905bdcae",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-manual-refresh · commit 95679932 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-refresh-feedback · commit 905bdcae · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "芭蕾刷新计时与完成通知",
+      "summary": "实测页面同步 15:48:05–15:49:06 共 61 秒；顶部刷新状态补已等待时分秒，说明通常约 1–2 分钟，六分钟等待上限后明确报超时。"
+    },
     {
       "date": "2026-10-11",
       "title": "芭蕾进入页面自动同步与手动整体刷新",
@@ -28,11 +33,6 @@
       "date": "2026-10-11",
       "title": "训练摘要融入白色面板",
       "summary": "移除训练摘要整条蓝底，累计 / 月均 / 周均三组与下方分类列对齐，底部细线分隔；累计保持主数字，均值降低一级。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "训练记录视觉层级优化",
-      "summary": "按确认效果图将四组统计收进浅蓝灰摘要条，次数与小时数字统一深色；三栏增加排序序号和首位浅底强调，排序切换改为圆角分段控件。"
     }
   ]
 }

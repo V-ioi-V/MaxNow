@@ -6411,13 +6411,31 @@ async function loadData(options = {}) {
 }
 
 let balletRefreshPromise = null;
+let balletRefreshNoticeTimer = 0;
 
-function setBalletRefreshStatus(state, message) {
+function balletRefreshDuration(seconds) {
+  const total = Math.max(0, Math.floor(Number(seconds) || 0));
+  return total >= 60 ? `${Math.floor(total / 60)} 分 ${total % 60} 秒` : `${total} 秒`;
+}
+
+function showBalletRefreshNotice(state, message) {
+  const notice = qs("#ballet-refresh-notice");
+  if (!notice) return;
+  clearTimeout(balletRefreshNoticeTimer);
+  notice.hidden = false;
+  notice.dataset.state = state;
+  setText("#ballet-refresh-notice-title", state === "success" ? "芭蕾刷新完成" : "芭蕾刷新失败");
+  setText("#ballet-refresh-notice-message", message);
+  if (state === "success") balletRefreshNoticeTimer = setTimeout(() => { notice.hidden = true; }, 12000);
+}
+
+function setBalletRefreshStatus(state, message, elapsedSeconds = 0) {
   const node = qs("#ballet-refresh-status");
   if (!node) return;
   node.hidden = false;
   node.dataset.state = state;
-  node.textContent = state === "loading" ? "刷新中" : state === "success" ? "已刷新" : "刷新失败";
+  node.setAttribute("aria-live", state === "loading" ? "off" : "polite");
+  node.textContent = state === "loading" ? `刷新中 ${Math.floor(elapsedSeconds / 60)}:${String(elapsedSeconds % 60).padStart(2, "0")}` : state === "success" ? "已刷新" : "刷新失败";
   node.title = message;
   node.setAttribute("aria-label", message);
 }
@@ -6444,9 +6462,15 @@ function refreshBalletData() {
     refreshButton.disabled = true;
     refreshButton.dataset.state = "loading";
     refreshButton.setAttribute("aria-busy", "true");
-    setBalletRefreshStatus("loading", "正在同步课程卡、预约、上课记录和课表，完成后自动更新。");
+    let startedAt = Date.now();
+    const updateElapsed = () => setBalletRefreshStatus("loading", "正在同步芭蕾整体数据，通常约 1–2 分钟；完成后会显示通知。", Math.max(0, Math.floor((Date.now() - startedAt) / 1000)));
+    clearTimeout(balletRefreshNoticeTimer);
+    if (qs("#ballet-refresh-notice")) qs("#ballet-refresh-notice").hidden = true;
+    updateElapsed();
+    const elapsedTimer = setInterval(updateElapsed, 1000);
     try {
       let result = await requestBalletRefresh("POST");
+      if (result.status === "running" && Number.isFinite(Date.parse(result.startedAt))) startedAt = Date.parse(result.startedAt);
       const deadline = Date.now() + 360000;
       while (result.status === "running" && Date.now() < deadline) {
         await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -6454,14 +6478,23 @@ function refreshBalletData() {
       }
       // Also reload safe failure metadata, while retaining the last-good content.
       await loadViewData("ballet", { force: true });
+      if (result.status === "running") throw new Error("同步等待超过 6 分钟，请稍后重试；仍显示上次成功的数据。");
+      if (result.status === "idle") throw new Error("同步服务已重启，请重新刷新；仍显示上次成功的数据。");
       if (result.status !== "success") throw new Error(result.message || "同步等待超时，仍显示上次成功的数据。");
       if (browserDataHealth.get("ballet")?.status === "failed") throw new Error("服务器同步已完成，但页面数据读取失败，请再刷新一次。");
-      setBalletRefreshStatus("success", result.message);
+      clearInterval(elapsedTimer);
+      const duration = balletRefreshDuration(result.durationSeconds ?? (Date.now() - startedAt) / 1000);
+      const message = `课程卡、预约、上课记录和课表已更新。用时 ${duration}。`;
+      setBalletRefreshStatus("success", message);
+      showBalletRefreshNotice("success", message);
       refreshButton.dataset.state = "success";
     } catch (error) {
+      clearInterval(elapsedTimer);
       setBalletRefreshStatus("error", error.message || "刷新失败，仍显示上次成功的数据。");
+      showBalletRefreshNotice("error", error.message || "刷新失败，仍显示上次成功的数据。");
       refreshButton.dataset.state = "error";
     } finally {
+      clearInterval(elapsedTimer);
       refreshButton.disabled = false;
       refreshButton.removeAttribute("aria-busy");
       balletRefreshPromise = null;
@@ -7012,6 +7045,11 @@ refreshButton?.addEventListener("click", async () => {
     refreshButton.disabled = false;
     setTimeout(() => refreshButton.removeAttribute("data-state"), 900);
   }
+});
+
+qs("#ballet-refresh-notice-close")?.addEventListener("click", () => {
+  clearTimeout(balletRefreshNoticeTimer);
+  qs("#ballet-refresh-notice").hidden = true;
 });
 
 window.addEventListener("hashchange", () => {

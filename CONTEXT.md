@@ -2,6 +2,8 @@
 
 ## 芭蕾页面即时刷新（2026-10-11）
 
+刷新状态包含页面已等待时间，完成后新增可关闭的页面内通知；成功保留 12 秒，失败保留到关闭或重试。接口增加安全的 `finishedAt` 与 `durationSeconds`，不发布 unit、源标识或凭据。顶部计时器必须在成功、失败和 finally 中清理，不能在完成后覆盖为刷新中。
+
 `ballet_refresh_service.py` 是独立于认证服务的低权限回环 HTTP 入口（8766），nginx 对精确 `/api/ballet/refresh` 使用现有 auth_request。页面每次进入芭蕾自动 POST，手动按钮使用同一路径；GET 轮询任务状态，结束后重读全部芭蕾展示源。单进程锁合并并发，完成后 60 秒复用结果；不会修改旧更新时间或清空最后成功内容。专用用户经精确 polkit 规则只允许 start `maxnow-ballet-full-sync.service`，不读取闻道凭据 / 私有账本，不参与抢课关键路径。
 
 这个文件主要给 Codex / 代理接力使用，用来快速恢复 MaxNow 的项目上下文；Owner 也可以阅读，但它不是汇报文档。
