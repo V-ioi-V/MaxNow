@@ -126,6 +126,14 @@ def membership_html() -> str:
     )
 
 
+def unactivated_membership_html() -> str:
+    return (
+        f'<a href="/gm/weixin/my/mycardone/{ballet.STORE_ID}/90002">'
+        '<strong>新课程卡</strong><span>未激活</span>'
+        '<span>有效期 : ~</span><span>卡内余 : 20 次</span></a>'
+    )
+
+
 def membership_html_with_expired_card() -> str:
     return (
         "<html><title>我的会员卡</title><body>"
@@ -541,6 +549,56 @@ class BalletSyncTests(unittest.TestCase):
         with self.assertRaises(ballet.SyncFailure) as context:
             ballet.parse_membership(html)
         self.assertEqual(context.exception.code, "source_changed")
+
+    def test_unactivated_card_blank_dates_and_unknown_total_are_not_forecast(self):
+        cards = ballet.parse_membership(unactivated_membership_html())
+        self.assertEqual(cards[0]["cardStatus"], "unactivated")
+        self.assertIsNone(cards[0]["validFrom"])
+        self.assertIsNone(cards[0]["validThrough"])
+        self.assertEqual(cards[0]["remainingClasses"], 20)
+        self.assertIsNone(cards[0]["totalClasses"])
+        self.assertIsNone(cards[0]["usedClasses"])
+        view = ballet.build_membership_view({"cards": cards}, NOW)["cards"][0]
+        self.assertFalse(view["pace"]["sampleSufficient"])
+        for key in ("validityDays", "requiredClassesPerWeek", "plannedFinishDate", "observedClassesPerWeek"):
+            self.assertIsNone(view["pace"][key])
+
+    def test_blank_validity_does_not_relax_active_or_unknown_card_checks(self):
+        for status in ("使用中", "状态未知", "已失效"):
+            with self.subTest(status=status), self.assertRaises(ballet.SyncFailure):
+                ballet.parse_membership(unactivated_membership_html().replace("未激活", status))
+        with self.assertRaises(ballet.SyncFailure):
+            ballet.parse_membership(unactivated_membership_html().replace("有效期 : ~", "有效期 : 2026-02-30~2026-12-01"))
+
+    def test_unactivated_card_can_become_active_with_source_dates_and_total(self):
+        html = unactivated_membership_html().replace("未激活", "使用中").replace(
+            "有效期 : ~", "有效期 : 2026-07-26~2027-01-23"
+        ).replace("卡内余 : 20 次", "卡内余 : 20 次 / 总20 次")
+        cards = ballet.parse_membership(html)
+        self.assertEqual(cards[0]["cardStatus"], "active")
+        self.assertEqual(cards[0]["usedClasses"], 0)
+        self.assertGreater(ballet.build_membership_view({"cards": cards}, NOW)["cards"][0]["pace"]["validityDays"], 0)
+
+    def test_three_card_sync_keeps_attendance_and_repeats_without_business_changes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixtures"
+            paths = ballet.build_paths(root / "private", root / "public" / "ballet.json")
+            write_fixture(fixture)
+            ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+            previous = json.loads(paths.output.read_text(encoding="utf-8"))
+            (fixture / "membership.html").write_text(
+                unactivated_membership_html() + membership_html_with_expired_card(), encoding="utf-8"
+            )
+            for mode in ("rolling", "full"):
+                result = ballet.synchronize(paths, ballet.FixtureSource(fixture), mode, NOW)
+                self.assertEqual(result.exit_code, 0)
+                self.assertEqual(result.changed_records, 0)
+                model = json.loads(paths.output.read_text(encoding="utf-8"))
+                self.assertEqual(model["summary"], previous["summary"])
+                self.assertEqual(model["sync"]["lastAttemptStatus"], "success")
+                self.assertEqual([c["cardStatus"] for c in model["membership"]["cards"]], ["unactivated", "expired", "active"])
+                ballet.validate_read_model(model)
 
     def test_timetable_course_is_parsed_into_safe_fields(self):
         parsed = ballet.parse_timetable(

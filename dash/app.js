@@ -4456,13 +4456,14 @@ function balletMembershipDisplayName(card = {}) {
 function createBalletMembershipItem(card = {}) {
   const article = document.createElement("article");
   article.className = "panel ballet-membership-item";
-  const cardStatus = card.cardStatus === "expired" ? "expired" : "active";
+  const cardStatus = ["expired", "unactivated"].includes(card.cardStatus) ? card.cardStatus : "active";
   const isExpired = cardStatus === "expired";
+  const isUnactivated = cardStatus === "unactivated";
   article.dataset.cardStatus = cardStatus;
 
   const ticketStatus = document.createElement("span");
   ticketStatus.className = "status-pill";
-  ticketStatus.textContent = isExpired ? "已失效" : "使用中";
+  ticketStatus.textContent = isUnactivated ? "未激活" : isExpired ? "已失效" : "使用中";
 
   const header = document.createElement("header");
   const title = document.createElement("div");
@@ -4470,7 +4471,7 @@ function createBalletMembershipItem(card = {}) {
   const period = document.createElement("small");
   name.textContent = balletMembershipDisplayName(card);
   period.className = "ballet-membership-period";
-  period.textContent = card.validFrom ? `${formatDateOnly(card.validFrom)} 开卡` : "开卡日期待同步";
+  period.textContent = isUnactivated ? "尚未激活" : card.validFrom ? `${formatDateOnly(card.validFrom)} 开卡` : "开卡日期待同步";
   title.className = "ballet-membership-name";
   title.append(name, ticketStatus);
   const validity = document.createElement("span");
@@ -4478,7 +4479,7 @@ function createBalletMembershipItem(card = {}) {
   validity.append(
     createBalletCalendarIcon(),
     document.createTextNode(
-      card.validThrough
+      isUnactivated ? "激活后生效" : card.validThrough
         ? `${isExpired ? "已于" : "有效至"} ${String(card.validThrough).slice(0, 10)}${isExpired ? " 到期" : ""}`
         : "有效期待同步",
     ),
@@ -4553,10 +4554,14 @@ function createBalletMembershipItem(card = {}) {
   const validityCopy = document.createElement("div");
   validityCopy.className = "ballet-membership-validity-copy";
   const validityLabel = document.createElement("span");
-  validityLabel.textContent = isExpired ? "有效状态" : "有效进度";
+  validityLabel.textContent = isExpired || isUnactivated ? "有效状态" : "有效进度";
   const validityValue = document.createElement("div");
   validityValue.className = "ballet-membership-day-value";
-  if (isExpired) {
+  if (isUnactivated) {
+    const pending = document.createElement("b");
+    pending.textContent = "未激活";
+    validityValue.appendChild(pending);
+  } else if (isExpired) {
     const expired = document.createElement("b");
     expired.textContent = "已失效";
     validityValue.appendChild(expired);
@@ -4576,12 +4581,12 @@ function createBalletMembershipItem(card = {}) {
     validityValue.appendChild(unopened);
   }
   const validityDetail = document.createElement("small");
-  validityDetail.textContent = isExpired
+  validityDetail.textContent = isUnactivated ? "激活后开始计算有效期" : isExpired
     ? (card.validThrough ? `已于 ${formatDateOnly(card.validThrough)} 到期` : "到期日期待同步")
     : `到期前需 ${balletNumber(pace.requiredClassesPerWeek).toFixed(1)} 节/周`;
   validityCopy.append(validityLabel, validityValue, validityDetail);
   validityMetric.appendChild(validityCopy);
-  if (!isExpired && validityDays > 0) {
+  if (!isExpired && !isUnactivated && validityDays > 0) {
     const validityTrack = document.createElement("div");
     validityTrack.className = "ballet-membership-validity-track";
     validityTrack.setAttribute("role", "progressbar");
@@ -4603,7 +4608,11 @@ function createBalletMembershipItem(card = {}) {
   const verdictTitle = document.createElement("strong");
   const verdictCopy = document.createElement("p");
   const plannedRate = Math.max(0, Math.floor(balletNumber(pace.recommendedWholeClassesPerWeek)));
-  if (isExpired) {
+  if (isUnactivated) {
+    verdict.dataset.state = "plan";
+    verdictTitle.textContent = "课程卡尚未激活";
+    verdictCopy.textContent = "激活后再计算有效期进度与上课节奏。";
+  } else if (isExpired) {
     verdict.dataset.state = "attention";
     verdictTitle.textContent = "课程卡已失效";
     verdictCopy.textContent = remainingClasses
@@ -4640,7 +4649,7 @@ function createBalletMembershipItem(card = {}) {
 }
 
 function balletMembershipCardPriority(card = {}) {
-  return card.cardStatus === "expired" ? 1 : 0;
+  return card.cardStatus === "expired" ? 2 : card.cardStatus === "unactivated" ? 1 : 0;
 }
 
 function balletMembershipCardKey(card = {}) {
@@ -4721,7 +4730,7 @@ function renderBalletMembership() {
     const option = document.createElement("option");
     option.value = String(index);
     option.dataset.cardKey = balletMembershipCardKey(card);
-    option.textContent = `${balletMembershipDisplayName(card)}${card.cardStatus === "expired" ? "（已失效）" : ""}`;
+    option.textContent = `${balletMembershipDisplayName(card)}${card.cardStatus === "expired" ? "（已失效）" : card.cardStatus === "unactivated" ? "（未激活）" : ""}`;
     typeList.appendChild(option);
   });
   const selectedIndex = Math.max(0, orderedCards.findIndex(({ card }) => (

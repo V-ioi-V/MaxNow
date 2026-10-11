@@ -1185,7 +1185,7 @@ def parse_membership(text: str) -> list[dict[str, Any]]:
         card_status = next(
             (
                 status
-                for label, status in (("使用中", "active"), ("已失效", "expired"))
+                for label, status in (("使用中", "active"), ("已失效", "expired"), ("未激活", "unactivated"))
                 if any(normalize_space(part) == label for part in parts)
             ),
             None,
@@ -1209,27 +1209,32 @@ def parse_membership(text: str) -> list[dict[str, Any]]:
                 for part in parts
                 if "有效期" not in part
                 and "卡内余" not in part
-                and normalize_space(part) not in {"使用中", "已失效"}
+                and normalize_space(part) not in {"使用中", "已失效", "未激活"}
             ),
             "",
         )
-        if not name or not validity or not remaining_balance:
+        blank_unactivated_validity = card_status == "unactivated" and any(
+            re.fullmatch(r"有效期\s*[:：]?\s*[~～—–]", normalize_space(part))
+            for part in parts
+        )
+        if not name or (not validity and not blank_unactivated_validity) or not remaining_balance:
             raise SyncFailure("source_changed")
         if card_status is None:
             card_status = "active" if balance else None
         if card_status is None or (card_status == "active" and not balance):
             raise SyncFailure("source_changed")
-        valid_from, valid_through = validity.groups()
+        valid_from, valid_through = validity.groups() if validity else (None, None)
         remaining = int(remaining_balance.group(1))
         total = int(balance.group(2)) if balance else None
         used = total - remaining if total is not None else None
         try:
-            date.fromisoformat(valid_from)
-            date.fromisoformat(valid_through)
+            if validity:
+                date.fromisoformat(valid_from)
+                date.fromisoformat(valid_through)
         except ValueError:
             raise SyncFailure("parse_error")
         if (
-            valid_through < valid_from
+            (validity is not None and valid_through < valid_from)
             or remaining < 0
             or (total is not None and (total <= 0 or remaining > total))
         ):
@@ -1966,6 +1971,21 @@ def build_membership_view(
     today = now.astimezone(TIMEZONE).date()
     cards = []
     for card in membership.get("cards", []):
+        if card.get("cardStatus") == "unactivated":
+            cards.append({
+                **card,
+                "pace": {
+                    "validityDays": None, "elapsedDays": None, "openDayNumber": None,
+                    "remainingDays": None, "remainingWeeks": None,
+                    "requiredClassesPerWeek": None, "recommendedWholeClassesPerWeek": None,
+                    "plannedFinishDate": None, "plannedBufferDays": None,
+                    "oneClassPerWeekProjectedRemaining": None,
+                    "sampleMinimumDays": 28, "sampleSufficient": False,
+                    "observedClassesPerWeek": None, "observedFinishDate": None,
+                    "observedProjectedRemainingAtExpiry": None, "observedCanFinish": None,
+                },
+            })
+            continue
         valid_from = date.fromisoformat(card["validFrom"])
         valid_through = date.fromisoformat(card["validThrough"])
         card_status = (
@@ -2229,7 +2249,7 @@ def validate_read_model(model: dict[str, Any]) -> None:
         if not isinstance(card, dict):
             raise SyncFailure("parse_error")
         card_status = card.get("cardStatus")
-        if card_status not in {None, "active", "expired"}:
+        if card_status not in {None, "active", "expired", "unactivated"}:
             raise SyncFailure("parse_error")
         remaining = card.get("remainingClasses")
         total = card.get("totalClasses")
@@ -2237,7 +2257,7 @@ def validate_read_model(model: dict[str, Any]) -> None:
         if isinstance(remaining, bool) or not isinstance(remaining, int) or remaining < 0:
             raise SyncFailure("parse_error")
         if total is None or used is None:
-            if card_status != "expired" or total is not None or used is not None:
+            if card_status not in {"expired", "unactivated"} or total is not None or used is not None:
                 raise SyncFailure("parse_error")
         elif (
             isinstance(total, bool)

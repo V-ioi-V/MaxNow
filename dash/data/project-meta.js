@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 09:42",
-  "version": "1.0.11.57",
-  "versionLabel": "v1.0.11.57",
-  "branch": "bugfix/training-bar-weight",
-  "commit": "bef15133",
+  "updatedAt": "2026-10-11 09:46",
+  "version": "1.0.11.58",
+  "versionLabel": "v1.0.11.58",
+  "branch": "bugfix/membership-sync",
+  "commit": "f30ee636",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/training-bar-weight · commit bef15133 · 有未提交代码改动",
+  "deployNote": "bugfix/membership-sync · commit f30ee636 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "修复未激活会员卡阻断课程同步",
+      "summary": "闻道新增“未激活”卡，源有效期为空 `~` 且未提供总次数；解析新增明确的 `unactivated` 状态，只对该状态允许空日期 / 未知总次数，使用中卡完整性检查不变。"
+    },
     {
       "date": "2026-10-11",
       "title": "训练分布进度条恢复原有厚度",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "全部累计卡增加手动补录统计",
       "summary": "Owner 明确统计口径为手动补录的上课记录；全部累计次数卡增加“其中手动补录”的节数，全部累计时间卡增加对应小时数，作为累计总量的子集展示，不重复相加。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "全部训练统计增加月均与周均",
-      "summary": "移除“全部”范围底部的每周节数 / 时间热力图；累计次数卡加入月均、周均节数，累计时间卡加入月均、周均小时，与原有累计值合并呈现。本月日历热力图、今年月折线继续保留。"
     }
   ]
 };
