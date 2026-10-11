@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 10:14",
-  "version": "1.0.11.62",
-  "versionLabel": "v1.0.11.62",
-  "branch": "bugfix/training-summary-balance",
-  "commit": "3695814a",
+  "updatedAt": "2026-10-11 15:09",
+  "version": "1.0.11.63",
+  "versionLabel": "v1.0.11.63",
+  "branch": "feature/ballet-card-priority",
+  "commit": "147897e8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/training-summary-balance · commit 3695814a · 有未提交代码改动",
+  "deployNote": "feature/ballet-card-priority · commit 147897e8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "确认多卡约课与自动激活规则",
+      "summary": "使用中适用卡按最早到期 → 第二早到期 → 最晚到期逐卡预检；明确不可约才在提交前顺延，同到期日优先剩余课次少的卡。"
+    },
     {
       "date": "2026-10-11",
       "title": "训练摘要融入白色面板",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "课程卡主次层级与三卡切换列表",
       "summary": "按 Owner 确认的效果图突出剩余课次与到期日，使用 / 期限数值降为辅助，保留饱满进度轨道；预测收成清晰的主日期与次级节奏说明。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "修复未激活会员卡阻断课程同步",
-      "summary": "闻道新增“未激活”卡，源有效期为空 `~` 且未提供总次数；解析新增明确的 `unactivated` 状态，只对该状态允许空日期 / 未知总次数，使用中卡完整性检查不变。"
     }
   ]
 };

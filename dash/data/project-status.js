@@ -1,10 +1,10 @@
 window.MAXNOW_PROJECT_STATUS_DATA = {
   "schemaVersion": 1,
   "source": "ROADMAP.md",
-  "sourceUpdatedAt": "2026-10-08 22:47",
-  "generatedAt": "2026-10-08 22:47",
+  "sourceUpdatedAt": "2026-10-11 15:09",
+  "generatedAt": "2026-10-11 15:09",
   "staleAfterHours": 168,
-  "sourceFingerprint": "0d51db45fc4a7726b17e6dbc15bb19e949affff99aa5ba28f9ef64b7e4cec514",
+  "sourceFingerprint": "771c79346ce3cc4a9f3b55398407cd7d8a84055e9cc0280e1910b081c0bd1783",
   "mainlines": [
     {
       "title": "规划个人博客发布链路",
@@ -16,6 +16,13 @@ window.MAXNOW_PROJECT_STATUS_DATA = {
   ],
   "actions": [
     {
+      "title": "实现芭蕾多卡顺延与自动激活",
+      "note": "来源：2026-10-11 Owner 确认按最早到期 → 第二早到期 → 最晚到期选卡；无可用卡时激活课次最少的未激活卡。",
+      "label": "Next",
+      "status": "waiting",
+      "sourceArea": "Next"
+    },
+    {
       "title": "让芭蕾自动抢课支持动态配置",
       "note": "来源：2026-08-01 Owner 希望以后改课不再由 Codex 修改脚本，而是在 MaxNow 中动态调整抢课方式。",
       "label": "Next",
@@ -24,13 +31,6 @@ window.MAXNOW_PROJECT_STATUS_DATA = {
     },
     {
       "title": "补齐前端自动测试、无障碍与移动端验证",
-      "note": "来源：2026-07-10 MaxNow 整体体检。",
-      "label": "Next",
-      "status": "waiting",
-      "sourceArea": "Next"
-    },
-    {
-      "title": "收紧外部依赖和链接安全",
       "note": "来源：2026-07-10 MaxNow 整体体检。",
       "label": "Next",
       "status": "waiting",
