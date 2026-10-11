@@ -1,5 +1,9 @@
 # MaxNow 服务器操作说明
 
+## 2026-10-11 手动待上课确认
+
+Owner 确认 10:00–11:30 李俊大教室芭蕾 L1 入门已完成。等待 `/run/maxnow-ballet/sync.lock` 后，在 `ubuntu:www-data` 身份下备份私有状态与公开 ballet 配对文件，使用既有归一化和校验函数复用同一 manual 键，将 planned 转为 active / attended，并离线重建公开模型。备份位于 `/home/ubuntu/maxnow-deploy-backups/manual-confirm-20261011-*`（0700），ledger 保持 0600；源快照与闻道 lastSuccessAt 不伪造更新。汇总增加 1 次 / 90 分钟，累计 50 次 / 65 小时，本周 6 次 / 8 小时；目标从 manualPlans 消失。未读取 Session、未发起闻道请求、未扣卡或提交任何预约类操作。
+
 ## 芭蕾页面即时刷新服务（2026-10-11）
 
 - 完成状态发布 `finishedAt` 与 `durationSeconds`，记录真实任务耗时；前端用同一个顶部状态显示等待计时 / 已同步 / 刷新失败，无弹出提醒。刷新 broker 代码更新后重启该低权限 service，不重启或修改原有同步 / 抢课 timer。同步器周日下午已发布下周时去掉六次无用的过去日期读取，其他同步范围不变。
