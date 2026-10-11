@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 09:02",
-  "version": "1.0.11.54",
-  "versionLabel": "v1.0.11.54",
-  "branch": "feature/ballet-manual-totals",
-  "commit": "19ed6c09",
+  "updatedAt": "2026-10-11 09:27",
+  "version": "1.0.11.55",
+  "versionLabel": "v1.0.11.55",
+  "branch": "feature/manual-pending-class",
+  "commit": "9b337f45",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-manual-totals · commit 19ed6c09 · 有未提交代码改动",
+  "deployNote": "feature/manual-pending-class · commit 9b337f45 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "登记手动待上课计划",
+      "summary": "Owner 将 10 月 11 日 10:00–11:30 李俊大教室「芭蕾L1-入门」先登记为待上课，90 分钟；不计入已上课次数 / 小时或手动补录累计，不代表闻道预约成功。"
+    },
     {
       "date": "2026-10-11",
       "title": "全部累计卡增加手动补录统计",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-10",
       "title": "课程卡合并为单一面板",
       "summary": "移除课程卡右侧独立会员卡列表，选卡入口收进标题栏原生下拉框；卡名与状态并排、开卡与到期日期降为次级信息，指标底色淡化，计划区改为细分隔线与紧凑文字，消除两个并列模块的视觉感。"
-    },
-    {
-      "date": "2026-10-09",
-      "title": "训练趋势图左右顺序调整",
-      "summary": "按 Owner 更正，训练记录底部两张趋势图在宽屏改为左侧上课节数、右侧训练时间；窄屏沿用节数在前、时间在后的单列顺序。上方统计卡继续保持上排节数、下排时间。"
     }
   ]
 };

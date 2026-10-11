@@ -9001,3 +9001,7 @@ body[data-view="ricky"] .topbar-ricky-status {
     transition: none;
   }
 }
+
+.ballet-manual-plans { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.ballet-manual-plans[hidden] { display: none; }
+.ballet-manual-plans > h3 { margin: 0 0 12px; color: var(--soft); font-size: 14px; }

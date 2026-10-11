@@ -5037,6 +5037,7 @@ function renderBalletGrowth() {
 }
 
 function createBalletUpcomingItem(record, isNearest = false) {
+  const isManualPlan = record.recordOrigin === "manual" && record.attendanceStatus === "planned";
   const article = document.createElement("article");
   article.className = "ballet-upcoming-item";
   const main = document.createElement("div");
@@ -5053,11 +5054,11 @@ function createBalletUpcomingItem(record, isNearest = false) {
   ].filter(Boolean).join(" · ") || "课程详情待补";
   const cancellation = document.createElement("small");
   cancellation.className = "ballet-upcoming-note";
-  cancellation.textContent = getBalletCancellationDisplay(record);
+  cancellation.textContent = isManualPlan ? "仅手动登记，待课后确认；尚未计入训练统计。" : getBalletCancellationDisplay(record);
   main.append(title, meta);
   const tags = document.createElement("div");
   tags.className = "ballet-history-meta";
-  const bookingLabel = getBalletBookingStatusLabel(record);
+  const bookingLabel = isManualPlan ? "手动待上课" : getBalletBookingStatusLabel(record);
   [
     {
       label: bookingLabel,
@@ -5105,7 +5106,26 @@ function createBalletUpcomingDayGroup(dateText, records, nearestRecord) {
   return group;
 }
 
+function renderBalletManualPlans() {
+  const panel = qs("#ballet-manual-plans");
+  const list = qs("#ballet-manual-plan-list");
+  const records = Array.isArray(balletData.manualPlans) ? balletData.manualPlans : [];
+  if (!panel || !list) return;
+  panel.hidden = !records.length;
+  list.replaceChildren();
+  const groups = new Map();
+  records.forEach((record) => {
+    const date = balletRecordDate(record);
+    if (!groups.has(date)) groups.set(date, []);
+    groups.get(date).push(record);
+  });
+  [...groups.entries()].sort(([a], [b]) => a.localeCompare(b)).forEach(([date, items]) => {
+    list.appendChild(createBalletUpcomingDayGroup(date, items, null));
+  });
+}
+
 function renderBalletUpcoming() {
+  renderBalletManualPlans();
   const panel = qs("#ballet-upcoming-panel");
   const container = qs("#ballet-upcoming-list");
   if (!panel || !container) return;

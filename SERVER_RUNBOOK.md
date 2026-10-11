@@ -2,6 +2,13 @@
 
 这个文件记录 MaxNow 服务器的 SSH 连接方式、前端静态站部署方式和常用排障命令。
 
+## 2026-10-11 手动待上课登记
+
+- Owner 截图红框唯一匹配 2026-10-11 10:00–11:30 李俊 / 大教室「芭蕾L1-入门」，90 分钟。核对时北京时间 09:24 尚未开课；Owner 明确选择“先登记为待上课”，因此不写为已上课，也不操作闻道预约。
+- 私有 `attendance-ledger.json` 增加 manual 稳定键记录，状态 `recordState=planned / attendanceStatus=planned`；以 `ubuntu:www-data` 身份在 `/run/maxnow-ballet/sync.lock` 非阻塞锁下写入并保留 `0600`。公开 `ballet.*` 仅增加脱敏 `manualPlans`；49 节 / 3810 分钟、4 节 / 300 分钟手动已上课与业务同步 freshness 均保持原样。课后须 Owner 明确确认才转为已上课。
+- 登记备份目录 `/home/ubuntu/maxnow-deploy-backups/20261011-manual-pending-l1`；静态部署备份目录 `/home/ubuntu/maxnow-deploy-backups/20261011-manual-pending-ui`。34 项同步测试验证计划不进入累计 / 周完成 / 预约统计，完整同步保留计划；本地 1800 / 390px 浏览器计划可见且无横向溢出，服务器一致性、nginx 与认证边界检查通过。没有登录后的线上视觉验收。
+- 版本 `1.0.11.55`，页面缓存 `app.js?v=256` / `styles.css?v=286`；没有访问闻道、读取凭据或手动触发同步、Fast Path、预约、候补、取消、转课。
+
 ## 2026-10-11 全部统计增加手动补录
 
 - Owner 澄清“手动抢课”实际指手动补录的上课记录。全部次数卡 / 时间卡各增加“其中手动补录”一行；仅汇总公开记录中 `recordOrigin=manual` 的已上课记录，属于累计总量子集，不额外相加。当前快照手动补录 4 节 / 5 小时；本月 / 今年隐藏该行，旧缓存来源或时长缺失时显示“—”。

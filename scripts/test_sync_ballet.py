@@ -1194,6 +1194,40 @@ class BalletSyncTests(unittest.TestCase):
             )
             self.assertEqual(manual_private["recordState"], "active")
 
+    def test_manual_plan_survives_sync_without_counting_as_attendance(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixtures"
+            paths = ballet.build_paths(root / "private", root / "public" / "ballet.json")
+            write_fixture(fixture)
+            ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+            before = json.loads(paths.output.read_text(encoding="utf-8"))
+            ledger = json.loads(paths.ledger.read_text(encoding="utf-8"))
+            plan = ballet.normalize_manual_plan({
+                "courseName": "芭蕾L1-入门", "date": "2026-07-28",
+                "startTime": "10:00", "endTime": "11:30", "teacher": "测试老师", "venue": "大教室",
+            }, NOW.isoformat())
+            ledger["records"].append(plan)
+            ballet.atomic_write_json(paths.ledger, ledger, mode=0o600)
+            ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+            model = json.loads(paths.output.read_text(encoding="utf-8"))
+            self.assertEqual(model["summary"], before["summary"])
+            self.assertEqual(model["week"], before["week"])
+            self.assertEqual(model["upcoming"], before["upcoming"])
+            self.assertEqual(len(model["manualPlans"]), 1)
+            self.assertEqual(model["manualPlans"][0]["recordOrigin"], "manual")
+            self.assertEqual(model["manualPlans"][0]["attendanceStatus"], "planned")
+            self.assertEqual(model["manualPlans"][0]["durationMinutes"], 90)
+            # Explicit promotion after class uses the same key, so no duplicate remains.
+            ledger = json.loads(paths.ledger.read_text(encoding="utf-8"))
+            item = next(r for r in ledger["records"] if r["stableKey"] == plan["stableKey"])
+            item["recordState"] = "active"
+            item["attendanceStatus"] = "attended"
+            model = ballet.build_read_model(ledger, ballet.empty_booking(), ballet.empty_membership(),
+                ballet.empty_timetable(), ballet.empty_sync_state(), NOW)
+            self.assertEqual(model["manualPlans"], [])
+            self.assertEqual(model["summary"]["classes"], before["summary"]["classes"] + 1)
+
     def test_fixture_dry_run_writes_nothing(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

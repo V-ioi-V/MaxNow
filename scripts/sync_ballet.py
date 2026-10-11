@@ -1476,6 +1476,13 @@ def normalize_manual_attendance(
     }
 
 
+def normalize_manual_plan(detail: dict[str, Any], observed_at: str) -> dict[str, Any]:
+    record = normalize_manual_attendance(detail, observed_at)
+    record["recordState"] = "planned"
+    record["attendanceStatus"] = "planned"
+    return record
+
+
 def normalize_upcoming(detail: dict[str, Any]) -> dict[str, Any] | None:
     raw_status = normalize_space(detail.get("bookingStatus", ""))
     statuses = {
@@ -2100,6 +2107,16 @@ def build_read_model(
         key=lambda item: (item.get("date", ""), item.get("startTime", "")),
         reverse=True,
     )
+    def identity(item: dict[str, Any]) -> tuple[str, ...]:
+        return tuple(str(item.get(key, "")) for key in ("date", "startTime", "endTime", "teacher", "venue")) + (normalize_course_name(item.get("courseName", "")),)
+
+    completed = {identity(item) for item in records}
+    manual_plans = sorted(
+        [item for item in ledger.get("records", [])
+         if item.get("keySource") == "manual" and item.get("recordState") == "planned"
+         and identity(item) not in completed],
+        key=lambda item: (item.get("date", ""), item.get("startTime", "")),
+    )
     summary, aggregates = compute_aggregates(records, now)
     upcoming = sorted(
         booking.get("records", []),
@@ -2143,6 +2160,7 @@ def build_read_model(
         },
         "summary": summary,
         "records": [_public_record(item) for item in records],
+        "manualPlans": [_public_record(item) for item in manual_plans],
         "aggregates": aggregates,
         "upcoming": {
             "dataAsOf": booking.get("dataAsOf"),
@@ -2186,6 +2204,15 @@ def validate_read_model(model: dict[str, Any]) -> None:
     )
     if summary.get("minutes") != expected_minutes:
         raise SyncFailure("parse_error")
+    plans = model.get("manualPlans", [])
+    if not isinstance(plans, list):
+        raise SyncFailure("parse_error")
+    for plan in plans:
+        if (not isinstance(plan, dict) or plan.get("recordOrigin") != "manual"
+            or plan.get("attendanceStatus") != "planned"
+            or not isinstance(plan.get("durationMinutes"), int)
+            or not 0 < plan["durationMinutes"] <= 480):
+            raise SyncFailure("parse_error")
     week = model.get("week")
     membership = model.get("membership")
     timetable = model.get("timetable")
