@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 10:03",
-  "version": "1.0.11.60",
-  "versionLabel": "v1.0.11.60",
-  "branch": "bugfix/card-picker-badges",
-  "commit": "78168f45",
+  "updatedAt": "2026-10-11 10:09",
+  "version": "1.0.11.61",
+  "versionLabel": "v1.0.11.61",
+  "branch": "feature/training-record-polish",
+  "commit": "92d818e5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/card-picker-badges · commit 78168f45 · 有未提交代码改动",
+  "deployNote": "feature/training-record-polish · commit 92d818e5 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "训练记录视觉层级优化",
+      "summary": "按确认效果图将四组统计收进浅蓝灰摘要条，次数与小时数字统一深色；三栏增加排序序号和首位浅底强调，排序切换改为圆角分段控件。"
+    },
     {
       "date": "2026-10-11",
       "title": "课程卡选项状态标签质感对齐",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "训练分布进度条恢复原有厚度",
       "summary": "三组分类进度条由 3px 恢复为原有 7px，同族圆润端头、浅色底轨与语义色保持一致；紧凑布局、双指标和独立排序继续保留。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "训练记录轻量布局与独立排序",
-      "summary": "将累计、月均、周均和手动补录的节数 / 小时合并成紧凑摘要；类型、级别、老师仅保留三组轻量列表，取消重复卡片与大块留白。"
     }
   ]
 };

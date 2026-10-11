@@ -4063,9 +4063,14 @@ function getBalletTrainingBreakdowns(aggregate = {}) {
   };
 }
 
-function createBalletBarItem(item, maxAmount, metric) {
+function createBalletBarItem(item, maxAmount, metric, index = 0) {
   const article = document.createElement("article");
   article.className = "ballet-bar-item";
+  const rank = document.createElement("span");
+  rank.className = "ballet-bar-rank";
+  rank.textContent = String(index + 1).padStart(2, "0");
+  rank.setAttribute("aria-hidden", "true");
+  article.appendChild(rank);
   const label = document.createElement("strong");
   label.textContent = item.label;
   article.appendChild(label);
@@ -4102,7 +4107,7 @@ function renderBalletDistribution(selector, source, kind, metric) {
     return items;
   }
   const maxAmount = Math.max(...items.map((item) => metric === "classes" ? item.classes : item.minutes || 0), 1);
-  container.append(...items.map((item) => createBalletBarItem(item, maxAmount, metric)));
+  container.append(...items.map((item, index) => createBalletBarItem(item, maxAmount, metric, index)));
   return items;
 }
 
