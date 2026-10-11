@@ -5791,6 +5791,7 @@ function renderBallet() {
   setText("#ballet-connection-status", state.label);
   const connectionStatus = qs("#ballet-connection-status");
   if (connectionStatus) connectionStatus.dataset.state = state.key;
+  if (balletRefreshUiState) applyBalletRefreshStatus();
 
   const alert = qs("#ballet-sync-alert");
   const shouldShowAlert = ["auth", "error", "stale"].includes(state.key);
@@ -6411,31 +6412,27 @@ async function loadData(options = {}) {
 }
 
 let balletRefreshPromise = null;
-let balletRefreshNoticeTimer = 0;
+let balletRefreshUiState = null;
 
 function balletRefreshDuration(seconds) {
   const total = Math.max(0, Math.floor(Number(seconds) || 0));
   return total >= 60 ? `${Math.floor(total / 60)} 分 ${total % 60} 秒` : `${total} 秒`;
 }
 
-function showBalletRefreshNotice(state, message) {
-  const notice = qs("#ballet-refresh-notice");
-  if (!notice) return;
-  clearTimeout(balletRefreshNoticeTimer);
-  notice.hidden = false;
-  notice.dataset.state = state;
-  setText("#ballet-refresh-notice-title", state === "success" ? "芭蕾刷新完成" : "芭蕾刷新失败");
-  setText("#ballet-refresh-notice-message", message);
-  if (state === "success") balletRefreshNoticeTimer = setTimeout(() => { notice.hidden = true; }, 12000);
+function setBalletRefreshStatus(state, message, elapsedSeconds = 0) {
+  balletRefreshUiState = state === "success" ? null : { state, message, elapsedSeconds };
+  applyBalletRefreshStatus({ state, message, elapsedSeconds });
 }
 
-function setBalletRefreshStatus(state, message, elapsedSeconds = 0) {
-  const node = qs("#ballet-refresh-status");
+function applyBalletRefreshStatus(value = balletRefreshUiState) {
+  if (!value) return;
+  const { state, message, elapsedSeconds } = value;
+  const node = qs("#ballet-connection-status");
   if (!node) return;
   node.hidden = false;
   node.dataset.state = state;
   node.setAttribute("aria-live", state === "loading" ? "off" : "polite");
-  node.textContent = state === "loading" ? `刷新中 ${Math.floor(elapsedSeconds / 60)}:${String(elapsedSeconds % 60).padStart(2, "0")}` : state === "success" ? "已刷新" : "刷新失败";
+  node.textContent = state === "loading" ? `刷新中 ${Math.floor(elapsedSeconds / 60)}:${String(elapsedSeconds % 60).padStart(2, "0")}` : state === "success" ? "已同步" : "刷新失败";
   node.title = message;
   node.setAttribute("aria-label", message);
 }
@@ -6463,9 +6460,7 @@ function refreshBalletData() {
     refreshButton.dataset.state = "loading";
     refreshButton.setAttribute("aria-busy", "true");
     let startedAt = Date.now();
-    const updateElapsed = () => setBalletRefreshStatus("loading", "正在同步芭蕾整体数据，通常约 1–2 分钟；完成后会显示通知。", Math.max(0, Math.floor((Date.now() - startedAt) / 1000)));
-    clearTimeout(balletRefreshNoticeTimer);
-    if (qs("#ballet-refresh-notice")) qs("#ballet-refresh-notice").hidden = true;
+    const updateElapsed = () => setBalletRefreshStatus("loading", "正在同步芭蕾整体数据，完成后恢复为已同步。", Math.max(0, Math.floor((Date.now() - startedAt) / 1000)));
     updateElapsed();
     const elapsedTimer = setInterval(updateElapsed, 1000);
     try {
@@ -6486,12 +6481,10 @@ function refreshBalletData() {
       const duration = balletRefreshDuration(result.durationSeconds ?? (Date.now() - startedAt) / 1000);
       const message = `课程卡、预约、上课记录和课表已更新。用时 ${duration}。`;
       setBalletRefreshStatus("success", message);
-      showBalletRefreshNotice("success", message);
       refreshButton.dataset.state = "success";
     } catch (error) {
       clearInterval(elapsedTimer);
       setBalletRefreshStatus("error", error.message || "刷新失败，仍显示上次成功的数据。");
-      showBalletRefreshNotice("error", error.message || "刷新失败，仍显示上次成功的数据。");
       refreshButton.dataset.state = "error";
     } finally {
       clearInterval(elapsedTimer);
@@ -7045,11 +7038,6 @@ refreshButton?.addEventListener("click", async () => {
     refreshButton.disabled = false;
     setTimeout(() => refreshButton.removeAttribute("data-state"), 900);
   }
-});
-
-qs("#ballet-refresh-notice-close")?.addEventListener("click", () => {
-  clearTimeout(balletRefreshNoticeTimer);
-  qs("#ballet-refresh-notice").hidden = true;
 });
 
 window.addEventListener("hashchange", () => {

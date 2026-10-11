@@ -757,8 +757,9 @@ class BalletSyncTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             fixture = Path(directory)
             write_fixture(fixture)
+            source = ballet.FixtureSource(fixture)
             snapshot = ballet.build_timetable_snapshot(
-                ballet.FixtureSource(fixture),
+                source,
                 datetime.fromisoformat("2026-08-02T14:20:00+08:00"),
                 "2026-08-02T14:20:00+08:00",
             )
@@ -766,6 +767,25 @@ class BalletSyncTests(unittest.TestCase):
         self.assertEqual(snapshot["weekStart"], "2026-08-02")
         self.assertEqual(snapshot["weekEnd"], "2026-08-09")
         self.assertEqual(len(snapshot["days"]), 8)
+        self.assertEqual(source.request_count, 8)
+
+    def test_sunday_unpublished_next_week_falls_back_to_full_current_week(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory)
+            write_fixture(fixture)
+            source = ballet.FixtureSource(fixture)
+            original = source.request
+            def request(path, marker):
+                if path.startswith(ballet.TIMETABLE_PATH) and path.rsplit('/', 1)[-1] >= '2026-08-03':
+                    source.request_count += 1
+                    return '<div class="dateswiper"></div>'
+                return original(path, marker)
+            source.request = request
+            snapshot = ballet.build_timetable_snapshot(source, datetime.fromisoformat('2026-08-02T14:20:00+08:00'), '2026-08-02T14:20:00+08:00')
+        self.assertEqual(snapshot['displayMode'], 'current_week')
+        self.assertEqual(snapshot['weekStart'], '2026-07-27')
+        self.assertEqual(len(snapshot['days']), 7)
+        self.assertEqual(source.request_count, 14)
 
     def test_timetable_booking_snapshot_only_highlights_owner_states(self):
         with tempfile.TemporaryDirectory() as directory:

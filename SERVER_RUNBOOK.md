@@ -2,7 +2,7 @@
 
 ## 芭蕾页面即时刷新服务（2026-10-11）
 
-- 完成状态发布 `finishedAt` 与 `durationSeconds`，记录真实任务耗时；前端显示等待时分秒及完成 / 失败通知。刷新 broker 代码更新后重启该低权限 service，不重启或修改原有同步 / 抢课 timer。
+- 完成状态发布 `finishedAt` 与 `durationSeconds`，记录真实任务耗时；前端用同一个顶部状态显示等待计时 / 已同步 / 刷新失败，无弹出提醒。刷新 broker 代码更新后重启该低权限 service，不重启或修改原有同步 / 抢课 timer。同步器周日下午已发布下周时去掉六次无用的过去日期读取，其他同步范围不变。
 
 - 页面进入及右上角刷新按钮 POST `/api/ballet/refresh`，固定空 JSON、`X-MaxNow-Refresh: 1`、Origin `https://dash.maxnow.cn`；GET 同一精确路径查询安全状态。nginx 保留 `auth_request /_auth`，匿名返回 401。
 - `maxnow-ballet-refresh.service` 以专用 no-login 用户 `maxnow-ballet-refresh` 监听 `127.0.0.1:8766`；无凭据、私有账本、卡激活 journal 访问权，文件系统只读，空 capabilities 与 NoNewPrivileges。

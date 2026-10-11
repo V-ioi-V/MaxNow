@@ -2437,24 +2437,25 @@ def build_timetable_snapshot(
     today = now.astimezone(TIMEZONE).date()
     week_start = today - timedelta(days=today.weekday())
     current_week_end = week_start + timedelta(days=6)
-    current_week_days: list[dict[str, Any]] = []
+    fetched_days: dict[date, dict[str, Any]] = {}
     selector_dates: set[str] = set()
 
     def fetch_day(course_date: date) -> dict[str, Any]:
+        if course_date in fetched_days:
+            return fetched_days[course_date]
         path = f"{TIMETABLE_PATH}/{course_date.isoformat()}"
         html_text = source.request(path, "dateswiper")
         parsed = parse_timetable(html_text, course_date.isoformat())
         selector_dates.update(parsed["selectorDates"])
-        return {
+        result = {
             "date": parsed["date"],
             "records": parsed["records"],
         }
-
-    for offset in range(7):
-        current_week_days.append(fetch_day(week_start + timedelta(days=offset)))
+        fetched_days[course_date] = result
+        return result
 
     display_mode = "current_week"
-    days = current_week_days
+    days = []
     sunday_publish_time = now.astimezone(TIMEZONE).replace(
         hour=14,
         minute=20,
@@ -2468,8 +2469,11 @@ def build_timetable_snapshot(
             for offset in range(7)
         ]
         if any(item["records"] for item in next_week_days):
-            days = [current_week_days[-1], *next_week_days]
+            days = [fetch_day(today), *next_week_days]
             display_mode = "sunday_plus_next_week"
+
+    if not days:
+        days = [fetch_day(week_start + timedelta(days=offset)) for offset in range(7)]
 
     booking_states = {
         (

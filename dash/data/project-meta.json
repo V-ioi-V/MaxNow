@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 15:51",
-  "version": "1.0.11.66",
-  "versionLabel": "v1.0.11.66",
+  "updatedAt": "2026-10-11 15:54",
+  "version": "1.0.11.67",
+  "versionLabel": "v1.0.11.67",
   "branch": "bugfix/ballet-refresh-feedback",
-  "commit": "905bdcae",
+  "commit": "5e927e71",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-refresh-feedback · commit 905bdcae · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-refresh-feedback · commit 5e927e71 · 有未提交代码改动",
   "recentUpdates": [
     {
       "date": "2026-10-11",
-      "title": "芭蕾刷新计时与完成通知",
-      "summary": "实测页面同步 15:48:05–15:49:06 共 61 秒；顶部刷新状态补已等待时分秒，说明通常约 1–2 分钟，六分钟等待上限后明确报超时。"
+      "title": "芭蕾统一刷新状态与减少课表请求",
+      "summary": "实测页面同步 15:48:05–15:49:06 共 61 秒；顶部只保留一个状态，刷新时显示已等待时分秒，完成恢复已同步，失败显示刷新失败。取消重复状态和弹出通知；静态数据重新渲染不得覆盖正在刷新的状态，六分钟等待上限后明确报超时。"
     },
     {
       "date": "2026-10-11",
