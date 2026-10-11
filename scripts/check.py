@@ -1751,6 +1751,9 @@ def check_secondary_view_style():
         or "fillBalletMonths(entries, year, Number(month.slice(5, 7)))" not in dashboard_js
         or 'const showTrend = sampleCount > 0;' not in dashboard_js
         or 'id="ballet-training-monthly-classes"' not in ballet_view_markup
+        or 'id="ballet-training-manual-classes"' not in ballet_view_markup
+        or 'id="ballet-training-manual-hours"' not in ballet_view_markup
+        or 'function renderBalletManualTraining(aggregate = {})' not in dashboard_js
         or 'id="ballet-training-weekly-hours"' not in ballet_view_markup
         or 'if (detail) detail.hidden = allTime;' not in dashboard_js
         or 'function getBalletTrainingAverages(aggregate = {})' not in dashboard_js
@@ -1867,9 +1870,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=284" not in dashboard_html
+        "styles.css?v=285" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=254" not in dashboard_html
+        or "app.js?v=255" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2124,7 +2127,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=254" not in dashboard_html:
+    if "app.js?v=255" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

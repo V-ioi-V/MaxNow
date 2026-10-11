@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 08:43",
-  "version": "1.0.11.53",
-  "versionLabel": "v1.0.11.53",
-  "branch": "feature/ballet-training-averages",
-  "commit": "54063030",
+  "updatedAt": "2026-10-11 09:02",
+  "version": "1.0.11.54",
+  "versionLabel": "v1.0.11.54",
+  "branch": "feature/ballet-manual-totals",
+  "commit": "19ed6c09",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-training-averages · commit 54063030 · 有未提交代码改动",
+  "deployNote": "feature/ballet-manual-totals · commit 19ed6c09 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "全部累计卡增加手动补录统计",
+      "summary": "Owner 明确统计口径为手动补录的上课记录；全部累计次数卡增加“其中手动补录”的节数，全部累计时间卡增加对应小时数，作为累计总量的子集展示，不重复相加。"
+    },
     {
       "date": "2026-10-11",
       "title": "全部训练统计增加月均与周均",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-09",
       "title": "训练趋势图左右顺序调整",
       "summary": "按 Owner 更正，训练记录底部两张趋势图在宽屏改为左侧上课节数、右侧训练时间；窄屏沿用节数在前、时间在后的单列顺序。上方统计卡继续保持上排节数、下排时间。"
-    },
-    {
-      "date": "2026-10-09",
-      "title": "取消三节晚课并刷新芭蕾面板",
-      "summary": "按 Owner 截图与闻道实时活动预约精确核对，取消 10 月 9 日申昊清小教室 18:45–20:15 芭蕾 L1.5－入门+、20:15–21:15 软开课，以及 10 月 10 日张瀚泽小教室 19:00–20:00 舞姿（基础）。三节均先通过零 mutation 预检，再分别单次取消并以独立实时查询复核；最终活动预约列表为空。"
     }
   ]
 };

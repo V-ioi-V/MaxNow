@@ -4380,6 +4380,20 @@ function renderBalletTrainingAverages(aggregate) {
   if (note) note.hidden = !allTime;
 }
 
+function renderBalletManualTraining(aggregate = {}) {
+  const allTime = activeBalletPeriod === "all";
+  qsa(".ballet-training-manual").forEach((node) => { node.hidden = !allTime; });
+  if (!allTime) return;
+  const records = getBalletBreakdownRecords(aggregate);
+  const originsKnown = records.every((record) => ["manual", "wenda"].includes(record.recordOrigin))
+    && (records.length > 0 || balletNumber(aggregate.classes) === 0);
+  const manual = records.filter((record) => record.recordOrigin === "manual");
+  const minutesKnown = manual.every((record) => record.durationMinutes != null && balletMinutes(record) !== null);
+  const minutes = manual.reduce((total, record) => total + (balletMinutes(record) || 0), 0);
+  setText("#ballet-training-manual-classes", originsKnown ? manual.length : "—");
+  setText("#ballet-training-manual-hours", originsKnown && minutesKnown ? formatBalletHours(minutes) : "—");
+}
+
 function renderBalletTraining() {
   const aggregate = getBalletSelectedAggregate();
   const breakdowns = getBalletTrainingBreakdowns(aggregate);
@@ -4395,6 +4409,7 @@ function renderBalletTraining() {
   setText("#ballet-training-hours", formatBalletHours(minutes));
   setText("#ballet-training-classes", classes);
   renderBalletTrainingAverages(aggregate);
+  renderBalletManualTraining(aggregate);
   ["classes", "hours"].forEach((metric) => {
     const courseTypes = renderBalletDistribution(
       `#ballet-course-types-${metric}`, aggregate.byCourseType, "courseType", metric,

@@ -7319,6 +7319,24 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-training-averages dd { margin: 8px 0 0; display: flex; flex-direction: column; gap: 5px; }
 .ballet-training-averages strong { color: var(--text); font-size: 24px; font-variant-numeric: tabular-nums; }
 .ballet-training-averages dd span { color: var(--muted); font-size: 11px; }
+.ballet-training-manual {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+.ballet-training-manual[hidden] { display: none; }
+.ballet-training-manual dt { color: var(--muted); font-size: 12px; }
+.ballet-training-manual dd { display: flex; align-items: baseline; gap: 5px; margin: 0; }
+.ballet-training-manual strong { color: var(--soft); font-size: 20px; font-variant-numeric: tabular-nums; }
+.ballet-training-manual dd span { color: var(--muted); font-size: 11px; }
+
 .ballet-training-average-note { margin: 10px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
 .ballet-training-overview.is-all-time { margin-bottom: 0; }
 
