@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 15:19",
-  "version": "1.0.11.64",
-  "versionLabel": "v1.0.11.64",
-  "branch": "feature/ballet-card-selection",
-  "commit": "15d29647",
+  "updatedAt": "2026-10-11 15:39",
+  "version": "1.0.11.65",
+  "versionLabel": "v1.0.11.65",
+  "branch": "feature/ballet-manual-refresh",
+  "commit": "95679932",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-card-selection · commit 15d29647 · 有未提交代码改动",
+  "deployNote": "feature/ballet-manual-refresh · commit 95679932 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-11",
+      "title": "芭蕾进入页面自动同步与手动整体刷新",
+      "summary": "每次打开芭蕾页面或从其他页面进入时，自动同步课程卡、预约 / 候补、上课历史和课表；右上角刷新按钮触发同一同步，完成后重新读取全部芭蕾展示源。过程中保留最后成功数据，状态区显示刷新中 / 已刷新 / 刷新失败。"
+    },
     {
       "date": "2026-10-11",
       "title": "接入多卡顺延与单次自动激活",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "训练记录视觉层级优化",
       "summary": "按确认效果图将四组统计收进浅蓝灰摘要条，次数与小时数字统一深色；三栏增加排序序号和首位浅底强调，排序切换改为圆角分段控件。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "课程卡选项状态标签质感对齐",
-      "summary": "切卡列表状态标签与主卡统一为 30px 最小高度、700 字重、细边框和浅底色；使用中蓝色、未激活橙色、已失效灰色继续区分。"
     }
   ]
 };

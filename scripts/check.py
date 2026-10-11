@@ -139,6 +139,10 @@ def check_required_files():
         "scripts/test_book_ballet.py",
         "scripts/ballet_card_policy.py",
         "scripts/test_ballet_card_policy.py",
+        "scripts/ballet_refresh_service.py",
+        "scripts/test_ballet_refresh_service.py",
+        "server/maxnow-ballet-refresh.service",
+        "server/maxnow-ballet-refresh.rules",
         "scripts/book_ballet_fast.py",
         "scripts/run_ballet_booking_fast.sh",
         "scripts/test_book_ballet_fast.py",
@@ -360,6 +364,10 @@ def check_ballet_booking_fast():
     policy_test = subprocess.run([sys.executable, "-B", str(ROOT / "scripts/test_ballet_card_policy.py")], cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=30)
     if policy_test.returncode:
         raise ValueError("ballet card policy: fixture self-test failed: " + policy_test.stdout.strip())
+
+    refresh_test = subprocess.run([sys.executable, "-B", str(ROOT / "scripts/test_ballet_refresh_service.py")], cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=30)
+    if refresh_test.returncode:
+        raise ValueError("ballet refresh: self-test failed: " + refresh_test.stdout.strip())
 
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     rules = config.get("selectionRules", [])
@@ -1875,7 +1883,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=292" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=261" not in dashboard_html
+        or "app.js?v=262" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2132,7 +2140,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=261" not in dashboard_html:
+    if "app.js?v=262" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

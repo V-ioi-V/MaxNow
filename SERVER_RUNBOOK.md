@@ -1,5 +1,14 @@
 # MaxNow 服务器操作说明
 
+## 芭蕾页面即时刷新服务（2026-10-11）
+
+- 页面进入及右上角刷新按钮 POST `/api/ballet/refresh`，固定空 JSON、`X-MaxNow-Refresh: 1`、Origin `https://dash.maxnow.cn`；GET 同一精确路径查询安全状态。nginx 保留 `auth_request /_auth`，匿名返回 401。
+- `maxnow-ballet-refresh.service` 以专用 no-login 用户 `maxnow-ballet-refresh` 监听 `127.0.0.1:8766`；无凭据、私有账本、卡激活 journal 访问权，文件系统只读，空 capabilities 与 NoNewPrivileges。
+- 安装 `server/maxnow-ballet-refresh.rules` 到 `/etc/polkit-1/rules.d/49-maxnow-ballet-refresh.rules`（root:root 0644），只授权该用户 `org.freedesktop.systemd1.manage-units` 的 verb=start、unit=maxnow-ballet-full-sync.service。它没有 sudoers 授权。
+- 安装 service 到 `/etc/systemd/system/`，执行 daemon-reload 和 enable --now；将仓库 `server/maxnow-auth-locations.conf` 更新到现有同名 nginx snippet，先 `nginx -t` 再 reload。未新增 timer，原有同步 / 抢课 timer 不变。
+- 请求锁合并同进程并发与已有 full-sync，完成 60 秒内复用结果；检查 systemd 实际执行开始标记、Result 和退出码，最多等 330 秒。full-sync 的共享锁争用、失败或超时不报成功；前端最多等 360 秒，保留最后成功内容。
+- 验收检查匿名 401、带有效会话的 GET / 同源 POST、跨站 POST 403、并发共享任务、完整同步后页面重读，并以专用用户确认不能 start 其他 unit。回滚时停用刷新 service 并移除该 polkit 规则 / 精确 nginx location，保留原有同步 timer 与运行数据。
+
 这个文件记录 MaxNow 服务器的 SSH 连接方式、前端静态站部署方式和常用排障命令。
 
 ## 2026-10-11 课程卡切换与主次层级

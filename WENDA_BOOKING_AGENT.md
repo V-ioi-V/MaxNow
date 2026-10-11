@@ -39,6 +39,10 @@
 
 ## 维护规则
 
+### 页面整体刷新入口（2026-10-11）
+
+`ballet_refresh_service.py` / `maxnow-ballet-refresh.service` 接收经登录保护的同源固定请求，只能启动既有 `maxnow-ballet-full-sync.service`；本身不读取 Session，不发起闻道网络请求，不调用任何预约类脚本。每次进入芭蕾页面自动触发，右上角按钮手动触发；多个标签共用任务，60 秒内复用完成结果。完整同步保留现有 Session、身份阻断、固定列表分页、全量校验、共享 sync.lock 和最后成功数据规则。polkit 只允许专用用户 start 这一固定 unit，不授权 restart、stop、其他 unit 或任何业务 mutation。
+
 - 新增、删除或修改上述闻道抢课相关脚本、runner、配置、systemd 入口、Session 使用方式、匹配规则、mutation 协议或写后复核流程时，必须在同一分支同步更新本文件。
 - 更新至少要反映受影响入口的当前职责、能力边界和安全顺序；如果行为未改变，也要确认本文件仍准确，不能让实现与 Agent 入口说明漂移。
 - `AGENTS.md` 只保留指向本文件的条件路由，不在总入口重复展开本文件内容。

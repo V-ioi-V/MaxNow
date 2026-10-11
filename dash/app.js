@@ -6410,7 +6410,68 @@ async function loadData(options = {}) {
   await loadViewData(view, options);
 }
 
+let balletRefreshPromise = null;
+
+function setBalletRefreshStatus(state, message) {
+  const node = qs("#ballet-refresh-status");
+  if (!node) return;
+  node.hidden = false;
+  node.dataset.state = state;
+  node.textContent = state === "loading" ? "刷新中" : state === "success" ? "已刷新" : "刷新失败";
+  node.title = message;
+  node.setAttribute("aria-label", message);
+}
+
+async function requestBalletRefresh(method = "GET") {
+  const response = await fetch("/api/ballet/refresh", {
+    method,
+    credentials: "same-origin",
+    cache: "no-store",
+    signal: AbortSignal.timeout(15000),
+    ...(method === "POST" ? {
+      headers: { "Content-Type": "application/json", "X-MaxNow-Refresh": "1" },
+      body: "{}",
+    } : {}),
+  });
+  if (response.status === 401) throw new Error("登录已过期，请重新登录后刷新。");
+  if (!response.ok) throw new Error("暂时无法连接同步服务，仍显示上次成功的数据。");
+  return response.json();
+}
+
+function refreshBalletData() {
+  if (balletRefreshPromise) return balletRefreshPromise;
+  balletRefreshPromise = (async () => {
+    refreshButton.disabled = true;
+    refreshButton.dataset.state = "loading";
+    refreshButton.setAttribute("aria-busy", "true");
+    setBalletRefreshStatus("loading", "正在同步课程卡、预约、上课记录和课表，完成后自动更新。");
+    try {
+      let result = await requestBalletRefresh("POST");
+      const deadline = Date.now() + 360000;
+      while (result.status === "running" && Date.now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        result = await requestBalletRefresh();
+      }
+      // Also reload safe failure metadata, while retaining the last-good content.
+      await loadViewData("ballet", { force: true });
+      if (result.status !== "success") throw new Error(result.message || "同步等待超时，仍显示上次成功的数据。");
+      if (browserDataHealth.get("ballet")?.status === "failed") throw new Error("服务器同步已完成，但页面数据读取失败，请再刷新一次。");
+      setBalletRefreshStatus("success", result.message);
+      refreshButton.dataset.state = "success";
+    } catch (error) {
+      setBalletRefreshStatus("error", error.message || "刷新失败，仍显示上次成功的数据。");
+      refreshButton.dataset.state = "error";
+    } finally {
+      refreshButton.disabled = false;
+      refreshButton.removeAttribute("aria-busy");
+      balletRefreshPromise = null;
+    }
+  })();
+  return balletRefreshPromise;
+}
+
 function setView(view) {
+  const previousView = getActiveView();
   const nextView = ["home", "tokens", "ballet", "cloud", "dounai"].includes(view) ? view : "home";
   document.body.dataset.view = nextView;
   restoreCachedView(nextView);
@@ -6446,6 +6507,9 @@ function setView(view) {
   if (nextView === "life") requestAnimationFrame(renderLife);
   if (nextView === "tokens") requestAnimationFrame(() => requestAnimationFrame(renderTokens));
   loadViewData(nextView);
+  refreshButton.title = nextView === "ballet" ? "刷新芭蕾整体数据" : "刷新页面数据";
+  refreshButton.setAttribute("aria-label", refreshButton.title);
+  if (nextView === "ballet" && previousView !== "ballet") refreshBalletData();
   if (nextView !== "tokens") updateSidebarTokenSummary("7d");
   if (location.hash !== `#${nextView}`) location.hash = nextView;
   window.scrollTo({ top: 0, behavior: "auto" });
@@ -6935,6 +6999,10 @@ qs("#ballet-week-download")?.addEventListener("click", async () => {
 });
 
 refreshButton?.addEventListener("click", async () => {
+  if (getActiveView() === "ballet") {
+    await refreshBalletData();
+    return;
+  }
   refreshButton.disabled = true;
   refreshButton.dataset.state = "loading";
   try {

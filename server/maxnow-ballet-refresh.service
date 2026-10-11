@@ -1,0 +1,30 @@
+[Unit]
+Description=MaxNow authenticated read-only ballet refresh broker
+After=network.target polkit.service
+
+[Service]
+Type=simple
+User=maxnow-ballet-refresh
+Group=maxnow-ballet-refresh
+WorkingDirectory=/var/www/maxnow-dashboard
+ExecStart=/usr/bin/python3 -B scripts/ballet_refresh_service.py
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectSystem=strict
+InaccessiblePaths=/etc/credstore.encrypted /etc/maxnow-ballet /etc/maxnow-auth /var/lib/maxnow-ballet /var/lib/maxnow-ballet-card-policy
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectProc=invisible
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictAddressFamilies=AF_UNIX AF_INET
+CapabilityBoundingSet=
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
