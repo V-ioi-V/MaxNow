@@ -1,4 +1,4 @@
-﻿---
+---
 name: maxnow-data
 description: Maintain MaxNow personal status workstation data. Use when OpenClaw updates daily personal state, logs, automation status, token usage, and AI external inputs for the static dashboard without changing page code or roadmap-generated project status.
 ---
@@ -18,7 +18,6 @@ dash/data/dashboard.json
 dash/data/dashboard.js
 dash/data/ai-news.json
 dash/data/ai-news.js
-dash/data/dounai_checkin.json
 ```
 
 Routine OpenClaw runs must not edit:
@@ -61,7 +60,6 @@ OpenClaw records facts and drafts summaries. The owner keeps final judgment. Do 
 
 `dash/data/ai-news.json` is only for the Home AI frontier brief. It normally contains 0-3 concrete model, API, agent, pricing, open-source, or research releases from the free collector or Last-30 memory. Visible titles and summaries must be fact-first Chinese; preserve the official URL and optional `originalTitle` for audit. `dash/data/ai-news.js` must contain the same object assigned to `window.MAXNOW_AI_NEWS_DATA`.
 
-`dash/data/dounai_checkin.json` stores Dounai daily check-in results, account balance snapshots, and account daily-budget history. OpenClaw check-in automation may update it, but MaxNow should only display traffic, account-extension hours, cumulative check-in days, remaining usable traffic, expiry, daily traffic budget, daily-budget history, and recent records for charts/tables; beans are raw data only and should not drive UI.
 
 ## Dashboard Data Shape
 
@@ -209,7 +207,6 @@ Before finishing every routine update:
 ```bash
 python -m json.tool dash/data/dashboard.json >/dev/null
 python -m json.tool dash/data/ai-news.json >/dev/null
-python -m json.tool dash/data/dounai_checkin.json >/dev/null
 ```
 
 Regenerate wrappers from the JSON files:
@@ -230,3 +227,7 @@ Use short operational Chinese. Prefer:
 - `AI 外部输入只保留与工具、模型或成本有关的信号。`
 
 Avoid hype, long reports, marketing language, generic watch-list language, visible English source-title dumps, and markdown inside JSON string fields.
+
+## Retired Dounai source
+
+Dounai was retired by the owner on 2026-10-11. Do not recreate its data, login files, scripts, or jobs.

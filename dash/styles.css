@@ -625,11 +625,6 @@ a {
   color: var(--purple);
 }
 
-.nav-dounai .nav-icon {
-  background: #e7fbff;
-  color: var(--cyan);
-}
-
 .nav-ballet .nav-icon {
   background: #fff0f5;
   color: var(--ballet);
@@ -663,10 +658,6 @@ a {
 
 .nav-token {
   --nav-color: var(--purple);
-}
-
-.nav-dounai {
-  --nav-color: var(--cyan);
 }
 
 .nav-ballet {
@@ -1414,12 +1405,7 @@ body[data-view="ballet"] .ballet-week-trigger {
 .token-head-card,
 .status-strip article,
 .mini-token-grid div,
-.checkin-grid div,
-.dounai-title-tab > span,
-.dounai-top-tabs > span,
 .line-chart,
-.dounai-title-tab,
-.dounai-top-tabs,
 .token-summary article,
 .last30-column,
 .token-source-item {
@@ -1468,12 +1454,7 @@ body[data-view="ballet"] .ballet-week-trigger {
   .status-strip article:hover,
   .ricky-stats article:hover,
   .mini-token-grid div:hover,
-  .checkin-grid div:hover,
-  .dounai-title-tab > span:hover,
-  .dounai-top-tabs > span:hover,
   .line-chart:hover,
-  .dounai-title-tab:hover,
-  .dounai-top-tabs:hover,
   .token-summary article:hover,
   .token-source-item:hover,
   .task-item:hover,
@@ -1509,13 +1490,6 @@ body[data-view="ballet"] .ballet-week-trigger {
     border-color: var(--card-border);
     box-shadow: 0 14px 32px color-mix(in srgb, var(--card-color) 18%, transparent), 0 1px 2px rgba(25, 43, 72, 0.08);
     transform: translateY(-2px);
-  }
-
-  .dounai-page-head:hover {
-    border-color: transparent;
-    background: transparent;
-    box-shadow: none;
-    transform: none;
   }
 }
 
@@ -1709,10 +1683,6 @@ body[data-view="ballet"] .ballet-week-trigger {
   order: 30;
 }
 
-.home-side-stack .home-card-checkin {
-  order: 40;
-}
-
 .home-side-stack .home-card-ballet {
   order: 45;
 }
@@ -1788,8 +1758,6 @@ body[data-view="ballet"] .ballet-week-trigger {
   grid-template-rows: auto auto minmax(0, 1fr);
   align-content: stretch;
 }
-
-.home-card-checkin,
 .home-card-token-mini,
 .home-card-actions,
 .home-card-system,
@@ -1847,11 +1815,6 @@ body[data-view="ballet"] .ballet-week-trigger {
 .maxnow-updates-panel {
   --card-color: var(--accent-strong);
   --card-border: var(--blue-border);
-}
-
-.checkin-panel {
-  --card-color: var(--cyan);
-  --card-border: var(--cyan-border);
 }
 
 .token-mini-panel {
@@ -2686,107 +2649,6 @@ a.last30-item {
   font-size: 24px;
 }
 
-.checkin-panel .panel-head {
-  margin-bottom: 14px;
-}
-
-.checkin-panel {
-  cursor: pointer;
-}
-
-.checkin-panel:hover {
-  border-color: var(--cyan-border);
-}
-
-.checkin-panel:focus-visible {
-  outline: 3px solid rgba(35, 156, 231, 0.22);
-  outline-offset: 3px;
-}
-
-.checkin-panel .panel-head small {
-  max-width: 150px;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 12px;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.checkin-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px 12px;
-}
-
-.checkin-grid div {
-  --card-color: var(--accent-strong);
-  --card-border: var(--blue-border);
-  min-width: 0;
-  min-height: 76px;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 8px;
-  padding: 12px 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: #ffffff;
-  text-align: center;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
-}
-
-.checkin-grid div:nth-child(2) {
-  --card-color: var(--orange);
-  --card-border: #ffd29a;
-}
-
-.checkin-grid div:nth-child(4) {
-  --card-color: var(--purple);
-  --card-border: #e1c4ff;
-}
-
-.checkin-grid div:nth-child(3) {
-  --card-color: var(--cyan);
-  --card-border: #9eeaf8;
-}
-
-.checkin-grid div:nth-child(6) {
-  --card-color: var(--ok);
-  --card-border: #a8e9c2;
-}
-
-.checkin-grid > div > span:not(.metric-label),
-.checkin-bar-item small {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.checkin-grid strong {
-  display: block;
-  color: var(--card-color);
-  font-size: clamp(14px, 1.15vw, 17px);
-  line-height: 1.15;
-  overflow-wrap: anywhere;
-}
-
-.dounai-chart-grid {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--page-grid-gap);
-  margin-top: var(--page-section-gap);
-}
-
-.dounai-chart-card {
-  min-width: 0;
-}
-
-.dounai-chart-card .panel-head {
-  margin-bottom: 12px;
-}
-
 .line-chart {
   width: 100%;
   min-width: 0;
@@ -2845,97 +2707,6 @@ a.last30-item {
   margin-bottom: var(--page-section-gap);
 }
 
-#dounai-view .token-page-head {
-  grid-template-columns: minmax(360px, 1fr) minmax(0, 1.15fr) minmax(0, 1.15fr);
-  gap: var(--page-grid-gap);
-}
-
-.dounai-page-head {
-  align-items: stretch;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.dounai-title-tab,
-.dounai-top-tabs {
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-
-.dounai-title-tab,
-.dounai-balance-tab,
-.dounai-total-tab {
-  --card-color: var(--accent-strong);
-  --card-border: var(--blue-border);
-}
-
-.dounai-total-tab {
-  --card-color: var(--cyan);
-  --card-border: #9eeaf8;
-}
-
-.dounai-title-tab,
-.dounai-top-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-content: center;
-  gap: 8px;
-  padding: 18px;
-}
-
-.dounai-section-head {
-  grid-column: 1 / -1;
-  margin-bottom: 2px;
-}
-
-.dounai-today-tab .dounai-section-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.dounai-section-head h2 {
-  margin: 4px 0 0;
-  font-size: 18px;
-  line-height: 1.1;
-}
-
-.dounai-today-tab .dounai-section-head p:last-child {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.dounai-title-tab > span,
-.dounai-top-tabs > span {
-  --card-color: var(--accent-strong);
-  --card-border: var(--blue-border);
-  min-width: 0;
-  min-height: 74px;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 8px;
-  padding: 12px 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: #ffffff;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  text-align: center;
-}
-
 .metric-label {
   min-width: 0;
   display: inline-flex;
@@ -2954,39 +2725,6 @@ a.last30-item {
   height: 15px;
   flex: 0 0 auto;
   fill: var(--card-color);
-}
-
-.dounai-title-tab > span[data-tone="purple"],
-.dounai-top-tabs > span[data-tone="purple"] {
-  --card-color: var(--purple);
-  --card-border: var(--purple-border);
-}
-
-.dounai-title-tab > span[data-tone="cyan"],
-.dounai-top-tabs > span[data-tone="cyan"] {
-  --card-color: var(--cyan);
-  --card-border: var(--cyan-border);
-}
-
-.dounai-title-tab > span[data-tone="orange"],
-.dounai-top-tabs > span[data-tone="orange"] {
-  --card-color: var(--orange);
-  --card-border: var(--orange-border);
-}
-
-.dounai-title-tab > span[data-tone="green"],
-.dounai-top-tabs > span[data-tone="green"] {
-  --card-color: var(--ok);
-  --card-border: var(--green-border);
-}
-
-.dounai-title-tab > span > strong,
-.dounai-top-tabs > span > strong {
-  max-width: 100%;
-  color: var(--card-color);
-  font-size: 20px;
-  line-height: 1.1;
-  overflow-wrap: anywhere;
 }
 
 .range-tabs {
@@ -8353,11 +8091,6 @@ body[data-view="ricky"] .topbar-ricky-status {
   --view-border: var(--purple-border);
 }
 
-#dounai-view {
-  --view-accent: var(--cyan);
-  --view-border: var(--cyan-border);
-}
-
 #ballet-view {
   --view-accent: var(--ballet);
   --view-border: var(--ballet-border);
@@ -8383,9 +8116,7 @@ body[data-view="ricky"] .topbar-ricky-status {
   --card-border: var(--view-border);
 }
 
-.secondary-view .token-head-card,
-.secondary-view .dounai-title-tab,
-.secondary-view .dounai-top-tabs {
+.secondary-view .token-head-card{
   position: relative;
   overflow: hidden;
   border-color: color-mix(in srgb, var(--card-color) 18%, #dfe8f2);
@@ -8400,8 +8131,6 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .secondary-view .token-head-card,
-.secondary-view .dounai-title-tab,
-.secondary-view .dounai-top-tabs,
 .secondary-view .panel,
 .secondary-view .token-summary article,
 .secondary-view .ricky-stats article {
@@ -8445,43 +8174,6 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 #tokens-view .token-summary article:nth-child(6) {
-  --card-color: var(--orange);
-  --card-border: var(--orange-border);
-}
-
-#dounai-view .dounai-today-tab {
-  --card-color: var(--accent-strong);
-  --card-border: var(--blue-border);
-}
-
-#dounai-view .dounai-balance-tab {
-  --card-color: var(--orange);
-  --card-border: var(--orange-border);
-}
-
-#dounai-view .dounai-total-tab {
-  --card-color: var(--purple);
-  --card-border: var(--purple-border);
-}
-
-#dounai-view .dounai-title-tab > span,
-#dounai-view .dounai-top-tabs > span {
-  border-color: color-mix(in srgb, var(--card-color) 18%, #e2eaf3);
-  background: color-mix(in srgb, var(--card-color) 4%, #ffffff);
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--card-color) 8%, transparent);
-}
-
-#dounai-view .dounai-chart-card:nth-child(2) {
-  --card-color: var(--cyan);
-  --card-border: var(--cyan-border);
-}
-
-#dounai-view .dounai-chart-card:nth-child(3) {
-  --card-color: var(--purple);
-  --card-border: var(--purple-border);
-}
-
-#dounai-view .dounai-chart-card:nth-child(4) {
   --card-color: var(--orange);
   --card-border: var(--orange-border);
 }
@@ -8580,10 +8272,6 @@ body[data-view="ricky"] .topbar-ricky-status {
     grid-column: 1 / -1;
   }
 
-  .home-card-checkin .checkin-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .home-side-stack .home-card-system .system-list {
     grid-template-columns: 1fr;
   }
@@ -8608,10 +8296,6 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .cloud-system-list {
     grid-template-columns: 1fr;
-  }
-
-  #dounai-view .token-page-head {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   }
 }
 
@@ -8774,12 +8458,6 @@ body[data-view="ricky"] .topbar-ricky-status {
     margin-bottom: 8px;
   }
 
-  #dounai-view .token-page-head,
-  .dounai-title-tab,
-  .dounai-top-tabs {
-    grid-template-columns: 1fr;
-  }
-
   .status-strip,
   .ai-news-list,
   .feed-list,
@@ -8844,10 +8522,6 @@ body[data-view="ricky"] .topbar-ricky-status {
     display: grid;
     justify-content: start;
     justify-items: start;
-  }
-
-  .checkin-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .status-strip article,

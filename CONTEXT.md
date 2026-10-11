@@ -1,5 +1,9 @@
 # MaxNow 上下文总览
 
+## 豆奶下线（2026-10-11）
+
+豆奶功能已于 2026-10-11 按 Owner 要求下线：不展示、不采集、不保存当前账号、签到或流量数据，删除专用登录凭据和运行文件。旧 #dounai 链接回到首页，浏览器打开新版时清除原豆奶缓存。下方豆奶历史说明仅代表已停用功能，不得据此恢复采集或凭据。
+
 ## 芭蕾页面即时刷新（2026-10-11）
 
 历史列表 / 详情与活动预约列表 / 详情在同步开始时重叠读取，课表继续后台读取；所有读取共用最多 3 条 HTTPS 连接。预约使用独立详情缓存，避免并发修改历史缓存；全部成功并校验后才发布。安全日志 bookings_wall 是后台预约耗时，bookings_join 只记录历史完成后的等待，两者不能与其他重叠阶段直接相加；实时读取范围与五分钟课表缓存规则不变。
@@ -327,7 +331,7 @@ Owner 已开始在 MaxNow 落地芭蕾模块。产品定义从原来的“远端
 - Last-30 AI 外部信号服务器自动同步已落地：`ubuntu` 用户 crontab 每天 00:00 运行一次 `MAXNOW-AI-LAST30-SYNC`，通过 `python3 scripts/update_data.py ai-last30` 刷新 `dash/data/ai-news.*` 和 `dash/data/last-30.*`。
 - 系统状态采集已接入 Home：页面展示 nginx、HTTPS、证书、部署 commit、最近 pull、cron、wiki-todos 同步、失败日志、资源和云服务器状态。
 - Token 用量账本已建立并接入 Token 页面：`scripts/sync_openclaw_usage.py` 可在服务器读取 `/root/.openclaw` 轨迹并生成 `dash/data/openclaw-usage.*`；`scripts/sync_codex_usage.py` 可读取本机或服务器 `.codex/sessions` 的 `token_count` 事件，分别生成 Windows 兼容 `dash/data/codex-usage.*`、macOS `dash/data/codex-macos-usage.*` 和服务器 `dash/data/codex-server-usage.*`；`scripts/sync_token_usage.py` 合并为 `dash/data/token-usage.*`。本机 Codex 用量已补 Windows Task Scheduler 和 macOS launchd 上报入口，服务器 Codex 用量已补 root crontab 自动刷新。Token 页支持 1d / 7d / 30d / all、总量 / 输入 / 输出 / 缓存读 / 缓存命中率 / 费用、按范围更新的来源费用面板、模型占比、会话消耗和最近 30 天折线图。Home 原“当前主线”位置展示近 90 天 Token 活动热力格。OpenClaw 费用为 OpenRouter 等价估算，Codex 费用为 OpenAI API 等价估算。
-- Dash 当前左侧导航顺序为首页、豆奶、Token、芭蕾、云服务。云服务页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作；页面不再保留顶部重复摘要卡，Host 与站点域名归入“系统与托管”模块，后续任务卡自然排列，不再插入独立“定时任务”分组标题。系统与托管模块不展示部署根目录、nginx 配置路径、采集器说明等低频实现细节。
+- Dash 当前左侧导航顺序为首页、Token、芭蕾、云服务。云服务页只读列出服务器自动化、数据同步、站点托管和日志边界，不从前端触发服务器操作；页面不再保留顶部重复摘要卡，Host 与站点域名归入“系统与托管”模块，后续任务卡自然排列，不再插入独立“定时任务”分组标题。系统与托管模块不展示部署根目录、nginx 配置路径、采集器说明等低频实现细节。
 - “同行记”和“生活”两个一级入口按 Owner 要求暂时下线，旧 hash 回首页。页面 DOM、渲染代码、数据契约和 personal-wiki 同步脚本保留，后续恢复入口时可复用；常规导航及自动刷新不再访问这两页独立数据。
 - 同行记保留的页面用 Leaflet + OpenStreetMap 真实地图和轻量统计承载两人的共同足迹，地点和旅行记录暂时只进入 marker / popup 数据，不单独铺列表；内置 SVG 地图只作为 fallback。生活页保留“吃啥”随机选择器：默认全选、数量默认 1，可临时取消候选并从勾选项中随机选取一个或多个结果；候选从 personal-wiki `wiki/life/food-picker.md` 同步。
 - 豆奶、Token、芭蕾、云服务、生活和同行记统一使用 `secondary-view` 视觉协议：轻色渐变白底、统一圆角 / 阴影 / hover 与状态 pill；芭蕾顶部栏已有页面名称，因此内容区不再重复标题卡，只保留低权重数据时间与连接状态。芭蕾顶部在 `1501px` 以上让训练概览约占三分之一、课程卡略宽、右侧等级区略窄，等级区纵向放置成长等级与课程等级两张独立面板；`1101px–1500px` 前两张各占一半，两个等级面板在下一行上下排列，`1100px` 以下全部单列。课程计划继承同一 `panel` 家族：宽桌面左侧预约占三分之一，右侧顶部助手 / 结果等分、下方周安排占满；`1320px` 以下预约优先整行、助手 / 结果并排、周安排随后，`860px` 以下全部单列。周安排七列在窄屏仅自身横向滚动，整页不得溢出。训练记录固定为最后一个模块；自动抢课完整运行态与 Session 详情继续归 Cloud。2026-07-11 起所有 Dash tab 卡片统一取消顶部彩色横条，语义色只保留在文字、数值、图标、状态点、pill 和轻背景中。

@@ -1,7 +1,6 @@
 const DATA_URL = "./data/dashboard.json";
 const LAST30_URL = "./data/last-30.json";
 const WIKI_TODO_URL = "./data/wiki-todos.json";
-const CHECKIN_URL = "./data/dounai_checkin.json";
 const OPENCLAW_USAGE_URL = "./data/openclaw-usage.json";
 const TOKEN_USAGE_URL = "./data/token-usage.json";
 const MARKET_INDICES_URL = "./data/market-indices.json";
@@ -28,6 +27,7 @@ const BALLET_WEEK_IMAGE_LOAD_TIMEOUT_MS = 20 * 1000;
 const BALLET_SESSION_PUBLISH_STALE_MS = 15 * 60 * 1000;
 const BALLET_SESSION_NEXT_RUN_INTERVAL_MINUTES = 20;
 const DATA_CACHE_PREFIX = "maxnow:last-good:v1:";
+try { localStorage.removeItem(`${DATA_CACHE_PREFIX}dounai`); } catch {}
 
 const DATA_SOURCE_OPTIONS = {
   weather: {
@@ -47,12 +47,6 @@ const DATA_SOURCE_OPTIONS = {
     staleAfterHours: 72,
     updatedAt: (data) => data.synced_at || data.updated_at,
     hasData: (data) => Boolean((data.tasks || []).length),
-  },
-  dounai: {
-    label: "豆奶",
-    staleAfterHours: 36,
-    updatedAt: (data) => data.updatedAt || data.account?.synced_at,
-    hasData: (data) => Boolean(data.today || (data.records || []).length || data.account),
   },
   market: {
     label: "市场",
@@ -109,7 +103,6 @@ const DATA_SOURCE_OPTIONS = {
 const fallbackData = window.MAXNOW_DASHBOARD_DATA || {};
 const fallbackLast30 = window.MAXNOW_LAST30_DATA || {};
 const fallbackWikiTodo = window.MAXNOW_WIKI_TODO_DATA || { tasks: [] };
-const fallbackCheckin = {};
 const fallbackOpenclawUsage = window.MAXNOW_OPENCLAW_USAGE_DATA || { days: [] };
 const fallbackTokenUsage = window.MAXNOW_TOKEN_USAGE_DATA || { days: [] };
 const fallbackMarketIndices = window.MAXNOW_MARKET_INDICES_DATA || { indices: [] };
@@ -148,7 +141,6 @@ const fallbackBalletBookingFast =
 let dashboardData = fallbackData;
 let last30Data = fallbackLast30;
 let wikiTodoData = fallbackWikiTodo;
-let checkinData = fallbackCheckin;
 let openclawUsageData = fallbackOpenclawUsage;
 let tokenUsageData = fallbackTokenUsage;
 let marketIndicesData = fallbackMarketIndices;
@@ -443,7 +435,6 @@ const copy = {
   ledgerMergedAt: "\u603b\u8d26\u5408\u5e76\u4e8e",
   noNote: "\u6682\u65e0\u8bf4\u660e\u3002",
   tokenTitle: "Token \u7528\u91cf",
-  dounaiTitle: "\u8c46\u5976",
   cloudTitle: "\u4e91\u670d\u52a1",
   rickyTitle: "\u6211\u548c Ricky",
   lifeTitle: "\u751f\u6d3b",
@@ -518,78 +509,9 @@ function addLocalDays(date, days) {
   return next;
 }
 
-function formatFlow(value, unit = "auto") {
-  const amount = Number(value);
-  if (!Number.isFinite(amount)) return "--";
-  if (unit === "mb") return `${Math.round(amount)} MB`;
-  if (unit === "gb" || amount >= 1024) return `${(amount / 1024).toFixed(1)} GB`;
-  return `${Math.round(amount)} MB`;
-}
-
-function formatTraffic(value) {
-  const amount = Number(value);
-  if (!Number.isFinite(amount)) return "--";
-  if (amount >= 1024 * 1024) return `${(amount / 1024 / 1024).toFixed(2)} TB`;
-  if (amount >= 1024) return `${(amount / 1024).toFixed(1)} GB`;
-  return `${Math.round(amount)} MB`;
-}
-
-function formatDailyTraffic(value) {
-  const amount = Number(value);
-  if (!Number.isFinite(amount)) return "--";
-  if (amount >= 1024 * 1024) return `${(amount / 1024 / 1024).toFixed(2)} TB`;
-  if (amount >= 1024) return `${(amount / 1024).toFixed(2)} GB`;
-  return `${Math.round(amount)} MB`;
-}
-
-function parseTrafficLabel(label) {
-  const match = String(label || "").trim().match(/^([\d.]+)\s*(TB|GB|MB|B)$/i);
-  if (!match) return NaN;
-  const amount = Number(match[1]);
-  if (!Number.isFinite(amount)) return NaN;
-  const unit = match[2].toUpperCase();
-  if (unit === "TB") return amount * 1024 * 1024;
-  if (unit === "GB") return amount * 1024;
-  if (unit === "MB") return amount;
-  return amount / 1024 / 1024;
-}
-
-function parseDounaiDate(value) {
-  if (!value) return null;
-  const normalized = String(value).trim().replace(" ", "T");
-  const date = new Date(`${normalized}+08:00`);
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
 function formatDateOnly(value) {
   const dateText = String(value || "").trim();
   return dateText ? dateText.slice(0, 10) : "--";
-}
-
-function getDaysRemaining(value) {
-  const date = parseDounaiDate(value);
-  if (!date) return NaN;
-  return Math.max(0, Math.ceil((date.getTime() - Date.now()) / 86400000));
-}
-
-function formatHours(value) {
-  const amount = Number(value);
-  if (!Number.isFinite(amount)) return "--";
-  return `${amount.toFixed(amount >= 10 ? 1 : 2)}h`;
-}
-
-function formatDuration(value) {
-  const amount = Number(value);
-  if (!Number.isFinite(amount)) return "--";
-  let days = Math.floor(amount / 24);
-  let hours = Math.round(amount - days * 24);
-  if (hours === 24) {
-    days += 1;
-    hours = 0;
-  }
-  if (days > 0 && hours > 0) return `${days}d ${hours}h`;
-  if (days > 0) return `${days}d`;
-  return `${hours}h`;
 }
 
 function formatActiveDuration(value) {
@@ -2005,57 +1927,12 @@ function createRickyMapIcon(place) {
   });
 }
 
-function getCheckinRecords(limit = 30) {
-  return Array.isArray(checkinData.records) ? checkinData.records.slice(0, limit).reverse() : [];
-}
-
-function getTodayCheckin() {
-  const record = checkinData.today;
-  return record?.date === getLocalDateKey() ? record : {};
-}
-
-function getAccountHistoryRecords(limit = 30) {
-  const history = Array.isArray(checkinData.account_history) ? checkinData.account_history : [];
-  const records = history
-    .filter((record) => Number.isFinite(Number(record.daily_available_mb)))
-    .slice(0, limit)
-    .reverse()
-    .map((record) => ({
-      ...record,
-      daily_available_gb: Number(record.daily_available_mb) / 1024,
-    }));
-
-  if (records.length || !Number.isFinite(Number(checkinData.account?.daily_available_mb))) return records;
-
-  const syncedAt = checkinData.account?.synced_at || checkinData.updatedAt || "";
-  return [
-    {
-      date: syncedAt.slice(0, 10) || copy.today,
-      daily_available_mb: Number(checkinData.account.daily_available_mb),
-      daily_available_gb: Number(checkinData.account.daily_available_mb) / 1024,
-    },
-  ];
-}
-
 function getLocalDateKey() {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
-}
-
-function getTrafficUsageRecords(limit = 30) {
-  const today = getLocalDateKey();
-  const history = Array.isArray(checkinData.traffic_usage_history) ? checkinData.traffic_usage_history : [];
-  return history
-    .filter((record) => record?.date && record.date !== today && Number.isFinite(Number(record.used_mb)))
-    .slice(0, limit)
-    .reverse()
-    .map((record) => ({
-      ...record,
-      used_gb: Number(record.used_mb) / 1024,
-    }));
 }
 
 function getNiceStep(value) {
@@ -2173,105 +2050,6 @@ function createLineChart(records, options) {
         .join("")}
     </svg>
   `;
-}
-
-function renderCheckin() {
-  const today = getTodayCheckin();
-  const total = checkinData.total || {};
-
-  setText("#checkin-today", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
-  setText("#checkin-today-beans", Number.isFinite(Number(today.beans)) ? `${today.beans}` : "--");
-  setText("#checkin-today-hours", formatHours(today.hours));
-  setText("#checkin-days", Number.isFinite(Number(total.days)) ? `${total.days}d` : "--");
-  setText("#checkin-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
-  setText("#checkin-total-hours", formatDuration(total.hours));
-  setText("#checkin-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
-  setText("#sidebar-dounai-flow", "\u7b7e\u5230\u72b6\u6001");
-}
-
-function renderDounai() {
-  const today = getTodayCheckin();
-  const total = checkinData.total || {};
-  const account = checkinData.account || {};
-  const records = getCheckinRecords(30);
-  const accountHistory = getAccountHistoryRecords(30);
-  const trafficUsageRecords = getTrafficUsageRecords(30);
-  const remainingFlow = Number.isFinite(Number(account.remaining_flow_mb))
-    ? Number(account.remaining_flow_mb)
-    : parseTrafficLabel(account.remaining_flow_label || account.remaining_flow);
-  const expiry = account.effective_expires_at || account.vip_expires_at || account.account_expires_at;
-  const daysRemaining = Number.isFinite(Number(account.days_remaining))
-    ? Number(account.days_remaining)
-    : getDaysRemaining(expiry);
-  const dailyAvailable = Number.isFinite(Number(account.daily_available_mb))
-    ? Number(account.daily_available_mb)
-    : Number.isFinite(remainingFlow) && Number.isFinite(daysRemaining) && daysRemaining > 0
-      ? remainingFlow / daysRemaining
-      : NaN;
-
-  setText("#dounai-updated", checkinData.updatedAt ? `更新 ${checkinData.updatedAt}` : copy.syncWaiting);
-  setText("#dounai-today-flow", Number.isFinite(Number(today.flow_mb)) ? formatFlow(today.flow_mb, "mb") : "--");
-  setText("#dounai-today-beans", Number.isFinite(Number(today.beans)) ? `${today.beans}` : "--");
-  setText("#dounai-today-hours", formatHours(today.hours));
-  setText("#dounai-days", Number.isFinite(Number(total.days)) ? `${total.days}d` : "--");
-  setText("#dounai-total-flow", Number.isFinite(Number(total.flow_mb)) ? formatFlow(total.flow_mb, "gb") : "--");
-  setText("#dounai-total-hours", formatDuration(total.hours));
-  setText("#dounai-remaining-flow", Number.isFinite(remainingFlow) ? formatTraffic(remainingFlow) : account.remaining_flow_label || "--");
-  setText("#dounai-expiry", formatDateOnly(expiry));
-  setText("#dounai-daily-flow", Number.isFinite(dailyAvailable) ? `${formatDailyTraffic(dailyAvailable)}/d` : "--");
-
-  const usageChart = qs("#dounai-usage-chart");
-  if (usageChart) {
-    usageChart.innerHTML = createLineChart(trafficUsageRecords, {
-      key: "used_gb",
-      title: "近 30 天实际使用流量",
-      unit: "GB",
-      stroke: "#00a6c8",
-      width: getChartRenderWidth(usageChart),
-      formatter: (value) => `${value.toFixed(2)} GB`,
-      yFormatter: (value) => `${Math.round(value)}GB`,
-      integerYScale: true,
-    });
-  }
-
-  const dailyBudgetChart = qs("#dounai-daily-budget-chart");
-  if (dailyBudgetChart) {
-    dailyBudgetChart.innerHTML = createLineChart(accountHistory, {
-      key: "daily_available_gb",
-      title: "近 30 天日均可用流量",
-      unit: "GB",
-      stroke: "#7c3aed",
-      width: getChartRenderWidth(dailyBudgetChart),
-      formatter: (value) => `${value.toFixed(2)} GB`,
-      yFormatter: (value) => `${Math.round(value)}GB`,
-      integerYScale: true,
-    });
-  }
-
-  const flowChart = qs("#dounai-flow-chart");
-  if (flowChart) {
-    flowChart.innerHTML = createLineChart(records, {
-      key: "flow_mb",
-      title: "近 30 天获取流量",
-      unit: "MB",
-      stroke: "#2688e8",
-      width: getChartRenderWidth(flowChart),
-      formatter: (value) => `${Math.round(value)} MB`,
-    });
-  }
-
-  const hoursChart = qs("#dounai-hours-chart");
-  if (hoursChart) {
-    hoursChart.innerHTML = createLineChart(records, {
-      key: "hours",
-      title: "近 30 天获取时长",
-      unit: "h",
-      stroke: "#00a6c8",
-      width: getChartRenderWidth(hoursChart),
-      formatter: (value) => `${value.toFixed(2)}h`,
-    });
-  }
-
 }
 
 function normalizeTaskTitle(value) {
@@ -5881,7 +5659,6 @@ function renderHome() {
   setText("#project-version", projectMetaData.versionLabel || "v--");
   setText("#project-version-note", projectMetaData.deployNote || projectMetaData.updatedAt || copy.sync);
   clearAndFill(qs("#project-update-list"), createProjectUpdateItem, (projectMetaData.recentUpdates || []).slice(0, 4));
-  renderCheckin();
   renderBalletHome();
   renderWikiTodos(openTodos);
   renderLast30Column("today", "#last30-today-list");
@@ -6202,7 +5979,6 @@ function renderActiveView() {
   const view = getActiveView();
   if (view === "home") renderHome();
   if (view === "cloud") renderCloud();
-  if (view === "dounai") renderDounai();
   if (view === "tokens") renderTokens();
   if (view === "ballet") renderBallet();
   if (view === "ricky") renderRicky();
@@ -6221,10 +5997,6 @@ const dataSources = {
   wiki: {
     load: (options) => readWikiTodo(options),
     assign: (data) => { wikiTodoData = data; },
-  },
-  dounai: {
-    load: (options) => readJson(CHECKIN_URL, fallbackCheckin, "dounai", options),
-    assign: (data) => { checkinData = data; },
   },
   market: {
     load: (options) => readJson(MARKET_INDICES_URL, window.MAXNOW_MARKET_INDICES_DATA || fallbackMarketIndices, "market", options),
@@ -6269,11 +6041,10 @@ const dataSources = {
 };
 
 const VIEW_DATA_SOURCES = {
-  home: ["dashboard", "last30", "wiki", "dounai", "market", "version", "roadmap", "ballet", "token", "openclaw"],
+  home: ["dashboard", "last30", "wiki", "market", "version", "roadmap", "ballet", "token", "openclaw"],
   ballet: ["ballet", "ballet-session", "ballet-booking-fast"],
   cloud: ["dashboard", "ballet", "ballet-session", "ballet-booking-fast"],
   tokens: ["token", "openclaw"],
-  dounai: ["dounai"],
   ricky: ["ricky"],
   life: ["life"],
 };
@@ -6327,7 +6098,7 @@ function loadDataSources(keys, options = {}) {
 
 async function loadHomeData(options = {}) {
   await Promise.all([
-    loadDataSources(["dashboard", "last30", "wiki", "dounai", "market", "version", "roadmap", "ballet"], options),
+    loadDataSources(["dashboard", "last30", "wiki", "market", "version", "roadmap", "ballet"], options),
     loadTokenData(options),
   ]);
   updateClock();
@@ -6347,10 +6118,6 @@ function loadBalletData(options = {}) {
 
 function loadCloudData(options = {}) {
   return loadDataSources(["dashboard", "ballet", "ballet-session", "ballet-booking-fast"], options);
-}
-
-function loadDounaiData(options = {}) {
-  return loadDataSource("dounai", options);
 }
 
 function loadStylesheetOnce(id, url) {
@@ -6402,7 +6169,6 @@ async function loadLifeData({ force = false } = {}) {
 
 async function loadViewData(view = getActiveView(), options = {}) {
   if (view === "home") await loadHomeData(options);
-  if (view === "dounai") await loadDounaiData(options);
   if (view === "tokens") await loadTokenData(options);
   if (view === "ballet") await loadBalletData(options);
   if (view === "cloud") await loadCloudData(options);
@@ -6506,7 +6272,7 @@ function refreshBalletData() {
 }
 
 function setView(view) {
-  const nextView = ["home", "tokens", "ballet", "cloud", "dounai"].includes(view) ? view : "home";
+  const nextView = ["home", "tokens", "ballet", "cloud"].includes(view) ? view : "home";
   document.body.dataset.view = nextView;
   restoreCachedView(nextView);
   qsa("[data-view-panel]").forEach((panel) => {
@@ -6527,13 +6293,10 @@ function setView(view) {
             ? copy.lifeTitle
             : nextView === "cloud"
               ? copy.cloudTitle
-              : nextView === "dounai"
-                ? copy.dounaiTitle
-                : copy.today;
+              : copy.today;
   }
   if (nextView === "home") requestAnimationFrame(renderHome);
   if (nextView === "cloud") requestAnimationFrame(renderCloud);
-  if (nextView === "dounai") requestAnimationFrame(renderDounai);
   if (nextView === "ballet") {
     requestAnimationFrame(renderBallet);
   }
@@ -6881,13 +6644,6 @@ qsa("[data-view]").forEach((button) => {
   button.addEventListener("click", () => setView(button.dataset.view));
 });
 
-qs("#dounai-checkin")?.addEventListener("click", () => setView("dounai"));
-qs("#dounai-checkin")?.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" || event.key === " ") {
-    event.preventDefault();
-    setView("dounai");
-  }
-});
 
 qs("#home-ballet-card")?.addEventListener("click", () => setView("ballet"));
 qs("#home-ballet-card")?.addEventListener("keydown", (event) => {
@@ -7065,7 +6821,6 @@ window.addEventListener("resize", () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
     scheduleWeatherMetaFit();
-    if (qs("#dounai-view")?.classList.contains("is-active")) renderDounai();
     if (qs("#tokens-view")?.classList.contains("is-active")) renderTokens();
     if (qs("#ballet-view")?.classList.contains("is-active")) {
       renderBalletTrend();

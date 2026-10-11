@@ -1,12 +1,16 @@
 # MaxNow 产品规格
 
+## 豆奶功能下线
+
+豆奶功能已于 2026-10-11 按 Owner 要求下线：不展示、不采集、不保存当前账号、签到或流量数据，删除专用登录凭据和运行文件。旧 #dounai 链接回到首页，浏览器打开新版时清除原豆奶缓存。
+
 ## 芭蕾页面整体刷新（2026-10-11）
 
 刷新与数据连接共用顶部一个状态：等待时显示“刷新中”及已等待时分秒，完成后恢复“已同步”，失败显示“刷新失败”并保留最后成功数据；实际耗时与失败原因放在该状态的详细说明。不弹出通知，不申请系统通知权限。静态数据重绘不得把进行中的刷新显示为已同步；等待超过六分钟、服务重启或页面重读失败均明确提示。
 
 周日下午下周课表已经发布时，直接读取今天与下周八天，省去不展示的过去六天；尚未发布时完整回退本周。这个优化不减少历史、课程卡或预约的校验范围。
 
-每次打开或重新加载 MaxNow 后，仅在首次进入芭蕾页面（直接访问或从其他页进入）自动启动一次服务器增量只读同步；同一次页面打开期间，切到豆奶等页面再返回芭蕾不再触发，失败也不因切页自动重试。是否已经触发只记录在当前页面内存，重新加载后重置；右上角刷新按钮在芭蕾页执行同一流程。同步覆盖课程卡、活动预约 / 候补、上课历史与未来课表，完成后重新读取芭蕾数据、Session 状态和抢课结果。刷新中保留原始更新时间及最后成功内容，显示刷新中；完成后显示已刷新，失败显示明确提示。其他页面手动刷新及五分钟静态数据重读保持原有行为。多个标签页共用正在运行的同步，完成后的 60 秒内复用结果。
+每次打开或重新加载 MaxNow 后，仅在首次进入芭蕾页面（直接访问或从其他页进入）自动启动一次服务器增量只读同步；同一次页面打开期间，切到其他页面再返回芭蕾不再触发，失败也不因切页自动重试。是否已经触发只记录在当前页面内存，重新加载后重置；右上角刷新按钮在芭蕾页执行同一流程。同步覆盖课程卡、活动预约 / 候补、上课历史与未来课表，完成后重新读取芭蕾数据、Session 状态和抢课结果。刷新中保留原始更新时间及最后成功内容，显示刷新中；完成后显示已刷新，失败显示明确提示。其他页面手动刷新及五分钟静态数据重读保持原有行为。多个标签页共用正在运行的同步，完成后的 60 秒内复用结果。
 
 站点页面与数据展示保持静态；仅新增经现有登录保护的 `/api/ballet/refresh` 最小操作入口。它不接受 unit、脚本、课程或命令参数，只能启动既有全量只读同步，不提供预约、取消、激活或支付能力。
 
@@ -69,7 +73,6 @@ MaxNow 由四类文件组成：
    - `dash/data/project-meta.js`
    - `dash/data/project-status.json`
    - `dash/data/project-status.js`
-   - `dash/data/dounai_checkin.json`
    - `dash/data/ricky.json`
    - `dash/data/ricky.js`
    - `dash/data/life-foods.json`
@@ -239,21 +242,6 @@ Token 真实数据按来源接入，并由统一总账合并展示：
 
 不要把完整 Token 页面复制到 Home。Home 只需要显示紧凑的使用状态。
 
-## 豆奶页面
-
-豆奶页面只回答签到资源相关问题：
-
-- 今日获得流量和账号有效期延长时长。
-- 顶部今日签到区展示今日流量、今日豆丁、今日延长，和 Home 豆奶摘要使用同一组今日数据。
-- 累计签到天数、累计获得流量和累计延长时长。
-- 当前账号剩余可用流量、有效期和按剩余天数折算的每日可用流量。
-- 从豆奶 `流量日志` 直接抓取的近 7 天真实使用量，并随每日同步累积成最多 60 天的 `traffic_usage_history`，展示为“近 30 天实际使用流量”折线图；该图默认排除当天，只展示已完成日期。
-- 近 30 天账号日均可用流量折线图，数据来自服务器侧每日账号余量快照。
-- 近 30 天签到流量折线图，必须有 x / y 轴、日期刻度和每日具体数值。
-- 近 30 天账号有效期延长时长折线图，必须有 x / y 轴、日期刻度和每日具体数值。
-
-不要在豆奶页面加入签到操作、账号登录、豆丁展示或 cron 管理。豆丁只进入 Home 摘要，不进入豆奶详情页展示口径。账号余量只能从 OpenClaw / 服务器侧登录态生成的数据快照读取，前端不直接访问豆奶站点。
-
 ## 同行记页面
 
 同行记页面只回答“我和 Ricky 一起去过哪里、留下过什么记录”：
@@ -385,34 +373,6 @@ UPDATE_LOG.md
 - 重要功能模块稳定落地：升 patch，并把最后两位归零，例如 `1.0.0.12` -> `1.0.1.00`。
 - 大版本阶段切换：升 minor 或 major，并重置后续位。
 - 每次升版本后必须运行 `python scripts/update_data.py project-meta`，让 Home / 系统状态里的 MaxNow 版本同步到前端数据。
-
-`dash/data/dounai_checkin.json` 负责豆奶每日签到记录、账号余量快照、账号日均可用历史和真实流量使用记录，由 OpenClaw / root 侧豆奶自动化更新；前端只读取流量、豆丁、账号有效期延长时长、累计签到天数、近 30 天 records、剩余可用流量、有效期、每日可用预算、`account_history`、`traffic_usage` 和 `traffic_usage_history`，不编辑、不回写，也不修改签到脚本或 cron。
-
-豆奶签到由 Owner 手动完成，服务器不再定时提交签到或发送验证码提醒。root 每天 00:05 运行 `gen_checkin_data.py --traffic-only --include-account --include-manual-checkin --exclude-today`：从 `/user/record` 只读回读最新“每日签到”变更、从订阅 `subscription-userinfo` 更新精确余量和账号到期时间，并统计昨天及更早的完整流量使用量；登录 Cookie 只用于访问这些只读数据，不代表自动签到授权。当天没有匹配日期的签到记录时，前端今日指标必须显示 `--`，不能把上一条签到伪装成今天。
-
-账号余量快照每天优先从现有专属订阅响应的标准 `subscription-userinfo` header 读取精确到字节的 `total`、`upload` 和 `download`，用 `total - upload - download` 生成 `remaining_flow_bytes`，再换算 `remaining_flow_mb`。日均可用预算使用快照时刻到有效期的精确剩余时长：`remaining_days_exact = remaining_seconds / 86400`，`daily_available_mb = remaining_flow_mb / remaining_days_exact`；`days_remaining` 只保留为整天摘要，不得再作为日均预算分母，避免有效期延长后整天数未变化造成锯齿式假下降。成功时 `remaining_flow_precision` 固定为 `byte`，`source` 标记为 `dounai.pro/subscription-userinfo`；订阅地址、查询参数和令牌不得写入日志、数据文件或前端。只有精确响应头不可用时，才允许降级解析用户面板两位 TB / GB 标签，并把 `remaining_flow_precision` 标记为 `rounded-label`。`account_history` 从 2026-07-21 起保存同样的余量精度字段，从 2026-07-26 起保存 `remaining_days_exact`；更早的粗略历史不伪造精确值。
-
-`traffic_usage` 来自豆奶登录态只读访问 `https://dounai.pro/user/trafficlog` 和 `https://dounai.pro/user/trafficlog?ajax=1`：
-
-```json
-{
-  "source": "dounai.pro/user/trafficlog",
-  "synced_at": "2026-07-05 19:07",
-  "window_days": 7,
-  "daily": [
-    { "date": "2026-07-05", "relative_label": "今天", "used_mb": 1341.44, "used_label": "1.31GB" }
-  ],
-  "recent_window_label": "12h node activity",
-  "recent_log_count": 609,
-  "recent_traffic_mb": 938.87,
-  "recent_traffic_label": "938.87MB",
-  "top_nodes_12h": [
-    { "node": "节点名", "traffic_mb": 415.29, "traffic_label": "415.29MB" }
-  ]
-}
-```
-
-`traffic_usage.daily` 是豆奶页面直接展示的近 7 天真实使用量；`traffic_usage_history` 将每日同步得到的 direct daily entries 按日期合并并保留最近 60 天。每天 00:05 的 traffic-only closeout 只合并昨天及更早日期，并从 `traffic_usage_history` 移除当天，避免把 00:05 的极早日内碎片当作当天最终值。前端“近 30 天实际使用流量”图也会排除当天。`traffic_usage?ajax=1` 返回的是近 12 小时节点活跃 / 占比窗口，不等同于完整 7 天或 30 天总用量。
 
 `dash/data/ricky.json` 负责“我和 Ricky”页面的只读地图数据、地点、旅行记录、摘要和可选照片 / 来源链接。它由 `scripts/sync_ricky_travel.py` 从 personal-wiki `wiki/relationships/ricky-travel.json` 生成；本地优先读取相邻 personal-wiki checkout，服务器侧可通过 `gh api` 读取 private personal-wiki。
 
@@ -695,7 +655,7 @@ maxnow.cn       -> 未来公开主页 / 个人入口
 
 ## 实现边界
 
-- 当前一级入口保留 Home、豆奶、Token、芭蕾、云服务；生活和同行记的页面实现暂存。
+- 当前一级入口保留 Home、Token、芭蕾、云服务；生活和同行记的页面实现暂存。
 - v1 的 Dashboard 业务内容保持静态，不加数据库或业务 API；唯一后端是仅供 nginx 调用的最小认证服务，用于校验密码和签发 HttpOnly 会话 Cookie。
 - 任何新的日常维护数据字段，都必须同时写进这里和 OpenClaw skill。
 - 页面代码变化需要 Codex 或 Owner 明确意图；OpenClaw 永远不能改变页面结构。

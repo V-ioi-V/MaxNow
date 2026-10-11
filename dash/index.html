@@ -6,8 +6,8 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=268" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=294" />
+    <script src="./app.js?v=269" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=295" />
   </head>
   <body>
     <div class="app-shell">
@@ -29,15 +29,7 @@
               <small>&#20170;&#26085;&#27010;&#35272;</small>
             </span>
           </button>
-          <button class="side-nav-item nav-dounai" type="button" data-view="dounai">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 3.5c3.7 4.2 6 7.7 6 10.5a6 6 0 0 1-12 0c0-2.8 2.3-6.3 6-10.5zm0 3.1C9.5 9.7 8 12.3 8 14a4 4 0 0 0 8 0c0-1.7-1.5-4.3-4-7.4z"/></svg>
-            </span>
-            <span class="nav-copy">
-              <strong>豆奶</strong>
-              <small id="sidebar-dounai-flow">&#31614;&#21040;&#29366;&#24577;</small>
-            </span>
-          </button>
+
           <button class="side-nav-item nav-token" type="button" data-view="tokens">
             <span class="nav-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M12 3 4 7v10l8 4 8-4V7zm0 2.2L17.6 8 12 10.8 6.4 8zm-6 4.6 5 2.5v5.9l-5-2.5zm7 8.4v-5.9l5-2.5v5.9z"/></svg>
@@ -203,7 +195,7 @@
               <strong id="metric-today-execution">0</strong>
               <small id="metric-today-execution-note">&#26242;&#26080;&#26126;&#30830;&#25191;&#34892;&#26085;&#26399;</small>
             </article>
-            <article class="metric-sync" title="Owner 可见数据源状态：Wiki、Token、天气、市场、Last-30、版本、Roadmap、豆奶、芭蕾、同行记和生活">
+            <article class="metric-sync" title="Owner 可见数据源状态：Wiki、Token、天气、市场、Last-30、版本、Roadmap、芭蕾、同行记和生活">
               <span>&#25968;&#25454;&#21516;&#27493;</span>
               <strong id="metric-sync">--</strong>
               <small id="metric-sync-note">&#31561;&#24453;&#21516;&#27493;</small>
@@ -370,59 +362,7 @@
                 <div class="today-todo-list" id="today-todo-list"></div>
                 </article>
 
-                <article class="panel checkin-panel home-board-card home-card-checkin" id="dounai-checkin" data-card-size="widget-wide" role="button" tabindex="0" aria-label="打开豆奶详情">
-                <header class="panel-head">
-                  <div>
-                    <p class="eyebrow">Dounai</p>
-                    <h2>签到</h2>
-                  </div>
-                  <small id="checkin-updated">等待同步</small>
-                </header>
-                <div class="checkin-grid" aria-label="豆奶签到摘要">
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7.5h11.5A2.5 2.5 0 0 1 19 10v1h-4.2A2.8 2.8 0 0 0 12 13.8v.4a2.8 2.8 0 0 0 2.8 2.8H19v1A2.5 2.5 0 0 1 16.5 20H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h10.5A1.5 1.5 0 0 1 17 5.5v2H5A.5.5 0 0 0 4.5 8v.1c.2-.1.3-.1.5-.1Zm9.8 5H20v3h-5.2a1.3 1.3 0 0 1 0-2.6Z"/></svg>
-                      今日流量
-                    </span>
-                    <strong id="checkin-today">--</strong>
-                  </div>
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4Zm0 2.2L17.6 8 12 10.8 6.4 8 12 5.2ZM6 9.8l5 2.5v5.9l-5-2.5V9.8Zm7 8.4v-5.9l5-2.5v5.9l-5 2.5Z"/></svg>
-                      今日豆丁
-                    </span>
-                    <strong id="checkin-today-beans">--</strong>
-                  </div>
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 1-7.1 2.9A10 10 0 0 1 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 4v3.6l2.5 2.5a1 1 0 0 1-1.4 1.4l-2.8-2.8A1 1 0 0 1 11 12V8a1 1 0 1 1 2 0Z"/></svg>
-                      今日延长
-                    </span>
-                    <strong id="checkin-today-hours">--</strong>
-                  </div>
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 16.2 5.8 12.5a1 1 0 0 1 1.4-1.4l2.3 2.3 7.3-7.3a1 1 0 1 1 1.4 1.4l-8 8a1 1 0 0 1-1.4 0ZM12 22a10 10 0 1 1 7.1-2.9A10 10 0 0 1 12 22Zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/></svg>
-                      累计签到
-                    </span>
-                    <strong id="checkin-days">--</strong>
-                  </div>
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13ZM7 7a1 1 0 0 0 0 2h10a1 1 0 1 0 0-2H7Zm0 4a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H7Zm0 4a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H7Z"/></svg>
-                      累计流量
-                    </span>
-                    <strong id="checkin-total-flow">--</strong>
-                  </div>
-                  <div>
-                    <span class="metric-label">
-                      <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 1-7.1 2.9A10 10 0 0 1 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 4v3.6l2.5 2.5a1 1 0 0 1-1.4 1.4l-2.8-2.8A1 1 0 0 1 11 12V8a1 1 0 1 1 2 0Z"/></svg>
-                      累计延长
-                    </span>
-                    <strong id="checkin-total-hours">--</strong>
-                  </div>
-                </div>
-                </article>
+
 
                 <article class="panel ballet-home-card home-board-card home-card-ballet" id="home-ballet-card" data-card-size="widget-wide" role="button" tabindex="0" aria-label="打开芭蕾课程与进度">
                   <header class="panel-head">
@@ -1039,22 +979,7 @@
               </dl>
             </article>
 
-            <article class="panel cloud-card" data-tone="cyan">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Daily 00:05</p>
-                  <h2>&#35910;&#22902;&#33258;&#21160;&#21270;</h2>
-                </div>
-                <span class="status-pill">root</span>
-              </header>
-              <p class="item-copy">豆奶签到由 Owner 手动完成；root / OpenClaw 只读回读签到变更记录、账号余量和昨日及更早的真实流量，不提交签到、不发送验证码提醒。结果双写到 OpenClaw 工作区和线上部署目录。</p>
-              <dl class="cloud-meta">
-                <div><dt>&#21482;&#35835;&#26085;&#32467;</dt><dd>00:05 --traffic-only --include-account --include-manual-checkin --exclude-today</dd></div>
-                <div><dt>签到</dt><dd>Owner 手动完成；无服务器定时签到任务</dd></div>
-                <div><dt>&#29983;&#25104;</dt><dd>/root/.openclaw/gen_checkin_data.py</dd></div>
-                <div><dt>&#20889;&#20837;</dt><dd>/var/www/maxnow-dashboard/dash/data/dounai_checkin.json</dd></div>
-              </dl>
-            </article>
+
 
             <article class="panel cloud-card" data-tone="purple">
               <header class="panel-head">
@@ -1205,141 +1130,7 @@
           </section>
         </section>
 
-        <section class="view secondary-view" id="dounai-view" data-view-panel="dounai">
-          <header class="token-page-head secondary-page-head dounai-page-head">
-            <div class="dounai-title-tab dounai-today-tab" aria-label="豆奶今日签到">
-              <div class="dounai-section-head">
-                <div>
-                  <p class="eyebrow">Check-in</p>
-                  <h2>签到</h2>
-                </div>
-                <p id="dounai-updated">等待同步</p>
-              </div>
-              <span data-tone="blue">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7.5h11.5A2.5 2.5 0 0 1 19 10v1h-4.2A2.8 2.8 0 0 0 12 13.8v.4a2.8 2.8 0 0 0 2.8 2.8H19v1A2.5 2.5 0 0 1 16.5 20H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h10.5A1.5 1.5 0 0 1 17 5.5v2H5A.5.5 0 0 0 4.5 8v.1c.2-.1.3-.1.5-.1Zm9.8 5H20v3h-5.2a1.3 1.3 0 0 1 0-2.6Z"/></svg>
-                  今日流量
-                </span>
-                <strong id="dounai-today-flow">--</strong>
-              </span>
-              <span data-tone="orange">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8 4.5v9L12 20l-8-4.5v-9L12 2Zm0 2.3L6.7 7.2 12 10l5.3-2.8L12 4.3ZM6 9v5.3l5 2.8v-5.4L6 9Zm7 2.7v5.4l5-2.8V9l-5 2.7Z"/></svg>
-                  今日豆丁
-                </span>
-                <strong id="dounai-today-beans">--</strong>
-              </span>
-              <span data-tone="cyan">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 1-7.1 2.9A10 10 0 0 1 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 4v3.6l2.5 2.5a1 1 0 0 1-1.4 1.4l-2.8-2.8A1 1 0 0 1 11 12V8a1 1 0 1 1 2 0Z"/></svg>
-                  今日延长
-                </span>
-                <strong id="dounai-today-hours">--</strong>
-              </span>
-            </div>
-            <div class="dounai-top-tabs dounai-balance-tab" aria-label="豆奶账号余量">
-              <div class="dounai-section-head">
-                <p class="eyebrow">Account</p>
-                <h2>账号余量</h2>
-              </div>
-              <span data-tone="blue">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7.5h11.5A2.5 2.5 0 0 1 19 10v1h-4.2A2.8 2.8 0 0 0 12 13.8v.4a2.8 2.8 0 0 0 2.8 2.8H19v1A2.5 2.5 0 0 1 16.5 20H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h10.5A1.5 1.5 0 0 1 17 5.5v2H5A.5.5 0 0 0 4.5 8v.1c.2-.1.3-.1.5-.1Zm9.8 5H20v3h-5.2a1.3 1.3 0 0 1 0-2.6Z"/></svg>
-                  剩余流量
-                </span>
-                <strong id="dounai-remaining-flow">--</strong>
-              </span>
-              <span data-tone="orange">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1.5A2.5 2.5 0 0 1 22 6.5v12A2.5 2.5 0 0 1 19.5 21h-15A2.5 2.5 0 0 1 2 18.5v-12A2.5 2.5 0 0 1 4.5 4H6V3a1 1 0 0 1 1-1Zm13 8H4v8.5c0 .3.2.5.5.5h15c.3 0 .5-.2.5-.5V10Zm-4.5 3a1 1 0 0 1 .7 1.7l-3.2 3.2a1 1 0 0 1-1.4 0l-1.8-1.8a1 1 0 0 1 1.4-1.4l1.1 1.1 2.5-2.5a1 1 0 0 1 .7-.3Z"/></svg>
-                  VIP 到期
-                </span>
-                <strong id="dounai-expiry">--</strong>
-              </span>
-              <span data-tone="cyan">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a10 10 0 1 1-7.1 2.9 1 1 0 0 1 1.4 1.4A8 8 0 1 0 12 6a1 1 0 1 1 0-2Zm6.1 3.1a1 1 0 0 1 0 1.4l-4.3 4.3a2.4 2.4 0 1 1-1.4-1.4l4.3-4.3a1 1 0 0 1 1.4 0ZM12 13a.4.4 0 1 0 0 .8.4.4 0 0 0 0-.8ZM7 13a1 1 0 1 1 0-2h1a1 1 0 1 1 0 2H7Zm8 5a1 1 0 0 1-1 1h-4a1 1 0 1 1 0-2h4a1 1 0 0 1 1 1Z"/></svg>
-                  日均可用
-                </span>
-                <strong id="dounai-daily-flow">--</strong>
-              </span>
-            </div>
-            <div class="dounai-top-tabs dounai-total-tab" aria-label="豆奶签到累计">
-              <div class="dounai-section-head">
-                <p class="eyebrow">Total</p>
-                <h2>签到累计</h2>
-              </div>
-              <span data-tone="purple">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 16.2 5.8 12.5a1 1 0 0 1 1.4-1.4l2.3 2.3 7.3-7.3a1 1 0 1 1 1.4 1.4l-8 8a1 1 0 0 1-1.4 0ZM12 22a10 10 0 1 1 7.1-2.9A10 10 0 0 1 12 22Zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/></svg>
-                  累计签到
-                </span>
-                <strong id="dounai-days">--</strong>
-              </span>
-              <span data-tone="blue">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13ZM7 7a1 1 0 0 0 0 2h10a1 1 0 1 0 0-2H7Zm0 4a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H7Zm0 4a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H7Z"/></svg>
-                  累计流量
-                </span>
-                <strong id="dounai-total-flow">--</strong>
-              </span>
-              <span data-tone="green">
-                <span class="metric-label">
-                  <svg class="metric-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 1-7.1 2.9A10 10 0 0 1 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 4v3.6l2.5 2.5a1 1 0 0 1-1.4 1.4l-2.8-2.8A1 1 0 0 1 11 12V8a1 1 0 1 1 2 0Z"/></svg>
-                  累计延长
-                </span>
-                <strong id="dounai-total-hours">--</strong>
-              </span>
-            </div>
-          </header>
 
-          <section class="dounai-chart-grid" aria-label="近 30 天豆奶签到趋势">
-            <article class="panel dounai-chart-card">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Usage</p>
-                  <h2>近 30 天实际使用流量</h2>
-                </div>
-                <span class="status-pill">GB/d</span>
-              </header>
-              <div class="line-chart" id="dounai-usage-chart"></div>
-            </article>
-
-            <article class="panel dounai-chart-card">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Budget</p>
-                  <h2>近 30 天日均可用流量</h2>
-                </div>
-                <span class="status-pill">GB/d</span>
-              </header>
-              <div class="line-chart" id="dounai-daily-budget-chart"></div>
-            </article>
-
-            <article class="panel dounai-chart-card">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Traffic</p>
-                  <h2>近 30 天获取流量</h2>
-                </div>
-                <span class="status-pill">MB/d</span>
-              </header>
-              <div class="line-chart" id="dounai-flow-chart"></div>
-            </article>
-
-            <article class="panel dounai-chart-card">
-              <header class="panel-head">
-                <div>
-                  <p class="eyebrow">Hours</p>
-                  <h2>近 30 天获取时长</h2>
-                </div>
-                <span class="status-pill">h/d</span>
-              </header>
-              <div class="line-chart" id="dounai-hours-chart"></div>
-            </article>
-          </section>
-
-        </section>
       </main>
     </div>
 

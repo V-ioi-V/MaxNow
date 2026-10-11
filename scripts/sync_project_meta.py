@@ -32,7 +32,6 @@ GENERATED_DATA_PATHS = {
     "dash/data/token-usage.js",
     "dash/data/market-indices.json",
     "dash/data/market-indices.js",
-    "dash/data/dounai_checkin.json",
     "dash/data/project-meta.json",
     "dash/data/project-meta.js",
     "dash/data/ricky.json",

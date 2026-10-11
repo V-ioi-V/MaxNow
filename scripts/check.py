@@ -70,7 +70,6 @@ def check_required_files():
         "dash/login.js",
         "dash/styles.css",
         "dash/app.js",
-        "dash/data/dounai_checkin.json",
         "dash/data/ricky.json",
         "dash/data/ricky.js",
         "dash/data/life-foods.json",
@@ -1123,103 +1122,6 @@ def check_local_server(url):
         return f"local server skipped: {url} is not reachable ({error.reason})"
 
 
-def check_dounai_checkin():
-    data = load_json(ROOT / "dash/data/dounai_checkin.json")
-    account = data.get("account")
-
-    def check_remaining_precision(item, label):
-        precision = item.get("remaining_flow_precision")
-        if precision is None:
-            return
-        if precision not in {"byte", "rounded-label"}:
-            raise ValueError(f"dounai-checkin: {label}.remaining_flow_precision is invalid")
-        expected_mb = float(item["remaining_flow_mb"])
-        if precision == "byte":
-            remaining_bytes = item.get("remaining_flow_bytes")
-            if isinstance(remaining_bytes, bool) or not isinstance(remaining_bytes, int) or remaining_bytes < 0:
-                raise ValueError(f"dounai-checkin: {label}.remaining_flow_bytes must be a non-negative integer")
-            expected_mb = round(remaining_bytes / 1024 / 1024, 2)
-            if abs(float(item["remaining_flow_mb"]) - expected_mb) > 0.001:
-                raise ValueError(f"dounai-checkin: {label}.remaining_flow_mb does not match byte precision")
-        remaining_days_exact = item.get("remaining_days_exact")
-        if remaining_days_exact is not None:
-            remaining_days_exact = float(remaining_days_exact)
-            if not math.isfinite(remaining_days_exact) or remaining_days_exact <= 0:
-                raise ValueError(f"dounai-checkin: {label}.remaining_days_exact must be finite and positive")
-            expected_daily = round(expected_mb / remaining_days_exact, 2)
-            if abs(float(item["daily_available_mb"]) - expected_daily) > 0.001:
-                raise ValueError(f"dounai-checkin: {label}.daily_available_mb does not match exact remaining duration")
-            return
-        days_remaining = int(item.get("days_remaining", 0))
-        if days_remaining > 0:
-            expected_daily = round(expected_mb / days_remaining, 2)
-            if abs(float(item["daily_available_mb"]) - expected_daily) > 0.001:
-                raise ValueError(f"dounai-checkin: {label}.legacy daily_available_mb does not match whole remaining days")
-
-    if account and "remaining_flow_mb" in account:
-        remaining = float(account["remaining_flow_mb"])
-        if remaining < 0:
-            raise ValueError("dounai-checkin: account.remaining_flow_mb cannot be negative")
-        check_remaining_precision(account, "account")
-
-    expiry = account.get("effective_expires_at") or account.get("vip_expires_at") or account.get("account_expires_at") if account else None
-    if expiry:
-        datetime.strptime(expiry, "%Y-%m-%d %H:%M:%S")
-
-    if account and "daily_available_mb" in account:
-        daily = float(account["daily_available_mb"])
-        if daily < 0:
-            raise ValueError("dounai-checkin: account.daily_available_mb cannot be negative")
-
-    history = data.get("account_history", [])
-    if not isinstance(history, list):
-        raise ValueError("dounai-checkin: account_history must be a list")
-    for item in history:
-        datetime.strptime(item["date"], "%Y-%m-%d")
-        daily = float(item["daily_available_mb"])
-        if daily < 0:
-            raise ValueError("dounai-checkin: account_history.daily_available_mb cannot be negative")
-        check_remaining_precision(item, "account_history item")
-
-    traffic_usage = data.get("traffic_usage")
-    traffic_excludes_today = bool(traffic_usage.get("excluded_today")) if traffic_usage else False
-    today_key = datetime.now().astimezone().strftime("%Y-%m-%d")
-    if traffic_usage:
-        daily_items = traffic_usage.get("daily", [])
-        if not isinstance(daily_items, list):
-            raise ValueError("dounai-checkin: traffic_usage.daily must be a list")
-        for item in daily_items:
-            datetime.strptime(item["date"], "%Y-%m-%d")
-            if traffic_excludes_today and item["date"] == today_key:
-                raise ValueError("dounai-checkin: traffic_usage.daily must exclude today when excluded_today is true")
-            used = float(item["used_mb"])
-            if used < 0:
-                raise ValueError("dounai-checkin: traffic_usage.daily.used_mb cannot be negative")
-        recent = float(traffic_usage.get("recent_traffic_mb", 0))
-        if recent < 0:
-            raise ValueError("dounai-checkin: traffic_usage.recent_traffic_mb cannot be negative")
-        top_nodes = traffic_usage.get("top_nodes_12h", [])
-        if top_nodes and not isinstance(top_nodes, list):
-            raise ValueError("dounai-checkin: traffic_usage.top_nodes_12h must be a list")
-        for item in top_nodes:
-            traffic = float(item.get("traffic_mb", 0))
-            if traffic < 0:
-                raise ValueError("dounai-checkin: traffic_usage.top_nodes_12h.traffic_mb cannot be negative")
-
-    traffic_history = data.get("traffic_usage_history", [])
-    if not isinstance(traffic_history, list):
-        raise ValueError("dounai-checkin: traffic_usage_history must be a list")
-    for item in traffic_history:
-        datetime.strptime(item["date"], "%Y-%m-%d")
-        if traffic_excludes_today and item["date"] == today_key:
-            raise ValueError("dounai-checkin: traffic_usage_history must exclude today when traffic_usage.excluded_today is true")
-        used = float(item["used_mb"])
-        if used < 0:
-            raise ValueError("dounai-checkin: traffic_usage_history.used_mb cannot be negative")
-
-    return "dounai-checkin: json, account snapshot, account history, and traffic usage are valid"
-
-
 def check_openclaw_usage():
     data = load_json(ROOT / "dash/data/openclaw-usage.json")
     if data.get("pricingBasis") != "openrouter-equivalent":
@@ -1576,13 +1478,13 @@ def check_secondary_view_style():
     login_html = (ROOT / "dash/login.html").read_text(encoding="utf-8")
     dashboard_css = (ROOT / "dash/styles.css").read_text(encoding="utf-8")
     dashboard_js = (ROOT / "dash/app.js").read_text(encoding="utf-8")
-    for view_id in ("tokens-view", "dounai-view", "ballet-view", "cloud-view", "life-view", "ricky-view"):
+    for view_id in ("tokens-view", "ballet-view", "cloud-view", "life-view", "ricky-view"):
         if f'class="view secondary-view" id="{view_id}"' not in dashboard_html:
             raise ValueError(f"secondary views: shared view class is missing on {view_id}")
     if 'class="view secondary-view" id="home-view"' in dashboard_html:
         raise ValueError("secondary views: Home must not inherit the secondary shell")
-    if dashboard_html.count("secondary-page-head") != 1:
-        raise ValueError("secondary views: only Dounai may keep the shared page head")
+    if dashboard_html.count("secondary-page-head") != 0:
+        raise ValueError("secondary views: retired page head remains")
     required_css = (
         ".secondary-view {",
         ".secondary-page-head {",
@@ -1593,7 +1495,6 @@ def check_secondary_view_style():
         ".ballet-upcoming-item.is-nearest {",
         ".ballet-upcoming-note {",
         "#tokens-view {",
-        "#dounai-view {",
         "#ballet-view {",
         "#cloud-view {",
         "#life-view {",
@@ -1602,10 +1503,8 @@ def check_secondary_view_style():
     if any(rule not in dashboard_css for rule in required_css):
         raise ValueError("secondary views: shared theme, accent, or card rules are incomplete")
     retired_top_bars = (
-        ".secondary-page-head:not(.token-usage-head, .dounai-page-head)::before",
+        ".secondary-page-head:not(.token-usage-head)::before",
         ".secondary-view .token-head-card::before",
-        ".secondary-view .dounai-title-tab::before",
-        ".secondary-view .dounai-top-tabs::before",
         ".secondary-view .panel::before",
         ".secondary-view .token-summary article::before",
         ".secondary-view .ricky-stats article::before",
@@ -1616,7 +1515,7 @@ def check_secondary_view_style():
     token_view_markup = dashboard_html.split('id="tokens-view"', 1)[1].split('id="ballet-view"', 1)[0]
     life_view_markup = dashboard_html.split('id="life-view"', 1)[1].split('id="tokens-view"', 1)[0]
     ricky_view_markup = dashboard_html.split('id="ricky-view"', 1)[1].split('id="life-view"', 1)[0]
-    cloud_view_markup = dashboard_html.split('id="cloud-view"', 1)[1].split('id="dounai-view"', 1)[0]
+    cloud_view_markup = dashboard_html.split('id="cloud-view"', 1)[1].split("</main>", 1)[0]
     if "cloud-page-head" in cloud_view_markup or "Cloud Services" in cloud_view_markup:
         raise ValueError("secondary views: Cloud must not repeat the topbar page title")
     topbar_markup = dashboard_html.split('<header class="topbar"', 1)[1].split("</header>", 1)[0]
@@ -1876,9 +1775,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=294" not in dashboard_html
+        "styles.css?v=295" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=268" not in dashboard_html
+        or "app.js?v=269" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -1937,7 +1836,7 @@ def check_secondary_view_style():
     if ".side-nav {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }" not in mobile_rules:
         raise ValueError("secondary views: mobile navigation must remain a two-column grid")
     shared_hover = dashboard_css.split(".ballet-home-next:hover {", 1)[1].split(
-        "\n  }\n\n  .dounai-page-head:hover", 1
+        "}", 1
     )[0]
     if "background: #ffffff;" in shared_hover:
         raise ValueError("secondary views: shared hover must preserve component backgrounds")
@@ -2135,7 +2034,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=268" not in dashboard_html:
+    if "app.js?v=269" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js
@@ -2156,8 +2055,10 @@ def check_data_health_contract():
         import sync_system_status
 
         source_keys = {item[0] for item in sync_system_status.DATA_SOURCE_SPECS}
-        if len(source_keys) != 11 or "ballet" not in source_keys:
-            raise ValueError("data health: the 11-source summary does not include ballet")
+        if "dounai" in source_keys or (ROOT / "dash/data/dounai_checkin.json").exists():
+            raise ValueError("data health: retired Dounai source or data has been restored")
+        if len(source_keys) != 10 or "ballet" not in source_keys:
+            raise ValueError("data health: the 10-source summary does not include ballet")
         with tempfile.TemporaryDirectory() as directory:
             temporary_root = Path(directory)
             path = temporary_root / "automation.log"
@@ -2207,13 +2108,12 @@ def check_data_health_contract():
             raise ValueError("data health: outer automation success does not clear an old child failure")
     finally:
         sys.path.pop(0)
-    return "data health: five states, last-good fallback, 11-source summary, and failure streak checks are valid"
+    return "data health: five states, last-good fallback, 10-source summary, and failure streak checks are valid"
 
 
 def main():
     checks = [check_required_files()]
     checks.extend(check_dataset(*dataset) for dataset in DATASETS)
-    checks.append(check_dounai_checkin())
     checks.append(check_openclaw_usage())
     checks.append(check_codex_usage())
     checks.append(check_codex_macos_usage())
