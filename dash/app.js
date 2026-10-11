@@ -5497,6 +5497,14 @@ function buildBalletTimetableRows(days = []) {
 
 function renderBalletTimetable() {
   const timetable = balletData.timetable || {};
+  const refreshed = qs("#ballet-timetable-updated-at");
+  if (refreshed) {
+    const label = formatBalletSessionTimestamp(timetable.dataAsOf);
+    refreshed.textContent = `刷新时间 ${label}`;
+    if (label !== "--") refreshed.dateTime = timetable.dataAsOf;
+    else refreshed.removeAttribute("datetime");
+    refreshed.title = "课表实际读取时间；缓存最多复用 5 分钟，使用缓存不会推进此时间。";
+  }
   const days = Array.isArray(timetable.days)
     ? timetable.days
         .filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(String(day?.date || "")))

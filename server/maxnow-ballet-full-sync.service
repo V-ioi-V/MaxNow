@@ -1,5 +1,5 @@
 [Unit]
-Description=MaxNow read-only Wenda ballet monthly full reconciliation
+Description=MaxNow read-only Wenda ballet on-demand incremental reconciliation
 Documentation=file:/var/www/maxnow-dashboard/SERVER_RUNBOOK.md
 Wants=network-online.target
 After=network-online.target
@@ -18,7 +18,7 @@ StateDirectoryMode=0700
 RuntimeDirectory=maxnow-ballet
 RuntimeDirectoryMode=0700
 ExecStartPre=/usr/bin/echo maxnow ballet sync start
-ExecStart=/usr/bin/flock --nonblock /run/maxnow-ballet/sync.lock /usr/bin/python3 -B scripts/sync_ballet.py --mode full --state-dir /var/lib/maxnow-ballet --output /var/www/maxnow-dashboard/dash/data/ballet.json --credential-file=%d/wenda-session.json --credential-version-file=%d/credential-version
+ExecStart=/usr/bin/flock --nonblock /run/maxnow-ballet/sync.lock /usr/bin/python3 -B scripts/sync_ballet.py --mode smart --state-dir /var/lib/maxnow-ballet --output /var/www/maxnow-dashboard/dash/data/ballet.json --credential-file=%d/wenda-session.json --credential-version-file=%d/credential-version
 TimeoutStartSec=300
 UMask=0027
 StandardOutput=append:/var/www/maxnow-dashboard/logs/ballet-sync.log

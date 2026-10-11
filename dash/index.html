@@ -6,7 +6,7 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=267" defer></script>
+    <script src="./app.js?v=268" defer></script>
     <link rel="stylesheet" href="./styles.css?v=294" />
   </head>
   <body>
@@ -977,6 +977,7 @@
                   <span data-availability="full">已满</span>
                   <span data-availability="cancelled">已取消</span>
                 </div>
+                <time class="status-pill" id="ballet-timetable-updated-at">刷新时间 —</time>
                 <span class="status-pill" id="ballet-timetable-count">等待同步</span>
               </div>
             </header>
@@ -1063,7 +1064,7 @@
                 </div>
                 <span class="status-pill">只读同步已启用</span>
               </header>
-              <p class="item-copy">仅周日 14:30 在抢课后定时刷新预约、候补、上课记录、课程卡与周课表。每次打开 MaxNow 后首次进入芭蕾页，或点击刷新按钮，都会同步整体数据，并发打开共用任务。登录失效后停止网络请求并保留最后成功缓存。</p>
+              <p class="item-copy">仅周日 14:30 在抢课后定时刷新预约、候补、上课记录、课程卡与周课表。每次打开 MaxNow 后首次进入芭蕾页，或点击刷新按钮，都会同步整体数据，并发打开共用任务。日常历史增量读取，课表最多缓存 5 分钟，预约、候补与课程卡实时读取。登录失效后停止网络请求并保留最后成功缓存。</p>
               <dl class="cloud-meta">
                 <div><dt>定时</dt><dd>仅周日 14:30 整体刷新</dd></div>
                 <div><dt>按需</dt><dd>首次进入芭蕾页或点击刷新按钮</dd></div>

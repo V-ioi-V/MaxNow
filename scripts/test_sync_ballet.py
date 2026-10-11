@@ -8,7 +8,7 @@ import threading
 import time
 import unittest
 from unittest import mock
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import sync_ballet as ballet
@@ -754,6 +754,55 @@ class BalletSyncTests(unittest.TestCase):
 
         same_course_next_day = {**transferred, "date": "2026-08-19"}
         self.assertFalse(ballet.is_attendance_excluded(same_course_next_day))
+
+    def test_smart_refresh_reuses_history_and_short_timetable_cache(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); fixture = root/"fixture"; fixture.mkdir(); write_fixture(fixture)
+            paths = ballet.build_paths(root/"state", root/"ballet.json")
+            first = ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+            second = ballet.synchronize(paths, ballet.FixtureSource(fixture), "smart", NOW+timedelta(minutes=1))
+            self.assertEqual(second.status, "success")
+            self.assertEqual(second.cache_metrics["historyDetailsRead"], 0)
+            self.assertTrue(second.cache_metrics["timetableReused"])
+            self.assertEqual(first.requests_made-second.requests_made, 9)
+            snapshot = json.loads(paths.timetable.read_text(encoding="utf-8"))
+            self.assertEqual(snapshot["dataAsOf"], NOW.isoformat())
+            self.assertNotIn("rawDays", json.loads(paths.output.read_text(encoding="utf-8"))["timetable"])
+            expired = ballet.synchronize(paths, ballet.FixtureSource(fixture), "smart", NOW+timedelta(minutes=5))
+            self.assertFalse(expired.cache_metrics["timetableReused"])
+            self.assertEqual(expired.cache_metrics["historyDetailsRead"], 0)
+
+    def test_smart_refresh_validates_changed_index_and_periodic_full(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); fixture = root/"fixture"; fixture.mkdir(); write_fixture(fixture)
+            paths = ballet.build_paths(root/"state", root/"ballet.json")
+            ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+            page = fixture/"attendance.html"
+            page.write_text(page.read_text(encoding="utf-8").replace("2026-07-26", "2026-07-25"),encoding="utf-8")
+            (fixture/"details"/"10001.html").write_text(detail_html(course="芭蕾L1.5",day="2026-07-25"),encoding="utf-8")
+            changed = ballet.synchronize(paths, ballet.FixtureSource(fixture), "smart", NOW+timedelta(minutes=1))
+            self.assertEqual(changed.status, "success")
+            self.assertEqual(changed.cache_metrics["historyDetailsRead"], 1)
+            weekly = ballet.synchronize(paths, ballet.FixtureSource(fixture), "smart", NOW+timedelta(days=7))
+            self.assertEqual(weekly.cache_metrics["historyMode"], "full")
+            self.assertEqual(weekly.cache_metrics["historyDetailsRead"], 2)
+            self.assertFalse(weekly.cache_metrics["timetableReused"])
+
+    def test_smart_cancellation_refreshes_cached_owner_booking(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); fixture = root/"fixture"; fixture.mkdir(); write_fixture(fixture)
+            paths = ballet.build_paths(root/"state", root/"ballet.json")
+            ballet.synchronize(paths, ballet.FixtureSource(fixture), "full", NOW)
+            snapshot = json.loads(paths.timetable.read_text(encoding="utf-8"))
+            snapshot["rawDays"][0]["records"][0]["availability"] = "booked"
+            ballet.atomic_write_json(paths.timetable,snapshot)
+            result = ballet.synchronize(paths, ballet.FixtureSource(fixture), "smart", NOW+timedelta(minutes=1))
+            self.assertEqual(result.status, "success")
+            self.assertFalse(result.cache_metrics["timetableReused"])
+
+    def test_sunday_publish_invalidates_prepublication_timetable(self):
+        snapshot = {"dataAsOf":"2026-08-02T14:19:00+08:00","weekStart":"2026-07-27","rawDays":[{}]}
+        self.assertFalse(ballet.reusable_timetable(snapshot,datetime.fromisoformat("2026-08-02T14:20:00+08:00")))
 
     def test_connection_pool_reuses_connection_and_replaces_server_closed_one(self):
         import urllib.request

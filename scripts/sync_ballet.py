@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import html
 from html.parser import HTMLParser
@@ -154,6 +155,7 @@ class SyncResult:
     timings: dict[str, float] = field(default_factory=dict)
     requests_made: int = 0
     connection_metrics: dict[str, int] = field(default_factory=dict)
+    cache_metrics: dict[str, Any] = field(default_factory=dict)
 
 
 def iso_now(now: datetime | None = None) -> str:
@@ -2283,7 +2285,7 @@ def build_read_model(
         },
         "week": compute_week_summary(records, upcoming, now),
         "membership": build_membership_view(membership, now),
-        "timetable": timetable,
+        "timetable": {key: value for key, value in timetable.items() if key != "rawDays"},
         "learningLogs": [],
         "authHealth": {
             "status": auth_status,
@@ -2472,14 +2474,49 @@ def _logical_window(now: datetime, mode: str) -> dict[str, str]:
     }
 
 
+def _index_fingerprint(item):
+    return hashlib.sha256(json.dumps(item, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def reusable_timetable(snapshot, now):
+    try:
+        fetched = datetime.fromisoformat(snapshot["dataAsOf"])
+        age = (now - fetched).total_seconds()
+        if not 0 <= age < 300 or not snapshot.get("rawDays"):
+            return False
+        local = now.astimezone(TIMEZONE)
+        today = local.date()
+        week_start = today - timedelta(days=today.weekday())
+        publish = local.replace(hour=14, minute=20, second=0, microsecond=0)
+        if today.weekday() == 6 and local >= publish:
+            if fetched < publish:
+                return False
+            expected = today if snapshot.get("displayMode") == "sunday_plus_next_week" else week_start
+        else:
+            expected = week_start
+        return snapshot.get("weekStart") == expected.isoformat()
+    except (KeyError, ValueError, TypeError):
+        return False
+
+
 def _needs_detail(
     index_item: dict[str, str],
     existing: dict[str, Any] | None,
     mode: str,
     window: dict[str, str],
+    index_fingerprints: dict[str, str] | None = None,
 ) -> bool:
     if not existing or mode == "full":
         return True
+    if mode == "smart":
+        old_fingerprint = (index_fingerprints or {}).get(index_item["sourceRecordId"])
+        return (
+            existing.get("recordState") != "active"
+            or normalize_course_name(index_item.get("courseName", "")) != normalize_course_name(existing.get("courseName", ""))
+            or index_item.get("date") != existing.get("date")
+            or index_item.get("status", "") not in ("", "已上课", "已完成")
+            or (old_fingerprint is not None and old_fingerprint != _index_fingerprint(index_item))
+        )
     if index_item.get("date") >= window["from"]:
         return True
     return (
@@ -2601,6 +2638,7 @@ def build_timetable_snapshot(
     if not days:
         days = fetch_days([week_start + timedelta(days=offset) for offset in range(7)])
 
+    raw_days = copy.deepcopy(days)
     apply_timetable_bookings(days, upcoming)
 
     available_dates = [
@@ -2621,6 +2659,7 @@ def build_timetable_snapshot(
         "selectorDays": len(sorted_selector),
         "availableThrough": max(available_dates) if available_dates else None,
         "days": days,
+        "rawDays": raw_days,
     }
 
 
@@ -2632,7 +2671,7 @@ def synchronize(
     dry_run: bool = False,
     credential_version: str | None = None,
 ) -> SyncResult:
-    if mode not in {"rolling", "full"}:
+    if mode not in {"rolling", "full", "smart"}:
         raise SyncFailure("configuration_error")
     if not dry_run:
         paths.state_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -2654,13 +2693,26 @@ def synchronize(
     timetable = safe_read_json(paths.timetable, empty_timetable())
     old_state = safe_read_json(paths.sync_state, empty_sync_state())
     validate_ledger(ledger)
+    if mode == "smart":
+        try:
+            full_age = (now - datetime.fromisoformat(ledger["lastFullSyncAt"])).total_seconds()
+        except (KeyError, ValueError, TypeError):
+            full_age = -1
+        if not 0 <= full_age < 7 * 86400:
+            mode = "full"
+    index_fingerprints = ledger.get("indexFingerprints", {})
     window = _logical_window(now, mode)
     observed_at = iso_now(now)
 
     timetable_executor = ThreadPoolExecutor(max_workers=1)
+    timetable_cached = mode == "smart" and reusable_timetable(timetable, now)
     def read_timetable():
         started = time.perf_counter()
-        snapshot = build_timetable_snapshot(source, now, observed_at)
+        if timetable_cached:
+            snapshot = copy.deepcopy(timetable)
+            snapshot["days"] = copy.deepcopy(snapshot["rawDays"])
+        else:
+            snapshot = build_timetable_snapshot(source, now, observed_at)
         return snapshot, round(time.perf_counter() - started, 3)
     timetable_future = timetable_executor.submit(read_timetable)
     try:
@@ -2682,7 +2734,7 @@ def synchronize(
         finish_stage("attendance_index")
         detail_items = [item for item in attendance_index
                         if item.get("summaryOnly") != "true"
-                        and _needs_detail(item, existing_by_id.get(item["sourceRecordId"]), mode, window)]
+                        and _needs_detail(item, existing_by_id.get(item["sourceRecordId"]), mode, window, index_fingerprints)]
         def read_attendance_detail(item):
             source_id = item["sourceRecordId"]
             return source_id, parse_detail(source.request(item["detailPath"], "约课记录明细"), source_id)
@@ -2700,7 +2752,7 @@ def synchronize(
                 normalized["lastSeenAt"] = observed_at
                 normalized["missingFullSyncCount"] = 0
                 normalized["recordState"] = "active"
-            elif _needs_detail(item, existing, mode, window):
+            elif _needs_detail(item, existing, mode, window, index_fingerprints):
                 detail = detail_cache[source_id]
                 normalized = normalize_attendance(detail, observed_at, existing)
             elif existing:
@@ -2751,6 +2803,7 @@ def synchronize(
                 observed_at if mode == "full" else ledger.get("lastFullSyncAt")
             ),
             "records": merged_records,
+            "indexFingerprints": {item["sourceRecordId"]: _index_fingerprint(item) for item in attendance_index if item.get("summaryOnly") != "true"},
         }
         fingerprint = content_fingerprint(merged_records)
         proposed_ledger["contentFingerprint"] = fingerprint
@@ -2780,6 +2833,16 @@ def synchronize(
         }
         finish_stage("membership")
         proposed_timetable, timetable_seconds = timetable_future.result()
+        if timetable_cached:
+            current_keys = {(item["date"], item["startTime"], item["endTime"], normalize_course_name(item["courseName"])) for item in upcoming}
+            cancelled_cache = any(
+                record.get("availability") in ("booked", "waitlist")
+                and (record["date"], record["startTime"], record["endTime"], normalize_course_name(record["courseName"])) not in current_keys
+                for day in proposed_timetable["rawDays"] for record in day["records"]
+            )
+            if cancelled_cache:
+                proposed_timetable = build_timetable_snapshot(source, now, observed_at)
+                timetable_cached = False
         apply_timetable_bookings(proposed_timetable["days"], proposed_booking["records"])
         finish_stage("timetable_join")
         timings["timetable_wall"] = timetable_seconds
@@ -2839,6 +2902,7 @@ def synchronize(
             status="success",
             timings=timings,
             requests_made=source.request_count,
+            cache_metrics={"historyMode": mode, "historyDetailsRead": len(detail_items), "timetableReused": timetable_cached},
             connection_metrics=(dict(source.opener.metrics) if isinstance(source, WendaSource) else {}),
             source_records=len(attendance_index),
             merged_records=len(merged_records),
@@ -2930,7 +2994,7 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_OUTPUT,
         help="Sanitized public read-model JSON.",
     )
-    parser.add_argument("--mode", choices=("rolling", "full"), default="rolling")
+    parser.add_argument("--mode", choices=("rolling", "full", "smart"), default="rolling")
     parser.add_argument(
         "--fixture-dir",
         type=Path,
@@ -2962,6 +3026,7 @@ def _safe_stdout(result: SyncResult, dry_run: bool) -> None:
                 "phaseSeconds": result.timings,
                 "requestsMade": result.requests_made,
                 "connections": result.connection_metrics,
+                "reuse": result.cache_metrics,
             },
             ensure_ascii=False,
             separators=(",", ":"),
