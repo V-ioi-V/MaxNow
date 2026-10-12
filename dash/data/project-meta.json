@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-12 22:20",
-  "version": "1.0.11.83",
-  "versionLabel": "v1.0.11.83",
-  "branch": "feature/ballet-summary-rows",
-  "commit": "15132e1a",
+  "updatedAt": "2026-10-12 22:28",
+  "version": "1.0.11.84",
+  "versionLabel": "v1.0.11.84",
+  "branch": "feature/ballet-summary-four-columns",
+  "commit": "2bc8b49c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-summary-rows · commit 15132e1a · 有未提交代码改动",
+  "deployNote": "feature/ballet-summary-four-columns · commit 2bc8b49c · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-12",
+      "title": "训练概览四列与月度老师统计",
+      "summary": "改为四列四行：本周 / 本月 / 累计各显示次数、时长、最喜欢的课与老师；均值行固定按每周次数、每月次数、每周时长、每月时长排列。"
+    },
     {
       "date": "2026-10-12",
       "title": "训练概览横排与均值补充",
@@ -28,11 +33,6 @@
       "date": "2026-10-12",
       "title": "抢课课型与日期优先级调整",
       "summary": "长期目标改为每天 L1.5 → 软开 / 软开课 → L2，移除 L1；周六优先，工作日按周一至周五的日期顺序处理。所有老师平等，未标注老师也不归入李俊优先；同一天同课型按开始时间，同名同时段仍按大教室优先 / 小教室兜底并唯一匹配。"
-    },
-    {
-      "date": "2026-10-12",
-      "title": "周二三课取消并重新预约 L2",
-      "summary": "按 Owner 红框精确取消 10 月 13 日李俊 / 大教室 18:45–19:45 软开候补、19:45–21:15 L1 预约，以及张瀚泽 / 小教室 18:45–20:15 L2 预约。三次 dry-run 均 ready / mutationAttempts=0，逐课各一次取消并独立实时查询确认消失。"
     }
   ]
 }

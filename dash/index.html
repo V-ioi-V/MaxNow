@@ -6,8 +6,8 @@
     <title>MaxNow</title>
     <meta name="description" content="MaxNow personal dashboard maintained by OpenClaw data files." />
     <link rel="icon" type="image/png" href="./assets/maxnow-icon.png?v=1" />
-    <script src="./app.js?v=273" defer></script>
-    <link rel="stylesheet" href="./styles.css?v=296" />
+    <script src="./app.js?v=274" defer></script>
+    <link rel="stylesheet" href="./styles.css?v=297" />
   </head>
   <body>
     <div class="app-shell">
@@ -577,38 +577,70 @@
                   <strong class="ballet-week-favorite" id="ballet-week-favorite">暂无</strong>
                   <small id="ballet-week-favorite-meta">暂无已上完课程</small>
                 </section>
-                <section data-tone="cyan">
-                  <span>总训练次数</span>
-                  <strong id="ballet-total-classes">0 次</strong>
-                  <small>全部已上完课程</small>
+                <section data-tone="blue">
+                  <span>本周最喜欢的老师</span>
+                  <strong class="ballet-week-favorite" id="ballet-week-teacher">暂无</strong>
+                  <small id="ballet-week-teacher-meta">暂无已上完课程</small>
                 </section>
-                <section data-tone="orange">
-                  <span>总训练时长</span>
-                  <strong id="ballet-total-hours">0 小时</strong>
-                  <small>全部已上完课程</small>
+                <section data-tone="green">
+                  <span>本月训练次数</span>
+                  <strong id="ballet-month-classes">0 次</strong>
+                  <small>已上完课程</small>
+                </section>
+                <section data-tone="purple">
+                  <span>本月训练时长</span>
+                  <strong id="ballet-month-hours">0 小时</strong>
+                  <small>截至刷新时间</small>
+                </section>
+                <section data-tone="pink">
+                  <span>本月最喜欢的课</span>
+                  <strong class="ballet-week-favorite" id="ballet-month-favorite">暂无</strong>
+                  <small id="ballet-month-favorite-meta">暂无已上完课程</small>
                 </section>
                 <section data-tone="blue">
-                  <span>最喜欢的课</span>
+                  <span>本月最喜欢的老师</span>
+                  <strong class="ballet-week-favorite" id="ballet-month-teacher">暂无</strong>
+                  <small id="ballet-month-teacher-meta">暂无已上完课程</small>
+                </section>
+                <section data-tone="green">
+                  <span>累计训练次数</span>
+                  <strong id="ballet-total-classes">0 次</strong>
+                  <small>已上完课程</small>
+                </section>
+                <section data-tone="purple">
+                  <span>累计训练时长</span>
+                  <strong id="ballet-total-hours">0 小时</strong>
+                  <small>截至刷新时间</small>
+                </section>
+                <section data-tone="pink">
+                  <span>累计最喜欢的课</span>
                   <strong class="ballet-week-favorite" id="ballet-total-favorite">暂无</strong>
                   <small id="ballet-total-favorite-meta">暂无已上完课程</small>
+                </section>
+                <section data-tone="blue">
+                  <span>累计最喜欢的老师</span>
+                  <strong class="ballet-week-favorite" id="ballet-total-teacher">暂无</strong>
+                  <small id="ballet-total-teacher-meta">暂无已上完课程</small>
                 </section>
                 <section data-tone="green">
                   <span>平均每周上课次数</span>
                   <strong id="ballet-overview-weekly-classes">—</strong>
                   <small>次 / 周</small>
                 </section>
+                <section data-tone="cyan">
+                  <span>平均每月上课次数</span>
+                  <strong id="ballet-overview-monthly-classes">—</strong>
+                  <small>次 / 月</small>
+                </section>
                 <section data-tone="purple">
-                  <span>平均每周上课时长</span>
+                  <span>平均每周上课时间</span>
                   <strong id="ballet-overview-weekly-hours">—</strong>
                   <small>小时 / 周</small>
                 </section>
-                <section data-tone="blue">
-                  <span>平均每月上课</span>
-                  <div class="ballet-overview-monthly-values">
-                    <strong id="ballet-overview-monthly-classes">—</strong><small>次</small>
-                    <strong id="ballet-overview-monthly-hours">—</strong><small>小时</small>
-                  </div>
-                  <small>次数与时长 / 月</small>
+                <section data-tone="orange">
+                  <span>平均每月上课时间</span>
+                  <strong id="ballet-overview-monthly-hours">—</strong>
+                  <small>小时 / 月</small>
                 </section>
               </div>
               <p class="ballet-overview-average-note" id="ballet-overview-average-note">暂无有效训练区间</p>

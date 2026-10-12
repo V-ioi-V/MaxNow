@@ -787,7 +787,6 @@ def check_ballet_read_model():
         or 'id="ballet-week-booked"' in dashboard_html
         or 'id="ballet-week-waitlist"' in dashboard_html
         or 'id="ballet-week-completion-ring"' in dashboard_html
-        or "最喜欢的老师" in dashboard_html
         or "function balletTrainingCompletedAt(record = {})" not in dashboard_js
         or "function getBalletCompletedTrainingRecords(" not in dashboard_js
         or "function getBalletFavoriteCourse(records = [])" not in dashboard_js
@@ -802,7 +801,7 @@ def check_ballet_read_model():
         or 'setText("#ballet-week-classes", `${weekSummary.classes} 次`);' not in dashboard_js
         or 'setText("#ballet-total-hours", `${formatBalletHours(totalSummary.minutes)} 小时`);' not in dashboard_js
         or ".ballet-week-grid .ballet-week-favorite {" not in dashboard_css
-        or "grid-template-rows: repeat(3, minmax(94px, 1fr));" not in dashboard_css
+        or "grid-template-rows: repeat(4, minmax(94px, 1fr));" not in dashboard_css
         or "grid-auto-flow: row;" not in dashboard_css
         or ".ballet-week-completion-ring {" in dashboard_css
         or ".ballet-week-grid .ballet-week-bottom {" in dashboard_css
@@ -1776,9 +1775,9 @@ def check_secondary_view_style():
     if any(not (digits_root / digits[digit]["file"]).is_file() for digit in "0123456789"):
         raise ValueError("secondary views: ballet weekly cover digit PNG is missing")
     if (
-        "styles.css?v=296" not in dashboard_html
+        "styles.css?v=297" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=273" not in dashboard_html
+        or "app.js?v=274" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2035,7 +2034,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=273" not in dashboard_html:
+    if "app.js?v=274" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js
