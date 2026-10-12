@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 11,
+  "schemaVersion": 12,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -7,21 +7,25 @@
     "weekday": 6,
     "time": "14:20"
   },
-  "discoveryRefreshSeconds": [2, 6, 10],
-  "unknownVerificationSeconds": [0.8, 2, 4],
-  "priorityWeekdays": [
-    1,
-    5,
-    4,
-    0,
+  "discoveryRefreshSeconds": [
     2,
-    3
+    6,
+    10
+  ],
+  "unknownVerificationSeconds": [
+    0.8,
+    2,
+    4
+  ],
+  "priorityWeekdays": [
+    5,
+    0,
+    1,
+    2,
+    3,
+    4
   ],
   "priorityCourses": [
-    {
-      "courseType": "ballet",
-      "level": "L1"
-    },
     {
       "courseType": "ballet",
       "level": "L1.5"
@@ -29,16 +33,18 @@
     {
       "courseType": "soft_open",
       "level": "none"
+    },
+    {
+      "courseType": "ballet",
+      "level": "L2"
     }
   ],
   "venuePriority": [
     "大教室",
     "小教室"
   ],
-  "teacherPriority": [
-    "李俊"
-  ],
-  "emptyTeacherAs": "李俊",
+  "teacherPriority": [],
+  "emptyTeacherAs": "",
   "weekdayStartTimes": {
     "0": "18:40",
     "1": "18:40",
@@ -53,21 +59,45 @@
   "selectionRules": [
     {
       "key": "soft-open",
-      "weekdays": [0, 1, 2, 3, 4, 5],
+      "weekdays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "courseType": "soft_open",
       "level": "none",
-      "exactCourseNames": ["软开", "软开课"]
+      "exactCourseNames": [
+        "软开",
+        "软开课"
+      ]
     },
     {
-      "key": "ballet-l1",
-      "weekdays": [0, 1, 2, 3, 4, 5],
+      "key": "ballet-l2",
+      "weekdays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "courseType": "ballet",
-      "level": "L1",
+      "level": "L2",
       "exactCourseNames": null
     },
     {
       "key": "ballet-l1-5",
-      "weekdays": [0, 1, 2, 3, 4, 5],
+      "weekdays": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "courseType": "ballet",
       "level": "L1.5",
       "exactCourseNames": null
