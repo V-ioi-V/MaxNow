@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-12 22:01",
-  "version": "1.0.11.80",
-  "versionLabel": "v1.0.11.80",
-  "branch": "feature/ballet-priority-l15-soft-l2",
-  "commit": "e5a9209c",
+  "updatedAt": "2026-10-12 22:04",
+  "version": "1.0.11.81",
+  "versionLabel": "v1.0.11.81",
+  "branch": "bugfix/ballet-monday-first",
+  "commit": "f4a80bde",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-priority-l15-soft-l2 · commit e5a9209c · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-monday-first · commit f4a80bde · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-12",
+      "title": "抢课日期按周一至周六顺序",
+      "summary": "Owner 将日期优先级改为周一 → 周二 → 周三 → 周四 → 周五 → 周六；首轮只允许周一 L1.5 提前提交，其余课型 / 日期等待发现窗口结束。每日 L1.5 → 软开 / 软开课 → L2、老师平等、旧卡顺延、时间限制和提交保护不变。"
+    },
     {
       "date": "2026-10-12",
       "title": "抢课课型与日期优先级调整",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "截图圈选周六课程取消",
       "summary": "Owner 红框指定 10 月 17 日 15:30–17:00「芭蕾L1.5 - 入门+」，徐老师 / 大教室。实时活动预约唯一匹配，dry-run ready、mutationAttempts=0；单次取消 mutation 返回 cancelled，18:37:20 独立活动预约查询确认目标消失，周六上午 L1 预约仍在。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "截图圈选两节课程预约",
-      "summary": "Owner 红框指定 10 月 13 日 18:45–20:15「芭蕾L2-零基础」和 10 月 14 日 19:00–20:00「软开课」，均为张瀚泽 / 小教室。实时课表唯一匹配，统一 dry-run 两节 ready、mutationAttempts=0；执行各一次预约，activationAttempts=0，独立活动预约查询均确认 booked。"
     }
   ]
 };

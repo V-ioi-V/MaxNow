@@ -11,14 +11,14 @@
     "芭蕾 L2"
   ],
   "priorityOrder": [
-    "周六",
     "周一",
     "周二",
     "周三",
     "周四",
-    "周五"
+    "周五",
+    "周六"
   ],
-  "prioritySummary": "按天优先：周六 > 周一至周五（按日期顺序）；每天按芭蕾 L1.5 > 软开 / 软开课 > 芭蕾 L2；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；课程卡按到期日由近到远顺延；无可用卡时激活剩余课次最少的适用卡",
+  "prioritySummary": "按天优先：周一 > 周二 > 周三 > 周四 > 周五 > 周六；每天按芭蕾 L1.5 > 软开 / 软开课 > 芭蕾 L2；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；课程卡按到期日由近到远顺延；无可用卡时激活剩余课次最少的适用卡",
   "lastAttemptAt": null,
   "lastSuccessAt": null,
   "nextRunAt": "2026-10-18T14:20:00+08:00",
@@ -29,36 +29,6 @@
   "averageCriticalPathMilliseconds": null,
   "lastStatus": "waiting",
   "targets": [
-    {
-      "key": "ballet-l1-5-5",
-      "weekday": "周六",
-      "date": "2026-10-24",
-      "startTime": "18:00 前结束",
-      "endTime": "",
-      "course": "芭蕾 L1.5",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "soft-open-5",
-      "weekday": "周六",
-      "date": "2026-10-24",
-      "startTime": "18:00 前结束",
-      "endTime": "",
-      "course": "软开",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "ballet-l2-5",
-      "weekday": "周六",
-      "date": "2026-10-24",
-      "startTime": "18:00 前结束",
-      "endTime": "",
-      "course": "芭蕾 L2",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
     {
       "key": "ballet-l1-5-0",
       "weekday": "周一",
@@ -208,9 +178,39 @@
       "course": "芭蕾 L2",
       "teacher": "不限老师",
       "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "ballet-l1-5-5",
+      "weekday": "周六",
+      "date": "2026-10-24",
+      "startTime": "18:00 前结束",
+      "endTime": "",
+      "course": "芭蕾 L1.5",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "soft-open-5",
+      "weekday": "周六",
+      "date": "2026-10-24",
+      "startTime": "18:00 前结束",
+      "endTime": "",
+      "course": "软开",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "ballet-l2-5",
+      "weekday": "周六",
+      "date": "2026-10-24",
+      "startTime": "18:00 前结束",
+      "endTime": "",
+      "course": "芭蕾 L2",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
     }
   ],
   "lastRun": null,
   "preview": null,
-  "generatedAt": "2026-10-12T21:57:02+08:00"
+  "generatedAt": "2026-10-12T22:04:13+08:00"
 }

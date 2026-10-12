@@ -371,7 +371,7 @@ def check_ballet_booking_fast():
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     rules = config.get("selectionRules", [])
     if (
-        config.get("schemaVersion") != 12
+        config.get("schemaVersion") != 13
         or not rules
         or config.get("priorityCourses")
         != [
@@ -379,7 +379,7 @@ def check_ballet_booking_fast():
             {"courseType": "soft_open", "level": "none"},
             {"courseType": "ballet", "level": "L2"},
         ]
-        or config.get("priorityWeekdays") != [5, 0, 1, 2, 3, 4]
+        or config.get("priorityWeekdays") != [0, 1, 2, 3, 4, 5]
         or config.get("venuePriority") != ["大教室", "小教室"]
         or config.get("teacherPriority") != []
         or config.get("emptyTeacherAs") != ""
@@ -426,11 +426,11 @@ def check_ballet_booking_fast():
         or {item.get("teacher") for item in data.get("targets", [])}
         != {"不限老师"}
         or data.get("priorityOrder")
-        != ["周六", "周一", "周二", "周三", "周四", "周五"]
+        != ["周一", "周二", "周三", "周四", "周五", "周六"]
         or data.get("coursePriorityOrder")
         != ["芭蕾 L1.5", "软开 / 软开课", "芭蕾 L2"]
         or not str(data.get("prioritySummary", "")).startswith(
-            "按天优先：周六 > 周一至周五（按日期顺序）；"
+            "按天优先：周一 > 周二 > 周三 > 周四 > 周五 > 周六；"
             "每天按芭蕾 L1.5 > 软开 / 软开课 > 芭蕾 L2；"
             "所有日期不限老师，同课型按开始时间排序；"
             "工作日仅 18:40 后、周六仅 18:00 前结束；"
@@ -1777,7 +1777,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=295" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=270" not in dashboard_html
+        or "app.js?v=271" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2034,7 +2034,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=270" not in dashboard_html:
+    if "app.js?v=271" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

@@ -132,8 +132,8 @@ const fallbackBalletBookingFast =
     enabled: false,
     planMode: "weekly-rules",
     coursePriorityOrder: ["芭蕾 L1.5", "软开 / 软开课", "芭蕾 L2"],
-    priorityOrder: ["周六", "周一", "周二", "周三", "周四", "周五"],
-    prioritySummary: "按天优先：周六 > 周一至周五（按日期顺序）；每天按芭蕾 L1.5 > 软开 / 软开课 > 芭蕾 L2；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底",
+    priorityOrder: ["周一", "周二", "周三", "周四", "周五", "周六"],
+    prioritySummary: "按天优先：周一 > 周二 > 周三 > 周四 > 周五 > 周六；每天按芭蕾 L1.5 > 软开 / 软开课 > 芭蕾 L2；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底",
     targets: [],
     lastStatus: "waiting",
   };
@@ -2712,7 +2712,7 @@ function createBalletBookingMiniTimetable(targets = [], options = {}) {
     const firstTarget = dayTargets[0] || {};
     const day = document.createElement("section");
     day.className = "ballet-booking-mini-day";
-    day.dataset.priority = mode === "targets" && firstTarget.weekday === "周六" ? "first" : "standard";
+    day.dataset.priority = mode === "targets" && firstTarget.weekday === "周一" ? "first" : "standard";
     day.setAttribute("role", "cell");
 
     const header = document.createElement("header");
@@ -2724,10 +2724,10 @@ function createBalletBookingMiniTimetable(targets = [], options = {}) {
     date.textContent = String(firstTarget.date || "").slice(5).replace("-", "/");
     heading.append(weekday, date);
     header.appendChild(heading);
-    if (mode === "targets" && firstTarget.weekday === "周六") {
+    if (mode === "targets" && firstTarget.weekday === "周一") {
       const priority = document.createElement("span");
       priority.className = "ballet-booking-mini-priority";
-      priority.textContent = "周末优先";
+      priority.textContent = "周一优先";
       header.appendChild(priority);
     }
 
