@@ -8904,6 +8904,11 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-manual-plans > h3 { margin: 0 0 12px; color: var(--soft); font-size: 14px; }
 
 /* Training summary: week, month, total, then four independent averages. */
+#ballet-week-hours, #ballet-month-hours, #ballet-total-hours {
+  font-size: clamp(14px, 1vw, 18px);
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
 .ballet-overview-average-note {
   margin: 12px 0 0;
   color: var(--muted);
