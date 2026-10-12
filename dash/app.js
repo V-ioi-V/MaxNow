@@ -133,7 +133,7 @@ const fallbackBalletBookingFast =
     planMode: "weekly-rules",
     coursePriorityOrder: ["芭蕾 L1.5", "软开 / 软开课", "芭蕾 L2"],
     priorityOrder: ["周一", "周二", "周三", "周四", "周五", "周六"],
-    prioritySummary: "按天优先：周一 > 周二 > 周三 > 周四 > 周五 > 周六；每天按芭蕾 L1.5 > 软开 / 软开课 > 芭蕾 L2；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底",
+    prioritySummary: "第一轮按周一至周六，每天先芭蕾 L1.5 再软开 / 软开课；第二轮按周一至周六处理芭蕾 L2；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底",
     targets: [],
     lastStatus: "waiting",
   };

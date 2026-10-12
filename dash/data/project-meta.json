@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-12 22:04",
-  "version": "1.0.11.81",
-  "versionLabel": "v1.0.11.81",
-  "branch": "bugfix/ballet-monday-first",
-  "commit": "f4a80bde",
+  "updatedAt": "2026-10-12 22:09",
+  "version": "1.0.11.82",
+  "versionLabel": "v1.0.11.82",
+  "branch": "bugfix/ballet-l2-second-pass",
+  "commit": "34ebc374",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-monday-first · commit f4a80bde · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-l2-second-pass · commit 34ebc374 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-12",
+      "title": "L2 在全周 L1.5 / 软开之后处理",
+      "summary": "按 Owner 明确的两轮顺序：第一轮周一 L1.5 → 软开、周二 L1.5 → 软开，依次至周六；全部轮完后第二轮周一至周六 L2。执行配置新增 deferredCourses，并将轮次置于日期之前排序，避免周一 L2 提前于后续日期的 L1.5 / 软开。"
+    },
     {
       "date": "2026-10-12",
       "title": "抢课日期按周一至周六顺序",
@@ -28,11 +33,6 @@
       "date": "2026-10-11",
       "title": "豆奶功能下线",
       "summary": "按 Owner 要求删除豆奶 tab、首页摘要、专用页面 / 样式、数据加载、健康来源及数据文件；旧链接回首页并清除原浏览器缓存。同步移除 Cloud 采集任务说明和 OpenClaw 数据写入授权。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "截图圈选周六课程取消",
-      "summary": "Owner 红框指定 10 月 17 日 15:30–17:00「芭蕾L1.5 - 入门+」，徐老师 / 大教室。实时活动预约唯一匹配，dry-run ready、mutationAttempts=0；单次取消 mutation 返回 cancelled，18:37:20 独立活动预约查询确认目标消失，周六上午 L1 预约仍在。"
     }
   ]
 }

@@ -354,18 +354,31 @@ class FastBookingTests(unittest.TestCase):
             2026, 8, 2, 14, 20, tzinfo=ballet.TIMEZONE
         )
 
+    def test_all_l15_and_soft_open_are_attempted_before_any_l2(self):
+        source = FakeFastSource(progressive_l15_after_requests={"2026-08-08": 2})
+        result, _ = fast.run_fast(source, config(), fast.default_state(), self.release,
+                                  execute=True, sleeper=lambda _: None)
+        self.assertEqual(len(source.mutation_order), 18)
+        self.assertTrue(all(not key.startswith("ballet-l2-") for key in source.mutation_order[:12]))
+        self.assertTrue(all(key.startswith("ballet-l2-") for key in source.mutation_order[12:]))
+        self.assertTrue(source.mutation_order[11].startswith("soft-open-2026-08-08-"))
+        self.assertTrue(source.mutation_order[12].startswith("ballet-l2-2026-08-03-"))
+        self.assertEqual(source.max_active_mutation, 1)
+
     def test_targets_follow_permanent_priority(self):
         targets = fast.materialize_targets(config(), self.release)
         self.assertEqual(
             [target["key"] for target in targets],
             [f"{course}-{day}" for day in [0, 1, 2, 3, 4, 5]
-             for course in ["ballet-l1-5", "soft-open", "ballet-l2"]],
+             for course in ["ballet-l1-5", "soft-open"]]
+            + [f"ballet-l2-{day}" for day in [0, 1, 2, 3, 4, 5]],
         )
         self.assertEqual(
             [target["date"] for target in targets],
             [day for day in ["2026-08-03", "2026-08-04", "2026-08-05",
                              "2026-08-06", "2026-08-07", "2026-08-08"]
-             for _ in range(3)],
+             for _ in range(2)] + ["2026-08-03", "2026-08-04", "2026-08-05",
+                                   "2026-08-06", "2026-08-07", "2026-08-08"],
         )
 
     def test_discovery_selects_only_exact_soft_open_and_standard_l15_l2(self):
@@ -603,13 +616,15 @@ class FastBookingTests(unittest.TestCase):
                 for day in ["2026-08-03", "2026-08-04", "2026-08-05",
                             "2026-08-06", "2026-08-07", "2026-08-08"]
                 for course, times in (
-                    [("ballet-l1-5", "1430-1600"), ("soft-open", "1000-1100"),
-                     ("ballet-l2", "1300-1430")]
+                    [("ballet-l1-5", "1430-1600"), ("soft-open", "1000-1100")]
                     if day == "2026-08-08" else
-                    [("ballet-l1-5", "2115-2245"), ("soft-open", "1845-1945"),
-                     ("ballet-l2", "1945-2115")]
+                    [("ballet-l1-5", "2115-2245"), ("soft-open", "1845-1945")]
                 )
-            ],
+            ] + [f"ballet-l2-{day}-{times}-0" for day, times in [
+                ("2026-08-03", "1945-2115"), ("2026-08-04", "1945-2115"),
+                ("2026-08-05", "1945-2115"), ("2026-08-06", "1945-2115"),
+                ("2026-08-07", "1945-2115"), ("2026-08-08", "1300-1430"),
+            ]],
         )
 
     def test_unknown_result_does_not_block_remaining_courses(self):
@@ -678,7 +693,8 @@ class FastBookingTests(unittest.TestCase):
                          "2026-08-06", "2026-08-07", "2026-08-08"]
         self.assertEqual(
             [record["date"] for record in result["records"]],
-            [day for day in expected_days for _ in range(3)],
+            [day for day in expected_days for _ in range(2)] + ["2026-08-03", "2026-08-04", "2026-08-05",
+                                   "2026-08-06", "2026-08-07", "2026-08-08"],
         )
         for day in expected_days:
             keys = [key for key in source.mutation_order if day in key]
@@ -700,12 +716,13 @@ class FastBookingTests(unittest.TestCase):
             [record["date"] for record in result["records"]],
             [day for day in ["2026-08-03", "2026-08-04", "2026-08-05",
                              "2026-08-06", "2026-08-07", "2026-08-08"]
-             for _ in range(3)],
+             for _ in range(2)] + ["2026-08-03", "2026-08-04", "2026-08-05",
+                                   "2026-08-06", "2026-08-07", "2026-08-08"],
         )
         self.assertEqual(source.mutation_order[:3], [
             "ballet-l1-5-2026-08-03-2115-2245-0",
             "soft-open-2026-08-03-1845-1945-0",
-            "ballet-l2-2026-08-03-1945-2115-0",
+            "ballet-l1-5-2026-08-04-2115-2245-0",
         ])
         self.assertEqual(source.max_active_mutation, 1)
 

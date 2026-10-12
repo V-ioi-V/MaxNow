@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 13,
+  "schemaVersion": 14,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -101,6 +101,12 @@
       "courseType": "ballet",
       "level": "L1.5",
       "exactCourseNames": null
+    }
+  ],
+  "deferredCourses": [
+    {
+      "courseType": "ballet",
+      "level": "L2"
     }
   ]
 }

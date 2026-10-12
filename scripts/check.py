@@ -371,7 +371,8 @@ def check_ballet_booking_fast():
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     rules = config.get("selectionRules", [])
     if (
-        config.get("schemaVersion") != 13
+        config.get("schemaVersion") != 14
+        or config.get("deferredCourses") != [{"courseType": "ballet", "level": "L2"}]
         or not rules
         or config.get("priorityCourses")
         != [
@@ -430,8 +431,8 @@ def check_ballet_booking_fast():
         or data.get("coursePriorityOrder")
         != ["芭蕾 L1.5", "软开 / 软开课", "芭蕾 L2"]
         or not str(data.get("prioritySummary", "")).startswith(
-            "按天优先：周一 > 周二 > 周三 > 周四 > 周五 > 周六；"
-            "每天按芭蕾 L1.5 > 软开 / 软开课 > 芭蕾 L2；"
+            "第一轮按周一至周六，每天先芭蕾 L1.5 再软开 / 软开课；第二轮按周一至周六处理芭蕾 L2；"
+            ""
             "所有日期不限老师，同课型按开始时间排序；"
             "工作日仅 18:40 后、周六仅 18:00 前结束；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
@@ -1777,7 +1778,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=295" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=271" not in dashboard_html
+        or "app.js?v=272" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2034,7 +2035,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=271" not in dashboard_html:
+    if "app.js?v=272" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

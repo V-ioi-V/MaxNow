@@ -365,7 +365,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     if (
         not isinstance(data, dict)
-        or data.get("schemaVersion") != 13
+        or data.get("schemaVersion") != 14
         or data.get("timezone") != "Asia/Shanghai"
         or not isinstance(data.get("enabled"), bool)
         or not isinstance(data.get("allowWaitlist"), bool)
@@ -411,6 +411,8 @@ def load_config(path: Path) -> dict[str, Any]:
         {"courseType": "soft_open", "level": "none"},
         {"courseType": "ballet", "level": "L2"},
     ]
+    if data.get("deferredCourses") != [{"courseType": "ballet", "level": "L2"}]:
+        raise FastBookingFailure("configuration_error")
     if course_priorities != expected_course_priorities:
         raise FastBookingFailure("configuration_error")
     if data["venuePriority"] != ["大教室", "小教室"]:
@@ -503,7 +505,9 @@ def target_priority_key(
     target: dict[str, Any], config: dict[str, Any]
 ) -> tuple[Any, ...]:
     weekday = target["weekday"]
+    deferred = {"courseType": target["courseType"], "level": target["level"]} in config["deferredCourses"]
     return (
+        int(deferred),
         priority_rank(weekday, config["priorityWeekdays"]),
         course_priority_rank(target, config["priorityCourses"]),
         target.get("startTime", ""),
@@ -1582,8 +1586,8 @@ def build_public(
         "coursePriorityOrder": ["芭蕾 L1.5", "软开 / 软开课", "芭蕾 L2"],
         "priorityOrder": ["周一", "周二", "周三", "周四", "周五", "周六"],
         "prioritySummary": (
-            "按天优先：周一 > 周二 > 周三 > 周四 > 周五 > 周六；"
-            "每天按芭蕾 L1.5 > 软开 / 软开课 > 芭蕾 L2；"
+            "第一轮按周一至周六，每天先芭蕾 L1.5 再软开 / 软开课；第二轮按周一至周六处理芭蕾 L2；"
+            ""
             "所有日期不限老师，同课型按开始时间排序；"
             "工作日仅 18:40 后、周六仅 18:00 前结束；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；"
