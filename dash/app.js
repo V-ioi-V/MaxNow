@@ -4663,7 +4663,7 @@ function renderBalletWeek() {
   setText("#ballet-month-classes", `${monthSummary.classes} 次`);
   setText("#ballet-month-hours", `${formatBalletHours(monthSummary.minutes)} 小时`);
   setBalletFavoriteCourse("#ballet-month-favorite", "#ballet-month-favorite-meta", monthSummary.favorite);
-  [["week", weekSummary], ["month", monthSummary], ["total", totalSummary]].forEach(([period, summary]) => {
+  [["week", weekSummary], ["month", monthSummary]].forEach(([period, summary]) => {
     setBalletFavoriteCourse(`#ballet-${period}-teacher`, `#ballet-${period}-teacher-meta`, summary.teacher);
   });
   setText("#ballet-week-classes", `${weekSummary.classes} 次`);
@@ -4672,13 +4672,6 @@ function renderBalletWeek() {
     "#ballet-week-favorite",
     "#ballet-week-favorite-meta",
     weekSummary.favorite,
-  );
-  setText("#ballet-total-classes", `${totalSummary.classes} 次`);
-  setText("#ballet-total-hours", `${formatBalletHours(totalSummary.minutes)} 小时`);
-  setBalletFavoriteCourse(
-    "#ballet-total-favorite",
-    "#ballet-total-favorite-meta",
-    totalSummary.favorite,
   );
   const averages = getBalletTrainingAverages(totalSummary, completedRecords);
   const formatAverage = (value) => Number.isFinite(value) ? value.toLocaleString("zh-CN", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—";
