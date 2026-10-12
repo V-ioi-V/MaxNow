@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-11 18:53",
-  "version": "1.0.11.78",
-  "versionLabel": "v1.0.11.78",
-  "branch": "feature/remove-dounai",
-  "commit": "aea6b733",
+  "updatedAt": "2026-10-12 21:52",
+  "version": "1.0.11.79",
+  "versionLabel": "v1.0.11.79",
+  "branch": "bugfix/tuesday-l2-rebooking",
+  "commit": "557139d9",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/remove-dounai · commit aea6b733 · 有未提交代码改动",
+  "deployNote": "bugfix/tuesday-l2-rebooking · commit 557139d9 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-12",
+      "title": "周二三课取消并重新预约 L2",
+      "summary": "按 Owner 红框精确取消 10 月 13 日李俊 / 大教室 18:45–19:45 软开候补、19:45–21:15 L1 预约，以及张瀚泽 / 小教室 18:45–20:15 L2 预约。三次 dry-run 均 ready / mutationAttempts=0，逐课各一次取消并独立实时查询确认消失。"
+    },
     {
       "date": "2026-10-11",
       "title": "豆奶功能下线",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-11",
       "title": "芭蕾历史与预约重叠读取",
       "summary": "同步开始即并行读取历史、活动预约与课表，各任务仍共用最多 3 条 HTTPS 连接，不减少预约 / 历史索引 / 课程卡实时读取。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "芭蕾减少重复历史详情与课表请求",
-      "summary": "页面 / 手动刷新使用 smart 增量：完整读取历史列表及分页，只重读新增或索引变化的历史详情；预约、候补和课程卡保持实时读取。课表原始快照最多复用 5 分钟，不推进采集时间，取消导致旧本人状态时重读。"
     }
   ]
 };
