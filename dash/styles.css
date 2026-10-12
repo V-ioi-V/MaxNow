@@ -4295,9 +4295,9 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-overview-grid .ballet-week-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(3, minmax(84px, 1fr));
-  grid-auto-flow: column;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(94px, 1fr));
+  grid-auto-flow: row;
   grid-auto-rows: auto;
 }
 
@@ -8637,8 +8637,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 
   .ballet-session-metrics,
   .ballet-booking-fast-metrics,
-  .ballet-membership-metrics,
-  .ballet-overview-grid .ballet-week-grid {
+  .ballet-membership-metrics {
     grid-template-columns: 1fr;
     gap: 10px;
   }
@@ -8903,3 +8902,32 @@ body[data-view="ricky"] .topbar-ricky-status {
 .ballet-manual-plans { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
 .ballet-manual-plans[hidden] { display: none; }
 .ballet-manual-plans > h3 { margin: 0 0 12px; color: var(--soft); font-size: 14px; }
+
+/* Training summary: weekly row, cumulative row, then three average blocks. */
+.ballet-overview-monthly-values {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  justify-content: center;
+  column-gap: 4px;
+  row-gap: 4px;
+}
+.ballet-overview-average-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+@media (max-width: 560px) {
+  .ballet-overview-grid .ballet-week-grid {
+    grid-template-rows: repeat(3, minmax(110px, auto));
+    gap: 7px;
+  }
+  .ballet-week-grid section {
+    padding: 11px 5px;
+    gap: 6px;
+  }
+  .ballet-week-grid span, .ballet-week-grid small { font-size: 10px; }
+  .ballet-week-grid strong { font-size: 18px; }
+  .ballet-week-grid .ballet-week-favorite { font-size: 14px; }
+}

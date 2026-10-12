@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-12 22:09",
-  "version": "1.0.11.82",
-  "versionLabel": "v1.0.11.82",
-  "branch": "bugfix/ballet-l2-second-pass",
-  "commit": "34ebc374",
+  "updatedAt": "2026-10-12 22:20",
+  "version": "1.0.11.83",
+  "versionLabel": "v1.0.11.83",
+  "branch": "feature/ballet-summary-rows",
+  "commit": "15132e1a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-l2-second-pass · commit 34ebc374 · 有未提交代码改动",
+  "deployNote": "feature/ballet-summary-rows · commit 15132e1a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-12",
+      "title": "训练概览横排与均值补充",
+      "summary": "本周次数 / 时长 / 最喜欢的课横排为第一行，累计三项横排为第二行；第三行新增每周平均次数、每周平均时长、每月平均次数及时间。手机仍保留三列，继承既有指标卡语义色和悬浮反馈。"
+    },
     {
       "date": "2026-10-12",
       "title": "L2 在全周 L1.5 / 软开之后处理",
@@ -28,11 +33,6 @@
       "date": "2026-10-12",
       "title": "周二三课取消并重新预约 L2",
       "summary": "按 Owner 红框精确取消 10 月 13 日李俊 / 大教室 18:45–19:45 软开候补、19:45–21:15 L1 预约，以及张瀚泽 / 小教室 18:45–20:15 L2 预约。三次 dry-run 均 ready / mutationAttempts=0，逐课各一次取消并独立实时查询确认消失。"
-    },
-    {
-      "date": "2026-10-11",
-      "title": "豆奶功能下线",
-      "summary": "按 Owner 要求删除豆奶 tab、首页摘要、专用页面 / 样式、数据加载、健康来源及数据文件；旧链接回首页并清除原浏览器缓存。同步移除 Cloud 采集任务说明和 OpenClaw 数据写入授权。"
     }
   ]
 }

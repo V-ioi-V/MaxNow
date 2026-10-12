@@ -4127,7 +4127,7 @@ function renderBalletTrend() {
 }
 
 // Calendar-day span includes idle dates and freezes at the last successful snapshot.
-function getBalletTrainingAverages(aggregate = {}) {
+function getBalletTrainingAverages(aggregate = {}, completedRecords = null) {
   const dayNumber = (key) => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return null;
     const stamp = Date.parse(`${key}T00:00:00Z`);
@@ -4138,7 +4138,9 @@ function getBalletTrainingAverages(aggregate = {}) {
   const endDay = dayNumber(through);
   if (endDay === null) return null;
   const daily = normalizeBalletTrendEntries(balletData.aggregates?.daily, "day");
-  const entries = daily.length ? daily : aggregateBalletRecords("day");
+  const entries = completedRecords
+    ? completedRecords.map((record) => ({ date: balletRecordDate(record), classes: 1, minutes: balletMinutes(record) || 0 }))
+    : (daily.length ? daily : aggregateBalletRecords("day"));
   const dates = entries.filter((entry) => (entry.classes > 0 || entry.minutes > 0)
     && dayNumber(entry.date) !== null && dayNumber(entry.date) <= endDay)
     .map((entry) => entry.date).sort();
@@ -4660,6 +4662,15 @@ function renderBalletWeek() {
     "#ballet-total-favorite-meta",
     totalSummary.favorite,
   );
+  const averages = getBalletTrainingAverages(totalSummary, completedRecords);
+  const formatAverage = (value) => Number.isFinite(value) ? value.toLocaleString("zh-CN", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—";
+  setText("#ballet-overview-weekly-classes", formatAverage(averages?.weeklyClasses));
+  setText("#ballet-overview-weekly-hours", formatAverage(averages?.weeklyHours));
+  setText("#ballet-overview-monthly-classes", formatAverage(averages?.monthlyClasses));
+  setText("#ballet-overview-monthly-hours", formatAverage(averages?.monthlyHours));
+  setText("#ballet-overview-average-note", averages
+    ? `${formatDateOnly(averages.from)}—${formatDateOnly(averages.through)} · 含未上课日期，周按 7 天、月按 30.44 天折算。`
+    : "暂无有效训练区间");
 }
 
 function normalizeBalletLevel(value) {
