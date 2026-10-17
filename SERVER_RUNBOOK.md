@@ -1,5 +1,10 @@
 # MaxNow 服务器操作说明
 
+## 2026-10-17 取消周日课程
+
+- Owner 授权取消 2026-10-18 15:30–17:00 戴俊瑶「芭蕾L1.5 - 入门+」（小教室）。实时预约精确唯一匹配；取消 runner dry-run 为 ready / mutationAttempts=0，execute 为 cancelled / mutationAttempts=1。
+- 独立不带日期范围的 bookings 查询返回空列表；既有 maxnow-ballet-sync.service 只读同步 Result=success / ExecMainStatus=0 / inactive，dataAsOf=2026-10-17T16:38:28+08:00。公开预约为空，手动补录保留，累计 56 节 / 73.5 小时。版本 `1.0.11.87`。
+
 ## 2026-10-17 手动上课记录
 
 - Owner 截图唯一对应 2026-10-17 10:00–11:30 徐老师「芭蕾L1-入门」（小教室 / 90 分钟）。写入前私有账本及公开历史均无重复。

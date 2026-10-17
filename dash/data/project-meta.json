@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-17 16:36",
-  "version": "1.0.11.86",
-  "versionLabel": "v1.0.11.86",
-  "branch": "feature/manual-ballet-20261017",
-  "commit": "754830c8",
+  "updatedAt": "2026-10-17 16:38",
+  "version": "1.0.11.87",
+  "versionLabel": "v1.0.11.87",
+  "branch": "feature/cancel-ballet-20261018",
+  "commit": "c5b8b8ba",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/manual-ballet-20261017 · commit 754830c8 · 有未提交代码改动",
+  "deployNote": "feature/cancel-ballet-20261018 · commit c5b8b8ba · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-17",
+      "title": "取消周日芭蕾预约",
+      "summary": "根据 Owner 截图取消 2026-10-18 15:30–17:00 戴俊瑶「芭蕾L1.5 - 入门+」（小教室）。实时唯一匹配、零变更预检通过后，仅提交一次取消，独立实时查询确认预约已消失。"
+    },
     {
       "date": "2026-10-17",
       "title": "手动补录芭蕾上课记录",
@@ -28,11 +33,6 @@
       "date": "2026-10-12",
       "title": "训练概览横排与均值补充",
       "summary": "本周次数 / 时长 / 最喜欢的课横排为第一行，累计三项横排为第二行；第三行新增每周平均次数、每周平均时长、每月平均次数及时间。手机仍保留三列，继承既有指标卡语义色和悬浮反馈。"
-    },
-    {
-      "date": "2026-10-12",
-      "title": "L2 在全周 L1.5 / 软开之后处理",
-      "summary": "按 Owner 明确的两轮顺序：第一轮周一 L1.5 → 软开、周二 L1.5 → 软开，依次至周六；全部轮完后第二轮周一至周六 L2。执行配置新增 deferredCourses，并将轮次置于日期之前排序，避免周一 L2 提前于后续日期的 L1.5 / 软开。"
     }
   ]
 }
