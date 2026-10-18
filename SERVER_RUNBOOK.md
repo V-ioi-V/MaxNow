@@ -1,5 +1,11 @@
 # MaxNow 服务器操作说明
 
+## 2026-10-18 训练概览累计数据
+
+- 版本 `1.0.11.89`，`app.js?v=276`：第二排四项从本月改为累计，统一使用全部已完成课程统计；本周、均值和既有布局不变。
+- 静态发布通过校验 Git bundle 快进，仅涉及页面脚本、标签、检查与文档 / 元信息，保留生产 `ballet.json` / `ballet.js` 配对数据及其他 runtime 数据；不触发闻道同步或预约类操作。备份目录 `/home/ubuntu/maxnow-deploy-backups/20261018-training-total`。
+
+
 ## 2026-10-18 取消入口分页修复
 
 - 取消 runner 复用完整活动预约分页读取器；WendaCancellationSource 转发固定列表分页读取，不扩大 mutation 端点。旧脚本备份于 `/home/ubuntu/maxnow-deploy-backups/20261018-cancel-pagination/cancel_ballet.py`，部署保留全部运行数据、凭据与 timer。版本 `1.0.11.88`。

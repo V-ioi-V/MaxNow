@@ -4655,15 +4655,10 @@ function renderBalletWeek() {
     : [];
   const weekSummary = summarizeBalletTraining(weekRecords);
   const totalSummary = summarizeBalletTraining(completedRecords);
-  const snapshotMonth = String(balletData.dataAsOf || balletData.sync?.lastSuccessAt || "").slice(0, 7);
-  const monthRecords = /^\d{4}-\d{2}$/.test(snapshotMonth)
-    ? completedRecords.filter((record) => balletRecordDate(record).startsWith(snapshotMonth + "-"))
-    : [];
-  const monthSummary = summarizeBalletTraining(monthRecords);
-  setText("#ballet-month-classes", `${monthSummary.classes} 次`);
-  setText("#ballet-month-hours", `${formatBalletHours(monthSummary.minutes)} 小时`);
-  setBalletFavoriteCourse("#ballet-month-favorite", "#ballet-month-favorite-meta", monthSummary.favorite);
-  [["week", weekSummary], ["month", monthSummary]].forEach(([period, summary]) => {
+  setText("#ballet-total-classes", `${totalSummary.classes} 次`);
+  setText("#ballet-total-hours", `${formatBalletHours(totalSummary.minutes)} 小时`);
+  setBalletFavoriteCourse("#ballet-total-favorite", "#ballet-total-favorite-meta", totalSummary.favorite);
+  [["week", weekSummary], ["total", totalSummary]].forEach(([period, summary]) => {
     setBalletFavoriteCourse(`#ballet-${period}-teacher`, `#ballet-${period}-teacher-meta`, summary.teacher);
   });
   setText("#ballet-week-classes", `${weekSummary.classes} 次`);
