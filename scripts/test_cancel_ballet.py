@@ -3,7 +3,7 @@ import unittest
 
 import cancel_ballet as cancellation
 import sync_ballet as ballet
-from test_sync_ballet import detail_html, index_html
+from test_sync_ballet import detail_html, index_html, paginated_booking_html
 
 
 TARGET = {
@@ -100,6 +100,44 @@ class FakeSource:
 
 
 class BalletCancellationTests(unittest.TestCase):
+    def test_cancel_target_beyond_first_page(self):
+        class PaginatedSource(FakeSource):
+            def request(self, path, expected_marker):
+                if path == ballet.BOOKING_PATH:
+                    self.request_count += 1
+                    rows = [(str(80000 + i), TARGET["courseName"], TARGET["date"], "已取消") for i in range(10)]
+                    return paginated_booking_html(rows, 11 if self.active else 10)
+                return super().request(path, expected_marker)
+
+            def request_booking_page(self, offset, customer_id):
+                self.request_count += 1
+                assert offset == 10
+                return index_html("约课记录", [(SOURCE_ID, TARGET["courseName"], TARGET["date"], "已预约")])
+
+        source = PaginatedSource()
+        preview = cancellation.run(source, TARGET, execute=False)
+        self.assertEqual(preview["data"]["records"][0]["status"], "ready")
+        self.assertEqual(source.mutation_count, 0)
+        result = cancellation.run(source, TARGET, execute=True)
+        self.assertEqual(result["data"]["records"][0]["status"], "cancelled")
+        self.assertEqual(source.mutation_count, 1)
+
+    def test_empty_booking_page_fails_before_mutation(self):
+        class BrokenPageSource(FakeSource):
+            def request(self, path, expected_marker):
+                if path == ballet.BOOKING_PATH:
+                    return paginated_booking_html([], 1)
+                return super().request(path, expected_marker)
+
+            def request_booking_page(self, offset, customer_id):
+                return index_html("约课记录", [])
+
+        source = BrokenPageSource()
+        with self.assertRaises(cancellation.CancellationFailure) as caught:
+            cancellation.run(source, TARGET, execute=True)
+        self.assertEqual(caught.exception.code, "source_changed")
+        self.assertEqual(source.mutation_count, 0)
+
     def request_payload(self, confirm):
         return json.dumps({"course": TARGET, "confirm": confirm})
 

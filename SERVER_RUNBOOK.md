@@ -1,9 +1,20 @@
 # MaxNow 服务器操作说明
 
+## 2026-10-18 取消入口分页修复
+
+- 取消 runner 复用完整活动预约分页读取器；WendaCancellationSource 转发固定列表分页读取，不扩大 mutation 端点。旧脚本备份于 `/home/ubuntu/maxnow-deploy-backups/20261018-cancel-pagination/cancel_ballet.py`，部署保留全部运行数据、凭据与 timer。版本 `1.0.11.88`。
+
+
+- Owner 截图授权取消 2026-10-19 至 10-22 共 7 节（6 个预约、1 个排队）：周一张瀚泽大教室软开 18:45–19:45 / L2 19:45–21:15；周二李俊大教室软开排队 18:45–19:45、王嘉豪小教室 L2 18:45–20:15；周三张瀚泽小教室软开 19:00–20:00 / 大教室 L1.5 20:00–21:30；周四张瀚泽小教室 L1.5 18:45–20:15。
+- 每节实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。独立无日期范围 bookings 查询确认只保留周五 2 节、周六 2 节；maxnow-ballet-full-sync.service 只读同步 success / exit 0 / inactive，dataAsOf=2026-10-18T16:17:30+08:00，公开预约 4 条且 JSON / JS 一致。
+
 ## 2026-10-17 取消周日课程
 
 - Owner 授权取消 2026-10-18 15:30–17:00 戴俊瑶「芭蕾L1.5 - 入门+」（小教室）。实时预约精确唯一匹配；取消 runner dry-run 为 ready / mutationAttempts=0，execute 为 cancelled / mutationAttempts=1。
 - 独立不带日期范围的 bookings 查询返回空列表；既有 maxnow-ballet-sync.service 只读同步 Result=success / ExecMainStatus=0 / inactive，dataAsOf=2026-10-17T16:38:28+08:00。公开预约为空，手动补录保留，累计 56 节 / 73.5 小时。版本 `1.0.11.87`。
+
+- Owner 截图授权取消 2026-10-19 至 10-22 共 7 节（6 个预约、1 个排队）：周一张瀚泽大教室软开 18:45–19:45 / L2 19:45–21:15；周二李俊大教室软开排队 18:45–19:45、王嘉豪小教室 L2 18:45–20:15；周三张瀚泽小教室软开 19:00–20:00 / 大教室 L1.5 20:00–21:30；周四张瀚泽小教室 L1.5 18:45–20:15。
+- 每节实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。独立无日期范围 bookings 查询确认只保留周五 2 节、周六 2 节；maxnow-ballet-full-sync.service 只读同步 success / exit 0 / inactive，dataAsOf=2026-10-18T16:17:30+08:00，公开预约 4 条且 JSON / JS 一致。
 
 ## 2026-10-17 手动上课记录
 

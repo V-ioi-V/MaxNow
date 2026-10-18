@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-17 16:38",
-  "version": "1.0.11.87",
-  "versionLabel": "v1.0.11.87",
-  "branch": "feature/cancel-ballet-20261018",
-  "commit": "c5b8b8ba",
+  "updatedAt": "2026-10-18 16:17",
+  "version": "1.0.11.88",
+  "versionLabel": "v1.0.11.88",
+  "branch": "bugfix/cancel-booking-pagination",
+  "commit": "53e98deb",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/cancel-ballet-20261018 · commit c5b8b8ba · 有未提交代码改动",
+  "deployNote": "bugfix/cancel-booking-pagination · commit 53e98deb · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-18",
+      "title": "修复取消课程的预约分页读取",
+      "summary": "取消入口改用与同步 / 实时查询共用的完整活动预约分页读取器，修复目标落在首页之后时误报未预约的问题。固定列表分页仅做读取；每节课仍需唯一匹配、零变更预检和至多一次取消。版本 `1.0.11.88`。"
+    },
     {
       "date": "2026-10-17",
       "title": "取消周日芭蕾预约",
@@ -28,11 +33,6 @@
       "date": "2026-10-12",
       "title": "训练概览四列与月度老师统计",
       "summary": "改为四列四行：本周 / 本月 / 累计各显示次数、时长、最喜欢的课与老师；均值行固定按每周次数、每月次数、每周时长、每月时长排列。"
-    },
-    {
-      "date": "2026-10-12",
-      "title": "训练概览横排与均值补充",
-      "summary": "本周次数 / 时长 / 最喜欢的课横排为第一行，累计三项横排为第二行；第三行新增每周平均次数、每周平均时长、每月平均次数及时间。手机仍保留三列，继承既有指标卡语义色和悬浮反馈。"
     }
   ]
 }
