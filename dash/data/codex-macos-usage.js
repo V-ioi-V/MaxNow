@@ -1,5 +1,5 @@
 window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
-  "updatedAt": "2026-10-19 21:00",
+  "updatedAt": "2026-10-19 22:00",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
@@ -7,29 +7,29 @@ window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
   "pricingStale": false,
   "sinceDays": 3650,
   "summary": {
-    "inputTokens": 913900791,
-    "outputTokens": 2559318,
-    "cacheReadTokens": 884602496,
-    "cacheBaseTokens": 913900791,
-    "totalTokens": 916460109,
-    "estimatedCostUsd": 665.572263,
+    "inputTokens": 918368637,
+    "outputTokens": 2581115,
+    "cacheReadTokens": 888935424,
+    "cacheBaseTokens": 918368637,
+    "totalTokens": 920949752,
+    "estimatedCostUsd": 669.067227,
     "runs": 177,
-    "activeSeconds": 89087,
-    "completedTurns": 1654
+    "activeSeconds": 89789,
+    "completedTurns": 1661
   },
   "sources": [
     {
       "key": "codex-macos",
       "label": "Codex macOS",
-      "inputTokens": 913900791,
-      "outputTokens": 2559318,
-      "cacheReadTokens": 884602496,
-      "cacheBaseTokens": 913900791,
-      "totalTokens": 916460109,
-      "estimatedCostUsd": 665.572263,
+      "inputTokens": 918368637,
+      "outputTokens": 2581115,
+      "cacheReadTokens": 888935424,
+      "cacheBaseTokens": 918368637,
+      "totalTokens": 920949752,
+      "estimatedCostUsd": 669.067227,
       "runs": 177,
-      "activeSeconds": 89087,
-      "completedTurns": 1654
+      "activeSeconds": 89789,
+      "completedTurns": 1661
     }
   ],
   "days": [
@@ -38,29 +38,29 @@ window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
       "sources": [
         "codex-macos"
       ],
-      "inputTokens": 296007447,
-      "outputTokens": 877159,
-      "cacheReadTokens": 287596032,
-      "cacheBaseTokens": 296007447,
-      "totalTokens": 296884606,
-      "estimatedCostUsd": 212.169861,
+      "inputTokens": 300475293,
+      "outputTokens": 898956,
+      "cacheReadTokens": 291928960,
+      "cacheBaseTokens": 300475293,
+      "totalTokens": 301374249,
+      "estimatedCostUsd": 215.664825,
       "runs": 43,
-      "activeSeconds": 24365,
-      "completedTurns": 484,
+      "activeSeconds": 25067,
+      "completedTurns": 491,
       "byModel": [
         {
           "model": "gpt-5.5",
           "provider": "openai",
           "openrouterModel": null,
-          "inputTokens": 296007447,
-          "outputTokens": 877159,
-          "cacheReadTokens": 287596032,
-          "cacheBaseTokens": 296007447,
-          "totalTokens": 296884606,
-          "estimatedCostUsd": 212.169861,
+          "inputTokens": 300475293,
+          "outputTokens": 898956,
+          "cacheReadTokens": 291928960,
+          "cacheBaseTokens": 300475293,
+          "totalTokens": 301374249,
+          "estimatedCostUsd": 215.664825,
           "runs": 43,
-          "activeSeconds": 24365,
-          "completedTurns": 484,
+          "activeSeconds": 25067,
+          "completedTurns": 491,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -86,15 +86,15 @@ window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
           "kind": "codex-session",
           "label": "xs_fm_ios",
           "model": "gpt-5.5",
-          "inputTokens": 125418747,
-          "outputTokens": 408298,
-          "cacheReadTokens": 121939584,
-          "cacheBaseTokens": 125418747,
-          "totalTokens": 125827045,
-          "estimatedCostUsd": 90.614547,
+          "inputTokens": 129886593,
+          "outputTokens": 430095,
+          "cacheReadTokens": 126272512,
+          "cacheBaseTokens": 129886593,
+          "totalTokens": 130316688,
+          "estimatedCostUsd": 94.109511,
           "runs": 19,
-          "activeSeconds": 10598,
-          "completedTurns": 170,
+          "activeSeconds": 11300,
+          "completedTurns": 177,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -533,7 +533,7 @@ window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
   "recentRuns": [
     {
       "date": "2026-10-19",
-      "timestamp": "2026-10-19T20:59:56+08:00",
+      "timestamp": "2026-10-19T21:05:52+08:00",
       "source": "codex-macos",
       "provider": "openai",
       "model": "gpt-5.5",
@@ -542,62 +542,30 @@ window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
       "runId": "01a153f7-4bdc-7591-81a8-e8e20e02ba4e:2026-10-19",
       "kind": "codex-session",
       "label": "xs_fm_ios",
-      "inputTokens": 37996590,
-      "outputTokens": 124729,
-      "cacheReadTokens": 37479552,
-      "cacheBaseTokens": 37996590,
-      "reasoningOutputTokens": 40061,
-      "totalTokens": 38121319,
+      "inputTokens": 41026004,
+      "outputTokens": 141083,
+      "cacheReadTokens": 40453504,
+      "cacheBaseTokens": 41026004,
+      "reasoningOutputTokens": 44653,
+      "totalTokens": 41167087,
       "pricingEstimated": true,
       "pricingModel": "gpt-5.5",
       "contextWindow": 475000,
-      "tokenCountEvents": 201,
-      "activeSeconds": 3314,
-      "completedTurns": 18,
+      "tokenCountEvents": 213,
+      "activeSeconds": 3892,
+      "completedTurns": 19,
       "activeByDate": [
         {
           "date": "2026-10-19",
-          "activeSeconds": 3314,
-          "completedTurns": 18
+          "activeSeconds": 3892,
+          "completedTurns": 19
         }
       ],
-      "estimatedCostUsd": 25.066836
+      "estimatedCostUsd": 27.321742
     },
     {
       "date": "2026-10-19",
-      "timestamp": "2026-10-19T20:58:01+08:00",
-      "source": "codex-macos",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "openrouterModel": null,
-      "sessionId": "01a15403-f2f7-7250-a63d-9016c54bd384",
-      "runId": "01a15403-f2f7-7250-a63d-9016c54bd384:2026-10-19",
-      "kind": "codex-session",
-      "label": "xs_fm_ios",
-      "inputTokens": 28833973,
-      "outputTokens": 82236,
-      "cacheReadTokens": 28338304,
-      "cacheBaseTokens": 28833973,
-      "reasoningOutputTokens": 25305,
-      "totalTokens": 28916209,
-      "pricingEstimated": true,
-      "pricingModel": "gpt-5.5",
-      "contextWindow": 475000,
-      "tokenCountEvents": 132,
-      "activeSeconds": 2178,
-      "completedTurns": 17,
-      "activeByDate": [
-        {
-          "date": "2026-10-19",
-          "activeSeconds": 2178,
-          "completedTurns": 17
-        }
-      ],
-      "estimatedCostUsd": 19.114577
-    },
-    {
-      "date": "2026-10-19",
-      "timestamp": "2026-10-19T20:55:23+08:00",
+      "timestamp": "2026-10-19T21:05:31+08:00",
       "source": "codex-macos",
       "provider": "openai",
       "model": "gpt-5.5",
@@ -606,30 +574,62 @@ window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
       "runId": "01a15435-a47e-7d82-a3e4-ee4611e07ef9:2026-10-19",
       "kind": "codex-session",
       "label": "xs_fm_ios",
-      "inputTokens": 85314,
-      "outputTokens": 334,
-      "cacheReadTokens": 34176,
-      "cacheBaseTokens": 85314,
-      "reasoningOutputTokens": 199,
-      "totalTokens": 85648,
+      "inputTokens": 370907,
+      "outputTokens": 1003,
+      "cacheReadTokens": 293248,
+      "cacheBaseTokens": 370907,
+      "reasoningOutputTokens": 570,
+      "totalTokens": 371910,
       "pricingEstimated": true,
       "pricingModel": "gpt-5.5",
       "contextWindow": 258400,
-      "tokenCountEvents": 2,
-      "activeSeconds": 7,
-      "completedTurns": 2,
+      "tokenCountEvents": 6,
+      "activeSeconds": 25,
+      "completedTurns": 6,
       "activeByDate": [
         {
           "date": "2026-10-19",
-          "activeSeconds": 7,
-          "completedTurns": 2
+          "activeSeconds": 25,
+          "completedTurns": 6
         }
       ],
-      "estimatedCostUsd": 0.282798
+      "estimatedCostUsd": 0.565009
     },
     {
       "date": "2026-10-19",
-      "timestamp": "2026-10-19T20:54:22+08:00",
+      "timestamp": "2026-10-19T21:02:26+08:00",
+      "source": "codex-macos",
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "openrouterModel": null,
+      "sessionId": "01a15403-f2f7-7250-a63d-9016c54bd384",
+      "runId": "01a15403-f2f7-7250-a63d-9016c54bd384:2026-10-19",
+      "kind": "codex-session",
+      "label": "xs_fm_ios",
+      "inputTokens": 29933031,
+      "outputTokens": 86689,
+      "cacheReadTokens": 29399296,
+      "cacheBaseTokens": 29933031,
+      "reasoningOutputTokens": 26567,
+      "totalTokens": 30019720,
+      "pricingEstimated": true,
+      "pricingModel": "gpt-5.5",
+      "contextWindow": 475000,
+      "tokenCountEvents": 139,
+      "activeSeconds": 2280,
+      "completedTurns": 18,
+      "activeByDate": [
+        {
+          "date": "2026-10-19",
+          "activeSeconds": 2280,
+          "completedTurns": 18
+        }
+      ],
+      "estimatedCostUsd": 19.968993
+    },
+    {
+      "date": "2026-10-19",
+      "timestamp": "2026-10-19T21:02:15+08:00",
       "source": "codex-macos",
       "provider": "openai",
       "model": "gpt-5.5",
@@ -638,26 +638,26 @@ window.MAXNOW_CODEX_MACOS_USAGE_DATA = {
       "runId": "01a15438-8f54-7d03-b91a-77ee588be7cb:2026-10-19",
       "kind": "codex-session",
       "label": "xs_fm_ios",
-      "inputTokens": 233745,
-      "outputTokens": 941,
-      "cacheReadTokens": 193536,
-      "cacheBaseTokens": 233745,
-      "reasoningOutputTokens": 457,
-      "totalTokens": 234686,
+      "inputTokens": 287526,
+      "outputTokens": 1262,
+      "cacheReadTokens": 232448,
+      "cacheBaseTokens": 287526,
+      "reasoningOutputTokens": 702,
+      "totalTokens": 288788,
       "pricingEstimated": true,
       "pricingModel": "gpt-5.5",
       "contextWindow": 258400,
-      "tokenCountEvents": 7,
-      "activeSeconds": 18,
-      "completedTurns": 7,
+      "tokenCountEvents": 8,
+      "activeSeconds": 22,
+      "completedTurns": 8,
       "activeByDate": [
         {
           "date": "2026-10-19",
-          "activeSeconds": 18,
-          "completedTurns": 7
+          "activeSeconds": 22,
+          "completedTurns": 8
         }
       ],
-      "estimatedCostUsd": 0.326043
+      "estimatedCostUsd": 0.429474
     },
     {
       "date": "2026-10-19",
