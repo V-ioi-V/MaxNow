@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-25 20:07",
-  "version": "1.0.11.90",
-  "versionLabel": "v1.0.11.90",
-  "branch": "feature/cancel-ballet-20261025",
-  "commit": "f9a0e957",
+  "updatedAt": "2026-10-25 20:13",
+  "version": "1.0.11.91",
+  "versionLabel": "v1.0.11.91",
+  "branch": "feature/rebook-old-card-20261030",
+  "commit": "93c7210e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/cancel-ballet-20261025 · commit f9a0e957 · 有未提交代码改动",
+  "deployNote": "feature/rebook-old-card-20261030 · commit 93c7210e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-25",
+      "title": "周五 L1.5 指定老卡重约",
+      "summary": "Owner 授权取消并重约 10/30 18:45–20:15 申昊清小教室 L1.5，仅使用 2026-07-26 开卡、2027-02-07 到期的老卡；老卡实时有效且剩余 3 次。"
+    },
     {
       "date": "2026-10-25",
       "title": "下周仅保留三节指定 L1.5",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-17",
       "title": "取消周日芭蕾预约",
       "summary": "根据 Owner 截图取消 2026-10-18 15:30–17:00 戴俊瑶「芭蕾L1.5 - 入门+」（小教室）。实时唯一匹配、零变更预检通过后，仅提交一次取消，独立实时查询确认预约已消失。"
-    },
-    {
-      "date": "2026-10-17",
-      "title": "手动补录芭蕾上课记录",
-      "summary": "根据 Owner 截图，唯一核对并补录 2026-10-17 10:00–11:30 徐老师「芭蕾L1-入门」（小教室 / 90 分钟），标记为手动已上课。"
     }
   ]
 };
