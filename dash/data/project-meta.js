@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-18 16:19",
-  "version": "1.0.11.89",
-  "versionLabel": "v1.0.11.89",
-  "branch": "feature/training-summary-total",
-  "commit": "fafb5128",
+  "updatedAt": "2026-10-25 20:07",
+  "version": "1.0.11.90",
+  "versionLabel": "v1.0.11.90",
+  "branch": "feature/cancel-ballet-20261025",
+  "commit": "f9a0e957",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/training-summary-total · commit fafb5128 · 有未提交代码改动",
+  "deployNote": "feature/cancel-ballet-20261025 · commit f9a0e957 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-25",
+      "title": "下周仅保留三节指定 L1.5",
+      "summary": "按 Owner 红框保留 10/28 20:00–21:30 张瀚泽大教室、10/29 18:45–20:15 张瀚泽小教室、10/30 18:45–20:15 申昊清小教室三节 L1.5。"
+    },
     {
       "date": "2026-10-18",
       "title": "训练概览改用累计数据",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-17",
       "title": "手动补录芭蕾上课记录",
       "summary": "根据 Owner 截图，唯一核对并补录 2026-10-17 10:00–11:30 徐老师「芭蕾L1-入门」（小教室 / 90 分钟），标记为手动已上课。"
-    },
-    {
-      "date": "2026-10-12",
-      "title": "删除训练概览累计排",
-      "summary": "按 Owner 红框删除累计次数、累计时长、累计最喜欢的课及老师四项；概览保留本周 / 本月 / 均值三排，每排四项。均值仍按全部已完成课程计算，底部训练记录累计统计保留。"
     }
   ]
 };
