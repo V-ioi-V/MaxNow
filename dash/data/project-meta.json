@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-25 20:13",
-  "version": "1.0.11.91",
-  "versionLabel": "v1.0.11.91",
-  "branch": "feature/rebook-old-card-20261030",
-  "commit": "93c7210e",
+  "updatedAt": "2026-10-27 21:51",
+  "version": "1.0.11.92",
+  "versionLabel": "v1.0.11.92",
+  "branch": "bugfix/cancel-wednesday-1028",
+  "commit": "eddd55c8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/rebook-old-card-20261030 · commit 93c7210e · 有未提交代码改动",
+  "deployNote": "bugfix/cancel-wednesday-1028 · commit eddd55c8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-10-27",
+      "title": "取消周三 L1.5 预约",
+      "summary": "按 Owner 截图精确取消 10/28 20:00–21:30 张瀚泽大教室「芭蕾L1.5 - 入门+」；实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。"
+    },
     {
       "date": "2026-10-25",
       "title": "周五 L1.5 指定老卡重约",
@@ -28,11 +33,6 @@
       "date": "2026-10-18",
       "title": "修复取消课程的预约分页读取",
       "summary": "取消入口改用与同步 / 实时查询共用的完整活动预约分页读取器，修复目标落在首页之后时误报未预约的问题。固定列表分页仅做读取；每节课仍需唯一匹配、零变更预检和至多一次取消。版本 `1.0.11.88`。"
-    },
-    {
-      "date": "2026-10-17",
-      "title": "取消周日芭蕾预约",
-      "summary": "根据 Owner 截图取消 2026-10-18 15:30–17:00 戴俊瑶「芭蕾L1.5 - 入门+」（小教室）。实时唯一匹配、零变更预检通过后，仅提交一次取消，独立实时查询确认预约已消失。"
     }
   ]
 }

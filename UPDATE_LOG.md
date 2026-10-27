@@ -9,6 +9,13 @@
 - 有必要时写清楚涉及哪些文件。
 - 原始未来想法写进 `IDEAS.md`；已经确认的产品行为再同步进 `SPEC.md`。
 
+## 2026-10-27
+
+### 取消周三 L1.5 预约
+
+- 按 Owner 截图精确取消 10/28 20:00–21:30 张瀚泽大教室「芭蕾L1.5 - 入门+」；实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。
+- 独立完整预约查询确认目标消失，仅保留周四、周五两节；既有隔离 full-sync 服务 success / exit 0 / inactive，公开数据时间 2026-10-27 21:50:58，JSON / JS 配对一致。版本 `1.0.11.92`。
+
 ## 2026-10-25
 
 ### 周五 L1.5 指定老卡重约

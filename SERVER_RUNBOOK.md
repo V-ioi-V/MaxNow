@@ -1,5 +1,11 @@
 # MaxNow 服务器操作说明
 
+## 2026-10-27 周三 L1.5 取消
+
+- Owner 截图授权取消 2026-10-28 20:00–21:30 张瀚泽 / 大教室「芭蕾L1.5 - 入门+」。既有受保护 Session 实时唯一匹配，取消 runner dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。
+- 独立无日期范围 bookings 查询确认只剩 10/29 张瀚泽小教室及 10/30 申昊清小教室两节 L1.5，均 18:45–20:15 / booked。
+- maxnow-ballet-full-sync.service 返回 success / exit 0 / inactive，dataAsOf=2026-10-27T21:50:58+08:00，公开 JSON / JS 配对一致。未调整入口、凭据、timer 或长期策略。
+
 ## 2026-10-25 周五 L1.5 老卡重约
 
 - Owner 授权 2026-10-30 18:45–20:15 申昊清 / 小教室「芭蕾L1.5 - 入门+」取消后用老卡预约一次。老卡精确绑定 2026-07-26 至 2027-02-07 的有效卡，实时剩余 3 次；不按同名卡猜测。
