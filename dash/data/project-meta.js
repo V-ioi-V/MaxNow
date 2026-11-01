@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-01 20:15",
-  "version": "1.0.11.93",
-  "versionLabel": "v1.0.11.93",
-  "branch": "bugfix/cancel-nov5-onward",
-  "commit": "13074cd8",
+  "updatedAt": "2026-11-01 21:52",
+  "version": "1.0.11.94",
+  "versionLabel": "v1.0.11.94",
+  "branch": "bugfix/cancel-selected-nov2-4",
+  "commit": "88bf4a0a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/cancel-nov5-onward · commit 13074cd8 · 有未提交代码改动",
+  "deployNote": "bugfix/cancel-selected-nov2-4 · commit 88bf4a0a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-01",
+      "title": "取消周一至周三红框四节课",
+      "summary": "按 Owner 新截图逐节取消 11/02 18:45–19:45 张瀚泽大教室软开课、同日 19:45–21:15 张瀚泽大教室 L2、11/03 18:45–19:45 李俊大教室软开排队，以及 11/04 19:00–20:00 张瀚泽小教室软开课。"
+    },
     {
       "date": "2026-11-01",
       "title": "取消下周周四至周六四节课",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-25",
       "title": "下周仅保留三节指定 L1.5",
       "summary": "按 Owner 红框保留 10/28 20:00–21:30 张瀚泽大教室、10/29 18:45–20:15 张瀚泽小教室、10/30 18:45–20:15 申昊清小教室三节 L1.5。"
-    },
-    {
-      "date": "2026-10-18",
-      "title": "训练概览改用累计数据",
-      "summary": "第二排四项改为累计训练次数、累计训练时长、累计最喜欢的课与累计最喜欢的老师；全部按刷新截止时已经完成的课程统计，包含手动已上课记录。保留本周与均值行的口径、布局及交互。"
     }
   ]
 };
