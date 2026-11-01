@@ -1,5 +1,11 @@
 # MaxNow 服务器操作说明
 
+## 2026-11-01 周四起四节课取消
+
+- Owner 截图授权取消 11/05 18:45–20:15 张瀚泽小教室 L1.5、11/06 18:45–20:15 申昊清小教室 L1.5、11/06 20:15–21:15 申昊清小教室软开课、11/07 15:30–17:00 徐老师大教室 L1.5（排队第 1 位）。
+- 通过既有受保护 Session 与单课取消 runner，逐节实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1；每节后独立无日期范围 bookings 查询确认目标消失，未重试或替换目标。
+- 最终活动记录仅有 11/02–11/04 的 6 条（5 booked / 1 waitlist）。既有 maxnow-ballet-full-sync.service 只读同步 success / exit 0 / inactive；dataAsOf=2026-11-01T20:15:23+08:00，cacheState=fresh，公开 JSON / JS 配对一致。长期 Fast Path 规则和服务配置不变。
+
 ## 2026-10-27 周三 L1.5 取消
 
 - Owner 截图授权取消 2026-10-28 20:00–21:30 张瀚泽 / 大教室「芭蕾L1.5 - 入门+」。既有受保护 Session 实时唯一匹配，取消 runner dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。

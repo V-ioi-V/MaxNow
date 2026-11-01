@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-27 21:51",
-  "version": "1.0.11.92",
-  "versionLabel": "v1.0.11.92",
-  "branch": "bugfix/cancel-wednesday-1028",
-  "commit": "eddd55c8",
+  "updatedAt": "2026-11-01 20:15",
+  "version": "1.0.11.93",
+  "versionLabel": "v1.0.11.93",
+  "branch": "bugfix/cancel-nov5-onward",
+  "commit": "13074cd8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/cancel-wednesday-1028 · commit eddd55c8 · 有未提交代码改动",
+  "deployNote": "bugfix/cancel-nov5-onward · commit 13074cd8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-01",
+      "title": "取消下周周四至周六四节课",
+      "summary": "按 Owner 截图逐节取消 11/05 18:45–20:15 张瀚泽小教室 L1.5、11/06 18:45–20:15 申昊清小教室 L1.5、同日 20:15–21:15 申昊清小教室软开课，以及 11/07 15:30–17:00 徐老师大教室 L1.5 排队。"
+    },
     {
       "date": "2026-10-27",
       "title": "取消周三 L1.5 预约",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-10-18",
       "title": "训练概览改用累计数据",
       "summary": "第二排四项改为累计训练次数、累计训练时长、累计最喜欢的课与累计最喜欢的老师；全部按刷新截止时已经完成的课程统计，包含手动已上课记录。保留本周与均值行的口径、布局及交互。"
-    },
-    {
-      "date": "2026-10-18",
-      "title": "修复取消课程的预约分页读取",
-      "summary": "取消入口改用与同步 / 实时查询共用的完整活动预约分页读取器，修复目标落在首页之后时误报未预约的问题。固定列表分页仅做读取；每节课仍需唯一匹配、零变更预检和至多一次取消。版本 `1.0.11.88`。"
     }
   ]
 };
