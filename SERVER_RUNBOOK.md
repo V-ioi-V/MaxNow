@@ -3437,3 +3437,10 @@ Owner 将无人值守业务刷新收敛为仅周日 14:30。安装仓库 maxnow-
 周日 14:30 唯一业务 timer 继续调用 sync.service，但改为 --mode full、300 秒超时：完整历史校验并强制实时课表，不新增其他 timer。普通 smart 课表只在原始采集时间五分钟内且日期范围一致时复用，复用不推进课表 dataAsOf；每次先从私有 rawDays 恢复源状态，再合并实时预约 / 候补，取消导致源本人状态过时就重读课表。rawDays 与索引指纹仅存私有快照 / 账本，公开 read model 不包含。预约、候补、课程卡始终实时读取；共享锁、身份阻断、三连接复用及失败保留缓存不变。
 
 2026-10-11 增量部署验收：固定入口首次 smart 为 29 请求、6.989 秒 / broker 8 秒，随后通过既有隔离 full-sync.service 测试命中五分钟课表缓存，为 21 请求、7.554 秒；后轮预约响应更慢，少请求不保证每轮耗时更短。两轮 historyDetailsRead=0，均 success，无业务记录改变。公开上课统计维持 50 次 / 65 小时，原始课表和索引指纹未公开；第二轮总体 dataAsOf=16:35:02，课表 dataAsOf=16:34:53，证明复用不延长缓存。
+
+
+## 2026-11-02 周二 L2 预约取消
+
+- Owner 截图指定 2026-11-03 18:45–20:15 王嘉豪小教室「芭蕾L2-零基础」；使用既有受保护 Session 的 runner 实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。
+- 独立无日期范围 bookings 查询确认目标消失，仅余 11/04 20:00–21:30 张瀚泽大教室 L1.5。既有 maxnow-ballet-full-sync.service 成功结束（success / exit 0 / inactive），公开 dataAsOf=2026-11-02T23:13:14+08:00，目标不在 upcoming.records，JSON / JS 配对一致。
+- 本次只取消该节预约并刷新公开快照，不改变长期规则或调度，不执行其他业务 mutation；无凭据及源标识记录。

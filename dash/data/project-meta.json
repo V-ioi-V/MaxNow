@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-01 21:52",
-  "version": "1.0.11.94",
-  "versionLabel": "v1.0.11.94",
-  "branch": "bugfix/cancel-selected-nov2-4",
-  "commit": "88bf4a0a",
+  "updatedAt": "2026-11-02 23:14",
+  "version": "1.0.11.95",
+  "versionLabel": "v1.0.11.95",
+  "branch": "bugfix/cancel-nov03-l2",
+  "commit": "267082d0",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/cancel-selected-nov2-4 · commit 88bf4a0a · 有未提交代码改动",
+  "deployNote": "bugfix/cancel-nov03-l2 · commit 267082d0 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-02",
+      "title": "取消周二 L2 预约",
+      "summary": "按 Owner 红框截图精确取消 11/03 18:45–20:15 王嘉豪小教室「芭蕾L2-零基础」；实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。"
+    },
     {
       "date": "2026-11-01",
       "title": "取消周一至周三红框四节课",
@@ -28,11 +33,6 @@
       "date": "2026-10-25",
       "title": "周五 L1.5 指定老卡重约",
       "summary": "Owner 授权取消并重约 10/30 18:45–20:15 申昊清小教室 L1.5，仅使用 2026-07-26 开卡、2027-02-07 到期的老卡；老卡实时有效且剩余 3 次。"
-    },
-    {
-      "date": "2026-10-25",
-      "title": "下周仅保留三节指定 L1.5",
-      "summary": "按 Owner 红框保留 10/28 20:00–21:30 张瀚泽大教室、10/29 18:45–20:15 张瀚泽小教室、10/30 18:45–20:15 申昊清小教室三节 L1.5。"
     }
   ]
 }
