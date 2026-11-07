@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-02 23:14",
-  "version": "1.0.11.95",
-  "versionLabel": "v1.0.11.95",
-  "branch": "bugfix/cancel-nov03-l2",
-  "commit": "267082d0",
-  "dirty": true,
-  "dirtyLevel": "code",
-  "deployNote": "bugfix/cancel-nov03-l2 · commit 267082d0 · 有未提交代码改动",
+  "updatedAt": "2026-11-07 19:05",
+  "version": "1.0.11.96",
+  "versionLabel": "v1.0.11.96",
+  "branch": "feature/ballet-teacher-focus",
+  "commit": "a1b9bd0c",
+  "dirty": false,
+  "dirtyLevel": "clean",
+  "deployNote": "feature/ballet-teacher-focus · commit a1b9bd0c · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-11-07",
+      "title": "本周课程表按老师锁定",
+      "summary": "点击课卡突出该老师的全部课程，其余课卡置灰。再次点击同一位老师或点击课表空白处解除，点击另一位老师直接切换。"
+    },
     {
       "date": "2026-11-02",
       "title": "取消周二 L2 预约",
@@ -28,11 +33,6 @@
       "date": "2026-10-27",
       "title": "取消周三 L1.5 预约",
       "summary": "按 Owner 截图精确取消 10/28 20:00–21:30 张瀚泽大教室「芭蕾L1.5 - 入门+」；实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。"
-    },
-    {
-      "date": "2026-10-25",
-      "title": "周五 L1.5 指定老卡重约",
-      "summary": "Owner 授权取消并重约 10/30 18:45–20:15 申昊清小教室 L1.5，仅使用 2026-07-26 开卡、2027-02-07 到期的老卡；老卡实时有效且剩余 3 次。"
     }
   ]
 }
