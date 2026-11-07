@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-07 19:05",
+  "updatedAt": "2026-11-07 19:09",
   "version": "1.0.11.96",
   "versionLabel": "v1.0.11.96",
   "branch": "feature/ballet-teacher-focus",
-  "commit": "a1b9bd0c",
+  "commit": "b7a11995",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-teacher-focus · commit a1b9bd0c · 干净",
+  "deployNote": "feature/ballet-teacher-focus · commit b7a11995 · 干净",
   "recentUpdates": [
     {
       "date": "2026-11-07",
