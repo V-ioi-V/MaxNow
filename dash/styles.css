@@ -5641,6 +5641,25 @@ body[data-view="ricky"] .topbar-ricky-status {
   filter: saturate(0.52) brightness(1.04);
 }
 
+.ballet-timetable-course[data-teacher] {
+  cursor: pointer;
+}
+
+.ballet-timetable-course[data-teacher][aria-pressed="true"] {
+  outline: 2px solid var(--ballet);
+  outline-offset: -2px;
+}
+
+.ballet-timetable-panel .ballet-timetable-course.is-teacher-muted {
+  opacity: 0.65;
+  filter: grayscale(1);
+}
+
+.ballet-timetable-course[data-teacher]:focus-visible {
+  outline: 2px solid var(--ballet);
+  outline-offset: 1px;
+}
+
 .ballet-timetable-cell[data-day-state="today"] {
   background: rgba(255, 244, 248, 0.7);
 }

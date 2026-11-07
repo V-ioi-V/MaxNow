@@ -175,6 +175,7 @@ const BALLET_PLAN_WEEK_LABELS = new Map([
   [2, "两周后"],
 ]);
 let balletPlanWeekOffset = 0;
+let balletTimetableTeacher = "";
 const browserDataHealth = new Map();
 
 const lifeFoodTones = ["cyan", "orange", "green", "purple", "blue"];
@@ -5062,6 +5063,12 @@ function getBalletTimetableCounts(record = {}) {
 function createBalletTimetableCourse(record, mobile = false, options = {}) {
   const article = document.createElement("article");
   article.className = mobile ? "ballet-timetable-course is-mobile" : "ballet-timetable-course";
+  const teacher = String(balletTeacher(record)).trim();
+  if (options.teacherFocus && teacher) {
+    article.dataset.teacher = teacher;
+    article.setAttribute("role", "button");
+    article.tabIndex = 0;
+  }
   article.dataset.courseType = String(record.courseType || "other").toLowerCase();
   article.dataset.level = String(record.level || "none").toLowerCase();
   article.dataset.compact = Number(record.durationMinutes) <= 60 ? "true" : "false";
@@ -5290,6 +5297,40 @@ function buildBalletTimetableRows(days = []) {
   return rows;
 }
 
+function getBalletTimetableDays() {
+  const days = balletData.timetable?.days;
+  return Array.isArray(days)
+    ? days.filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(String(day?.date || "")))
+    : [];
+}
+
+function updateBalletTimetableTeacher(days = getBalletTimetableDays()) {
+  let totalCourses = 0;
+  let teacherCourses = 0;
+  const teacherDates = new Set();
+  for (const day of days) {
+    const records = Array.isArray(day.records) ? day.records : [];
+    totalCourses += records.length;
+    if (!balletTimetableTeacher) continue;
+    for (const record of records) {
+      if (String(balletTeacher(record)).trim() !== balletTimetableTeacher) continue;
+      teacherCourses += 1;
+      teacherDates.add(day.date);
+    }
+  }
+  if (!teacherCourses) balletTimetableTeacher = "";
+
+  qsa(".ballet-timetable-panel .ballet-timetable-course").forEach((course) => {
+    const selected = course.dataset.teacher === balletTimetableTeacher;
+    course.classList.toggle("is-teacher-muted", Boolean(balletTimetableTeacher) && !selected);
+    if (course.dataset.teacher) course.setAttribute("aria-pressed", String(selected));
+  });
+  const count = balletTimetableTeacher
+    ? `${balletTimetableTeacher} · ${teacherDates.size} 天 · ${teacherCourses} 节`
+    : days.length ? `${days.length} 天 · ${totalCourses} 节` : "等待同步";
+  setText("#ballet-timetable-count", count);
+}
+
 function renderBalletTimetable() {
   const timetable = balletData.timetable || {};
   const refreshed = qs("#ballet-timetable-updated-at");
@@ -5300,24 +5341,16 @@ function renderBalletTimetable() {
     else refreshed.removeAttribute("datetime");
     refreshed.title = "课表实际读取时间；缓存最多复用 5 分钟，使用缓存不会推进此时间。";
   }
-  const days = Array.isArray(timetable.days)
-    ? timetable.days
-        .filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(String(day?.date || "")))
-        .sort((a, b) => String(a.date).localeCompare(String(b.date)))
-    : [];
+  const days = getBalletTimetableDays().sort((a, b) => String(a.date).localeCompare(String(b.date)));
   const grid = qs("#ballet-timetable-grid");
   const mobile = qs("#ballet-timetable-mobile");
   if (!grid || !mobile) return;
 
-  const courseCount = days.reduce(
-    (total, day) => total + (Array.isArray(day.records) ? day.records.length : 0),
-    0,
-  );
-  setText("#ballet-timetable-count", days.length ? `${days.length} 天 · ${courseCount} 节` : "等待同步");
   grid.replaceChildren();
   mobile.replaceChildren();
 
   if (!days.length) {
+    updateBalletTimetableTeacher(days);
     grid.appendChild(emptyTemplate.content.cloneNode(true));
     mobile.appendChild(emptyTemplate.content.cloneNode(true));
     setText("#ballet-timetable-note", "同步完成后显示本周课程。");
@@ -5454,7 +5487,7 @@ function renderBalletTimetable() {
           const startLine = minuteGridLines.get(interval.start);
           const endLine = minuteGridLines.get(interval.end);
           if (!startLine || !endLine || endLine <= startLine) return;
-          const course = createBalletTimetableCourse(record);
+          const course = createBalletTimetableCourse(record, false, { teacherFocus: true });
           course.dataset.dayState = dayState;
           course.dataset.room = room.key;
           course.dataset.overlap = laneCount > 1 ? "true" : "false";
@@ -5523,7 +5556,7 @@ function renderBalletTimetable() {
           roomHeader.append(roomName, roomCount);
           roomGroup.append(
             roomHeader,
-            ...roomRecords.map((record) => createBalletTimetableCourse(record, true)),
+            ...roomRecords.map((record) => createBalletTimetableCourse(record, true, { teacherFocus: true })),
           );
           group.appendChild(roomGroup);
         },
@@ -5536,6 +5569,7 @@ function renderBalletTimetable() {
     }
     mobile.appendChild(group);
   });
+  updateBalletTimetableTeacher(days);
 
   const through = String(timetable.availableThrough || "");
   const throughLabel = through
@@ -6730,6 +6764,27 @@ qsa("[data-ballet-sort]").forEach((button) => {
   button.addEventListener("click", () => {
     balletDistributionSort[button.dataset.balletDistribution] = button.dataset.balletSort;
     renderBalletTraining();
+  });
+});
+
+qsa("#ballet-timetable-grid, #ballet-timetable-mobile").forEach((timetable) => {
+  timetable.addEventListener("click", (event) => {
+    const course = event.target.closest(".ballet-timetable-course");
+    if (course && !course.dataset.teacher) return;
+    if (!course && !balletTimetableTeacher) return;
+    const teacher = course?.dataset.teacher || "";
+    balletTimetableTeacher = teacher === balletTimetableTeacher ? "" : teacher;
+    updateBalletTimetableTeacher();
+  });
+  timetable.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && balletTimetableTeacher) {
+      event.preventDefault();
+      balletTimetableTeacher = "";
+      updateBalletTimetableTeacher();
+    } else if (event.target.matches(".ballet-timetable-course[data-teacher]") && ["Enter", " "].includes(event.key)) {
+      event.preventDefault();
+      if (!event.repeat) event.target.click();
+    }
   });
 });
 
