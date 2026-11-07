@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-07 19:09",
-  "version": "1.0.11.96",
-  "versionLabel": "v1.0.11.96",
-  "branch": "feature/ballet-teacher-focus",
-  "commit": "b7a11995",
+  "updatedAt": "2026-11-07 19:17",
+  "version": "1.0.11.97",
+  "versionLabel": "v1.0.11.97",
+  "branch": "bugfix/ballet-teacher-highlight",
+  "commit": "929c297c",
   "dirty": false,
   "dirtyLevel": "clean",
-  "deployNote": "feature/ballet-teacher-focus · commit b7a11995 · 干净",
+  "deployNote": "bugfix/ballet-teacher-highlight · commit 929c297c · 干净",
   "recentUpdates": [
+    {
+      "date": "2026-11-07",
+      "title": "修正课表老师高亮",
+      "summary": "锁定老师后，该老师的课程以原课型颜色和完整不透明度呈现，包括已经过去的课程。去掉锁定描边，其他老师的课继续置灰。解除锁定后，历史课程恢复常规淡化。版本 `1.0.11.97`，样式缓存 `styles.css?v=300`。"
+    },
     {
       "date": "2026-11-07",
       "title": "本周课程表按老师锁定",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-11-01",
       "title": "取消下周周四至周六四节课",
       "summary": "按 Owner 截图逐节取消 11/05 18:45–20:15 张瀚泽小教室 L1.5、11/06 18:45–20:15 申昊清小教室 L1.5、同日 20:15–21:15 申昊清小教室软开课，以及 11/07 15:30–17:00 徐老师大教室 L1.5 排队。"
-    },
-    {
-      "date": "2026-10-27",
-      "title": "取消周三 L1.5 预约",
-      "summary": "按 Owner 截图精确取消 10/28 20:00–21:30 张瀚泽大教室「芭蕾L1.5 - 入门+」；实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。"
     }
   ]
 };
