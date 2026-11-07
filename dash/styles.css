@@ -5646,8 +5646,8 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-course[data-teacher][aria-pressed="true"] {
-  outline: 2px solid var(--ballet);
-  outline-offset: -2px;
+  opacity: 1;
+  filter: none;
 }
 
 .ballet-timetable-panel .ballet-timetable-course.is-teacher-muted {
@@ -5656,7 +5656,7 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-timetable-course[data-teacher]:focus-visible {
-  outline: 2px solid var(--ballet);
+  outline: 2px solid var(--accent-strong);
   outline-offset: 1px;
 }
 

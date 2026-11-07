@@ -2,6 +2,7 @@
 
 ## 2026-11-07 本周课表按老师锁定
 
+- 高亮修正版 `1.0.11.97` 使用 `styles.css?v=300`。生产快进备份目录为 `/home/ubuntu/maxnow-deploy-backups/20261107-ballet-teacher-highlight`。备份目录使用 `0700`，静态文件通过正常 `umask 022` 签出并验证 Nginx 工作进程可读。
 - 静态发布版本 `1.0.11.96`，页面加载 `app.js?v=277` 和 `styles.css?v=299`。按老师锁定与课表统计都在浏览器内计算。
 - 使用经过 SHA-256 校验的增量 Git bundle 快进生产主分支。发布备份为 `/home/ubuntu/maxnow-deploy-backups/20261107-ballet-teacher-focus`，包含原运行数据和部署前文件状态。以部署前后的 SHA-256 核对生产芭蕾 JSON / JS 配对文件。
 
