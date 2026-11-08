@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-07 19:17",
-  "version": "1.0.11.97",
-  "versionLabel": "v1.0.11.97",
-  "branch": "bugfix/ballet-teacher-highlight",
-  "commit": "929c297c",
-  "dirty": false,
-  "dirtyLevel": "clean",
-  "deployNote": "bugfix/ballet-teacher-highlight · commit 929c297c · 干净",
+  "updatedAt": "2026-11-08 16:42",
+  "version": "1.0.11.98",
+  "versionLabel": "v1.0.11.98",
+  "branch": "feature/ballet-late-timetable-retry",
+  "commit": "6a4bc6be",
+  "dirty": true,
+  "dirtyLevel": "generated",
+  "deployNote": "feature/ballet-late-timetable-retry · commit 6a4bc6be · 运行数据已更新",
   "recentUpdates": [
+    {
+      "date": "2026-11-08",
+      "title": "周日抢课增加延迟放课补查",
+      "summary": "14:20 的四轮课表扫描均成功且下周一至周六始终无课程时，同一任务在 14:21 再查一次。发现目标课后按原规则预约或候补，仍为空则结束。版本 `1.0.11.98`。"
+    },
     {
       "date": "2026-11-07",
       "title": "修正课表老师高亮",
@@ -28,11 +33,6 @@
       "date": "2026-11-01",
       "title": "取消周一至周三红框四节课",
       "summary": "按 Owner 新截图逐节取消 11/02 18:45–19:45 张瀚泽大教室软开课、同日 19:45–21:15 张瀚泽大教室 L2、11/03 18:45–19:45 李俊大教室软开排队，以及 11/04 19:00–20:00 张瀚泽小教室软开课。"
-    },
-    {
-      "date": "2026-11-01",
-      "title": "取消下周周四至周六四节课",
-      "summary": "按 Owner 截图逐节取消 11/05 18:45–20:15 张瀚泽小教室 L1.5、11/06 18:45–20:15 申昊清小教室 L1.5、同日 20:15–21:15 申昊清小教室软开课，以及 11/07 15:30–17:00 徐老师大教室 L1.5 排队。"
     }
   ]
 }
