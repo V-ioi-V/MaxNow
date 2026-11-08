@@ -36,6 +36,7 @@ MAX_RETRIES = 3
 RETRY_DELAYS_SECONDS = (0.08, 0.16, 0.32)
 PREFETCH_WORKERS = 3
 DISCOVERY_WORKERS = 2
+LATE_TIMETABLE_RETRY_DELAY = timedelta(minutes=1)
 PREFLIGHT_WORKERS = 1
 PREFLIGHT_TTL_SECONDS = 15
 MAX_DISCOVERED_TARGETS = 30
@@ -938,9 +939,8 @@ def run_fast(
     unique_dates = list(
         dict.fromkeys(target["date"] for target in planned_targets)
     )
-    prefetched_pages: dict[str, str | Exception] = {}
 
-    def fetch_date(target_date: str) -> str:
+    def fetch_date(target_date: str) -> str | Exception:
         for attempt in range(1, MAX_RETRIES + 2):
             try:
                 return source.request(
@@ -952,24 +952,33 @@ def run_fast(
                     not in {"network_error", "http_error"}
                     or attempt > MAX_RETRIES
                 ):
-                    raise
+                    return failure
                 sleeper(RETRY_DELAYS_SECONDS[attempt - 1])
         raise FastBookingFailure("network_error")
 
-    def page_target_count(target_date: str, page: str) -> int:
+    def fetch_pages(workers: int) -> dict[str, str | Exception]:
+        with ThreadPoolExecutor(max_workers=min(workers, len(unique_dates))) as pool:
+            return dict(zip(unique_dates, pool.map(fetch_date, unique_dates)))
+
+    def page_rank(target_date: str, page: str) -> tuple[int, bool]:
         date_rules = [
             target for target in planned_targets if target["date"] == target_date
         ]
-        return sum(
+        entries = parse_timetable_entries(page, target_date)
+        target_count = sum(
             1
-            for entry in parse_timetable_entries(page, target_date)
+            for entry in entries
             if any(rule_matches(entry["record"], rule) for rule in date_rules)
         )
+        # Keep evidence that the timetable was already published, even if
+        # the page had no courses that matched the booking rules.
+        return target_count, bool(entries)
 
     def refresh_discovery_pages(
         initial_pages: dict[str, str | Exception],
-    ) -> dict[str, str | Exception]:
+    ) -> tuple[dict[str, str | Exception], str | None]:
         pages = dict(initial_pages)
+        scan_complete = all(isinstance(page, str) for page in pages.values())
         refresh_started = time.monotonic()
         for offset in config["discoveryRefreshSeconds"]:
             sleeper(
@@ -978,40 +987,38 @@ def run_fast(
                     float(offset) - (time.monotonic() - refresh_started),
                 )
             )
-            with ThreadPoolExecutor(
-                max_workers=min(DISCOVERY_WORKERS, len(unique_dates))
-            ) as refresh_pool:
-                futures = {
-                    target_date: refresh_pool.submit(fetch_date, target_date)
-                    for target_date in unique_dates
-                }
-                for target_date, future in futures.items():
+            for target_date, refreshed in fetch_pages(DISCOVERY_WORKERS).items():
+                current = pages[target_date]
+                if isinstance(refreshed, str) and isinstance(current, str):
                     try:
-                        refreshed = future.result()
-                        current = pages.get(target_date)
-                        if (
-                            isinstance(current, Exception)
-                            or page_target_count(target_date, refreshed)
-                            >= page_target_count(target_date, current)
+                        if page_rank(target_date, refreshed) < page_rank(
+                            target_date, current
                         ):
-                            pages[target_date] = refreshed
-                    except (booking.BookingFailure, ballet.SyncFailure) as failure:
-                        if isinstance(pages.get(target_date), Exception):
-                            pages[target_date] = failure
-        return pages
+                            continue
+                    except (booking.BookingFailure, ballet.SyncFailure):
+                        scan_complete = False
+                        continue
+                if isinstance(refreshed, Exception):
+                    scan_complete = False
+                    if isinstance(current, str):
+                        continue
+                pages[target_date] = refreshed
+        if execute and scan_complete and all(
+            isinstance(page, str) and not parse_timetable_entries(page, target_date)
+            for target_date, page in pages.items()
+        ):
+            wait_until(release_at + LATE_TIMETABLE_RETRY_DELAY)
+            retried_at = ballet.iso_now()
+            pages = fetch_pages(DISCOVERY_WORKERS)
+            for page in pages.values():
+                if isinstance(page, (booking.BookingFailure, ballet.SyncFailure)) and (
+                    page.code in GLOBAL_STOP_CODES
+                ):
+                    raise page
+            return pages, retried_at
+        return pages, None
 
-    with ThreadPoolExecutor(
-        max_workers=min(PREFETCH_WORKERS, len(unique_dates))
-    ) as prefetch_executor:
-        page_futures = {
-            target_date: prefetch_executor.submit(fetch_date, target_date)
-            for target_date in unique_dates
-        }
-        for target_date, future in page_futures.items():
-            try:
-                prefetched_pages[target_date] = future.result()
-            except (booking.BookingFailure, ballet.SyncFailure) as failure:
-                prefetched_pages[target_date] = failure
+    prefetched_pages = fetch_pages(PREFETCH_WORKERS)
     prefetch_wall_milliseconds = round(
         (time.monotonic() - prefetch_started) * 1000
     )
@@ -1055,6 +1062,7 @@ def run_fast(
     target_index = 0
     discovery_settled = False
     discovery_wall_milliseconds = 0
+    late_discovery_retry_at = None
     while True:
         needs_settle = not discovery_settled and (
             target_index >= len(targets)
@@ -1067,7 +1075,7 @@ def run_fast(
             != 0
         )
         if needs_settle:
-            settled_pages = discovery_future.result()
+            settled_pages, late_discovery_retry_at = discovery_future.result()
             discovery_executor.shutdown(wait=True, cancel_futures=True)
             discovery_wall_milliseconds = round(
                 (time.monotonic() - discovery_started) * 1000
@@ -1519,6 +1527,11 @@ def run_fast(
         "timings": {
             "prefetchWallMilliseconds": prefetch_wall_milliseconds,
             "discoveryWallMilliseconds": discovery_wall_milliseconds,
+            **(
+                {"lateDiscoveryRetryAt": late_discovery_retry_at}
+                if late_discovery_retry_at
+                else {}
+            ),
             "mutationWallMilliseconds": mutation_wall_milliseconds,
             "lastMutationAtMilliseconds": last_mutation_at_milliseconds,
             "verificationWallMilliseconds": verification_wall_milliseconds,

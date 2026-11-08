@@ -4,8 +4,9 @@ import tempfile
 import threading
 import time
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
+from unittest.mock import patch
 
 import book_ballet as booking
 import book_ballet_fast as fast
@@ -353,6 +354,106 @@ class FastBookingTests(unittest.TestCase):
         self.release = datetime(
             2026, 8, 2, 14, 20, tzinfo=ballet.TIMEZONE
         )
+
+    def test_unpublished_timetable_retries_once_at_1421_then_books(self):
+        source = FakeFastSource()
+        timetable_published = False
+        empty_requests = []
+        original_request = source.request
+
+        def request(path, marker):
+            if path.startswith(ballet.TIMETABLE_PATH) and not timetable_published:
+                empty_requests.append(path.rsplit("/", 1)[-1])
+                return '<div class="dateswiper"></div><!-- classtable -->'
+            return original_request(path, marker)
+
+        def publish_at_retry(_):
+            nonlocal timetable_published
+            timetable_published = True
+
+        with patch.object(source, "request", side_effect=request), patch.object(
+            fast, "wait_until", side_effect=publish_at_retry
+        ) as wait:
+            result, state = fast.run_fast(
+                source, config(), fast.default_state(), self.release,
+                execute=True, sleeper=lambda _: None,
+            )
+
+        wait.assert_called_once_with(self.release + timedelta(minutes=1))
+        self.assertEqual(len(empty_requests), 24)
+        self.assertEqual(set(source.timetable_requests_by_date), set(empty_requests))
+        self.assertEqual(list(source.timetable_requests_by_date.values()), [1] * 6)
+        self.assertEqual(result["mutationAttempts"], 18)
+        self.assertEqual(len(set(source.mutation_order)), 18)
+        self.assertIn("lateDiscoveryRetryAt", result["timings"])
+        self.assertEqual(state["totalRuns"], 1)
+
+    def test_timetable_stays_empty_after_single_retry(self):
+        source = FakeFastSource()
+        with patch.object(
+            source, "request", return_value='<div class="dateswiper"></div><!-- classtable -->'
+        ) as request, patch.object(fast, "wait_until") as wait:
+            result, _ = fast.run_fast(
+                source, config(), fast.default_state(), self.release,
+                execute=True, sleeper=lambda _: None,
+            )
+
+        wait.assert_called_once_with(self.release + timedelta(minutes=1))
+        self.assertEqual(request.call_count, 30)
+        self.assertEqual(result["records"], [])
+        self.assertEqual(result["mutationAttempts"], 0)
+
+    def test_published_non_target_courses_do_not_trigger_retry(self):
+        source = FakeFastSource(progressive_all_after_requests={
+            f"2026-08-{day:02d}": 4 for day in range(3, 9)
+        })
+        with patch.object(fast, "wait_until") as wait:
+            result, _ = fast.run_fast(
+                source, config(), fast.default_state(), self.release,
+                execute=True, sleeper=lambda _: None,
+            )
+        wait.assert_not_called()
+        self.assertEqual(result["records"], [])
+
+    def test_empty_timetable_dry_run_does_not_wait(self):
+        source = FakeFastSource()
+        with patch.object(
+            source, "request", return_value='<div class="dateswiper"></div><!-- classtable -->'
+        ) as request, patch.object(fast, "wait_until") as wait:
+            result, _ = fast.run_fast(
+                source, config(), fast.default_state(), self.release,
+                execute=False, sleeper=lambda _: None,
+            )
+        wait.assert_not_called()
+        self.assertEqual(request.call_count, 24)
+        self.assertEqual(result["mutationAttempts"], 0)
+
+    def test_auth_failure_during_late_retry_stops_before_booking(self):
+        source = FakeFastSource()
+        late_retry = False
+        original_request = source.request
+
+        def request(path, marker):
+            if not late_retry:
+                return '<div class="dateswiper"></div><!-- classtable -->'
+            if path.endswith("/2026-08-08"):
+                raise ballet.SyncFailure("auth_required")
+            return original_request(path, marker)
+
+        def expire_at_retry(_):
+            nonlocal late_retry
+            late_retry = True
+
+        with patch.object(source, "request", side_effect=request), patch.object(
+            fast, "wait_until", side_effect=expire_at_retry
+        ):
+            with self.assertRaises(ballet.SyncFailure) as failure:
+                fast.run_fast(
+                    source, config(), fast.default_state(), self.release,
+                    execute=True, sleeper=lambda _: None,
+                )
+        self.assertEqual(failure.exception.code, "auth_required")
+        self.assertEqual(source.mutation_count, 0)
 
     def test_all_l15_and_soft_open_are_attempted_before_any_l2(self):
         source = FakeFastSource(progressive_l15_after_requests={"2026-08-08": 2})
