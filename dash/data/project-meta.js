@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14 09:13",
-  "version": "1.0.11.99",
-  "versionLabel": "v1.0.11.99",
-  "branch": "bugfix/wenda-session-recovery",
-  "commit": "5d3e8b53",
+  "updatedAt": "2026-11-14 09:17",
+  "version": "1.0.12.00",
+  "versionLabel": "v1.0.12.00",
+  "branch": "bugfix/wenda-disable-card-activation",
+  "commit": "8d16de7e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/wenda-session-recovery · commit 5d3e8b53 · 有未提交代码改动",
+  "deployNote": "bugfix/wenda-disable-card-activation · commit 8d16de7e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-14",
+      "title": "闻道会员卡改为手动激活",
+      "summary": "普通预约和周日自动抢课只使用已激活卡，继续按到期日顺延。仅有需激活的适用卡时提示手动激活。版本 `1.0.12.00`。"
+    },
     {
       "date": "2026-11-14",
       "title": "恢复闻道同步",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-11-07",
       "title": "本周课程表按老师锁定",
       "summary": "点击课卡突出该老师的全部课程，其余课卡置灰。再次点击同一位老师或点击课表空白处解除，点击另一位老师直接切换。"
-    },
-    {
-      "date": "2026-11-02",
-      "title": "取消周二 L2 预约",
-      "summary": "按 Owner 红框截图精确取消 11/03 18:45–20:15 王嘉豪小教室「芭蕾L2-零基础」；实时唯一匹配，dry-run ready / mutationAttempts=0，execute cancelled / mutationAttempts=1。"
     }
   ]
 };

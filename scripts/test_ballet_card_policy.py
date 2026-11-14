@@ -1,10 +1,5 @@
 import json
-import tempfile
-import threading
 import unittest
-from contextlib import nullcontext
-from pathlib import Path
-from unittest.mock import patch
 
 import ballet_card_policy as policy
 import book_ballet as booking
@@ -19,7 +14,7 @@ def card(key, expiry="2027-02-07", remaining=4, state="active"):
     label = {"active": "使用中", "expired": "已失效", "unactivated": "未激活"}[state]
     validity = "~" if state == "unactivated" else f"2026-01-01 ~ {expiry}"
     balance = f"卡内余:{remaining}次" + ("/总50次" if state == "active" else "")
-    return f'<a href="{policy.DETAIL_PREFIX}{key}"><p>测试卡</p><p>{label}</p><p>有效期:{validity}</p><p>{balance}</p></a>'
+    return f'<a href="/gm/weixin/my/mycardone/{ballet.STORE_ID}/{key}"><p>测试卡</p><p>{label}</p><p>有效期:{validity}</p><p>{balance}</p></a>'
 
 
 class Source:
@@ -28,18 +23,10 @@ class Source:
         self.blocked = set(blocked)
         self.checked = []
         self.mutations = []
-        self.unknown = False
-        self.activation_attempted = False
 
     def request(self, path, marker):
         assert path == ballet.MEMBERSHIP_PATH
         return "".join(card(key, **value) for key, value in self.cards.items())
-
-    def request_card_detail(self, path):
-        key = path.rsplit("/", 1)[-1]
-        return (f'<button class="notopencard" cardid="{key}">激活</button>'
-            f'<script>$.ajax({{url:"{policy.INFO_PATH}",type:"post",data:{{"cardid":cardid}}}});'
-            f'$.ajax({{url:"{policy.ACTIVATE_PREFIX}"+cardid,type:"post"}});</script>')
 
     def post_fields(self, path, fields, mutation):
         if path == booking.CARD_TYPE_PATH:
@@ -49,16 +36,6 @@ class Source:
             if fields["cardid"] in self.blocked:
                 return json.dumps("BLOCKED")
             return json.dumps("OK")
-        if path == policy.INFO_PATH:
-            return "2027-12-31"
-        if path.startswith(policy.ACTIVATE_PREFIX):
-            assert mutation and fields == {}
-            key = path.rsplit("/", 1)[-1]
-            self.mutations.append(key)
-            if self.unknown:
-                raise booking.BookingFailure("unknown_result")
-            self.cards[key].update(state="active", expiry="2027-12-31")
-            return ""
         raise AssertionError(path)
 
 
@@ -86,81 +63,69 @@ class CardPolicyTests(unittest.TestCase):
             return original(path,fields,mutation)
         source.post_fields = post
         with self.assertRaises(booking.BookingFailure) as caught:
-            policy.select_card(source,CONTRACT,True)
+            policy.select_card(source,CONTRACT)
         self.assertEqual(caught.exception.code,"unknown_result")
         self.assertEqual(source.mutations,[])
 
-    def test_dry_run_does_not_activate(self):
+    def test_selection_requires_manual_activation(self):
         source = Source({"1":{"state":"unactivated"}})
         with self.assertRaises(booking.BookingFailure) as caught:
             policy.select_card(source,CONTRACT)
         self.assertEqual(caught.exception.code,"activation_required")
         self.assertEqual(source.mutations,[])
 
-    def test_smallest_inactive_is_activated_and_requeried(self):
-        source = Source({"1":{"state":"unactivated","remaining":40},"2":{"state":"unactivated","remaining":10}})
-        with tempfile.TemporaryDirectory() as directory, patch.object(policy,"activation_lock",lambda d:nullcontext()):
-            source.card_policy_directory = Path(directory)
-            self.assertEqual(policy.select_card(source,CONTRACT,True),"2")
-            self.assertEqual(source.mutations,["2"])
-            self.assertEqual(json.loads((Path(directory)/"activation.json").read_text())["status"],"verified")
-            self.assertEqual(policy.select_card(source,CONTRACT,True),"2")
-            self.assertEqual(source.mutations,["2"])
-
-    def test_activation_unknown_survives_process_restart(self):
-        with tempfile.TemporaryDirectory() as directory, patch.object(policy,"activation_lock",lambda d:nullcontext()):
-            for attempt in range(2):
-                source=Source({"1":{"state":"unactivated"}})
-                source.unknown=True
-                source.card_policy_directory=Path(directory)
-                with self.assertRaises(booking.BookingFailure) as caught:
-                    policy.select_card(source,CONTRACT,True)
-                self.assertEqual(caught.exception.code,"activation_unknown")
-                self.assertEqual(len(source.mutations),1 if attempt==0 else 0)
-
-    def test_no_second_activation_when_first_card_rules_still_block(self):
-        source=Source({"1":{"state":"unactivated","remaining":10},"2":{"state":"unactivated","remaining":40}},blocked={"1"})
-        with tempfile.TemporaryDirectory() as directory, patch.object(policy,"activation_lock",lambda d:nullcontext()):
-            source.card_policy_directory=Path(directory)
-            with self.assertRaises(booking.BookingFailure):
-                policy.select_card(source,CONTRACT,True)
-            with self.assertRaises(booking.BookingFailure) as caught:
-                policy.select_card(source,CONTRACT,True)
-            self.assertEqual(caught.exception.code,"activation_limit")
-            self.assertEqual(source.mutations,["1"])
-
-    def test_activation_requires_exact_button_and_contract(self):
-        source=Source({"1":{"state":"unactivated"}})
-        with self.assertRaises(booking.BookingFailure):
-            policy.activation_contract(source.request_card_detail(policy.DETAIL_PREFIX+"1"),"2")
-
     def test_no_eligible_cards_fail_without_mutation(self):
         source=Source({})
         with self.assertRaises(booking.BookingFailure) as caught:
-            policy.select_card(source,CONTRACT,True)
+            policy.select_card(source,CONTRACT)
         self.assertEqual(caught.exception.code,"no_eligible_card")
         self.assertEqual(source.mutations,[])
 
-    def test_malformed_journal_blocks_activation(self):
-        source=Source({"1":{"state":"unactivated"}})
-        with tempfile.TemporaryDirectory() as directory, patch.object(policy,"activation_lock",lambda d:nullcontext()):
-            source.card_policy_directory=Path(directory)
-            (Path(directory)/"activation.json").write_text("broken")
-            with self.assertRaises(booking.BookingFailure) as caught:
-                policy.select_card(source,CONTRACT,True)
-            self.assertEqual(caught.exception.code,"activation_unknown")
-            self.assertEqual(source.mutations,[])
+    def test_execute_reports_inactive_card_without_mutation(self):
+        for use_fast_path in (False, True):
+            with self.subTest(fast_path=use_fast_path):
+                source = FakeFastSource() if use_fast_path else BookingSource()
+                original_request = source.request
+                original_post = source.post_fields
 
-    def test_concurrent_activation_serializes_and_posts_once(self):
-        source=Source({"1":{"state":"unactivated"}})
-        lock=threading.RLock()
-        from concurrent.futures import ThreadPoolExecutor
-        with tempfile.TemporaryDirectory() as directory, patch.object(policy,"activation_lock",lambda d:lock):
-            source.card_policy_directory=Path(directory)
-            with ThreadPoolExecutor(max_workers=2) as pool:
-                results=list(pool.map(lambda _:policy.select_card(source,CONTRACT,True),range(2)))
-            self.assertEqual(results,["1","1"])
-            self.assertEqual(source.mutations,["1"])
+                def request(path, marker):
+                    if path == ballet.MEMBERSHIP_PATH:
+                        return card("90002", state="unactivated")
+                    return original_request(path, marker)
+
+                def post(path, fields, mutation):
+                    self.assertFalse(mutation)
+                    if path == booking.CARD_TYPE_PATH:
+                        return json.dumps([{"id": 90002, "status": "NOTOPEN"}])
+                    return original_post(path, fields, mutation)
+
+                source.request = request
+                source.post_fields = post
+                if use_fast_path:
+                    release = datetime(2026, 8, 2, 14, 20, tzinfo=ballet.TIMEZONE)
+                    result, _ = fast.run_fast(source, config(), {}, release, True, sleeper=lambda _: None)
+                    records = result["records"]
+                else:
+                    result = booking.run(source, [TARGET], True)
+                    records = result["data"]["records"]
+                    self.assertEqual(result["status"], "preflight_failed")
+                self.assertIn("activation_required", [record["status"] for record in records])
+                self.assertEqual(source.mutation_count, 0)
+
+    def test_sources_reject_card_activation_requests(self):
+        for source_type in (booking.WendaBookingSource, fast.PersistentWendaBookingSource):
+            source = object.__new__(source_type)
+            with self.subTest(source=source_type.__name__):
+                for action, fields, mutation in (
+                    ("getopencardinfo", {"cardid": "1"}, False),
+                    ("opencard", {}, True),
+                ):
+                    path = f"/gm/weixin/my/{action}/{ballet.STORE_ID}"
+                    if mutation:
+                        path += "/1"
+                    with self.assertRaises(booking.BookingFailure) as failure:
+                        source.post_fields(path, fields, mutation)
+                    self.assertEqual(failure.exception.code, "configuration_error")
 
     def test_normal_booking_uses_second_card_and_single_mutation(self):
         source=BookingSource(); original_request=source.request; original_post=source.post_fields

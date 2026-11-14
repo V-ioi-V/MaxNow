@@ -53,7 +53,6 @@ GLOBAL_STOP_CODES = {
     "configuration_error",
     "parse_error",
     "source_changed",
-    "activation_unknown",
 }
 PUBLIC_ERROR_LABELS = {
     "auth_required": "闻道登录已失效，未执行预约。",
@@ -62,7 +61,6 @@ PUBLIC_ERROR_LABELS = {
     "outside_window": "不在周日抢课时间窗内，未执行预约。",
     "source_changed": "闻道页面结构发生变化，已停止后续课程。",
     "unknown_result": "预约结果无法安全确认，未重复提交该课。",
-    "activation_unknown": "课程卡激活结果待确认，已停止后续操作。",
 }
 
 
@@ -91,7 +89,6 @@ class PersistentWendaBookingSource:
         self.timeout_seconds = timeout_seconds
         self.post_count = 0
         self.mutation_count = 0
-        self.activation_count = 0
         self._counter_lock = threading.Lock()
         self._credential_lock = threading.Lock()
         self._timing_lock = threading.Lock()
@@ -208,9 +205,7 @@ class PersistentWendaBookingSource:
         raise OSError("unreachable")
 
     def request(self, path: str, expected_marker: str) -> str:
-        from ballet_card_policy import DETAIL_PREFIX
-        if not re.fullmatch(re.escape(DETAIL_PREFIX) + r"[1-9][0-9]{0,19}", path):
-            path = ballet.validate_read_only_path(path)
+        path = ballet.validate_read_only_path(path)
         try:
             status, headers, body = self._perform(
                 "GET",
@@ -231,9 +226,6 @@ class PersistentWendaBookingSource:
         if expected_marker not in text:
             raise ballet.SyncFailure("source_changed")
         return text
-
-    def request_card_detail(self, path: str) -> str:
-        return self.request(path, "opencard")
 
     def request_booking_page(self, offset: int, customer_id: str) -> str:
         if not isinstance(offset, int):
@@ -276,10 +268,7 @@ class PersistentWendaBookingSource:
         fields: dict[str, str],
         mutation: bool,
     ) -> str:
-        from ballet_card_policy import INFO_PATH, ACTIVATE_PREFIX
-        activation = bool(re.fullmatch(re.escape(ACTIVATE_PREFIX) + r"[1-9][0-9]{0,19}", path))
         allowed = {
-            INFO_PATH,
             booking.CARD_TYPE_PATH,
             booking.GET_USING_CARD_PATH,
             booking.BOOKING_SUBMIT_PATH,
@@ -289,20 +278,17 @@ class PersistentWendaBookingSource:
                 path.removeprefix(booking.CHECK_RULES_PREFIX).isdigit()
             )
             if path.startswith(booking.CHECK_RULES_PREFIX)
-            else path in allowed or activation
+            else path in allowed
         )
         if (
             not path_allowed
-            or (not fields and not activation)
-            or (activation and fields != {})
-            or mutation != (path == booking.BOOKING_SUBMIT_PATH or activation)
+            or not fields
+            or mutation != (path == booking.BOOKING_SUBMIT_PATH)
         ):
             raise booking.BookingFailure("configuration_error")
         if mutation:
             with self._counter_lock:
                 self.mutation_count += 1
-                if activation:
-                    self.activation_count += 1
         body = urllib.parse.urlencode(fields).encode("utf-8")
         headers = {
             **self._headers(path),
@@ -1250,7 +1236,7 @@ def run_fast(
                         prepared = None
                 if prepared is None:
                     contract = booking.booking_contract(candidate)
-                    card_id = booking.eligible_card(source, contract, allow_activation=execute)
+                    card_id = booking.eligible_card(source, contract)
                 else:
                     contract = prepared["contract"]
                     card_id = prepared["cardId"]
@@ -1260,7 +1246,7 @@ def run_fast(
                     except booking.BookingFailure as failure:
                         if failure.code != "rules_blocked":
                             raise
-                        card_id = booking.eligible_card(source, contract, allow_activation=execute)
+                        card_id = booking.eligible_card(source, contract)
                 if not execute:
                     records.append(
                         safe_record(
@@ -1604,7 +1590,7 @@ def build_public(
             "所有日期不限老师，同课型按开始时间排序；"
             "工作日仅 18:40 后、周六仅 18:00 前结束；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；"
-            "课程卡按到期日由近到远顺延；无可用卡时激活剩余课次最少的适用卡"
+            "仅使用已激活的课程卡，按到期日由近到远顺延；仅有未激活卡适用时请手动激活"
         ),
         "lastAttemptAt": state.get("lastAttemptAt"),
         "lastSuccessAt": state.get("lastSuccessAt"),

@@ -328,9 +328,9 @@ def response_json(text: str) -> Any:
         raise BookingFailure("source_changed")
 
 
-def eligible_card(source: Any, contract: dict[str, str], allow_activation: bool = False) -> str:
+def eligible_card(source: Any, contract: dict[str, str]) -> str:
     from ballet_card_policy import select_card
-    return select_card(source, contract, allow_activation=allow_activation)
+    return select_card(source, contract)
 
 
 def check_rules(source: Any, contract: dict[str, str], card_id: str) -> None:
@@ -369,7 +369,6 @@ class WendaBookingSource:
         )
         self.post_count = 0
         self.mutation_count = 0
-        self.activation_count = 0
 
     @property
     def request_count(self) -> int:
@@ -377,25 +376,6 @@ class WendaBookingSource:
 
     def request(self, path: str, expected_marker: str) -> str:
         return self.reader.request(path, expected_marker)
-
-    def request_card_detail(self, path: str) -> str:
-        from ballet_card_policy import DETAIL_PREFIX
-        if not re.fullmatch(re.escape(DETAIL_PREFIX) + r"[1-9][0-9]{0,19}", path):
-            raise BookingFailure("configuration_error")
-        self.reader.request_count += 1
-        request = urllib.request.Request(ballet.BASE_URL + path, headers=self.reader._headers(path))
-        try:
-            with self.reader.opener.open(request, timeout=self.reader.timeout_seconds) as response:
-                body = ballet._read_limited(response)
-                text = body.decode("utf-8", "replace")
-                if ballet._is_auth_response(response.status, response.headers, text):
-                    raise BookingFailure("auth_required")
-                self.reader._update_session_in_memory(response.headers)
-                if response.status != 200:
-                    raise BookingFailure("http_error")
-                return text
-        except (urllib.error.URLError, TimeoutError):
-            raise BookingFailure("network_error") from None
 
     def request_booking_page(self, offset: int, customer_id: str) -> str:
         return self.reader.request_booking_page(offset, customer_id)
@@ -406,10 +386,7 @@ class WendaBookingSource:
         fields: dict[str, str],
         mutation: bool,
     ) -> str:
-        from ballet_card_policy import INFO_PATH, ACTIVATE_PREFIX
-        activation = bool(re.fullmatch(re.escape(ACTIVATE_PREFIX) + r"[1-9][0-9]{0,19}", path))
         allowed = {
-            INFO_PATH,
             CARD_TYPE_PATH,
             GET_USING_CARD_PATH,
             BOOKING_SUBMIT_PATH,
@@ -418,19 +395,16 @@ class WendaBookingSource:
             suffix = path.removeprefix(CHECK_RULES_PREFIX)
             path_allowed = bool(re.fullmatch(r"\d+", suffix))
         else:
-            path_allowed = path in allowed or activation
+            path_allowed = path in allowed
         if (
             not path_allowed
-            or (not fields and not activation)
-            or (activation and fields != {})
-            or mutation != (path == BOOKING_SUBMIT_PATH or activation)
+            or not fields
+            or mutation != (path == BOOKING_SUBMIT_PATH)
         ):
             raise BookingFailure("configuration_error")
         self.post_count += 1
         if mutation:
             self.mutation_count += 1
-            if activation:
-                self.activation_count += 1
         request = urllib.request.Request(
             ballet.BASE_URL + path,
             data=urllib.parse.urlencode(fields).encode("utf-8"),
@@ -507,11 +481,11 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
             continue
         try:
             contract = booking_contract(candidate)
-            card_id = eligible_card(source, contract)
+            eligible_card(source, contract)
         except BookingFailure as failure:
             if failure.code not in recoverable_preflight_failures:
                 raise
-            prepared.append({"target": target, "status": "ready_activation" if execute and failure.code == "activation_required" else failure.code})
+            prepared.append({"target": target, "status": failure.code})
             continue
         prepared.append(
             {
@@ -538,7 +512,7 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
         for item in prepared
     ]
     preflight_blocked = any(
-        item["status"] not in {"ready", "ready_activation", "already_booked"} for item in prepared
+        item["status"] not in {"ready", "already_booked"} for item in prepared
     )
     if not execute or preflight_blocked:
         return {
@@ -571,7 +545,7 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
                 }
             )
             continue
-        mutation_attempts_before = getattr(source, "mutation_count", 0) - getattr(source, "activation_count", 0)
+        mutation_attempts_before = getattr(source, "mutation_count", 0)
         try:
             candidate = timetable_candidates(source, target)
             if (
@@ -580,7 +554,7 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
             ):
                 raise BookingFailure("not_available")
             contract = booking_contract(candidate[0])
-            card_id = eligible_card(source, contract, allow_activation=True)
+            card_id = eligible_card(source, contract)
             mutation_result = response_json(
                 source.post_fields(
                     contract["bookingPath"],
@@ -608,7 +582,7 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
             )
         except (BookingFailure, ballet.SyncFailure) as failure:
             mutation_attempted = (
-                getattr(source, "mutation_count", 0) - getattr(source, "activation_count", 0) > mutation_attempts_before
+                getattr(source, "mutation_count", 0) > mutation_attempts_before
             )
             failure_code = getattr(failure, "code", "unknown_result")
             status = (
@@ -627,8 +601,8 @@ def run(source: Any, courses: list[dict[str, str]], execute: bool) -> dict[str, 
         "status": "stopped" if stop_reason else "success",
         "live": stop_reason != "unknown_result",
         "mode": "execute" if execute else "dry-run",
-        "mutated": (None if stop_reason == "activation_unknown" else bool(getattr(source, "activation_count", 0)) or any(record["status"] == "booked" for record in results)),
-        "activationAttempts": getattr(source, "activation_count", 0),
+        "mutated": any(record["status"] == "booked" for record in results),
+        "activationAttempts": 0,
         "fetchedAt": ballet.iso_now(),
         "requestsMade": source.request_count,
         "postsMade": getattr(source, "post_count", 0),
