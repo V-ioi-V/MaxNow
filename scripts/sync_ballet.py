@@ -40,6 +40,22 @@ BOOKING_PATH = f"/gm/weixin/my/bookrecord/{STORE_ID}"
 BOOKING_MORE_PREFIX = f"/gm/weixin/my/newbookrecord/{STORE_ID}/"
 MEMBERSHIP_PATH = f"/gm/weixin/my/mycard/{STORE_ID}"
 TIMETABLE_PATH = f"/gm/weixin/classtable/simpleclass/{STORE_ID}/430"
+BOOKING_SUBMIT_PATH = f"/gm/weixin/classtable/do_addbook/{STORE_ID}"
+CARD_TYPE_PATH = f"/gm/weixin/classtable/check_cardtypecourse/{STORE_ID}"
+GET_USING_CARD_PATH = f"/gm/weixin/classtable/getusingcard/{STORE_ID}"
+CHECK_RULES_PREFIX = f"/gm/weixin/classtable/check_rules/{STORE_ID}/"
+CANCEL_SUBMIT_PATH = f"/gm/weixin/my/do_cancel/{STORE_ID}"
+CHECK_CANCEL_PREFIX = f"/gm/weixin/my/check_cancelrules/{STORE_ID}/"
+WENDA_POST_PATHS = {
+    BOOKING_SUBMIT_PATH,
+    CARD_TYPE_PATH,
+    GET_USING_CARD_PATH,
+    CANCEL_SUBMIT_PATH,
+}
+WENDA_POST_DETAIL_PATTERN = re.compile(
+    rf"(?:{re.escape(CHECK_RULES_PREFIX)}[0-9]+|"
+    rf"{re.escape(CHECK_CANCEL_PREFIX)}[1-9][0-9]{{0,19}})"
+)
 DETAIL_PATH_PATTERN = re.compile(
     rf"^/gm/weixin/my/bookrecordone/{STORE_ID}/([1-9][0-9]{{0,19}})$"
 )
@@ -365,6 +381,23 @@ def validate_booking_page_path(path: str) -> str:
     return path
 
 
+def validate_wenda_request(method: str, path: str) -> None:
+    """Allow only supported routes at the HTTP boundary, including when called directly."""
+    if method == "GET":
+        validate_read_only_path(path)
+        return
+    if method == "POST":
+        if path in WENDA_POST_PATHS or WENDA_POST_DETAIL_PATTERN.fullmatch(path):
+            return
+        if path.startswith(ATTENDANCE_MORE_PREFIX):
+            validate_attendance_page_path(path)
+            return
+        if path.startswith(BOOKING_MORE_PREFIX):
+            validate_booking_page_path(path)
+            return
+    raise SyncFailure("configuration_error")
+
+
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
@@ -427,8 +460,10 @@ class WendaConnectionPool:
             self.pool.put(None)
     def open(self, request, timeout):
         url = urlsplit(request.full_url)
-        if url.scheme != "https" or url.netloc != urlsplit(BASE_URL).netloc:
+        if request.full_url != BASE_URL + url.path:
             raise SyncFailure("configuration_error")
+        method = request.get_method()
+        validate_wenda_request(method, url.path)
         connection = self.pool.get()
         try:
             self.guard()
@@ -442,7 +477,7 @@ class WendaConnectionPool:
             connection.timeout = timeout
             headers = dict(request.header_items())
             headers["Connection"] = "keep-alive"
-            connection.request(request.get_method(), url.path + ("?" + url.query if url.query else ""), body=request.data, headers=headers)
+            connection.request(method, url.path, body=request.data, headers=headers)
             response = connection.getresponse()
             return PooledResponse(response, connection, self.pool)
         except BaseException as error:

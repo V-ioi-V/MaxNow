@@ -1,5 +1,7 @@
 import json
 import unittest
+import urllib.request
+from unittest.mock import Mock
 
 import ballet_card_policy as policy
 import book_ballet as booking
@@ -126,6 +128,47 @@ class CardPolicyTests(unittest.TestCase):
                     with self.assertRaises(booking.BookingFailure) as failure:
                         source.post_fields(path, fields, mutation)
                     self.assertEqual(failure.exception.code, "configuration_error")
+
+    def test_http_transports_reject_activation_before_acquiring_connection(self):
+        connection_factory = Mock()
+        pool = ballet.WendaConnectionPool(Mock(), connection_factory)
+        fast_source = object.__new__(fast.PersistentWendaBookingSource)
+        fast_source._pool = Mock()
+        for path in (
+            f"/gm/weixin/my/opencard/{ballet.STORE_ID}/1",
+            f"/gm/weixin/my/getopencardinfo/{ballet.STORE_ID}",
+            f"/gm/weixin/my/%6fpencard/{ballet.STORE_ID}/1",
+            f"/gm/weixin/my//opencard/{ballet.STORE_ID}/1",
+            f"/gm/weixin/my/another_card_action/{ballet.STORE_ID}/1",
+        ):
+            for method in ("GET", "POST"):
+                with self.subTest(path=path, method=method):
+                    request = urllib.request.Request(ballet.BASE_URL + path, method=method)
+                    with self.assertRaises(ballet.SyncFailure) as failure:
+                        pool.open(request, timeout=1)
+                    self.assertEqual(failure.exception.code, "configuration_error")
+                    with self.assertRaises(ballet.SyncFailure) as failure:
+                        fast_source._perform_once(method, path, {}, None, "test")
+                    self.assertEqual(failure.exception.code, "configuration_error")
+        connection_factory.assert_not_called()
+        fast_source._pool.get.assert_not_called()
+
+    def test_http_allowlist_preserves_existing_routes(self):
+        for path in (
+            ballet.ATTENDANCE_MORE_PREFIX + "10",
+            ballet.BOOKING_MORE_PREFIX + "10",
+            ballet.CHECK_RULES_PREFIX + "1",
+            ballet.CHECK_CANCEL_PREFIX + "1",
+            ballet.BOOKING_SUBMIT_PATH,
+            ballet.CANCEL_SUBMIT_PATH,
+            ballet.CARD_TYPE_PATH,
+            ballet.GET_USING_CARD_PATH,
+        ):
+            with self.subTest(path=path):
+                ballet.validate_wenda_request("POST", path)
+                with self.assertRaises(ballet.SyncFailure):
+                    ballet.validate_wenda_request("GET", path)
+        ballet.validate_wenda_request("GET", ballet.MEMBERSHIP_PATH)
 
     def test_normal_booking_uses_second_card_and_single_mutation(self):
         source=BookingSource(); original_request=source.request; original_post=source.post_fields

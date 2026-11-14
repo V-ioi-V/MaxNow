@@ -69,7 +69,7 @@ Only book when the owner explicitly asks to book one or more exact classes. An e
 scripts/run_ballet_booking.sh dry-run
 ```
 
-The preflight may use Wenda's fixed read-only POST checks for eligible cards and booking rules. It must never call `do_addbook`. Require `live=true` and `mutationAttempts=0`; target records must be `ready`, `already_booked`, or `activation_required`. The last status means activation is planned but has not occurred; other preflight failures must not be bypassed.
+The preflight may use Wenda's fixed card eligibility and booking rules checks. Proceed only if the requested courses are all `ready` or `already_booked`, with `live=true` and `mutationAttempts=0`. For `activation_required`, tell the owner which course needs a manually activated card and stop the booking batch.
 
 3. If the owner has explicitly requested those exact classes in the current request, change only `confirm` to `true` and run:
 
@@ -81,7 +81,7 @@ The runner performs a unified live preflight, then books courses sequentially. B
 
 For multiple exact classes without an owner-specified order, sort them by the permanent weekday priority `周六 > 周日 > 周五 > 其他日期`, then keep the original order within the same weekday.
 
-4. Report only the safe per-course result. A course is booked only when its result is `status=booked` and live verification returns `bookingStatus=booked`. Card choice follows the owner-approved expiry order through `ballet_card_policy.py`: earliest expiry first, then later expiries; a definite card/rules rejection advances before booking submission. When no active applicable card works, execution may activate the applicable unactivated card with the fewest remaining classes. Dry-run reports `activation_required` with zero mutations; it may proceed to execute only for owner-confirmed exact targets under this already-approved activation policy. Never bypass an `activation_unknown` result or delete the private journal to retry.
+4. Report only the safe per-course result. A course is booked only when its result is `status=booked` and live verification returns `bookingStatus=booked`. Use active cards in expiry order through `ballet_card_policy.py`. A definite card or rules rejection advances to the next active card before submission. The owner activates cards manually.
 
 ## Sunday Automatic Booking
 
@@ -102,7 +102,7 @@ Current recurring rules are:
 - Sunday courses are excluded. `软开专项`, `软开专项【前后腿】`, `软开-胯`, and any other merely soft-open-classified near match are excluded.
 - For the same occurrence, prefer `大教室`; use `小教室` only when the large-room tier has no match. The selected tier must contain exactly one course.
 
-For the Sunday fast path, process dates in the order Tuesday, Saturday, Friday, Monday, Wednesday, Thursday; within each day process L1, L1.5, then exact-name soft-open. Weekday selection prefers Li Jun (blank teacher treated as Li Jun); Saturday has no teacher tier. Teacher is excluded from the occurrence idempotency key. Timetable GETs may use at most three workers; one background card/rules worker plus the serial submission stage keep preflight concurrency at most two. Preflight expires after fifteen seconds, and the selected card rules are always rechecked immediately before submission. Actual booking or waitlist mutations must remain strictly serial. Activation may run only at that serial stage, at most one card per execution, with an independent live-card verification and a persistent private attempted/verified journal. Any unknown activation is a global stop across later courses and survives process restart. Final booking-detail verification may use at most three read-only workers.
+For the Sunday fast path, follow the production target rules in `WENDA_BOOKING_AGENT.md` and `config/ballet-booking-fast.json`. Preflight expires after fifteen seconds, and selected card rules are rechecked immediately before submission. Actual booking or waitlist mutations must remain strictly serial. When an eligible card needs activation, skip the affected course and continue checking later targets.
 
 To query the automation plan and safe result ledger, run:
 

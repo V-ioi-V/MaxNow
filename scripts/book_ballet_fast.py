@@ -163,6 +163,7 @@ class PersistentWendaBookingSource:
         body: bytes | None,
         stage: str,
     ) -> tuple[int, Any, bytes]:
+        ballet.validate_wenda_request(method, path)
         connection = self._pool.get()
         reusable = False
         started = time.monotonic()

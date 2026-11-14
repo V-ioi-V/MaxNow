@@ -20,10 +20,8 @@ import sync_ballet as ballet
 
 sys.dont_write_bytecode = True
 
-CHECK_CANCEL_PREFIX = (
-    f"/gm/weixin/my/check_cancelrules/{ballet.STORE_ID}/"
-)
-CANCEL_SUBMIT_PATH = f"/gm/weixin/my/do_cancel/{ballet.STORE_ID}"
+CHECK_CANCEL_PREFIX = ballet.CHECK_CANCEL_PREFIX
+CANCEL_SUBMIT_PATH = ballet.CANCEL_SUBMIT_PATH
 CANCEL_SUCCESS_PATH = f"/gm/weixin/my/cancelsuccess/{ballet.STORE_ID}"
 CHECK_CANCEL_PATTERN = re.compile(
     re.escape(CHECK_CANCEL_PREFIX) + r"[1-9][0-9]{0,19}"

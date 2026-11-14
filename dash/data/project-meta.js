@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14 09:17",
-  "version": "1.0.12.00",
-  "versionLabel": "v1.0.12.00",
-  "branch": "bugfix/wenda-disable-card-activation",
-  "commit": "8d16de7e",
+  "updatedAt": "2026-11-14 09:23",
+  "version": "1.0.12.01",
+  "versionLabel": "v1.0.12.01",
+  "branch": "bugfix/wenda-activation-transport-block",
+  "commit": "b0a0bbd5",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/wenda-disable-card-activation · commit 8d16de7e · 有未提交代码改动",
+  "deployNote": "bugfix/wenda-activation-transport-block · commit b0a0bbd5 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-14",
+      "title": "闻道请求出口拦截会员卡激活",
+      "summary": "MaxNow 的闻道 HTTP 白名单在建立连接前拒绝激活、激活预检和未知端点。清除 OpenClaw 仍允许自动激活的旧指引。版本 `1.0.12.01`。"
+    },
     {
       "date": "2026-11-14",
       "title": "闻道会员卡改为手动激活",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-11-07",
       "title": "修正课表老师高亮",
       "summary": "锁定老师后，该老师的课程以原课型颜色和完整不透明度呈现，包括已经过去的课程。去掉锁定描边，其他老师的课继续置灰。解除锁定后，历史课程恢复常规淡化。版本 `1.0.11.97`，样式缓存 `styles.css?v=300`。"
-    },
-    {
-      "date": "2026-11-07",
-      "title": "本周课程表按老师锁定",
-      "summary": "点击课卡突出该老师的全部课程，其余课卡置灰。再次点击同一位老师或点击课表空白处解除，点击另一位老师直接切换。"
     }
   ]
 };

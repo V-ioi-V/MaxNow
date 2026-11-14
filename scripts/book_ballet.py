@@ -20,16 +20,10 @@ import sync_ballet as ballet
 
 sys.dont_write_bytecode = True
 
-BOOKING_SUBMIT_PATH = f"/gm/weixin/classtable/do_addbook/{ballet.STORE_ID}"
-CARD_TYPE_PATH = (
-    f"/gm/weixin/classtable/check_cardtypecourse/{ballet.STORE_ID}"
-)
-GET_USING_CARD_PATH = (
-    f"/gm/weixin/classtable/getusingcard/{ballet.STORE_ID}"
-)
-CHECK_RULES_PREFIX = (
-    f"/gm/weixin/classtable/check_rules/{ballet.STORE_ID}/"
-)
+BOOKING_SUBMIT_PATH = ballet.BOOKING_SUBMIT_PATH
+CARD_TYPE_PATH = ballet.CARD_TYPE_PATH
+GET_USING_CARD_PATH = ballet.GET_USING_CARD_PATH
+CHECK_RULES_PREFIX = ballet.CHECK_RULES_PREFIX
 MAX_COURSES = 10
 TIME_PATTERN = re.compile(r"(?:[01]\d|2[0-3]):[0-5]\d")
 
