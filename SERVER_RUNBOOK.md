@@ -1,5 +1,12 @@
 # MaxNow 服务器操作说明
 
+## 闻道生产凭据交接
+
+- 新会话先做隔离实时只读验证，再原子替换生产加密文件，最后原子替换 `/etc/maxnow-ballet/credential-version`。每次使用唯一版本值。systemd path 单元 `maxnow-wenda-session-credential.path` 监听这个最终提交动作。
+- `maxnow-wenda-session-handoff.service` 启动 `maxnow-wenda-session-probe@<版本>.service`。探针用 systemd 挂载的生产加密凭据，启动即检查，随后每 1200 秒检查一次。新一代开始后停旧探针，旧日志保留。身份失效时该代次退出，下一次换票据会重新开始。
+- 原有五分钟转存及发布定时器继续工作。转存服务按当前代次发布固定目录中的脱敏 JSONL。相关 Python 脚本由 root 安装在 `/usr/local/lib/maxnow-wenda-session/`。安装时用仓库版替换旧转存单元，并移除 v8 的 `20-current-probe.conf`；启动 path 单元后手动启动一次 handoff 接管当前版本。
+- 检查命令为 `systemctl is-active maxnow-wenda-session-credential.path`、`systemctl list-units 'maxnow-wenda-session-probe@*.service'` 和读取发布后的 `ballet-session.json`。同一版本交接是幂等的，已结束代次保留历史。服务器重启后需产生新的凭据版本才会开启下一代检查。
+
 ## 2026-11-14 恢复闻道每 20 分钟会话检查
 
 - 午后确认上午更换的生产会话已失效。Owner 在电脑微信打开闻道课表后，从本机受控提取新会话，经标准输入加密并通过隔离的实时课表和活动预约检查。更新生产凭据及版本后，15:30 芭蕾完整同步成功。

@@ -1,0 +1,18 @@
+[Unit]
+Description=Export redacted Wenda probe log for MaxNow status
+ConditionPathExists=/etc/maxnow-ballet/session-experiment.json
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -B /usr/local/lib/maxnow-wenda-session/manage_wenda_session_probe.py export
+UMask=0077
+ProtectSystem=strict
+ReadWritePaths=/var/lib/maxnow-ballet-session-source
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+NoNewPrivileges=true
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+InaccessiblePaths=-/etc/credstore.encrypted -/run/credentials
+

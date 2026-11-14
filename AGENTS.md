@@ -96,6 +96,7 @@ scripts/test_cancel_ballet.py
 scripts/test_sync_ballet.py
 scripts/sync_ballet_session_status.py
 scripts/test_sync_ballet_session_status.py
+scripts/manage_wenda_session_probe.py
 server/maxnow-ballet-sync.service
 server/maxnow-ballet-sync.timer
 server/maxnow-ballet-full-sync.service
@@ -103,6 +104,10 @@ server/maxnow-ballet-full-sync.timer
 server/maxnow-ballet-session-status.service
 server/maxnow-ballet-session-status.timer
 server/maxnow-ballet-session-status.sysusers
+server/maxnow-ballet-session-log-export.service
+server/maxnow-wenda-session-credential.path
+server/maxnow-wenda-session-handoff.service
+server/maxnow-wenda-session-probe@.service
 server/maxnow-auth-locations.conf
 VERSION
 CONTEXT.md

@@ -1097,12 +1097,12 @@
                 </dl>
 
                 <p class="ballet-session-note" id="ballet-session-note">
-                  这是无副作用的只读探针，不代表 PHPSESSID 已实现自动续期。
+                  每 20 分钟只读检查。更换生产凭据后自动开启新一轮检查。
                 </p>
                 <div class="ballet-session-evidence" aria-label="实验辅助信息">
                   <span id="ballet-session-phase">阶段起始 --</span>
                   <span id="ballet-session-samples">样本 --</span>
-                  <span id="ballet-session-next-plan" hidden>新凭据后计划每 20 分钟</span>
+                  <span id="ballet-session-next-plan" hidden>更新凭据后自动恢复每 20 分钟检查</span>
                   <span id="ballet-session-observations">等待观察结果</span>
                 </div>
               </div>

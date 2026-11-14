@@ -1,0 +1,19 @@
+[Unit]
+Description=Switch the Wenda 20-minute probe to the new production credential
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -B /usr/local/lib/maxnow-wenda-session/manage_wenda_session_probe.py handoff
+ExecStartPost=/usr/bin/systemctl start maxnow-ballet-session-status.service
+TimeoutStartSec=90
+UMask=0077
+ProtectSystem=strict
+ReadWritePaths=/etc/maxnow-ballet /var/lib/maxnow-ballet-session-source
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+NoNewPrivileges=true
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+InaccessiblePaths=-/etc/credstore.encrypted -/run/credentials
+

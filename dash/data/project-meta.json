@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14 15:31",
-  "version": "1.0.12.02",
-  "versionLabel": "v1.0.12.02",
-  "branch": "bugfix/restore-wenda-session-check",
-  "commit": "3994b406",
+  "updatedAt": "2026-11-14 15:42",
+  "version": "1.0.12.03",
+  "versionLabel": "v1.0.12.03",
+  "branch": "bugfix/wenda-auto-probe-handoff",
+  "commit": "759950de",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/restore-wenda-session-check · commit 3994b406 · 有未提交代码改动",
+  "deployNote": "bugfix/wenda-auto-probe-handoff · commit 759950de · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-14",
+      "title": "换闻道凭据后自动恢复检查",
+      "summary": "systemd 监测生产凭据版本，换票后自动切换为新一轮只读检查，间隔 20 分钟。状态卡按新会话计时。版本 `1.0.12.03`。"
+    },
     {
       "date": "2026-11-14",
       "title": "恢复闻道每 20 分钟会话检查",
@@ -28,11 +33,6 @@
       "date": "2026-11-14",
       "title": "恢复闻道同步",
       "summary": "电脑微信重新登录后更新生产加密凭据，实时课表和预约查询通过。芭蕾页面同步于 09:13 完成，数据状态为 fresh。版本 `1.0.11.99`。"
-    },
-    {
-      "date": "2026-11-08",
-      "title": "周日抢课增加延迟放课补查",
-      "summary": "14:20 的四轮课表扫描均成功且下周一至周六始终无课程时，同一任务在 14:21 再查一次。发现目标课后按原规则预约或候补，仍为空则结束。版本 `1.0.11.98`。"
     }
   ]
 }

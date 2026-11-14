@@ -179,6 +179,11 @@ def load_credentials(path: Path) -> Credentials:
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError("Credential file must be a JSON object")
+    if set(data) == {"PHPSESSID", "user_agent"}:
+        data = {
+            "cookies": {"PHPSESSID": data["PHPSESSID"]},
+            "user_agent": data["user_agent"],
+        }
     allowed_keys = {
         "authorization",
         "cookies",

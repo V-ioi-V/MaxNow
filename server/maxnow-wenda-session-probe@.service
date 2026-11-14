@@ -1,0 +1,38 @@
+[Unit]
+Description=MaxNow Wenda read-only session probe
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+DynamicUser=yes
+StateDirectory=maxnow-wenda-session-probe-%i
+StateDirectoryMode=0700
+UMask=0077
+LoadCredentialEncrypted=wenda-session.json:/etc/credstore.encrypted/maxnow-ballet-wenda.cred
+Environment=WENDA_API_URL=https://gm.wendaosoft.com/gm/weixin/classtable/simpleclass/54114/430
+Environment=WENDA_CREDENTIAL_FILE=%d/wenda-session.json
+Environment=WENDA_LOG_PATH=/var/lib/maxnow-wenda-session-probe-%i/probe.jsonl
+Environment=WENDA_INTERVAL_SECONDS=1200 WENDA_DURATION_SECONDS=0
+ExecStartPre=/usr/bin/test ! -e /var/lib/maxnow-wenda-session-probe-%i/probe.jsonl
+ExecStart=/usr/bin/python3 -B /usr/local/lib/maxnow-wenda-session/probe_ballet_session.py
+Restart=no
+StandardOutput=null
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectProc=invisible
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
