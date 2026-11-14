@@ -1,5 +1,11 @@
 # MaxNow 服务器操作说明
 
+## 2026-11-14 闻道生产会话恢复
+
+- 11 月 13 日 14:03，独立探针收到 HTTP 307 登录跳转。次日 09:06，生产同步收到带空会员标识的预约分页脚本，报告 `source_changed` 并保留最后成功快照。同期独立课表和课程卡只读请求返回 `auth_required`。
+- Owner 在电脑微信重新登录。新会话通过标准输入生成临时 host-bound 加密凭据，隔离验证实时课表和活动预约成功后，替换生产加密凭据并推进非敏感凭据版本。现有 `maxnow-ballet-full-sync.service` 于 09:13 以 exit 0 完成，`dataAsOf=2026-11-14T09:13:06+08:00`，`cacheState=fresh`，`authHealth=valid`。
+- 已核对 11 月 15 日 14:19:35 预热定时器。未触发预约类提交或重启已结束的独立生命周期探针。
+
 ## 2026-11-07 本周课表按老师锁定
 
 - 高亮修正版 `1.0.11.97` 使用 `styles.css?v=300`。生产快进备份目录为 `/home/ubuntu/maxnow-deploy-backups/20261107-ballet-teacher-highlight`。备份目录使用 `0700`，静态文件通过正常 `umask 022` 签出并验证 Nginx 工作进程可读。
