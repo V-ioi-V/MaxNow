@@ -1,5 +1,11 @@
 # MaxNow 服务器操作说明
 
+## 2026-11-14 恢复闻道每 20 分钟会话检查
+
+- 午后确认上午更换的生产会话已失效。Owner 在电脑微信打开闻道课表后，从本机受控提取新会话，经标准输入加密并通过隔离的实时课表和活动预约检查。更新生产凭据及版本后，15:30 芭蕾完整同步成功。
+- 使用同一新会话建立独立 v8 生命周期实验，旧 v6/v7 样本保留。新单元为 `maxnow-wenda-session-lifetime-20261114-v8.service`，使用独立 host-bound 加密凭据，立即检查一次后每 1200 秒只读检查。它是 transient unit，失效时退出，换凭据或重启服务器后需要启动新的实验。
+- 现有 `maxnow-ballet-session-log-export.service` 的 `20-current-probe.conf` 指向 v8 脱敏日志。现有转存及发布定时器继续工作，`/etc/maxnow-ballet/session-experiment.json` 仅记录 v8 新代次，15:29 首次认证成功，页面间隔显示 20 分钟。
+
 ## 2026-11-14 闻道 HTTP 出口拦截会员卡激活
 
 - 同步、实时查询、普通预约、取消与 Fast Path 在取连接前共用固定方法和路径白名单。激活、激活预检及未知端点被拒绝。独立生命周期探针继续只允许固定课表 GET。
@@ -399,10 +405,10 @@ https://dash.maxnow.cn/data/dashboard.json -> 未登录 401
 
 Owner 已批准在 MaxNow 服务器上验证闻道 `PHPSESSID` 在持续活动下的最长寿命。该实验只读访问课程表，不具备预约、候补、取消或转课能力：
 
-当前 v7 沿用 2026-07-27 在本机微信重新打开闻道页面后提取的会话，与 v3-v5 的旧会话属于不同凭据代次，寿命必须分别计算。v7 与 v6 属于同一凭据代次，只是把固定 30 天阶段安全交接为无限期阶段：
+以下为已结束的 v7 历史记录，活动单元见本文件顶部的 v8 恢复记录。v7 沿用 2026-07-27 取得的 v6 会话，寿命与 v3-v5、v8 分别计算：
 
 ```text
-current unit -> maxnow-wenda-session-lifetime-20260728-v7.service（active / transient）
+historical unit -> maxnow-wenda-session-lifetime-20260728-v7.service（failed / identity expired on 2026-11-13）
 credential -> /etc/credstore.encrypted/maxnow-wenda-session-v6.cred（root:root 0600 / host-bound）
 probe -> /usr/local/lib/maxnow-wenda-session/probe_ballet_session.py（root:root 0555）
 current private log -> /var/lib/maxnow-wenda-session-v7/server-lifetime-20260728-continuous-20min.jsonl（0600）
@@ -512,7 +518,7 @@ public URL -> authenticated nginx aliases /data/ballet-session.json + ballet-ses
 
 安装与检查：
 
-先创建只包含实验拓扑、不包含任何 Session / Cookie 的受限配置。当前 v7 配置如下；新凭据代次必须重新设置 `experimentStartedAt`，不能把旧阶段寿命接在新 Session 上：
+先创建只包含实验拓扑的受限配置。以下是 v7 的历史配置示例；当前 v8 只配置 `v8-continuous-20m`，`experimentStartedAt` 为新探针日志的首条 `start` 时间。每次换代都要重新设置起点：
 
 ```json
 {
@@ -539,18 +545,18 @@ public URL -> authenticated nginx aliases /data/ballet-session.json + ballet-ses
 }
 ```
 
-v7 已在服务器安装活动日志转存 unit。它只能读取固定的 v7 脱敏 JSONL，并用临时文件 + `mv` 原子替换状态源；不要让非 root 状态发布器直接穿过 `/var/lib/private`，也不要为活动日志创建硬链接。常用检查：
+日志转存 unit 通过 drop-in 只读取 v8 的固定脱敏 JSONL，并使用临时文件和 `mv` 原子替换状态源。状态发布器读取转存文件。活动日志保留单一硬链接。常用检查：
 
 ```bash
 sudo systemctl cat maxnow-ballet-session-log-export.service \
   maxnow-ballet-session-log-export.timer
 sudo systemctl is-active maxnow-ballet-session-log-export.timer \
   maxnow-ballet-session-status.timer \
-  maxnow-wenda-session-lifetime-20260728-v7.service
+  maxnow-wenda-session-lifetime-20261114-v8.service
 sudo systemctl start maxnow-ballet-session-log-export.service
 sudo systemctl start maxnow-ballet-session-status.service
 python3 -m json.tool /var/lib/maxnow-ballet-session-status/public/ballet-session.json
-sudo test "$(stat -c '%U:%G %a' /var/lib/maxnow-ballet-session-source/v7-continuous-20m.jsonl)" \
+sudo test "$(stat -c '%U:%G %a' /var/lib/maxnow-ballet-session-source/v8-continuous-20m.jsonl)" \
   = "root:maxnow-ballet-status 640"
 sudo test "$(stat -c '%U:%G %a' /etc/maxnow-ballet/session-experiment.json)" = "root:maxnow-ballet-status 640"
 sudo test "$(stat -c '%U:%G %a' /var/lib/maxnow-ballet-session-status/public/ballet-session.json)" = "maxnow-ballet-status:maxnow-ballet-status 644"
