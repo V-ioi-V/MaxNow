@@ -479,7 +479,6 @@ def check_ballet_booking_fast():
         ROOT / "openclaw/maxnow-ballet-live/SKILL.md"
     ).read_text(encoding="utf-8")
     required = (
-        "OnCalendar=Sun *-*-* 14:19:35 Asia/Shanghai",
         "Persistent=false",
         "AccuracySec=1s",
         "LoadCredentialEncrypted=wenda-session.json:",
@@ -540,6 +539,13 @@ def check_ballet_booking_fast():
         "Monday through Friday",
         "软开专项【前后腿】",
     )
+    calendar_lines = [line for line in timer.splitlines() if line.startswith("OnCalendar=")]
+    if calendar_lines != [
+        "OnCalendar=Sun 2026-11-16..30 14:19:35 Asia/Shanghai",
+        "OnCalendar=Sun 2026-12-* 14:19:35 Asia/Shanghai",
+        "OnCalendar=Sun 2027/1-*-* 14:19:35 Asia/Shanghai",
+    ]:
+        raise ValueError("ballet fast booking: calendar must skip Nov 15 and resume weekly")
     combined = "\n".join(
         (
             timer,

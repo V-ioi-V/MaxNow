@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14 15:42",
-  "version": "1.0.12.03",
-  "versionLabel": "v1.0.12.03",
-  "branch": "bugfix/wenda-auto-probe-handoff",
-  "commit": "759950de",
+  "updatedAt": "2026-11-15 09:16",
+  "version": "1.0.12.04",
+  "versionLabel": "v1.0.12.04",
+  "branch": "feature/skip-ballet-nov15",
+  "commit": "fb01b68e",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/wenda-auto-probe-handoff · commit 759950de · 有未提交代码改动",
+  "deployNote": "feature/skip-ballet-nov15 · commit fb01b68e · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-15",
+      "title": "本次周日自动抢课跳过",
+      "summary": "跳过 11 月 15 日 14:20 的预约及候补批次。11 月 22 日 14:20 起恢复每周自动约课。版本 `1.0.12.04`。"
+    },
     {
       "date": "2026-11-14",
       "title": "换闻道凭据后自动恢复检查",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-11-14",
       "title": "闻道会员卡改为手动激活",
       "summary": "普通预约和周日自动抢课只使用已激活卡，继续按到期日顺延。仅有需激活的适用卡时提示手动激活。版本 `1.0.12.00`。"
-    },
-    {
-      "date": "2026-11-14",
-      "title": "恢复闻道同步",
-      "summary": "电脑微信重新登录后更新生产加密凭据，实时课表和预约查询通过。芭蕾页面同步于 09:13 完成，数据状态为 fresh。版本 `1.0.11.99`。"
     }
   ]
 };

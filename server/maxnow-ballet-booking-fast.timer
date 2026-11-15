@@ -2,7 +2,10 @@
 Description=Arm MaxNow ballet booking fast path before Sunday release
 
 [Timer]
-OnCalendar=Sun *-*-* 14:19:35 Asia/Shanghai
+# Skip the 2026-11-15 release. Resume the standard Sunday schedule on 2026-11-22.
+OnCalendar=Sun 2026-11-16..30 14:19:35 Asia/Shanghai
+OnCalendar=Sun 2026-12-* 14:19:35 Asia/Shanghai
+OnCalendar=Sun 2027/1-*-* 14:19:35 Asia/Shanghai
 Persistent=false
 AccuracySec=1s
 RandomizedDelaySec=0

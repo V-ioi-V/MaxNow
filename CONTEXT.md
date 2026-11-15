@@ -1,5 +1,9 @@
 # MaxNow 上下文总览
 
+## 2026-11-15 跳过一轮自动抢课
+
+11 月 15 日自动抢课不运行，11 月 22 日 14:20 起恢复每周自动抢课。临时日期例外落实在 Fast Path timer。详见 `SERVER_RUNBOOK.md`。
+
 ## 闻道会话检查自动交接
 
 生产凭据版本更新后由 `maxnow-wenda-session-credential.path` 触发交接。新探针读取生产加密凭据，每 20 分钟只读检查，按代保留日志并由原有发布器生成页面状态。详见 `SERVER_RUNBOOK.md`。

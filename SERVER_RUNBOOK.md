@@ -747,6 +747,8 @@ execute 在 mutation 前重新读取同一预约并再次检查规则；每次�
 
 #### 芭蕾周日自动抢课 Fast Path
 
+2026-11-15 跳过当天约课批次。安装的 Fast Path timer 三条日历分别覆盖 2026 年 11 月 22 日起的周日、2026 年 12 月的周日及 2027 年起的所有周日。用 `TZ=Asia/Shanghai systemctl list-timers maxnow-ballet-booking-fast.timer` 验证下次预热为 11 月 22 日 14:19:35，14:20 开始约课。日历自动恢复每周执行，无需手工恢复。部署时用无网络 `preview --now 2026-11-15T14:20:01+08:00` 和私有状态副本发布 11 月 22 日的计划。周日 14:30 只读同步照常。
+
 Owner 已单独批准长期周规则在北京时间每周日 14:20 无人值守预约。关键路径不经过 Codex、Skill、OpenClaw 或 SSH：
 
 ```text
