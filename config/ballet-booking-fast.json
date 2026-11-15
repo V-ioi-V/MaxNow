@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 14,
+  "schemaVersion": 15,
   "enabled": true,
   "allowWaitlist": true,
   "timezone": "Asia/Shanghai",
@@ -28,7 +28,7 @@
   "priorityCourses": [
     {
       "courseType": "ballet",
-      "level": "L1.5"
+      "level": "L2"
     },
     {
       "courseType": "soft_open",
@@ -36,7 +36,7 @@
     },
     {
       "courseType": "ballet",
-      "level": "L2"
+      "level": "L1.5"
     }
   ],
   "venuePriority": [
@@ -101,12 +101,6 @@
       "courseType": "ballet",
       "level": "L1.5",
       "exactCourseNames": null
-    }
-  ],
-  "deferredCourses": [
-    {
-      "courseType": "ballet",
-      "level": "L2"
     }
   ]
 }

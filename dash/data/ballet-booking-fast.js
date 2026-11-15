@@ -6,9 +6,9 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
   "schedule": "每周日 14:20（北京时间）",
   "planMode": "weekly-rules",
   "coursePriorityOrder": [
-    "芭蕾 L1.5",
+    "芭蕾 L2",
     "软开 / 软开课",
-    "芭蕾 L2"
+    "芭蕾 L1.5"
   ],
   "priorityOrder": [
     "周一",
@@ -18,10 +18,10 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
     "周五",
     "周六"
   ],
-  "prioritySummary": "第一轮按周一至周六，每天先芭蕾 L1.5 再软开 / 软开课；第二轮按周一至周六处理芭蕾 L2；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；仅使用已激活的课程卡，按到期日由近到远顺延；仅有未激活卡适用时请手动激活",
+  "prioritySummary": "按周一至周六逐日处理，每天依次为芭蕾 L2 → 软开 / 软开课 → 芭蕾 L1.5；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；仅使用已激活的课程卡，按到期日由近到远顺延；仅有未激活卡适用时请手动激活",
   "lastAttemptAt": null,
   "lastSuccessAt": null,
-  "nextRunAt": "2026-10-18T14:20:00+08:00",
+  "nextRunAt": "2026-11-22T14:20:00+08:00",
   "totalRuns": 0,
   "totalBooked": 0,
   "totalWaitlisted": 0,
@@ -30,9 +30,29 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
   "lastStatus": "waiting",
   "targets": [
     {
+      "key": "ballet-l2-0",
+      "weekday": "周一",
+      "date": "2026-11-23",
+      "startTime": "18:40 后",
+      "endTime": "",
+      "course": "芭蕾 L2",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "soft-open-0",
+      "weekday": "周一",
+      "date": "2026-11-23",
+      "startTime": "18:40 后",
+      "endTime": "",
+      "course": "软开",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
       "key": "ballet-l1-5-0",
       "weekday": "周一",
-      "date": "2026-10-19",
+      "date": "2026-11-23",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -40,9 +60,19 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "venue": "大教室优先，小教室兜底"
     },
     {
-      "key": "soft-open-0",
-      "weekday": "周一",
-      "date": "2026-10-19",
+      "key": "ballet-l2-1",
+      "weekday": "周二",
+      "date": "2026-11-24",
+      "startTime": "18:40 后",
+      "endTime": "",
+      "course": "芭蕾 L2",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "soft-open-1",
+      "weekday": "周二",
+      "date": "2026-11-24",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -52,7 +82,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
     {
       "key": "ballet-l1-5-1",
       "weekday": "周二",
-      "date": "2026-10-20",
+      "date": "2026-11-24",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -60,9 +90,19 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "venue": "大教室优先，小教室兜底"
     },
     {
-      "key": "soft-open-1",
-      "weekday": "周二",
-      "date": "2026-10-20",
+      "key": "ballet-l2-2",
+      "weekday": "周三",
+      "date": "2026-11-25",
+      "startTime": "18:40 后",
+      "endTime": "",
+      "course": "芭蕾 L2",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "soft-open-2",
+      "weekday": "周三",
+      "date": "2026-11-25",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -72,7 +112,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
     {
       "key": "ballet-l1-5-2",
       "weekday": "周三",
-      "date": "2026-10-21",
+      "date": "2026-11-25",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -80,9 +120,19 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "venue": "大教室优先，小教室兜底"
     },
     {
-      "key": "soft-open-2",
-      "weekday": "周三",
-      "date": "2026-10-21",
+      "key": "ballet-l2-3",
+      "weekday": "周四",
+      "date": "2026-11-26",
+      "startTime": "18:40 后",
+      "endTime": "",
+      "course": "芭蕾 L2",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "soft-open-3",
+      "weekday": "周四",
+      "date": "2026-11-26",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -92,7 +142,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
     {
       "key": "ballet-l1-5-3",
       "weekday": "周四",
-      "date": "2026-10-22",
+      "date": "2026-11-26",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -100,9 +150,19 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "venue": "大教室优先，小教室兜底"
     },
     {
-      "key": "soft-open-3",
-      "weekday": "周四",
-      "date": "2026-10-22",
+      "key": "ballet-l2-4",
+      "weekday": "周五",
+      "date": "2026-11-27",
+      "startTime": "18:40 后",
+      "endTime": "",
+      "course": "芭蕾 L2",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "soft-open-4",
+      "weekday": "周五",
+      "date": "2026-11-27",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -112,7 +172,7 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
     {
       "key": "ballet-l1-5-4",
       "weekday": "周五",
-      "date": "2026-10-23",
+      "date": "2026-11-27",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -120,10 +180,20 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
       "venue": "大教室优先，小教室兜底"
     },
     {
-      "key": "soft-open-4",
-      "weekday": "周五",
-      "date": "2026-10-23",
-      "startTime": "18:40 后",
+      "key": "ballet-l2-5",
+      "weekday": "周六",
+      "date": "2026-11-28",
+      "startTime": "18:00 前结束",
+      "endTime": "",
+      "course": "芭蕾 L2",
+      "teacher": "不限老师",
+      "venue": "大教室优先，小教室兜底"
+    },
+    {
+      "key": "soft-open-5",
+      "weekday": "周六",
+      "date": "2026-11-28",
+      "startTime": "18:00 前结束",
       "endTime": "",
       "course": "软开",
       "teacher": "不限老师",
@@ -132,85 +202,15 @@ window.MAXNOW_BALLET_BOOKING_FAST_DATA = {
     {
       "key": "ballet-l1-5-5",
       "weekday": "周六",
-      "date": "2026-10-24",
+      "date": "2026-11-28",
       "startTime": "18:00 前结束",
       "endTime": "",
       "course": "芭蕾 L1.5",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "soft-open-5",
-      "weekday": "周六",
-      "date": "2026-10-24",
-      "startTime": "18:00 前结束",
-      "endTime": "",
-      "course": "软开",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "ballet-l2-0",
-      "weekday": "周一",
-      "date": "2026-10-19",
-      "startTime": "18:40 后",
-      "endTime": "",
-      "course": "芭蕾 L2",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "ballet-l2-1",
-      "weekday": "周二",
-      "date": "2026-10-20",
-      "startTime": "18:40 后",
-      "endTime": "",
-      "course": "芭蕾 L2",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "ballet-l2-2",
-      "weekday": "周三",
-      "date": "2026-10-21",
-      "startTime": "18:40 后",
-      "endTime": "",
-      "course": "芭蕾 L2",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "ballet-l2-3",
-      "weekday": "周四",
-      "date": "2026-10-22",
-      "startTime": "18:40 后",
-      "endTime": "",
-      "course": "芭蕾 L2",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "ballet-l2-4",
-      "weekday": "周五",
-      "date": "2026-10-23",
-      "startTime": "18:40 后",
-      "endTime": "",
-      "course": "芭蕾 L2",
-      "teacher": "不限老师",
-      "venue": "大教室优先，小教室兜底"
-    },
-    {
-      "key": "ballet-l2-5",
-      "weekday": "周六",
-      "date": "2026-10-24",
-      "startTime": "18:00 前结束",
-      "endTime": "",
-      "course": "芭蕾 L2",
       "teacher": "不限老师",
       "venue": "大教室优先，小教室兜底"
     }
   ],
   "lastRun": null,
   "preview": null,
-  "generatedAt": "2026-10-12T22:09:49+08:00"
+  "generatedAt": "2026-11-15T14:20:01+08:00"
 };

@@ -455,31 +455,18 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(failure.exception.code, "auth_required")
         self.assertEqual(source.mutation_count, 0)
 
-    def test_all_l15_and_soft_open_are_attempted_before_any_l2(self):
-        source = FakeFastSource(progressive_l15_after_requests={"2026-08-08": 2})
-        result, _ = fast.run_fast(source, config(), fast.default_state(), self.release,
-                                  execute=True, sleeper=lambda _: None)
-        self.assertEqual(len(source.mutation_order), 18)
-        self.assertTrue(all(not key.startswith("ballet-l2-") for key in source.mutation_order[:12]))
-        self.assertTrue(all(key.startswith("ballet-l2-") for key in source.mutation_order[12:]))
-        self.assertTrue(source.mutation_order[11].startswith("soft-open-2026-08-08-"))
-        self.assertTrue(source.mutation_order[12].startswith("ballet-l2-2026-08-03-"))
-        self.assertEqual(source.max_active_mutation, 1)
-
     def test_targets_follow_permanent_priority(self):
         targets = fast.materialize_targets(config(), self.release)
         self.assertEqual(
             [target["key"] for target in targets],
-            [f"{course}-{day}" for day in [0, 1, 2, 3, 4, 5]
-             for course in ["ballet-l1-5", "soft-open"]]
-            + [f"ballet-l2-{day}" for day in [0, 1, 2, 3, 4, 5]],
+            [f"{course}-{day}" for day in range(6)
+             for course in ["ballet-l2", "soft-open", "ballet-l1-5"]],
         )
         self.assertEqual(
             [target["date"] for target in targets],
             [day for day in ["2026-08-03", "2026-08-04", "2026-08-05",
                              "2026-08-06", "2026-08-07", "2026-08-08"]
-             for _ in range(2)] + ["2026-08-03", "2026-08-04", "2026-08-05",
-                                   "2026-08-06", "2026-08-07", "2026-08-08"],
+             for _ in range(3)],
         )
 
     def test_discovery_selects_only_exact_soft_open_and_standard_l15_l2(self):
@@ -717,15 +704,11 @@ class FastBookingTests(unittest.TestCase):
                 for day in ["2026-08-03", "2026-08-04", "2026-08-05",
                             "2026-08-06", "2026-08-07", "2026-08-08"]
                 for course, times in (
-                    [("ballet-l1-5", "1430-1600"), ("soft-open", "1000-1100")]
+                    [("ballet-l2", "1300-1430"), ("soft-open", "1000-1100"), ("ballet-l1-5", "1430-1600")]
                     if day == "2026-08-08" else
-                    [("ballet-l1-5", "2115-2245"), ("soft-open", "1845-1945")]
+                    [("ballet-l2", "1945-2115"), ("soft-open", "1845-1945"), ("ballet-l1-5", "2115-2245")]
                 )
-            ] + [f"ballet-l2-{day}-{times}-0" for day, times in [
-                ("2026-08-03", "1945-2115"), ("2026-08-04", "1945-2115"),
-                ("2026-08-05", "1945-2115"), ("2026-08-06", "1945-2115"),
-                ("2026-08-07", "1945-2115"), ("2026-08-08", "1300-1430"),
-            ]],
+            ],
         )
 
     def test_unknown_result_does_not_block_remaining_courses(self):
@@ -751,7 +734,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertEqual(state["totalBooked"], 17)
 
     def test_unknown_result_is_verified_later_without_duplicate_mutation(self):
-        target_key = "ballet-l1-5-2026-08-03-2115-2245-0"
+        target_key = "ballet-l2-2026-08-03-1945-2115-0"
         source = FakeFastSource(
             unknown_on_mutation=1,
             queue_target_keys={target_key},
@@ -772,7 +755,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertTrue(result["records"][0]["verified"])
         self.assertEqual(state["totalWaitlisted"], 1)
 
-    def test_progressive_release_discovers_late_l15_before_soft_open(self):
+    def test_progressive_release_discovers_late_l15_in_daily_order(self):
         source = FakeFastSource(
             progressive_l15_after_requests={
                 "2026-08-04": 1,
@@ -794,16 +777,15 @@ class FastBookingTests(unittest.TestCase):
                          "2026-08-06", "2026-08-07", "2026-08-08"]
         self.assertEqual(
             [record["date"] for record in result["records"]],
-            [day for day in expected_days for _ in range(2)] + ["2026-08-03", "2026-08-04", "2026-08-05",
-                                   "2026-08-06", "2026-08-07", "2026-08-08"],
+            [day for day in expected_days for _ in range(3)],
         )
         for day in expected_days:
             keys = [key for key in source.mutation_order if day in key]
-            self.assertTrue(keys[0].startswith("ballet-l1-5-" + day))
+            self.assertTrue(keys[0].startswith("ballet-l2-" + day))
             self.assertTrue(keys[1].startswith("soft-open-" + day))
-            self.assertTrue(keys[2].startswith("ballet-l2-" + day))
+            self.assertTrue(keys[2].startswith("ballet-l1-5-" + day))
 
-    def test_late_monday_l15_precedes_other_days_even_when_initially_absent(self):
+    def test_late_monday_l2_precedes_other_days_even_when_initially_absent(self):
         source = FakeFastSource(
             progressive_all_after_requests={"2026-08-03": 2},
         )
@@ -817,13 +799,12 @@ class FastBookingTests(unittest.TestCase):
             [record["date"] for record in result["records"]],
             [day for day in ["2026-08-03", "2026-08-04", "2026-08-05",
                              "2026-08-06", "2026-08-07", "2026-08-08"]
-             for _ in range(2)] + ["2026-08-03", "2026-08-04", "2026-08-05",
-                                   "2026-08-06", "2026-08-07", "2026-08-08"],
+             for _ in range(3)],
         )
         self.assertEqual(source.mutation_order[:3], [
-            "ballet-l1-5-2026-08-03-2115-2245-0",
+            "ballet-l2-2026-08-03-1945-2115-0",
             "soft-open-2026-08-03-1845-1945-0",
-            "ballet-l1-5-2026-08-04-2115-2245-0",
+            "ballet-l1-5-2026-08-03-2115-2245-0",
         ])
         self.assertEqual(source.max_active_mutation, 1)
 
@@ -870,7 +851,7 @@ class FastBookingTests(unittest.TestCase):
         )
         self.assertTrue(all("_selectedTeacherRank" not in item for item in targets))
 
-    def test_monday_l15_pipeline_starts_before_discovery_settles(self):
+    def test_monday_l2_pipeline_starts_before_discovery_settles(self):
         settings = config()
         settings["discoveryRefreshSeconds"] = [0.08, 0.1, 0.12]
         source = FakeFastSource(request_delay=0.002)
@@ -945,7 +926,7 @@ class FastBookingTests(unittest.TestCase):
 
     def test_queue_available_target_joins_waitlist_and_verifies_position(self):
         source = FakeFastSource(
-            queue_target_keys={"ballet-l1-5-2026-08-03-2115-2245-0"}
+            queue_target_keys={"ballet-l2-2026-08-03-1945-2115-0"}
         )
         result, state = fast.run_fast(
             source,
@@ -964,7 +945,7 @@ class FastBookingTests(unittest.TestCase):
 
     def test_queue_available_target_is_ready_in_dry_run(self):
         source = FakeFastSource(
-            queue_target_keys={"ballet-l1-5-2026-08-03-2115-2245-0"}
+            queue_target_keys={"ballet-l2-2026-08-03-1945-2115-0"}
         )
         result, state = fast.run_fast(
             source,
@@ -982,7 +963,7 @@ class FastBookingTests(unittest.TestCase):
         disabled = copy.deepcopy(config())
         disabled["allowWaitlist"] = False
         source = FakeFastSource(
-            queue_target_keys={"ballet-l1-5-2026-08-03-2115-2245-0"}
+            queue_target_keys={"ballet-l2-2026-08-03-1945-2115-0"}
         )
         result, state = fast.run_fast(
             source,

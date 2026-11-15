@@ -371,14 +371,13 @@ def check_ballet_booking_fast():
     config = load_json(ROOT / "config/ballet-booking-fast.json")
     rules = config.get("selectionRules", [])
     if (
-        config.get("schemaVersion") != 14
-        or config.get("deferredCourses") != [{"courseType": "ballet", "level": "L2"}]
+        config.get("schemaVersion") != 15
         or not rules
         or config.get("priorityCourses")
         != [
-            {"courseType": "ballet", "level": "L1.5"},
-            {"courseType": "soft_open", "level": "none"},
             {"courseType": "ballet", "level": "L2"},
+            {"courseType": "soft_open", "level": "none"},
+            {"courseType": "ballet", "level": "L1.5"},
         ]
         or config.get("priorityWeekdays") != [0, 1, 2, 3, 4, 5]
         or config.get("venuePriority") != ["大教室", "小教室"]
@@ -404,7 +403,7 @@ def check_ballet_booking_fast():
         != ["软开", "软开课"]
     ):
         raise ValueError(
-            "ballet fast booking: teacher-priority config is invalid"
+            "ballet fast booking: daily-priority config is invalid"
         )
 
     data = load_json(ROOT / "dash/data/ballet-booking-fast.json")
@@ -429,19 +428,21 @@ def check_ballet_booking_fast():
         or data.get("priorityOrder")
         != ["周一", "周二", "周三", "周四", "周五", "周六"]
         or data.get("coursePriorityOrder")
-        != ["芭蕾 L1.5", "软开 / 软开课", "芭蕾 L2"]
+        != ["芭蕾 L2", "软开 / 软开课", "芭蕾 L1.5"]
         or not str(data.get("prioritySummary", "")).startswith(
-            "第一轮按周一至周六，每天先芭蕾 L1.5 再软开 / 软开课；第二轮按周一至周六处理芭蕾 L2；"
-            ""
+            "按周一至周六逐日处理，每天依次为芭蕾 L2 → 软开 / 软开课 → 芭蕾 L1.5；"
             "所有日期不限老师，同课型按开始时间排序；"
             "工作日仅 18:40 后、周六仅 18:00 前结束；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         )
         or {item.get("venue") for item in data.get("targets", [])}
         != {"大教室优先，小教室兜底"}
-        or len(data.get("targets", [])) != 18
-        or {item.get("course") for item in data.get("targets", [])}
-        != {"软开", "芭蕾 L1.5", "芭蕾 L2"}
+        or [(item.get("weekday"), item.get("course")) for item in data.get("targets", [])]
+        != [
+            (weekday, course)
+            for weekday in ["周一", "周二", "周三", "周四", "周五", "周六"]
+            for course in ["芭蕾 L2", "软开", "芭蕾 L1.5"]
+        ]
         or {item.get("startTime") for item in data.get("targets", [])}
         != {"18:00 前结束", "18:40 后"}
     ):
@@ -1779,7 +1780,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=301" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=278" not in dashboard_html
+        or "app.js?v=279" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2036,7 +2037,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=278" not in dashboard_html:
+    if "app.js?v=279" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js
