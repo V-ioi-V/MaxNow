@@ -6612,7 +6612,10 @@ body[data-view="ricky"] .topbar-ricky-status {
 }
 
 .ballet-overview-grid .ballet-membership-card { position: relative; }
-.ballet-membership-card:has(.ballet-card-picker[open]) { z-index: 10; }
+.ballet-membership-card:has(.ballet-card-picker[open]) {
+  z-index: 10;
+  overflow: visible;
+}
 .ballet-card-picker summary {
   display: flex;
   align-items: center;
@@ -6638,6 +6641,9 @@ body[data-view="ricky"] .topbar-ricky-status {
   right: 0;
   top: calc(100% + 8px);
   width: min(360px, calc(100vw - 88px));
+  max-height: min(24rem, 55dvh);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   padding: 6px;
   border: 1px solid var(--line);
   border-radius: var(--radius);

@@ -4249,6 +4249,10 @@ function createBalletMembershipItem(card = {}) {
   const cardStatus = ["expired", "unactivated"].includes(card.cardStatus) ? card.cardStatus : "active";
   const isExpired = cardStatus === "expired";
   const isUnactivated = cardStatus === "unactivated";
+  const expiryDate = card.validThrough ? formatDateOnly(card.validThrough) : "";
+  const expiryText = isExpired && expiryDate < dateKeyInTimeZone()
+    ? `已于 ${expiryDate} 到期`
+    : `${isExpired ? "闻道登记有效期至" : "有效至"} ${expiryDate}`;
   article.dataset.cardStatus = cardStatus;
 
   const ticketStatus = document.createElement("span");
@@ -4269,9 +4273,7 @@ function createBalletMembershipItem(card = {}) {
   validity.append(
     createBalletCalendarIcon(),
     document.createTextNode(
-      isUnactivated ? "激活后生效" : card.validThrough
-        ? `${isExpired ? "已于" : "有效至"} ${String(card.validThrough).slice(0, 10)}${isExpired ? " 到期" : ""}`
-        : "有效期待同步",
+      isUnactivated ? "激活后生效" : expiryDate ? expiryText : "有效期待同步",
     ),
   );
   const dates = document.createElement("div");
@@ -4366,7 +4368,7 @@ function createBalletMembershipItem(card = {}) {
   }
   const validityDetail = document.createElement("small");
   validityDetail.textContent = isUnactivated ? "激活后开始计算有效期" : isExpired
-    ? (card.validThrough ? `已于 ${formatDateOnly(card.validThrough)} 到期` : "到期日期待同步")
+    ? (expiryDate ? expiryText : "到期日期待同步")
     : validityDays > 0 ? `第 ${openDayNumber} / ${validityDays} 天` : "有效期尚未提供";
   validityCopy.append(validityLabel, validityValue, validityDetail);
   validityMetric.appendChild(validityCopy);

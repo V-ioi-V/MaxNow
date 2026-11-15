@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-15 09:16",
-  "version": "1.0.12.04",
-  "versionLabel": "v1.0.12.04",
-  "branch": "feature/skip-ballet-nov15",
-  "commit": "fb01b68e",
+  "updatedAt": "2026-11-15 09:19",
+  "version": "1.0.12.05",
+  "versionLabel": "v1.0.12.05",
+  "branch": "bugfix/ballet-card-picker-scroll",
+  "commit": "0a7ed61c",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/skip-ballet-nov15 · commit fb01b68e · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-card-picker-scroll · commit 0a7ed61c · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-15",
+      "title": "修复课程卡切换列表",
+      "summary": "切卡浮层支持纵向滚动，可查看并选择最后一张卡。闻道已标记失效但登记有效期尚未结束时，页面分别显示状态和登记日期。版本 `1.0.12.05`。"
+    },
     {
       "date": "2026-11-15",
       "title": "本次周日自动抢课跳过",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-11-14",
       "title": "闻道请求出口拦截会员卡激活",
       "summary": "MaxNow 的闻道 HTTP 白名单在建立连接前拒绝激活、激活预检和未知端点。清除 OpenClaw 仍允许自动激活的旧指引。版本 `1.0.12.01`。"
-    },
-    {
-      "date": "2026-11-14",
-      "title": "闻道会员卡改为手动激活",
-      "summary": "普通预约和周日自动抢课只使用已激活卡，继续按到期日顺延。仅有需激活的适用卡时提示手动激活。版本 `1.0.12.00`。"
     }
   ]
 };
