@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-19 21:04",
+  "updatedAt": "2026-11-19 22:04",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
@@ -7,32 +7,100 @@
   "pricingStale": false,
   "sinceDays": 3650,
   "summary": {
-    "inputTokens": 51866549,
-    "outputTokens": 114576,
-    "cacheReadTokens": 51095040,
-    "cacheBaseTokens": 51866549,
-    "totalTokens": 51981125,
-    "estimatedCostUsd": 32.842345,
-    "runs": 5,
-    "activeSeconds": 4091,
-    "completedTurns": 27
+    "inputTokens": 54289300,
+    "outputTokens": 122216,
+    "cacheReadTokens": 53436672,
+    "cacheBaseTokens": 54289300,
+    "totalTokens": 54411516,
+    "estimatedCostUsd": 34.647956,
+    "runs": 7,
+    "activeSeconds": 4177,
+    "completedTurns": 29
   },
   "sources": [
     {
       "key": "codex-windows",
       "label": "Codex Windows",
-      "inputTokens": 51866549,
-      "outputTokens": 114576,
-      "cacheReadTokens": 51095040,
-      "cacheBaseTokens": 51866549,
-      "totalTokens": 51981125,
-      "estimatedCostUsd": 32.842345,
-      "runs": 5,
-      "activeSeconds": 4091,
-      "completedTurns": 27
+      "inputTokens": 54289300,
+      "outputTokens": 122216,
+      "cacheReadTokens": 53436672,
+      "cacheBaseTokens": 54289300,
+      "totalTokens": 54411516,
+      "estimatedCostUsd": 34.647956,
+      "runs": 7,
+      "activeSeconds": 4177,
+      "completedTurns": 29
     }
   ],
   "days": [
+    {
+      "date": "2026-11-19",
+      "sources": [
+        "codex-windows"
+      ],
+      "inputTokens": 2422751,
+      "outputTokens": 7640,
+      "cacheReadTokens": 2341632,
+      "cacheBaseTokens": 2422751,
+      "totalTokens": 2430391,
+      "estimatedCostUsd": 1.805611,
+      "runs": 2,
+      "activeSeconds": 86,
+      "completedTurns": 2,
+      "byModel": [
+        {
+          "model": "gpt-5.5",
+          "provider": "openai",
+          "openrouterModel": null,
+          "inputTokens": 2422751,
+          "outputTokens": 7640,
+          "cacheReadTokens": 2341632,
+          "cacheBaseTokens": 2422751,
+          "totalTokens": 2430391,
+          "estimatedCostUsd": 1.805611,
+          "runs": 2,
+          "activeSeconds": 86,
+          "completedTurns": 2,
+          "pricingEstimated": true,
+          "pricingModel": "gpt-5.5"
+        }
+      ],
+      "byTask": [
+        {
+          "kind": "codex-session",
+          "label": "ronbay-hr-efficiency-platform",
+          "model": "gpt-5.5",
+          "inputTokens": 2295478,
+          "outputTokens": 7043,
+          "cacheReadTokens": 2233728,
+          "cacheBaseTokens": 2295478,
+          "totalTokens": 2302521,
+          "estimatedCostUsd": 1.636904,
+          "runs": 1,
+          "activeSeconds": 56,
+          "completedTurns": 1,
+          "pricingEstimated": true,
+          "pricingModel": "gpt-5.5"
+        },
+        {
+          "kind": "codex-session",
+          "label": "ronbay_hr_agent",
+          "model": "gpt-5.5",
+          "inputTokens": 127273,
+          "outputTokens": 597,
+          "cacheReadTokens": 107904,
+          "cacheBaseTokens": 127273,
+          "totalTokens": 127870,
+          "estimatedCostUsd": 0.168707,
+          "runs": 1,
+          "activeSeconds": 30,
+          "completedTurns": 1,
+          "pricingEstimated": true,
+          "pricingModel": "gpt-5.5"
+        }
+      ],
+      "pricingEstimated": true
+    },
     {
       "date": "2026-11-17",
       "sources": [
@@ -191,6 +259,70 @@
     }
   ],
   "recentRuns": [
+    {
+      "date": "2026-11-19",
+      "timestamp": "2026-11-19T22:03:53+08:00",
+      "source": "codex-windows",
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "openrouterModel": null,
+      "sessionId": "01a1f418-39dc-72c3-b2a7-e8c342133146",
+      "runId": "01a1f418-39dc-72c3-b2a7-e8c342133146:2026-11-19",
+      "kind": "codex-session",
+      "label": "ronbay-hr-efficiency-platform",
+      "inputTokens": 2295478,
+      "outputTokens": 7043,
+      "cacheReadTokens": 2233728,
+      "cacheBaseTokens": 2295478,
+      "reasoningOutputTokens": 1179,
+      "totalTokens": 2302521,
+      "pricingEstimated": true,
+      "pricingModel": "gpt-5.5",
+      "contextWindow": 475000,
+      "tokenCountEvents": 39,
+      "activeSeconds": 56,
+      "completedTurns": 1,
+      "activeByDate": [
+        {
+          "date": "2026-11-19",
+          "activeSeconds": 56,
+          "completedTurns": 1
+        }
+      ],
+      "estimatedCostUsd": 1.636904
+    },
+    {
+      "date": "2026-11-19",
+      "timestamp": "2026-11-19T21:38:18+08:00",
+      "source": "codex-windows",
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "openrouterModel": null,
+      "sessionId": "01a1f407-1a12-7570-923d-0464a5bfaff4",
+      "runId": "01a1f407-1a12-7570-923d-0464a5bfaff4:2026-11-19",
+      "kind": "codex-session",
+      "label": "ronbay_hr_agent",
+      "inputTokens": 127273,
+      "outputTokens": 597,
+      "cacheReadTokens": 107904,
+      "cacheBaseTokens": 127273,
+      "reasoningOutputTokens": 0,
+      "totalTokens": 127870,
+      "pricingEstimated": true,
+      "pricingModel": "gpt-5.5",
+      "contextWindow": 475000,
+      "tokenCountEvents": 4,
+      "activeSeconds": 30,
+      "completedTurns": 1,
+      "activeByDate": [
+        {
+          "date": "2026-11-19",
+          "activeSeconds": 30,
+          "completedTurns": 1
+        }
+      ],
+      "estimatedCostUsd": 0.168707
+    },
     {
       "date": "2026-11-17",
       "timestamp": "2026-11-17T21:26:17+08:00",
