@@ -489,7 +489,7 @@ class FastBookingTests(unittest.TestCase):
         self.assertTrue(
             all(
                 (
-                    target["endTime"] < "18:00"
+                    target["endTime"] < "19:10"
                     if target["weekday"] == 5
                     else target["startTime"] >= "18:40"
                 )
@@ -527,7 +527,7 @@ class FastBookingTests(unittest.TestCase):
         candidates = fast.timetable_candidates(None, targets[0], prefetched_text=pages["2026-08-03"])
         self.assertEqual(len(candidates), 2)
 
-    def test_saturday_cutoff_uses_end_time_before_1800(self):
+    def test_saturday_cutoff_uses_end_time_before_1910(self):
         target = next(t for t in fast.materialize_targets(config(), self.release)
                       if t["weekday"] == 5 and t["level"] == "L2")
         record = {
@@ -539,17 +539,22 @@ class FastBookingTests(unittest.TestCase):
 
         self.assertTrue(
             fast.rule_matches(
-                {**record, "startTime": "16:30", "endTime": "17:59"}, target
+                {**record, "startTime": "17:30", "endTime": "19:00"}, target
+            )
+        )
+        self.assertTrue(
+            fast.rule_matches(
+                {**record, "startTime": "17:39", "endTime": "19:09"}, target
             )
         )
         self.assertFalse(
             fast.rule_matches(
-                {**record, "startTime": "16:30", "endTime": "18:00"}, target
+                {**record, "startTime": "17:40", "endTime": "19:10"}, target
             )
         )
         self.assertFalse(
             fast.rule_matches(
-                {**record, "startTime": "17:00", "endTime": "18:30"}, target
+                {**record, "startTime": "17:41", "endTime": "19:11"}, target
             )
         )
         self.assertFalse(

@@ -385,7 +385,7 @@ def check_ballet_booking_fast():
         or config.get("emptyTeacherAs") != ""
         or config.get("discoveryRefreshSeconds") != [2, 6, 10]
         or config.get("unknownVerificationSeconds") != [0.8, 2, 4]
-        or config.get("weekdayEndTimes") != {"5": "18:00"}
+        or config.get("weekdayEndTimes") != {"5": "19:10"}
         or any(
             rule.get("weekdays") != [0, 1, 2, 3, 4, 5]
             or "teacher" in rule
@@ -432,7 +432,7 @@ def check_ballet_booking_fast():
         or not str(data.get("prioritySummary", "")).startswith(
             "按周一至周六逐日处理，每天依次为芭蕾 L2 → 软开 / 软开课 → 芭蕾 L1.5；"
             "所有日期不限老师，同课型按开始时间排序；"
-            "工作日仅 18:40 后、周六仅 18:00 前结束；"
+            "工作日仅 18:40 后、周六仅 19:10 前结束；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底"
         )
         or {item.get("venue") for item in data.get("targets", [])}
@@ -443,8 +443,10 @@ def check_ballet_booking_fast():
             for weekday in ["周一", "周二", "周三", "周四", "周五", "周六"]
             for course in ["芭蕾 L2", "软开", "芭蕾 L1.5"]
         ]
-        or {item.get("startTime") for item in data.get("targets", [])}
-        != {"18:00 前结束", "18:40 后"}
+        or any(
+            item.get("startTime") != ("19:10 前结束" if item.get("weekday") == "周六" else "18:40 后")
+            for item in data.get("targets", [])
+        )
     ):
         raise ValueError("ballet fast booking: public plan or priority is invalid")
     serialized = json.dumps(data, ensure_ascii=False)
@@ -1578,8 +1580,8 @@ def check_secondary_view_style():
         or "fastRunAt >= balletSnapshotAt" not in dashboard_js
         or 'if (fastRunIsCurrent) lastRecords.forEach((record) => add(record, "last-run"));' not in dashboard_js
         or 'course.classList.add("is-plan")' not in dashboard_js
-        or 'record.weekday === "周六" && (!plannedTimeLabel || plannedTimeLabel === "全天" || plannedTimeLabel === "18:00 前")' not in dashboard_js
-        or '? "18:00 前结束"' not in dashboard_js
+        or 'record.weekday === "周六" && ["", "全天", "18:00 前", "18:00 前结束"].includes(plannedTimeLabel)' not in dashboard_js
+        or '? "19:10 前结束"' not in dashboard_js
         or ': plannedTimeLabel || "时间待确认"' not in dashboard_js
         or 'options.planned ? [timeText, teacherText] : [teacherText, timeText]' not in dashboard_js
         or "function renderBalletPlanWeekTimeline(container, weekDates, actualRecords)" not in dashboard_js
@@ -1780,7 +1782,7 @@ def check_secondary_view_style():
     if (
         "styles.css?v=301" not in dashboard_html
         or "styles.css?v=127" not in login_html
-        or "app.js?v=279" not in dashboard_html
+        or "app.js?v=280" not in dashboard_html
     ):
         raise ValueError("secondary views: stylesheet cache version is stale")
     if (
@@ -2037,7 +2039,7 @@ def check_data_health_contract():
     )
     if any(value not in dashboard_js for value in required_frontend):
         raise ValueError("data health: frontend state or last-good fallback is incomplete")
-    if "app.js?v=279" not in dashboard_html:
+    if "app.js?v=280" not in dashboard_html:
         raise ValueError("data health: script cache version is stale")
     if (
         'cache: force ? "no-store" : "default"' not in dashboard_js

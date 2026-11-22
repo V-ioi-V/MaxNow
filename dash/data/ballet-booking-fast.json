@@ -18,10 +18,10 @@
     "周五",
     "周六"
   ],
-  "prioritySummary": "按周一至周六逐日处理，每天依次为芭蕾 L2 → 软开 / 软开课 → 芭蕾 L1.5；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；仅使用已激活的课程卡，按到期日由近到远顺延；仅有未激活卡适用时请手动激活",
+  "prioritySummary": "按周一至周六逐日处理，每天依次为芭蕾 L2 → 软开 / 软开课 → 芭蕾 L1.5；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 19:10 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；仅使用已激活的课程卡，按到期日由近到远顺延；仅有未激活卡适用时请手动激活",
   "lastAttemptAt": null,
   "lastSuccessAt": null,
-  "nextRunAt": "2026-11-22T14:20:00+08:00",
+  "nextRunAt": "2026-11-29T14:20:00+08:00",
   "totalRuns": 0,
   "totalBooked": 0,
   "totalWaitlisted": 0,
@@ -32,7 +32,7 @@
     {
       "key": "ballet-l2-0",
       "weekday": "周一",
-      "date": "2026-11-23",
+      "date": "2026-11-30",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L2",
@@ -42,7 +42,7 @@
     {
       "key": "soft-open-0",
       "weekday": "周一",
-      "date": "2026-11-23",
+      "date": "2026-11-30",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -52,7 +52,7 @@
     {
       "key": "ballet-l1-5-0",
       "weekday": "周一",
-      "date": "2026-11-23",
+      "date": "2026-11-30",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -62,7 +62,7 @@
     {
       "key": "ballet-l2-1",
       "weekday": "周二",
-      "date": "2026-11-24",
+      "date": "2026-12-01",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L2",
@@ -72,7 +72,7 @@
     {
       "key": "soft-open-1",
       "weekday": "周二",
-      "date": "2026-11-24",
+      "date": "2026-12-01",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -82,7 +82,7 @@
     {
       "key": "ballet-l1-5-1",
       "weekday": "周二",
-      "date": "2026-11-24",
+      "date": "2026-12-01",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -92,7 +92,7 @@
     {
       "key": "ballet-l2-2",
       "weekday": "周三",
-      "date": "2026-11-25",
+      "date": "2026-12-02",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L2",
@@ -102,7 +102,7 @@
     {
       "key": "soft-open-2",
       "weekday": "周三",
-      "date": "2026-11-25",
+      "date": "2026-12-02",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -112,7 +112,7 @@
     {
       "key": "ballet-l1-5-2",
       "weekday": "周三",
-      "date": "2026-11-25",
+      "date": "2026-12-02",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -122,7 +122,7 @@
     {
       "key": "ballet-l2-3",
       "weekday": "周四",
-      "date": "2026-11-26",
+      "date": "2026-12-03",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L2",
@@ -132,7 +132,7 @@
     {
       "key": "soft-open-3",
       "weekday": "周四",
-      "date": "2026-11-26",
+      "date": "2026-12-03",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -142,7 +142,7 @@
     {
       "key": "ballet-l1-5-3",
       "weekday": "周四",
-      "date": "2026-11-26",
+      "date": "2026-12-03",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -152,7 +152,7 @@
     {
       "key": "ballet-l2-4",
       "weekday": "周五",
-      "date": "2026-11-27",
+      "date": "2026-12-04",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L2",
@@ -162,7 +162,7 @@
     {
       "key": "soft-open-4",
       "weekday": "周五",
-      "date": "2026-11-27",
+      "date": "2026-12-04",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "软开",
@@ -172,7 +172,7 @@
     {
       "key": "ballet-l1-5-4",
       "weekday": "周五",
-      "date": "2026-11-27",
+      "date": "2026-12-04",
       "startTime": "18:40 后",
       "endTime": "",
       "course": "芭蕾 L1.5",
@@ -182,8 +182,8 @@
     {
       "key": "ballet-l2-5",
       "weekday": "周六",
-      "date": "2026-11-28",
-      "startTime": "18:00 前结束",
+      "date": "2026-12-05",
+      "startTime": "19:10 前结束",
       "endTime": "",
       "course": "芭蕾 L2",
       "teacher": "不限老师",
@@ -192,8 +192,8 @@
     {
       "key": "soft-open-5",
       "weekday": "周六",
-      "date": "2026-11-28",
-      "startTime": "18:00 前结束",
+      "date": "2026-12-05",
+      "startTime": "19:10 前结束",
       "endTime": "",
       "course": "软开",
       "teacher": "不限老师",
@@ -202,8 +202,8 @@
     {
       "key": "ballet-l1-5-5",
       "weekday": "周六",
-      "date": "2026-11-28",
-      "startTime": "18:00 前结束",
+      "date": "2026-12-05",
+      "startTime": "19:10 前结束",
       "endTime": "",
       "course": "芭蕾 L1.5",
       "teacher": "不限老师",
@@ -212,5 +212,5 @@
   ],
   "lastRun": null,
   "preview": null,
-  "generatedAt": "2026-11-15T14:20:01+08:00"
+  "generatedAt": "2026-11-22T14:20:01+08:00"
 }

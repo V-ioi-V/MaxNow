@@ -417,7 +417,7 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FastBookingFailure("configuration_error")
     for value in data["weekdayStartTimes"].values():
         parse_hhmm(value)
-    if data["weekdayEndTimes"] != {"5": "18:00"}:
+    if data["weekdayEndTimes"] != {"5": "19:10"}:
         raise FastBookingFailure("configuration_error")
     for value in data["weekdayEndTimes"].values():
         parse_hhmm(value)
@@ -1583,7 +1583,7 @@ def build_public(
         "prioritySummary": (
             "按周一至周六逐日处理，每天依次为芭蕾 L2 → 软开 / 软开课 → 芭蕾 L1.5；"
             "所有日期不限老师，同课型按开始时间排序；"
-            "工作日仅 18:40 后、周六仅 18:00 前结束；"
+            f"工作日仅 18:40 后、周六仅 {config['weekdayEndTimes']['5']} 前结束；"
             "软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底；"
             "仅使用已激活的课程卡，按到期日由近到远顺延；仅有未激活卡适用时请手动激活"
         ),

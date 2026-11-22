@@ -95,10 +95,10 @@ For these configured recurring targets only, `allowWaitlist=true` authorizes the
 
 Current recurring rules are:
 
-- Monday through Friday: every standard ballet L1 occurrence starting at or after 18:40, any teacher.
+- Monday through Friday: every standard ballet L2 occurrence starting at or after 18:40, any teacher.
 - Monday through Friday: every standard ballet L1.5 occurrence starting at or after 18:40, any teacher.
 - Monday through Friday: only a course whose normalized name is exactly `软开` or `软开课` and starts at or after 18:40, any teacher.
-- Saturday, only classes ending strictly before 18:00: the same standard ballet L1, standard ballet L1.5, and exact-name `软开` / `软开课` rules.
+- Saturday, only classes ending strictly before 19:10: the same standard ballet L2, standard ballet L1.5, and exact-name `软开` / `软开课` rules.
 - Sunday courses are excluded. `软开专项`, `软开专项【前后腿】`, `软开-胯`, and any other merely soft-open-classified near match are excluded.
 - For the same occurrence, prefer `大教室`; use `小教室` only when the large-room tier has no match. The selected tier must contain exactly one course.
 

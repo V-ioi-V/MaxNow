@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-22 14:40",
-  "version": "1.0.12.07",
-  "versionLabel": "v1.0.12.07",
-  "branch": "bugfix/cancel-nov23-24",
-  "commit": "96b6d974",
+  "updatedAt": "2026-11-22 14:56",
+  "version": "1.0.12.08",
+  "versionLabel": "v1.0.12.08",
+  "branch": "feature/ballet-saturday-1910",
+  "commit": "dd922e77",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/cancel-nov23-24 · commit 96b6d974 · 有未提交代码改动",
+  "deployNote": "feature/ballet-saturday-1910 · commit dd922e77 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-22",
+      "title": "周六自动抢课延长至 19:10 前结束",
+      "summary": "周六目标课按结束时间筛选，只有严格早于 19:10 的课程进入自动抢课。周安排、公开计划和旧缓存显示同步更新。版本 `1.0.12.08`。"
+    },
     {
       "date": "2026-11-22",
       "title": "调整周一、周二芭蕾预约",
@@ -28,11 +33,6 @@
       "date": "2026-11-15",
       "title": "本次周日自动抢课跳过",
       "summary": "跳过 11 月 15 日 14:20 的预约及候补批次。11 月 22 日 14:20 起恢复每周自动约课。版本 `1.0.12.04`。"
-    },
-    {
-      "date": "2026-11-14",
-      "title": "换闻道凭据后自动恢复检查",
-      "summary": "systemd 监测生产凭据版本，换票后自动切换为新一轮只读检查，间隔 20 分钟。状态卡按新会话计时。版本 `1.0.12.03`。"
     }
   ]
 }

@@ -133,7 +133,7 @@ const fallbackBalletBookingFast =
     planMode: "weekly-rules",
     coursePriorityOrder: ["芭蕾 L2", "软开 / 软开课", "芭蕾 L1.5"],
     priorityOrder: ["周一", "周二", "周三", "周四", "周五", "周六"],
-    prioritySummary: "按周一至周六逐日处理，每天依次为芭蕾 L2 → 软开 / 软开课 → 芭蕾 L1.5；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 18:00 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底",
+    prioritySummary: "按周一至周六逐日处理，每天依次为芭蕾 L2 → 软开 / 软开课 → 芭蕾 L1.5；所有日期不限老师，同课型按开始时间排序；工作日仅 18:40 后、周六仅 19:10 前结束；软开严格排除软开专项 / 软开-胯；教室按大教室 > 小教室兜底",
     targets: [],
     lastStatus: "waiting",
   };
@@ -2994,8 +2994,8 @@ function createBalletPlanWeekCourse(record = {}, options = {}) {
   title.textContent = balletCourseName(record);
   const plannedTimeLabel = String(record.startTime || "").trim();
   const timeText = options.planned
-    ? (record.weekday === "周六" && (!plannedTimeLabel || plannedTimeLabel === "全天" || plannedTimeLabel === "18:00 前")
-      ? "18:00 前结束"
+    ? (record.weekday === "周六" && ["", "全天", "18:00 前", "18:00 前结束"].includes(plannedTimeLabel)
+      ? "19:10 前结束"
       : plannedTimeLabel || "时间待确认")
     : [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–")
       || String(record.startTime || "时间待确认");
