@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-15 14:51",
-  "version": "1.0.12.06",
-  "versionLabel": "v1.0.12.06",
-  "branch": "feature/ballet-daily-priority",
-  "commit": "b1c15a84",
+  "updatedAt": "2026-11-22 14:40",
+  "version": "1.0.12.07",
+  "versionLabel": "v1.0.12.07",
+  "branch": "bugfix/cancel-nov23-24",
+  "commit": "96b6d974",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-daily-priority · commit b1c15a84 · 有未提交代码改动",
+  "deployNote": "bugfix/cancel-nov23-24 · commit 96b6d974 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-22",
+      "title": "调整周一、周二芭蕾预约",
+      "summary": "按 Owner 圈选取消 11 月 23–24 日三节已预约课程和一节排队课程。闻道实时复核确认四节均已取消，MaxNow 周安排已同步。版本 `1.0.12.07`。"
+    },
     {
       "date": "2026-11-15",
       "title": "抢课按天优先处理 L2",
@@ -28,11 +33,6 @@
       "date": "2026-11-14",
       "title": "换闻道凭据后自动恢复检查",
       "summary": "systemd 监测生产凭据版本，换票后自动切换为新一轮只读检查，间隔 20 分钟。状态卡按新会话计时。版本 `1.0.12.03`。"
-    },
-    {
-      "date": "2026-11-14",
-      "title": "恢复闻道每 20 分钟会话检查",
-      "summary": "新会话通过实时课表、活动预约及芭蕾完整同步验证。会话状态卡切到新一轮只读检查，时间和样本从新会话起算，间隔为 20 分钟。版本 `1.0.12.02`。"
     }
   ]
 }
