@@ -1,5 +1,5 @@
 window.MAXNOW_CODEX_USAGE_DATA = {
-  "updatedAt": "2026-11-22 11:23",
+  "updatedAt": "2026-11-22 12:05",
   "timezone": "Asia/Shanghai",
   "currency": "USD",
   "pricingBasis": "openai-api-equivalent",
@@ -7,29 +7,29 @@ window.MAXNOW_CODEX_USAGE_DATA = {
   "pricingStale": false,
   "sinceDays": 3650,
   "summary": {
-    "inputTokens": 169539065,
-    "outputTokens": 322100,
-    "cacheReadTokens": 167395712,
-    "cacheBaseTokens": 169539065,
-    "totalTokens": 169861165,
-    "estimatedCostUsd": 104.077621,
+    "inputTokens": 169729767,
+    "outputTokens": 322506,
+    "cacheReadTokens": 167581952,
+    "cacheBaseTokens": 169729767,
+    "totalTokens": 170052273,
+    "estimatedCostUsd": 104.205231,
     "runs": 7,
-    "activeSeconds": 12801,
-    "completedTurns": 43
+    "activeSeconds": 12812,
+    "completedTurns": 44
   },
   "sources": [
     {
       "key": "codex-windows",
       "label": "Codex Windows",
-      "inputTokens": 169539065,
-      "outputTokens": 322100,
-      "cacheReadTokens": 167395712,
-      "cacheBaseTokens": 169539065,
-      "totalTokens": 169861165,
-      "estimatedCostUsd": 104.077621,
+      "inputTokens": 169729767,
+      "outputTokens": 322506,
+      "cacheReadTokens": 167581952,
+      "cacheBaseTokens": 169729767,
+      "totalTokens": 170052273,
+      "estimatedCostUsd": 104.205231,
       "runs": 7,
-      "activeSeconds": 12801,
-      "completedTurns": 43
+      "activeSeconds": 12812,
+      "completedTurns": 44
     }
   ],
   "days": [
@@ -38,29 +38,29 @@ window.MAXNOW_CODEX_USAGE_DATA = {
       "sources": [
         "codex-windows"
       ],
-      "inputTokens": 446797,
-      "outputTokens": 3094,
-      "cacheReadTokens": 398976,
-      "cacheBaseTokens": 446797,
-      "totalTokens": 449891,
-      "estimatedCostUsd": 0.531413,
+      "inputTokens": 637499,
+      "outputTokens": 3500,
+      "cacheReadTokens": 585216,
+      "cacheBaseTokens": 637499,
+      "totalTokens": 640999,
+      "estimatedCostUsd": 0.659023,
       "runs": 1,
-      "activeSeconds": 82,
-      "completedTurns": 1,
+      "activeSeconds": 93,
+      "completedTurns": 2,
       "byModel": [
         {
           "model": "gpt-5.5",
           "provider": "openai",
           "openrouterModel": null,
-          "inputTokens": 446797,
-          "outputTokens": 3094,
-          "cacheReadTokens": 398976,
-          "cacheBaseTokens": 446797,
-          "totalTokens": 449891,
-          "estimatedCostUsd": 0.531413,
+          "inputTokens": 637499,
+          "outputTokens": 3500,
+          "cacheReadTokens": 585216,
+          "cacheBaseTokens": 637499,
+          "totalTokens": 640999,
+          "estimatedCostUsd": 0.659023,
           "runs": 1,
-          "activeSeconds": 82,
-          "completedTurns": 1,
+          "activeSeconds": 93,
+          "completedTurns": 2,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -70,15 +70,15 @@ window.MAXNOW_CODEX_USAGE_DATA = {
           "kind": "codex-session",
           "label": "MaxNow",
           "model": "gpt-5.5",
-          "inputTokens": 446797,
-          "outputTokens": 3094,
-          "cacheReadTokens": 398976,
-          "cacheBaseTokens": 446797,
-          "totalTokens": 449891,
-          "estimatedCostUsd": 0.531413,
+          "inputTokens": 637499,
+          "outputTokens": 3500,
+          "cacheReadTokens": 585216,
+          "cacheBaseTokens": 637499,
+          "totalTokens": 640999,
+          "estimatedCostUsd": 0.659023,
           "runs": 1,
-          "activeSeconds": 82,
-          "completedTurns": 1,
+          "activeSeconds": 93,
+          "completedTurns": 2,
           "pricingEstimated": true,
           "pricingModel": "gpt-5.5"
         }
@@ -313,7 +313,7 @@ window.MAXNOW_CODEX_USAGE_DATA = {
   "recentRuns": [
     {
       "date": "2026-11-22",
-      "timestamp": "2026-11-22T11:22:46+08:00",
+      "timestamp": "2026-11-22T11:25:36+08:00",
       "source": "codex-windows",
       "provider": "openai",
       "model": "gpt-5.5",
@@ -322,26 +322,26 @@ window.MAXNOW_CODEX_USAGE_DATA = {
       "runId": "01a20145-dc74-7400-8f98-f0202e4c2943:2026-11-22",
       "kind": "codex-session",
       "label": "MaxNow",
-      "inputTokens": 446797,
-      "outputTokens": 3094,
-      "cacheReadTokens": 398976,
-      "cacheBaseTokens": 446797,
-      "reasoningOutputTokens": 261,
-      "totalTokens": 449891,
+      "inputTokens": 637499,
+      "outputTokens": 3500,
+      "cacheReadTokens": 585216,
+      "cacheBaseTokens": 637499,
+      "reasoningOutputTokens": 334,
+      "totalTokens": 640999,
       "pricingEstimated": true,
       "pricingModel": "gpt-5.5",
       "contextWindow": 475000,
-      "tokenCountEvents": 9,
-      "activeSeconds": 82,
-      "completedTurns": 1,
+      "tokenCountEvents": 12,
+      "activeSeconds": 93,
+      "completedTurns": 2,
       "activeByDate": [
         {
           "date": "2026-11-22",
-          "activeSeconds": 82,
-          "completedTurns": 1
+          "activeSeconds": 93,
+          "completedTurns": 2
         }
       ],
-      "estimatedCostUsd": 0.531413
+      "estimatedCostUsd": 0.659023
     },
     {
       "date": "2026-11-21",
