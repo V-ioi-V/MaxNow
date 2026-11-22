@@ -1,14 +1,19 @@
 window.MAXNOW_PROJECT_META_DATA = {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-22 14:56",
-  "version": "1.0.12.08",
-  "versionLabel": "v1.0.12.08",
-  "branch": "feature/ballet-saturday-1910",
-  "commit": "dd922e77",
+  "updatedAt": "2026-11-22 15:12",
+  "version": "1.0.12.09",
+  "versionLabel": "v1.0.12.09",
+  "branch": "feature/ballet-course-hover",
+  "commit": "c1beea6a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-saturday-1910 · commit dd922e77 · 有未提交代码改动",
+  "deployNote": "feature/ballet-course-hover · commit c1beea6a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-22",
+      "title": "课表悬停查看课程信息和报名头像",
+      "summary": "课程卡停留 0.5 秒后显示时间、老师、教室和报名状态。提示条下方展示同一节课的闻道报名头像，无头像数据时显示课程信息。版本 `1.0.12.09`。"
+    },
     {
       "date": "2026-11-22",
       "title": "周六自动抢课延长至 19:10 前结束",
@@ -28,11 +33,6 @@ window.MAXNOW_PROJECT_META_DATA = {
       "date": "2026-11-15",
       "title": "修复课程卡切换列表",
       "summary": "切卡浮层支持纵向滚动，可查看并选择最后一张卡。闻道已标记失效但登记有效期尚未结束时，页面分别显示状态和登记日期。版本 `1.0.12.05`。"
-    },
-    {
-      "date": "2026-11-15",
-      "title": "本次周日自动抢课跳过",
-      "summary": "跳过 11 月 15 日 14:20 的预约及候补批次。11 月 22 日 14:20 起恢复每周自动约课。版本 `1.0.12.04`。"
     }
   ]
 };

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import binascii
 import copy
 import hashlib
 import html
@@ -73,6 +75,11 @@ MAX_ATTENDANCE_RECORDS = 500
 MAX_ATTENDANCE_PAGES = 50
 MAX_BOOKING_RECORDS = 500
 MAX_BOOKING_PAGES = 50
+MAX_TIMETABLE_AVATARS = 64
+TIMETABLE_AVATAR_URL = re.compile(
+    r"https://thirdwx\.qlogo\.cn/mmopen/vi_32/[A-Za-z0-9_+=-]{1,192}/132"
+)
+INLINE_AVATAR_PREFIX = "data:image/jpeg;base64,"
 ROLLING_DAYS = 60
 CACHE_TTL_HOURS = 36
 DEFAULT_ATTENDANCE_TEACHER = "李俊"
@@ -936,15 +943,39 @@ class MembershipCardParser(HTMLParser):
             self.current_parts.append(data)
 
 
+def is_timetable_avatar(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    if TIMETABLE_AVATAR_URL.fullmatch(value):
+        return True
+    if not value.startswith(INLINE_AVATAR_PREFIX) or len(value) > 16_384:
+        return False
+    try:
+        jpeg = base64.b64decode(value[len(INLINE_AVATAR_PREFIX):], validate=True)
+    except binascii.Error:
+        return False
+    return jpeg.startswith(b"\xff\xd8\xff") and jpeg.endswith(b"\xff\xd9")
+
+
 class TimetableParser(HTMLParser):
-    def __init__(self):
+    def __init__(self, *, include_avatars: bool = False):
         super().__init__()
+        self.include_avatars = include_avatars
+        self.avatar_urls: list[str] = []
         self.div_stack: list[dict[str, Any]] = []
         self.current_nodes: list[dict[str, Any]] | None = None
         self.courses: list[dict[str, Any]] = []
         self.selector_dates: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]):
+        if tag == "img" and self.include_avatars and self.current_nodes is not None:
+            src = dict(attrs).get("src")
+            if (
+                len(self.avatar_urls) < MAX_TIMETABLE_AVATARS
+                and any(node.get("avatar_roster") for node in self.div_stack)
+                and is_timetable_avatar(src)
+            ):
+                self.avatar_urls.append(src)
         if tag != "div":
             return
         values = dict(attrs)
@@ -958,6 +989,8 @@ class TimetableParser(HTMLParser):
         if self.current_nodes is None and "classtable" in classes:
             self.current_nodes = [node]
         elif self.current_nodes is not None:
+            if self.include_avatars and "collapse" in classes:
+                node["avatar_roster"] = bool(re.fullmatch(r"collapse_[0-9]+", values.get("id") or ""))
             self.current_nodes.append(node)
 
     def handle_endtag(self, tag: str):
@@ -965,7 +998,11 @@ class TimetableParser(HTMLParser):
             return
         node = self.div_stack.pop()
         if self.current_nodes is not None and "classtable" in node["classes"]:
-            self.courses.append(self._parse_course(self.current_nodes))
+            course = self._parse_course(self.current_nodes)
+            if self.avatar_urls:
+                course["bookedAvatarUrls"] = self.avatar_urls
+                self.avatar_urls = []
+            self.courses.append(course)
             self.current_nodes = None
 
     def handle_data(self, data: str):
@@ -1384,12 +1421,12 @@ def parse_membership(text: str) -> list[dict[str, Any]]:
     return cards
 
 
-def parse_timetable(text: str, course_date: str) -> dict[str, Any]:
+def parse_timetable(text: str, course_date: str, *, include_avatars: bool = False) -> dict[str, Any]:
     try:
         parsed_date = date.fromisoformat(course_date)
     except ValueError:
         raise SyncFailure("configuration_error")
-    parser = TimetableParser()
+    parser = TimetableParser(include_avatars=include_avatars)
     try:
         parser.feed(text)
     except SyncFailure:
@@ -2445,6 +2482,13 @@ def validate_read_model(model: dict[str, Any]) -> None:
                 }
             ):
                 raise SyncFailure("parse_error")
+            avatars = record.get("bookedAvatarUrls", [])
+            if (
+                not isinstance(avatars, list)
+                or len(avatars) > MAX_TIMETABLE_AVATARS
+                or not all(is_timetable_avatar(avatar) for avatar in avatars)
+            ):
+                raise SyncFailure("parse_error")
             waitlist_count = record.get("waitlistCount")
             if (
                 waitlist_count is not None
@@ -2643,7 +2687,9 @@ def build_timetable_snapshot(
 
     def read_day(course_date: date) -> dict[str, Any]:
         path = f"{TIMETABLE_PATH}/{course_date.isoformat()}"
-        return parse_timetable(source.request(path, "dateswiper"), course_date.isoformat())
+        return parse_timetable(
+            source.request(path, "dateswiper"), course_date.isoformat(), include_avatars=True,
+        )
 
     def fetch_days(dates: list[date]) -> list[dict[str, Any]]:
         missing = [day for day in dates if day not in fetched_days]

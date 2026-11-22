@@ -5660,6 +5660,46 @@ body[data-view="ricky"] .topbar-ricky-status {
   outline-offset: 1px;
 }
 
+.ballet-course-tooltip {
+  position: fixed;
+  z-index: 20;
+  width: max-content;
+  max-width: min(21rem, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  overflow: auto;
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.ballet-course-tooltip p {
+  margin: 0;
+}
+
+.ballet-course-tooltip-avatars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 7px;
+}
+
+.ballet-course-tooltip-avatars:empty {
+  display: none;
+}
+
+.ballet-course-tooltip-avatars img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .ballet-timetable-cell[data-day-state="today"] {
   background: rgba(255, 244, 248, 0.7);
 }

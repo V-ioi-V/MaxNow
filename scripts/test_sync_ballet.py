@@ -635,6 +635,31 @@ class BalletSyncTests(unittest.TestCase):
             ],
         )
 
+    def test_timetable_keeps_only_avatar_images_from_the_same_course(self):
+        booked_avatar = "https://thirdwx.qlogo.cn/mmopen/vi_32/FixtureAvatar/132"
+        teacher_portrait = "https://thirdwx.qlogo.cn/mmopen/vi_32/FixtureTeacher/132"
+        inline_avatar = "data:image/jpeg;base64,/9j/AP/Z"
+        roster = (
+            f'<img src="{teacher_portrait}">'
+            '<div class="collapse" id="collapse_123">'
+            '<div class="card card-body"><div class="row form_row small">'
+            f'<img src="{booked_avatar}" memberid="private-member">'
+            f'<img src="{inline_avatar}">'
+            f'<img src="{booked_avatar}?token=secret">'
+            '<img src="https://example.com/other.png">'
+            '<img src="data:image/svg+xml;base64,AAAA">'
+            '</div></div></div>'
+        )
+        first_course = timetable_html().replace(
+            "</div></body>", roster + "</div></body>",
+        )
+        text = first_course + timetable_html(course="软开课", time_text="20:15 ~ 21:15")
+        records = ballet.parse_timetable(text, "2026-08-01", include_avatars=True)["records"]
+        self.assertEqual(records[0]["bookedAvatarUrls"], [booked_avatar, inline_avatar])
+        self.assertNotIn("bookedAvatarUrls", records[1])
+        self.assertNotIn("private-member", json.dumps(records))
+        self.assertNotIn("bookedAvatarUrls", ballet.parse_timetable(text, "2026-08-01")["records"][0])
+
     def test_missing_attendance_teacher_defaults_to_lijun(self):
         detail = ballet.parse_detail(
             detail_html(
