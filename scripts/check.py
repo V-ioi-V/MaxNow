@@ -183,8 +183,14 @@ def check_auth_surface():
     if 'action="/auth/logout"' not in dashboard_html:
         raise ValueError("auth surface: dashboard logout action is missing")
     nginx_locations = (ROOT / "server/maxnow-auth-locations.conf").read_text(encoding="utf-8")
-    if "auth_request /_auth;" not in nginx_locations or "@login_redirect" not in nginx_locations:
+    dashboard_location = nginx_locations.partition("location / {")[2].partition("\n}")[0]
+    if "auth_request /_auth;" not in dashboard_location or "@login_redirect" not in dashboard_location:
         raise ValueError("auth surface: nginx session gate is incomplete")
+    if (
+        'add_header Cache-Control "private, no-cache";' not in dashboard_location
+        or "include /etc/nginx/snippets/maxnow-security-headers.conf;" not in dashboard_location
+    ):
+        raise ValueError("auth surface: dashboard HTML must revalidate and retain its security headers")
     result = subprocess.run(
         [sys.executable, str(ROOT / "scripts/maxnow_auth_service.py"), "--self-test"],
         cwd=ROOT,

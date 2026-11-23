@@ -1,5 +1,10 @@
 # MaxNow 服务器操作说明
 
+## 2026-11-23 MaxNow 页面 HTML 缓存
+
+- 版本 `1.0.12.13`。受登录保护的 Dash 页面 HTML 返回 `Cache-Control: private, no-cache`，浏览器重新打开页面时向服务器验证资源版本。JS 和 CSS 继续通过 URL 版本与各自缓存规则更新。
+- 发布需备份并安装仓库的 `server/maxnow-auth-locations.conf`，执行 `nginx -t` 后 reload。验证登录后的 HTML、CSP 和匿名拦截，以及访问旧标签页时重新加载实际引用的脚本版本。
+
 ## 2026-11-23 芭蕾课表头像分组
 
 - 静态发布版本 `1.0.12.12`，页面引用 `app.js?v=283` 和 `styles.css?v=304`。浏览器按课表已有的容量和头像顺序渲染分组。

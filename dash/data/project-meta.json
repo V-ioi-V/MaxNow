@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-23 20:27",
-  "version": "1.0.12.12",
-  "versionLabel": "v1.0.12.12",
-  "branch": "feature/ballet-roster-groups",
-  "commit": "72cf4bf8",
+  "updatedAt": "2026-11-23 20:36",
+  "version": "1.0.12.13",
+  "versionLabel": "v1.0.12.13",
+  "branch": "bugfix/dashboard-html-cache",
+  "commit": "ba6280a3",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "feature/ballet-roster-groups · commit 72cf4bf8 · 有未提交代码改动",
+  "deployNote": "bugfix/dashboard-html-cache · commit ba6280a3 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-23",
+      "title": "修复浏览器继续加载旧版页面",
+      "summary": "MaxNow 页面 HTML 每次导航都向服务器验证，确保部署后能加载新版资源。版本 `1.0.12.13`。"
+    },
     {
       "date": "2026-11-23",
       "title": "课表头像区分报名和排队",
@@ -28,11 +33,6 @@
       "date": "2026-11-22",
       "title": "课表悬停查看课程信息和报名头像",
       "summary": "课程卡停留 0.5 秒后显示时间、老师、教室和报名状态。提示条下方展示同一节课的闻道报名头像，无头像数据时显示课程信息。版本 `1.0.12.09`。"
-    },
-    {
-      "date": "2026-11-22",
-      "title": "周六自动抢课延长至 19:10 前结束",
-      "summary": "周六目标课按结束时间筛选，只有严格早于 19:10 的课程进入自动抢课。周安排、公开计划和旧缓存显示同步更新。版本 `1.0.12.08`。"
     }
   ]
 }
