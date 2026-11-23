@@ -5102,7 +5102,7 @@ function renderBalletCourseTooltipAvatars(record) {
   const capacity = Number(record.capacity);
   // The source roster already lists booked attendees before the waitlist.
   const groups = Number.isInteger(capacity) && capacity > 0
-    ? [["已报名", urls.slice(0, capacity)], ["排队", urls.slice(capacity)]]
+    ? [["已预约", urls.slice(0, capacity)], ["排队中", urls.slice(capacity)]]
     : [["", urls]];
   for (const [label, groupUrls] of groups) {
     const row = document.createElement("div");

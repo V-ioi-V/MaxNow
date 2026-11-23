@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-23 20:36",
-  "version": "1.0.12.13",
-  "versionLabel": "v1.0.12.13",
-  "branch": "bugfix/dashboard-html-cache",
-  "commit": "ba6280a3",
+  "updatedAt": "2026-11-23 20:41",
+  "version": "1.0.12.14",
+  "versionLabel": "v1.0.12.14",
+  "branch": "bugfix/ballet-roster-labels",
+  "commit": "9ba06b18",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/dashboard-html-cache · commit ba6280a3 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-roster-labels · commit 9ba06b18 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-23",
+      "title": "调整芭蕾课表头像分组标题",
+      "summary": "报名头像分组标题改为「已预约」和「排队中」。版本 `1.0.12.14`。"
+    },
     {
       "date": "2026-11-23",
       "title": "修复浏览器继续加载旧版页面",
@@ -28,11 +33,6 @@
       "date": "2026-11-23",
       "title": "周安排补齐课表悬停信息",
       "summary": "周安排复用完整课程表的浮层，显示同一节课的课程信息、报名人数、容量、排队人数和报名头像。版本 `1.0.12.10`。"
-    },
-    {
-      "date": "2026-11-22",
-      "title": "课表悬停查看课程信息和报名头像",
-      "summary": "课程卡停留 0.5 秒后显示时间、老师、教室和报名状态。提示条下方展示同一节课的闻道报名头像，无头像数据时显示课程信息。版本 `1.0.12.09`。"
     }
   ]
 }
