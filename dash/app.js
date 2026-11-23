@@ -5097,7 +5097,43 @@ function hideBalletCourseTooltip() {
   balletCourseTooltipAvatars.replaceChildren();
 }
 
-function showBalletCourseTooltip(card, text, avatarUrls, point) {
+function renderBalletCourseTooltipAvatars(record) {
+  const urls = Array.isArray(record.bookedAvatarUrls) ? record.bookedAvatarUrls.slice(0, 64) : [];
+  const capacity = Number(record.capacity);
+  // The source roster already lists booked attendees before the waitlist.
+  const groups = Number.isInteger(capacity) && capacity > 0
+    ? [["已报名", urls.slice(0, capacity)], ["排队", urls.slice(capacity)]]
+    : [["", urls]];
+  for (const [label, groupUrls] of groups) {
+    const row = document.createElement("div");
+    row.className = "ballet-course-tooltip-avatar-row";
+    for (const src of groupUrls) {
+      const safeUrl = typeof src === "string" && src.length <= 16384
+        && (balletAvatarUrl.test(src) || balletInlineAvatar.test(src));
+      if (!safeUrl) continue;
+      const image = document.createElement("img");
+      image.alt = "";
+      image.referrerPolicy = "no-referrer";
+      image.decoding = "async";
+      image.addEventListener("error", () => image.remove(), { once: true });
+      image.src = src;
+      row.append(image);
+    }
+    if (!row.childElementCount) continue;
+    const group = document.createElement("div");
+    group.className = "ballet-course-tooltip-avatar-group";
+    if (label) {
+      const title = document.createElement("div");
+      title.className = "ballet-course-tooltip-avatar-label";
+      title.textContent = label;
+      group.append(title);
+    }
+    group.append(row);
+    balletCourseTooltipAvatars.append(group);
+  }
+}
+
+function showBalletCourseTooltip(card, text, record, point) {
   if (balletTooltipCard === card) {
     clearTimeout(balletTooltipHideTimer);
     return;
@@ -5110,18 +5146,7 @@ function showBalletCourseTooltip(card, text, avatarUrls, point) {
       return;
     }
     balletCourseTooltip.querySelector("p").textContent = text;
-    for (const src of avatarUrls) {
-      const safeUrl = typeof src === "string" && src.length <= 16384
-        && (balletAvatarUrl.test(src) || balletInlineAvatar.test(src));
-      if (!safeUrl) continue;
-      const image = document.createElement("img");
-      image.alt = "";
-      image.referrerPolicy = "no-referrer";
-      image.decoding = "async";
-      image.addEventListener("error", () => image.remove(), { once: true });
-      image.src = src;
-      balletCourseTooltipAvatars.append(image);
-    }
+    renderBalletCourseTooltipAvatars(record);
     balletCourseTooltip.hidden = false;
     card.setAttribute("aria-describedby", balletCourseTooltip.id);
 
@@ -5210,10 +5235,9 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
     counts?.accessible,
     status.label,
   ].filter(Boolean).join(" · ");
-  const avatarUrls = Array.isArray(record.bookedAvatarUrls) ? record.bookedAvatarUrls.slice(0, 64) : [];
   article.addEventListener("pointerenter", (event) => {
     if (event.pointerType === "mouse") {
-      showBalletCourseTooltip(article, tooltipText, avatarUrls, { x: event.clientX, y: event.clientY });
+      showBalletCourseTooltip(article, tooltipText, record, { x: event.clientX, y: event.clientY });
     }
   });
   article.addEventListener("pointerleave", () => {
@@ -5222,7 +5246,7 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
     else balletTooltipHideTimer = setTimeout(hideBalletCourseTooltip, 150);
   });
   article.addEventListener("focus", () => {
-    if (article.matches(":focus-visible")) showBalletCourseTooltip(article, tooltipText, avatarUrls);
+    if (article.matches(":focus-visible")) showBalletCourseTooltip(article, tooltipText, record);
   });
   article.addEventListener("blur", () => {
     if (article === balletTooltipCard) hideBalletCourseTooltip();

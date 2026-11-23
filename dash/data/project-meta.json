@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-23 10:43",
-  "version": "1.0.12.11",
-  "versionLabel": "v1.0.12.11",
-  "branch": "codex/remove-server-codex-cli",
-  "commit": "acd0382d",
+  "updatedAt": "2026-11-23 20:27",
+  "version": "1.0.12.12",
+  "versionLabel": "v1.0.12.12",
+  "branch": "feature/ballet-roster-groups",
+  "commit": "72cf4bf8",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "codex/remove-server-codex-cli · commit acd0382d · 有未提交代码改动",
+  "deployNote": "feature/ballet-roster-groups · commit 72cf4bf8 · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-23",
+      "title": "课表头像区分报名和排队",
+      "summary": "本周课程表和周安排的悬停提示按课程容量分开展示「已报名」和「排队」头像，组内沿用报名顺序。版本 `1.0.12.12`。"
+    },
     {
       "date": "2026-11-23",
       "title": "停用服务器 Codex CLI 和用量采集",
@@ -28,11 +33,6 @@
       "date": "2026-11-22",
       "title": "周六自动抢课延长至 19:10 前结束",
       "summary": "周六目标课按结束时间筛选，只有严格早于 19:10 的课程进入自动抢课。周安排、公开计划和旧缓存显示同步更新。版本 `1.0.12.08`。"
-    },
-    {
-      "date": "2026-11-22",
-      "title": "调整周一、周二芭蕾预约",
-      "summary": "按 Owner 圈选取消 11 月 23–24 日三节已预约课程和一节排队课程。闻道实时复核确认四节均已取消，MaxNow 周安排已同步。版本 `1.0.12.07`。"
     }
   ]
 }

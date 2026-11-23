@@ -5683,15 +5683,25 @@ body[data-view="ricky"] .topbar-ricky-status {
   margin: 0;
 }
 
-.ballet-course-tooltip-avatars {
+.ballet-course-tooltip-avatar-group {
+  margin-top: 8px;
+}
+
+.ballet-course-tooltip-avatar-group:not(:has(img)) {
+  display: none;
+}
+
+.ballet-course-tooltip-avatar-label {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ballet-course-tooltip-avatar-row {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin-top: 7px;
-}
-
-.ballet-course-tooltip-avatars:empty {
-  display: none;
 }
 
 .ballet-course-tooltip-avatars img {
