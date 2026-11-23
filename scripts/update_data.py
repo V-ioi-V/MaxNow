@@ -199,8 +199,6 @@ def parse_args():
     codex_usage.add_argument("--source-only", action="store_true", help="Refresh only the source ledger; skip merged token-usage output.")
     codex_macos_usage = subparsers.add_parser("codex-macos-usage", help="Refresh macOS Codex token usage ledger and validate data.")
     codex_macos_usage.add_argument("--source-only", action="store_true", help="Refresh only the source ledger; skip merged token-usage output.")
-    codex_server_usage = subparsers.add_parser("codex-server-usage", help="Refresh server Codex token usage ledger and validate data.")
-    codex_server_usage.add_argument("--source-only", action="store_true", help="Refresh only the source ledger; skip merged token-usage output.")
     subparsers.add_parser("token-usage", help="Merge OpenClaw and Codex token ledgers and validate data.")
     subparsers.add_parser("ai-last30", help="Refresh free external AI signals for ai-news and Last-30.")
     subparsers.add_parser("market-indices", help="Refresh market index quotes and validate data.")
@@ -267,22 +265,8 @@ def main():
         )
         write_wrapper("codex-macos-usage")
 
-    if args.command in {"codex-server-usage"}:
-        run_python(
-            "scripts/sync_codex_usage.py",
-            "codex-server-usage.log",
-            extra_args=["--output", "dash/data/codex-server-usage.json"],
-            env={
-                "MAXNOW_CODEX_SOURCE_KEY": "codex-server",
-                "MAXNOW_CODEX_SOURCE_LABEL": "Codex server",
-                "CODEX_STATE_DIR": "/root/.codex",
-                "MAXNOW_CODEX_MISSING_OK": "1",
-            },
-        )
-        write_wrapper("codex-server-usage")
-
     source_only = bool(getattr(args, "source_only", False))
-    if (not source_only) and args.command in {"openclaw-usage", "codex-usage", "codex-macos-usage", "codex-server-usage", "token-usage", "all"}:
+    if (not source_only) and args.command in {"openclaw-usage", "codex-usage", "codex-macos-usage", "token-usage", "all"}:
         run_python("scripts/sync_token_usage.py", "token-usage.log")
         write_wrapper("token-usage")
 

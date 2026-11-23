@@ -13,13 +13,9 @@ cd "$REPO_ROOT"
 mkdir -p logs
 echo "[$(date -Is)] token source refresh start"
 python3 scripts/update_data.py openclaw-usage --source-only
-python3 scripts/update_data.py codex-server-usage --source-only
 python3 scripts/check.py
 chown ubuntu:www-data \
   dash/data/openclaw-usage.json \
   dash/data/openclaw-usage.js \
-  dash/data/codex-server-usage.json \
-  dash/data/codex-server-usage.js \
-  logs/openclaw-usage.log \
-  logs/codex-server-usage.log 2>/dev/null || true
+  logs/openclaw-usage.log 2>/dev/null || true
 echo "[$(date -Is)] token source refresh ok"

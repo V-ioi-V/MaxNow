@@ -1,5 +1,12 @@
 # MaxNow 服务器操作说明
 
+## 2026-11-23 停用服务器 Codex CLI 和用量采集
+
+- 使用 root 的 npm 安装执行 `codex logout`，回读为 `Not logged in` 后卸载 `@openai/codex`。安装目录和命令均已移除。会话历史和最后一份用量账本保留。
+- 停用当天先用 root 所有的 `/usr/local/lib/maxnow/refresh_openclaw_token_source.sh` 接管 `MAXNOW-TOKEN-SOURCE-REFRESH`，每小时仅刷新 OpenClaw 源账本。原 root crontab 备份位于 `/var/backups/maxnow-token-sources-Xdhsvm`。
+- 已通过原 cron 锁复跑 OpenClaw 采集及 Token 合并。Codex Server 历史 JSON / JS 哈希保持一致，合并后的总账含 OpenClaw、Codex Windows、Codex macOS 和 Codex Server 历史记录。
+- 发布 `1.0.12.11` 时，确认线上脚本仅采集 OpenClaw，将 cron 切回仓库入口 `/bin/bash scripts/refresh_token_sources_on_server.sh`，验证通过后归档临时入口。保留原执行时间、锁和日志。
+
 ## 2026-11-23 周安排补齐课程浮层
 
 - 版本 `1.0.12.10`，页面引用 `app.js?v=282` 和 `styles.css?v=303`。从 `origin/main` 快进部署前成对备份芭蕾课表 JSON / JS，部署后核对哈希并重新生成 `project-meta.*`。
@@ -1199,22 +1206,13 @@ python3 scripts/update_data.py project-status
 python3 scripts/update_data.py openclaw-usage
 python3 scripts/update_data.py codex-usage
 python3 scripts/update_data.py codex-macos-usage
-python3 scripts/update_data.py codex-server-usage
 python3 scripts/update_data.py token-usage
 python3 scripts/update_data.py ai-last30
 python3 scripts/update_data.py project-meta
 python3 scripts/update_data.py wrap all
 ```
 
-`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断或独立项目状态。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`market-indices` 会刷新纳指100、标普500、上证指数、深证成指和创业板指，数据源为腾讯公开行情接口。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 `dash/data/project-status.*` 的当前主线 / 待推进、来源时间、生成时间和内容指纹；ROADMAP Now / Next / Done 变化后必须执行，且不会修改 `dashboard.today`。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Windows 兼容本机 Codex 源账本并合并统一 Token 总账；`codex-macos-usage` 刷新 macOS 本机 Codex 源账本并合并统一 Token 总账；`codex-server-usage` 刷新服务器 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新中文 AI 前沿简报和 Last-30 滚动记忆，优先正式发布、过滤客户案例并跨栏目去重；采集脚本本身不调用模型、不消耗 token。
-
-刷新服务器 Codex Token 用量：
-
-```bash
-cd /var/www/maxnow-dashboard
-sudo python3 scripts/update_data.py codex-server-usage
-python3 scripts/check.py
-```
+`runtime` 是服务器定时任务使用的安全入口，只刷新 wiki-todos、Ricky 旅行记录、生活页吃啥候选、天气、行情指数、系统状态、MaxNow 项目元信息和 wrapper，不覆盖 Owner 的今日判断或独立项目状态。`weather` 会刷新北京市海淀区天气卡，数据源为 Open-Meteo 免费 forecast API。`market-indices` 会刷新纳指100、标普500、上证指数、深证成指和创业板指，数据源为腾讯公开行情接口。`life-foods` 会从 private personal-wiki `wiki/life/food-picker.md` 同步生活页吃啥候选。`project-status` 会从 `ROADMAP.md` 显式刷新 `dash/data/project-status.*` 的当前主线 / 待推进、来源时间、生成时间和内容指纹；ROADMAP Now / Next / Done 变化后必须执行，且不会修改 `dashboard.today`。`openclaw-usage` 刷新 OpenClaw 源账本并合并统一 Token 总账；`codex-usage` 刷新 Windows 兼容本机 Codex 源账本并合并统一 Token 总账；`codex-macos-usage` 刷新 macOS 本机 Codex 源账本并合并统一 Token 总账；`token-usage` 只合并现有源账本。`ai-last30` 会刷新中文 AI 前沿简报和 Last-30 滚动记忆，优先正式发布、过滤客户案例并跨栏目去重；采集脚本本身不调用模型、不消耗 token。
 
 本机 Windows 可直接在仓库目录运行：
 
@@ -1270,7 +1268,7 @@ bash scripts/install_local_codex_usage_launchd.sh --repo-root /Users/bytedance/.
 
 Codex collector 只读取 `.codex/sessions/**/*.jsonl` 中的 `token_count`、`turn_context.model` 和 `task_complete.duration_ms`，按 `total_token_usage` 相邻快照的正向增量与原始事件日期记账，并在同一会话树内去重分叉文件继承的历史；导出 token、已完成任务活跃时长、时间、来源、模型和费用估算，活跃时长不包含轮次之间空闲时间，不导出 prompt / response 正文。Windows、macOS、server 继续使用三个独立源账本。
 
-2026-07-10 将 OpenClaw / Codex server 合并为固定小时源采集，标记块为 `MAXNOW-TOKEN-SOURCE-REFRESH`：
+服务器每小时 `:05` 刷新 OpenClaw 源账本，root crontab 使用 `MAXNOW-TOKEN-SOURCE-REFRESH` 标记块：
 
 ```cron
 # BEGIN MAXNOW-TOKEN-SOURCE-REFRESH
@@ -1290,7 +1288,7 @@ ubuntu crontab 在每小时 `:10` 拉取本机源账本并发布统一 Token 总
 
 总账脚本在拉取前把 `openclaw-usage`、三路 Codex usage、统一 `token-usage` 与 `project-meta` 的 JSON / JS 原样备份到 `/tmp/maxnow-token-usage-refresh/<timestamp>`，再清理这些受管工作树文件并执行 fast-forward pull。若三次拉取仍失败，必须恢复全部备份后退出；成功后只恢复服务器权威 `openclaw-usage.*` / `codex-server-usage.*`，再合并总账。不要重新引入未清理的长期 Git stash。
 
-固定周期为 macOS `:00`、Windows `:02`、服务器源采集 `:05`、总账发布 `:10`。总账任务保留服务器运行态 `openclaw-usage.*` / `codex-server-usage.*`，再运行 `python3 scripts/update_data.py token-usage`；`git pull` 单次默认 120 秒超时，遇到并发 Git 更新等瞬时失败时最多尝试 3 次。
+固定周期为 macOS `:00`、Windows `:02`、服务器 OpenClaw 源采集 `:05`、总账发布 `:10`。总账任务保留 OpenClaw 运行态账本和服务器 Codex 历史账本，再运行 `python3 scripts/update_data.py token-usage`；`git pull` 单次默认 120 秒超时，遇到并发 Git 更新等瞬时失败时最多尝试 3 次。
 
 2026-07-28 11:10 的总账发布曾与另一条 Git 更新并发，`git pull` 因 `cannot lock ref 'refs/remotes/origin/main'` 退出，导致已经上报到 `origin/main` 的 macOS 源账本没有进入线上总账。11:28 使用原 cron 锁手动补跑后，总账更新为 `11:28`，Codex macOS 来源时间更新为 `11:00`；随后为拉取步骤增加有限重试，避免一次引用锁竞争漏掉整小时发布。
 
