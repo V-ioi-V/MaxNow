@@ -5655,7 +5655,8 @@ body[data-view="ricky"] .topbar-ricky-status {
   filter: grayscale(1);
 }
 
-.ballet-timetable-course[data-teacher]:focus-visible {
+.ballet-timetable-course[data-teacher]:focus-visible,
+.ballet-timetable-course.is-plan:focus-visible {
   outline: 2px solid var(--accent-strong);
   outline-offset: 1px;
 }

@@ -2929,6 +2929,11 @@ function getBalletBookingSnapshotRecords() {
 
 function getBalletPlanActualRecords() {
   const records = [];
+  const timetableByCourse = new Map();
+  const timetableKey = (record) => {
+    const venue = String(record.venue || "").replace(/\s+/g, "");
+    return venue ? `${balletTimetableCourseKey(record)}|${venue}` : "";
+  };
   const add = (record, source) => {
     const date = balletRecordDate(record);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
@@ -2938,9 +2943,14 @@ function getBalletPlanActualRecords() {
   getBalletUpcomingRecords().forEach((record) => add(record, "upcoming"));
   const timetableDays = Array.isArray(balletData.timetable?.days) ? balletData.timetable.days : [];
   timetableDays.forEach((day) => {
-    (Array.isArray(day.records) ? day.records : [])
-      .filter((record) => ["booked", "waitlist", "attended"].includes(String(record.availability || "").toLowerCase()))
-      .forEach((record) => add({ ...record, date: day.date }, "timetable"));
+    (Array.isArray(day.records) ? day.records : []).forEach((record) => {
+      const course = { ...record, date: day.date };
+      const key = timetableKey(course);
+      if (key) timetableByCourse.set(key, timetableByCourse.has(key) ? null : course);
+      if (["booked", "waitlist", "attended"].includes(String(record.availability || "").toLowerCase())) {
+        add(course, "timetable");
+      }
+    });
   });
   const lastRecords = Array.isArray(balletBookingFastData?.lastRun?.records)
     ? balletBookingFastData.lastRun.records
@@ -2963,7 +2973,12 @@ function getBalletPlanActualRecords() {
       unique.set(key, record);
     }
   });
-  return [...unique.values()];
+  return [...unique.values()].map((record) => {
+    const timetable = timetableByCourse.get(timetableKey(record));
+    if (!timetable || record._planSource === "timetable") return record;
+    const { bookedCount, capacity, waitlistCount, bookedAvatarUrls } = timetable;
+    return { ...record, bookedCount, capacity, waitlistCount, bookedAvatarUrls };
+  });
 }
 
 function createBalletPlanWeekCourse(record = {}, options = {}) {
@@ -2976,9 +2991,10 @@ function createBalletPlanWeekCourse(record = {}, options = {}) {
         durationMinutes: record.durationMinutes || (interval ? interval.end - interval.start : undefined),
       },
       false,
-      { includeVenue: false, includeCounts: false },
+      { showCountsOnCard: false },
     );
     course.classList.add("is-plan");
+    course.tabIndex = 0;
     return course;
   }
   const article = document.createElement("article");
@@ -5127,7 +5143,10 @@ balletCourseTooltip.addEventListener("pointerleave", (event) => {
   if (!balletTooltipCard?.contains(event.relatedTarget)) hideBalletCourseTooltip();
 });
 document.addEventListener("scroll", (event) => {
-  if (balletTooltipCard && !balletCourseTooltip.contains(event.target)) hideBalletCourseTooltip();
+  if (!balletTooltipCard || balletCourseTooltip.contains(event.target)) return;
+  // Tabbing to an off-screen card can scroll it into view before the tooltip opens.
+  if (balletCourseTooltip.hidden && balletTooltipCard.matches(".is-plan:focus-visible")) return;
+  hideBalletCourseTooltip();
 }, { capture: true, passive: true });
 window.addEventListener("resize", hideBalletCourseTooltip);
 document.addEventListener("keydown", (event) => {
@@ -5158,10 +5177,9 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
   const timeText = [balletStartTime(record), balletEndTime(record)].filter(Boolean).join("–") || "时间待确认";
   const detailText = [balletTeacher(record) || "老师待确认", timeText].join(" · ");
   detail.textContent = detailText;
-  const counts = options.includeCounts === false
-    ? null
-    : getBalletTimetableCounts(record);
-  if (counts) {
+  const counts = getBalletTimetableCounts(record);
+  const showCountsOnCard = counts && options.showCountsOnCard !== false;
+  if (showCountsOnCard) {
     const capacity = document.createElement("span");
     capacity.className = "ballet-timetable-capacity";
     capacity.textContent = counts.capacity;
@@ -5180,7 +5198,7 @@ function createBalletTimetableCourse(record, mobile = false, options = {}) {
   state.dataset.availability = status.key;
   foot.append(state);
   article.append(title, detail);
-  if (counts) {
+  if (showCountsOnCard) {
     article.append(meta);
   }
   article.append(foot);
