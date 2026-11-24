@@ -6125,7 +6125,8 @@ function createSessionItem(session) {
 
 async function readJson(url, fallback, sourceKey, { force = false } = {}) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), DATA_REQUEST_TIMEOUT_MS);
+  const timeoutMs = sourceKey === "ballet" ? 45000 : DATA_REQUEST_TIMEOUT_MS;
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(url, { cache: force ? "no-store" : "default", signal: controller.signal });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -6133,6 +6134,10 @@ async function readJson(url, fallback, sourceKey, { force = false } = {}) {
     if (sourceKey) {
       saveLastGood(sourceKey, data);
       updateBrowserDataHealth(sourceKey, data);
+      if (sourceKey === "ballet" && balletRefreshUiState?.snapshotReadFailed && browserDataHealth.get("ballet")?.status === "fresh") {
+        balletRefreshUiState = null;
+        refreshButton.dataset.state = "success";
+      }
     }
     return data;
   } catch (error) {
@@ -6436,7 +6441,15 @@ function refreshBalletData() {
       if (result.status === "running") throw new Error("同步等待超过 6 分钟，请稍后重试；仍显示上次成功的数据。");
       if (result.status === "idle") throw new Error("同步服务已重启，请重新刷新；仍显示上次成功的数据。");
       if (result.status !== "success") throw new Error(result.message || "同步等待超时，仍显示上次成功的数据。");
-      if (browserDataHealth.get("ballet")?.status === "failed") throw new Error("服务器同步已完成，但页面数据读取失败，请再刷新一次。");
+      if (browserDataHealth.get("ballet")?.status === "failed") {
+        await loadDataSource("ballet", { force: true });
+        if (browserDataHealth.get("ballet")?.status === "failed") {
+          setBalletRefreshStatus("error", "服务器同步已完成，但页面数据读取失败，请再刷新一次。");
+          balletRefreshUiState.snapshotReadFailed = true;
+          refreshButton.dataset.state = "error";
+          return;
+        }
+      }
       clearInterval(elapsedTimer);
       const duration = balletRefreshDuration(result.durationSeconds ?? (Date.now() - startedAt) / 1000);
       const message = `课程卡、预约、上课记录和课表已更新。用时 ${duration}。`;

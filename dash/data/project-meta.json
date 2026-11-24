@@ -1,14 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-23 20:41",
-  "version": "1.0.12.14",
-  "versionLabel": "v1.0.12.14",
-  "branch": "bugfix/ballet-roster-labels",
-  "commit": "9ba06b18",
+  "updatedAt": "2026-11-24 22:10",
+  "version": "1.0.12.15",
+  "versionLabel": "v1.0.12.15",
+  "branch": "bugfix/ballet-snapshot-read",
+  "commit": "0b5c488a",
   "dirty": true,
   "dirtyLevel": "code",
-  "deployNote": "bugfix/ballet-roster-labels · commit 9ba06b18 · 有未提交代码改动",
+  "deployNote": "bugfix/ballet-snapshot-read · commit 0b5c488a · 有未提交代码改动",
   "recentUpdates": [
+    {
+      "date": "2026-11-24",
+      "title": "改善芭蕾快照读取",
+      "summary": "芭蕾数据读取最多等待 45 秒，同步成功后读取失败会重新下载一次。后续读到新数据时清除旧的读取失败提示。版本 `1.0.12.15`。"
+    },
     {
       "date": "2026-11-23",
       "title": "调整芭蕾课表头像分组标题",
@@ -28,11 +33,6 @@
       "date": "2026-11-23",
       "title": "停用服务器 Codex CLI 和用量采集",
       "summary": "服务器 Codex CLI 已退出登录并卸载。移除手动采集入口和云服务页的任务卡片，每小时源采集仅刷新 OpenClaw，历史 Codex Server 用量继续纳入总账。版本 `1.0.12.11`。"
-    },
-    {
-      "date": "2026-11-23",
-      "title": "周安排补齐课表悬停信息",
-      "summary": "周安排复用完整课程表的浮层，显示同一节课的课程信息、报名人数、容量、排队人数和报名头像。版本 `1.0.12.10`。"
     }
   ]
 }
